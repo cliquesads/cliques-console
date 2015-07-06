@@ -1,0 +1,40 @@
+node_modules
+# iOS / Apple
+# ===========
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
+config/env/local.js
+
+# Node and related ecosystem
+# ==========================
+.nodemonignore
+.sass-cache/
+npm-debug.log
+node_modules/
+public/lib/
+app/tests/coverage/
+.bower-*/
+bower_components/
+.idea/
+
+# MEAN.js app and assets
+# ======================
+config/sslcerts/*.pem
+access.log
+public/dist/
+
+# General
+# =======
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.tmp
+*.bak
+*.swp
+logs/
+build/
