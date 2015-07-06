@@ -1,0 +1,53 @@
+{
+  "name": "Angle",
+  "version": "0.0.0",
+  "authors": [
+    "@themicon_co"
+  ],
+  "description": "Bootstrap Admin Theme + Meanjs",
+  "main": "index.html",
+  "keywords": [
+    "bootstrap",
+    "angular",
+    "admin",
+    "theme",
+    "dashboard"
+  ],
+  "license": "http://support.wrapbootstrap.com/knowledge_base/topics/usage-licenses",
+  "homepage": "http://themicon.co",
+  "private": true,
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "angular": "1.3.16",
+    "angular-mocks": "1.3.16",
+    "angular-touch": "1.3.16",
+    "angular-route": "1.3.16",
+    "angular-sanitize": "1.3.16",
+    "angular-resource": "1.3.16",
+    "angular-cookies": "1.3.16",
+    "angular-bootstrap": "0.12.1",
+    "angular-animate": "1.3.16",
+    "angular-translate": "2.6.0",
+    "angular-translate-loader-url": "2.6.0",
+    "angular-translate-loader-static-files": "2.6.0",
+    "angular-translate-storage-local": "2.6.0",
+    "angular-translate-storage-cookie": "2.6.0",
+    "angular-loading-bar": "0.7.0",
+    "angular-ui-utils": "0.2.2",
+    "angular-ui-router": "0.2.13",
+    "fontawesome": "4.3.0",
+    "oclazyload": "0.6.3",
+    "ngstorage": "0.3.0",
+    "jquery": "2.1.3",
+    "modernizr": "2.8.3",
+    "simple-line-icons": "0.1.1",
+    "jquery.browser": "master"
+  },
+  "resolutions": {
+    "angular": "1.3.16",
+    "angular-translate": "2.6.0",
+    "angular-translate-storage-cookie": "2.6.0"
+  }
+}

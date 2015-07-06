@@ -1,0 +1,29 @@
+<h3>
+	<div class="pull-right" data-ng-show="authentication.user._id == article.user._id">
+		<a class="btn btn-primary" href="/#!/articles/{{article._id}}/edit">
+			<i class="fa fa-edit"></i>
+		</a>
+		<a class="btn btn-primary" data-ng-click="remove();">
+			<i class="fa fa-trash"></i>
+		</a>
+	</div>
+	{{article.title}}
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+<section data-ng-init="findOne()">
+	<small>
+		<em class="text-muted">
+			Posted on
+			<span data-ng-bind="article.created | date:'mediumDate'"></span>
+			by
+			<span data-ng-bind="article.user.displayName"></span>
+		</em>
+	</small>
+	<p class="lead" data-ng-bind="article.content"></p>
+</section>
