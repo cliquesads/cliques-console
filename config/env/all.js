@@ -2,7 +2,7 @@
 
 module.exports = {
 	app: {
-		title: 'Angle',
+		title: 'cliquesui',
 		description: 'Bootstrap Admin Theme + Meanjs',
 		keywords: 'MongoDB, Express, AngularJS, Node.js'
 	},
@@ -63,5 +63,12 @@ module.exports = {
 			'public/lib/angular-mocks/angular-mocks.js',
 			'public/modules/*/tests/*.js'
 		]
-	}
+	},
+    mongodb: {
+        user: "exchangerw",
+        pwd: "yb3CSw76Cru8qpUdDP8xxyKLHzZpNRhQG8MNQWoqdKdGPU5miEc4DuU",
+        host: "146.148.94.184",
+        port: 27017,
+        db: "exchange"
+    }
 };

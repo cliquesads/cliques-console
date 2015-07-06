@@ -21,6 +21,7 @@ var fs = require('fs'),
 	flash = require('connect-flash'),
 	config = require('./config'),
 	consolidate = require('consolidate'),
+    responseTime = require('response-time'),
 	path = require('path');
 
 module.exports = function(db) {
@@ -82,7 +83,10 @@ module.exports = function(db) {
 	app.use(bodyParser.json());
 	app.use(methodOverride());
 
-	// CookieParser should be above session
+    // Adds response time to response headers
+    app.use(responseTime());
+
+    // CookieParser should be above session
 	app.use(cookieParser());
 
 	// Express MongoDB session storage
@@ -91,7 +95,7 @@ module.exports = function(db) {
 		resave: true,
 		secret: config.sessionSecret,
 		store: new mongoStore({
-			db: db.connection.db,
+            mongoose_connection: db,
 			collection: config.sessionCollection
 		})
 	}));
@@ -112,6 +116,9 @@ module.exports = function(db) {
 
 	// Setting the app router and static folder
 	app.use(express.static(path.resolve('./public')));
+
+    // TODO: FIX THIS HACK. set DB connection as object property on app to pass through to routers
+    app.db = db;
 
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {

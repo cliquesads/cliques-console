@@ -4,21 +4,34 @@
  */
 var init = require('./config/init')(),
 	config = require('./config/config'),
-	mongoose = require('mongoose'),
+    pmx = require('pmx').init(),
+    util = require('util'),
+    cliques_mongo = require('cliques_node_utils').mongodb,
 	chalk = require('chalk');
 
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
  */
+// Build the connection string
+var exchangeMongoURI = util.format('mongodb://%s:%s/%s',
+    config.mongodb.host,
+    config.mongodb.port,
+    config.mongodb.db);
 
-// Bootstrap db connection
-var db = mongoose.connect(config.db, function(err) {
-	if (err) {
-		console.error(chalk.red('Could not connect to MongoDB!'));
-		console.log(chalk.red(err));
-	}
+var exchangeMongoOptions = {
+    user: config.mongodb.user,
+    pass: config.mongodb.pwd,
+    auth: {authenticationDatabase: config.mongodb.db}
+};
+var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOptions, function(err, logstring){
+    if (err) {
+        console.error(chalk.red('Could not connect to MongoDB!'));
+        console.log(chalk.red(err));
+    }
+    console.log(logstring);
 });
+
 
 // Init the express application
 var app = require('./config/express')(db);
