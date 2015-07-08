@@ -30,8 +30,8 @@ angular.module('core').run(["$rootScope", "$state", "$stateParams",  '$window', 
     // Scope Globals
     // ----------------------------------- 
     $rootScope.app = {
-      name: 'Angle',
-      description: 'Angular Bootstrap Admin Template',
+      name: 'Cliques Labs Inc.',
+      description: 'Cliques Advertising Console',
       year: ((new Date()).getFullYear()),
       layout: {
         isFixed: true,
@@ -40,7 +40,7 @@ angular.module('core').run(["$rootScope", "$state", "$stateParams",  '$window', 
         isRTL: false,
         horizontal: false,
         isFloat: false,
-        asideHover: false,
+        asideHover: true,
         theme: null
       },
       useFullLayout: false,

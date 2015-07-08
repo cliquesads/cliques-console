@@ -9,7 +9,7 @@
 </h3>
 <section data-ng-controller="AdvertiserController" data-ng-init="find()">
 	<div class="list-group">
-		<a data-ng-repeat="advertiser in Advertiser" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
+		<a data-ng-repeat="advertiser in advertisers" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on
 				<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>

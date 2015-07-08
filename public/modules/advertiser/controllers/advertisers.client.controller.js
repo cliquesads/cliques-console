@@ -53,7 +53,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 		};
 
 		$scope.find = function() {
-			$scope.advertiser = Advertiser.query();
+			$scope.advertisers = Advertiser.query();
 		};
 
 		$scope.findOne = function() {

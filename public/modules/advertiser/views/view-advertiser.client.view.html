@@ -1,5 +1,5 @@
 <h3>
-	<div class="pull-right" data-ng-show="authentication.user._id == advertiser.user._id">
+	<div class="pull-right" data-ng-show="authentication.user._id == advertiser.user">
 		<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">
 			<i class="fa fa-edit"></i>
 		</a>
@@ -20,10 +20,15 @@
 	<small>
 		<em class="text-muted">
 			Posted on
-			<span data-ng-bind="advertiser.created | date:'mediumDate'"></span>
+			<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>
 			by
 			<span data-ng-bind="advertiser.user.displayName"></span>
 		</em>
 	</small>
-	<p class="lead" data-ng-bind="advertiser.content"></p>
+    <p class="lead" data-ng-bind="advertiser.contact"></p>
+	<p class="lead" data-ng-bind="advertiser.email"></p>
+    <p class="lead" data-ng-bind="advertiser.phone"></p>
+    <p class="lead" data-ng-bind="advertiser.description"></p>
+    <p class="lead" data-ng-bind="advertiser.user"></p>
+    <p class="lead" data-ng-bind="advertiser.campaigns"></p>
 </section>
