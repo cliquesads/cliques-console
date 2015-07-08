@@ -7,6 +7,7 @@ var init = require('./config/init')(),
     pmx = require('pmx').init(),
     util = require('util'),
     cliques_mongo = require('cliques_node_utils').mongodb,
+    mongoose = require('mongoose'),
 	chalk = require('chalk');
 
 /**
@@ -32,6 +33,15 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
     console.log(logstring);
 });
 
+// Create default connection as well for built-in UI-only models
+// TODO: Fix this to use connection object so you don't have to rely on default connection
+mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring){
+    if (err) {
+        console.error(chalk.red('Could not connect default connection to MongoDB!'));
+        console.log(chalk.red(err));
+    }
+    console.log('Connected to exchange connection as default mongo DB connection');
+});
 
 // Init the express application
 var app = require('./config/express')(db);
