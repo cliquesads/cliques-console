@@ -114,7 +114,7 @@ module.exports = function(db) {
          * Article authorization middleware
          */
         hasAuthorization: function (req, res, next) {
-            if (req.advertiser.user.id !== req.user.id) {
+            if (req.advertiser.user != req.user.id) {
                 return res.status(403).send({
                     message: 'User is not authorized'
                 });
