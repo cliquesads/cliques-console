@@ -6,7 +6,7 @@ module.exports = function(app){
 
     /* ---- Advertiser API Routes ---- */
     app.route('/advertiser')
-        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.getMany)
+        .get(users.requiresLogin, advertisers.getMany)
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.updateOrCreate)
         .post(users.requiresLogin, advertisers.hasAuthorization, advertisers.create);
 
