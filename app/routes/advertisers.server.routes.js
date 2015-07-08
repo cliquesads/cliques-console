@@ -10,10 +10,10 @@ module.exports = function(app){
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.updateOrCreate)
         .post(users.requiresLogin, advertisers.hasAuthorization, advertisers.create);
 
-    app.route('/advertiser/:adv_id')
+    app.route('/advertiser/:advertiserId')
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.read)
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
 
-    app.param('adv_id', advertisers.advertiserByID);
+    app.param('advertiserId', advertisers.advertiserByID);
 };

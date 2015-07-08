@@ -1,0 +1,41 @@
+<h3>Edit Advertiser
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.name}}</a>
+	     <span ng-switch-when="true">{{state.name}}</span>
+	  </li>
+	</ul>
+</h3>
+<section data-ng-controller="AdvertiserController" data-ng-init="findOne()">
+	<div class="col-md-12">
+		<form name="advertiserForm" class="form-horizontal" data-ng-submit="update(advertiserForm.$valid)" novalidate>
+			<fieldset>
+				<div class="form-group" ng-class="{ 'has-error' : submitted && advertiserForm.name.$invalid}">
+					<label class="control-label" for="name">Name</label>
+					<div class="controls">
+						<input name="name" type="text" data-ng-model="advertiser.name" id="name" class="form-control" placeholder="Name" required>
+					</div>
+					<div ng-show="submitted && advertiserForm.name.$invalid" class="help-block">
+						<p ng-show="advertiserForm.name.$error.required" class="text-danger">Name is required</p>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error' : submitted && advertiserForm.content.$invalid}">
+					<label class="control-label" for="contact">Contact</label>
+					<div class="controls">
+						<input name="contact" data-ng-model="advertiser.contact" id="contact" class="form-control" cols="30" rows="10" placeholder="Contact" required>
+					</div>
+					<div ng-show="submitted && advertiserForm.contact.$invalid" class="help-block">
+						<p ng-show="advertiserForm.content.$error.required" class="text-danger">Contact is required</p>
+					</div>
+				</div>
+				<div class="form-group mt">
+					<input type="submit" value="Update" class="btn btn-default">
+				</div>
+				<div data-ng-show="error" class="text-danger">
+					<strong data-ng-bind="error"></strong>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</section>

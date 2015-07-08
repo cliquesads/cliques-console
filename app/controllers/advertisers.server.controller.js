@@ -7,7 +7,6 @@ var models = require('cliques_node_utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
 
-
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
 
