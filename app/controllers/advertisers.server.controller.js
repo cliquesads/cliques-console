@@ -21,6 +21,11 @@ module.exports = function(db) {
          * Gets arbitrary number of Advertisers
          */
         getMany: function (req, res) {
+            // limit scope of query to just those advertisers to which
+            // user is permitted to see
+            if (req.user.roles.indexOf('admin') === -1){
+                req.query.user = req.user.id
+            }
             advertiserModels.Advertiser.apiQuery(req.query, function (err, advertisers) {
                 if (err) {
                     return res.status(400).send({
@@ -114,10 +119,12 @@ module.exports = function(db) {
          * Article authorization middleware
          */
         hasAuthorization: function (req, res, next) {
-            if (req.advertiser.user != req.user.id) {
-                return res.status(403).send({
-                    message: 'User is not authorized'
-                });
+            if (req.user.roles.indexOf('admin') === -1){
+                if (req.advertiser.user != req.user.id) {
+                    return res.status(403).send({
+                        message: 'User is not authorized'
+                    });
+                }
             }
             next();
         },
