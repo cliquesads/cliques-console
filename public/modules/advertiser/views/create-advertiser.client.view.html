@@ -7,27 +7,199 @@
 	  </li>
 	</ul>
 </h3>
+
 <section data-ng-controller="AdvertiserController">
-	<div class="col-md-12">
-		<form name="advertiserForm" class="form-horizontal" data-ng-submit="create()" novalidate>
-			<fieldset>
-				<div class="form-group" ng-class="{ 'has-error': advertiserForm.name.$dirty && advertiserForm.name.$invalid }">
-					<label class="control-label" for="name">Name</label>
-					<div class="controls">
-						<input name="name" type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
-					</div>
-                    <label class="control-label" for="contact">Contact</label>
-                    <div class="controls">
-                        <input name="contact" type="text" data-ng-model="contact" id="contact" class="form-control" placeholder="Contact" required>
+    <div class="panel panel-default">
+        <div class="panel-heading">This'll only take a second.</div>
+        <div class="panel-body">
+            <form name="advertiserForm" data-ng-submit="create()" form-wizard="" validate-steps="true" validate-form="" steps="4">
+                <div class="form-wizard wizard-horizontal">
+                    <!-- START wizard steps indicator-->
+                    <ol class="row">
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-md-3">
+                            <h4>Advertiser</h4>
+                            <small class="text-muted">Basic advertiser info</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-3">
+                            <h4>Campaign</h4>
+                            <small class="text-muted">Set up your campaign info (dates, budget) and bid settings</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-md-3">
+                            <h4>Creatives</h4>
+                            <small class="text-muted">Add creative assets to your campaign</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)" class="col-md-3">
+                            <h4>Done!</h4>
+                            <small class="text-muted">Start advertising!</small>
+                        </li>
+                    </ol>
+                    <!-- END wizard steps indicator-->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset>
+                            <legend>Advertiser</legend>
+                            <!-- START row -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <div class="controls">
+                                            <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required="required">
+                                            <span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <div class="controls">
+                                            <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid" placeholder="Optional - Brief Description of this Advertiser">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Website</label>
+                                        <div class="controls">
+                                            <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-required ng-valid ng-valid-url" placeholder="http://www.example.com" required>
+                                            <span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END row -->
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
                     </div>
-				</div>
-				<div class="form-group mt">
-					<input type="submit" class="btn btn-default">
-				</div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
-			</fieldset>
-		</form>
-	</div>
+                    <!-- END Wizard Step inputs -->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+                        <fieldset>
+                            <legend>Campaign</legend>
+                            <!-- START row -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label></label>
+                                        <input type="text" name="first-name" data-parsley-group="step2" placeholder="John" required="required" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" name="last-name" data-parsley-group="step2" placeholder="Snow" required="required" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END row -->
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(1)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step3" ng-show="wizard.active(3)">
+                        <fieldset>
+                            <legend>Contact</legend>
+                            <!-- START row -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" name="email" data-parsley-group="step3" placeholder="john@snow.com" required="required" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Phone</label>
+                                        <input type="text" name="phone" data-parsley-group="step3" placeholder="11-2345-6789" required="required" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END row -->
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(2)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                    <!-- START Wizard Step inputs -->
+                    <div id="step4" ng-show="wizard.active(4)">
+                        <div class="jumbotron">
+                            <h1>Done!</h1>
+                            <p>In vulputate mattis ipsum vitae vehicula. Praesent at arcu non arcu convallis pellentesque. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p>
+                                <button type="button" class="btn btn-info btn-lg">You can Proceed Now</button>
+                            </p>
+                        </div>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(3)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                </div>
+            </form>
+        </div>
+    </div>
 </section>
+
+
+<!-- START panel-->
+
+<!-- END panel -->
+
+<!--<div class="panel panel-default">-->
+    <!--<form name="advertiserForm" class="form-horizontal panel-body" data-ng-submit="create()" novalidate class="form-validate form-horizontal ng-invalid ng-invalid-required ng-valid-pattern ng-invalid-validator ng-valid-minlength ng-valid-maxlength ng-valid-blacklist ng-valid-date ng-valid-date-disabled ng-valid-time ng-dirty ng-valid-url ng-valid-parse ng-invalid-email">-->
+        <!--<fieldset>-->
+            <!--<div class="form-group">-->
+                <!--&lt;!&ndash;Begin Error alert from server&ndash;&gt;-->
+                <!--<div data-ng-show="error" class="alert alert-danger alert-dismissable" ng-class="['alert-' + (type || 'warning'), closeable ? 'alert-dismissable' : null]" role="alert" type="danger" close="closeAlert($index)">-->
+                    <!--<button ng-show="closeable" type="button" class="close" ng-click="close()">-->
+                        <!--<span aria-hidden="true">×</span>-->
+                        <!--<span class="sr-only">Close</span>-->
+                    <!--</button>-->
+                        <!--<span class="ng-binding ng-scope">-->
+                            <!--<span data-ng-bind="error"></span>-->
+                        <!--</span>-->
+                <!--</div>-->
+
+                <!--&lt;!&ndash;Begin Form Fields&ndash;&gt;-->
+                <!--<label class="control-label" for="name">Name</label>-->
+                <!--<div class="controls">-->
+                    <!--<input name="name" type="text" data-ng-model="name" id="name" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required>-->
+                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
+                <!--</div>-->
+
+                <!--<label class="control-label" for="website">Website</label>-->
+                <!--<div class="controls">-->
+                    <!--<input name="website" type="url" data-ng-model="website" id="website" class="form-control ng-touched ng-dirty ng-valid-required ng-valid ng-valid-url" placeholder="http://www.example.com" required>-->
+                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                <!--</div>-->
+
+            <!--</div>-->
+            <!--<div class="form-group mt">-->
+                <!--<input type="submit" class="btn btn-default">-->
+            <!--</div>-->
+        <!--</fieldset>-->
+    <!--</form>-->
+<!--</div>-->

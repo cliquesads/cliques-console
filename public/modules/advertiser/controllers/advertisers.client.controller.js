@@ -5,25 +5,30 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 		$scope.authentication = Authentication;
 
 		$scope.create = function() {
-			var advertiser = new Advertiser({
-				name: this.name,
-				contact: this.contact,
-                email: this.email,
-                description: this.description,
-                phone: this.phone,
-                website: this.website
-			});
-			advertiser.$create(function(response) {
-				$location.path('advertiser/');
-				$scope.name = '';
-				$scope.contact = '';
-                $scope.email = '';
-                $scope.description = '';
-                $scope.phone = '';
-                $scope.website = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
+            $scope.submitted = true;
+            if (this.advertiserForm.$valid) {
+                var advertiser = new Advertiser({
+                    name: this.name,
+                    description: this.description,
+                    website: this.website,
+                    cliques: this.cliques,
+                    campaigns: this.campaigns,
+                    actionbeacons: this.actionbeacons
+                });
+                advertiser.$create(function (response) {
+                    $location.path('advertiser/');
+                    $scope.name = '';
+                    $scope.contact = '';
+                    $scope.email = '';
+                    $scope.description = '';
+                    $scope.phone = '';
+                    $scope.website = '';
+                }, function (errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                });
+            } else {
+                return false;
+            }
 		};
 
 		$scope.remove = function(advertiser) {
@@ -41,6 +46,11 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 				});
 			}
 		};
+
+        $scope.validateInput = function(name, type) {
+            var input = this.advertiserForm[name];
+            return (input.$dirty || $scope.submitted) && input.$error[type];
+        };
 
 		$scope.update = function() {
 			var advertiser = $scope.advertiser;
