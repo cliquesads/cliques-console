@@ -36,7 +36,8 @@ module.exports = {
 				'public/lib/oclazyload/dist/ocLazyLoad.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/lib/angular-loading-bar/build/loading-bar.js',
-				'public/lib/jquery.browser/dist/jquery.browser.js'
+				'public/lib/jquery.browser/dist/jquery.browser.js',
+                'public/lib/parsleyjs/dist/parsley.min.js'
 				// 'public/lib/jquery/dist/jquery.js',
 				// 'public/lib/angular/angular.js',
 				// 'public/lib/angular-resource/angular-resource.js',
