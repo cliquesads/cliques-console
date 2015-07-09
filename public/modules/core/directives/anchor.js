@@ -3,7 +3,7 @@
  * Disables null anchor behavior
  =========================================================*/
 
-App.directive('href', function() {
+angular.module('core').directive('href', function() {
 
   return {
     restrict: 'A',

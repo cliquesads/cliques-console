@@ -3,7 +3,7 @@
  * Removes a key from the browser storage via element click
  =========================================================*/
 
-App.directive('resetKey',  ['$state','$rootScope', function($state, $rootScope) {
+angular.module('core').directive('resetKey',  ['$state','$rootScope', function($state, $rootScope) {
   'use strict';
 
   return {

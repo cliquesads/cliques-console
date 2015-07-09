@@ -3,7 +3,7 @@
  * Tables check all checkbox
  =========================================================*/
 
-App.directive('checkAll', function() {
+angular.module('core').directive('checkAll', function() {
   'use strict';
   
   return {

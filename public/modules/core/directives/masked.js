@@ -3,7 +3,7 @@
  * Initializes the masked inputs
  =========================================================*/
 
-App.directive('masked', function() {
+angular.module('core').directive('masked', function() {
   return {
     restrict: 'A',
     controller: ["$scope", "$element", function($scope, $element) {

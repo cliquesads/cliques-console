@@ -3,7 +3,7 @@
  * Initializes the validation plugin Parsley
  =========================================================*/
 
-App.directive('validateForm', function() {
+angular.module('core').directive('validateForm', function() {
   return {
     restrict: 'A',
     controller: ["$scope", "$element", function($scope, $element) {

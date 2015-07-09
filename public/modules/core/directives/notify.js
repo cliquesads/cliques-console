@@ -3,7 +3,7 @@
  * Directive for notify plugin
  =========================================================*/
 
-App.directive('notify', ["$window", "Notify", function($window, Notify){
+angular.module('core').directive('notify', ["$window", "Notify", function($window, Notify){
 
   return {
     restrict: 'A',

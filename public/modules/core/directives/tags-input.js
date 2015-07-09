@@ -3,7 +3,7 @@
  * Initializes the tag inputs plugin
  =========================================================*/
 
-App.directive('tagsinput', ["$timeout", function($timeout) {
+angular.module('core').directive('tagsinput', ["$timeout", function($timeout) {
   return {
     restrict: 'A',
     require: 'ngModel',

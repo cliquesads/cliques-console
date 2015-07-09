@@ -3,7 +3,7 @@
  * Request and load into the current page a css file
  =========================================================*/
 
-App.directive('loadCss', function() {
+angular.module('core').directive('loadCss', function() {
   'use strict';
 
   return {

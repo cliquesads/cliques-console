@@ -3,7 +3,7 @@
  * Provides a simple way to display the current time formatted
  =========================================================*/
 
-App.directive("now", ['dateFilter', '$interval', function(dateFilter, $interval){
+angular.module('core').directive("now", ['dateFilter', '$interval', function(dateFilter, $interval){
     return {
       restrict: 'E',
       link: function(scope, element, attrs){

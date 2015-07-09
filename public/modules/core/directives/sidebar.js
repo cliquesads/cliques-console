@@ -3,9 +3,8 @@
  * Wraps the sidebar and handles collapsed state
  =========================================================*/
 
-/* jshint -W026 */
 angular.module('core').directive('sidebar', ['$rootScope', '$timeout', '$window', 'Utils', function($rootScope, $timeout, $window, Utils) {
-  'use strict';
+  
   var $win  = $($window);
   var $body = $('body');
   var $scope;

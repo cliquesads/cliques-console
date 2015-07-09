@@ -3,7 +3,7 @@
  * Initializes the fielstyle plugin
  =========================================================*/
 
-App.directive('filestyle', function() {
+angular.module('core').directive('filestyle', function() {
   return {
     restrict: 'A',
     controller: ["$scope", "$element", function($scope, $element) {

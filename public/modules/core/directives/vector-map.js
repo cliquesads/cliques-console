@@ -3,7 +3,7 @@
  * Init jQuery Vector Map plugin
  =========================================================*/
 
-App.directive('vectorMap', ['vectorMap', function(vectorMap){
+angular.module('core').directive('vectorMap', ['vectorMap', function(vectorMap){
   'use strict';
 
   var defaultColors = {

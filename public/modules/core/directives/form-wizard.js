@@ -3,7 +3,7 @@
  * Handles form wizard plugin and validation
  =========================================================*/
 
-App.directive('formWizard', ["$parse", function($parse){
+angular.module('core').directive('formWizard', ["$parse", function($parse){
   'use strict';
 
   return {

@@ -3,7 +3,7 @@
  * Creates the flatdoc markup and initializes the plugin
  =========================================================*/
 
-App.directive('flatdoc', ['$location', function($location) {
+angular.module('core').directive('flatdoc', ['$location', function($location) {
   return {
     restrict: "EA",
     template: "<div role='flatdoc'><div role='flatdoc-menu'></div><div role='flatdoc-content'></div></div>",

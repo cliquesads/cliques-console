@@ -5,7 +5,7 @@
  * Saves panel state in browser storage
  =========================================================*/
 
-App.directive('paneltool', ["$compile", "$timeout", function($compile, $timeout){
+angular.module('core').directive('paneltool', ["$compile", "$timeout", function($compile, $timeout){
   var templates = {
     /* jshint multistr: true */
     collapse:"<a href='#' panel-collapse='' tooltip='Collapse Panel' ng-click='{{panelId}} = !{{panelId}}'> \

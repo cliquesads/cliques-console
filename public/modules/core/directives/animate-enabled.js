@@ -3,7 +3,7 @@
  * Enable or disables ngAnimate for element with directive
  =========================================================*/
 
-App.directive("animateEnabled", ["$animate", function ($animate) {
+angular.module('core').directive("animateEnabled", ["$animate", function ($animate) {
   return {
     link: function (scope, element, attrs) {
       scope.$watch(function () {

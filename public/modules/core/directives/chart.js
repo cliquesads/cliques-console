@@ -91,11 +91,11 @@ var ChartJS = function (type) {
 };
 
 /* Aliases for various chart types */
-App.directive("chartjs",       function () { return ChartJS(); });
-App.directive("linechart",     function () { return ChartJS("Line"); });
-App.directive("barchart",      function () { return ChartJS("Bar"); });
-App.directive("radarchart",    function () { return ChartJS("Radar"); });
-App.directive("polarchart",    function () { return ChartJS("PolarArea"); });
-App.directive("piechart",      function () { return ChartJS("Pie"); });
-App.directive("doughnutchart", function () { return ChartJS("Doughnut"); });
-App.directive("donutchart",    function () { return ChartJS("Doughnut"); });
+angular.module('core').directive("chartjs",       function () { return ChartJS(); });
+angular.module('core').directive("linechart",     function () { return ChartJS("Line"); });
+angular.module('core').directive("barchart",      function () { return ChartJS("Bar"); });
+angular.module('core').directive("radarchart",    function () { return ChartJS("Radar"); });
+angular.module('core').directive("polarchart",    function () { return ChartJS("PolarArea"); });
+angular.module('core').directive("piechart",      function () { return ChartJS("Pie"); });
+angular.module('core').directive("doughnutchart", function () { return ChartJS("Doughnut"); });
+angular.module('core').directive("donutchart",    function () { return ChartJS("Doughnut"); });

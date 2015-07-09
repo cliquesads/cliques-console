@@ -3,7 +3,7 @@
  * Make a content box scrollable
  =========================================================*/
 
-App.directive('scrollable', function(){
+angular.module('core').directive('scrollable', function(){
   return {
     restrict: 'EA',
     link: function(scope, elem, attrs) {

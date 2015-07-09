@@ -6,10 +6,10 @@
 (function() {
     "use strict";
 
-    App.directive('morrisBar',   morrisChart('Bar')   );
-    App.directive('morrisDonut', morrisChart('Donut') );
-    App.directive('morrisLine',  morrisChart('Line')  );
-    App.directive('morrisArea',  morrisChart('Area')  );
+    angular.module('core').directive('morrisBar',   morrisChart('Bar')   );
+    angular.module('core').directive('morrisDonut', morrisChart('Donut') );
+    angular.module('core').directive('morrisLine',  morrisChart('Line')  );
+    angular.module('core').directive('morrisArea',  morrisChart('Area')  );
 
     function morrisChart(type) {
       return function () {

@@ -3,7 +3,7 @@
  * Enable use of classyloader directly from data attributes
  =========================================================*/
 
-App.directive('classyloader', ["$timeout", "Utils", function($timeout, Utils) {
+angular.module('core').directive('classyloader', ["$timeout", "Utils", function($timeout, Utils) {
   'use strict';
 
   var $scroller       = $(window),

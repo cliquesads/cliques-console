@@ -4,7 +4,7 @@
  * Requires animo.js
  =========================================================*/
  
-App.directive('animate', ["$window", "Utils", function($window, Utils){
+angular.module('core').directive('animate', ["$window", "Utils", function($window, Utils){
 
   'use strict';
 
