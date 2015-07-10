@@ -34,7 +34,8 @@
                         </li>
                     </ol>
                     <!-- END wizard steps indicator-->
-                    <!-- START Wizard Step inputs -->
+
+                    <!-- START Advertiser inputs -->
                     <div id="step1" ng-show="wizard.active(1)">
                         <fieldset>
                             <legend>Advertiser</legend>
@@ -45,7 +46,7 @@
                                         <label>Name</label>
                                         <div class="controls">
                                             <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required="required">
-                                            <span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>
+                                            <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +63,7 @@
                                         <label>Website</label>
                                         <div class="controls">
                                             <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-required ng-valid ng-valid-url" placeholder="http://www.example.com" required>
-                                            <span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>
+                                            <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
                                         </div>
                                     </div>
                                 </div>
@@ -74,28 +75,42 @@
                             </li>
                         </ul>
                     </div>
-                    <!-- END Wizard Step inputs -->
-                    <!-- START Wizard Step inputs -->
+                    <!-- END Advertiser Step inputs -->
+
+                    <!-- START CAMPAIGN inputs -->
                     <div id="step2" ng-show="wizard.active(2)">
+                        <legend>Campaign</legend>
+                        <!-- START row -->
                         <fieldset>
-                            <legend>Campaign</legend>
-                            <!-- START row -->
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label></label>
-                                        <input type="text" name="first-name" data-parsley-group="step2" placeholder="John" required="required" class="form-control" />
+                                        <label>Name</label>
+                                        <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="A Sweet Campaign" required="required" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" />
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Last Name</label>
-                                        <input type="text" name="last-name" data-parsley-group="step2" placeholder="Snow" required="required" class="form-control" />
+                                        <label>Description</label>
+                                        <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid" />
                                     </div>
                                 </div>
                             </div>
-                            <!-- END row -->
                         </fieldset>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-4">
+
+                                        <label>Budget</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+                                            <input type="number" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="Campaign Budget in USD" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required ng-valid-number" />
+                                        </div>
+
+                                </div>
+                            </div>
+                        </fieldset>
+                            <!-- END row -->
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(1)">
@@ -168,38 +183,3 @@
 
 <!-- END panel -->
 
-<!--<div class="panel panel-default">-->
-    <!--<form name="advertiserForm" class="form-horizontal panel-body" data-ng-submit="create()" novalidate class="form-validate form-horizontal ng-invalid ng-invalid-required ng-valid-pattern ng-invalid-validator ng-valid-minlength ng-valid-maxlength ng-valid-blacklist ng-valid-date ng-valid-date-disabled ng-valid-time ng-dirty ng-valid-url ng-valid-parse ng-invalid-email">-->
-        <!--<fieldset>-->
-            <!--<div class="form-group">-->
-                <!--&lt;!&ndash;Begin Error alert from server&ndash;&gt;-->
-                <!--<div data-ng-show="error" class="alert alert-danger alert-dismissable" ng-class="['alert-' + (type || 'warning'), closeable ? 'alert-dismissable' : null]" role="alert" type="danger" close="closeAlert($index)">-->
-                    <!--<button ng-show="closeable" type="button" class="close" ng-click="close()">-->
-                        <!--<span aria-hidden="true">×</span>-->
-                        <!--<span class="sr-only">Close</span>-->
-                    <!--</button>-->
-                        <!--<span class="ng-binding ng-scope">-->
-                            <!--<span data-ng-bind="error"></span>-->
-                        <!--</span>-->
-                <!--</div>-->
-
-                <!--&lt;!&ndash;Begin Form Fields&ndash;&gt;-->
-                <!--<label class="control-label" for="name">Name</label>-->
-                <!--<div class="controls">-->
-                    <!--<input name="name" type="text" data-ng-model="name" id="name" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required>-->
-                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
-                <!--</div>-->
-
-                <!--<label class="control-label" for="website">Website</label>-->
-                <!--<div class="controls">-->
-                    <!--<input name="website" type="url" data-ng-model="website" id="website" class="form-control ng-touched ng-dirty ng-valid-required ng-valid ng-valid-url" placeholder="http://www.example.com" required>-->
-                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
-                <!--</div>-->
-
-            <!--</div>-->
-            <!--<div class="form-group mt">-->
-                <!--<input type="submit" class="btn btn-default">-->
-            <!--</div>-->
-        <!--</fieldset>-->
-    <!--</form>-->
-<!--</div>-->
