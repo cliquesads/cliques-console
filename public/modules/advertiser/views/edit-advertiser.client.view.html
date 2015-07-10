@@ -9,7 +9,7 @@
 </h3>
 <section data-ng-controller="AdvertiserController" data-ng-init="findOne()">
 	<div class="col-md-12">
-		<form name="advertiserForm" class="form-horizontal" data-ng-submit="update(advertiserForm.$valid)" novalidate>
+		<form name="advertiserForm" class="form-horizontal" data-ng-submit="update(advertiserForm.$valid)" novalidate class="form-validate form-horizontal ng-invalid ng-invalid-required ng-valid-pattern ng-invalid-validator ng-valid-minlength ng-valid-maxlength ng-valid-blacklist ng-valid-date ng-valid-date-disabled ng-valid-time ng-dirty ng-valid-url ng-valid-parse ng-invalid-email">
 			<fieldset>
 				<div class="form-group" ng-class="{ 'has-error' : submitted && advertiserForm.name.$invalid}">
 					<label class="control-label" for="name">Name</label>
@@ -20,6 +20,7 @@
 						<p ng-show="advertiserForm.name.$error.required" class="text-danger">Name is required</p>
 					</div>
 				</div>
+
 				<div class="form-group" ng-class="{ 'has-error' : submitted && advertiserForm.content.$invalid}">
 					<label class="control-label" for="contact">Contact</label>
 					<div class="controls">
@@ -39,3 +40,40 @@
 		</form>
 	</div>
 </section>
+
+
+<!--<div class="panel panel-default">-->
+    <!--<form name="advertiserForm" class="form-horizontal panel-body" data-ng-submit="create()" novalidate class="form-validate form-horizontal ng-invalid ng-invalid-required ng-valid-pattern ng-invalid-validator ng-valid-minlength ng-valid-maxlength ng-valid-blacklist ng-valid-date ng-valid-date-disabled ng-valid-time ng-dirty ng-valid-url ng-valid-parse ng-invalid-email">-->
+        <!--<fieldset>-->
+            <!--<div class="form-group">-->
+            <!--&lt;!&ndash;Begin Error alert from server&ndash;&gt;-->
+                <!--<div data-ng-show="error" class="alert alert-danger alert-dismissable" ng-class="['alert-' + (type || 'warning'), closeable ? 'alert-dismissable' : null]" role="alert" type="danger" close="closeAlert($index)">-->
+                    <!--<button ng-show="closeable" type="button" class="close" ng-click="close()">-->
+                        <!--<span aria-hidden="true">×</span>-->
+                        <!--<span class="sr-only">Close</span>-->
+                    <!--</button>-->
+                    <!--<span class="ng-binding ng-scope">-->
+                        <!--<span data-ng-bind="error"></span>-->
+                    <!--</span>-->
+                <!--</div>-->
+
+                <!--&lt;!&ndash;Begin Form Fields&ndash;&gt;-->
+                <!--<label class="control-label" for="name">Name</label>-->
+                <!--<div class="controls">-->
+                    <!--<input name="name" type="text" data-ng-model="name" id="name" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required>-->
+                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
+                <!--</div>-->
+
+                <!--<label class="control-label" for="website">Website</label>-->
+                <!--<div class="controls">-->
+                    <!--<input name="website" type="url" data-ng-model="website" id="website" class="form-control ng-touched ng-dirty ng-valid-required ng-valid ng-valid-url" placeholder="http://www.example.com" required>-->
+                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                <!--</div>-->
+
+            <!--</div>-->
+                <!--<div class="form-group mt">-->
+                <!--<input type="submit" class="btn btn-default">-->
+            <!--</div>-->
+        <!--</fieldset>-->
+    <!--</form>-->
+<!--</div>-->
