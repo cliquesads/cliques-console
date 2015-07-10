@@ -13,7 +13,8 @@ angular.module('advertiser').config(['$stateProvider',
 		state('app.createAdvertiser', {
 			url: '/advertiser/create',
 			title: 'New Advertiser',
-			templateUrl: 'modules/advertiser/views/create-advertiser.client.view.html'
+			templateUrl: 'modules/advertiser/views/create-advertiser.client.view.html',
+            controller: 'AdvertiserWizardController'
 		}).
 		state('app.viewAdvertiser', {
 			url: '/advertiser/:advertiserId',
@@ -26,5 +27,5 @@ angular.module('advertiser').config(['$stateProvider',
 			url: '/advertiser/:advertiserId/edit',
 			templateUrl: 'modules/advertiser/views/edit-advertiser.client.view.html'
 		});
-	}
+	}   
 ]);
