@@ -3,7 +3,7 @@
 module.exports = {
 	db: 'mongodb://localhost/angle-dev',
 	app: {
-		title: 'Angle - Development Environment'
+		title: 'Cliques - DEVELOPMENT'
 	},
 	facebook: {
 		clientID: process.env.FACEBOOK_ID || 'APP_ID',

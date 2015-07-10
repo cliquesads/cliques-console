@@ -2,7 +2,7 @@
 
 module.exports = {
 	app: {
-		title: 'cliquesui',
+		title: 'Cliques Console',
 		description: 'Bootstrap Admin Theme + Meanjs',
 		keywords: 'MongoDB, Express, AngularJS, Node.js'
 	},
