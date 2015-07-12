@@ -10,7 +10,9 @@
 
 <section data-ng-controller="AdvertiserWizardController">
     <div class="panel panel-default">
-        <div class="panel-heading">This'll only take a second.</div>
+        <!--DEBUGGING-->
+        <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
+        <div class="panel-heading">This'll only take a second</div>
         <div class="panel-body">
             <form name="advertiserForm" data-ng-submit="create()" form-wizard="" validate-steps="true" validate-form="" steps="4">
                 <div class="form-wizard wizard-horizontal">
@@ -112,7 +114,7 @@
                                     <label>Start Date</label>
                                     <div class="form-group">
                                         <!--<input type="date" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" datepicker-popup="dd-MMMM-yyyy" data-parsley-group="step2" min-date="minDate" max-date="'2015-06-22'" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" class="form-control" required="required" close-text="Close"/>-->
-                                        <input type="date" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" data-parsley-group="step2" min="{{ today | date: 'yyyy-MM-dd' }}"  max="" class="form-control" required="required"/>
+                                        <input type="date" name="campaign_start_date" id="campaign_start_date" ng-model="campaign.start_date" min="{{ today | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>
                                         <!--Button to enable popup Angular UI datepicker-->
                                         <!--<span class="input-group-btn">-->
                                              <!--<button type="button" ng-click="open($event)" class="btn btn-default">-->
@@ -126,7 +128,7 @@
                                     <label>End Date</label>
                                     <div class="form-group">
                                         <!--<input type="date" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" datepicker-popup="dd-MMMM-yyyy" data-parsley-group="step2" min-date="minDate" max-date="'2015-06-22'" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" class="form-control" required="required" close-text="Close"/>-->
-                                        <input type="date" name="campaign.end_date" id="campaign.end_date" data-ng-model="campaign.end_date" data-parsley-group="step2" min="{{ advertiserForm }}"  max="" class="form-control" required="required"/>
+                                        <input type="date" name="campaign.end_date" id="campaign.end_date" ng-model="campaign.end_date" min="{{ campaign.start_date | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>
                                         <!--Button to enable popup Angular UI datepicker-->
                                         <!--<span class="input-group-btn">-->
                                         <!--<button type="button" ng-click="open($event)" class="btn btn-default">-->

@@ -27,5 +27,5 @@ angular.module('advertiser').config(['$stateProvider',
 			url: '/advertiser/:advertiserId/edit',
 			templateUrl: 'modules/advertiser/views/edit-advertiser.client.view.html'
 		});
-	}   
+	}
 ]);
