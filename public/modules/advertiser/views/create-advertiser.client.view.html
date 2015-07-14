@@ -105,36 +105,64 @@
                                     <label>Budget</label>
                                     <div class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="1234.56" class="form-control" required="required"/>
+                                        <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="1234" class="form-control" required="required"/>
                                         <span class="input-group-addon">.00</span>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
                                 <div class="col-md-4">
                                     <label>Start Date</label>
-                                    <div class="form-group">
-                                        <!--<input type="date" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" datepicker-popup="dd-MMMM-yyyy" data-parsley-group="step2" min-date="minDate" max-date="'2015-06-22'" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" class="form-control" required="required" close-text="Close"/>-->
-                                        <input type="date" name="campaign_start_date" id="campaign_start_date" ng-model="campaign.start_date" min="{{ today | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>
+                                    <div class="input-group">
+                                        <input type="text" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" is-open="calendar.opened.start_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="calendar.today" placeholder="yyyy-MM-dd" datepicker-options="calendar.dateOptions" class="form-control" required="required" close-text="Close"/>
+                                        <!--<input type="date" name="campaign_start_date" id="campaign_start_date" ng-model="campaign.start_date" data-parsley-group="step2" min="{{ today | date: 'yyyy-MM-dd' }}" data-parsley-min="" class="form-control" required="required"/>-->
                                         <!--Button to enable popup Angular UI datepicker-->
-                                        <!--<span class="input-group-btn">-->
-                                             <!--<button type="button" ng-click="open($event)" class="btn btn-default">-->
-                                                 <!--<em class="fa fa-calendar"></em>-->
-                                             <!--</button>-->
-                                        <!--</span>-->
+                                        <span class="input-group-btn">
+                                             <button type="button" ng-click="calendar.open($event,'start_date')" class="btn btn-default">
+                                                 <em class="fa fa-calendar"></em>
+                                             </button>
+                                        </span>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
                                 <div class="col-md-4">
                                     <label>End Date</label>
-                                    <div class="form-group">
-                                        <!--<input type="date" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" datepicker-popup="dd-MMMM-yyyy" data-parsley-group="step2" min-date="minDate" max-date="'2015-06-22'" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" class="form-control" required="required" close-text="Close"/>-->
-                                        <input type="date" name="campaign.end_date" id="campaign.end_date" ng-model="campaign.end_date" min="{{ campaign.start_date | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>
+                                    <div class="input-group">
+                                        <input type="text" name="campaign.end_date" id="campaign.end_date" data-ng-model="campaign.end_date" is-open="calendar.opened.end_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="campaign.start_date" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" class="form-control" required="required" close-text="Close"/>
+                                        <!--<input type="date" name="campaign.end_date" id="campaign.end_date" ng-model="campaign.end_date" data-parsley-group="step2" data-parsley-min="" min="{{ campaign.start_date | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>-->
                                         <!--Button to enable popup Angular UI datepicker-->
-                                        <!--<span class="input-group-btn">-->
-                                        <!--<button type="button" ng-click="open($event)" class="btn btn-default">-->
-                                        <!--<em class="fa fa-calendar"></em>-->
-                                        <!--</button>-->
-                                        <!--</span>-->
+                                        <span class="input-group-btn">
+                                            <button type="button" ng-click="calendar.open($event, 'end_date')" class="btn btn-default">
+                                            <em class="fa fa-calendar"></em>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Base Bid</label>
+                                    <div class="form-group">
+                                        <input type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" data-parsley-group="step2" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Max Bid</label>
+                                    <div class="form-group">
+                                        <input type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" data-parsley-group="step2" min="{{ campaign.base_bid }}" class="form-control"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Clique</label>
+                                    <div class="form-group">
+                                        <input type="text" name="campaign.clique" id="campaign.clique" ng-model="campaign.clique" data-parsley-group="step2" required="required" class="form-control"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Frequency Cap</label>
+                                    <div class="form-group">
+                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step2" required="required" class="form-control"/>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>

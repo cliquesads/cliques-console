@@ -4,8 +4,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 	function($scope, $stateParams, $location, Authentication, Advertiser) {
 		$scope.authentication = Authentication;
 
-        // used for datepicker forms
-        $scope.today = new Date();
+        //// used for datepicker forms
+        //$scope.today = new Date();
 
 		$scope.remove = function(advertiser) {
 			if (advertiser) {

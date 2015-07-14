@@ -1,11 +1,13 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser',
-	function($scope, $stateParams, $location, Authentication, Advertiser) {
+angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','DatepickerService',
+	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService) {
 		$scope.authentication = Authentication;
+        $scope.calendar = DatepickerService;
 
-        // used for datepicker forms
-        $scope.today = new Date();
+        // Set mins & maxes
+        $scope.min_base_bid = 1;
+        $scope.max_base_bid = 20;
 
         // Basic models
         $scope.advertiser = {
