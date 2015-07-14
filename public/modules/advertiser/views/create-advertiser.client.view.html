@@ -97,6 +97,12 @@
                                         <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Clique</label>
+                                        <input type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" required="required" class="form-control" />
+                                    </div>
+                                </div>
                             </div>
                         </fieldset>
                         <fieldset>
@@ -110,6 +116,26 @@
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
+                                <div class="col-md-4">
+                                    <label>Base Bid</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step2" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Max Bid</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step2" min="{{ campaign.base_bid }}" class="form-control"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="row">
                                 <div class="col-md-4">
                                     <label>Start Date</label>
                                     <div class="input-group">
@@ -132,33 +158,17 @@
                                         <!--Button to enable popup Angular UI datepicker-->
                                         <span class="input-group-btn">
                                             <button type="button" ng-click="calendar.open($event, 'end_date')" class="btn btn-default">
-                                            <em class="fa fa-calendar"></em>
+                                                <em class="fa fa-calendar"></em>
                                             </button>
                                         </span>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
-                                <div class="col-md-4">
-                                    <label>Base Bid</label>
-                                    <div class="form-group">
-                                        <input type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" data-parsley-group="step2" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Max Bid</label>
-                                    <div class="form-group">
-                                        <input type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" data-parsley-group="step2" min="{{ campaign.base_bid }}" class="form-control"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Clique</label>
-                                    <div class="form-group">
-                                        <input type="text" name="campaign.clique" id="campaign.clique" ng-model="campaign.clique" data-parsley-group="step2" required="required" class="form-control"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <h4>Targeting</h4>
+                            <div class="row">
                                 <div class="col-md-4">
                                     <label>Frequency Cap</label>
                                     <div class="form-group">
@@ -168,7 +178,6 @@
                                 </div>
                             </div>
                         </fieldset>
-                            <!-- END row -->
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(1)">
