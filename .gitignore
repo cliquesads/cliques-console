@@ -36,5 +36,6 @@ public/dist/
 *.tmp
 *.bak
 *.swp
+junk
 logs/
 build/

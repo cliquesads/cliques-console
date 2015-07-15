@@ -21,6 +21,8 @@ module.exports = function(db) {
          * Gets arbitrary number of Cliques
          */
         getMany: function (req, res) {
+            // this defaults to 10, kind of infuriating
+            req.query.per_page = "1000000";
             cliqueModels.Clique.apiQuery(req.query, function (err, cliques) {
                 if (err) {
                     return res.status(400).send({

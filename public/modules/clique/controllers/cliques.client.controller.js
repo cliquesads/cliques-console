@@ -1,84 +1,70 @@
 'use strict';
 
+/**
+ * Formats Cliques query result for ABN-tree plugin
+ *
+ * @param query_result
+ * @returns {*}
+ */
+function format_cliques_collection_for_tree(query_result){
+    /**
+     * Converts Clique collection into tree-structure object
+     */
+    function _get_or_create_branch(obj, branch_arr){
+        if (branch_arr.length > 0){
+            var child = branch_arr.shift();
+            if (!obj.hasOwnProperty(child)){
+                obj[child] = {};
+            }
+            obj = obj[child];
+            return _get_or_create_branch(obj,branch_arr);
+        }
+    }
+    /**
+     * Recursive method to convert tree object into abn-formatted tree array
+     */
+    function _reformat_tree(cliques_tree, _destination_array){
+        _destination_array = _destination_array || [];
+        if (cliques_tree != {}){
+            for (var key in cliques_tree){
+                if (cliques_tree.hasOwnProperty(key)){
+                    var obj = {
+                        label: key,
+                        children: []
+                    };
+                    _reformat_tree(cliques_tree[key], obj.children);
+                    _destination_array.push(obj);
+
+                }
+            }
+        }
+        return _destination_array;
+    }
+
+    var cliques = {};
+    query_result.forEach(function(clique){
+        var ancestors = clique.ancestors;
+        ancestors.push(clique._id);
+        _get_or_create_branch(cliques, ancestors);
+    });
+    return _reformat_tree(cliques);
+}
+
 angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', 'Authentication', 'Clique',
 	function($scope, $stateParams, $location, Authentication, Clique) {
 		$scope.authentication = Authentication;
 
-        var treedata_avm = [
-            {
-                label: 'Animal',
-                children: [
-                    {
-                        label: 'Dog',
-                        data: {
-                            description: "man's best friend"
-                        }
-                    }, {
-                        label: 'Cat',
-                        data: {
-                            description: "Felis catus"
-                        }
-                    }, {
-                        label: 'Hippopotamus',
-                        data: {
-                            description: "hungry, hungry"
-                        }
-                    }, {
-                        label: 'Chicken',
-                        children: ['White Leghorn', 'Rhode Island Red', 'Jersey Giant']
-                    }
-                ]
-            }, {
-                label: 'Vegetable',
-                data: {
-                    definition: "A plant or part of a plant used as food, typically as accompaniment to meat or fish, such as a cabbage, potato, carrot, or bean.",
-                    data_can_contain_anything: true
-                },
-                onSelect: function(branch) {
-                    $scope.output = "Vegetable: " + branch.data.definition;
-                    return $scope.output;
-                },
-                children: [
-                    {
-                        label: 'Oranges'
-                    }, {
-                        label: 'Apples',
-                        children: ['Granny Smith','Red Delicous','Fuji']
-                    }
-                ]
-            }, {
-                label: 'Mineral',
-                children: [
-                    {
-                        label: 'Rock',
-                        children: ['Igneous', 'Sedimentary', 'Metamorphic']
-                    }, {
-                        label: 'Metal',
-                        children: ['Aluminum', 'Steel', 'Copper']
-                    }, {
-                        label: 'Plastic',
-                        children: [
-                            {
-                                label: 'Thermoplastic',
-                                children: ['polyethylene', 'polypropylene', 'polystyrene', ' polyvinyl chloride']
-                            }, {
-                                label: 'Thermosetting Polymer',
-                                children: ['polyester', 'polyurethane', 'vulcanized rubber', 'bakelite', 'urea-formaldehyde']
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
-
+        // Populate tree data for tree visualization
+        $scope.cliques = [];
 		$scope.find = function() {
-			//$scope.cliques = Clique.query();
-            $scope.cliques = treedata_avm;
+            var query_result = Clique.query(function(){
+                $scope.cliques = format_cliques_collection_for_tree(query_result);
+            });
 		};
 
         $scope.my_tree_handler = function(branch) {
 
-            $scope.output = "You selected: " + branch.label;
+            console.log("You selected: " + branch.label);
 
             if (branch.data && branch.data.description) {
                 $scope.output += '(' + branch.data.description + ')';
@@ -88,10 +74,5 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
         var tree;
         // This is our API control variable
         $scope.my_tree = tree = {};
-		//$scope.findOne = function() {
-		//	$scope.advertiser = Advertiser.get({
-		//		advertiserId: $stateParams.advertiserId
-		//	});
-		//};
 	}
 ]);
