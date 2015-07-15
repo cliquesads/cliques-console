@@ -1,9 +1,20 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','DatepickerService',
-	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService) {
+angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','DatepickerService','getCliqueTree',
+	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService, getCliqueTree) {
 		$scope.authentication = Authentication;
         $scope.calendar = DatepickerService;
+
+        // Populate tree data for tree visualization
+        $scope.cliques = [];
+        getCliqueTree($scope);
+        $scope.set_clique = function(branch) {
+            $scope.campaign.clique = branch.label;
+        };
+        var tree;
+        // This is our API control variable
+        $scope.my_tree = tree = {};
+
 
         // Set mins & maxes
         $scope.min_base_bid = 1;

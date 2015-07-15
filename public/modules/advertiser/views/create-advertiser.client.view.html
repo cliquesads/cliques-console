@@ -12,25 +12,32 @@
     <div class="panel panel-default">
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
-        <div class="panel-heading">This'll only take a second</div>
         <div class="panel-body">
-            <form name="advertiserForm" data-ng-submit="create()" form-wizard="" validate-steps="true" validate-form="" steps="4">
-                <div class="form-wizard wizard-horizontal">
+            <form name="advertiserForm" data-ng-submit="create()" form-wizard="" validate-steps="true" validate-form="" steps="6">
+                <div class="form-wizard wizard-vertical">
                     <!-- START wizard steps indicator-->
-                    <ol class="row">
-                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-md-3">
+                    <ol>
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
                             <h4>Advertiser</h4>
                             <small class="text-muted">Basic advertiser info</small>
                         </li>
-                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-3">
-                            <h4>Campaign</h4>
-                            <small class="text-muted">Set up your campaign info (dates, budget) and bid settings</small>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
+                            <h4>Campaign Basics</h4>
+                            <small class="text-muted">Set up your campaign</small>
                         </li>
-                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-md-3">
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
+                            <h4>Choose a Clique</h4>
+                            <small class="text-muted">Choose the Clique that best describes your campaign</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
+                            <h4>Targeting Details</h4>
+                            <small class="text-muted">Set your bids, budget & targeting details</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
                             <h4>Creatives</h4>
                             <small class="text-muted">Add creative assets to your campaign</small>
                         </li>
-                        <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)" class="col-md-3">
+                        <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
                             <h4>Done!</h4>
                             <small class="text-muted">Start advertising!</small>
                         </li>
@@ -41,36 +48,26 @@
                     <div id="step1" ng-show="wizard.active(1)">
                         <fieldset>
                             <legend>Advertiser</legend>
-                            <!-- START row -->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Name</label>
-                                        <div class="controls">
-                                            <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control ng-touched ng-dirty ng-valid-parse ng-invalid ng-invalid-required" placeholder="Name" required="required">
-                                            <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <div class="controls">
-                                            <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Website</label>
-                                        <div class="controls">
-                                            <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
-                                            <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
-                                        </div>
-                                    </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <div class="controls">
+                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
+                                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
-                            <!-- END row -->
+                            <div class="form-group">
+                                <label>Description</label>
+                                <div class="controls">
+                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Website</label>
+                                <div class="controls">
+                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                                </div>
+                            </div>
                         </fieldset>
                         <ul class="pager">
                             <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
@@ -81,62 +78,21 @@
 
                     <!-- START CAMPAIGN inputs -->
                     <div id="step2" ng-show="wizard.active(2)">
-                        <legend>Campaign</legend>
-                        <!-- START row -->
+                        <legend>Campaign Basics</legend>
                         <fieldset>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Name</label>
-                                        <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="A Sweet Campaign" required="required" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Clique</label>
-                                        <input type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" required="required" class="form-control" />
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="A Sweet Campaign" required="required" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
                             </div>
                         </fieldset>
+                        <!--Start Flight Dates Row-->
                         <fieldset>
                             <div class="row">
-                                <div class="col-md-4">
-                                    <label>Budget</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="1234" class="form-control" required="required"/>
-                                        <span class="input-group-addon">.00</span>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Base Bid</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step2" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                                <div class="col-md-4">
-                                    <label>Max Bid</label>
-                                    <div class="input-group">
-                                        <span class="input-group-addon">$</span>
-                                        <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step2" min="{{ campaign.base_bid }}" class="form-control"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                            </div>
-                        </fieldset>
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label>Start Date</label>
                                     <div class="input-group">
                                         <input type="text" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" is-open="calendar.opened.start_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="calendar.today" placeholder="yyyy-MM-dd" datepicker-options="calendar.dateOptions" class="form-control" required="required" close-text="Close"/>
@@ -150,7 +106,7 @@
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label>End Date</label>
                                     <div class="input-group">
                                         <input type="text" name="campaign.end_date" id="campaign.end_date" data-ng-model="campaign.end_date" is-open="calendar.opened.end_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="campaign.start_date" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" class="form-control" required="required" close-text="Close"/>
@@ -166,18 +122,6 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <fieldset>
-                            <h4>Targeting</h4>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Frequency Cap</label>
-                                    <div class="form-group">
-                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step2" required="required" class="form-control"/>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                            </div>
-                        </fieldset>
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(1)">
@@ -188,28 +132,13 @@
                             </li>
                         </ul>
                     </div>
-                    <!-- END Wizard Step inputs -->
 
-                    <!-- START CREATIVE inputs-->
                     <div id="step3" ng-show="wizard.active(3)">
+                        <legend>Pick a Clique!</legend>
                         <fieldset>
-                            <legend>Contact</legend>
-                            <!-- START row -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="text" name="email" data-parsley-group="step3" placeholder="john@snow.com" required="required" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Phone</label>
-                                        <input type="text" name="phone" data-parsley-group="step3" placeholder="11-2345-6789" required="required" class="form-control" />
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
                             </div>
-                            <!-- END row -->
                         </fieldset>
                         <ul class="pager">
                             <li class="previous">
@@ -221,10 +150,84 @@
                             </li>
                         </ul>
                     </div>
+
+                    <!-- START CAMPAIGN inputs -->
+                    <div id="step4" ng-show="wizard.active(4)">
+                        <legend>Targeting</legend>
+                        <!-- START row -->
+                        <fieldset>
+                        <label>Budget</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step4" placeholder="1234" class="form-control" required="required"/>
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+
+                        <label>Base Bid</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                        </div>
+                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                        <label>Max Bid</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control"/>
+                        </div>
+                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+
+                        </fieldset>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Frequency Cap</label>
+                                    <div class="form-group">
+                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step4" required="required" class="form-control"/>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                            </div>
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(3)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(5)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+
+                    <!-- START CREATIVE inputs-->
+                    <div id="step5" ng-show="wizard.active(5)">
+                        <fieldset>
+                            <legend>Contact</legend>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" name="email" data-parsley-group="step5" placeholder="john@snow.com" required="required" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" name="phone" data-parsley-group="step5" placeholder="11-2345-6789" required="required" class="form-control" />
+                            </div>
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(4)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(6)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
                     <!-- END Wizard Step inputs -->
 
                     <!-- START Wizard Step inputs -->
-                    <div id="step4" ng-show="wizard.active(4)">
+                    <div id="step6" ng-show="wizard.active(6)">
                         <div class="jumbotron">
                             <h1>Done!</h1>
                             <p>You've successfully created a new advertiser</p>
@@ -234,7 +237,7 @@
                         </div>
                         <ul class="pager">
                             <li class="previous">
-                                <a href="#" ng-click="wizard.go(3)">
+                                <a href="#" ng-click="wizard.go(5)">
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
