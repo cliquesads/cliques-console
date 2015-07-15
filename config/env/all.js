@@ -19,6 +19,7 @@ module.exports = {
 			js: [
 				'public/lib/jquery/dist/jquery.js',
 				'public/lib/angular/angular.js',
+                'public/lib/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
 				'public/lib/angular-route/angular-route.js',
 				'public/lib/angular-cookies/angular-cookies.js',
 				'public/lib/angular-animate/angular-animate.js',
@@ -52,7 +53,8 @@ module.exports = {
 		},
 		css: [
 			// 'public/modules/**/css/*.css'
-			'public/dist/application.min.css'
+			'public/dist/application.min.css',
+            'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css'
 		],
 		js: [
 			'public/config.js',

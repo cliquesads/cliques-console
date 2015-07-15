@@ -1,0 +1,30 @@
+<h3>Clique
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+<section data-ng-controller="CliqueController" data-ng-init="find()">
+    <div class="row">
+        <div class="col-lg-3 col-sm-6 col-lg-push-3 col-sm-push-6">
+            <div class="well wd-wide">
+                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="my_tree_handler(branch)" icon-leaf="fa fa-square" expand-level="0" initial-selection="Granny Smith"></abn-tree>
+                <!--<div class="list-group">-->
+                    <!--<a data-ng-repeat="clique in cliques" data-ng-href="#!/clique/{{clique._id}}" class="list-group-item">-->
+                        <!--<small class="list-group-item-text">-->
+                            <!--Posted on-->
+                            <!--<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>-->
+                            <!--by-->
+                            <!--<span data-ng-bind="advertiser.user.displayName"></span>-->
+                        <!--</small>-->
+                        <!--<h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>-->
+                        <!--<p class="list-group-item-text" data-ng-bind="advertiser.contact"></p>-->
+                    <!--</a>-->
+                <!--</div>-->
+                </div>
+            </div>
+        </div>
+</section>
