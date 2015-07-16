@@ -174,7 +174,7 @@
                         <legend>Set your bids & targeting specifics</legend>
                         <!-- START row -->
                         <fieldset>
-                            <label>Base Bid</label>
+                            <label>Base Bid *</label>
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
                                 <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
@@ -191,8 +191,21 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label>Frequency Cap</label>
+                                    <div class="input-group">
+                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step4" placeholder="12" required="required" class="form-control"/>
+                                        <span class="input-group-addon">/ 24 hours</span>
+                                    </div>
+                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>DMAs</label>
                                     <div class="form-group">
-                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step4" required="required" class="form-control"/>
+                                        <select chosen="" multiple="multiple" name="campaign.dma_targets" id="dma_targets" ng-options="obj.name for obj in dmas" ng-model="campaign.dma_targets" data-parsley-group="step4" class="chosen-select form-control">
+                                        </select>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>

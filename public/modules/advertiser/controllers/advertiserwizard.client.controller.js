@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','DatepickerService','getCliqueTree',
-	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService, getCliqueTree) {
+angular.module('advertiser').controller('AdvertiserWizardController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','DatepickerService','getCliqueTree', 'DMA',
+	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService, getCliqueTree, DMA) {
 		$scope.authentication = Authentication;
         $scope.calendar = DatepickerService;
 
@@ -15,6 +15,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         // This is our API control variable
         $scope.my_tree = tree = {};
 
+        $scope.dmas = DMA.query();
 
         // Set mins & maxes
         $scope.min_base_bid = 1;

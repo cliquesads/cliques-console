@@ -39,7 +39,8 @@ module.exports = {
 				'public/lib/angular-loading-bar/build/loading-bar.js',
 				'public/lib/jquery.browser/dist/jquery.browser.js',
                 'public/lib/parsleyjs/dist/parsley.min.js',
-                'public/lib/chosen/dist/chosen.jquery.min.js'
+                'public/lib/chosen/chosen.jquery.min.js',
+                'public/lib/angular-chosen-localytics/chosen.js'
 				// 'public/lib/jquery/dist/jquery.js',
 				// 'public/lib/angular/angular.js',
 				// 'public/lib/angular-resource/angular-resource.js',
