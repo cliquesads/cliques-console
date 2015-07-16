@@ -19,27 +19,27 @@
                     <ol>
                         <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
                             <h4>Advertiser</h4>
-                            <small class="text-muted">Basic advertiser info</small>
+                            <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
                             <h4>Campaign Basics</h4>
-                            <small class="text-muted">Set up your campaign</small>
+                            <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
                             <h4>Choose a Clique</h4>
-                            <small class="text-muted">Choose the Clique that best describes your campaign</small>
+                            <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
                             <h4>Targeting Details</h4>
-                            <small class="text-muted">Set your bids, budget & targeting details</small>
+                            <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
                             <h4>Creatives</h4>
-                            <small class="text-muted">Add creative assets to your campaign</small>
+                            <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
                             <h4>Done!</h4>
-                            <small class="text-muted">Start advertising!</small>
+                            <small class="text-muted"></small>
                         </li>
                     </ol>
                     <!-- END wizard steps indicator-->
@@ -47,28 +47,31 @@
                     <!-- START Advertiser inputs -->
                     <div id="step1" ng-show="wizard.active(1)">
                         <fieldset>
-                            <legend>Advertiser</legend>
+                            <legend>Basic advertiser info</legend>
                             <div class="form-group">
-                                <label>Name</label>
+                                <label>Name *</label>
                                 <div class="controls">
                                     <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
                                     <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Website *</label>
+                                <div class="controls">
+                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                                </div>
+                            </div>
+                            <br/>
                             <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
                                     <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Website</label>
-                                <div class="controls">
-                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
-                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
-                                </div>
-                            </div>
                         </fieldset>
+                        <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
                             </li>
@@ -78,22 +81,31 @@
 
                     <!-- START CAMPAIGN inputs -->
                     <div id="step2" ng-show="wizard.active(2)">
-                        <legend>Campaign Basics</legend>
+                        <legend>Tell us about your first campaign.</legend>
                         <fieldset>
                             <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="A Sweet Campaign" required="required" class="form-control" />
+                                <label>Name *</label>
+                                <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
                             </div>
+                            <br/>
                             <div class="form-group">
                                 <label>Description</label>
                                 <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <label>Budget *</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="10000" class="form-control" required="required"/>
+                                <span class="input-group-addon">.00</span>
                             </div>
                         </fieldset>
                         <!--Start Flight Dates Row-->
                         <fieldset>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label>Start Date</label>
+                                    <label>Start Date *</label>
                                     <div class="input-group">
                                         <input type="text" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" is-open="calendar.opened.start_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="calendar.today" placeholder="yyyy-MM-dd" datepicker-options="calendar.dateOptions" class="form-control" required="required" close-text="Close"/>
                                         <!--<input type="date" name="campaign_start_date" id="campaign_start_date" ng-model="campaign.start_date" data-parsley-group="step2" min="{{ today | date: 'yyyy-MM-dd' }}" data-parsley-min="" class="form-control" required="required"/>-->
@@ -107,7 +119,7 @@
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
                                 <div class="col-md-6">
-                                    <label>End Date</label>
+                                    <label>End Date *</label>
                                     <div class="input-group">
                                         <input type="text" name="campaign.end_date" id="campaign.end_date" data-ng-model="campaign.end_date" is-open="calendar.opened.end_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="campaign.start_date" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" class="form-control" required="required" close-text="Close"/>
                                         <!--<input type="date" name="campaign.end_date" id="campaign.end_date" ng-model="campaign.end_date" data-parsley-group="step2" data-parsley-min="" min="{{ campaign.start_date | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>-->
@@ -122,6 +134,7 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(1)">
@@ -134,12 +147,17 @@
                     </div>
 
                     <div id="step3" ng-show="wizard.active(3)">
-                        <legend>Pick a Clique!</legend>
+                        <legend>Choose the Clique that best describes your campaign</legend>
                         <fieldset>
+                            <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
+                            <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
+                            <p>Please select a Clique *</p>
                             <div class="form-group">
-                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
                             </div>
                         </fieldset>
+                        <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
+                        <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(2)">
@@ -153,30 +171,21 @@
 
                     <!-- START CAMPAIGN inputs -->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <legend>Targeting</legend>
+                        <legend>Set your bids & targeting specifics</legend>
                         <!-- START row -->
                         <fieldset>
-                        <label>Budget</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step4" placeholder="1234" class="form-control" required="required"/>
-                            <span class="input-group-addon">.00</span>
-                        </div>
+                            <label>Base Bid</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                            </div>
+                            <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                            <label>Max Bid</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control"/>
+                            </div>
                         <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-
-                        <label>Base Bid</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
-                        </div>
-                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                        <label>Max Bid</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control"/>
-                        </div>
-                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-
                         </fieldset>
                         <fieldset>
                             <div class="row">
@@ -204,7 +213,7 @@
                     <!-- START CREATIVE inputs-->
                     <div id="step5" ng-show="wizard.active(5)">
                         <fieldset>
-                            <legend>Contact</legend>
+                            <legend>Add creatives to your campaign</legend>
                             <div class="form-group">
                                 <label>Email</label>
                                 <input type="text" name="email" data-parsley-group="step5" placeholder="john@snow.com" required="required" class="form-control" />
