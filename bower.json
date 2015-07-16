@@ -45,7 +45,8 @@
     "simple-line-icons": "0.1.1",
     "jquery.browser": "master",
     "parsleyjs": "~2.1.2",
-    "angular-bootstrap-nav-tree": "*"
+    "angular-bootstrap-nav-tree": "*",
+    "chosen": "~1.4.2"
   },
   "resolutions": {
     "angular": "1.3.16",

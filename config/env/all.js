@@ -38,7 +38,8 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/lib/angular-loading-bar/build/loading-bar.js',
 				'public/lib/jquery.browser/dist/jquery.browser.js',
-                'public/lib/parsleyjs/dist/parsley.min.js'
+                'public/lib/parsleyjs/dist/parsley.min.js',
+                'public/lib/chosen/dist/chosen.jquery.min.js'
 				// 'public/lib/jquery/dist/jquery.js',
 				// 'public/lib/angular/angular.js',
 				// 'public/lib/angular-resource/angular-resource.js',
@@ -54,7 +55,8 @@ module.exports = {
 		css: [
 			// 'public/modules/**/css/*.css'
 			'public/dist/application.min.css',
-            'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css'
+            'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
+            'public/lib/chosen/chosen.min.css'
 		],
 		js: [
 			'public/config.js',
