@@ -40,7 +40,9 @@ module.exports = {
 				'public/lib/jquery.browser/dist/jquery.browser.js',
                 'public/lib/parsleyjs/dist/parsley.min.js',
                 'public/lib/chosen/chosen.jquery.min.js',
-                'public/lib/angular-chosen-localytics/chosen.js'
+                'public/lib/angular-chosen-localytics/chosen.js',
+                'public/lib/angular-bootstrap-slider/slider.js',
+                'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js'
 				// 'public/lib/jquery/dist/jquery.js',
 				// 'public/lib/angular/angular.js',
 				// 'public/lib/angular-resource/angular-resource.js',
@@ -57,7 +59,8 @@ module.exports = {
 			// 'public/modules/**/css/*.css'
 			'public/dist/application.min.css',
             'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
-            'public/lib/chosen/chosen.min.css'
+            'public/lib/chosen/chosen.min.css',
+            'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css'
 		],
 		js: [
 			'public/config.js',

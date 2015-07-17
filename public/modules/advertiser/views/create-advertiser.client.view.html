@@ -18,27 +18,27 @@
                     <!-- START wizard steps indicator-->
                     <ol>
                         <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
-                            <h4>Advertiser</h4>
+                            <h4>1. Advertiser</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
-                            <h4>Campaign Basics</h4>
+                            <h4>2. Campaign Basics</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
-                            <h4>Choose a Clique</h4>
+                            <h4>3. Choose a Clique</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>Targeting Details</h4>
+                            <h4>4. Targeting Details</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                            <h4>Creatives</h4>
+                            <h4>5. Creatives</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
-                            <h4>Done!</h4>
+                            <h4>6. Done!</h4>
                             <small class="text-muted"></small>
                         </li>
                     </ol>
@@ -71,6 +71,7 @@
                                 </div>
                             </div>
                         </fieldset>
+                        <slider ng-model="min_base_bid" min="5" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
                         <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
@@ -210,22 +211,15 @@
                         <fieldset>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>Frequency Cap</label>
-                                    <div class="input-group">
-                                        <input type="text" name="campaign.frequency" id="campaign.frequency" ng-model="campaign.frequency" data-parsley-group="step4" placeholder="12" required="required" class="form-control"/>
-                                        <span class="input-group-addon">/ 24 hours</span>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                            </div>
-                        </fieldset>
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-md-4">
                                     <label>DMAs</label>
                                     <div class="form-group">
                                         <select chosen="" multiple="multiple" name="campaign.dma_targets" id="dma_targets" ng-options="obj.name for obj in dmas" ng-model="campaign.dma_targets" data-parsley-group="step4" class="chosen-select form-control">
                                         </select>
+                                    </div>
+                                    <div data-ng-show="campaign.dma_targets">
+                                        <div ng-repeat="dma in campaign.dma_targets">{{ dma.name }}
+                                            <slider ng-model="campaign.base_bid" min="5" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
+                                        </div>
                                     </div>
                                     <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                                 </div>
