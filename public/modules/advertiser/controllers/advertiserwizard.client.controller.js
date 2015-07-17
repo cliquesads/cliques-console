@@ -38,6 +38,8 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             max_bid:        null,
             frequency:      null,
             clique:         null,
+            dma_targets:    null,
+            placement_targets: null,
             creativegroups: []
         };
         $scope.creatives = [{

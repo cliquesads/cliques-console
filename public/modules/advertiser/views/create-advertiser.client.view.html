@@ -71,7 +71,6 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <slider ng-model="min_base_bid" min="5" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
                         <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
@@ -196,7 +195,6 @@
                                 <span class="input-group-addon">$</span>
                                 <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
                             </div>
-                            <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                             <label>Max Bid (CPM)</label>
                             &nbsp;&nbsp;&nbsp;
                             <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
@@ -206,25 +204,43 @@
                                 <span class="input-group-addon">$</span>
                                 <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control"/>
                             </div>
-                        <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
                         </fieldset>
+
+                        <!--BEGIN DMA slider controls-->
                         <fieldset>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <label>DMAs</label>
                                     <div class="form-group">
-                                        <select chosen="" multiple="multiple" name="campaign.dma_targets" id="dma_targets" ng-options="obj.name for obj in dmas" ng-model="campaign.dma_targets" data-parsley-group="step4" class="chosen-select form-control">
+                                        <select chosen="" multiple="multiple" name="campaign.dma_targets" id="dma_targets" ng-options="obj.name for obj in dmas" ng-model="campaign.dma_targets" placeholder="Select DMAs to target or block" data-parsley-group="step4" class="chosen-select form-control">
                                         </select>
                                     </div>
-                                    <div data-ng-show="campaign.dma_targets">
-                                        <div ng-repeat="dma in campaign.dma_targets">{{ dma.name }}
-                                            <slider ng-model="campaign.base_bid" min="5" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
-                                        </div>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
+                                </div>
+                                <!--BEGIN DMA table-->
+                                <div class="col-md-10" data-ng-show="campaign.dma_targets">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>DMA</th>
+                                                <th>Weighting</th>
+                                                <th>Bid</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody data-ng-show="campaign.dma_targets">
+                                            <tr ng-repeat="target in campaign.dma_targets">
+                                                <td>{{ target.name}}</td>
+                                                <td>
+                                                    <slider ng-model="target.weight" min="0" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
+                                                </td>
+                                                <td>{{ target.weight * campaign.base_bid | currency : "$" : 2}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </fieldset>
+                        <!--END DMA slider controls-->
+
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(3)">
