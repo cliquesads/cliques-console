@@ -230,9 +230,9 @@
                                             <tr ng-repeat="target in campaign.dma_targets">
                                                 <td>{{ target.name}}</td>
                                                 <td>
-                                                    <slider ng-model="target.weight" min="0" max="20" step="1" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
+                                                    <slider ng-model="target.weight" min="0" max="10" step="0.5" value="1.5" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
                                                 </td>
-                                                <td>{{ target.weight * campaign.base_bid | currency : "$" : 2}}</td>
+                                                <td>{{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}</td>
                                             </tr>
                                         </tbody>
                                     </table>

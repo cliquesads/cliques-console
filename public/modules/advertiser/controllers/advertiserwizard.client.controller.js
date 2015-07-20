@@ -4,6 +4,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
 	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService, getCliqueTree, DMA) {
 		$scope.authentication = Authentication;
         $scope.calendar = DatepickerService;
+        $scope.Math = Math;
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
