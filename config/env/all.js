@@ -57,9 +57,9 @@ module.exports = {
 		},
 		css: [
 			// 'public/modules/**/css/*.css'
+            'public/lib/chosen/chosen.min.css',
 			'public/dist/application.min.css',
             'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
-            'public/lib/chosen/chosen.min.css',
             'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css'
 		],
 		js: [
