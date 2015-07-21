@@ -5,8 +5,6 @@
  */
 var models = require('cliques_node_utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
-    multer = require('multer'),
-    upload = multer({ dest: '../public/uploads/'}),
 	_ = require('lodash');
 
 module.exports = function(db) {
