@@ -132,7 +132,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         //#################################
 
         var uploader = $scope.uploader = new FileUploader({
-            url: 'creativeassets'
+            url: 'creativeassets/test/test'
         });
 
         // FILTERS
