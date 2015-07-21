@@ -8,5 +8,5 @@ module.exports = function(app){
 
     /* ---- Advertiser API Routes ---- */
     app.route('/creativeassets')
-        .post(users.requiresLogin, upload.single('creative'), creativeassets.create);
+        .post(users.requiresLogin, upload.single('file'), creativeassets.create);
 };
