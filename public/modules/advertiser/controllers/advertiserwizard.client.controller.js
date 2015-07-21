@@ -51,15 +51,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             placement_targets: null,
             creativegroups: []
         };
-        $scope.creatives = [{
-            name: null,
-            type: 'Banner',
-            h: null,
-            w: null,
-            url: null,
-            click_url: null,
-            weight: null
-        }];
+        $scope.creatives = [];
 
 		$scope.create = function() {
             $scope.submitted = true;
@@ -134,19 +126,20 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         var uploader = $scope.uploader = new FileUploader({
             url: 'creativeassets/test/test'
         });
-
-        // FILTERS
         uploader.filters.push({
-            name: 'customFilter',
-            fn: function(item /*{File|FileLikeObject}*/, options) {
-                return this.queue.length < 10;
+            name: 'mimetypeFilter',
+            fn: function(item, options) {
+                var mimetypes = ['image/jpeg','image/gif', 'image/png'];
+                return mimetypes.indexOf(item.type) > -1
             }
         });
 
         // CALLBACKS
-
+        $scope.creative_upload_errors = [];
         uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-            console.info('onWhenAddingFileFailed', item, filter, options);
+            if (String(filter.name) === String('mimetypeFilter')){
+                $scope.creative_upload_errors.push('File must be JPG, PNG or GIF');
+            }
         };
         uploader.onAfterAddingFile = function(fileItem) {
             console.info('onAfterAddingFile', fileItem);
@@ -174,6 +167,11 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         };
         uploader.onCompleteItem = function(fileItem, response, status, headers) {
             console.info('onCompleteItem', fileItem, response, status, headers);
+            $scope.creatives.push({
+                name: fileItem.file.name,
+                clickUrl: fileItem.clickUrl,
+                url: response.url
+            });
         };
         uploader.onCompleteAll = function() {
             console.info('onCompleteAll');

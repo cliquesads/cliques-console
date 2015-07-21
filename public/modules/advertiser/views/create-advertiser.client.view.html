@@ -13,7 +13,7 @@
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
         <div class="panel-body">
-            <form name="advertiserForm" data-ng-submit="create()" form-wizard="" validate-steps="true" validate-form="" steps="6">
+            <form name="advertiserForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="6">
                 <div class="form-wizard wizard-vertical">
                     <!-- START wizard steps indicator-->
                     <ol>
@@ -258,8 +258,11 @@
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
                             <div class="col-md-12">
+                                <div ng-repeat="error in creative_upload_errors" ng-show="creative_upload_errors">
+                                    <div class="alert alert-danger">{{ error }}</div>
+                                </div>
                                 <div class="row">
-                                    <div nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+                                    <div nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter, mimetypeFilter">
                                         <div ng-show="uploader.isHTML5">
                                             <!-- 3. nv-file-over uploader="link" over-class="className"-->
                                             <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here</div>
@@ -277,10 +280,11 @@
                                         <table ng-if="uploader.queue.length" class="table">
                                             <thead>
                                             <tr>
-                                                <th width="50%">Name</th>
+                                                <th width="30%">Name</th>
                                                 <th ng-show="uploader.isHTML5">Size</th>
                                                 <th ng-show="uploader.isHTML5">Progress</th>
                                                 <th>Status</th>
+                                                <th>Click URL</th>
                                                 <th>Actions</th>
                                             </tr>
                                             </thead>
@@ -289,7 +293,7 @@
                                                 <td>
                                                     <strong>{{ item.file.name }}</strong>
                                                 </td>
-                                                <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024/1024|number:2 }} MB</td>
+                                                <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>
                                                 <td ng-show="uploader.isHTML5">
                                                     <div style="margin-bottom: 0;" class="progress progress-xs">
                                                         <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
@@ -305,6 +309,9 @@
                                                      <span ng-show="item.isError">
                                                         <em class="fa fa-times fa-fw"></em>
                                                      </span>
+                                                </td>
+                                                <td>
+                                                    <input name="website" type="url" data-ng-model="item.clickUrl" id="{{ item.file.name }}_clickurl" data-parsley-group="step5" class="form-control" placeholder="http://www.example.com" required="required">
                                                 </td>
                                                 <td nowrap="">
                                                     <!--<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">-->
@@ -368,4 +375,5 @@
         </div>
     </div>
     <p>{{ campaign }}</p>
+    <p>{{ creatives }}</p>
 </section>
