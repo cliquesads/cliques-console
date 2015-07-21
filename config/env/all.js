@@ -42,17 +42,9 @@ module.exports = {
                 'public/lib/chosen/chosen.jquery.min.js',
                 'public/lib/angular-chosen-localytics/chosen.js',
                 'public/lib/angular-bootstrap-slider/slider.js',
-                'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js'
-				// 'public/lib/jquery/dist/jquery.js',
-				// 'public/lib/angular/angular.js',
-				// 'public/lib/angular-resource/angular-resource.js',
-				// 'public/lib/angular-cookies/angular-cookies.js',
-				// 'public/lib/angular-animate/angular-animate.js',
-				// 'public/lib/angular-touch/angular-touch.js',
-				// 'public/lib/angular-sanitize/angular-sanitize.js',
-				// 'public/lib/angular-ui-router/release/angular-ui-router.js',
-				// 'public/lib/angular-ui-utils/ui-utils.js',
-				// 'public/lib/angular-bootstrap/ui-bootstrap-tpls.js'
+                'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
+                'public/lib/angular-file-upload/angular-file-upload.min.js',
+                'public/lib/bootstrap-filestyle/src/bootstrap-filestyle.js'
 			]
 		},
 		css: [
