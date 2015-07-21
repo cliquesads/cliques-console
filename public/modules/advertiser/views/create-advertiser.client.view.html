@@ -163,7 +163,6 @@
                         <fieldset>
                             <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                             <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
-                            <p>Please select a Clique *</p>
                             <div class="form-group">
                                 <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
                             </div>
@@ -195,6 +194,7 @@
                                 <span class="input-group-addon">$</span>
                                 <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
                             </div>
+                            <br/>
                             <label>Max Bid (CPM)</label>
                             &nbsp;&nbsp;&nbsp;
                             <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
