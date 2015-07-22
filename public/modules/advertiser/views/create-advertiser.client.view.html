@@ -279,12 +279,12 @@
                                             <thead>
                                             <tr>
                                                 <th width="30%">Name</th>
-                                                <th ng-show="uploader.isHTML5">Size</th>
-                                                <th ng-show="uploader.isHTML5">Progress</th>
                                                 <th>Dimensions</th>
-                                                <th>Status</th>
+                                                <th ng-show="uploader.isHTML5">Size</th>
                                                 <th>Click URL</th>
                                                 <th>Actions</th>
+                                                <th ng-show="uploader.isHTML5">Progress</th>
+                                                <th>Status</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -292,14 +292,25 @@
                                                 <td>
                                                     <strong>{{ item.file.name }}</strong>
                                                 </td>
+                                                <td>
+                                                    {{ item.dimensions }}
+                                                </td>
                                                 <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>
+                                                <td>
+                                                    <input name="website" type="url" data-ng-model="item.clickUrl" id="{{ item.file.name }}_clickurl" data-parsley-group="step5" class="form-control" placeholder="http://www.example.com" required="required">
+                                                </td>
+                                                <td nowrap="">
+                                                    <!--<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">-->
+                                                        <!--<span class="icon-cloud-upload mr"></span>Upload</button>-->
+                                                    <!--<button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">-->
+                                                        <!--<span class="icon-close mr"></span>Cancel</button>-->
+                                                    <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+                                                        <span class="icon-trash mr"></span>Remove</button>
+                                                </td>
                                                 <td ng-show="uploader.isHTML5">
                                                     <div style="margin-bottom: 0;" class="progress progress-xs">
                                                         <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {{ item.dimensions }}
                                                 </td>
                                                 <td class="text-center">
                                                      <span ng-show="item.isSuccess">
@@ -311,17 +322,6 @@
                                                      <span ng-show="item.isError">
                                                         <em class="fa fa-times fa-fw"></em>
                                                      </span>
-                                                </td>
-                                                <td>
-                                                    <input name="website" type="url" data-ng-model="item.clickUrl" id="{{ item.file.name }}_clickurl" data-parsley-group="step5" class="form-control" placeholder="http://www.example.com" required="required">
-                                                </td>
-                                                <td nowrap="">
-                                                    <!--<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">-->
-                                                        <!--<span class="icon-cloud-upload mr"></span>Upload</button>-->
-                                                    <!--<button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">-->
-                                                        <!--<span class="icon-close mr"></span>Cancel</button>-->
-                                                    <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
-                                                        <span class="icon-trash mr"></span>Remove</button>
                                                 </td>
                                             </tr>
                                             </tbody>
