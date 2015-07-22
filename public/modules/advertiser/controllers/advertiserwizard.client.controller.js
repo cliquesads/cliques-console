@@ -61,9 +61,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 $scope.creatives.forEach(function(creative){
                     var key = creative.w + 'x' + creative.h;
                     if (creativegroups_obj.hasOwnProperty(key)){
-                        creativegroups_obj[key] = [creative];
-                    } else {
                         creativegroups_obj[key].push(creative);
+                    } else {
+                        creativegroups_obj[key] = [creative];
                     }
                 });
                 var creativegroups = [];
@@ -73,7 +73,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                             name: $scope.campaign.name + '_' + size,
                             h: Number(size.split('x')[1]),
                             w: Number(size.split('x')[0]),
-                            creatives: [creativegroups_obj[size]]
+                            creatives: creativegroups_obj[size]
                         });
                     }
                 }
