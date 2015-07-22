@@ -134,17 +134,41 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             }
         });
 
+        uploader.filters.push({
+            name: 'sizeFilter',
+            fn: function(item, options) {
+                var max_size = 60 * 1024;
+                return item.size < max_size;
+            }
+        });
+
         // CALLBACKS
         $scope.creative_upload_errors = [];
         uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-            if (String(filter.name) === String('mimetypeFilter')){
-                $scope.creative_upload_errors.push('File must be JPG, PNG or GIF');
+            if (filter.name === 'mimetypeFilter'){
+                $scope.creative_upload_error = 'File must be JPG, PNG or GIF';
+            } else if (filter.name === 'sizeFilter') {
+                $scope.creative_upload_error = 'File must be less than 60 KB';
             }
         };
+
         uploader.onAfterAddingFile = function(fileItem) {
-            console.info('onAfterAddingFile', fileItem);
+            var reader = new FileReader();
+            var image = new Image();
+            reader.readAsDataURL(fileItem._file);
+            reader.onload = function(_file){
+                image.src = _file.target.result;
+                image.onload = function(){
+                    fileItem.width = this.width;
+                    fileItem.height = this.height;
+                }
+            }
         };
+
         uploader.onAfterAddingAll = function(addedFileItems) {
+            if ($scope.creative_upload_error){
+                $scope.creative_upload_error = null;
+            }
             console.info('onAfterAddingAll', addedFileItems);
         };
         uploader.onBeforeUploadItem = function(item) {
@@ -170,6 +194,8 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             $scope.creatives.push({
                 name: fileItem.file.name,
                 clickUrl: fileItem.clickUrl,
+                w: fileItem.width,
+                h: fileItem.height,
                 url: response.url
             });
         };

@@ -258,14 +258,12 @@
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
                             <div class="col-md-12">
-                                <div ng-repeat="error in creative_upload_errors" ng-show="creative_upload_errors">
-                                    <div class="alert alert-danger">{{ error }}</div>
-                                </div>
+                                <div ng-show="creative_upload_error" class="alert alert-danger">{{ creative_upload_error }}</div>
                                 <div class="row">
-                                    <div nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter, mimetypeFilter">
+                                    <div nv-file-drop="" uploader="uploader">
                                         <div ng-show="uploader.isHTML5">
                                             <!-- 3. nv-file-over uploader="link" over-class="className"-->
-                                            <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here</div>
+                                            <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here (Supported types: .png .jpeg .gif)</div>
                                             <!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}"-->
                                         </div>
                                         <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}"-->
