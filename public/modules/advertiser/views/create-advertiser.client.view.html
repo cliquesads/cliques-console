@@ -267,7 +267,7 @@
                                             <!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}"-->
                                         </div>
                                         <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}"-->
-                                        <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" multiple="" class="form-control" />
+                                        <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
                                     </div>
                                 </div>
                                 <br/>
@@ -299,7 +299,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    {{ item._file.dimensions }}
+                                                    {{ item.dimensions }}
                                                 </td>
                                                 <td class="text-center">
                                                      <span ng-show="item.isSuccess">

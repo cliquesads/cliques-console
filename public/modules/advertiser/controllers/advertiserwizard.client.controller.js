@@ -156,16 +156,13 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
 
         $scope.SUPPORTED_DIMENSIONS = ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100'];
 
-        /**
-         * Checks dimensions of image File or Blob object
-         * and ensures dimensions are supported.
-         *
-         * @param {File} file
-         * @param {Function} callback takes only err as arg
-         */
-        var checkCreativeDimensions = function(file, callback){
+        uploader.onAfterAddingFile = function(fileItem) {
+            // check added image dimensions, and remove item from queue if
+            // dimensions not supported
             var reader = new FileReader();
             var image = new Image();
+            // Have to use onload callbacks for both FileReader & Image objects,
+            // then load data to each
             reader.onload = function(_file){
                 image.onload = function(){
                     var self = this;
@@ -175,32 +172,22 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                     $scope.$apply(function(){
                         // Store width & height properties on file object for convenience
                         var dimensions = [self.width, self.height].join('x');
-                        file.width = self.width;
-                        file.height = self.height;
-                        file.dimensions = dimensions;
+                        fileItem.width = self.width;
+                        fileItem.height = self.height;
+                        fileItem.dimensions = dimensions;
                         // Now check to make sure dimensions are supported, calling callback
                         // if they're not.
                         if ($scope.SUPPORTED_DIMENSIONS.indexOf(dimensions) === -1){
-                            return callback('File dimensions not supported.  ' +
-                            'Image dimensions must be one of the following: ' +
-                            $scope.SUPPORTED_DIMENSIONS.join(', '));
+                            $scope.creative_upload_error = 'File dimensions not supported. Image dimensions must be one of the following: ' + $scope.SUPPORTED_DIMENSIONS.join(', ');
+                            fileItem.remove();
                         }
                     });
                 };
+                // now set image source
                 image.src = _file.target.result;
             };
-            reader.readAsDataURL(file);
-        };
-
-        uploader.onAfterAddingFile = function(fileItem) {
-            // check added image dimensions, and remove item from queue if
-            // dimensions not supported
-            checkCreativeDimensions(fileItem._file, function(err){
-                if (err){
-                        $scope.creative_upload_error = err;
-                        fileItem.remove();
-                    }
-                });
+            // load file
+            reader.readAsDataURL(fileItem._file);
         };
 
         uploader.onAfterAddingAll = function(addedFileItems) {
