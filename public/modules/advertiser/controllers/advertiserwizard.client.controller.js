@@ -93,18 +93,15 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                         frequency:      this.campaign.frequency,
                         clique:         this.campaign.clique,
                         creativegroups: [creativegroups]
-                    }],
-                    actionbeacons: this.actionbeacons
+                    }]
                 });
                 advertiser.$create(function (response) {
-                    $location.path('advertiser/');
                     $scope.name = '';
                     $scope.description= '';
                     $scope.campaign = '';
                     $scope.creatives = '';
                     $scope.cliques = '';
                     $scope.website = '';
-                    $scope.actionbeacons = '';
                 }, function (errorResponse) {
                     $scope.error = errorResponse.data.message;
                 });
