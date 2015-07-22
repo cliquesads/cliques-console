@@ -281,6 +281,7 @@
                                                 <th width="30%">Name</th>
                                                 <th ng-show="uploader.isHTML5">Size</th>
                                                 <th ng-show="uploader.isHTML5">Progress</th>
+                                                <th>Dimensions</th>
                                                 <th>Status</th>
                                                 <th>Click URL</th>
                                                 <th>Actions</th>
@@ -296,6 +297,9 @@
                                                     <div style="margin-bottom: 0;" class="progress progress-xs">
                                                         <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    {{ item._file.dimensions }}
                                                 </td>
                                                 <td class="text-center">
                                                      <span ng-show="item.isSuccess">

@@ -126,6 +126,8 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         var uploader = $scope.uploader = new FileUploader({
             url: 'creativeassets/test/test'
         });
+
+        //##### FILTERS ######
         uploader.filters.push({
             name: 'mimetypeFilter',
             fn: function(item, options) {
@@ -142,9 +144,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             }
         });
 
-        // CALLBACKS
+        //##### CALLBACKS ######
         $scope.creative_upload_errors = [];
-        uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+        uploader.onWhenAddingFileFailed = function(item, filter, options) {
             if (filter.name === 'mimetypeFilter'){
                 $scope.creative_upload_error = 'File must be JPG, PNG or GIF';
             } else if (filter.name === 'sizeFilter') {
@@ -152,42 +154,78 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             }
         };
 
-        uploader.onAfterAddingFile = function(fileItem) {
+        $scope.SUPPORTED_DIMENSIONS = ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100'];
+
+        /**
+         * Checks dimensions of image File or Blob object
+         * and ensures dimensions are supported.
+         *
+         * @param {File} file
+         * @param {Function} callback takes only err as arg
+         */
+        var checkCreativeDimensions = function(file, callback){
             var reader = new FileReader();
             var image = new Image();
-            reader.readAsDataURL(fileItem._file);
             reader.onload = function(_file){
-                image.src = _file.target.result;
                 image.onload = function(){
-                    fileItem.width = this.width;
-                    fileItem.height = this.height;
-                }
-            }
+                    var self = this;
+                    // Have to wrap asynchronous scope changes in $apply call
+                    // in order to update bindings properly, otherwise
+                    // browser will execute callback after next event tick
+                    $scope.$apply(function(){
+                        // Store width & height properties on file object for convenience
+                        var dimensions = [self.width, self.height].join('x');
+                        file.width = self.width;
+                        file.height = self.height;
+                        file.dimensions = dimensions;
+                        // Now check to make sure dimensions are supported, calling callback
+                        // if they're not.
+                        if ($scope.SUPPORTED_DIMENSIONS.indexOf(dimensions) === -1){
+                            return callback('File dimensions not supported.  ' +
+                            'Image dimensions must be one of the following: ' +
+                            $scope.SUPPORTED_DIMENSIONS.join(', '));
+                        }
+                    });
+                };
+                image.src = _file.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        uploader.onAfterAddingFile = function(fileItem) {
+            // check added image dimensions, and remove item from queue if
+            // dimensions not supported
+            checkCreativeDimensions(fileItem._file, function(err){
+                if (err){
+                        $scope.creative_upload_error = err;
+                        fileItem.remove();
+                    }
+                });
         };
 
         uploader.onAfterAddingAll = function(addedFileItems) {
             if ($scope.creative_upload_error){
                 $scope.creative_upload_error = null;
             }
-            console.info('onAfterAddingAll', addedFileItems);
+            //console.info('onAfterAddingAll', addedFileItems);
         };
         uploader.onBeforeUploadItem = function(item) {
-            console.info('onBeforeUploadItem', item);
+            //console.info('onBeforeUploadItem', item);
         };
         uploader.onProgressItem = function(fileItem, progress) {
-            console.info('onProgressItem', fileItem, progress);
+            //console.info('onProgressItem', fileItem, progress);
         };
         uploader.onProgressAll = function(progress) {
-            console.info('onProgressAll', progress);
+            //console.info('onProgressAll', progress);
         };
         uploader.onSuccessItem = function(fileItem, response, status, headers) {
-            console.info('onSuccessItem', fileItem, response, status, headers);
+            //console.info('onSuccessItem', fileItem, response, status, headers);
         };
         uploader.onErrorItem = function(fileItem, response, status, headers) {
-            console.info('onErrorItem', fileItem, response, status, headers);
+            //console.info('onErrorItem', fileItem, response, status, headers);
         };
         uploader.onCancelItem = function(fileItem, response, status, headers) {
-            console.info('onCancelItem', fileItem, response, status, headers);
+            //console.info('onCancelItem', fileItem, response, status, headers);
         };
         uploader.onCompleteItem = function(fileItem, response, status, headers) {
             console.info('onCompleteItem', fileItem, response, status, headers);
@@ -200,7 +238,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             });
         };
         uploader.onCompleteAll = function() {
-            console.info('onCompleteAll');
+            //console.info('onCompleteAll');
         };
 
         console.info('uploader', uploader);
