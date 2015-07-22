@@ -41,6 +41,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         $scope.campaign = {
             name:           null,
             description:    null,
+            budget:         null,
             start_date:     null,
             end_date:       null,
             base_bid:       null,
@@ -48,13 +49,11 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             frequency:      null,
             clique:         null,
             dma_targets:    null,
-            placement_targets: null,
-            creativegroups: []
+            placement_targets: null
         };
         $scope.creatives = [];
 
 		$scope.create = function() {
-            $scope.submitted = true;
             if (this.advertiserForm.$valid) {
                 // group creatives by size and create creative groups for each
                 var creativegroups_obj = {};
@@ -78,22 +77,13 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                     }
                 }
                 // now create new advertiser object
+                var campaign = this.campaign;
+                campaign.creativegroups = creativegroups;
                 var advertiser = new Advertiser({
                     name:           this.name,
                     description:    this.description,
                     website:        this.website,
-                    cliques:        this.cliques,
-                    campaigns: [{
-                        name:           this.campaign.name,
-                        description:    this.campaign.description,
-                        start_date:     this.campaign.start_date,
-                        end_date:       this.campaign.end_date,
-                        base_bid:       this.campaign.base_bid,
-                        max_bid:        this.campaign.max_bid,
-                        frequency:      this.campaign.frequency,
-                        clique:         this.campaign.clique,
-                        creativegroups: [creativegroups]
-                    }]
+                    campaigns: [campaign]
                 });
                 advertiser.$create(function (response) {
                     $scope.name = '';
@@ -215,7 +205,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             console.info('onCompleteItem', fileItem, response, status, headers);
             $scope.creatives.push({
                 name: fileItem.file.name,
-                clickUrl: fileItem.clickUrl,
+                click_url: fileItem.click_url,
                 w: fileItem.width,
                 h: fileItem.height,
                 url: response.url
