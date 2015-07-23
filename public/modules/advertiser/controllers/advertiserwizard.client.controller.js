@@ -236,8 +236,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
          * @param callback
          * @returns {boolean}
          */
-        $scope.create = function(callback) {
+        $scope.create = function() {
             if (this.advertiserForm.$valid) {
+                $scope.loading = true;
                 // Construct advertiser JSON to POST to API
                 var creatives = getCreativesFromUploadQueue();
                 var creativegroups = groupCreatives(creatives, $scope.campaign.name);
@@ -251,17 +252,19 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                     campaigns: [campaign]
                 });
                 advertiser.$create(function(response){
+                    $scope.loading = false;
                     $scope.name = '';
                     $scope.description= '';
                     $scope.campaign = '';
                     $scope.creatives = '';
                     $scope.cliques = '';
                     $scope.website = '';
-                    $scope.advertiser = response;
-                    return callback;
+                    //On success, redirect to advertiser detail page
+                    var advertiserId = response._id;
+                    $location.url('/advertiser/' + advertiserId);
                 }, function (errorResponse) {
-                    $scope.error = errorResponse.data.message;
-                    return callback
+                    $scope.loading = false;
+                    $scope.creation_error = errorResponse.data.message;
                 });
             } else {
                 return false;

@@ -362,6 +362,9 @@
                     <!-- START Wizard Step inputs -->
                     <div id="step6" ng-show="wizard.active(6)">
                         <legend>Review your new advertiser</legend>
+                        <div class="col-md-12">
+                            <div ng-show="creation_error" class="alert alert-danger">{{ creation_error }}</div>
+                        </div>
                         <div>
                             <!--JUST A PLACEHOLDER-->
                             <p>{{ campaign | json }}</p>
@@ -372,8 +375,15 @@
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
+                            <li ng-show="loading">
+                                <div class="ball-pulse">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </li>
                             <li class="next">
-                                <a href="#" ng-click="create(wizard.go(7))"> Submit <span>&rarr;</span></a>
+                                <a href="#" ng-click="create()"> Submit <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
