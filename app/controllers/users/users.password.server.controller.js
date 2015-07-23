@@ -130,7 +130,7 @@ exports.reset = function(req, res, next) {
 						user.save(function(err) {
 							if (err) {
 								return res.status(400).send({
-									message: errorHandler.getErrorMessage(err)
+									message: errorHandler.getAndLogErrorMessage(err)
 								});
 							} else {
 								req.login(user, function(err) {
@@ -202,7 +202,7 @@ exports.changePassword = function(req, res) {
 							user.save(function(err) {
 								if (err) {
 									return res.status(400).send({
-										message: errorHandler.getErrorMessage(err)
+										message: errorHandler.getAndLogErrorMessage(err)
 									});
 								} else {
 									req.login(user, function(err) {

@@ -26,7 +26,7 @@ module.exports = function(db) {
             geoModels.DMA.apiQuery(req.query, function (err, geos) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(geos);

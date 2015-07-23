@@ -35,13 +35,13 @@ module.exports = function(db) {
                 if (err) {
                     console.log(err);
                     return res.status(404).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     // make file public and get public facing URL
                     file.makePublic(function(err, apiResponse){
                         if (err) return res.status(404).send({
-                            message: errorHandler.getErrorMessage(err)
+                            message: errorHandler.getAndLogErrorMessage(err)
                         });
                         // construct public URL of newly-uploaded asset
                         // to return to client in apiResponse

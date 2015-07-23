@@ -20,7 +20,7 @@ var getUniqueErrorMessage = function(err) {
 /**
  * Get the error message from error object
  */
-exports.getErrorMessage = function(err) {
+exports.getAndLogErrorMessage = function(err) {
 	var message = '';
 
 	if (err.code) {
@@ -34,9 +34,9 @@ exports.getErrorMessage = function(err) {
 		}
 	} else {
 		for (var errName in err.errors) {
-			if (err.errors[errName].message) message = err.errors[errName].message;
+			if (err.errors[errName].message) message += err.errors[errName].message + ' | ';
 		}
 	}
-
+    console.err('ERROR: ' + message);
 	return message;
 };

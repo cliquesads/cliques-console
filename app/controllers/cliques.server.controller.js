@@ -26,7 +26,7 @@ module.exports = function(db) {
             cliqueModels.Clique.apiQuery(req.query, function (err, cliques) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(cliques);
@@ -42,7 +42,7 @@ module.exports = function(db) {
             clique.save(function (err) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(clique);
@@ -59,7 +59,7 @@ module.exports = function(db) {
                 function (err, clique) {
                     if (err) {
                         return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
+                            message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
                         res.json(clique);
@@ -76,7 +76,7 @@ module.exports = function(db) {
             clique.save(function (err) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(clique);
@@ -91,7 +91,7 @@ module.exports = function(db) {
             clique.remove(function (err) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(clique);

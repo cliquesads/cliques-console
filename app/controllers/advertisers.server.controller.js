@@ -29,7 +29,7 @@ module.exports = function(db) {
             advertiserModels.Advertiser.apiQuery(req.query, function (err, advertisers) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(advertisers);
@@ -45,8 +45,9 @@ module.exports = function(db) {
 
             advertiser.save(function (err) {
                 if (err) {
+
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(advertiser);
@@ -63,7 +64,7 @@ module.exports = function(db) {
                 function (err, advertiser) {
                     if (err) {
                         return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
+                            message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
                         res.json(advertiser);
@@ -80,7 +81,7 @@ module.exports = function(db) {
             advertiser.save(function (err) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(advertiser);
@@ -95,7 +96,7 @@ module.exports = function(db) {
             advertiser.remove(function (err) {
                 if (err) {
                     return res.status(400).send({
-                        message: errorHandler.getErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
                     res.json(advertiser);

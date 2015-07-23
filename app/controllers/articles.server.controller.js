@@ -18,7 +18,7 @@ exports.create = function(req, res) {
 	article.save(function(err) {
 		if (err) {
 			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
+				message: errorHandler.getAndLogErrorMessage(err)
 			});
 		} else {
 			res.json(article);
@@ -44,7 +44,7 @@ exports.update = function(req, res) {
 	article.save(function(err) {
 		if (err) {
 			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
+				message: errorHandler.getAndLogErrorMessage(err)
 			});
 		} else {
 			res.json(article);
@@ -61,7 +61,7 @@ exports.delete = function(req, res) {
 	article.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
+				message: errorHandler.getAndLogErrorMessage(err)
 			});
 		} else {
 			res.json(article);
@@ -76,7 +76,7 @@ exports.list = function(req, res) {
 	Article.find().sort('-created').populate('user', 'displayName').exec(function(err, articles) {
 		if (err) {
 			return res.status(400).send({
-				message: errorHandler.getErrorMessage(err)
+				message: errorHandler.getAndLogErrorMessage(err)
 			});
 		} else {
 			res.json(articles);
