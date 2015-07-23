@@ -3,14 +3,20 @@
 angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     '$stateParams',
     '$location',
+    '$q',
     'Authentication',
     'Advertiser',
     'DatepickerService',
     'getCliqueTree',
     'DMA',
     'FileUploader',
-	function($scope, $stateParams, $location, Authentication, Advertiser, DatepickerService, getCliqueTree, DMA, FileUploader) {
-		$scope.authentication = Authentication;
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, DatepickerService, getCliqueTree, DMA, FileUploader) {
+
+        //##################################//
+        //###### INIT SCOPE VARIABLES ######//
+        //##################################//
+
+        $scope.authentication = Authentication;
         $scope.calendar = DatepickerService;
         $scope.Math = Math;
 
@@ -53,29 +59,46 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         };
         $scope.creatives = [];
 
-		$scope.create = function() {
-            if (this.advertiserForm.$valid) {
-                // group creatives by size and create creative groups for each
-                var creativegroups_obj = {};
-                $scope.creatives.forEach(function(creative){
-                    var key = creative.w + 'x' + creative.h;
-                    if (creativegroups_obj.hasOwnProperty(key)){
-                        creativegroups_obj[key].push(creative);
-                    } else {
-                        creativegroups_obj[key] = [creative];
-                    }
-                });
-                var creativegroups = [];
-                for (var size in creativegroups_obj){
-                    if (creativegroups_obj.hasOwnProperty(size)){
-                        creativegroups.push({
-                            name: $scope.campaign.name + '_' + size,
-                            h: Number(size.split('x')[1]),
-                            w: Number(size.split('x')[0]),
-                            creatives: creativegroups_obj[size]
-                        });
-                    }
+
+        /**
+         * Helper function to group creatives by size and create creative groups for each
+         * @param creatives
+         * @param groupname_prefix
+         * @returns {Array}
+         */
+        var groupCreatives = function(creatives, groupname_prefix){
+            var creativegroups_obj = {};
+            creatives.forEach(function(creative){
+                var key = creative.w + 'x' + creative.h;
+                if (creativegroups_obj.hasOwnProperty(key)){
+                    creativegroups_obj[key].push(creative);
+                } else {
+                    creativegroups_obj[key] = [creative];
                 }
+            });
+            var creativegroups = [];
+            for (var size in creativegroups_obj){
+                if (creativegroups_obj.hasOwnProperty(size)){
+                    creativegroups.push({
+                        name: groupname_prefix + '_' + size,
+                        h: Number(size.split('x')[1]),
+                        w: Number(size.split('x')[0]),
+                        creatives: creativegroups_obj[size]
+                    });
+                }
+            }
+            return creativegroups
+        };
+
+        /**
+         * Method called to submit Advertiser to API
+         * @param callback
+         * @returns {boolean}
+         */
+        $scope.create = function(callback) {
+            if (this.advertiserForm.$valid) {
+                // Construct advertiser JSON to POST to API
+                var creativegroups = groupCreatives($scope.creatives, $scope.campaign.name);
                 // now create new advertiser object
                 var campaign = this.campaign;
                 campaign.creativegroups = creativegroups;
@@ -85,13 +108,15 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                     website:        this.website,
                     campaigns: [campaign]
                 });
-                advertiser.$create(function (response) {
+                advertiser.$create(function(response){
                     $scope.name = '';
                     $scope.description= '';
                     $scope.campaign = '';
                     $scope.creatives = '';
                     $scope.cliques = '';
                     $scope.website = '';
+                    $scope.advertiser = response;
+                    return callback;
                 }, function (errorResponse) {
                     $scope.error = errorResponse.data.message;
                 });
@@ -211,10 +236,17 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 url: response.url
             });
         };
-        uploader.onCompleteAll = function() {
-            //console.info('onCompleteAll');
+        uploader.onCompleteAll = function(){
+            $scope.uploads_completed = true;
         };
 
-        console.info('uploader', uploader);
+        // Hook for view to pass callback to 'onCompleteAll' event
+        $scope.validateAndUpload = function(validateFunc){
+            // pre_callback should be validation step for other various
+            // form elements, and return true if validation passes
+            if (validateFunc){
+                uploader.uploadAll();
+            }
+        }
 	}
 ]);

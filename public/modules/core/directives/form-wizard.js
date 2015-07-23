@@ -3,7 +3,7 @@
  * Handles form wizard plugin and validation
  =========================================================*/
 
-angular.module('core').directive('formWizard', ["$parse", function($parse){
+angular.module('core').directive('formWizard', ["$parse", "$q", function($parse){
   'use strict';
 
   return {
@@ -23,11 +23,27 @@ angular.module('core').directive('formWizard', ["$parse", function($parse){
     self.quantity = parseInt(quantity,10);
     self.validate = validate;
     self.element = element;
-    
+
     self.init = function() {
       self.createsteps(self.quantity);
       self.go(1); // always start at fist step
       return self;
+    };
+
+    // Just runs validation for current step, doesn't go to next
+    self.validateStep = function(step) {
+
+      if ( angular.isDefined(self.steps[step]) ) {
+        if(self.validate && step !== 1) {
+          var form = $(self.element),
+              group = form.children().children('div').get(step - 1);
+
+          if (false === form.parsley().validate( group.id )) {
+            return false;
+          }
+        }
+        return true;
+      }
     };
 
     self.go = function(step) {
@@ -42,9 +58,16 @@ angular.module('core').directive('formWizard', ["$parse", function($parse){
             return false;
           }
         }
-
         self.cleanall();
         self.steps[step] = true;
+      }
+    };
+
+    self.goNoValidate = function(step) {
+      if ( angular.isDefined(self.steps[step]) ) {
+          self.cleanall();
+          self.steps[step] = true;
+          return true;
       }
     };
 

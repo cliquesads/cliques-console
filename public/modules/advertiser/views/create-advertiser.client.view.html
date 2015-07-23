@@ -337,12 +337,12 @@
                                             <div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>
                                         </div>
                                     </div>
-                                    <!--<button type="button" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s">-->
-                                        <!--<span class="icon-cloud-upload mr"></span>Upload all</button>-->
-                                    <!--<button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s">-->
-                                        <!--<span class="icon-close mr"></span>Cancel all</button>-->
-                                    <!--<button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s">-->
-                                        <!--<span class="icon-trash mr"></span>Remove all</button>-->
+                                    <button type="button" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s">
+                                        <span class="icon-cloud-upload mr"></span>Upload all</button>
+                                    <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s">
+                                        <span class="icon-close mr"></span>Cancel all</button>
+                                    <button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s">
+                                        <span class="icon-trash mr"></span>Remove all</button>
                                 </div>
                             </div>
                         </fieldset>
@@ -352,7 +352,8 @@
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
-                            <li class="next"><a href="#" ng-click="uploader.uploadAll(); wizard.go(6);"><span class="icon-cloud-upload mr"></span> Upload & Finalize </a>
+                            <li class="next" ng-show="uploads_completed">
+                                <a href="#" ng-click="wizard.go(6)"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
@@ -372,8 +373,8 @@
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
-                            </li>
-                            <li class="next"><a href="#" ng-click="create();wizard.go(7)"> Submit <span>&rarr;</span></a>
+                            <li class="next">
+                                <a href="#" ng-click="create(wizard.go(7))"> Submit <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
@@ -384,17 +385,7 @@
                         <div class="jumbotron">
                             <h1>Great Success!</h1>
                             <p>You've created a new advertiser</p>
-                            <p>
-                                <button type="button" class="btn btn-info btn-lg">okthxbai</button>
-                            </p>
                         </div>
-                        <ul class="pager">
-                            <li class="previous">
-                                <a href="#" ng-click="wizard.go(6)">
-                                    <span>&larr; Previous</span>
-                                </a>
-                            </li>
-                        </ul>
                     </div>
                     <!-- END Wizard Step inputs -->
                 </div>
