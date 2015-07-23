@@ -57,83 +57,10 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             dma_targets:    null,
             placement_targets: null
         };
-        $scope.creatives = [];
 
-
-        /**
-         * Helper function to group creatives by size and create creative groups for each
-         * @param creatives
-         * @param groupname_prefix
-         * @returns {Array}
-         */
-        var groupCreatives = function(creatives, groupname_prefix){
-            var creativegroups_obj = {};
-            creatives.forEach(function(creative){
-                var key = creative.w + 'x' + creative.h;
-                if (creativegroups_obj.hasOwnProperty(key)){
-                    creativegroups_obj[key].push(creative);
-                } else {
-                    creativegroups_obj[key] = [creative];
-                }
-            });
-            var creativegroups = [];
-            for (var size in creativegroups_obj){
-                if (creativegroups_obj.hasOwnProperty(size)){
-                    creativegroups.push({
-                        name: groupname_prefix + '_' + size,
-                        h: Number(size.split('x')[1]),
-                        w: Number(size.split('x')[0]),
-                        creatives: creativegroups_obj[size]
-                    });
-                }
-            }
-            return creativegroups
-        };
-
-        /**
-         * Method called to submit Advertiser to API
-         * @param callback
-         * @returns {boolean}
-         */
-        $scope.create = function(callback) {
-            if (this.advertiserForm.$valid) {
-                // Construct advertiser JSON to POST to API
-                var creativegroups = groupCreatives($scope.creatives, $scope.campaign.name);
-                // now create new advertiser object
-                var campaign = this.campaign;
-                campaign.creativegroups = creativegroups;
-                var advertiser = new Advertiser({
-                    name:           this.name,
-                    description:    this.description,
-                    website:        this.website,
-                    campaigns: [campaign]
-                });
-                advertiser.$create(function(response){
-                    $scope.name = '';
-                    $scope.description= '';
-                    $scope.campaign = '';
-                    $scope.creatives = '';
-                    $scope.cliques = '';
-                    $scope.website = '';
-                    $scope.advertiser = response;
-                    return callback;
-                }, function (errorResponse) {
-                    $scope.error = errorResponse.data.message;
-                });
-            } else {
-                return false;
-            }
-		};
-
-        $scope.validateInput = function(name, type) {
-            var input = this.advertiserForm[name];
-            return (input.$dirty || $scope.submitted) && input.$error[type];
-        };
-
-
-        //#################################
-        //######### FILE UPLOADER #########
-        //#################################
+        //#################################//
+        //######### FILE UPLOADER #########//
+        //#################################//
 
         var uploader = $scope.uploader = new FileUploader({
             url: 'creativeassets/test/test'
@@ -227,26 +154,123 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             //console.info('onCancelItem', fileItem, response, status, headers);
         };
         uploader.onCompleteItem = function(fileItem, response, status, headers) {
-            console.info('onCompleteItem', fileItem, response, status, headers);
-            $scope.creatives.push({
-                name: fileItem.file.name,
-                click_url: fileItem.click_url,
-                w: fileItem.width,
-                h: fileItem.height,
-                url: response.url
-            });
+            // Add Google Cloud URL to fileitem when it successfully uploads
+            fileItem.url = response.url;
         };
         uploader.onCompleteAll = function(){
             $scope.uploads_completed = true;
         };
 
-        // Hook for view to pass callback to 'onCompleteAll' event
+        /**
+         * Wrapper for uploader.uploadAll() which allows form to pass
+         * validation function to call first.
+         *
+         * @param validateFunc
+         */
         $scope.validateAndUpload = function(validateFunc){
             // pre_callback should be validation step for other various
             // form elements, and return true if validation passes
             if (validateFunc){
                 uploader.uploadAll();
             }
-        }
+        };
+
+
+        //####################################//
+        //###### CREATE/SUBMIT METHODS #######//
+        //####################################//
+
+        /**
+         * Maps successfully uploaded items in uploader queue to array of
+         * creative objects to push to API
+         * @returns {Array}
+         */
+        var getCreativesFromUploadQueue = function(){
+            var creatives = [];
+            uploader.queue.forEach(function(fileItem){
+                if (fileItem.isSuccess) {
+                    creatives.push({
+                        name: fileItem.file.name,
+                        click_url: fileItem.click_url,
+                        w: fileItem.width,
+                        h: fileItem.height,
+                        url: fileItem.url
+                    });
+                }
+            });
+            return creatives;
+        };
+
+        /**
+         * Helper function to group creatives by size and create creative groups for each
+         * @param creatives
+         * @param groupname_prefix
+         * @returns {Array}
+         */
+        var groupCreatives = function(creatives, groupname_prefix){
+            var creativegroups_obj = {};
+            creatives.forEach(function(creative){
+                var key = creative.w + 'x' + creative.h;
+                if (creativegroups_obj.hasOwnProperty(key)){
+                    creativegroups_obj[key].push(creative);
+                } else {
+                    creativegroups_obj[key] = [creative];
+                }
+            });
+            var creativegroups = [];
+            for (var size in creativegroups_obj){
+                if (creativegroups_obj.hasOwnProperty(size)){
+                    creativegroups.push({
+                        name: groupname_prefix + '_' + size,
+                        h: Number(size.split('x')[1]),
+                        w: Number(size.split('x')[0]),
+                        creatives: creativegroups_obj[size]
+                    });
+                }
+            }
+            return creativegroups
+        };
+
+        /**
+         * Method called to submit Advertiser to API
+         * @param callback
+         * @returns {boolean}
+         */
+        $scope.create = function(callback) {
+            if (this.advertiserForm.$valid) {
+                // Construct advertiser JSON to POST to API
+                var creatives = getCreativesFromUploadQueue();
+                var creativegroups = groupCreatives(creatives, $scope.campaign.name);
+                // now create new advertiser object
+                var campaign = this.campaign;
+                campaign.creativegroups = creativegroups;
+                var advertiser = new Advertiser({
+                    name:           this.name,
+                    description:    this.description,
+                    website:        this.website,
+                    campaigns: [campaign]
+                });
+                advertiser.$create(function(response){
+                    $scope.name = '';
+                    $scope.description= '';
+                    $scope.campaign = '';
+                    $scope.creatives = '';
+                    $scope.cliques = '';
+                    $scope.website = '';
+                    $scope.advertiser = response;
+                    return callback;
+                }, function (errorResponse) {
+                    $scope.error = errorResponse.data.message;
+                    return callback
+                });
+            } else {
+                return false;
+            }
+        };
+
+        $scope.validateInput = function(name, type) {
+            var input = this.advertiserForm[name];
+            return (input.$dirty || $scope.submitted) && input.$error[type];
+        };
 	}
 ]);
