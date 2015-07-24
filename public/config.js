@@ -3,7 +3,7 @@
 // Init the application configuration module for AngularJS application
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
-	var applicationModuleName = 'angleApp';
+	var applicationModuleName = 'cliquesConsole';
 	// var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils'];
 	var applicationModuleVendorDependencies = [
         'ngRoute',
@@ -22,7 +22,8 @@ var ApplicationConfiguration = (function() {
         'localytics.directives',
         'ui.utils',
         'angularBootstrapNavTree',
-        'angularFileUpload'
+        'angularFileUpload',
+        'xeditable'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
