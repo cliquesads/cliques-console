@@ -34,9 +34,9 @@ exports.getAndLogErrorMessage = function(err) {
 		}
 	} else {
 		for (var errName in err.errors) {
-			if (err.errors[errName].message) message += err.errors[errName].message + ' | ';
+			if (err.errors[errName].message) message += err.errors[errName].message + '  ';
 		}
 	}
-    console.err('ERROR: ' + message);
+    console.error('ERROR: ' + message);
 	return message;
 };
