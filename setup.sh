@@ -19,3 +19,5 @@ npm install
 sudo npm install pm2 -g
 sudo npm install mocha -g
 sudo npm install bower -g
+sudo npm install grunt -g
+sudo npm install -g grunt-cli
