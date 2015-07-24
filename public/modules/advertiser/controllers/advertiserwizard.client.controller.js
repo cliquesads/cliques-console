@@ -10,7 +10,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'getCliqueTree',
     'DMA',
     'FileUploader',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, DatepickerService, getCliqueTree, DMA, FileUploader) {
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, DatepickerService,  getCliqueTree, DMA, FileUploader) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
