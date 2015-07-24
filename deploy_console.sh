@@ -3,7 +3,7 @@
 source ./activate_production.sh
 nvm use 0.12.0
 npm install
-grunt build
+NODE_ENV=development grunt build
 
 processname='cliques-console'
 running=$(pm2 list -m | grep "$processname")

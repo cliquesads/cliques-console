@@ -10,14 +10,8 @@
 <section data-ng-controller="AdvertiserController" data-ng-init="find()">
 	<div class="list-group">
 		<a data-ng-repeat="advertiser in advertisers" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
-			<small class="list-group-item-text">
-				Posted on
-				<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>
-				by
-				<span data-ng-bind="advertiser.user.displayName"></span>
-			</small>
 			<h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>
-			<p class="list-group-item-text" data-ng-bind="advertiser.contact"></p>
+			<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>
 		</a>
 	</div>
 	<h4 class="alert alert-purple text-center pv-lg" data-ng-if="advertiser.$resolved && !advertiser.length">

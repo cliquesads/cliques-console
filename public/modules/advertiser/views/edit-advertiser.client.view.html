@@ -22,9 +22,9 @@
 				</div>
 
 				<div class="form-group" ng-class="{ 'has-error' : submitted && advertiserForm.content.$invalid}">
-					<label class="control-label" for="contact">Contact</label>
+					<label class="control-label" for="description">Description</label>
 					<div class="controls">
-						<input name="contact" data-ng-model="advertiser.contact" id="contact" class="form-control" cols="30" rows="10" placeholder="Contact" required>
+						<input name="description" data-ng-model="advertiser.description" id="contact" class="form-control" cols="30" rows="10" placeholder="Description">
 					</div>
 					<div ng-show="submitted && advertiserForm.contact.$invalid" class="help-block">
 						<p ng-show="advertiserForm.content.$error.required" class="text-danger">Contact is required</p>

@@ -19,16 +19,81 @@
 <section data-ng-init="findOne()">
 	<small>
 		<em class="text-muted">
-			Posted on
+			Created on
 			<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>
 			by
 			<span data-ng-bind="advertiser.user.displayName"></span>
 		</em>
 	</small>
-    <p class="lead" data-ng-bind="advertiser.contact"></p>
-	<p class="lead" data-ng-bind="advertiser.email"></p>
-    <p class="lead" data-ng-bind="advertiser.phone"></p>
-    <p class="lead" data-ng-bind="advertiser.description"></p>
-    <p class="lead" data-ng-bind="advertiser.user"></p>
-    <p class="lead" data-ng-bind="advertiser.campaigns"></p>
+    <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+    <div class="col-lg-4">
+        <!-- START panel-->
+        <div id="advertiserPanel" class="panel panel-default">
+            <div ng-class="{'panel-heading-collapsed':advertiserPanel}" class="panel-heading">{{ advertiser.name }}
+                <paneltool tool-collapse="tool-collapse"></paneltool>
+            </div>
+            <!-- .panel-wrapper is the element to be collapsed-->
+            <div collapse="advertiserPanel" class="panel-wrapper">
+                <div class="panel-body">
+                    <div class="col-md-12 box-placeholder">
+                        <h4>Advertiser&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+                        <div class="col-sm-2">Name</div><div class="col-sm-10">{{ advertiser.name }}</div>
+                        <div class="col-sm-2">Website</div><div class="col-sm-10">{{ advertiser.website }}</div>
+                        <div class="col-sm-2">Description</div><div class="col-sm-10">{{ advertiser.description || &apos;empty&apos; }}</div>
+                    </div>
+                </div>
+                <div class="panel-footer">Campaigns: {{ advertiser.campaigns.length }}</div>
+            </div>
+        </div>
+        <!-- END panel-->
+    </div>
+
+    <div ng-repeat="campaign in advertiser.campaigns" class="col-lg-4">
+        <!-- START panel-->
+        <div id="campaignPanel" class="panel panel-default">
+            <div ng-class="{'panel-heading-collapsed':campaignPanel}" class="panel-heading">{{ campaign.name }}
+                <paneltool tool-collapse="tool-collapse"></paneltool>
+            </div>
+            <!-- .panel-wrapper is the element to be collapsed-->
+            <div collapse="campaignPanel" class="panel-wrapper">
+                <div class="panel-body">
+
+                    <div class="col-md-12 box-placeholder">
+                        <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+                        <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ campaign.name }}</div>
+                        <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ campaign.description || &apos;empty&apos; }}</div>
+                        <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ campaign.budget | currency:"$":0 }}</div>
+                        <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
+                        <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
+                    </div>
+                    <div class="col-md-12 box-placeholder">
+                        <h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+                        <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ campaign.clique }}</div>
+                    </div>
+                    <div class="col-md-12 box-placeholder">
+                        <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+                        <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ campaign.base_bid | currency:"$":2 }}</div>
+                        <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ campaign.max_bid | currency:"$":2 }}</div>
+                        <div class="col-sm-2"><b>DMA Targets</b></div>
+                        <div class="col-sm-10">
+                            <div ng-repeat="target in campaign.dma_targets">
+                                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 box-placeholder">
+                        <h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+                        <div ng-repeat="creativegroup in campaign.creativegroups">
+                            <div ng-repeat="creative in creativegroup.creatives">
+                                <div class="col-sm-4"><b>{{ creative.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- END panel-->
+    </div>
+
 </section>
