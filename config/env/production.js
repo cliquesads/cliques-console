@@ -41,7 +41,8 @@ module.exports = {
                 'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
                 'public/lib/angular-file-upload/angular-file-upload.min.js',
                 'public/lib/bootstrap-filestyle/src/bootstrap-filestyle.js',
-                'public/lib/angular-xeditable/dist/js/xeditable.min.js'
+                'public/lib/angular-xeditable/dist/js/xeditable.min.js',
+                'public/lib/angular-bootstrap-nav-tree/dist/abn_tree_directive.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
