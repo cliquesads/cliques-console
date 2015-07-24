@@ -358,16 +358,15 @@
                     <!-- START Wizard Step inputs -->
                     <div id="step6" ng-show="wizard.active(6)">
                         <legend>Review your new advertiser</legend>
-
                         <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
                         <div class="col-md-12 box-placeholder">
-                            <h4>Advertiser</h4>
+                            <h4>Advertiser&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
                             <div class="col-sm-2">Name</div><div class="col-sm-10">{{ name }}</div>
                             <div class="col-sm-2">Website</div><div class="col-sm-10">{{ website }}</div>
                             <div class="col-sm-2">Description</div><div class="col-sm-10">{{ &apos;empty&apos; }}</div>
                         </div>
                         <div class="col-md-12 box-placeholder">
-                            <h4>Campaign Basics</h4>
+                            <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
                             <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ campaign.name }}</div>
                             <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ campaign.description || &apos;empty&apos; }}</div>
                             <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ campaign.budget | currency:"$":0 }}</div>
@@ -375,7 +374,11 @@
                             <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
                         </div>
                         <div class="col-md-12 box-placeholder">
-                            <h4>Campaign Targeting</h4>
+                            <h4>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ campaign.clique }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
                             <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ campaign.base_bid | currency:"$":2 }}</div>
                             <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ campaign.max_bid | currency:"$":2 }}</div>
                             <div class="col-sm-2"><b>DMA Targets</b></div><div class="col-sm-10">
@@ -385,7 +388,7 @@
                             </div>
                         </div>
                         <div class="col-md-12 box-placeholder">
-                            <h4>Creatives</h4>
+                            <h4>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
                             <div ng-repeat="fileItem in uploader.queue">
                                 <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
                             </div>
