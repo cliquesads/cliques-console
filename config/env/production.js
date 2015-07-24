@@ -6,8 +6,12 @@ module.exports = {
 	assets: {
 		lib: {
 			css: [
-				// 'public/lib/bootstrap/dist/css/bootstrap.min.css',
-				// 'public/lib/bootstrap/dist/css/bootstrap-theme.min.css',
+                'public/lib/chosen/chosen.min.css',
+                'public/dist/application.min.css',
+                'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
+                'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
+                'public/lib/loaders.css/loaders.min.css',
+                'public/lib/angular-xeditable/dist/css/xeditable.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.js',
@@ -29,7 +33,15 @@ module.exports = {
 				'public/lib/oclazyload/dist/ocLazyLoad.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/lib/angular-loading-bar/build/loading-bar.js',
-				'public/lib/jquery.browser/dist/jquery.browser.min.js'
+				'public/lib/jquery.browser/dist/jquery.browser.min.js',
+                'public/lib/parsleyjs/dist/parsley.min.js',
+                'public/lib/chosen/chosen.jquery.min.js',
+                'public/lib/angular-chosen-localytics/chosen.js',
+                'public/lib/angular-bootstrap-slider/slider.js',
+                'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
+                'public/lib/angular-file-upload/angular-file-upload.min.js',
+                'public/lib/bootstrap-filestyle/src/bootstrap-filestyle.js',
+                'public/lib/angular-xeditable/dist/js/xeditable.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
