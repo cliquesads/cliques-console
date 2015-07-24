@@ -13,7 +13,7 @@
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
         <div class="panel-body">
-            <form name="advertiserForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="7">
+            <form name="advertiserForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="6">
                 <div class="form-wizard wizard-vertical">
                     <!-- START wizard steps indicator-->
                     <ol>
@@ -39,10 +39,6 @@
                         </li>
                         <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
                             <h4>6. Review & Submit</h4>
-                            <small class="text-muted"></small>
-                        </li>
-                        <li ng-class="{'active':wizard.active(7)}" ng-click="wizard.go(7)">
-                            <h4>7. Done!</h4>
                             <small class="text-muted"></small>
                         </li>
                     </ol>
@@ -386,15 +382,6 @@
                                 <a href="#" ng-click="create()"> Submit <span>&rarr;</span></a>
                             </li>
                         </ul>
-                    </div>
-                    <!-- END Wizard Step inputs -->
-
-                    <!-- START Wizard Step inputs -->
-                    <div id="step7" ng-show="wizard.active(7)">
-                        <div class="jumbotron">
-                            <h1>Great Success!</h1>
-                            <p>You've created a new advertiser</p>
-                        </div>
                     </div>
                     <!-- END Wizard Step inputs -->
                 </div>

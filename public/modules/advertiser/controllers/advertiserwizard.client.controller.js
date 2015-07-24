@@ -88,7 +88,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         uploader.onWhenAddingFileFailed = function(item, filter, options) {
             if (filter.name === 'mimetypeFilter'){
                 $scope.creative_upload_error = 'File must be JPG, PNG or GIF';
-            } else if (filter.name === 'sizeFilter') {
+            } else if (filter.name === 'sizeFilter'){
                 $scope.creative_upload_error = 'File must be less than 60 KB';
             }
         };
@@ -232,8 +232,24 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         };
 
         /**
+         * Converts array of weighted targets with whole target object in each element
+         * to array of objects that conform with respective weightedTargetSchema
+         * @param arr
+         */
+        var convertWeightedTargetArray = function(arr){
+            if (arr === null) return arr;
+            var new_target_arr = [];
+            arr.forEach(function(obj){
+                new_target_arr.push({
+                    target: obj._id,
+                    weight: obj.weight
+                });
+            });
+            return new_target_arr;
+        };
+
+        /**
          * Method called to submit Advertiser to API
-         * @param callback
          * @returns {boolean}
          */
         $scope.create = function() {
@@ -244,6 +260,17 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 var creativegroups = groupCreatives(creatives, $scope.campaign.name);
                 // now create new advertiser object
                 var campaign = this.campaign;
+
+                // convert target arrays to weightedSchema format
+                for (var prop in campaign){
+                    if (campaign.hasOwnProperty(prop)){
+                        // TODO: sort of a hack
+                        if (prop.indexOf('_targets') > -1){
+                            campaign[prop] = convertWeightedTargetArray(campaign[prop]);
+                        }
+                    }
+                }
+
                 campaign.creativegroups = creativegroups;
                 var advertiser = new Advertiser({
                     name:           this.name,
