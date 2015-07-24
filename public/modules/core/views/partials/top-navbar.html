@@ -54,20 +54,20 @@
       <!-- START Right Navbar-->
       <ul class="nav navbar-nav navbar-right ml0">
          <!-- Search icon-->
-         <li>
-            <a search-open="">
-               <em class="icon-magnifier"></em>
-            </a>
-         </li>
+         <!--<li>-->
+            <!--<a search-open="">-->
+               <!--<em class="icon-magnifier"></em>-->
+            <!--</a>-->
+         <!--</li>-->
          <!-- START Offsidebar button-->
-         <li>
-            <a href="#" ng-click="app.offsidebarOpen = !app.offsidebarOpen">
-               <em class="icon-notebook"></em>
-            </a>
-         </li>
+         <!--<li>-->
+            <!--<a href="#" ng-click="app.offsidebarOpen = !app.offsidebarOpen">-->
+               <!--<em class="icon-notebook"></em>-->
+            <!--</a>-->
+         <!--</li>-->
          <!-- END Offsidebar menu-->
       </ul>
-      <ul class="nav navbar-nav" data-ng-show="authentication.user">
+      <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
          <li class="dropdown" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
                <span data-ng-bind="authentication.user.displayName"></span>
@@ -77,9 +77,9 @@
                <li>
                   <a href="/#!/settings/profile">Edit Profile</a>
                </li>
-               <li>
-                  <a href="/#!/settings/accounts">Manage Social Accounts</a>
-               </li>
+               <!--<li>-->
+                  <!--<a href="/#!/settings/accounts">Manage Social Accounts</a>-->
+               <!--</li>-->
                <li data-ng-show="authentication.user.provider === 'local'">
                   <a href="/#!/settings/password">Change Password</a>
                </li>
@@ -91,9 +91,9 @@
          </li>
       </ul>
       <ul class="nav navbar-nav navbar-right ml0 mr0" data-ng-hide="authentication.user">
-         <li ui-route="/page/signup" ng-class="{active: $uiRoute}">
-            <a href="/#!/page/signup">Sign Up</a>
-         </li>
+         <!--<li ui-route="/page/signup" ng-class="{active: $uiRoute}">-->
+            <!--<a href="/#!/page/signup">Sign Up</a>-->
+         <!--</li>-->
          <li class="divider-vertical"></li>
          <li ui-route="/page/signin" ng-class="{active: $uiRoute}">
             <a href="/#!/page/signin">Sign In</a>
@@ -103,13 +103,13 @@
    </div>
    <!-- END Nav wrapper-->
    <!-- START Search form-->
-   <form role="search" action="search.html" class="navbar-form">
-      <div class="form-group has-feedback">
-         <input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />
-         <div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>
-      </div>
-      <button type="submit" class="hidden btn btn-default">Submit</button>
-   </form>
+   <!--<form role="search" action="search.html" class="navbar-form">-->
+      <!--<div class="form-group has-feedback">-->
+         <!--<input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />-->
+         <!--<div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>-->
+      <!--</div>-->
+      <!--<button type="submit" class="hidden btn btn-default">Submit</button>-->
+   <!--</form>-->
    <!-- END Search form-->
 </nav>
 <!-- END Top Navbar-->

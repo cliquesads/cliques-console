@@ -9,10 +9,6 @@ angular.module('users').config(['$stateProvider',
 			url: '/signin',
 			templateUrl: 'modules/users/views/authentication/signin.client.view.html'
 		}).
-		//state('page.signup', {
-		//	url: '/signup',
-		//	templateUrl: 'modules/users/views/authentication/signup.client.view.html'
-		//}).
 		state('page.forgot', {
 			url: '/password/forgot',
 			templateUrl: 'modules/users/views/password/forgot-password.client.view.html'
@@ -37,9 +33,5 @@ angular.module('users').config(['$stateProvider',
 			url: '/settings/profile',
 			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
 		});
-		//state('app.accounts', {
-		//	url: '/settings/accounts',
-		//	templateUrl: 'modules/users/views/settings/social-accounts.client.view.html'
-		//});
 	}
 ]);
