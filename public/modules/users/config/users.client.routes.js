@@ -36,10 +36,10 @@ angular.module('users').config(['$stateProvider',
 		state('app.profile', {
 			url: '/settings/profile',
 			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
-		}).
-		state('app.accounts', {
-			url: '/settings/accounts',
-			templateUrl: 'modules/users/views/settings/social-accounts.client.view.html'
 		});
+		//state('app.accounts', {
+		//	url: '/settings/accounts',
+		//	templateUrl: 'modules/users/views/settings/social-accounts.client.view.html'
+		//});
 	}
 ]);

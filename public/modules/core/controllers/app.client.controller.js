@@ -4,12 +4,17 @@
  =========================================================*/
 
 angular.module('core').controller('AppController',
-  ['$rootScope', '$scope', '$state', '$translate', '$window', '$localStorage', '$timeout', 'colors', 'browser', 'cfpLoadingBar', 'Authentication',
-  function($rootScope, $scope, $state, $translate, $window, $localStorage, $timeout, colors, browser, cfpLoadingBar, Authentication) {
+  ['$rootScope', '$scope', '$state', '$translate', '$location','$window', '$localStorage', '$timeout', 'colors', 'browser', 'cfpLoadingBar', 'Authentication',
+  function($rootScope, $scope, $state, $translate, $location, $window, $localStorage, $timeout, colors, browser, cfpLoadingBar, Authentication) {
     "use strict";
 
     // This provides Authentication context.
     $scope.authentication = Authentication;
+
+    // Redirect users to signin page if not logged in
+    if (!user){
+          $location.path('/page/signin');
+    }
 
     // Loading bar transition
     // ----------------------------------- 
