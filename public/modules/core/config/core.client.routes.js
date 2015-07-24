@@ -12,7 +12,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   $locationProvider.html5Mode(false);
 
   // default route
-  $urlRouterProvider.otherwise('/home');
+  $urlRouterProvider.otherwise('home');
 
   // 
   // Application Routes

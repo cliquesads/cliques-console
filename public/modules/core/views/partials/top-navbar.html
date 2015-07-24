@@ -2,7 +2,8 @@
 <nav role="navigation" class="navbar topnavbar">
    <!-- START navbar header-->
    <div class="navbar-header">
-      <a href="#/" class="navbar-brand">
+       <!--The ng-show here is a hack, if you can figure out a way to secure home link (i.e. have it pass through app controller) then this isn't necessary-->
+       <a href="#/" ng-show="authentication.user" class="navbar-brand">
          <div class="brand-logo">
             <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive" />
          </div>
@@ -10,13 +11,21 @@
             <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive" />
          </div>
       </a>
+       <div ng-hide="authentication.user" class="navbar-brand">
+           <div class="brand-logo">
+               <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive" />
+           </div>
+           <div class="brand-logo-collapsed">
+               <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive" />
+           </div>
+       </div>
    </div>
    <!-- END navbar header-->
    <!-- START Nav wrapper-->
    <div class="nav-wrapper">
       <!-- START Left navbar-->
       <ul class="nav navbar-nav">
-         <li>
+         <li ng-show="authentication.user">
             <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
             <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
                <em class="fa fa-navicon"></em>
@@ -95,8 +104,8 @@
             <!--<a href="/#!/page/signup">Sign Up</a>-->
          <!--</li>-->
          <li class="divider-vertical"></li>
-         <li ui-route="/page/signin" ng-class="{active: $uiRoute}">
-            <a href="/#!/page/signin">Sign In</a>
+         <li ui-route="/signin" ng-class="{active: $uiRoute}">
+            <a href="/#!/signin">Sign In</a>
          </li>
       </ul>
       <!-- END Right Navbar-->

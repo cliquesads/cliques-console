@@ -13,7 +13,7 @@ angular.module('core').controller('AppController',
 
     // Redirect users to signin page if not logged in
     if (!user){
-          $location.path('/page/signin');
+          $location.path('signin');
     }
 
     // Loading bar transition
