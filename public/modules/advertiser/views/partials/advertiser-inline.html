@@ -1,0 +1,52 @@
+<div class="panel panel-default">
+    <form editable-form name="advertiserInline" onaftersave="onaftersave()">
+        <div class="panel-heading">
+            <h4>{{ advertiser.name }}
+                <a href="#" class="pull-right" ng-click="advertiserInline.$show()" ng-show="!advertiserInline.$visible">
+                    <span class="fa fa-edit"></span>
+                </a>
+            </h4>
+        </div>
+        <div class="form-horizontal">
+            <div class="form-group m0">
+                <label class="col-sm-4 control-label">Name</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static">
+                        <span editable-text="advertiser.name" e-name="name" e-required>{{ advertiser.name }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group m0">
+                <label class="col-sm-4 control-label">Website</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static">
+                        <span editable-url="advertiser.website" e-name="url" e-required>{{ advertiser.website}}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group m0">
+                <label class="col-sm-4 control-label">Description</label>
+                <div class="col-sm-8">
+                    <p class="form-control-static">
+                        <span editable-text="advertiser.description" e-name="description" >{{ advertiser.description }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="pull-right">
+            <!-- buttons to submit / cancel form -->
+                <span ng-show="advertiserInline.$visible">
+                    <button type="submit" class="btn btn-small btn-primary" ng-disabled="advertiserInline.$waiting">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-small btn-default" ng-disabled="advertiserInline.$waiting" ng-click="advertiserInline.$cancel()">
+                        Cancel
+                    </button>
+                </span>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <div class="panel-footer">Campaigns: {{ advertiser.campaigns.length }}</div>
+    </form>
+</div>
