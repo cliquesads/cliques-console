@@ -28,66 +28,69 @@
 	    </small>
     </div>
     <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+
+    <!--Upper left panel-->
+    <div class="col-sm-4">
+        <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
+    </div>
+    <div class="col-md-8">
+        GRAPH WILL GO HERE
+    </div>
     <div class="col-sm-4">
         <!-- START panel-->
-        <!--<div class="panel panel-default">-->
-            <!--<div class="panel-heading">-->
-                <!--<h4>{{ advertiser.name }}-->
-                    <!--<a href="#" class="pull-right" ng-click="advertiserInline.$show()" ng-show="!advertiserInline.$visible">-->
-                        <!--<span class="fa fa-edit"></span>-->
-                    <!--</a>-->
-                <!--</h4>-->
-            <!--</div>-->
-        <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
-        <!--</div>-->
-        <!-- END panel-->
-    </div>
-
-
-    <div ng-repeat="campaign in advertiser.campaigns" class="col-lg-6">
-        <!-- START panel-->
         <div id="campaignPanel" class="panel panel-default">
-            <div ng-class="{'panel-heading-collapsed':campaignPanel}" class="panel-heading">{{ campaign.name }}
-                <paneltool tool-collapse="tool-collapse"></paneltool>
+            <div class="panel-heading">
+                <div class="panel-title">Campaigns</div>
             </div>
-            <!-- .panel-wrapper is the element to be collapsed-->
-            <div collapse="campaignPanel" class="panel-wrapper">
-                <div class="panel-body">
-
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-4"><b>Name</b></div><div class="col-sm-10">{{ campaign.name }}</div>
-                        <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ campaign.description || &apos;empty&apos; }}</div>
-                        <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ campaign.budget | currency:"$":0 }}</div>
-                        <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
-                        <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ campaign.clique }}</div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ campaign.base_bid | currency:"$":2 }}</div>
-                        <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ campaign.max_bid | currency:"$":2 }}</div>
-                        <div class="col-sm-2"><b>DMA Targets</b></div>
-                        <div class="col-sm-10">
-                            <div ng-repeat="target in campaign.dma_targets">
-                                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                        <div ng-repeat="creativegroup in campaign.creativegroups">
-                            <div ng-repeat="creative in creativegroup.creatives">
-                                <div class="col-sm-4"><b>{{ creative.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+            <div class="panel-body">
+                <table ng-table="" class="table ng-table-rowselected">
+                    <thead>
+                        <th>Name</th>
+                        <th>Clique</th>
+                        <th>Budget</th>
+                    </thead>
+                    <tr ng-repeat="campaign in advertiser.campaigns" ng-click="campaign.$selected = !campaign.$selected" ng-class="{'active': campaign.$selected}">
+                        <td data-title="Campaign">{{campaign.name}}</td>
+                        <td data-title="Clique">{{campaign.clique}}</td>
+                        <td data-title="Budget">{{campaign.budget|currency:"$":"0"}}</td>
+                    </tr>
+                </table>
             </div>
+            <!--<div collapse="campaignPanel" class="panel-wrapper">-->
+                <!--<div class="panel-body">-->
+                    <!--<div class="col-md-12 box-placeholder">-->
+                        <!--<h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>-->
+                        <!--<div class="col-sm-4"><b>Name</b></div><div class="col-sm-8">{{ campaign.name }}</div>-->
+                        <!--<div class="col-sm-4"><b>Description</b></div><div class="col-sm-8">{{ campaign.description || &apos;empty&apos; }}</div>-->
+                        <!--<div class="col-sm-4"><b>Budget</b></div><div class="col-sm-8">{{ campaign.budget | currency:"$":0 }}</div>-->
+                        <!--<div class="col-sm-4"><b>Start Date</b></div><div class="col-sm-8">{{ campaign.start_date | date:"shortDate":"EST" }}</div>-->
+                        <!--<div class="col-sm-4"><b>End Date</b></div><div class="col-sm-8">{{ campaign.end_date | date:"shortDate":"EST" }}</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-12 box-placeholder">-->
+                        <!--<h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>-->
+                        <!--<div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-12 box-placeholder">-->
+                        <!--<h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>-->
+                        <!--<div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>-->
+                        <!--<div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>-->
+                        <!--<div class="col-sm-4"><b>DMA Targets</b></div>-->
+                        <!--<div class="col-sm-8">-->
+                            <!--<div ng-repeat="target in campaign.dma_targets">-->
+                                <!--{{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col-md-12 box-placeholder">-->
+                        <!--<h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>-->
+                        <!--<div ng-repeat="creativegroup in campaign.creativegroups">-->
+                            <!--<div ng-repeat="creative in creativegroup.creatives">-->
+                                <!--<div class="col-sm-6"><b>{{ creative.name }}</b></div><div class="col-sm-6"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <!-- END panel-->
     </div>
