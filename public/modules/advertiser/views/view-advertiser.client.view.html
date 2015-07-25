@@ -1,8 +1,8 @@
 <h3>
 	<div class="pull-right" data-ng-show="authentication.user._id == advertiser.user">
-		<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">
-			<i class="fa fa-edit"></i>
-		</a>
+		<!--<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">-->
+			<!--<i class="fa fa-edit"></i>-->
+		<!--</a>-->
 		<a class="btn btn-primary" data-ng-click="remove();">
 			<i class="fa fa-trash"></i>
 		</a>
@@ -17,16 +17,18 @@
 	</ul>
 </h3>
 <section data-ng-init="findOne()">
-	<small>
+	<div>
+        <small>
 		<em class="text-muted">
 			Created on
 			<span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>
 			by
 			<span data-ng-bind="advertiser.user.displayName"></span>
 		</em>
-	</small>
+	    </small>
+    </div>
     <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-    <div class="col-lg-4">
+    <div class="col-sm-4">
         <!-- START panel-->
         <!--<div class="panel panel-default">-->
             <!--<div class="panel-heading">-->
