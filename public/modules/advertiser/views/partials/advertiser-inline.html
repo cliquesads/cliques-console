@@ -1,39 +1,40 @@
 <div class="panel panel-default">
     <form editable-form name="advertiserInline" onaftersave="onaftersave()">
         <div class="panel-heading">
-            <h4>Basic Info
+            <div class="panel-title">
+                Advertiser Info
                 <a href="#" class="pull-right" ng-click="advertiserInline.$show()" ng-show="!advertiserInline.$visible">
                     <span class="fa fa-edit"></span>
                 </a>
-            </h4>
-        </div>
-        <div class="form-horizontal">
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Name</label>
-                <div class="col-sm-8">
-                    <p class="form-control-static">
-                        <span editable-text="advertiser.name" e-name="name" e-required>{{ advertiser.name }}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Website</label>
-                <div class="col-sm-8">
-                    <p class="form-control-static">
-                        <span editable-url="advertiser.website" e-name="url" e-required>{{ advertiser.website}}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Description</label>
-                <div class="col-sm-8">
-                    <p class="form-control-static">
-                        <span editable-text="advertiser.description" e-name="description" >{{ advertiser.description }}</span>
-                    </p>
-                </div>
             </div>
         </div>
-        <div class="panel-footer">Campaigns: {{ advertiser.campaigns.length }}
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group m0">
+                    <label class="col-sm-4 control-label">Name</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">
+                            <span editable-text="advertiser.name" e-name="name" e-required>{{ advertiser.name }}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-4 control-label">Website</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">
+                            <span editable-url="advertiser.website" e-name="url" e-required>{{ advertiser.website}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-4 control-label">Description</label>
+                    <div class="col-sm-8">
+                        <p class="form-control-static">
+                            <span editable-text="advertiser.description" e-name="description" >{{ advertiser.description }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="pull-right">
                 <!-- buttons to submit / cancel form -->
                 <span ng-show="advertiserInline.$visible">

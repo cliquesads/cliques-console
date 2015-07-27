@@ -108,12 +108,15 @@ module.exports = function(db) {
          * Advertiser middleware
          */
         advertiserByID: function (req, res, next, id) {
-            advertiserModels.Advertiser.findById(id).exec(function (err, advertiser) {
-                if (err) return next(err);
-                if (!advertiser) return next(new Error('Failed to load advertiser' + id));
-                req.advertiser = advertiser;
-                next();
-            });
+            advertiserModels.Advertiser
+                .findById(id)
+                .populate('user')
+                .exec(function (err, advertiser) {
+                    if (err) return next(err);
+                    if (!advertiser) return next(new Error('Failed to load advertiser' + id));
+                    req.advertiser = advertiser;
+                    next();
+                });
         },
 
         /**
