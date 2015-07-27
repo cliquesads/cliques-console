@@ -45,12 +45,18 @@ module.exports = function(db) {
 
             advertiser.save(function (err) {
                 if (err) {
-
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    res.json(advertiser);
+                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        }
+                        res.json(adv);
+                    });
                 }
             });
         },
@@ -67,7 +73,14 @@ module.exports = function(db) {
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        res.json(advertiser);
+                        advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                            if (err) {
+                                return res.status(400).send({
+                                    message: errorHandler.getAndLogErrorMessage(err)
+                                });
+                            }
+                            res.json(adv);
+                        });
                     }
                 }
             );
@@ -84,7 +97,14 @@ module.exports = function(db) {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    res.json(advertiser);
+                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        }
+                        res.json(adv);
+                    });
                 }
             });
         },
