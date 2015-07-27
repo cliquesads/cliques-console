@@ -4,48 +4,32 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 	function($scope, $stateParams, $location, Authentication, Advertiser) {
 		$scope.authentication = Authentication;
         $scope.lineData = [{
-            "label": "Complete",
+            "label": "Impressions",
             "color": "#5ab1ef",
+            "yaxis": 1,
             "data": [
-                ["Jan", 188],
-                ["Feb", 183],
-                ["Mar", 185],
-                ["Apr", 199],
-                ["May", 190],
-                ["Jun", 194],
-                ["Jul", 194],
-                ["Aug", 184],
-                ["Sep", 74]
+                [new Date('2015-07-01'), 40838],
+                [new Date('2015-07-02'), 58978],
+                [new Date('2015-07-03'), 47909],
+                [new Date('2015-07-04'), 37090],
+                [new Date('2015-07-05'), 89322],
+                [new Date('2015-07-06'), 74490],
+                [new Date('2015-07-07'), 67599]
             ]
         }, {
-            "label": "In Progress",
+            "label": "Spend",
             "color": "#f5994e",
+            "yaxis": 2,
             "data": [
-                ["Jan", 153],
-                ["Feb", 116],
-                ["Mar", 136],
-                ["Apr", 119],
-                ["May", 148],
-                ["Jun", 133],
-                ["Jul", 118],
-                ["Aug", 161],
-                ["Sep", 59]
+                [new Date('2015-07-01'), 65],
+                [new Date('2015-07-02'), 116],
+                [new Date('2015-07-03'), 123],
+                [new Date('2015-07-04'), 119],
+                [new Date('2015-07-05'), 378],
+                [new Date('2015-07-06'), 389],
+                [new Date('2015-07-07'), 312]
             ]
-        }, {
-            "label": "Cancelled",
-            "color": "#d87a80",
-            "data": [
-                ["Jan", 111],
-                ["Feb", 97],
-                ["Mar", 93],
-                ["Apr", 110],
-                ["May", 102],
-                ["Jun", 93],
-                ["Jul", 92],
-                ["Aug", 92],
-                ["Sep", 44]
-            ]
-        }]
+        }];
         $scope.lineOptions = {
             series: {
                 lines: {
@@ -69,12 +53,26 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             },
             xaxis: {
                 tickColor: '#eee',
-                mode: 'categories'
+                mode: 'time',
+                timeformat: '%m/%d',
+                ticksize: [1, 'day']
             },
-            yaxis: {
-                position: ('left'),
-                tickColor: '#eee'
-            },
+            yaxes: [
+                {
+                    position: 'left',
+                    tickColor: '#eee',
+                    tickFormatter: function (val, axis) {
+                        return val.toLocaleString();
+                    }
+                },
+                {
+                    position: 'right',
+                    tickColor: '#eee',
+                    tickFormatter: function (val, axis) {
+                        return '$' + val.toLocaleString();
+                    }
+                }
+            ],
             shadowSize: 0
         };
 
