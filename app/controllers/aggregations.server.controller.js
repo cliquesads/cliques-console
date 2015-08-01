@@ -39,12 +39,11 @@ var models = require('cliques_node_utils').mongodb.models,
  * @param {String} dateFieldName name of date field in aggregation model, default is 'hour'
  * @constructor
  */
-var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, dateFieldName, role_lookup_field){
+var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, dateFieldName){
     this.pathParams = pathParams;
     this.queryParams = queryParams;
     this.dateFieldName = dateFieldName || 'hour';
     this.queryParamOperators = ['in','nin','ne'];
-    this.role_lookup_field = role_lookup_field;
 };
 
 /**
@@ -192,8 +191,8 @@ var HourlyAdStatAPI = function(aggregationModels){
     this.adv_params = ['advertiser','campaign','creativegroup','creative'];
     this.pub_params = ['publisher','site','page','placement'];
     this.clique_params = ['pub_clique', 'adv_clique'];
-    this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params, 'hour', 'advertiser');
-    this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params, 'hour', 'publisher');
+    this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params, 'hour');
+    this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params, 'hour');
     this.cliquePipelineBuilder = new HourlyAggregationPipelineVarBuilder([], this.clique_params, 'hour');
 };
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
