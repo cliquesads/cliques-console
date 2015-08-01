@@ -218,7 +218,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                 { $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
                 { $group: {
                         _id: group,
-                        bids: {$sum: "$num_bids"},
+                        bids: {$sum: "$bids"},
                         imps: {$sum: "$imps"},
                         spend: {$sum: "$spend"},
                         clicks: {$sum: "$clicks"},

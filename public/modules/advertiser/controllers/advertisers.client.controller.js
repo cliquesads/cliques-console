@@ -116,10 +116,10 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 		};
 		$scope.findOne = function() {
             var cb = function(response){
-                var data = new MongoTimeSeries(response.data, {fields: ['imps','clicks','view_convs','num_bids']});
-                $scope.data = {imps: data.imps, clicks: data.clicks, bids: data.num_bids}
+                var data = new MongoTimeSeries(response.data, {fields: ['imps','clicks','view_convs','bids']});
+                $scope.data = {imps: data.imps, clicks: data.clicks, bids: data.bids}
             };
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'hour'}).then(cb, cb);
+            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'day'}).then(cb, cb);
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
 			});
