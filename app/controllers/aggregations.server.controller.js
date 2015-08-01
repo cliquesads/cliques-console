@@ -27,7 +27,6 @@ var models = require('cliques_node_utils').mongodb.models,
  *  - {nin} element not in array
  *  - {ne} matches any row with field val not equal to query val
  *
- *
  * SPECIAL QUERY PARAMS:
  *  - startDate: (inclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
  *  - endDate: (exclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
@@ -175,69 +174,94 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
             year: { $year: dateFieldName }
         }
     };
-    var dateGroupBy = req.query.dateGroupBy;
-    if (dateGroupBy){
-        group.date = date_groupings[dateGroupBy];
+    if (req.query.dateGroupBy){
+        group.date = date_groupings[req.query.dateGroupBy];
     }
     return group;
 };
 
+/**
+ * Lightweight object to expose query methods to API routes.
+ *
+ * @param aggregationModels
+ * @constructor
+ */
+var HourlyAdStatAPI = function(aggregationModels){
+    this.aggregationModels = aggregationModels;
+    this.adv_params = ['advertiser','campaign','creativegroup','creative'];
+    this.pub_params = ['publisher','site','page','placement'];
+    this.clique_params = ['pub_clique', 'adv_clique'];
+    this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params, 'hour');
+    this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params, 'hour');
+    this.cliquePipelineBuilder = new HourlyAggregationPipelineVarBuilder([], this.clique_params, 'hour');
+};
+HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
+    var self = this;
+    return function (req, res) {
+        try {
+            var group = pipelineBuilder.getGroup(req);
+        } catch (e) {
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+        try {
+            var match = pipelineBuilder.getMatch(req);
+        } catch (e) {
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+        self.aggregationModels.HourlyAdStat
+            .aggregate([
+                { $match: match },
+                { $group: {
+                        _id: group,
+                        bids: {$sum: "$num_bids"},
+                        imps: {$sum: "$imps"},
+                        spend: {$sum: "$spend"},
+                        clicks: {$sum: "$clicks"},
+                        view_convs: {$sum: "$view_convs"},
+                        click_convs: {$sum: "$click_convs"}
+                    }
+                }
+            ])
+            .exec(function(err, hourlyAdStats){
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                } else {
+                    res.json(hourlyAdStats);
+                }
+            });
+    }
+};
+// BEGIN actual methods to expose to API routes.
+HourlyAdStatAPI.prototype.getManyAdvertiser = function(req, res){
+    return this._getManyWrapper(this.advPipelineBuilder)(req, res);
+};
+HourlyAdStatAPI.prototype.getManyPublisher = function(req, res){
+    return this._getManyWrapper(this.pubPipelineBuilder)(req, res);
+};
+HourlyAdStatAPI.prototype.getManyClique = function(req, res){
+    return this._getManyWrapper(this.cliquePipelineBuilder)(req, res);
+};
+
+
 module.exports = function(db) {
     var aggregationModels = new models.AggregationModels(db);
-
-    // pipelineBuilder for HourlyAdStats
-    var hourlyAdStatPathParams = ['advertiser','campaign','creativegroup','creative'];
-    var hourlyAdStatGroupByFields = ['publisher','site','page','placement'];
-    var pipelineBuilder = new HourlyAggregationPipelineVarBuilder(hourlyAdStatPathParams, hourlyAdStatGroupByFields, 'hour');
-
+    var hourlyAdStatAPI = new HourlyAdStatAPI(aggregationModels);
     return {
         hourlyAdStat: {
-            /**
-             * Queries HourLyAdStats & groups by advertiser object
-             */
             getManyAdvertiser: function (req, res) {
-
-                try {
-                    var group = pipelineBuilder.getGroup(req);
-                } catch (e) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(e)
-                    });
-                }
-
-                try {
-                    var match = pipelineBuilder.getMatch(req);
-                } catch (e) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(e)
-                    });
-                }
-                aggregationModels.HourlyAdStat
-                    .aggregate([
-                        {
-                            $match: match
-                        },
-                        {
-                            $group: {
-                                _id: group,
-                                bids: {$sum: "$num_bids"},
-                                imps: {$sum: "$imps"},
-                                spend: {$sum: "$spend"},
-                                clicks: {$sum: "$clicks"},
-                                view_convs: {$sum: "$view_convs"},
-                                click_convs: {$sum: "$click_convs"}
-                            }
-                        }
-                    ])
-                    .exec(function(err, hourlyAdStats){
-                        if (err) {
-                            return res.status(400).send({
-                                message: errorHandler.getAndLogErrorMessage(err)
-                            });
-                        } else {
-                            res.json(hourlyAdStats);
-                        }
-                });
+                return hourlyAdStatAPI.getManyAdvertiser(req, res);
+            },
+            getManyPublisher: function (req, res) {
+                return hourlyAdStatAPI.getManyPublisher(req, res);
+            },
+            getManyClique: function (req, res) {
+                return hourlyAdStatAPI.getManyClique(req, res);
             }
         }
     };
