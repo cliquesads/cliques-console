@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser',
-	function($scope, $stateParams, $location, Authentication, Advertiser) {
+angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','HourlyAdStat',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat) {
 		$scope.authentication = Authentication;
+
         $scope.lineData = [{
             "label": "Impressions",
             "color": "#5ab1ef",
@@ -114,6 +115,11 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			$scope.advertisers = Advertiser.query();
 		};
 		$scope.findOne = function() {
+            var cb = function(response){
+                //$scope.data = new MongoTimeSeries(data, {fields: ['imps','clicks','view_convs','num_bids']})
+                $scope.data = response.data;
+            };
+            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'hour'}).then(cb, cb);
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
 			});
