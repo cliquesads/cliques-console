@@ -1,7 +1,7 @@
 'use strict';
 
 //Articles service used for communicating with the articles REST endpoints
-angular.module('advertiser').factory('HourlyAdStat', ['$http',
+angular.module('aggregations').factory('HourlyAdStat', ['$http',
 	function($http) {
         var base_path    = '/hourlyadstat';
         var adv_path     = base_path + '/adv';
