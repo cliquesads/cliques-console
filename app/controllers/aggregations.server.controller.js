@@ -75,14 +75,18 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     // Handle date query params & add to match step if provided
     if (req.query.hasOwnProperty('startDate')) {
         try {
-            match.hour.$gte = new Date(req.query.startDate);
+            match.hour = { $gte: new Date(req.query.startDate) };
         } catch (e) {
             throw new Error('Invalid startDate, cannot parse to Date object');
         }
     }
     if (req.query.hasOwnProperty('endDate')) {
         try {
-            match.hour.$lt = new Date(req.query.endDate);
+            if (match.hour){
+                match.hour.$lt = new Date(req.query.endDate);
+            } else {
+                match.hour = { $lt: new Date(req.query.endDate) }
+            }
         } catch (e) {
             throw new Error('Invalid endDate, cannot parse to Date object');
         }
@@ -113,6 +117,8 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
             groupBy.forEach(function(field){
                 group[field] = '$' + field;
             })
+        } else {
+            group[groupBy] = '$' + groupBy;
         }
     }
     // Handle dateGroupBy directives
@@ -136,7 +142,6 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
         year: {
             year: { $year: dateFieldName }
         }
-
     };
     var dateGroupBy = req.query.dateGroupBy;
     if (dateGroupBy){
@@ -161,7 +166,7 @@ module.exports = function(db) {
                     var group = pipelineBuilder.getGroup(req);
                 } catch (e) {
                     return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(e)
                     });
                 }
 
@@ -169,7 +174,7 @@ module.exports = function(db) {
                     var match = pipelineBuilder.getMatch(req);
                 } catch (e) {
                     return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
+                        message: errorHandler.getAndLogErrorMessage(e)
                     });
                 }
                 aggregationModels.HourlyAdStat
