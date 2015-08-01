@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','HourlyAdStat',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat) {
+angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries) {
 		$scope.authentication = Authentication;
 
         $scope.lineData = [{
@@ -116,8 +116,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 		};
 		$scope.findOne = function() {
             var cb = function(response){
-                //$scope.data = new MongoTimeSeries(data, {fields: ['imps','clicks','view_convs','num_bids']})
-                $scope.data = response.data;
+                var data = new MongoTimeSeries(response.data, {fields: ['imps','clicks','view_convs','num_bids']});
+                $scope.data = {imps: data.imps, clicks: data.clicks, bids: data.num_bids}
             };
             HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'hour'}).then(cb, cb);
 			$scope.advertiser = Advertiser.get({

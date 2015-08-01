@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('aggregations').factory('MongoTimeSeries',function(){
     /**
      * Helper class to convert aggregation data from API to chart format
