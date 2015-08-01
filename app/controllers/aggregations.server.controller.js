@@ -11,6 +11,30 @@ var models = require('cliques_node_utils').mongodb.models,
  * Constructor for PipelineVarsBuilder object, which translates API request
  * path params into MongoDB Aggregation Pipeline-compatible objects.
  *
+ * Use `pathParams` to provide array of expected path parameters. Any path params
+ * found will be use in 'group' and 'match', so query results will be filtered
+ * to match desired param value, and will be grouped by corresponding field.
+ *
+ * Use `queryParams` to pass in non-hierarchical dimensions by which you wish
+ * to filter query results.  Resulting data will not be grouped by these dimensions
+ * unless specified using the `groupBy` query parameter.
+ *
+ * Additionally, you can pass in comma-separated values for any queryParam, and you
+ * get access to the following operators which are passed directly to $match step
+ * in the MongoDB Aggregation Pipeline
+ *
+ *  - {in} element in array
+ *  - {nin} element not in array
+ *  - {ne} matches any row with field val not equal to query val
+ *
+ *
+ * SPECIAL QUERY PARAMS:
+ *  - startDate: (inclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
+ *  - endDate: (exclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
+ *  - groupBy: single value or CSV containing additional fields to group by. NOTE: DO NOT INCLUDE DATE FIELD, use
+ *          dateGroupBy param instead
+ *  - dateGroupBy: 'hour', 'day', 'month' or 'year'
+ *
  * @param {Array} pathParams
  * @param {Array} queryParams
  * @param {String} dateFieldName name of date field in aggregation model, default is 'hour'
@@ -22,6 +46,17 @@ var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, date
     this.dateFieldName = dateFieldName || 'hour';
     this.queryParamOperators = ['in','nin','ne'];
 };
+
+/**
+ * Handles parsing of operator & comma-separated query values
+ *
+ * Returns either parsed value, or if a recognized operator is used, object
+ * with Mongo-compatible operator (i.e. prefixed with '$') as key.
+ *
+ * @param val
+ * @returns {*}
+ * @private
+ */
 HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     // first parse out operator & val
     var operator = val.match(/\{(.*)\}/);
@@ -46,13 +81,6 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
 
 /**
  * Creates $match object to pass to aggregation pipeline.
- *
- * Matches all path params, as well as the following:
- *
- *  - startDate: [inclusive] accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
- *  - endDate: [exclusive] accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
- *
- *
  * @param req
  */
 HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
@@ -94,6 +122,10 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     return match;
 };
 
+/**
+ * Creates $group object to pass to aggregation pipeline.
+ * @param req
+ */
 HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     var group = {};
     var self = this;
@@ -152,9 +184,12 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
 
 module.exports = function(db) {
     var aggregationModels = new models.AggregationModels(db);
+
+    // pipelineBuilder for HourlyAdStats
     var hourlyAdStatPathParams = ['advertiser','campaign','creativegroup','creative'];
     var hourlyAdStatGroupByFields = ['publisher','site','page','placement'];
     var pipelineBuilder = new HourlyAggregationPipelineVarBuilder(hourlyAdStatPathParams, hourlyAdStatGroupByFields, 'hour');
+
     return {
         hourlyAdStat: {
             /**
