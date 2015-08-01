@@ -7,7 +7,6 @@ angular.module('advertiser').factory('HourlyAdStat', ['$http',
         var adv_path     = base_path + '/adv';
         var pub_path     = base_path + '/pub';
         var clique_path  = base_path + 'clique';
-
         var hourlyadstatfactory = {};
 
         // Wrapper for query function so you don't have to
@@ -25,11 +24,12 @@ angular.module('advertiser').factory('HourlyAdStat', ['$http',
                 return $http.get(path, {params: queryParams})
             }
         }
-
         hourlyadstatfactory.advQuery = constructQueryFunc(['advertiserId', 'campaignId', 'creativegroupId','creativeId'], adv_path);
         hourlyadstatfactory.pubQuery = constructQueryFunc(['publisherId', 'siteId', 'pageId','placementId'], pub_path);
         hourlyadstatfactory.cliqueQuery = function(queryParams){
             return $http.get(clique_path, queryParams);
-        }
+        };
+
+        return hourlyadstatfactory;
 	}
 ]);
