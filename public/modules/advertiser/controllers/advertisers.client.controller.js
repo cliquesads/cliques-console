@@ -117,11 +117,11 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                 label: "Last 90 Days"
             }
         };
-        $scope.dateShortCode = "7d";
+        $scope.dateRangeSelection = "7d";
 
         $scope.getAdvertiserGraph = function(dateShortCode){
             // callback to pass to promise
-            dateShortCode = dateShortCode || '90d';
+            dateShortCode = dateShortCode || $scope.dateRangeSelection;
 
             var cb = function(response){
                 var data = new MongoTimeSeries(response.data, {
@@ -163,6 +163,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                 startDate: $scope.dateRanges[dateShortCode].startDate,
                 endDate: $scope.dateRanges[dateShortCode].endDate
             }).then(cb, cb);
+            $scope.dateRangeSelection = dateShortCode;
         }
 	}
 ]);

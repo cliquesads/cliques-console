@@ -58,8 +58,13 @@
     <div class="col-md-8">
         <div id="advertiserGraphPanel" class="panel panel-default" data-ng-init="getAdvertiserGraph()">
             <div class="panel-heading">
-                <paneltool tool-refresh="traditional"></paneltool>
-                <div class="panel-title">Last 7 Days</div>
+                <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
+                    <span class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('7d')">7d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('30d')">30d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('90d')">90d</button>
+                    </span>
+                </div>
             </div>
             <div class="panel-body">
                 <flot dataset="lineData" options="lineOptions" height="300px"></flot>
