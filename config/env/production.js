@@ -45,7 +45,8 @@ module.exports = {
                 'public/lib/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
                 'public/lib/flot/jquery.flot.js',
                 'public/lib/flot/jquery.flot.*.js',
-                'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js'
+                'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js',
+                'public/lib/d3/d3.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
