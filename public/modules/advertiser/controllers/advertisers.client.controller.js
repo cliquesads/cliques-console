@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries) {
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, mts) {
 		$scope.authentication = Authentication;
 
 		$scope.remove = function(advertiser) {
@@ -120,50 +120,57 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         $scope.dateRangeSelection = "7d";
 
         $scope.getAdvertiserGraph = function(dateShortCode){
-            // callback to pass to promise
-            dateShortCode = dateShortCode || $scope.dateRangeSelection;
 
-            var cb = function(response){
-                var data = new MongoTimeSeries(response.data, {
-                    fields: [
-                        'imps',
-                        {'CTR': function(row){return row.clicks / row.imps;}}
-                    ]
-                });
-                $scope.lineData = [{
-                    label: "Impressions",
-                    bars: {
-                        show: true,
-                        align: "center",
-                        fill: true,
-                        barWidth: 24 * 60 * 60 * 600,
-                        lineWidth: 0.4
-                    },
-                    color: "#768294",
-                    yaxis: 1,
-                    data: data.imps
-                },{
-                    label: "CTR",
-                    lines: {
-                        show: true,
-                        fill: 0.01
-                    },
-                    points: {
-                        show: true,
-                        radius: 4
-                    },
-                    color: "#5ab1ef",
-                    yaxis: 2,
-                    data: data.CTR
-                }];
-            };
-            // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
-                dateGroupBy: 'day',
-                startDate: $scope.dateRanges[dateShortCode].startDate,
-                endDate: $scope.dateRanges[dateShortCode].endDate
-            }).then(cb, cb);
-            $scope.dateRangeSelection = dateShortCode;
+            dateShortCode = dateShortCode || $scope.dateRangeSelection;
+            var startDate = $scope.dateRanges[dateShortCode].startDate;
+            var endDate = $scope.dateRanges[dateShortCode].endDate;
+            var timeUnit = 'day';
+
+            mts.then(function(MongoTimeSeries){
+                // callback to pass to promise
+                var cb = function(response){
+                    var data = new MongoTimeSeries(response.data, startDate, endDate, timeUnit, {
+                        fields: [
+                            'imps',
+                            {'CTR': function(row){return row.clicks / row.imps;}}
+                        ]
+                    });
+                    $scope.lineData = [{
+                        label: "Impressions",
+                        bars: {
+                            show: true,
+                            align: "center",
+                            fill: true,
+                            barWidth: 24 * 60 * 60 * 600,
+                            lineWidth: 0.4
+                        },
+                        color: "#768294",
+                        yaxis: 1,
+                        data: data.imps
+                    },{
+                        label: "CTR",
+                        lines: {
+                            show: true,
+                            fill: 0.01
+                        },
+                        points: {
+                            show: true,
+                            radius: 4
+                        },
+                        color: "#5ab1ef",
+                        yaxis: 2,
+                        data: data.CTR
+                    }];
+                };
+                // query HourlyAdStats api endpoint
+                HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+                    dateGroupBy: timeUnit,
+                    startDate: startDate,
+                    endDate: endDate
+                }).then(cb, cb);
+                $scope.dateRangeSelection = dateShortCode;
+            });
+
         }
 	}
 ]);
