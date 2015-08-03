@@ -38,7 +38,7 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
             var dateJSON = row._id[self.dateField];
 
             // TODO: This will automatically convert date to local time, should make specifiable by user
-            var thisDate = new Date(Date.UTC(dateJSON.year, dateJSON.month || null, dateJSON.day || null, dateJSON.hour || null, dateJSON.minute || null, dateJSON.second || null));
+            var thisDate = new Date(Date.UTC(dateJSON.year, dateJSON.month - 1 || null, dateJSON.day || null, dateJSON.hour || null, dateJSON.minute || null, dateJSON.second || null));
 
             // now read API data into individual series stored on self,
             // calling field operator function for each
