@@ -44,7 +44,8 @@ module.exports = {
                 'public/lib/angular-xeditable/dist/js/xeditable.min.js',
                 'public/lib/angular-bootstrap-nav-tree/dist/abn_tree_directive.js',
                 'public/lib/flot/jquery.flot.js',
-                'public/lib/flot/jquery.flot.*.js'
+                'public/lib/flot/jquery.flot.*.js',
+                'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',

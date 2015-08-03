@@ -44,12 +44,106 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			});
 		};
 
-        $scope.getAdvertiserGraph = function(){
+        $scope.lineOptions = {
+            grid: {
+                borderColor: '#eee',
+                borderWidth: 1,
+                hoverable: true,
+                backgroundColor: '#fcfcfc'
+            },
+            tooltip: true,
+            tooltipOpts: {
+                content: function (label, x, y) {
+                    var date = new Date(x);
+                    var str = (date.getMonth() + 1).toString() + '/' + date.getDate().toString();
+                    if (label === 'Impressions'){
+                        y = y.toLocaleString();
+                    } else if (label === 'CTR'){
+                        y = (y * 100).toFixed(3) + '%';
+                    }
+                    return str + ' : ' + y;
+                }
+            },
+            xaxis: {
+                tickColor: '#fcfcfc',
+                mode: 'time',
+                timeformat: '%m/%d/%y',
+                tickSize: [1, 'day'],
+                axisLabelPadding: 5
+            },
+            yaxes: [
+                {
+                    position: 'left',
+                    tickColor: '#eee',
+                    tickFormatter: function (val, axis) {
+                        return val.toLocaleString();
+                    }
+                },
+                {
+                    position: 'right',
+                    tickColor: '#eee',
+                    tickFormatter: function (val, axis) {
+                        return (val * 100).toFixed(3) + '%';
+                    }
+                }
+            ],
+            shadowSize: 0
+        };
+
+        var now = new Date(); // date in local time
+        // get tomorrow at midnight as end date
+        var end_date = new Date(now.setDate(now.getDate() + 1));
+        end_date.setHours(0);
+        end_date.setMinutes(0);
+        end_date.setSeconds(0);
+        end_date.setMilliseconds(0);
+        function subtractDays(date, days){
+            return new Date(date - days * 24 * 60 * 60 * 1000);
+        }
+        $scope.dateRanges = {
+            "7d": {
+                startDate: subtractDays(end_date, 7).toISOString(),
+                endDate: end_date.toISOString(),
+                label: "Last 7 Days"
+            },
+            "30d": {
+                startDate: subtractDays(end_date, 30).toISOString(),
+                endDate: end_date.toISOString(),
+                label: "Last 30 Days"
+            },
+            "90d": {
+                startDate: subtractDays(end_date, 90).toISOString(),
+                endDate: end_date.toISOString(),
+                label: "Last 90 Days"
+            }
+        };
+        $scope.dateShortCode = "7d";
+
+        $scope.getAdvertiserGraph = function(dateShortCode){
             // callback to pass to promise
+            dateShortCode = dateShortCode || '90d';
+
             var cb = function(response){
-                var data = new MongoTimeSeries(response.data, {fields: ['imps','spend','bids']});
+                var data = new MongoTimeSeries(response.data, {
+                    fields: [
+                        'imps',
+                        {'CTR': function(row){return row.clicks / row.imps;}}
+                    ]
+                });
                 $scope.lineData = [{
                     label: "Impressions",
+                    bars: {
+                        show: true,
+                        align: "center",
+                        fill: true,
+                        barWidth: 24 * 60 * 60 * 600,
+                        lineWidth: 0.4
+                    },
+                    color: "#768294",
+                    yaxis: 1,
+                    data: data.imps
+                },{
+                    label: "CTR",
                     lines: {
                         show: true,
                         fill: 0.01
@@ -59,58 +153,16 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                         radius: 4
                     },
                     color: "#5ab1ef",
-                    yaxis: 1,
-                    data: data.imps
-                }, {
-                    label: "Spend",
-                    bars: {
-                        show: true,
-                        align: "center",
-                        fill: true,
-                        barWidth: 24 * 60 * 60 * 800,
-                        lineWidth: 1
-                    },
-                    color: "#f5994e",
                     yaxis: 2,
-                    data: data.spend
+                    data: data.CTR
                 }];
             };
             // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'day'}).then(cb, cb);
-
-            $scope.lineOptions = {
-                grid: {
-                    borderColor: '#eee',
-                    borderWidth: 1,
-                    hoverable: true,
-                    backgroundColor: '#fcfcfc'
-                },
-                tooltip: true,
-                xaxis: {
-                    tickColor: '#eee',
-                    mode: 'time',
-                    timeformat: '%m/%d',
-                    ticksize: [1, 'day'],
-                    axisLabelPadding: 5
-                },
-                yaxes: [
-                    {
-                        position: 'left',
-                        tickColor: '#eee',
-                        tickFormatter: function (val, axis) {
-                            return val.toLocaleString();
-                        }
-                    },
-                    {
-                        position: 'right',
-                        tickColor: '#eee',
-                        tickFormatter: function (val, axis) {
-                            return '$' + val.toLocaleString();
-                        }
-                    }
-                ],
-                shadowSize: 0
-            };
+            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+                dateGroupBy: 'day',
+                startDate: $scope.dateRanges[dateShortCode].startDate,
+                endDate: $scope.dateRanges[dateShortCode].endDate
+            }).then(cb, cb);
         }
 	}
 ]);
