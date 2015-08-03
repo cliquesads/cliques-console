@@ -59,7 +59,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                     if (label === 'Impressions'){
                         y = y.toLocaleString();
                     } else if (label === 'CTR'){
-                        y = (y * 100).toFixed(3) + '%';
+                        y = (y * 100).toFixed(2) + '%';
                     }
                     return str + ' : ' + y;
                 }
@@ -83,7 +83,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                     position: 'right',
                     tickColor: '#eee',
                     tickFormatter: function (val, axis) {
-                        return (val * 100).toFixed(3) + '%';
+                        return (val * 100).toFixed(2) + '%';
                     }
                 }
             ],
