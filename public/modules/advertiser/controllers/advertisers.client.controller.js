@@ -4,82 +4,6 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries) {
 		$scope.authentication = Authentication;
 
-        $scope.lineData = [{
-            "label": "Impressions",
-            "color": "#5ab1ef",
-            "yaxis": 1,
-            "data": [
-                [new Date('2015-07-01'), 40838],
-                [new Date('2015-07-02'), 58978],
-                [new Date('2015-07-03'), 47909],
-                [new Date('2015-07-04'), 37090],
-                [new Date('2015-07-05'), 89322],
-                [new Date('2015-07-06'), 74490],
-                [new Date('2015-07-07'), 67599]
-            ]
-        }, {
-            "label": "Spend",
-            "color": "#f5994e",
-            "yaxis": 2,
-            "data": [
-                [new Date('2015-07-01'), 65],
-                [new Date('2015-07-02'), 116],
-                [new Date('2015-07-03'), 123],
-                [new Date('2015-07-04'), 119],
-                [new Date('2015-07-05'), 378],
-                [new Date('2015-07-06'), 389],
-                [new Date('2015-07-07'), 312]
-            ]
-        }];
-        $scope.lineOptions = {
-            series: {
-                lines: {
-                    show: true,
-                    fill: 0.01
-                },
-                points: {
-                    show: true,
-                    radius: 4
-                }
-            },
-            grid: {
-                borderColor: '#eee',
-                borderWidth: 1,
-                hoverable: true,
-                backgroundColor: '#fcfcfc'
-            },
-            tooltip: true,
-            tooltipOpts: {
-                content: function (label, x, y) { return x + ' : ' + y; }
-            },
-            xaxis: {
-                tickColor: '#eee',
-                mode: 'time',
-                timeformat: '%m/%d',
-                ticksize: [1, 'day']
-            },
-            yaxes: [
-                {
-                    position: 'left',
-                    tickColor: '#eee',
-                    tickFormatter: function (val, axis) {
-                        return val.toLocaleString();
-                    }
-                },
-                {
-                    position: 'right',
-                    tickColor: '#eee',
-                    tickFormatter: function (val, axis) {
-                        return '$' + val.toLocaleString();
-                    }
-                }
-            ],
-            shadowSize: 0
-        };
-
-        //// used for datepicker forms
-        //$scope.today = new Date();
-
 		$scope.remove = function(advertiser) {
 			if (advertiser) {
 				advertiser.$remove();
@@ -115,14 +39,78 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			$scope.advertisers = Advertiser.query();
 		};
 		$scope.findOne = function() {
-            var cb = function(response){
-                var data = new MongoTimeSeries(response.data, {fields: ['imps','clicks','view_convs','bids']});
-                $scope.data = {imps: data.imps, clicks: data.clicks, bids: data.bids}
-            };
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'day'}).then(cb, cb);
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
 			});
 		};
+
+        $scope.getAdvertiserGraph = function(){
+            // callback to pass to promise
+            var cb = function(response){
+                var data = new MongoTimeSeries(response.data, {fields: ['imps','spend','bids']});
+                $scope.lineData = [{
+                    label: "Impressions",
+                    lines: {
+                        show: true,
+                        fill: 0.01
+                    },
+                    points: {
+                        show: true,
+                        radius: 4
+                    },
+                    color: "#5ab1ef",
+                    yaxis: 1,
+                    data: data.imps
+                }, {
+                    label: "Spend",
+                    bars: {
+                        show: true,
+                        align: "center",
+                        fill: true,
+                        barWidth: 24 * 60 * 60 * 800,
+                        lineWidth: 1
+                    },
+                    color: "#f5994e",
+                    yaxis: 2,
+                    data: data.spend
+                }];
+            };
+            // query HourlyAdStats api endpoint
+            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{ dateGroupBy: 'day'}).then(cb, cb);
+
+            $scope.lineOptions = {
+                grid: {
+                    borderColor: '#eee',
+                    borderWidth: 1,
+                    hoverable: true,
+                    backgroundColor: '#fcfcfc'
+                },
+                tooltip: true,
+                xaxis: {
+                    tickColor: '#eee',
+                    mode: 'time',
+                    timeformat: '%m/%d',
+                    ticksize: [1, 'day'],
+                    axisLabelPadding: 5
+                },
+                yaxes: [
+                    {
+                        position: 'left',
+                        tickColor: '#eee',
+                        tickFormatter: function (val, axis) {
+                            return val.toLocaleString();
+                        }
+                    },
+                    {
+                        position: 'right',
+                        tickColor: '#eee',
+                        tickFormatter: function (val, axis) {
+                            return '$' + val.toLocaleString();
+                        }
+                    }
+                ],
+                shadowSize: 0
+            };
+        }
 	}
 ]);
