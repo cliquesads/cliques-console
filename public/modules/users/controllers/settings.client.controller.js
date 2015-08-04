@@ -1,11 +1,13 @@
 'use strict';
 
-angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication',
-	function($scope, $http, $location, Users, Authentication) {
+angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication','Timezones',
+	function($scope, $http, $location, Users, Authentication, Timezones) {
 		$scope.user = Authentication.user;
 
 		// If user is not signed in then redirect back home
 		if (!$scope.user) $location.path('/');
+
+        $scope.timezoneChoices = Timezones;
 
 		// Check if there are additional accounts 
 		$scope.hasConnectedAdditionalSocialAccounts = function(provider) {
