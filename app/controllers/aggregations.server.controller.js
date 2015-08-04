@@ -5,7 +5,8 @@
  */
 var models = require('cliques_node_utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
-	_ = require('lodash');
+	_ = require('lodash'),
+    moment = require('moment-timezone');
 
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
@@ -44,6 +45,7 @@ var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, date
     this.queryParams = queryParams;
     this.dateFieldName = dateFieldName || 'hour';
     this.queryParamOperators = ['in','nin','ne'];
+    this.tzOffset = null;
 };
 
 /**
@@ -123,6 +125,9 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
 
 /**
  * Creates $group object to pass to aggregation pipeline.
+ *
+ * NOTE: Converts all DB dates user's timezone (offset determined based off current date)
+ * BEFORE grouping, so all groupings reflect user's timezone
  * @param req
  */
 HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
@@ -153,25 +158,30 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
         }
     }
     // Handle dateGroupBy directives
+
+    // TODO: currently setting timezone offset based on offset for current time.
+    // TODO: Need to fix, this is kind of shitty
+    var offset_minutes = moment.tz.zone(req.user.tz).offset(new Date());
+    var offset_ms = offset_minutes * 60 * 1000;
     var dateFieldName = '$' + self.dateFieldName;
     var date_groupings = {
         hour: {
-            hour: { $hour: dateFieldName },
-            month: { $month: dateFieldName },
-            day: { $dayOfMonth: dateFieldName },
-            year: { $year: dateFieldName }
+            hour: { $hour: [{ $subtract: [dateFieldName,offset_ms]}]},
+            month: { $month: [{ $subtract: [dateFieldName,offset_ms]}]},
+            day: { $dayOfMonth: [{ $subtract: [dateFieldName,offset_ms]}]},
+            year: { $year: [{ $subtract: [dateFieldName,offset_ms]}]}
         },
         day: {
-            month: { $month: dateFieldName },
-            day: { $dayOfMonth: dateFieldName },
-            year: { $year: dateFieldName }
+            month: { $month: [{ $subtract: [dateFieldName,offset_ms]}]},
+            day: { $dayOfMonth: [{ $subtract: [dateFieldName,offset_ms]}]},
+            year: { $year: [{ $subtract: [dateFieldName,offset_ms]}]}
         },
         month: {
-            month: { $month: dateFieldName },
-            year: { $year: dateFieldName }
+            month: { $month: [{ $subtract: [dateFieldName,offset_ms]}]},
+            year: { $year: [{ $subtract: [dateFieldName,offset_ms]}]}
         },
         year: {
-            year: { $year: dateFieldName }
+            year: { $year: [{ $subtract: [dateFieldName,offset_ms]}]}
         }
     };
     if (req.query.dateGroupBy){
