@@ -12,12 +12,18 @@ function getDatesArray(startDate, stopDate, unit){
 
 angular.module('aggregations').factory('MongoTimeSeries',function(){
     /**
-     * Helper class to convert aggregation data from API to chart format
+     * Helper class to convert aggregation data from API to chart format.
      *
-     * @param apiData
+     * Reads response from aggregation API, converts to chart-friendly
+     * series, and fills zeros for missing dates.
+     *
+     * NOTE: Not optimized for larger datasets, really should only be used
+     * for chart data.
+     *
+     * @param apiData response from aggregation API
      * @param startDate ISOFormatted datetime
      * @param endDate ISOFormatted datetime
-     * @param timezone
+     * @param timezone tz string to specify timezone in which start & end dates were generated.
      * @param timeUnit
      * @param options
      * @constructor
@@ -50,13 +56,13 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
         self.fieldOperators = {};
         this.fields.forEach(function(fieldspec){
             if (typeof fieldspec === 'string'){
-                self[fieldspec] = self.zerosArray;
+                self[fieldspec] = self.zerosArray.slice(0);
                 // Add just pass-through function to operators, since no function declared
                 // for this field
                 self.fieldOperators[fieldspec] = function(row){return row[fieldspec]}
             } else if (typeof fieldspec === 'object'){
                 var field = Object.keys(fieldspec)[0]; // I think this is safe to do but not 100% sure
-                self[field] = self.zerosArray;
+                self[field] = self.zerosArray.slice(0);
                 self.fieldOperators[field] = fieldspec[field];
             }
         })
@@ -78,6 +84,7 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
 
             // now read API data into individual series stored on self,
             // calling field operator function for each
+            // TODO: This is going to be pretty slow, not good for larger datasets
             Object.keys(self.fieldOperators).forEach(function(field){
                 var fieldFunc = self.fieldOperators[field];
                 // get index in initial zeros array of this date and
