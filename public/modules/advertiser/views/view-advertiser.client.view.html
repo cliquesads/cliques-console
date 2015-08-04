@@ -59,6 +59,12 @@
         <div id="advertiserGraphPanel" class="panel panel-default" data-ng-init="getAdvertiserGraph('7d')">
             <div class="panel-heading">
                 <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
+                    &nbsp&nbsp&nbsp
+                    <small>
+                        <em class="text-muted">
+                            Reporting Timezone: {{ authentication.user.tz }}
+                        </em>
+                    </small>
                     <span class="pull-right">
                         <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('7d')">7d</button>
                         <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('30d')">30d</button>
