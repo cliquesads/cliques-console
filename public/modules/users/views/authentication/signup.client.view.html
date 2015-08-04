@@ -33,6 +33,12 @@
 					<label for="email">Email</label>
 					<input type="email" id="email" name="email" class="form-control" data-ng-model="credentials.email" placeholder="Email">
 				</div>
+                <div class="form-group">
+                    <label for="password">Reporting Timezone</label>
+                    <select id="tz" name="tz" class="form-control" data-ng-model="credentials.tz" placeholder="America/New_York">
+                        <option ng-repeat="timezone in timezoneChoices" value="{{ timezone[0] }}">{{ timezone[1] }}</option>
+                    </select>
+                </div>
 				<div class="form-group">
 					<label for="username">Username</label>
 					<input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="Username">

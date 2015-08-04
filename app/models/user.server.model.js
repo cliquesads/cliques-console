@@ -75,6 +75,7 @@ var UserSchema = new Schema({
 		}],
 		default: ['advertiser']
 	},
+    tz: { type: String, default: 'America/New_York',enum: ['America/Los_Angeles','America/Denver','America/Chicago','America/New_York']},
 	updated: {
 		type: Date
 	},

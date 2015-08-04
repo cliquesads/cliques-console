@@ -7,6 +7,17 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		// If user is signed in then redirect back home
 		if ($scope.authentication.user) $location.path('/');
 
+        // TODO: get this from model enum
+        $scope.timezoneChoices = [
+            ['America/Los_Angeles','US - Pacific Time'],
+            ['America/Denver','US - Mountain Time'],
+            ['America/Chicago','US - Central Time'],
+            ['America/New_York','US - Eastern Time']
+        ];
+        $scope.credentials = {
+            tz: ['America/New_York']
+        };
+
 		$scope.signup = function() {
 			$http.post('/auth/signup', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
