@@ -20,6 +20,9 @@ var models = require('cliques_node_utils').mongodb.models,
  * to filter query results.  Resulting data will not be grouped by these dimensions
  * unless specified using the `groupBy` query parameter.
  *
+ * !!!NOTE!!!: When grouped by date unit, converts all dates to user's timezone before returning
+ * so no conversion is necessary on client side
+ *
  * Additionally, you can pass in comma-separated values for any queryParam, and you
  * get access to the following operators which are passed directly to $match step
  * in the MongoDB Aggregation Pipeline

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, mts) {
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries) {
 		$scope.authentication = Authentication;
 
 		$scope.remove = function(advertiser) {
@@ -90,30 +90,22 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             shadowSize: 0
         };
 
-        var now = new Date(); // date in local time
-        // get tomorrow at midnight as end date
-        var end_date = new Date(now.setDate(now.getDate() + 1));
-        end_date.setHours(0);
-        end_date.setMinutes(0);
-        end_date.setSeconds(0);
-        end_date.setMilliseconds(0);
-        function subtractDays(date, days){
-            return new Date(date - days * 24 * 60 * 60 * 1000);
-        }
+        // get tomorrow at midnight in user's TZ as end date
+        //var end_date = moment().tz(user.tz).add(1,'days').startOf('day');
         $scope.dateRanges = {
             "7d": {
-                startDate: subtractDays(end_date, 7).toISOString(),
-                endDate: end_date.toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(7, 'days').toISOString(),
+                endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
                 label: "Last 7 Days"
             },
             "30d": {
-                startDate: subtractDays(end_date, 30).toISOString(),
-                endDate: end_date.toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(30, 'days').toISOString(),
+                endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
                 label: "Last 30 Days"
             },
             "90d": {
-                startDate: subtractDays(end_date, 90).toISOString(),
-                endDate: end_date.toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(90, 'days').toISOString(),
+                endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
                 label: "Last 90 Days"
             }
         };
@@ -126,51 +118,49 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             var endDate = $scope.dateRanges[dateShortCode].endDate;
             var timeUnit = 'day';
 
-            mts.then(function(MongoTimeSeries){
-                // callback to pass to promise
-                var cb = function(response){
-                    var data = new MongoTimeSeries(response.data, startDate, endDate, timeUnit, {
-                        fields: [
-                            'imps',
-                            {'CTR': function(row){return row.clicks / row.imps;}}
-                        ]
-                    });
-                    $scope.lineData = [{
-                        label: "Impressions",
-                        bars: {
-                            show: true,
-                            align: "center",
-                            fill: true,
-                            barWidth: 24 * 60 * 60 * 600,
-                            lineWidth: 0.4
-                        },
-                        color: "#768294",
-                        yaxis: 1,
-                        data: data.imps
-                    },{
-                        label: "CTR",
-                        lines: {
-                            show: true,
-                            fill: 0.01
-                        },
-                        points: {
-                            show: true,
-                            radius: 4
-                        },
-                        color: "#5ab1ef",
-                        yaxis: 2,
-                        data: data.CTR
-                    }];
-                };
-                // query HourlyAdStats api endpoint
-                HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
-                    dateGroupBy: timeUnit,
-                    startDate: startDate,
-                    endDate: endDate
-                }).then(cb, cb);
-                $scope.dateRangeSelection = dateShortCode;
-            });
 
+            // callback to pass to promise
+            var cb = function(response){
+                var data = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit, {
+                    fields: [
+                        'imps',
+                        {'CTR': function(row){return row.clicks / row.imps;}}
+                    ]
+                });
+                $scope.lineData = [{
+                    label: "Impressions",
+                    bars: {
+                        show: true,
+                        align: "center",
+                        fill: true,
+                        barWidth: 24 * 60 * 60 * 600,
+                        lineWidth: 0.4
+                    },
+                    color: "#768294",
+                    yaxis: 1,
+                    data: data.imps
+                },{
+                    label: "CTR",
+                    lines: {
+                        show: true,
+                        fill: 0.01
+                    },
+                    points: {
+                        show: true,
+                        radius: 4
+                    },
+                    color: "#5ab1ef",
+                    yaxis: 2,
+                    data: data.CTR
+                }];
+            };
+            // query HourlyAdStats api endpoint
+            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+                dateGroupBy: timeUnit,
+                startDate: startDate,
+                endDate: endDate
+            }).then(cb, cb);
+            $scope.dateRangeSelection = dateShortCode;
         }
 	}
 ]);
