@@ -49,7 +49,9 @@ module.exports = {
                 'public/lib/flot/jquery.flot.js',
                 'public/lib/flot/jquery.flot.*.js',
                 'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js',
-                'public/lib/d3/d3.min.js'
+                'public/lib/lodash/lodash.min.js',
+                'public/lib/moment/min/moment.min.js',
+                'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js'
 			]
 		},
 		css: [
