@@ -44,69 +44,29 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			});
 		};
 
-        $scope.lineOptions = {
-            grid: {
-                borderColor: '#eee',
-                borderWidth: 1,
-                hoverable: true,
-                backgroundColor: '#fcfcfc'
-            },
-            tooltip: true,
-            tooltipOpts: {
-                content: function (label, x, y) {
-                    var date = new Date(x);
-                    var str = (date.getMonth() + 1).toString() + '/' + date.getDate().toString();
-                    if (label === 'Impressions'){
-                        y = y.toLocaleString();
-                    } else if (label === 'CTR'){
-                        y = (y * 100).toFixed(2) + '%';
-                    }
-                    return str + ' : ' + y;
-                }
-            },
-            xaxis: {
-                tickColor: '#fcfcfc',
-                mode: 'time',
-                timeformat: '%m/%d/%y',
-                tickSize: [1, 'day'],
-                axisLabelPadding: 5
-            },
-            yaxes: [
-                {
-                    position: 'left',
-                    tickColor: '#eee',
-                    tickFormatter: function (val, axis) {
-                        return val.toLocaleString();
-                    }
-                },
-                {
-                    position: 'right',
-                    tickColor: '#eee',
-                    tickFormatter: function (val, axis) {
-                        return (val * 100).toFixed(2) + '%';
-                    }
-                }
-            ],
-            shadowSize: 0
-        };
-
         // get tomorrow at midnight in user's TZ as end date
         //var end_date = moment().tz(user.tz).add(1,'days').startOf('day');
         $scope.dateRanges = {
             "7d": {
-                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(7, 'days').toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(6, 'days').toISOString(),
                 endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
-                label: "Last 7 Days"
+                label: "Last 7 Days",
+                showPoints: true,
+                tickDays: 1
             },
             "30d": {
-                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(30, 'days').toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(29, 'days').toISOString(),
                 endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
-                label: "Last 30 Days"
+                label: "Last 30 Days",
+                showPoints: false,
+                tickDays: 5
             },
             "90d": {
-                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(90, 'days').toISOString(),
+                startDate: moment().tz(user.tz).add(1,'days').startOf('day').subtract(89, 'days').toISOString(),
                 endDate: moment().tz(user.tz).add(1,'days').startOf('day').toISOString(),
-                label: "Last 90 Days"
+                label: "Last 90 Days",
+                showPoints: false,
+                tickDays: 15
             }
         };
         $scope.dateRangeSelection = "7d";
@@ -116,7 +76,57 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             dateShortCode = dateShortCode || $scope.dateRangeSelection;
             var startDate = $scope.dateRanges[dateShortCode].startDate;
             var endDate = $scope.dateRanges[dateShortCode].endDate;
+            var tickDays = $scope.dateRanges[dateShortCode].tickDays;
             var timeUnit = 'day';
+
+            $scope.lineOptions = {
+                grid: {
+                    borderColor: '#eee',
+                    borderWidth: 1,
+                    hoverable: true,
+                    backgroundColor: '#fcfcfc'
+                },
+                tooltip: true,
+                tooltipOpts: {
+                    content: function (label, x, y) {
+                        var date = new Date(x);
+                        var str = (date.getMonth() + 1).toString() + '/' + date.getDate().toString();
+                        if (label === 'Impressions'){
+                            y = y.toLocaleString();
+                        } else if (label === 'CTR'){
+                            y = (y * 100).toFixed(2) + '%';
+                        }
+                        return str + ' : ' + y;
+                    }
+                },
+                xaxis: {
+                    tickColor: '#fcfcfc',
+                    mode: 'time',
+
+                    timeformat: '%m/%d/%y',
+                    tickSize: [tickDays, 'day'],
+                    axisLabelPadding: 5
+                },
+                yaxes: [
+                    {
+                        position: 'left',
+                        tickColor: '#eee',
+                        min: 0,
+                        tickFormatter: function (val, axis) {
+                            return val.toLocaleString();
+                        }
+                    },
+                    {
+                        position: 'right',
+                        tickColor: '#eee',
+                        min: 0,
+                        tickFormatter: function (val, axis) {
+                            return (val * 100).toFixed(2) + '%';
+                        }
+                    }
+                ],
+                shadowSize: 0
+            };
 
 
             // callback to pass to promise
