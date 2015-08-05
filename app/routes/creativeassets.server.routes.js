@@ -7,10 +7,11 @@ module.exports = function(app){
     var creativeassets = require('../controllers/creativeassets.server.controller')(app.db);
 
     app.route('/creativeassets')
-        .get(users.requiresLogin, function(req, res){ res.send('CreativeAssets')});
-
-    /* ---- Advertiser API Routes ---- */
-    app.route('/creativeassets/:advertiser/:campaign')
-        .get(users.requiresLogin, function(req, res){ res.send('advertiser: ' + req.params.advertiser + ' campaign: ' + req.params.campaign)})
+        .get(users.requiresLogin, function(req, res){ res.send('CreativeAssets')})
         .post(users.requiresLogin, upload.single('file'), creativeassets.create);
+
+    ///* ---- Advertiser API Routes ---- */
+    //app.route('/creativeassets/)
+    //    .get(users.requiresLogin, function(req, res){ res.send('advertiser: ' + req.params.advertiser + ' campaign: ' + req.params.campaign)})
+
 };
