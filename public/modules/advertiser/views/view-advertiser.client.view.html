@@ -34,12 +34,18 @@
     <div class="col-sm-4">
         <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
 
-        <h4>Campaigns</h4>
+
         <ul class="list-group">
+            <li class="list-group-item">
+                Campaigns
+                <a href="#" class="pull-right ng-click-active" ng-click="">
+                    <span class="fa fa-plus-square-o"></span>
+                </a>
+            </li>
             <li data-ng-repeat="campaign in advertiser.campaigns" ng-click="" class="list-group-item">
                 <div class="row row-table">
                     <div class="col-sm-2">
-                        <div class="label label-success">Active</div>
+                        <div class="label label-success">{{ campaign.active ? "Active":"Inactive"}}</div>
                     </div>
                     <div class="col-sm-4">
                         <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>
