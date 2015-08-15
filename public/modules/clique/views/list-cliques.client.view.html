@@ -8,9 +8,55 @@
 	</ul>
 </h3>
 <section data-ng-controller="CliqueController" data-ng-init="find()">
-    <div class="row">
+    <div class="col-md-6">
         <div class="well wd-wide">
-            <abn-tree tree-data="cliques" tree-control="my_tree" on-select="my_tree_handler(branch)" icon-leaf="fa fa-square" expand-level="0" initial-selection="Outdoor"></abn-tree>
+            <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="0" initial-selection="Outdoor"></abn-tree>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default" data-ng-show="clique._id">
+            <div class="panel-heading">
+                <b>Selected:</b> {{ clique._id }}
+                <div class="panel-body">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" ng-click="show_child_form = !show_child_form">Add Child</button>
+                        <button type="button" class="btn btn-default" ng-click="show_edit_form = !show_edit_form">Edit</button>
+                    </div>
+                    <br/>
+                    <br/>
+                    <!--BEGIN New Clique Form-->
+                    <form name="newCliqueForm" class="form-horizontal" data-ng-show="show_child_form" validate-form="">
+                        <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Name</label>
+                            <div class="col-lg-10">
+                                <input name="new_clique_name" type="text" data-ng-model="new_clique_name" id="new_clique_name" class="form-control" placeholder="Name" required="required" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <button type="submit" class="btn btn-sm btn-primary" ng-click="create_new_clique()">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                    <!--END New Clique Form-->
+                    <form name="editCliqueForm" class="form-horizontal" data-ng-show="show_edit_form" validate-form="">
+                        <div ng-show="update_error" class="alert alert-danger col-md-12">{{ update_error }}</div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">Name</label>
+                            <div class="col-lg-10">
+                                <input name="clique_name" type="text" data-ng-model="clique.name" id="clique.name" class="form-control" placeholder="Name" required="required" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-2 col-lg-10">
+                                <button type="submit" class="btn btn-sm btn-primary" ng-click="update_clique()">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>

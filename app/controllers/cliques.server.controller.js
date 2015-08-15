@@ -37,6 +37,9 @@ module.exports = function(db) {
          * Create new clique
          */
         create: function (req, res) {
+            // pass in _id as name, as passing _id directly in request body
+            // messes up client-side resource class
+            req.body._id = req.body.name;
             var clique = new cliqueModels.Clique(req.body);
 
             clique.save(function (err) {
@@ -69,19 +72,40 @@ module.exports = function(db) {
         },
         /**
          * Update existing clique
+         *
+         * WARNING: If name field is provided,
          */
         update: function (req, res) {
             var clique = req.clique;
-            clique = _.extend(clique, req.body);
-            clique.save(function (err) {
-                if (err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                } else {
-                    res.json(clique);
-                }
-            });
+            function updateEverythingElse(thisClique){
+                thisClique = _.extend(thisClique, req.body);
+                thisClique.save(function (err) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        res.json(thisClique);
+                    }
+                });
+            }
+            if (req.body.name){
+                cliqueModels.updateCliqueId(clique._id, req.body.name, function(err, newClique){
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        _.omit(req.body, 'name');
+                        if (req.body != {}) {
+                            return updateEverythingElse(newClique);
+                        }
+                    }
+                });
+            } else {
+                return updateEverythingElse(req.clique);
+            }
+
         },
         /**
          * Delete an advertiser
