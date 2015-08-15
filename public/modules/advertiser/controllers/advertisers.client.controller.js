@@ -37,12 +37,25 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 		};
 
 		$scope.find = function() {
+            // on query return, get campaign spend data to augment $scope.advertisers
 			$scope.advertisers = Advertiser.query();
 		};
 		$scope.findOne = function() {
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
-			});
+			}, function(){
+                HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+                    groupBy: 'campaign'
+                }).then(function(response){
+                    response.data.forEach(function(campaign_data){
+                        var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
+                            return campaign._id === campaign_data._id.campaign
+                        });
+                        $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend
+                        / $scope.advertiser.campaigns[i].budget).toFixed(4);
+                    });
+                });
+            });
 		};
 
 

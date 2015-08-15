@@ -45,10 +45,12 @@
                         <p class="list-group-item-text">{{ campaign.clique }}</p>
                     </div>
                     <div class="col-sm-3">
-                        <p class="list-group-item-text">Budget</p>
                         <h4 class="list-group-item-heading">{{ campaign.budget | currency:"$":"0" }}</h4>
+                        <p class="list-group-item-text">Budget</p>
                     </div>
-                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3">
+                        <radial percent="{{ campaign.percent_spent }}" size="sm"></radial>
+                    </div>
                 </div>
             </li>
         </ul>
