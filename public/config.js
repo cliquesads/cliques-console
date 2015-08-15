@@ -23,7 +23,8 @@ var ApplicationConfiguration = (function() {
         'ui.utils',
         'angularBootstrapNavTree',
         'angularFileUpload',
-        'xeditable'
+        'xeditable',
+        'ngDialog'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

@@ -51,7 +51,8 @@ module.exports = {
                 'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js',
                 'public/lib/lodash/lodash.min.js',
                 'public/lib/moment/min/moment.min.js',
-                'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js'
+                'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js',
+                'public/lib/ngDialog/js/ngDialog.min.js'
 			]
 		},
 		css: [

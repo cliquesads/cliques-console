@@ -2,7 +2,7 @@
 
 module.exports = {
 	// db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/angle',
-	db: 'mongodb://angle:alterman05@ds029950.mongolab.com:29950/angle-on-mean',
+	//db: 'mongodb://angle:alterman05@ds029950.mongolab.com:29950/angle-on-mean',
 	assets: {
 		lib: {
 			css: [
@@ -48,7 +48,8 @@ module.exports = {
                 'public/lib/flot.tooltip/js/jquery.flot.tooltip.min.js',
                 'public/lib/lodash/lodash.min.js',
                 'public/lib/moment/min/moment.min.js',
-                'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js'
+                'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js',
+                'public/lib/ngDialog/js/ngDialog.min.js'
 			]
 		},
 		css: 'public/dist/application.min.css',
