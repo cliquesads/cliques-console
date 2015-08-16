@@ -16,6 +16,7 @@ angular.module('advertiser').directive('bidModifier', [function() {
         templateUrl: 'modules/advertiser/views/partials/bid-modifier.html',
         link: function(scope, element, attrs){
             scope.div_id = scope.title.toLowerCase();
+            scope.Math = Math;
         }
     };
 }]);
