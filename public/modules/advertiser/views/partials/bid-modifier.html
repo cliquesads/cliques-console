@@ -1,0 +1,27 @@
+<div class="col-md-{{ width }}">
+    <div class="form-group">
+        <label>{{ title }}</label>
+        <select chosen="{width: '100%'}" multiple="multiple" name="{{ div_id }}" id="{{ div_id }}" ng-options="obj.name for obj in options" ng-model="targets" placeholder="Select {{ title }} to target or block" data-parsley-group="{{ wizard_step }}" class="chosen-select form-control" style="width: 100%"></select>
+    </div>
+</div>
+<!--BEGIN DMA table-->
+<div class="col-md-{{ width }}" data-ng-show="targets">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Weighting</th>
+            <th>Bid</th>
+        </tr>
+        </thead>
+        <tbody data-ng-show="targets">
+        <tr ng-repeat="target in targets">
+            <td>{{ target.name}}</td>
+            <td>
+                <slider ng-model="target.weight" min="0" max="10" step="0.5" value="1.5" orientation="horizontal" class="bs-slider slider-horizontal"></slider>
+            </td>
+            <td>{{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
