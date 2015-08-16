@@ -9,6 +9,7 @@
 </h3>
 
 <section data-ng-controller="AdvertiserWizardController">
+    {{ campaign }}
     <div class="panel panel-default">
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
@@ -209,34 +210,6 @@
                         <!--BEGIN DMA slider controls-->
                         <fieldset>
                             <div class="row">
-                                <!--<div class="col-md-10">-->
-                                    <!--<div class="form-group">-->
-                                        <!--<label>DMAs</label>-->
-                                        <!--<select chosen="" multiple="multiple" name="campaign.dma_targets" id="dma_targets" ng-options="obj.name for obj in dmas" ng-model="campaign.dma_targets" placeholder="Select DMAs to target or block" data-parsley-group="step4" class="chosen-select form-control">-->
-                                        <!--</select>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--&lt;!&ndash;BEGIN DMA table&ndash;&gt;-->
-                                <!--<div class="col-md-10" data-ng-show="campaign.dma_targets">-->
-                                    <!--<table class="table table-striped">-->
-                                        <!--<thead>-->
-                                            <!--<tr>-->
-                                                <!--<th>DMA</th>-->
-                                                <!--<th>Weighting</th>-->
-                                                <!--<th>Bid</th>-->
-                                            <!--</tr>-->
-                                        <!--</thead>-->
-                                        <!--<tbody data-ng-show="campaign.dma_targets">-->
-                                            <!--<tr ng-repeat="target in campaign.dma_targets">-->
-                                                <!--<td>{{ target.name}}</td>-->
-                                                <!--<td>-->
-                                                    <!--<slider ng-model="target.weight" min="0" max="10" step="0.5" value="1.5" orientation="horizontal" class="bs-slider slider-horizontal"></slider>-->
-                                                <!--</td>-->
-                                                <!--<td>{{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}</td>-->
-                                            <!--</tr>-->
-                                        <!--</tbody>-->
-                                    <!--</table>-->
-                                <!--</div>-->
                                 <bid-modifier width="10" targets="campaign.dma_targets" options="dmas" campaign="campaign" wizard_step="step4" title="DMAs"></bid-modifier>
                             </div>
                         </fieldset>
