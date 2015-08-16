@@ -22,10 +22,11 @@ angular.module('advertiser').config(['$stateProvider',
 			templateUrl: 'modules/advertiser/views/view-advertiser.client.view.html',
 			controller: 'AdvertiserController'
 		}).
-		state('app.editAdvertiser', {
-			title: 'Edit Advertiser',
-			url: '/advertiser/:advertiserId/edit',
-			templateUrl: 'modules/advertiser/views/edit-advertiser.client.view.html'
-		});
+        state('app.viewCampaign', {
+            url: '/advertiser/:advertiserId/campaign/:campaignId',
+            title: 'View Campaign',
+            templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',
+            controller: 'CampaignController'
+        })
 	}
 ]);

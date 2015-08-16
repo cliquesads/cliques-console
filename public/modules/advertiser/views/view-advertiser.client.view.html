@@ -17,7 +17,6 @@
 	</ul>
 </h3>
 <section data-ng-init="findOne()">
-    {{ data }}
 	<div>
         <small>
 		<em class="text-muted">
@@ -33,8 +32,6 @@
     <!--Upper left panel-->
     <div class="col-sm-4">
         <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
-
-
         <ul class="list-group">
             <li class="list-group-item">
                 Campaigns
@@ -42,7 +39,7 @@
                     <span class="fa fa-plus-square-o"></span>
                 </a>
             </li>
-            <li data-ng-repeat="campaign in advertiser.campaigns" ng-click="" class="list-group-item">
+            <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
                 <div class="row row-table">
                     <div class="col-sm-2">
                         <div class="label label-success">{{ campaign.active ? "Active":"Inactive"}}</div>
@@ -59,7 +56,7 @@
                         <radial percent="{{ campaign.percent_spent }}" size="sm"></radial>
                     </div>
                 </div>
-            </li>
+            </a>
         </ul>
     </div>
 
