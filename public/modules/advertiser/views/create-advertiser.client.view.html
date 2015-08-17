@@ -231,90 +231,91 @@
                     <div id="step5" ng-show="wizard.active(5)">
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
-                            <div class="col-md-12">
-                                <div ng-show="creative_upload_error" class="alert alert-danger">{{ creative_upload_error }}</div>
-                                <div class="row">
-                                    <div nv-file-drop="" uploader="uploader">
-                                        <div ng-show="uploader.isHTML5">
-                                            <!-- 3. nv-file-over uploader="link" over-class="className"-->
-                                            <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here (Supported types: .png .jpeg .gif)</div>
-                                            <!-- Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}"-->
-                                        </div>
-                                        <!-- Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}"-->
-                                        <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
-                                    </div>
-                                </div>
-                                <br/>
-                                <div class="row" data-ng-show="uploader.queue.length">
-                                    <p ng-if="uploader.queue.length" class="pull-right label label-info">Queue length: {{ uploader.queue.length }}</p>
-                                    <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
-                                    <div ng-if="uploader.queue.length">
-                                        <table ng-if="uploader.queue.length" class="table">
-                                            <thead>
-                                            <tr>
-                                                <th width="30%">Name</th>
-                                                <th>Dimensions</th>
-                                                <th ng-show="uploader.isHTML5">Size</th>
-                                                <th>Click URL</th>
-                                                <th>Actions</th>
-                                                <th ng-show="uploader.isHTML5">Progress</th>
-                                                <th>Status</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr ng-repeat="item in uploader.queue">
-                                                <td>
-                                                    <strong>{{ item.file.name }}</strong>
-                                                </td>
-                                                <td>
-                                                    {{ item.dimensions }}
-                                                </td>
-                                                <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>
-                                                <td>
-                                                    <input name="website" type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="step5" class="form-control" placeholder="http://www.example.com" required="required">
-                                                </td>
-                                                <td nowrap="">
-                                                    <!--<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">-->
-                                                        <!--<span class="icon-cloud-upload mr"></span>Upload</button>-->
-                                                    <!--<button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">-->
-                                                        <!--<span class="icon-close mr"></span>Cancel</button>-->
-                                                    <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
-                                                        <span class="icon-trash mr"></span>Remove</button>
-                                                </td>
-                                                <td ng-show="uploader.isHTML5">
-                                                    <div style="margin-bottom: 0;" class="progress progress-xs">
-                                                        <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center">
-                                                     <span ng-show="item.isSuccess">
-                                                        <em class="fa fa-check fa-fw"></em>
-                                                     </span>
-                                                     <span ng-show="item.isCancel">
-                                                        <em class="fa fa-ban-circle fa-fw"></em>
-                                                     </span>
-                                                     <span ng-show="item.isError">
-                                                        <em class="fa fa-times fa-fw"></em>
-                                                     </span>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div data-ng-show="uploader.progress">
-                                        <p>Upload Progress:</p>
-                                        <div style="" class="progress progress-xs">
-                                            <div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>
-                                        </div>
-                                    </div>
-                                    <button type="button" ng-click="validateAndUpload(wizard.validateStep(5))" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s">
-                                        <span class="icon-cloud-upload mr"></span>Upload all</button>
-                                    <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s">
-                                        <span class="icon-close mr"></span>Cancel all</button>
-                                    <button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s">
-                                        <span class="icon-trash mr"></span>Remove all</button>
-                                </div>
-                            </div>
+                            <!--<div class="col-md-12">-->
+                                <!--<div ng-show="creative_upload_error" class="alert alert-danger">{{ creative_upload_error }}</div>-->
+                                <!--<div class="row">-->
+                                    <!--<div nv-file-drop="" uploader="uploader">-->
+                                        <!--<div ng-show="uploader.isHTML5">-->
+                                            <!--&lt;!&ndash; 3. nv-file-over uploader="link" over-class="className"&ndash;&gt;-->
+                                            <!--<div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here (Supported types: .png .jpeg .gif)</div>-->
+                                            <!--&lt;!&ndash; Example: nv-file-drop="" uploader="{Object}" options="{Object}" filters="{String}"&ndash;&gt;-->
+                                        <!--</div>-->
+                                        <!--&lt;!&ndash; Example: nv-file-select="" uploader="{Object}" options="{Object}" filters="{String}"&ndash;&gt;-->
+                                        <!--<input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<br/>-->
+                                <!--<div class="row" data-ng-show="uploader.queue.length">-->
+                                    <!--<p ng-if="uploader.queue.length" class="pull-right label label-info">Queue length: {{ uploader.queue.length }}</p>-->
+                                    <!--<p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>-->
+                                    <!--<div ng-if="uploader.queue.length">-->
+                                        <!--<table ng-if="uploader.queue.length" class="table">-->
+                                            <!--<thead>-->
+                                            <!--<tr>-->
+                                                <!--<th width="30%">Name</th>-->
+                                                <!--<th>Dimensions</th>-->
+                                                <!--<th ng-show="uploader.isHTML5">Size</th>-->
+                                                <!--<th>Click URL</th>-->
+                                                <!--<th>Actions</th>-->
+                                                <!--<th ng-show="uploader.isHTML5">Progress</th>-->
+                                                <!--<th>Status</th>-->
+                                            <!--</tr>-->
+                                            <!--</thead>-->
+                                            <!--<tbody>-->
+                                            <!--<tr ng-repeat="item in uploader.queue">-->
+                                                <!--<td>-->
+                                                    <!--<strong>{{ item.file.name }}</strong>-->
+                                                <!--</td>-->
+                                                <!--<td>-->
+                                                    <!--{{ item.dimensions }}-->
+                                                <!--</td>-->
+                                                <!--<td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>-->
+                                                <!--<td>-->
+                                                    <!--<input name="website" type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="step5" class="form-control" placeholder="http://www.example.com" required="required">-->
+                                                <!--</td>-->
+                                                <!--<td nowrap="">-->
+                                                    <!--&lt;!&ndash;<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;<span class="icon-cloud-upload mr"></span>Upload</button>&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">&ndash;&gt;-->
+                                                        <!--&lt;!&ndash;<span class="icon-close mr"></span>Cancel</button>&ndash;&gt;-->
+                                                    <!--<button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">-->
+                                                        <!--<span class="icon-trash mr"></span>Remove</button>-->
+                                                <!--</td>-->
+                                                <!--<td ng-show="uploader.isHTML5">-->
+                                                    <!--<div style="margin-bottom: 0;" class="progress progress-xs">-->
+                                                        <!--<div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>-->
+                                                    <!--</div>-->
+                                                <!--</td>-->
+                                                <!--<td class="text-center">-->
+                                                     <!--<span ng-show="item.isSuccess">-->
+                                                        <!--<em class="fa fa-check fa-fw"></em>-->
+                                                     <!--</span>-->
+                                                     <!--<span ng-show="item.isCancel">-->
+                                                        <!--<em class="fa fa-ban-circle fa-fw"></em>-->
+                                                     <!--</span>-->
+                                                     <!--<span ng-show="item.isError">-->
+                                                        <!--<em class="fa fa-times fa-fw"></em>-->
+                                                     <!--</span>-->
+                                                <!--</td>-->
+                                            <!--</tr>-->
+                                            <!--</tbody>-->
+                                        <!--</table>-->
+                                    <!--</div>-->
+                                    <!--<div data-ng-show="uploader.progress">-->
+                                        <!--<p>Upload Progress:</p>-->
+                                        <!--<div style="" class="progress progress-xs">-->
+                                            <!--<div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<button type="button" ng-click="validateAndUpload(wizard.validateStep(5))" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s">-->
+                                        <!--<span class="icon-cloud-upload mr"></span>Upload all</button>-->
+                                    <!--<button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s">-->
+                                        <!--<span class="icon-close mr"></span>Cancel all</button>-->
+                                    <!--<button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s">-->
+                                        <!--<span class="icon-trash mr"></span>Remove all</button>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <creative-uploader wizard_step="step5" uploader="uploader" creative_upload_error="creative_upload_error" validate_func="wizard.validateStep(5)" width="12"> </creative-uploader>
                         </fieldset>
                         <ul class="pager">
                             <li class="previous">
