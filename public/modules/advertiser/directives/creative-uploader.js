@@ -6,8 +6,8 @@ angular.module('advertiser').directive('creativeUploader', [function() {
     return {
         restrict: 'E',
         scope: {
-            validate_func: '&',
-            wizard_step: '@',
+            onuploadall: '&',
+            wizardstep: '@',
             width: '@',
             uploader: '='
         },
@@ -103,23 +103,6 @@ angular.module('advertiser').directive('creativeUploader', [function() {
             scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
                 // Add Google Cloud URL to fileitem when it successfully uploads
                 fileItem.url = response.url;
-            };
-            scope.uploader.onCompleteAll = function(){
-                scope.uploads_completed = true;
-            };
-
-            /**
-             * Wrapper for uploader.uploadAll() which allows form to pass
-             * validation function to call first.
-             *
-             * @param validateFunc
-             */
-            scope.validateAndUpload = function(validateFunc){
-                // pre_callback should be validation step for other various
-                // form elements, and return true if validation passes
-                if (validateFunc){
-                    scope.uploader.uploadAll();
-                }
             };
         }
     };

@@ -65,115 +65,22 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         var uploader = $scope.uploader = new FileUploader({
             url: 'creativeassets'
         });
-        //
-        ////##### FILTERS ######
-        //uploader.filters.push({
-        //    name: 'mimetypeFilter',
-        //    fn: function(item, options) {
-        //        var mimetypes = ['image/jpeg','image/gif', 'image/png'];
-        //        return mimetypes.indexOf(item.type) > -1
-        //    }
-        //});
-        //
-        //uploader.filters.push({
-        //    name: 'sizeFilter',
-        //    fn: function(item, options) {
-        //        var max_size = 60 * 1024;
-        //        return item.size < max_size;
-        //    }
-        //});
-        //
-        ////##### CALLBACKS ######
-        //$scope.creative_upload_errors = [];
-        //uploader.onWhenAddingFileFailed = function(item, filter, options) {
-        //    if (filter.name === 'mimetypeFilter'){
-        //        $scope.creative_upload_error = 'File must be JPG, PNG or GIF';
-        //    } else if (filter.name === 'sizeFilter'){
-        //        $scope.creative_upload_error = 'File must be less than 60 KB';
-        //    }
-        //};
-        //
-        //$scope.SUPPORTED_DIMENSIONS = ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100'];
-        //
-        //uploader.onAfterAddingFile = function(fileItem) {
-        //    // check added image dimensions, and remove item from queue if
-        //    // dimensions not supported
-        //    var reader = new FileReader();
-        //    var image = new Image();
-        //    // Have to use onload callbacks for both FileReader & Image objects,
-        //    // then load data to each
-        //    reader.onload = function(_file){
-        //        image.onload = function(){
-        //            var self = this;
-        //            // Have to wrap asynchronous scope changes in $apply call
-        //            // in order to update bindings properly, otherwise
-        //            // browser will execute callback after next event tick
-        //            $scope.$apply(function(){
-        //                // Store width & height properties on file object for convenience
-        //                var dimensions = [self.width, self.height].join('x');
-        //                fileItem.width = self.width;
-        //                fileItem.height = self.height;
-        //                fileItem.dimensions = dimensions;
-        //                // Now check to make sure dimensions are supported, calling callback
-        //                // if they're not.
-        //                if ($scope.SUPPORTED_DIMENSIONS.indexOf(dimensions) === -1){
-        //                    $scope.creative_upload_error = 'File dimensions not supported. Image dimensions must be one of the following: ' + $scope.SUPPORTED_DIMENSIONS.join(', ');
-        //                    fileItem.remove();
-        //                }
-        //            });
-        //        };
-        //        // now set image source
-        //        image.src = _file.target.result;
-        //    };
-        //    // load file
-        //    reader.readAsDataURL(fileItem._file);
-        //};
-        //
-        //uploader.onAfterAddingAll = function(addedFileItems) {
-        //    if ($scope.creative_upload_error){
-        //        $scope.creative_upload_error = null;
-        //    }
-        //    //console.info('onAfterAddingAll', addedFileItems);
-        //};
-        //uploader.onBeforeUploadItem = function(item) {
-        //    //console.info('onBeforeUploadItem', item);
-        //};
-        //uploader.onProgressItem = function(fileItem, progress) {
-        //    //console.info('onProgressItem', fileItem, progress);
-        //};
-        //uploader.onProgressAll = function(progress) {
-        //    //console.info('onProgressAll', progress);
-        //};
-        //uploader.onSuccessItem = function(fileItem, response, status, headers) {
-        //    //console.info('onSuccessItem', fileItem, response, status, headers);
-        //};
-        //uploader.onErrorItem = function(fileItem, response, status, headers) {
-        //    //console.info('onErrorItem', fileItem, response, status, headers);
-        //};
-        //uploader.onCancelItem = function(fileItem, response, status, headers) {
-        //    //console.info('onCancelItem', fileItem, response, status, headers);
-        //};
-        //uploader.onCompleteItem = function(fileItem, response, status, headers) {
-        //    // Add Google Cloud URL to fileitem when it successfully uploads
-        //    fileItem.url = response.url;
-        //};
-        //uploader.onCompleteAll = function(){
-        //    $scope.uploads_completed = true;
-        //};
-        //
-        ///**
-        // * Wrapper for uploader.uploadAll() which allows form to pass
-        // * validation function to call first.
-        // *
-        // * @param validateFunc
-        // */
-        //$scope.validateAndUpload = function(validateFunc){
-        //    // pre_callback should be validation step for other various
-        //    // form elements, and return true if validation passes
-        //    if (validateFunc){
-        //        uploader.uploadAll();
-        //    }
-        //};
+        $scope.uploader.onCompleteAll = function(){
+            $scope.uploads_completed = true;
+        };
+        /**
+        * Wrapper for uploader.uploadAll() which allows form to pass
+        * validation function to call first.
+        *
+        * @param validateFunc
+        */
+        $scope.validateAndUpload = function(validateFunc){
+            // pre_callback should be validation step for other various
+            // form elements, and return true if validation passes
+            if (validateFunc){
+                uploader.uploadAll();
+            }
+        };
 
 
         //####################################//
