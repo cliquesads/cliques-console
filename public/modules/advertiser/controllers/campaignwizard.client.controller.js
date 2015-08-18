@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
+angular.module('advertiser').controller('CampaignWizardController', ['$scope',
     '$stateParams',
     '$location',
     '$q',
@@ -9,7 +9,6 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'getCliqueTree',
     'DMA',
     'FileUploader',
-    'ngDialog',
 	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader) {
 
         //##################################//

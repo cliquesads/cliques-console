@@ -11,7 +11,9 @@ module.exports = {
                 'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
                 'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
                 'public/lib/loaders.css/loaders.min.css',
-                'public/lib/angular-xeditable/dist/css/xeditable.css'
+                'public/lib/angular-xeditable/dist/css/xeditable.css',
+                'public/lib/ngDialog/css/ngDialog.min.css',
+                'public/lib/ngDialog/css/ngDialog-theme-default.min.css'
 			],
 			js: [
 				'public/lib/jquery/dist/jquery.js',
