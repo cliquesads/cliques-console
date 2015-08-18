@@ -6,19 +6,16 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     '$q',
     'Authentication',
     'Advertiser',
-    'DatepickerService',
     'getCliqueTree',
     'DMA',
     'FileUploader',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, DatepickerService,  getCliqueTree, DMA, FileUploader) {
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
         //##################################//
 
         $scope.authentication = Authentication;
-        $scope.calendar = DatepickerService;
-        $scope.Math = Math;
 
         // Populate tree data for tree visualization
         $scope.cliques = [];

@@ -108,42 +108,7 @@
                         <!--Start Flight Dates Row-->
                         <fieldset>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label>Start Date *</label>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <a href="#" tooltip="What day do you want your campaign to start?">
-                                        <em class="fa fa-question-circle"></em>
-                                    </a>
-                                    <div class="input-group">
-                                        <input type="text" name="campaign.start_date" id="campaign.start_date" data-ng-model="campaign.start_date" is-open="calendar.opened.start_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="calendar.today" placeholder="yyyy-MM-dd" datepicker-options="calendar.dateOptions" class="form-control" required="required" close-text="Close"/>
-                                        <!--<input type="date" name="campaign_start_date" id="campaign_start_date" ng-model="campaign.start_date" data-parsley-group="step2" min="{{ today | date: 'yyyy-MM-dd' }}" data-parsley-min="" class="form-control" required="required"/>-->
-                                        <!--Button to enable popup Angular UI datepicker-->
-                                        <span class="input-group-btn">
-                                             <button type="button" ng-click="calendar.open($event,'start_date')" class="btn btn-default">
-                                                 <em class="fa fa-calendar"></em>
-                                             </button>
-                                        </span>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
-                                <div class="col-md-6">
-                                    <label>End Date *</label>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <a href="#" tooltip="What day do you want your campaign to end?">
-                                        <em class="fa fa-question-circle"></em>
-                                    </a>
-                                    <div class="input-group">
-                                        <input type="text" name="campaign.end_date" id="campaign.end_date" data-ng-model="campaign.end_date" is-open="calendar.opened.end_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="step2" min-date="campaign.start_date" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" class="form-control" required="required" close-text="Close"/>
-                                        <!--<input type="date" name="campaign.end_date" id="campaign.end_date" ng-model="campaign.end_date" data-parsley-group="step2" data-parsley-min="" min="{{ campaign.start_date | date: 'yyyy-MM-dd' }}" class="form-control" required="required"/>-->
-                                        <!--Button to enable popup Angular UI datepicker-->
-                                        <span class="input-group-btn">
-                                            <button type="button" ng-click="calendar.open($event, 'end_date')" class="btn btn-default">
-                                                <em class="fa fa-calendar"></em>
-                                            </button>
-                                        </span>
-                                    </div>
-                                    <!--<span ng-show="validateInput('campaign.budget', 'number')" class="text-danger ng-hide">This field must be a valid number</span>-->
-                                </div>
+                                <flight-dates width="6" wizardstep="step2" enddatemodel="campaign.end_date" startdatemodel="campaign.start_date"></flight-dates>
                             </div>
                         </fieldset>
                         <small class="text-muted">* Required</small>
