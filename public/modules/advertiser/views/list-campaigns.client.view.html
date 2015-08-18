@@ -9,8 +9,10 @@
 </h3>
 <section data-ng-controller="CampaignController" data-ng-init="findAdvertisers()">
     <div class="page-header">
-        <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="advertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="width: 100%"></select>
-        <option value=""></option>
+        <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="advertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="width: 100%">
+            <option value=""></option>
+        </select>
+
     </div>
     <div class="list-group">
         <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
