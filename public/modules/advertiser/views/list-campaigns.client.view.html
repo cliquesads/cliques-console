@@ -1,0 +1,23 @@
+<h3>Campaigns
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+<section data-ng-controller="CampaignController" data-ng-init="findAdvertisers()">
+    <div class="page-header">
+        <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="advertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="width: 100%"></select>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
+            <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>
+            <!--<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>-->
+        </a>
+    </div>
+	<h4 class="alert alert-purple text-center pv-lg" data-ng-if="advertiser.campaigns.length == 0">
+		No campaigns found.
+	</h4>
+</section>

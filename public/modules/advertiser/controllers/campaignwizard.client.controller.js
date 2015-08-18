@@ -168,7 +168,7 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
                 advertiser.campaigns.push(campaign);
                 advertiser.$update(function(){
                     $scope.closeThisDialog('Success');
-                }, function (errorResponse) {
+                }, function (errorResponse){
                     $scope.loading = false;
                     $scope.creation_error = errorResponse.data.message;
                 });

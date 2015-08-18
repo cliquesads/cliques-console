@@ -5,9 +5,18 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
 		$scope.authentication = Authentication;
 
+        //if ($stateParams.advertiserId != '_') {
+        //    $scope.advertiser = Advertiser.get({
+        //        advertiserId: $stateParams.advertiserId
+        //    });
+        //}
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
+        };
+        $scope.findAdvertisers = function() {
+            // on query return, get campaign spend data to augment $scope.advertisers
+            $scope.advertisers = Advertiser.query();
         };
 		$scope.update = function() {
 			var advertiser = $scope.advertiser;
