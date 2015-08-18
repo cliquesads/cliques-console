@@ -1,10 +1,9 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserController', ['$scope', '$rootScope', '$stateParams', '$location',
+angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
     'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-	function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog) {
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog) {
 		$scope.authentication = Authentication;
-        $rootScope.theme = 'ngdialog-theme-default';
 
 		$scope.remove = function(advertiser) {
 			if (advertiser) {
@@ -60,7 +59,12 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$roo
 		};
 
         $scope.newCampaign = function(){
-            ngDialog.open({ template: 'modules/advertiser/views/partials/create-campaign.client.view.html', controller: 'CampaignWizardController'});
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/advertiser/views/partials/create-campaign.client.view.html',
+                controller: 'CampaignWizardController',
+                data: {advertiser: $scope.advertiser}
+            });
         };
 
 

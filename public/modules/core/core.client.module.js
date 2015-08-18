@@ -20,6 +20,9 @@ angular.module('core').run(["$rootScope", "$state", "$stateParams",  '$window', 
     $rootScope.$stateParams = $stateParams;
     $rootScope.$storage = $window.localStorage;
 
+    // Set default class for ngDialog theme
+    $rootScope.theme = 'ngdialog-theme-default';
+
     // Uncomment this to disables template cache
     /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (typeof(toState) !== 'undefined'){
@@ -30,7 +33,7 @@ angular.module('core').run(["$rootScope", "$state", "$stateParams",  '$window', 
     // Scope Globals
     // ----------------------------------- 
     $rootScope.app = {
-      name: 'Cliques Labs Inc.',
+      name: 'Cliques Console',
       description: 'Cliques Advertising Console',
       year: ((new Date()).getFullYear()),
       layout: {
