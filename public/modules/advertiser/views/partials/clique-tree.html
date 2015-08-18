@@ -1,0 +1,4 @@
+<input style="display: None" type="text" name="clique_tree" id="clique_tree" data-ng-model="cliquemodel" data-parsley-group="{{ wizardstep }}" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
+<div class="form-group">
+    <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+</div>

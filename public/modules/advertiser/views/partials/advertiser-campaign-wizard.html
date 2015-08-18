@@ -1,0 +1,254 @@
+<div class="panel-body">
+    <form name="formName" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="{{ steps_base + campaign_steps }}">
+        <div class="form-wizard wizard-vertical">
+            <!-- START wizard steps indicator-->
+            <ol>
+                <li ng-class="{'active':wizard.active(steps_base + 0)}" ng-click="wizard.go(steps_base + 0)">
+                    <h4>{{ steps_base + 0 }}. Advertiser</h4>
+                    <small class="text-muted"></small>
+                </li>
+                <li ng-class="{'active':wizard.active(steps_base + 1)}" ng-click="wizard.go(steps_base + 1)">
+                    <h4>{{ steps_base + 1 }}. Campaign Basics</h4>
+                    <small class="text-muted"></small>
+                </li>
+                <li ng-class="{'active':wizard.active(steps_base + 2)}" ng-click="wizard.go(steps_base + 2)">
+                    <h4>{{ steps_base + 2 }}. Choose a Clique</h4>
+                    <small class="text-muted"></small>
+                </li>
+                <li ng-class="{'active':wizard.active(steps_base + 3)}" ng-click="wizard.go(steps_base + 3)">
+                    <h4>{{ steps_base + 3 }}. Targeting Details</h4>
+                    <small class="text-muted"></small>
+                </li>
+                <li ng-class="{'active':wizard.active(steps_base + 4)}" ng-click="wizard.go(steps_base + 4)">
+                    <h4>{{ steps_base + 4 }}. Creatives</h4>
+                    <small class="text-muted"></small>
+                </li>
+                <li ng-class="{'active':wizard.active(steps_base + 5)}" ng-click="wizard.go(steps_base + 5)">
+                    <h4>{{ steps_base + 5 }}. Review & Submit</h4>
+                    <small class="text-muted"></small>
+                </li>
+            </ol>
+            <!-- END wizard steps indicator-->
+
+            <!-- START Advertiser inputs -->
+            <div id="step{{steps_base + 0}}" ng-show="wizard.active(steps_base + 0)">
+                <fieldset>
+                    <legend>Basic advertiser info</legend>
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <div class="controls">
+                            <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step{{steps_base + 0}}" class="form-control" placeholder="Name" required="required">
+                            <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label>Website *</label>
+                        <div class="controls">
+                            <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step{{steps_base + 0}}" class="form-control" placeholder="http://www.example.com" required="required">
+                            <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div class="controls">
+                            <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step{{steps_base + 0}}" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
+                        </div>
+                    </div>
+                </fieldset>
+                <small class="text-muted">* Required</small>
+                <ul class="pager">
+                    <li class="next"><a href="#" ng-click="wizard.go(steps_base + 1)">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Advertiser Step inputs -->
+
+            <!-- START CAMPAIGN inputs -->
+            <div id="step2" ng-show="wizard.active(2)">
+                <legend>Tell us about your first campaign.</legend>
+                <fieldset>
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <label>Budget *</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="#" tooltip="Tell us how much money you would like to spend over the lifetime of this campaign. &#013;&#013; Don't worry, our bidders will pace your budget evenly over the lifetime of the campaign (set below)">
+                        <em class="fa fa-question-circle"></em>
+                    </a>
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="10000" class="form-control" required="required"/>
+                        <span class="input-group-addon">.00</span>
+                    </div>
+                </fieldset>
+                <!--Start Flight Dates Row-->
+                <fieldset>
+                    <div class="row">
+                        <flight-dates width="6" wizardstep="step2" enddatemodel="campaign.end_date" startdatemodel="campaign.start_date"></flight-dates>
+                    </div>
+                </fieldset>
+                <small class="text-muted">* Required</small>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="wizard.go(1)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="step3" ng-show="wizard.active(3)">
+                <legend>Choose the Clique that best describes your campaign</legend>
+                <fieldset>
+                    <clique-tree wizardstep="step3" model="campaign.clique"></clique-tree>
+                </fieldset>
+                <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
+                <small class="text-muted">* Required</small>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="wizard.go(2)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- START CAMPAIGN inputs -->
+            <div id="step4" ng-show="wizard.active(4)">
+                <legend>Set your bids & targeting specifics</legend>
+                <!-- START row -->
+                <fieldset>
+                    <label>Base Bid (CPM) *</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
+                        <em class="fa fa-question-circle"></em>
+                    </a>
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                    </div>
+                    <br/>
+                    <label>Max Bid (CPM) *</label>
+                    &nbsp;&nbsp;&nbsp;
+                    <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
+                        <em class="fa fa-question-circle"></em>
+                    </a>
+                    <div class="input-group">
+                        <span class="input-group-addon">$</span>
+                        <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
+                    </div>
+                </fieldset>
+
+                <!--BEGIN DMA slider controls-->
+                <fieldset>
+                    <div class="row">
+                        <bid-modifier width="10" targets="campaign.dma_targets" options="dmas" campaign="campaign" wizard_step="step4" title="DMAs"></bid-modifier>
+                    </div>
+                </fieldset>
+                <!--END DMA slider controls-->
+
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="wizard.go(3)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next"><a href="#" ng-click="wizard.go(5)">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+
+            <!-- START CREATIVE UPLOAD STEP-->
+            <div id="step5" ng-show="wizard.active(5)">
+                <legend>Now add some creatives to your campaign</legend>
+                <fieldset>
+                    <creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                </fieldset>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="wizard.go(4)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li class="next" ng-show="uploads_completed">
+                        <a href="#" ng-click="wizard.go(6)"> Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+
+            <!-- START Wizard Step inputs -->
+            <div id="step6" ng-show="wizard.active(6)">
+                <legend>Review your new advertiser</legend>
+                <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+                <div class="col-md-12 box-placeholder">
+                    <h4>Advertiser&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
+                    <div class="col-sm-2">Name</div><div class="col-sm-10">{{ name }}</div>
+                    <div class="col-sm-2">Website</div><div class="col-sm-10">{{ website }}</div>
+                    <div class="col-sm-2">Description</div><div class="col-sm-10">{{ description || &apos;empty&apos; }}</div>
+                </div>
+                <div class="col-md-12 box-placeholder">
+                    <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
+                    <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ campaign.name }}</div>
+                    <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ campaign.description || &apos;empty&apos; }}</div>
+                    <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ campaign.budget | currency:"$":0 }}</div>
+                    <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
+                    <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
+                </div>
+                <div class="col-md-12 box-placeholder">
+                    <h4>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
+                    <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ campaign.clique }}</div>
+                </div>
+                <div class="col-md-12 box-placeholder">
+                    <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
+                    <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ campaign.base_bid | currency:"$":2 }}</div>
+                    <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ campaign.max_bid | currency:"$":2 }}</div>
+                    <div class="col-sm-2"><b>DMA Targets</b></div><div class="col-sm-10">
+                    <div ng-repeat="target in campaign.dma_targets">
+                        {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 box-placeholder">
+                    <h4>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
+                    <div ng-repeat="fileItem in uploader.queue">
+                        <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                    </div>
+                </div>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="wizard.go(5)">
+                            <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li ng-show="loading">
+                        <div class="ball-pulse">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </li>
+                    <li class="next">
+                        <a href="#" ng-click="create()"> Submit <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+        </div>
+    </form>
+</div>

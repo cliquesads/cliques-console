@@ -1,0 +1,207 @@
+angular.module('advertiser').directive('advertiserCampaignWizard', ['getCliqueTree','DMA','FileUploader',function(getCliqueTree, DMA, FileUploader) {
+    'use strict';
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {
+            wizardtype: "@"
+        },
+        templateUrl: 'modules/advertiser/views/partials/advertiser-campaign-wizard.html',
+        link: function(scope, element, attrs){
+            scope.steps_base = 0;
+            scope.campaign_steps = 5;
+            if (scope.wizardtype === 'advertiser'){
+                scope.steps_base = 1;
+            }
+
+            //##################################//
+            //###### INIT SCOPE VARIABLES ######//
+            //##################################//
+            // Populate tree data for tree visualization
+            //scope.cliques = [];
+            //getCliqueTree(scope);
+            //scope.set_clique = function(branch) {
+            //    scope.campaign.clique = branch.label;
+            //};
+            //var tree;
+            //// This is our API control variable
+            //scope.my_tree = tree = {};
+
+            scope.dmas = DMA.query();
+
+            // Set mins & maxes
+            scope.min_base_bid = 1;
+            scope.max_base_bid = 20;
+
+            // Basic models
+            scope.advertiser = {
+                name: null,
+                description: null,
+                website: null,
+                cliques: null,
+                campaigns: []
+            };
+            scope.campaign = {
+                name:           null,
+                description:    null,
+                budget:         null,
+                start_date:     null,
+                end_date:       null,
+                base_bid:       null,
+                max_bid:        null,
+                frequency:      null,
+                clique:         null,
+                dma_targets:    null,
+                placement_targets: null
+            };
+
+            //#################################//
+            //######### FILE UPLOADER #########//
+            //#################################//
+
+            var uploader = scope.uploader = new FileUploader({
+                url: 'creativeassets'
+            });
+            scope.uploader.onCompleteAll = function(){
+                scope.uploads_completed = true;
+            };
+            /**
+             * Wrapper for uploader.uploadAll() which allows form to pass
+             * validation function to call first.
+             *
+             * @param validateFunc
+             */
+            scope.validateAndUpload = function(validateFunc){
+                // pre_callback should be validation step for other various
+                // form elements, and return true if validation passes
+                if (validateFunc){
+                    uploader.uploadAll();
+                }
+            };
+
+
+            //####################################//
+            //###### CREATE/SUBMIT METHODS #######//
+            //####################################//
+
+            /**
+             * Maps successfully uploaded items in uploader queue to array of
+             * creative objects to push to API
+             * @returns {Array}
+             */
+            var getCreativesFromUploadQueue = function(){
+                var creatives = [];
+                uploader.queue.forEach(function(fileItem){
+                    if (fileItem.isSuccess) {
+                        creatives.push({
+                            name: fileItem.file.name,
+                            click_url: fileItem.click_url,
+                            w: fileItem.width,
+                            h: fileItem.height,
+                            url: fileItem.url
+                        });
+                    }
+                });
+                return creatives;
+            };
+
+            /**
+             * Helper function to group creatives by size and create creative groups for each
+             * @param creatives
+             * @param groupname_prefix
+             * @returns {Array}
+             */
+            var groupCreatives = function(creatives, groupname_prefix){
+                var creativegroups_obj = {};
+                creatives.forEach(function(creative){
+                    var key = creative.w + 'x' + creative.h;
+                    if (creativegroups_obj.hasOwnProperty(key)){
+                        creativegroups_obj[key].push(creative);
+                    } else {
+                        creativegroups_obj[key] = [creative];
+                    }
+                });
+                var creativegroups = [];
+                for (var size in creativegroups_obj){
+                    if (creativegroups_obj.hasOwnProperty(size)){
+                        creativegroups.push({
+                            name: groupname_prefix + '_' + size,
+                            h: Number(size.split('x')[1]),
+                            w: Number(size.split('x')[0]),
+                            creatives: creativegroups_obj[size]
+                        });
+                    }
+                }
+                return creativegroups
+            };
+
+            /**
+             * Converts array of weighted targets with whole target object in each element
+             * to array of objects that conform with respective weightedTargetSchema
+             * @param arr
+             */
+            var convertWeightedTargetArray = function(arr){
+                if (arr === null) return arr;
+                var new_target_arr = [];
+                arr.forEach(function(obj){
+                    new_target_arr.push({
+                        target: obj._id,
+                        weight: obj.weight
+                    });
+                });
+                return new_target_arr;
+            };
+
+            /**
+             * Method called to submit Advertiser to API
+             * @returns {boolean}
+             */
+            scope.create = function() {
+                if (this.advertiserForm.$valid) {
+                    scope.loading = true;
+                    // Construct advertiser JSON to POST to API
+                    var creatives = getCreativesFromUploadQueue();
+                    var creativegroups = groupCreatives(creatives, scope.campaign.name);
+                    // now create new advertiser object
+                    var campaign = this.campaign;
+
+                    // convert target arrays to weightedSchema format
+                    for (var prop in campaign){
+                        if (campaign.hasOwnProperty(prop)){
+                            // TODO: sort of a hack
+                            if (prop.indexOf('_targets') > -1){
+                                campaign[prop] = convertWeightedTargetArray(campaign[prop]);
+                            }
+                        }
+                    }
+
+                    campaign.creativegroups = creativegroups;
+                    var advertiser = new Advertiser({
+                        name:           this.name,
+                        description:    this.description,
+                        website:        this.website,
+                        campaigns: [campaign]
+                    });
+                    advertiser.$create(function(response){
+                        scope.loading = false;
+                        scope.name = '';
+                        scope.description= '';
+                        scope.campaign = '';
+                        scope.creatives = '';
+                        scope.cliques = '';
+                        scope.website = '';
+                        //On success, redirect to advertiser detail page
+                        var advertiserId = response._id;
+                        $location.url('/advertiser/' + advertiserId);
+                    }, function (errorResponse) {
+                        scope.loading = false;
+                        scope.creation_error = errorResponse.data.message;
+                    });
+                } else {
+                    return false;
+                }
+            };
+        }
+    };
+}]);
+
