@@ -4,6 +4,9 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
     'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
 	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
 		$scope.authentication = Authentication;
+        // Set mins & maxes
+        $scope.min_base_bid = 1;
+        $scope.max_base_bid = 20;
 
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];
