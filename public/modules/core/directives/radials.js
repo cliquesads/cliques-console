@@ -6,14 +6,21 @@ angular.module('core').directive("radial", function(){
     return {
         restrict: 'E',
         scope: {
-            percent: '@',
+            percent: '=',
             size: '@'
         },
-        template: '<div data-label="{{ percent_formatted }}" class="radial-bar {{ radial_percent_class }} radial-bar-{{ size }}"></div>',
+        template: '<div data-label="{{ percentformatted }}" class="radial-bar {{ radialpercentclass }} radial-bar-{{ size }}"></div>',
         link: function(scope, element, attrs){
-            var percentage = Number(scope.percent).toFixed(0);
-            scope.radial_percent_class = 'radial-bar-' + percentage;
-            scope.percent_formatted = percentage + '%';
+            scope.radialpercentclass = 'radial-bar-0';
+            scope.percentformatted = '0%';
+            scope.$watch(function(scope){ return scope.percent }, function(newVal, oldVal){
+                if (newVal){
+                    var percentage = Number(newVal * 100).toFixed(0);
+                    var rounded = 5 * Math.round(percentage/5);
+                    scope.radialpercentclass = 'radial-bar-' + rounded;
+                    scope.percentformatted = percentage + '%';
+                }
+            });
         }
     };
 });
