@@ -65,7 +65,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
 
-        $scope.getAdvertiserGraph = function(dateShortCode){
+        $scope.getCampaignGraph = function(dateShortCode){
             dateShortCode = dateShortCode || $scope.dateRangeSelection;
             var startDate = $scope.dateRanges[dateShortCode].startDate;
             var endDate = $scope.dateRanges[dateShortCode].endDate;
@@ -78,7 +78,10 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             var timeUnit = 'day';
 
             // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+            HourlyAdStat.advQuery({
+                advertiserId: $stateParams.advertiserId,
+                campaignId: $stateParams.campaignId
+            },{
                 dateGroupBy: timeUnit,
                 startDate: startDate,
                 endDate: endDate

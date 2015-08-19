@@ -14,137 +14,171 @@
     </ul>
 </h3>
 <section data-ng-init="findOne()">
-    <div>
-        <small>
-            <em class="text-muted">
-                Created on
-                <span data-ng-bind="campaign.tstamp | date:'mediumDate'"></span>
-                by
-                <span data-ng-bind="advertiser.user.displayName"></span>
-            </em>
-        </small>
-    </div>
+    <!--<div>-->
+        <!--<small>-->
+            <!--<em class="text-muted">-->
+                <!--Created on-->
+                <!--<span data-ng-bind="campaign.tstamp | date:'mediumDate'"></span>-->
+                <!--by-->
+                <!--<span data-ng-bind="advertiser.user.displayName"></span>-->
+            <!--</em>-->
+        <!--</small>-->
+    <!--</div>-->
     <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-
-
     <div class="col-md-4">
         <!--BEGIN Campaign Basics Panel-->
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="panel-title">
-                    Campaign Basics
+                    Campaign Settings
                 </div>
             </div>
             <div class="panel-body">
-                <fieldset>
-                    <form editable-form name="campaignInline" onaftersave="update()">
-                    <div class="form-horizontal">
-                        <div class="form-group m0">
-                            <label class="col-sm-4 control-label">Name</label>
-                            <div class="col-sm-6">
-                                <p class="form-control-static">
-                                    <span editable-text="campaign.name" e-name="name" e-required>{{ campaign.name }}</span>
-                                </p>
-                            </div>
-                            <div class="col-sm-2">
-                                <a href="#" class="pull-right" ng-click="campaignInline.$show()" ng-show="!campaignInline.$visible">
-                                    <span class="fa fa-edit"></span>
-                                </a>
+                <tabset>
+                    <tab heading="Basics">
+                        <fieldset>
+                            <small><em class="text-muted">Basics</em></small>
+                            <form editable-form name="campaignBasicsInline" onaftersave="update()">
+                                <div class="form-horizontal">
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Name</label>
+                                        <div class="col-sm-6">
+                                            <p class="form-control-static">
+                                                <span editable-text="campaign.name" e-name="name" e-required>{{ campaign.name }}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <a href="#" class="pull-right" ng-click="campaignBasicsInline.$show()" ng-show="!campaignBasicsInline.$visible">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Description</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">
+                                                <span editable-text="campaign.description" e-name="description" >{{ campaign.description }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Budget</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">
+                                                <span editable-number="campaign.budget" e-name="budget" >{{ campaign.budget| currency:"$":"0"}}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="campaignBasicsInline.$visible">
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="campaignBasicsInline.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="campaignBasicsInline.$waiting" ng-click="campaignBasicsInline.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
+                        <fieldset>
+                            <small><em class="text-muted">Flight Dates</em></small>
+                            <form editable-form name="flightDates" onaftersave="update()">
+                                <div class="form-horizontal">
+                                    <span ng-show="flightDates.$visible">
+                                        <flight-dates startdatemodel="campaign.start_date" enddatemodel="campaign.end_date"></flight-dates>
+                                    </span>
+                                    <span ng-show="!flightDates.$visible">
+                                        <div class="form-group m0">
+                                            <label class="col-sm-4 control-label">Start Date</label>
+                                            <div class="col-sm-6">
+                                                <p class="form-control-static">{{ campaign.start_date | date:'MM/dd/yyyy' }}</p>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <a href="#" class="pull-right" ng-click="flightDates.$show()" ng-show="!flightDates.$visible">
+                                                    <span class="fa fa-edit"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="form-group m0">
+                                            <label class="col-sm-4 control-label">End Date</label>
+                                            <div class="col-sm-8">
+                                                <p class="form-control-static">{{ campaign.end_date | date:'MM/dd/yyyy' }}</p>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="flightDates.$visible">
+                                        <br/>
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="flightDates.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="flightDates.$waiting" ng-click="flightDates.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </tab>
+                    <tab heading="Bids">
+                        <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
+                        <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
+                    </tab>
+                    <tab heading="Targeting">
+                        <div class="col-sm-8">
+                            <div ng-repeat="target in campaign.dma_targets">
+                                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
                             </div>
                         </div>
-                        <div class="form-group m0">
-                            <label class="col-sm-4 control-label">Description</label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">
-                                    <span editable-text="campaign.description" e-name="description" >{{ campaign.description }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="form-group m0">
-                            <label class="col-sm-4 control-label">Budget</label>
-                            <div class="col-sm-8">
-                                <p class="form-control-static">
-                                    <span editable-number="campaign.budget" e-name="budget" >{{ campaign.budget| currency:"$":"0"}}</span>
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="pull-right">
-                        <!-- buttons to submit / cancel form -->
-                        <span ng-show="campaignInline.$visible">
-                            <button type="submit" class="btn btn-xs btn-primary" ng-disabled="campaignInline.$waiting">
-                                Save
-                            </button>
-                            <button type="button" class="btn btn-xs btn-default" ng-disabled="campaignInline.$waiting" ng-click="campaignInline.$cancel()">
-                                Cancel
-                            </button>
-                        </span>
-                    </div>
-                </form>
-            </fieldset>
-            <fieldset>
-                <form editable-form name="flightDates" onaftersave="update()">
-                    <div class="form-horizontal">
-                        <span ng-show="flightDates.$visible">
-                            <flight-dates startdatemodel="campaign.start_date" enddatemodel="campaign.end_date"></flight-dates>
-                        </span>
-                        <span ng-show="!flightDates.$visible">
-                            <div class="form-group m0">
-                                <label class="col-sm-4 control-label">Start Date</label>
-                                <div class="col-sm-6">
-                                    <p class="form-control-static">{{ campaign.start_date | date:'MM/dd/yyyy' }}</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <a href="#" class="pull-right" ng-click="flightDates.$show()" ng-show="!flightDates.$visible">
-                                        <span class="fa fa-edit"></span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="form-group m0">
-                                <label class="col-sm-4 control-label">End Date</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">{{ campaign.end_date | date:'MM/dd/yyyy' }}</p>
-                                </div>
-                            </div>
-                        </span>
-                    </div>
-                    <div class="pull-right">
-                        <!-- buttons to submit / cancel form -->
-                        <span ng-show="flightDates.$visible">
-                            <br/>
-                            <button type="submit" class="btn btn-xs btn-primary" ng-disabled="flightDates.$waiting">
-                                Save
-                            </button>
-                            <button type="button" class="btn btn-xs btn-default" ng-disabled="flightDates.$waiting" ng-click="flightDates.$cancel()">
-                                Cancel
-                            </button>
-                        </span>
-                    </div>
-                </form>
-            </fieldset>
-        </div>
-    </div>
-    <div class="col-md-12 box-placeholder">
-        <h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-        <div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>
-    </div>
-    <div class="col-md-12 box-placeholder">
-        <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-        <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
-        <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
-        <div class="col-sm-4"><b>DMA Targets</b></div>
-        <div class="col-sm-8">
-            <div ng-repeat="target in campaign.dma_targets">
-                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
+                    </tab>
+                </tabset>
             </div>
         </div>
     </div>
-    <div class="col-md-12 box-placeholder">
-        <h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-        <div ng-repeat="creativegroup in campaign.creativegroups">
-            <div ng-repeat="creative in creativegroup.creatives">
-            <div class="col-sm-6"><b>{{ creative.name }}</b></div><div class="col-sm-6"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
+    <div class="col-md-8">
+        <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getCampaignGraph('7d')">
+            <div class="panel-heading">
+                <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
+                    &nbsp&nbsp&nbsp
+                    <small>
+                        <em class="text-muted">
+                            Reporting Timezone: {{ authentication.user.tz }}
+                        </em>
+                    </small>
+                    <span class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('7d')">7d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('30d')">30d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('90d')">90d</button>
+                    </span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>Impressions</p>
+                        <div class="h3">{{ impressions | number: 0 }}</div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>CTR</p>
+                        <div class="h3">{{ CTR | percentage:2 }}</div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>Clicks</p>
+                        <div class="h3">{{ clicks | number: 0 }}</div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>Spend</p>
+                        <div class="h3">{{ spend | currency:"$":"0" }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
             </div>
         </div>
     </div>

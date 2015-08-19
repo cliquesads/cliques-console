@@ -13,6 +13,7 @@ angular.module('advertiser').directive('flightDates', ['DatepickerService',funct
         },
         templateUrl: 'modules/advertiser/views/partials/flight-dates.html',
         link: function(scope, element, attrs){
+            //TODO: FIX DATE VALIDATION HERE
             scope.calendar = DatepickerService;
         }
     };
