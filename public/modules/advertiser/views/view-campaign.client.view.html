@@ -14,49 +14,39 @@
     </ul>
 </h3>
 <section data-ng-init="findOne()">
-    <div collapse="campaignPanel" class="panel-wrapper">
-        <div>
-            <small>
-                <em class="text-muted">
-                    Created on
-                    <span data-ng-bind="campaign.tstamp | date:'mediumDate'"></span>
-                    by
-                    <span data-ng-bind="advertiser.user.displayName"></span>
-                </em>
-            </small>
+    <div>
+        <small>
+            <em class="text-muted">
+                Created on
+                <span data-ng-bind="campaign.tstamp | date:'mediumDate'"></span>
+                by
+                <span data-ng-bind="advertiser.user.displayName"></span>
+            </em>
+        </small>
+    </div>
+    <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+
+    <div class="col-md-4"><campaign-inline campaign="campaign" onaftersave="update()"></campaign-inline></div>
+    <div class="col-md-12 box-placeholder">
+        <h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+        <div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>
+    </div>
+    <div class="col-md-12 box-placeholder">
+        <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+        <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
+        <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
+        <div class="col-sm-4"><b>DMA Targets</b></div>
+        <div class="col-sm-8">
+            <div ng-repeat="target in campaign.dma_targets">
+                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
+            </div>
         </div>
-        <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-        <div class="panel-body">
-            <div class="col-md-12 box-placeholder">
-                <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                <div class="col-sm-4"><b>Name</b></div><div class="col-sm-8">{{ campaign.name }}</div>
-                <div class="col-sm-4"><b>Description</b></div><div class="col-sm-8">{{ campaign.description || &apos;empty&apos; }}</div>
-                <div class="col-sm-4"><b>Budget</b></div><div class="col-sm-8">{{ campaign.budget | currency:"$":0 }}</div>
-                <div class="col-sm-4"><b>Start Date</b></div><div class="col-sm-8">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
-                <div class="col-sm-4"><b>End Date</b></div><div class="col-sm-8">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
-            </div>
-            <div class="col-md-12 box-placeholder">
-                <h4>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                <div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>
-            </div>
-                <div class="col-md-12 box-placeholder">
-                    <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                    <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
-                    <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
-                    <div class="col-sm-4"><b>DMA Targets</b></div>
-                    <div class="col-sm-8">
-                    <div ng-repeat="target in campaign.dma_targets">
-                        {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 box-placeholder">
-                <h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
-                <div ng-repeat="creativegroup in campaign.creativegroups">
-                    <div ng-repeat="creative in creativegroup.creatives">
-                    <div class="col-sm-6"><b>{{ creative.name }}</b></div><div class="col-sm-6"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
-                    </div>
-                </div>
+    </div>
+    <div class="col-md-12 box-placeholder">
+        <h4>Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><span class="fa fa-edit"></span></a></h4>
+        <div ng-repeat="creativegroup in campaign.creativegroups">
+            <div ng-repeat="creative in creativegroup.creatives">
+            <div class="col-sm-6"><b>{{ creative.name }}</b></div><div class="col-sm-6"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
             </div>
         </div>
     </div>

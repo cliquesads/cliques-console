@@ -5,11 +5,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
 		$scope.authentication = Authentication;
 
-        //if ($stateParams.advertiserId != '_') {
-        //    $scope.advertiser = Advertiser.get({
-        //        advertiserId: $stateParams.advertiserId
-        //    });
-        //}
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
@@ -21,9 +16,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 		$scope.update = function() {
 			var advertiser = $scope.advertiser;
 
-			advertiser.$update(function() {
-				$location.path('advertiser/' + advertiser._id);
-			}, function(errorResponse) {
+			advertiser.$update(function(){}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 		};
@@ -32,9 +25,12 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 .$promise
                 .then(function(advertiser){
                     $scope.advertiser = advertiser;
-                    $scope.campaign = advertiser.campaigns.filter(function(camp, ind, arr){
-                        return camp._id == $stateParams.campaignId; }
-                    )[0];
+                    var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                    //$scope.campaign as pointer to campaign in advertiser.campaigns array
+                    //this way, all Advertiser resource methods will work
+                    $scope.campaign = $scope.advertiser.campaigns[i];
                 });
 		};
 
