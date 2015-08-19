@@ -7,10 +7,12 @@ angular.module('advertiser').controller('dmaTargetsController', ['$scope','DMA',
     //this way, all Advertiser resource methods will work
     $scope.campaign = $scope.advertiser.campaigns[i];
     $scope.dmas = DMA.query(function(){
-        // Augment DMA targeting data w/ names as well
-        $scope.campaign.dma_targets.forEach(function(target){
-            target.name = _.find($scope.dmas, function(dmaObj){ return dmaObj._id === target.target;}).name;
-        });
+        // Have to replace dma_targets w/ options from dmas list in order to properly populate directive
+        for (var i=0; i < $scope.campaign.dma_targets.length; i++){
+            var target = $scope.campaign.dma_targets[i];
+            $scope.campaign.dma_targets[i] = _.find($scope.dmas, function(dmaObj){ return dmaObj._id === target.target;});
+            $scope.campaign.dma_targets[i].weight = target.weight;
+        }
     });
 
     $scope.updateAndClose = function(){
