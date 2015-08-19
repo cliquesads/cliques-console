@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -58,6 +58,14 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 });
             }
         });
+
+        $scope.editDMATargets = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/dma-targets.html',
+                controller: 'dmaTargetsController',
+                data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+        };
 
 
         // ######################################### //
