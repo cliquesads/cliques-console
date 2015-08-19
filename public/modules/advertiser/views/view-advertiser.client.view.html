@@ -42,7 +42,7 @@
             <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
                 <div class="row row-table">
                     <div class="col-sm-2">
-                        <div class="label label-success">{{ campaign.active ? "Active":"Inactive"}}</div>
+                        <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
                     </div>
                     <div class="col-sm-4">
                         <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>
