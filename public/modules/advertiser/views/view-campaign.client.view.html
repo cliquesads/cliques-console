@@ -23,7 +23,7 @@
         <!--</small>-->
     <!--</div>-->
     <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <!--BEGIN Campaign Basics Panel-->
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -188,11 +188,24 @@
 
                         </fieldset>
                     </tab>
+                    <tab heading="Creatives">
+                        <a href="#" class="pull-right" ng-click="editCreatives()">
+                            <span class="fa fa-edit"></span>
+                        </a>
+                        <div ng-repeat="creativegroup in campaign.creativegroups">
+                            <fieldset>
+                                <small><em class="text-muted">{{ creativegroup.w }}x{{ creativegroup.h }}</em></small>
+                                <div ng-repeat="creative in creativegroup.creatives">
+                                    <div class="col-sm-4"><b>{{ creative.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ creative.click_url }}</div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </tab>
                 </tabset>
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
         <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getCampaignGraph('7d')">
             <div class="panel-heading">
                 <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
