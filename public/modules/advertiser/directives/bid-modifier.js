@@ -10,7 +10,7 @@ angular.module('advertiser').directive('bidModifier', [function() {
             targets: '=',
             options: '=',
             campaign: '=',
-            wizard_step: '@',
+            wizardstep: '@',
             width: '@'
         },
         templateUrl: 'modules/advertiser/views/partials/bid-modifier.html',
