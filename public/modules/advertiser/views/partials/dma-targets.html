@@ -1,0 +1,8 @@
+<div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
+<div class="row">
+    <bid-modifier width="12" title="DMAs" targets="campaign.dma_targets" options="dmas" campaign="campaign"></bid-modifier>
+</div>
+<div class="text-center">
+    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+</div>
+

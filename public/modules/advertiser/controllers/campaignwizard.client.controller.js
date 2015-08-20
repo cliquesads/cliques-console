@@ -1,16 +1,14 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
+angular.module('advertiser').controller('CampaignWizardController', ['$scope',
     '$stateParams',
     '$location',
-    '$q',
     'Authentication',
     'Advertiser',
     'getCliqueTree',
     'DMA',
     'FileUploader',
-    'ngDialog',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader) {
+	function($scope, $stateParams, $location, Authentication, Advertiser, getCliqueTree, DMA, FileUploader) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -34,14 +32,6 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         $scope.min_base_bid = 1;
         $scope.max_base_bid = 20;
 
-        // Basic models
-        $scope.advertiser = {
-            name: null,
-            description: null,
-            website: null,
-            cliques: null,
-            campaigns: []
-        };
         $scope.campaign = {
             name:           null,
             description:    null,
@@ -80,11 +70,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             }
         };
 
-
         //####################################//
         //###### CREATE/SUBMIT METHODS #######//
         //####################################//
-
         /**
          * Maps successfully uploaded items in uploader queue to array of
          * creative objects to push to API
@@ -158,7 +146,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
          * @returns {boolean}
          */
         $scope.create = function() {
-            if (this.advertiserForm.$valid) {
+            if (this.campaignForm.$valid) {
                 $scope.loading = true;
                 // Construct advertiser JSON to POST to API
                 var creatives = getCreativesFromUploadQueue();
@@ -175,26 +163,12 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                         }
                     }
                 }
-
                 campaign.creativegroups = creativegroups;
-                var advertiser = new Advertiser({
-                    name:           this.name,
-                    description:    this.description,
-                    website:        this.website,
-                    campaigns: [campaign]
-                });
-                advertiser.$create(function(response){
-                    $scope.loading = false;
-                    $scope.name = '';
-                    $scope.description= '';
-                    $scope.campaign = '';
-                    $scope.creatives = '';
-                    $scope.cliques = '';
-                    $scope.website = '';
-                    //On success, redirect to advertiser detail page
-                    var advertiserId = response._id;
-                    $location.url('/advertiser/' + advertiserId);
-                }, function (errorResponse) {
+                var advertiser = $scope.ngDialogData.advertiser;
+                advertiser.campaigns.push(campaign);
+                advertiser.$update(function(){
+                    $scope.closeThisDialog('Success');
+                }, function (errorResponse){
                     $scope.loading = false;
                     $scope.creation_error = errorResponse.data.message;
                 });

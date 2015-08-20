@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog) {
 		$scope.authentication = Authentication;
 
 		$scope.remove = function(advertiser) {
@@ -57,6 +57,15 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                 });
             });
 		};
+
+        $scope.newCampaign = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/advertiser/views/partials/create-campaign.client.view.html',
+                controller: 'CampaignWizardController',
+                data: {advertiser: $scope.advertiser}
+            });
+        };
 
 
         // ######################################### //

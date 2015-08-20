@@ -1,20 +1,25 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
 		$scope.authentication = Authentication;
+        // Set mins & maxes
+        $scope.min_base_bid = 1;
+        $scope.max_base_bid = 20;
 
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
+        $scope.findAdvertisers = function() {
+            // on query return, get campaign spend data to augment $scope.advertisers
+            $scope.advertisers = Advertiser.query();
+        };
 		$scope.update = function() {
 			var advertiser = $scope.advertiser;
 
-			advertiser.$update(function() {
-				$location.path('advertiser/' + advertiser._id);
-			}, function(errorResponse) {
+			advertiser.$update(function(){}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 		};
@@ -23,11 +28,44 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 .$promise
                 .then(function(advertiser){
                     $scope.advertiser = advertiser;
-                    $scope.campaign = advertiser.campaigns.filter(function(camp, ind, arr){
-                        return camp._id == $stateParams.campaignId; }
-                    )[0];
+                    var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                    //$scope.campaign as pointer to campaign in advertiser.campaigns array
+                    //this way, all Advertiser resource methods will work
+                    $scope.campaign = $scope.advertiser.campaigns[i];
                 });
 		};
+
+        // Listener to update quickstats when advertiser var changes
+        $scope.$watch(function(scope){ return scope.advertiser }, function(newAdv, oldAdv){
+            if (newAdv){
+                HourlyAdStat.advQuery({advertiserId: newAdv._id},{
+                    groupBy: 'campaign'
+                }).then(function(response){
+                    response.data.forEach(function(campaign_data){
+                        var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
+                            return campaign._id === campaign_data._id.campaign
+                        });
+                        // augment campaign w/ campaign quickstats
+                        $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend/ $scope.advertiser.campaigns[i].budget).toFixed(4);
+                        $scope.advertiser.campaigns[i].imps = campaign_data.imps;
+                        $scope.advertiser.campaigns[i].clicks = campaign_data.clicks;
+                        $scope.advertiser.campaigns[i].ctr = (campaign_data.clicks / campaign_data.imps).toFixed(4);
+                        $scope.advertiser.campaigns[i].spend = campaign_data.spend;
+                        $scope.advertiser.campaigns[i].ecpm = ((campaign_data.spend / campaign_data.imps) * 1000).toFixed(4);
+                    });
+                });
+            }
+        });
+
+        $scope.editDMATargets = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/dma-targets.html',
+                controller: 'dmaTargetsController',
+                data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+        };
 
 
         // ######################################### //
@@ -38,7 +76,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
 
-        $scope.getAdvertiserGraph = function(dateShortCode){
+        $scope.getCampaignGraph = function(dateShortCode){
             dateShortCode = dateShortCode || $scope.dateRangeSelection;
             var startDate = $scope.dateRanges[dateShortCode].startDate;
             var endDate = $scope.dateRanges[dateShortCode].endDate;
@@ -51,7 +89,10 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             var timeUnit = 'day';
 
             // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+            HourlyAdStat.advQuery({
+                advertiserId: $stateParams.advertiserId,
+                campaignId: $stateParams.campaignId
+            },{
                 dateGroupBy: timeUnit,
                 startDate: startDate,
                 endDate: endDate

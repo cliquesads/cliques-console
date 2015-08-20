@@ -16,6 +16,12 @@ angular.module('advertiser').config(['$stateProvider',
 			templateUrl: 'modules/advertiser/views/create-advertiser.client.view.html',
             controller: 'AdvertiserWizardController'
 		}).
+        state('app.listCampaign', {
+            url: '/advertiser/campaign',
+            title: 'List Campaigns',
+            templateUrl: 'modules/advertiser/views/list-campaigns.client.view.html',
+            controller: 'CampaignController'
+        }).
 		state('app.viewAdvertiser', {
 			url: '/advertiser/:advertiserId',
 			title: 'View Advertiser',
