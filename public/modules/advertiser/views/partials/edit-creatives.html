@@ -1,0 +1,29 @@
+<h4>Creatives</h4>
+<fieldset>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Dimensions</th>
+                    <th>Click URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="creativegroup in campaign.creativegroups">
+                <tr ng-repeat="creative in creativegroup.creatives">
+                    <td><p class="form-control-static"><a href="#" editable-text="creative.name" e-required>{{ creative.name }}</a></p></td>
+                    <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                    <td><p class="form-control-static"><a href="#" editable-url="creative.click_url" e-required>{{ creative.click_url }}</a></p></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+<fieldset>
+    <creative-uploader uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+</fieldset>
+<div class="text-center">
+    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+</div>
