@@ -96,7 +96,7 @@
                         <fieldset>
                             <label>Budget *</label>
                             &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="Tell us how much money you would like to spend over the lifetime of this campaign. &#013;&#013; Don't worry, our bidders will pace your budget evenly over the lifetime of the campaign (set below)">
+                            <a href="#" tooltip="{{ TOOLTIPS.budget }}">
                                 <em class="fa fa-question-circle"></em>
                             </a>
                             <div class="input-group">
@@ -152,22 +152,22 @@
                         <fieldset>
                             <label>Base Bid (CPM) *</label>
                             &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
+                            <a href="#" tooltip="{{ TOOLTIPS.base_bid }}">
                                 <em class="fa fa-question-circle"></em>
                             </a>
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                                <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="7.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
                             </div>
                             <br/>
                             <label>Max Bid (CPM) *</label>
                             &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="Your base bid is what you'd like your average bid to be for qualified impressions.&#013; &#013;CPM = Cost per Thousand Impressions">
+                            <a href="#" tooltip="{{ TOOLTIPS.max_bid }}">
                                 <em class="fa fa-question-circle"></em>
                             </a>
                             <div class="input-group">
                                 <span class="input-group-addon">$</span>
-                                <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
+                                <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="20.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
                             </div>
                         </fieldset>
 

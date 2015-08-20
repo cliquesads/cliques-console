@@ -1,7 +1,7 @@
 /**
  * Created by bliang on 8/15/15.
  */
-angular.module('advertiser').directive('creativeUploader', [function() {
+angular.module('advertiser').directive('creativeUploader', ['CREATIVE_SIZES', function(CREATIVE_SIZES) {
     'use strict';
     return {
         restrict: 'E',
@@ -40,7 +40,7 @@ angular.module('advertiser').directive('creativeUploader', [function() {
                 }
             };
 
-            scope.SUPPORTED_DIMENSIONS = ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100'];
+            scope.SUPPORTED_DIMENSIONS = CREATIVE_SIZES.supported_dimensions;
 
             scope.uploader.onAfterAddingFile = function(fileItem) {
                 // check added image dimensions, and remove item from queue if
