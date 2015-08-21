@@ -79,34 +79,30 @@ angular.module('advertiser').controller('editCreativesController', [
             }
         };
 
-        // Add remove() method to each creative
-        $scope.$watch(function(scope){ return scope.campaign }, function(){
-            $scope.campaign.creativegroups.forEach(function(creativegroup){
-                creativegroup.creatives.forEach(function(creative){
-                    // remove function
-                    creative.remove = function(){
-                        ngDialog.openConfirm({
-                            template:'\
+        $scope.remove = function(creativegroup, creative){
+            ngDialog.openConfirm({
+                template:'\
                             <p>Are you sure you want to delete this creative? This cannot be undone.</p>\
                             <div class="ngdialog-buttons">\
                                 <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
                                 <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
                         </div>',
-                            plain: true
-                        }).then(function(val){
-                            var ind = creativegroup.creatives.indexOf(creative);
-                            creativegroup.creatives.splice(ind,1);
-                            if (creativegroup.creatives.length === 0){
-                                var crgind = $scope.campaign.creativegroups.indexOf(creativegroup);
-                                $scope.campaign.creativegroups.splice(crgind,1);
-                                $scope.update();
-                            }
-                        });
+                plain: true
+            }).then(function(val){
+                if (val === 1){
+                    // first find indices of desired creative
+                    var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup });
+                    var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative });
+                    // remove from creatives document array
+                    $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
+                    // remove creative group if it doesn't contain any creatives anymore
+                    if ($scope.campaign.creativegroups[crg_ind].creatives.length === 0){
+                        $scope.campaign.creativegroups.splice(crg_ind, 1);
                     }
-                });
+                    $scope.update();
+                }
             });
-        });
-
+        };
 
         $scope.validateQueue = function(){
             //TODO: This is pretty janky
