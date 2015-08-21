@@ -7,14 +7,16 @@ angular.module('advertiser').controller('dmaTargetsController', ['$scope','DMA',
     //this way, all Advertiser resource methods will work
     $scope.campaign = $scope.advertiser.campaigns[i];
     $scope.dmas = DMA.query(function(){
+        // TODO: THIS IS FUCKING HORRIBLE FIX THIS
         // Have to replace dma_targets w/ options from dmas list in order to properly populate directive
-        for (var i=0; i < $scope.campaign.dma_targets.length; i++){
-            var target = $scope.campaign.dma_targets[i];
-            $scope.campaign.dma_targets[i] = _.find($scope.dmas, function(dmaObj){ return dmaObj._id === target.target;});
-            $scope.campaign.dma_targets[i].weight = target.weight;
+        for (var j=0; j < $scope.campaign.dma_targets.length; j++){
+            var target = $scope.campaign.dma_targets[j];
+            $scope.campaign.dma_targets[j] = _.find($scope.dmas, function(dmaObj){ return dmaObj._id === target.target;});
+            $scope.campaign.dma_targets[j].weight = target.weight;
+            // TODO: THIS IS A HACK, otherwise overwrite dma targets when dialog is closed * opened again
+            $scope.campaign.dma_targets[j].target = $scope.campaign.dma_targets[j]._id;
         }
     });
-
     $scope.updateAndClose = function(){
         this.advertiser.campaigns[i] = AdvertiserUtils.convertAllTargetArrays(this.campaign);
         this.advertiser.$update(function() {

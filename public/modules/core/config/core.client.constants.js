@@ -40,4 +40,7 @@ angular.module('core')
     ]
 
   })
+    .constant('CREATIVE_SIZES', {
+        supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100']
+    })
 ;

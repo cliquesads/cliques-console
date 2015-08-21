@@ -1,0 +1,32 @@
+<h4>Creatives</h4>
+<div class="col-md-12 alert alert-error" ng-show="saveerror">{{ saveerror }}</div>
+<fieldset>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Preview</th>
+                    <th>Name</th>
+                    <th>Dimensions</th>
+                    <th>Click URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="creativegroup in campaign.creativegroups">
+                <tr ng-repeat="creative in creativegroup.creatives">
+                    <td><img src="{{ creative.url }}" class="smallthumbnail"/></td>
+                    <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a></p></td>
+                    <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                    <td><p class="form-control-static"><a href="#" editable-url="creative.click_url" onaftersave="update()" e-required>{{ creative.click_url }}</a></p></td>
+                    <td><button type="button" ng-click="remove(creativegroup, creative)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+<fieldset>
+    <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
+</fieldset>
+<!--<div class="text-center">-->
+    <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->
+<!--</div>-->
