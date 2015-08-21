@@ -61,7 +61,7 @@
       </ul>  -->
       <!-- END Left navbar-->
       <!-- START Right Navbar-->
-      <ul class="nav navbar-nav navbar-right ml0">
+      <!--<ul class="nav navbar-nav navbar-right ml0">-->
          <!-- Search icon-->
          <!--<li>-->
             <!--<a search-open="">-->
@@ -75,8 +75,19 @@
             <!--</a>-->
          <!--</li>-->
          <!-- END Offsidebar menu-->
-      </ul>
+      <!--</ul>-->
+
       <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+          <li class="dropdown" dropdown>
+              <a href class="dropdown-toggle" dropdown-toggle>
+                  <span class="fa fa-question-circle"></span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <a href="http://support.cliquesads.com" target="_blank">Support Center</a>
+                  </li>
+              </ul>
+          </li>
          <li class="dropdown" dropdown>
             <a href class="dropdown-toggle" dropdown-toggle>
                <span data-ng-bind="authentication.user.displayName"></span>

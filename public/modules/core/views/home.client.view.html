@@ -16,23 +16,5 @@
    <small>{{ 'dashboard.WELCOME' | translate:{ appName: app.name } }} !</small>
 </h3>
 <section>
-  <div class="jumbotron text-center">
-    <div class="text-center">
-      Work in progress
-    </div>
-    <br>
-    <div class="row">
-      <p class="lead">
-        I'm working on putting cool stuff here
-      </p>
-    </div>
-    <div class="row">
-      <p>
-        <a class="btn btn-primary btn-lg" href="/" target="_blank">Go Away</a>
-      </p>
-    </div>
-  </div>
-  <div>
-
-  </div>
+    <div ng-include="'/modules/core/views/partials/advdashboard.html'"></div>
 </section>
