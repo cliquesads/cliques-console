@@ -192,6 +192,9 @@
                         <a href="#" class="pull-right" ng-click="editCreatives()">
                             <span class="fa fa-edit"></span>
                         </a>
+                        <div class="box-placeholder" ng-show="!campaign.creativegroups.length">
+                            <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No creatives yet.</em>
+                        </div>
                         <div ng-repeat="creativegroup in campaign.creativegroups">
                             <fieldset>
                                 <small><em class="text-muted">{{ creativegroup.w }}x{{ creativegroup.h }}</em></small>
