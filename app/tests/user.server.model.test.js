@@ -1,3 +1,4 @@
+/* jshint node: true, mocha:true */
 'use strict';
 
 /**

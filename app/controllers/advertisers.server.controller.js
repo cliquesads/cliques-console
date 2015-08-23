@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -15,7 +15,7 @@ module.exports = function(db) {
          * Get a single advertiser
          */
         read: function (req, res) {
-            res.json(req.advertiser)
+            res.json(req.advertiser);
         },
         /**
          * Gets arbitrary number of Advertisers
@@ -24,7 +24,7 @@ module.exports = function(db) {
             // limit scope of query to just those advertisers to which
             // user is permitted to see
             if (req.user.roles.indexOf('admin') === -1){
-                req.query.user = req.user.id
+                req.query.user = req.user.id;
             }
             advertiserModels.Advertiser.apiQuery(req.query, function (err, advertisers) {
                 if (err) {

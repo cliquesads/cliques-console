@@ -1,3 +1,4 @@
+/* jshint node: true */
 'use strict';
 
 module.exports = function(grunt) {
@@ -35,7 +36,7 @@ module.exports = function(grunt) {
 			clientViews: {
 				files: watchFiles.clientViews,
 				options: {
-					livereload: true,
+					livereload: true
 				}
 			},
 			clientJS: {
@@ -205,7 +206,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate', 'uglify', /*'cssmin'*/ 'less' ]);
+	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','uglify', /*'cssmin'*/ 'less' ]);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

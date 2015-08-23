@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ /* jshint node: true */ 'use strict';
 
 module.exports = {
 	port: 443,

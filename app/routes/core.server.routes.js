@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
 module.exports = function(app) {

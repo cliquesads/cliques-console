@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -15,7 +15,7 @@ module.exports = function(db) {
          * Get a single publisher
          */
         read: function (req, res) {
-            res.json(req.publisher)
+            res.json(req.publisher);
         },
         /**
          * Gets arbitrary number of Publishers
@@ -24,7 +24,7 @@ module.exports = function(db) {
             // limit scope of query to just those publishers to which
             // user is permitted to see
             if (req.user.roles.indexOf('admin') === -1){
-                req.query.user = req.user.id
+                req.query.user = req.user.id;
             }
             publisherModels.Publisher.apiQuery(req.query, function (err, publishers) {
                 if (err) {

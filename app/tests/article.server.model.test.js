@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true, mocha:true */ 'use strict';
 
 /**
  * Module dependencies.

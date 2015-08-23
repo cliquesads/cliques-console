@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -73,13 +73,13 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     if (operator){
         operator = operator[1];
         if (this.queryParamOperators.indexOf(operator) > -1){
-            operator = '$' + operator
+            operator = '$' + operator;
         } else {
-            throw new Error('Unknown operator: ' + operator)
+            throw new Error('Unknown operator: ' + operator);
         }
-        return { operator: val }
+        return { operator: val };
     } else {
-        return val
+        return val;
     }
 };
 
@@ -93,7 +93,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     var self = this;
     this.pathParams.forEach(function(param){
         if (req.param(param)){
-            match[param] = req.param(param)
+            match[param] = req.param(param);
         }
     });
     // Now parse query params & add to match, if passed in
@@ -117,7 +117,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             if (match.hour){
                 match.hour.$lt = new Date(req.query.endDate);
             } else {
-                match.hour = { $lt: new Date(req.query.endDate) }
+                match.hour = { $lt: new Date(req.query.endDate) };
             }
         } catch (e) {
             throw new Error('Invalid endDate, cannot parse to Date object');
@@ -155,7 +155,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
             groupBy = JSON.parse("[" + groupBy + "]");
             groupBy.forEach(function(field){
                 group[field] = '$' + field;
-            })
+            });
         } else {
             group[groupBy] = '$' + groupBy;
         }
@@ -211,15 +211,17 @@ var HourlyAdStatAPI = function(aggregationModels){
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     var self = this;
     return function (req, res) {
+        var group;
         try {
-            var group = pipelineBuilder.getGroup(req);
+            group = pipelineBuilder.getGroup(req);
         } catch (e) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
+        var match;
         try {
-            var match = pipelineBuilder.getMatch(req);
+            match = pipelineBuilder.getMatch(req);
         } catch (e) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
@@ -249,7 +251,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     res.json(hourlyAdStats);
                 }
             });
-    }
+    };
 };
 // BEGIN actual methods to expose to API routes.
 HourlyAdStatAPI.prototype.getManyAdvertiser = function(req, res){

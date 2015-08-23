@@ -1,4 +1,6 @@
+/* jshint node: true */
 'use strict';
+
 /**
  * Module dependencies.
  */

@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -15,7 +15,7 @@ module.exports = function(db) {
          * Get a single geo
          */
         readDma: function (req, res) {
-            res.json(req.dma)
+            res.json(req.dma);
         },
         /**
          * Gets arbitrary number of DMAs

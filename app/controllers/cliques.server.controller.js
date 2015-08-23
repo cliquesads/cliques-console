@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -15,7 +15,7 @@ module.exports = function(db) {
          * Get a single clique
          */
         read: function (req, res) {
-            res.json(req.clique)
+            res.json(req.clique);
         },
         /**
          * Gets arbitrary number of Cliques
