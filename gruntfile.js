@@ -164,7 +164,6 @@ module.exports = function(grunt) {
 			production: {
 				files: {
 					'public/dist/application.js': '<%= applicationJavaScriptFiles %>'
-					// 'public/application.js': '<%= applicationJavaScriptFiles %>'
 				}
 			}
 		},
@@ -177,6 +176,10 @@ module.exports = function(grunt) {
 			}
 		},
 		env: {
+            // Only added development environment to add dev env step to build task as a hack
+            development: {
+                NODE_ENV: 'development'
+            },
 			test: {
 				NODE_ENV: 'test'
 			},
@@ -226,7 +229,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','uglify', /*'cssmin'*/ 'less' ]);
+	grunt.registerTask('build', ['env:development' /* THIS IS A HACK, DUE TO HOW CONFIG IS SET UP (ASSETS.JS) YOU HAVE TO SET ENV=DEV OTHERWISE JS WILL NOT BUILD AT ALL*/,'loadConfig', 'ngAnnotate','uglify', /*'cssmin'*/ 'less' ]);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);
