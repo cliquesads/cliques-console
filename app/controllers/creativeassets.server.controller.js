@@ -21,7 +21,7 @@ module.exports = function(db) {
                 keyFilename: AUTHFILE
             }).storage();
             var assets_bucket = client.bucket(BUCKET);
-            var object_path = [req.params.advertiser, req.params.campaign,req.file.filename].join('/');
+            var object_path = req.file.filename;
             var options = {
                 destination: object_path,
                 resumable: true,
