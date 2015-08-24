@@ -65,7 +65,27 @@ module.exports = function(grunt) {
 			all: {
 				src: watchFiles.clientJS.concat(watchFiles.serverJS),
 				options: {
-					jshintrc: true
+                    node: true,
+                    strict: true, // allows use of 'use strict'; string at beginning of file
+                    multistr: true, // allows use of \ literal to delimit newlines (new as of ES5)
+                    globals: {
+                        angular: false,
+                        after: false,
+                        afterEach: false,
+                        before: false,
+                        beforeEach: false,
+                        browser: false,
+                        describe: false,
+                        document: true,
+                        expect: false,
+                        inject: false,
+                        it: false,
+                        jasmine: false,
+                        spyOn: false,
+                        window: false,
+                        $: false,
+                        ApplicationConfiguration: false
+                    }
 				}
 			}
 		},

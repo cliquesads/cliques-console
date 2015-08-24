@@ -21,8 +21,8 @@ angular.module('aggregations').factory('HourlyAdStat', ['$http',
                     }
                 });
                 var path = basepath + relative_path;
-                return $http.get(path, {params: queryParams})
-            }
+                return $http.get(path, {params: queryParams});
+            };
         }
         hourlyadstatfactory.advQuery = constructQueryFunc(['advertiserId', 'campaignId', 'creativegroupId','creativeId'], adv_path);
         hourlyadstatfactory.pubQuery = constructQueryFunc(['publisherId', 'siteId', 'pageId','placementId'], pub_path);

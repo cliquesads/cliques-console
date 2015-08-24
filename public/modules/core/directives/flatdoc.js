@@ -3,6 +3,9 @@
  * Creates the flatdoc markup and initializes the plugin
  =========================================================*/
 
+/* global _, angular, Flatdoc */
+'use strict';
+
 angular.module('core').directive('flatdoc', ['$location', function($location) {
   return {
     restrict: "EA",

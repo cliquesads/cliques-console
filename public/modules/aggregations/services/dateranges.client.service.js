@@ -1,3 +1,4 @@
+/* global _, angular, moment */
 'use strict';
 
 angular.module('aggregations').factory('aggregationDateRanges',function(){
@@ -21,7 +22,7 @@ angular.module('aggregations').factory('aggregationDateRanges',function(){
                 label: "Last 90 Days",
                 showPoints: false // Used for graphing purposes, might not be generic enough to keep in here
             }
-        }
+        };
     }
     return getDateRanges;
 });

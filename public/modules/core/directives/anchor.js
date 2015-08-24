@@ -2,6 +2,8 @@
  * Module: anchor.js
  * Disables null anchor behavior
  =========================================================*/
+/* global _, angular */
+'use strict';
 
 angular.module('core').directive('href', function() {
 

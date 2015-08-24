@@ -3,6 +3,8 @@
  * Init jQuery Vector Map plugin
  =========================================================*/
 
+/* global _, angular */
+
 angular.module('core').directive('vectorMap', ['vectorMap', function(vectorMap){
   'use strict';
 

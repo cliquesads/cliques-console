@@ -1,3 +1,4 @@
+/* global _, angular, user */
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
@@ -49,10 +50,9 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                 }).then(function(response){
                     response.data.forEach(function(campaign_data){
                         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
-                            return campaign._id === campaign_data._id.campaign
+                            return campaign._id === campaign_data._id.campaign;
                         });
-                        $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend
-                        / $scope.advertiser.campaigns[i].budget).toFixed(4);
+                        $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend/$scope.advertiser.campaigns[i].budget).toFixed(4);
                     });
                 });
             });
@@ -96,14 +96,14 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             }).then(function(response){
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
                     {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend']});
-                $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1]});
-                $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1]});
-                $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1]});
+                $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1];});
+                $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1];});
+                $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.CTR = $scope.clicks / $scope.impressions;
             });
             // TODO: Need to provide error callback for query promise as well
 
             $scope.dateRangeSelection = dateShortCode;
-        }
+        };
 	}
 ]);

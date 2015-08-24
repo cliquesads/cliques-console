@@ -4,6 +4,10 @@
  * Based on https://gist.github.com/AndreasHeiberg/9837868
  =========================================================*/
 
+/* global _, angular, Chart */
+/* jshint newcap: false */
+'use strict';
+
 var ChartJS = function (type) {
     return {
         restrict: "A",

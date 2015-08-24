@@ -3,6 +3,9 @@
  * Initializes the fielstyle plugin
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('filestyle', function() {
   return {
     restrict: 'A',

@@ -33,6 +33,6 @@ angular.module('advertiser').config(['$stateProvider',
             title: 'View Campaign',
             templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',
             controller: 'CampaignController'
-        })
+        });
 	}
 ]);

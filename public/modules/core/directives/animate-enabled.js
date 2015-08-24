@@ -2,6 +2,8 @@
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
  =========================================================*/
+/* global _, angular */
+'use strict';
 
 angular.module('core').directive("animateEnabled", ["$animate", function ($animate) {
   return {

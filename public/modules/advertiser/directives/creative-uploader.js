@@ -18,7 +18,7 @@ angular.module('advertiser').directive('creativeUploader', ['CREATIVE_SIZES', fu
                 name: 'mimetypeFilter',
                 fn: function(item, options) {
                     var mimetypes = ['image/jpeg','image/gif', 'image/png'];
-                    return mimetypes.indexOf(item.type) > -1
+                    return mimetypes.indexOf(item.type) > -1;
                 }
             });
 

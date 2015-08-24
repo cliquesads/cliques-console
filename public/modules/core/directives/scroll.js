@@ -3,6 +3,9 @@
  * Make a content box scrollable
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('scrollable', function(){
   return {
     restrict: 'EA',

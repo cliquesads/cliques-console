@@ -3,6 +3,9 @@
  * Initializes the validation plugin Parsley
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('validateForm', function() {
   return {
     restrict: 'A',

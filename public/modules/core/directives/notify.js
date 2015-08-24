@@ -3,6 +3,9 @@
  * Directive for notify plugin
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('notify', ["$window", "Notify", function($window, Notify){
 
   return {

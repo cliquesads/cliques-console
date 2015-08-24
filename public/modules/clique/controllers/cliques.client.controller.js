@@ -1,3 +1,4 @@
+/* global _, angular */
 'use strict';
 
 angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', 'Authentication', 'Clique','getCliqueTree','ngDialog',
@@ -30,9 +31,9 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
             var parent = tree.get_parent_branch(branch);
             if (parent) {
                 ancestors.unshift(parent.label);
-                return get_clique_ancestors(parent, ancestors)
+                return get_clique_ancestors(parent, ancestors);
             } else {
-                return ancestors
+                return ancestors;
             }
         }
 

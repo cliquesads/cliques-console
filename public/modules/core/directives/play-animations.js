@@ -3,7 +3,9 @@
  * Provides a simple way to run animation with a trigger
  * Requires animo.js
  =========================================================*/
- 
+
+/* global _, angular */
+
 angular.module('core').directive('animate', ["$window", "Utils", function($window, Utils){
 
   'use strict';

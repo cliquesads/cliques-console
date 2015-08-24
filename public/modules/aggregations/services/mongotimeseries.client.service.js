@@ -1,3 +1,4 @@
+/* global _, angular, moment */
 'use strict';
 
 function getDatesArray(startDate, stopDate, unit){
@@ -46,10 +47,10 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
         this.timeUnit = timeUnit;
 
         var zerosArray = getDatesArray(this.startDate, this.endDate, this.timeUnit);
-        this.zerosArray = zerosArray.map(function(d){ return [d, 0]});
+        this.zerosArray = zerosArray.map(function(d){ return [d, 0];});
 
         this._initializeSeries();
-        this._read(apiData)
+        this._read(apiData);
     };
     MongoTimeSeries.prototype._initializeSeries = function(){
         var self = this;
@@ -59,13 +60,13 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
                 self[fieldspec] = self.zerosArray.slice(0);
                 // Add just pass-through function to operators, since no function declared
                 // for this field
-                self.fieldOperators[fieldspec] = function(row){return row[fieldspec]}
+                self.fieldOperators[fieldspec] = function(row){return row[fieldspec];};
             } else if (typeof fieldspec === 'object'){
                 var field = Object.keys(fieldspec)[0]; // I think this is safe to do but not 100% sure
                 self[field] = self.zerosArray.slice(0);
                 self.fieldOperators[field] = fieldspec[field];
             }
-        })
+        });
     };
     MongoTimeSeries.prototype._read = function(apiData){
         var self = this;
@@ -89,7 +90,7 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
                 var fieldFunc = self.fieldOperators[field];
                 // get index in initial zeros array of this date and
                 // replace element
-                var ind = _.findIndex(self[field], function(ar){ return ar[0] === thisDate});
+                var ind = _.findIndex(self[field], function(ar){ return ar[0] === thisDate;});
                 if (ind > -1){
                     self[field][ind] = [thisDate, fieldFunc(row)];
                 }
