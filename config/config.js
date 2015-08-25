@@ -1,4 +1,5 @@
-/* jshint node: true */ /* jshint node: true */ 'use strict';
+/* jshint node: true */
+'use strict';
 
 /**
  * Module dependencies.
