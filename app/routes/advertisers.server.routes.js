@@ -15,5 +15,8 @@ module.exports = function(app){
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
 
+    app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
+        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
+
     app.param('advertiserId', advertisers.advertiserByID);
 };
