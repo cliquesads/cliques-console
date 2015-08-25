@@ -1,10 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+<div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
+<fieldset>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>View Lookback</th>
+                <th>Click Lookback</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="actionbeacon in advertiser.actionbeacons">
+                    <td><p class="form-control-static"><a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a></p></td>
+                    <td><p class="form-control-static">{{ actionbeacon.view_lookback }} Days</td>
+                    <td><p class="form-control-static">{{ actionbeacon.click_lookback }} Days</td>
+                    <td>
+                        <button type="button" ng-click="remove(actionbeacon)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+                        <button type="button" ng-click="remove(actionbeacon)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Code</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-</body>
-</html>
+    <!--Placeholder if no actionbeacons created -->
+    <div class="well well-lg text-center pv-lg" data-ng-if="advertiser.actionbeacons.length == 0">
+        <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No Action Beacons have been created yet.</em>
+    </div>
+</fieldset>
+<div class="text-center">
+    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+</div>

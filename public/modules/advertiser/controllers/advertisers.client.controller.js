@@ -67,6 +67,15 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             });
         };
 
+        $scope.actionBeacons = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: 'modules/advertiser/views/partials/actionbeacons.html',
+                controller: 'actionBeaconController',
+                data: {advertiser: $scope.advertiser}
+            });
+        };
+
 
         // ######################################### //
         // ######### GRAPH VARS & FUNCTIONS ######## //

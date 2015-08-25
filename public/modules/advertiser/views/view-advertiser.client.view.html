@@ -32,6 +32,7 @@
     <!--Upper left panel-->
     <div class="col-sm-4">
         <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
+        <!--BEGIN CAMPAIGN PANEL-->
         <ul class="list-group">
             <li class="list-group-item">
                 Campaigns
@@ -58,6 +59,17 @@
                 </div>
             </a>
         </ul>
+        <!--BEGIN ACTION BEACON PANEL-->
+        <div id="actionbeacons" class="panel widget">
+            <div class="row row-table row-flush">
+                <div class="col-xs-12">
+                    <div class="panel-body text-center bg-primary-light" ng-click="actionBeacons()" tooltip="View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI.">
+                        <h4 class="mt0"><em class="fa fa-code"></em>  {{ advertiser.actionbeacons.length }}</h4>
+                        <p class="mb0">ACTION BEACON{{ advertiser.actionbeacons.length === 1 ? '' : 'S' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="col-md-8">
