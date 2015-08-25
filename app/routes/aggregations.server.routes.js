@@ -13,6 +13,11 @@ module.exports = function(app){
     app.param('advertiser', advertisers.advertiserByID);
     app.param('publisher', publishers.publisherByID);
 
+    /* ---- GENERAL ROUTE ---- */
+    // TODO: FIX PERMISSIONS ISSUE HERE
+    app.route('/hourlyadstat')
+        .get(users.requiresLogin, aggregations.hourlyAdStat.getMany);
+
     /* ---- ADVERTISER ROUTES ---- */
     app.route('/hourlyadstat/adv/:advertiser')
         .get(users.requiresLogin, advertisers.hasAuthorization ,aggregations.hourlyAdStat.getManyAdvertiser);

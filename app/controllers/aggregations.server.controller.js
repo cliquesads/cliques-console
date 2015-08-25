@@ -68,7 +68,7 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     // try to parse value as array if a comma found
     // Should go without saying that you SHOULDN'T USE COMMAS IN QUERY PARAMS
     if (val.indexOf(',') > -1){
-        val = JSON.parse("[" + val + "]");
+        val = val.split(',');
     }
     if (operator){
         operator = operator[1];
@@ -77,7 +77,9 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
         } else {
             throw new Error('Unknown operator: ' + operator);
         }
-        return { operator: val };
+        var obj = {};
+        obj[operator] = val;
+        return obj;
     } else {
         return val;
     }
@@ -207,6 +209,11 @@ var HourlyAdStatAPI = function(aggregationModels){
     this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params, 'hour');
     this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params, 'hour');
     this.cliquePipelineBuilder = new HourlyAggregationPipelineVarBuilder([], this.clique_params, 'hour');
+
+    //TODO: Don't love this, should figure out better way to handle general queries
+    var all_params = this.adv_params.concat(this.pub_params);
+    all_params = all_params.concat(this.clique_params);
+    this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([],all_params, 'hour');
 };
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     var self = this;
@@ -254,6 +261,9 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     };
 };
 // BEGIN actual methods to expose to API routes.
+HourlyAdStatAPI.prototype.getMany = function(req, res){
+    return this._getManyWrapper(this.genPipelineBuilder)(req, res);
+};
 HourlyAdStatAPI.prototype.getManyAdvertiser = function(req, res){
     return this._getManyWrapper(this.advPipelineBuilder)(req, res);
 };
@@ -270,6 +280,9 @@ module.exports = function(db) {
     var hourlyAdStatAPI = new HourlyAdStatAPI(aggregationModels);
     return {
         hourlyAdStat: {
+            getMany: function (req, res) {
+                return hourlyAdStatAPI.getMany(req, res);
+            },
             getManyAdvertiser: function (req, res) {
                 return hourlyAdStatAPI.getManyAdvertiser(req, res);
             },
