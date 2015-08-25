@@ -5,11 +5,10 @@ angular.module('advertiser').controller('actionBeaconController', [
     '$scope',
     'editableOptions',
     'editableThemes',
-    'ActionBeacon',
     'Advertiser',
     'AdvertiserUtils',
     'ngDialog',
-    function($scope, editableOptions, editableThemes, ActionBeacon, Advertiser, AdvertiserUtils, ngDialog) {
+    function($scope, editableOptions, editableThemes, Advertiser, AdvertiserUtils, ngDialog) {
         editableOptions.theme = 'bs3';
         editableThemes.bs3.inputClass = 'input-sm';
         editableThemes.bs3.buttonsClass = 'btn-sm';
@@ -24,6 +23,37 @@ angular.module('advertiser').controller('actionBeaconController', [
             this.advertiser.$update(function(){
             },function(errorResponse){
                 $scope.saveerror = errorResponse.data.message;
+            });
+        };
+
+        $scope.getTag = function(actionbeacon){
+            ngDialog.open({
+                template: '\
+                    <section data-ng-init="getTag()">\
+                        <h4>Code for {{actionbeacon.name}}</h4>\
+                        <div class="checkbox c-checkbox">\
+                            <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>\
+                        </div>\
+                        <pre>{{ tag }}</pre>\
+                    </section>',
+                plain: true,
+                controller: ['$scope','$http', 'ActionBeacon',function($scope,$http,ActionBeacon) {
+                    $scope.advertiser = $scope.ngDialogData.advertiser;
+                    $scope.actionbeacon = $scope.ngDialogData.actionbeacon;
+                    $scope.options = {
+                        secure: false
+                    };
+                    $scope.getTag = function(){
+                        ActionBeacon.getTag({
+                            advertiserId: $scope.advertiser._id,
+                            actionbeaconId: $scope.actionbeacon._id,
+                            secure: $scope.options.secure
+                        }).then(function(response){
+                            $scope.tag = response.data.tag;
+                        });
+                    }
+                }],
+                data: {advertiser: $scope.advertiser, actionbeacon: actionbeacon }
             });
         };
 
