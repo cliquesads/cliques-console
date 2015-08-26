@@ -1,14 +1,15 @@
+<h3> Action Beacons for {{ advertiser.name }}</h3>
 <div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
 <fieldset>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th>Name</th>
-                <th>View Lookback</th>
-                <th>Click Lookback</th>
-                <th>Actions</th>
-            </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>View Lookback</th>
+                    <th>Click Lookback</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="actionbeacon in advertiser.actionbeacons">
@@ -29,6 +30,6 @@
         <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No Action Beacons have been created yet.</em>
     </div>
 </fieldset>
-<div class="text-center">
-    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
-</div>
+<!--<div class="text-center">-->
+    <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->
+<!--</div>-->

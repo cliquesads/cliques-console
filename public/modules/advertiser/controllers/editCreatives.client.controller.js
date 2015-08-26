@@ -3,21 +3,11 @@
 
 angular.module('advertiser').controller('editCreativesController', [
     '$scope',
-    'editableOptions',
-    'editableThemes',
     'Advertiser',
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
-    function($scope,editableOptions, editableThemes, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
-        editableOptions.theme = 'bs3';
-        editableThemes.bs3.inputClass = 'input-sm';
-        editableThemes.bs3.buttonsClass = 'btn-sm';
-        editableThemes.bs3.submitTpl = '<button type="button" ng-click="$form.$submit()" class="btn btn-success"><span class="fa fa-check"></span></button>';
-        editableThemes.bs3.cancelTpl = '<button type="button" class="btn btn-default" ng-click="$form.$cancel()">'+
-                                        '<span class="fa fa-times text-muted"></span>'+
-                                        '</button>';
-
+    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
         $scope.advertiser = $scope.ngDialogData.advertiser;
         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
             return campaign._id === $scope.ngDialogData.campaign._id;

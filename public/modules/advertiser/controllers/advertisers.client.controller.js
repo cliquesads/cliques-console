@@ -27,16 +27,6 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
-		$scope.update = function() {
-			var advertiser = $scope.advertiser;
-
-			advertiser.$update(function() {
-				$location.path('advertiser/' + advertiser._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
 		$scope.find = function() {
             // on query return, get campaign spend data to augment $scope.advertisers
 			$scope.advertisers = Advertiser.query();
@@ -57,6 +47,24 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
                 });
             });
 		};
+
+        $scope.advertiserBasics = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/advertiser-inline.html',
+                controller: ['$scope',function($scope){
+                    $scope.advertiser = $scope.ngDialogData.advertiser;
+                    $scope.update = function() {
+                        var advertiser = $scope.advertiser;
+                        advertiser.$update(function() {
+                            $location.path('advertiser/' + advertiser._id);
+                        }, function(errorResponse) {
+                            $scope.error = errorResponse.data.message;
+                        });
+                    };
+                }],
+                data: {advertiser: $scope.advertiser}
+            });
+        };
 
         $scope.newCampaign = function(){
             ngDialog.open({

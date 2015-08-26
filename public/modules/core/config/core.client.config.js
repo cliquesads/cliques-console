@@ -43,4 +43,15 @@ angular.module('core').run(['Menus',
   cfpLoadingBarProvider.includeSpinner = false;
   cfpLoadingBarProvider.latencyThreshold = 500;
   cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-}]);
+}])
+.run(['editableOptions', 'editableThemes', function(editableOptions, editableThemes){
+        editableOptions.theme = 'bs3';
+        editableThemes.bs3.inputClass = 'input-sm';
+        editableThemes.bs3.buttonsClass = 'btn-sm';
+        editableThemes.bs3.submitTpl = '<button type="button" ng-click="$form.$submit()" class="btn btn-success"><span class="fa fa-check"></span></button>';
+        editableThemes.bs3.cancelTpl = '<button type="button" class="btn btn-default" ng-click="$form.$cancel()">'+
+                                        '<span class="fa fa-times text-muted"></span>'+
+                                        '</button>';
+
+    }
+]);

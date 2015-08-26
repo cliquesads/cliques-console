@@ -1,10 +1,10 @@
 <h3>
-	<div class="pull-right" data-ng-show="authentication.user._id == advertiser.user">
+	<div class="pull-right">
 		<!--<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">-->
 			<!--<i class="fa fa-edit"></i>-->
 		<!--</a>-->
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="fa fa-trash"></i>
+		<a data-ng-click="advertiserBasics();">
+			<i class="fa fa-cog"></i>
 		</a>
 	</div>
 	{{advertiser.name}}
@@ -31,7 +31,6 @@
 
     <!--Upper left panel-->
     <div class="col-sm-4">
-        <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
         <!--BEGIN CAMPAIGN PANEL-->
         <ul class="list-group">
             <li class="list-group-item">

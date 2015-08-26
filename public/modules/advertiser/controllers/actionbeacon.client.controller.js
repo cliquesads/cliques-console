@@ -3,19 +3,10 @@
 
 angular.module('advertiser').controller('actionBeaconController', [
     '$scope',
-    'editableOptions',
-    'editableThemes',
     'Advertiser',
     'AdvertiserUtils',
     'ngDialog',
-    function($scope, editableOptions, editableThemes, Advertiser, AdvertiserUtils, ngDialog) {
-        editableOptions.theme = 'bs3';
-        editableThemes.bs3.inputClass = 'input-sm';
-        editableThemes.bs3.buttonsClass = 'btn-sm';
-        editableThemes.bs3.submitTpl = '<button type="button" ng-click="$form.$submit()" class="btn btn-success"><span class="fa fa-check"></span></button>';
-        editableThemes.bs3.cancelTpl = '<button type="button" class="btn btn-default" ng-click="$form.$cancel()">'+
-                                        '<span class="fa fa-times text-muted"></span>'+
-                                        '</button>';
+    function($scope,Advertiser, AdvertiserUtils, ngDialog) {
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
 
