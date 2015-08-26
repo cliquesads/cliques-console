@@ -6,16 +6,16 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>View Lookback</th>
-                    <th>Click Lookback</th>
+                    <th>View Lookback  <a href="#" tooltip="{{ TOOLTIPS.view_lookback }}"><em class="fa fa-question-circle"></em></a></th>
+                    <th>Click Lookback  <a href="#" tooltip="{{ TOOLTIPS.click_lookback }}"><em class="fa fa-question-circle"></em></a></th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="actionbeacon in advertiser.actionbeacons">
                     <td><p class="form-control-static"><a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a></p></td>
-                    <td><p class="form-control-static">{{ actionbeacon.view_lookback }} Days</td>
-                    <td><p class="form-control-static">{{ actionbeacon.click_lookback }} Days</td>
+                    <td><p class="form-control-static">{{ actionbeacon.view_lookback }} Days</p></td>
+                    <td><p class="form-control-static">{{ actionbeacon.click_lookback }} Days</p></td>
                     <td>
                         <button type="button" ng-click="remove(actionbeacon)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
                         <button type="button" ng-click="getTag(actionbeacon)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Code</button>

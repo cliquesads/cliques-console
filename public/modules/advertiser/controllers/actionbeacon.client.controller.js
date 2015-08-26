@@ -6,9 +6,11 @@ angular.module('advertiser').controller('actionBeaconController', [
     'Advertiser',
     'AdvertiserUtils',
     'ngDialog',
-    function($scope,Advertiser, AdvertiserUtils, ngDialog) {
+    'TOOLTIPS',
+    function($scope,Advertiser, AdvertiserUtils, ngDialog, TOOLTIPS) {
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
+        $scope.TOOLTIPS = TOOLTIPS;
 
         $scope.actionbeacon = {
             name: null
