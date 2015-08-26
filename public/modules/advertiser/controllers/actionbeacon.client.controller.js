@@ -51,7 +51,10 @@ angular.module('advertiser').controller('actionBeaconController', [
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
-                    }
+                    };
+                    $scope.$watch(function(scope){ return scope.options.secure }, function(){
+                        $scope.getTag();
+                    });
                 }],
                 data: {advertiser: $scope.advertiser, actionbeacon: actionbeacon }
             });
@@ -78,4 +81,3 @@ angular.module('advertiser').controller('actionBeaconController', [
         };
     }
 ]);
-

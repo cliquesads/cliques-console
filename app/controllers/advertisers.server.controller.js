@@ -165,7 +165,10 @@ module.exports = function(db) {
         },
         actionbeacon: {
             getTag: function (req, res) {
-                var tag = new tags.ActionBeaconTag(adserverHostname, {port: adserverPort, secure: req.query.secure });
+                var tag = new tags.ActionBeaconTag(adserverHostname, {
+                    port: adserverPort,
+                    secure: JSON.parse(req.query.secure)
+                });
                 var actionbeaconId = req.param('actionbeaconId');
                 var actionbeacon = _.find(req.advertiser.actionbeacons, function(b){ return b.id === actionbeaconId; });
                 if (actionbeacon){

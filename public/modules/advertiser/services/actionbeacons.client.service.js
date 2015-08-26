@@ -7,7 +7,7 @@ angular.module('advertiser').factory('ActionBeacon', ['$http',
         actionbeaconfactory.getTag = function(params) {
             var path = '/advertiser/' + params.advertiserId + '/actionbeacon/' + params.actionbeaconId;
             var queryParams = { secure: params.secure || false };
-            return $http.get(path, queryParams);
+            return $http.get(path, {params: queryParams});
         };
         return actionbeaconfactory;
     }
