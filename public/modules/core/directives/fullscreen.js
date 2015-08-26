@@ -3,8 +3,10 @@
  * Toggle the fullscreen mode on/off
  =========================================================*/
 
+/* global _, angular, screenfull */
+'use strict';
+
 angular.module('core').directive('toggleFullscreen', ['browser', function(browser) {
-  'use strict';
 
   return {
     restrict: 'A',

@@ -36,8 +36,8 @@
             $scope.morrisInstance = new Morris[type]($scope.morrisOptions);
 
           }
-        }
-      }
+        };
+      };
     }
 
 })();

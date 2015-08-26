@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
 module.exports = function(app){
@@ -14,6 +14,9 @@ module.exports = function(app){
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.read)
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
+
+    app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
+        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
 
     app.param('advertiserId', advertisers.advertiserByID);
 };

@@ -1,5 +1,7 @@
-// used for datepicker forms
+/* global _, angular */
+'use strict';
 
+// used for datepicker forms
 angular.module('core').factory('DatepickerService',function(){
     var self = this;
     self.opened = {};
@@ -11,6 +13,6 @@ angular.module('core').factory('DatepickerService',function(){
         $event.stopPropagation();
         self.opened[which] = true;
     };
-    return self
+    return self;
 });
 

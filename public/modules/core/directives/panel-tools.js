@@ -5,6 +5,9 @@
  * Saves panel state in browser storage
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('paneltool', ["$compile", "$timeout", function($compile, $timeout){
   var templates = {
     /* jshint multistr: true */
@@ -53,7 +56,6 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
  * Dismiss panels * [panel-dismiss]
  =========================================================*/
 .directive('panelDismiss', ["$q", "Utils", function($q, Utils){
-  'use strict';
   return {
     restrict: 'A',
     controller: ["$scope", "$element", function ($scope, $element) {
@@ -107,7 +109,6 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
  * Collapse panels * [panel-collapse]
  =========================================================*/
 .directive('panelCollapse', ['$timeout', function($timeout){
-  'use strict';
   
   var storageKeyName = 'panelState',
       storage;
@@ -163,7 +164,6 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
  * [panel-refresh] * [data-spinner="standard"]
  =========================================================*/
 .directive('panelRefresh', ["$q", function($q){
-  'use strict';
   
   return {
     restrict: 'A',

@@ -3,8 +3,10 @@
  * Enable use of classyloader directly from data attributes
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('classyloader', ["$timeout", "Utils", function($timeout, Utils) {
-  'use strict';
 
   var $scroller       = $(window),
       inViewFlagClass = 'js-is-in-view'; // a classname to detect when a chart has been triggered after scroll

@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
 module.exports = function(app){
@@ -12,6 +12,11 @@ module.exports = function(app){
     /* ---- Param Middleware ---- */
     app.param('advertiser', advertisers.advertiserByID);
     app.param('publisher', publishers.publisherByID);
+
+    /* ---- GENERAL ROUTE ---- */
+    // TODO: FIX PERMISSIONS ISSUE HERE
+    app.route('/hourlyadstat')
+        .get(users.requiresLogin, aggregations.hourlyAdStat.getMany);
 
     /* ---- ADVERTISER ROUTES ---- */
     app.route('/hourlyadstat/adv/:advertiser')

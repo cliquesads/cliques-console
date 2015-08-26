@@ -3,6 +3,9 @@
  * Initializes the tag inputs plugin
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('tagsinput', ["$timeout", function($timeout) {
   return {
     restrict: 'A',

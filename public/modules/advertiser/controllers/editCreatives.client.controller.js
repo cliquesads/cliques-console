@@ -1,22 +1,13 @@
+/* global _, angular, moment */
 'use strict';
 
 angular.module('advertiser').controller('editCreativesController', [
     '$scope',
-    'editableOptions',
-    'editableThemes',
     'Advertiser',
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
-    function($scope,editableOptions, editableThemes, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
-        editableOptions.theme = 'bs3';
-        editableThemes.bs3.inputClass = 'input-sm';
-        editableThemes.bs3.buttonsClass = 'btn-sm';
-        editableThemes.bs3.submitTpl = '<button type="button" ng-click="$form.$submit()" class="btn btn-success"><span class="fa fa-check"></span></button>';
-        editableThemes.bs3.cancelTpl = '<button type="button" class="btn btn-default" ng-click="$form.$cancel()">'+
-                                        '<span class="fa fa-times text-muted"></span>'+
-                                        '</button>';
-
+    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
         $scope.advertiser = $scope.ngDialogData.advertiser;
         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
             return campaign._id === $scope.ngDialogData.campaign._id;
@@ -48,7 +39,7 @@ angular.module('advertiser').controller('editCreativesController', [
             $scope.$apply(function() {
                 creativegroups.forEach(function (crg) {
                     var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
-                        return cg.w === crg.w && cg.h === crg.h
+                        return cg.w === crg.w && cg.h === crg.h;
                     });
                     // if creativegroup of same size exists, add to this creative group
                     if (ind > -1) {
@@ -91,8 +82,8 @@ angular.module('advertiser').controller('editCreativesController', [
             }).then(function(val){
                 if (val === 1){
                     // first find indices of desired creative
-                    var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup });
-                    var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative });
+                    var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup; });
+                    var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative; });
                     // remove from creatives document array
                     $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
                     // remove creative group if it doesn't contain any creatives anymore

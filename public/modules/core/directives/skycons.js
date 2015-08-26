@@ -3,6 +3,9 @@
  * Include any animated weather icon from Skycons
  =========================================================*/
 
+/* global _, angular, Skycons */
+'use strict';
+
 angular.module('core').directive('skycon', function(){
 
   return {

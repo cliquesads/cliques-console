@@ -3,8 +3,10 @@
  * Handles form wizard plugin and validation
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('formWizard', ["$parse", "$q", function($parse){
-  'use strict';
 
   return {
     restrict: 'A',

@@ -3,6 +3,9 @@
  * Wraps the sidebar and handles collapsed state
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('sidebar', ['$rootScope', '$timeout', '$window', 'Utils', function($rootScope, $timeout, $window, Utils) {
   
   var $win  = $($window);

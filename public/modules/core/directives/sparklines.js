@@ -2,7 +2,9 @@
  * Module: sparkline.js
  * SparkLines Mini Charts
  =========================================================*/
- 
+
+/* global _, angular */
+
 angular.module('core').directive('sparkline', ['$timeout', '$window', function($timeout, $window){
 
   'use strict';

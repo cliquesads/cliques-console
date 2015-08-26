@@ -3,6 +3,9 @@
  * Initializes the masked inputs
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('masked', function() {
   return {
     restrict: 'A',

@@ -3,6 +3,9 @@
  * Services to use d3.js library
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').factory('d3service', ['$document', '$q', '$rootScope',
     function($document, $q, $rootScope) {
         var d = $q.defer();

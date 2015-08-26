@@ -1,11 +1,18 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
  */
-var models = require('cliques_node_utils').mongodb.models,
+var node_utils = require('cliques_node_utils'),
+    models = node_utils.mongodb.models,
+    tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
+
+// Global vars to render action beacon tags
+var config = require('config');
+var adserverHostname = config.get('AdServer.http.external.hostname');
+var adserverPort = config.get('AdServer.http.external.port');
 
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
@@ -15,7 +22,7 @@ module.exports = function(db) {
          * Get a single advertiser
          */
         read: function (req, res) {
-            res.json(req.advertiser)
+            res.json(req.advertiser);
         },
         /**
          * Gets arbitrary number of Advertisers
@@ -24,7 +31,7 @@ module.exports = function(db) {
             // limit scope of query to just those advertisers to which
             // user is permitted to see
             if (req.user.roles.indexOf('admin') === -1){
-                req.query.user = req.user.id
+                req.query.user = req.user.id;
             }
             advertiserModels.Advertiser.apiQuery(req.query, function (err, advertisers) {
                 if (err) {
@@ -155,6 +162,25 @@ module.exports = function(db) {
 
         campaign: {
             //TODO: Campaign controllers here
+        },
+        actionbeacon: {
+            getTag: function (req, res) {
+                var tag = new tags.ActionBeaconTag(adserverHostname, {
+                    port: adserverPort,
+                    secure: JSON.parse(req.query.secure)
+                });
+                var actionbeaconId = req.param('actionbeaconId');
+                var actionbeacon = _.find(req.advertiser.actionbeacons, function(b){ return b.id === actionbeaconId; });
+                if (actionbeacon){
+                    // Kind of a hack, but don't want to change render method
+                    actionbeacon.parent_advertiser = {};
+                    actionbeacon.parent_advertiser.id = req.advertiser.id;
+                    var rendered = tag.render(actionbeacon);
+                    res.json({tag: rendered});
+                } else {
+                    res.status(400).send({message: 'No actionbeacon with id ' + actionbeaconId + ' found under advertiser ID ' + req.advertiser.id});
+                }
+            }
         }
     };
 };

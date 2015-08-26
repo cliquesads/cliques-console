@@ -68,7 +68,7 @@ factory('getCliqueTree', ['Clique', function(Clique){
                 var query_result = Clique.query(function(){
                     scope.cliques = format_cliques_collection_for_tree(query_result);
                 });
-            })
-        }
+            });
+        };
     }
 ]);

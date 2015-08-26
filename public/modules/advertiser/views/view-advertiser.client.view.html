@@ -1,10 +1,10 @@
 <h3>
-	<div class="pull-right" data-ng-show="authentication.user._id == advertiser.user">
+	<div class="pull-right">
 		<!--<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">-->
 			<!--<i class="fa fa-edit"></i>-->
 		<!--</a>-->
-		<a class="btn btn-primary" data-ng-click="remove();">
-			<i class="fa fa-trash"></i>
+		<a data-ng-click="advertiserBasics();">
+			<i class="fa fa-cog"></i>
 		</a>
 	</div>
 	{{advertiser.name}}
@@ -31,10 +31,10 @@
 
     <!--Upper left panel-->
     <div class="col-sm-4">
-        <advertiser-inline advertiser="advertiser" onaftersave="update()"></advertiser-inline>
+        <!--BEGIN CAMPAIGN PANEL-->
         <ul class="list-group">
             <li class="list-group-item">
-                Campaigns
+                <strong>Campaigns</strong>
                 <a href="#" class="pull-right ng-click-active" ng-click="newCampaign()" tooltip="Create a new campaign">
                     <span class="fa fa-plus-square-o"></span>
                 </a>
@@ -58,6 +58,20 @@
                 </div>
             </a>
         </ul>
+        <!--BEGIN ACTION BEACON PANEL-->
+        <div id="actionbeacons" class="panel widget" ng-click="actionBeacons()" tooltip="View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI.">
+            <div class="row row-table row-flush">
+                <div class="col-xs-4 bg-primary-light text-center">
+                    <em class="fa fa-code fa-2x"></em>
+                </div>
+                <div class="col-xs-8">
+                    <div class="panel-body text-center">
+                        <h4 class="mt0">{{ advertiser.actionbeacons.length }}</h4>
+                        <p class="mb0">ACTION BEACON{{ advertiser.actionbeacons.length === 1 ? '' : 'S' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="col-md-8">

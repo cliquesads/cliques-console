@@ -19,6 +19,7 @@
     "chalk": "~0.5",
     "cliques-node-utils": "git+https://2c663350df2f1cdd63dd766c9f0a009489f1a0e9:x-oauth-basic@github.com/cliquesads/cliques-node-utils.git",
     "compression": "~1.2.0",
+    "config": "^1.15.0",
     "connect-flash": "~0.1.1",
     "connect-mongo": "~0.4.1",
     "consolidate": "~0.10.0",

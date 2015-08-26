@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 var auth = require('cliques_node_utils').google.auth,
     gcloud = require('gcloud'),
     errorHandler = require('./errors.server.controller');
@@ -21,7 +21,7 @@ module.exports = function(db) {
                 keyFilename: AUTHFILE
             }).storage();
             var assets_bucket = client.bucket(BUCKET);
-            var object_path = [req.params.advertiser, req.params.campaign,req.file.filename].join('/');
+            var object_path = req.file.filename;
             var options = {
                 destination: object_path,
                 resumable: true,
@@ -47,7 +47,7 @@ module.exports = function(db) {
                         // to return to client in apiResponse
                         // Not sure if it's necessary to include full apiResponse
                         // but it can't hurt
-                        apiResponse["url"] = BASE_URL + object_path;
+                        apiResponse.url  = BASE_URL + object_path;
                         return res.json(apiResponse);
                     });
                 }

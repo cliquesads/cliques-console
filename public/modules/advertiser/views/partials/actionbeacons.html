@@ -1,0 +1,58 @@
+<h3> Action Beacons for {{ advertiser.name }}</h3>
+<div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
+<fieldset>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>View Lookback  <a href="#" tooltip="{{ TOOLTIPS.view_lookback }}"><em class="fa fa-question-circle"></em></a></th>
+                    <th>Click Lookback  <a href="#" tooltip="{{ TOOLTIPS.click_lookback }}"><em class="fa fa-question-circle"></em></a></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="actionbeacon in advertiser.actionbeacons">
+                    <td><p class="form-control-static"><a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a></p></td>
+                    <td><p class="form-control-static">{{ actionbeacon.view_lookback }} Days</p></td>
+                    <td><p class="form-control-static">{{ actionbeacon.click_lookback }} Days</p></td>
+                    <td>
+                        <button type="button" ng-click="remove(actionbeacon)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+                        <button type="button" ng-click="getTag(actionbeacon)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Code</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!--Placeholder if no actionbeacons created -->
+    <div class="well well-lg text-center pv-lg" data-ng-if="advertiser.actionbeacons.length == 0">
+        <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No Action Beacons have been created yet.</em>
+    </div>
+</fieldset>
+    <p>
+        <button type="button" class="btn btn-labeled btn-primary" ng-click="formVisible = !formVisible">
+            <span class="btn-label"><i class="fa fa-plus"></i></span>Create a New Action Beacon
+        </button>
+    </p>
+    <div class="panel panel-default" ng-show="formVisible">
+        <div class="panel panel-heading">
+            <div class="panel-title">New Action Beacon</div>
+        </div>
+        <div class="panel-body">
+            <form name="newActionBeacon">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2">Name</label>
+                        <div class="controls">
+                            <input class="col-sm-6" name="actionbeacon.name" ng-model="actionbeacon.name" type="text" placeholder="Shopping Cart Beacon" required="required"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-xs" ng-click="submitNewActionBeacon()">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<!--<div class="text-center">-->
+    <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->
+<!--</div>-->

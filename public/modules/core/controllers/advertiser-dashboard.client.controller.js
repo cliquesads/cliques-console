@@ -1,6 +1,10 @@
 /**
  * Created by bliang on 8/21/15.
  */
+
+/* global _, angular, moment, user */
+'use strict';
+
 angular.module('core').controller('AdvertiserDashboardController',
     ['$scope','$location','$window','Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
         function($scope, $location, $window, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {

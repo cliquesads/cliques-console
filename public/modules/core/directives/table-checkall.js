@@ -3,6 +3,8 @@
  * Tables check all checkbox
  =========================================================*/
 
+/* global _, angular */
+
 angular.module('core').directive('checkAll', function() {
   'use strict';
   

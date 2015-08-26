@@ -1,3 +1,6 @@
+/* global _, angular, moment */
+'use strict';
+
 angular.module('advertiser').factory('AdvertiserUtils',function() {
     return {
         /**
@@ -47,7 +50,7 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
                     });
                 }
             }
-            return creativegroups
+            return creativegroups;
         },
 
         /**
@@ -78,5 +81,5 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             }
             return campaign;
         }
-    }
+    };
 });

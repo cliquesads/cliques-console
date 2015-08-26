@@ -3,8 +3,10 @@
  * Initializes the Flot chart plugin and handles data refresh
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('flot', ['$http', '$timeout', function($http, $timeout) {
-  'use strict';
   return {
     restrict: 'EA',
     template: '<div></div>',

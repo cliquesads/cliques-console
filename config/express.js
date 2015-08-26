@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -27,6 +27,10 @@ var fs = require('fs'),
 module.exports = function(db) {
 	// Initialize express app
 	var app = express();
+
+    // TODO: This is only here b/c project uses 'config' directory, which is the default dir for
+    // TODO: node config module
+    process.env.NODE_CONFIG_DIR = './cliques-config';
 
 	// Globbing model files
 	config.getGlobbedFiles('./app/models/**/*.js').forEach(function(modelPath) {

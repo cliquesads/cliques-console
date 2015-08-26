@@ -3,8 +3,10 @@
  * Request and load into the current page a css file
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('loadCss', function() {
-  'use strict';
 
   return {
     restrict: 'A',

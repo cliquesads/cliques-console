@@ -3,7 +3,16 @@
 source ./activate_production.sh
 nvm use 0.12.0
 npm install
-NODE_ENV=development grunt build
+grunt build
+
+if [ ! -d $HOME"/repositories/cliques-config" ]; then
+    git clone git@github.com:cliquesads/cliques-config.git ../cliques-config
+    ln -s ../cliques-config .
+else
+    cd ../cliques-config
+    git pull
+    cd ../cliques-console
+fi
 
 processname='cliques-console'
 running=$(pm2 list -m | grep "$processname")

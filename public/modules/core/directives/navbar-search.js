@@ -3,8 +3,10 @@
  * Navbar search toggler * Auto dismiss on ESC key
  =========================================================*/
 
+/* global _, angular */
+'use strict';
+
 angular.module('core').directive('searchOpen', ['navSearch', function(navSearch) {
-  'use strict';
 
   return {
     restrict: 'A',
@@ -16,7 +18,6 @@ angular.module('core').directive('searchOpen', ['navSearch', function(navSearch)
   };
 
 }]).directive('searchDismiss', ['navSearch', function(navSearch) {
-  'use strict';
 
   var inputSelector = '.navbar-form input[type="text"]';
 

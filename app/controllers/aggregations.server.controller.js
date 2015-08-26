@@ -1,4 +1,4 @@
-'use strict';
+/* jshint node: true */ 'use strict';
 
 /**
  * Module dependencies.
@@ -68,18 +68,20 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     // try to parse value as array if a comma found
     // Should go without saying that you SHOULDN'T USE COMMAS IN QUERY PARAMS
     if (val.indexOf(',') > -1){
-        val = JSON.parse("[" + val + "]");
+        val = val.split(',');
     }
     if (operator){
         operator = operator[1];
         if (this.queryParamOperators.indexOf(operator) > -1){
-            operator = '$' + operator
+            operator = '$' + operator;
         } else {
-            throw new Error('Unknown operator: ' + operator)
+            throw new Error('Unknown operator: ' + operator);
         }
-        return { operator: val }
+        var obj = {};
+        obj[operator] = val;
+        return obj;
     } else {
-        return val
+        return val;
     }
 };
 
@@ -93,7 +95,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     var self = this;
     this.pathParams.forEach(function(param){
         if (req.param(param)){
-            match[param] = req.param(param)
+            match[param] = req.param(param);
         }
     });
     // Now parse query params & add to match, if passed in
@@ -117,7 +119,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             if (match.hour){
                 match.hour.$lt = new Date(req.query.endDate);
             } else {
-                match.hour = { $lt: new Date(req.query.endDate) }
+                match.hour = { $lt: new Date(req.query.endDate) };
             }
         } catch (e) {
             throw new Error('Invalid endDate, cannot parse to Date object');
@@ -155,7 +157,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
             groupBy = JSON.parse("[" + groupBy + "]");
             groupBy.forEach(function(field){
                 group[field] = '$' + field;
-            })
+            });
         } else {
             group[groupBy] = '$' + groupBy;
         }
@@ -207,19 +209,26 @@ var HourlyAdStatAPI = function(aggregationModels){
     this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params, 'hour');
     this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params, 'hour');
     this.cliquePipelineBuilder = new HourlyAggregationPipelineVarBuilder([], this.clique_params, 'hour');
+
+    //TODO: Don't love this, should figure out better way to handle general queries
+    var all_params = this.adv_params.concat(this.pub_params);
+    all_params = all_params.concat(this.clique_params);
+    this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([],all_params, 'hour');
 };
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     var self = this;
     return function (req, res) {
+        var group;
         try {
-            var group = pipelineBuilder.getGroup(req);
+            group = pipelineBuilder.getGroup(req);
         } catch (e) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
+        var match;
         try {
-            var match = pipelineBuilder.getMatch(req);
+            match = pipelineBuilder.getMatch(req);
         } catch (e) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
@@ -249,9 +258,12 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     res.json(hourlyAdStats);
                 }
             });
-    }
+    };
 };
 // BEGIN actual methods to expose to API routes.
+HourlyAdStatAPI.prototype.getMany = function(req, res){
+    return this._getManyWrapper(this.genPipelineBuilder)(req, res);
+};
 HourlyAdStatAPI.prototype.getManyAdvertiser = function(req, res){
     return this._getManyWrapper(this.advPipelineBuilder)(req, res);
 };
@@ -268,6 +280,9 @@ module.exports = function(db) {
     var hourlyAdStatAPI = new HourlyAdStatAPI(aggregationModels);
     return {
         hourlyAdStat: {
+            getMany: function (req, res) {
+                return hourlyAdStatAPI.getMany(req, res);
+            },
             getManyAdvertiser: function (req, res) {
                 return hourlyAdStatAPI.getManyAdvertiser(req, res);
             },
