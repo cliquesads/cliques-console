@@ -19,7 +19,7 @@ angular.module('advertiser').controller('actionBeaconController', [
         $scope.update = function(callback){
             this.advertiser.$update(function(){
                 if (callback){
-                    callback()
+                    callback();
                 }
             },function(errorResponse){
                 $scope.saveerror = errorResponse.data.message;
@@ -52,7 +52,7 @@ angular.module('advertiser').controller('actionBeaconController', [
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watch(function(scope){ return scope.options.secure }, function(){
+                    $scope.$watch(function(scope){ return scope.options.secure; }, function(){
                         $scope.getTag();
                     });
                 }],
@@ -69,7 +69,7 @@ angular.module('advertiser').controller('actionBeaconController', [
                     $scope.formVisible = false;
                     $scope.actionbeacon = {
                         name: null
-                    }
+                    };
                 });
             } else {
                 return false;
