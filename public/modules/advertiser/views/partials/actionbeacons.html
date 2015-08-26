@@ -30,6 +30,29 @@
         <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No Action Beacons have been created yet.</em>
     </div>
 </fieldset>
+    <p>
+        <button type="button" class="btn btn-labeled btn-primary" ng-click="formVisible = !formVisible">
+            <span class="btn-label"><i class="fa fa-plus"></i></span>Create a New Action Beacon
+        </button>
+    </p>
+    <div class="panel panel-default" ng-show="formVisible">
+        <div class="panel panel-heading">
+            <div class="panel-title">New Action Beacon</div>
+        </div>
+        <div class="panel-body">
+            <form name="newActionBeacon">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2">Name</label>
+                        <div class="controls">
+                            <input class="col-sm-6" name="actionbeacon.name" ng-model="actionbeacon.name" type="text" placeholder="Shopping Cart Beacon" required="required"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-xs" ng-click="submitNewActionBeacon()">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 <!--<div class="text-center">-->
     <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->
 <!--</div>-->

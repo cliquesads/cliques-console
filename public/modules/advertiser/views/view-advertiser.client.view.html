@@ -34,7 +34,7 @@
         <!--BEGIN CAMPAIGN PANEL-->
         <ul class="list-group">
             <li class="list-group-item">
-                Campaigns
+                <strong>Campaigns</strong>
                 <a href="#" class="pull-right ng-click-active" ng-click="newCampaign()" tooltip="Create a new campaign">
                     <span class="fa fa-plus-square-o"></span>
                 </a>
@@ -59,10 +59,13 @@
             </a>
         </ul>
         <!--BEGIN ACTION BEACON PANEL-->
-        <div id="actionbeacons" class="panel widget">
+        <div id="actionbeacons" class="panel widget" ng-click="actionBeacons()" tooltip="View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI.">
             <div class="row row-table row-flush">
-                <div class="col-xs-12">
-                    <div class="panel-body text-center bg-primary-light" ng-click="actionBeacons()" tooltip="View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI.">
+                <div class="col-xs-4 bg-primary-light text-center">
+                    <em class="fa fa-code fa-2x"></em>
+                </div>
+                <div class="col-xs-8">
+                    <div class="panel-body text-center">
                         <h4 class="mt0">{{ advertiser.actionbeacons.length }}</h4>
                         <p class="mb0">ACTION BEACON{{ advertiser.actionbeacons.length === 1 ? '' : 'S' }}</p>
                     </div>

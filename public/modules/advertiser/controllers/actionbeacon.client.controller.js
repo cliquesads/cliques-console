@@ -10,8 +10,15 @@ angular.module('advertiser').controller('actionBeaconController', [
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
 
-        $scope.update = function(){
+        $scope.actionbeacon = {
+            name: null
+        };
+
+        $scope.update = function(callback){
             this.advertiser.$update(function(){
+                if (callback){
+                    callback()
+                }
             },function(errorResponse){
                 $scope.saveerror = errorResponse.data.message;
             });
@@ -49,6 +56,22 @@ angular.module('advertiser').controller('actionBeaconController', [
                 }],
                 data: {advertiser: $scope.advertiser, actionbeacon: actionbeacon }
             });
+        };
+
+        $scope.formVisible = false;
+
+        $scope.submitNewActionBeacon = function(){
+            if (this.newActionBeacon.$valid){
+                this.advertiser.actionbeacons.push(this.actionbeacon);
+                this.update(function(){
+                    $scope.formVisible = false;
+                    $scope.actionbeacon = {
+                        name: null
+                    }
+                });
+            } else {
+                return false;
+            }
         };
 
         $scope.remove = function(actionbeacon){
