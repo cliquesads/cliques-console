@@ -23,15 +23,15 @@
                         </li>
                         <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
                             <h4>2. Site Basics</h4>
-                            <small class="text-muted"></small>
+                            <small class="text-muted">You can set up more sites under this publisher later</small>
                         </li>
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
                             <h4>3. Choose a Clique</h4>
-                            <small class="text-muted"></small>
+                            <small class="text-muted">Your site's Clique determines what type of advertisers get to bid on your impressions.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>5. Placements</h4>
-                            <small class="text-muted"></small>
+                            <h4>5. Pages & Placements</h4>
+                            <small class="text-muted">Describe the page on your site where you'd like to place ads. You can add more pages later.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
                             <h4>6. Review & Submit</h4>
@@ -109,7 +109,7 @@
                                 </a>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control" required="required"/>
+                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
                                 </div>
                             </div>
                             <br/>
@@ -159,17 +159,72 @@
 
                     <!-- START PLACEMENT CREATION STEP-->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <legend>Now add some creatives to your site</legend>
+                        <legend>Set up a page & add placements</legend>
+                        <em><small class="text-muted"></small></em>
                         <fieldset>
-                            <!--<creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>-->
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" name="page.name" id="page.name" data-ng-model="page.name" data-parsley-group="step4" placeholder="Homepage" required="required" class="form-control" />
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>URL *</label>
+                                <a href="#" tooltip="{{ TOOLTIPS.page_url }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="controls">
+                                    <input name="page_url" type="url" data-ng-model="page.url" id="page_url" data-parsley-group="step4" class="form-control" placeholder="http://www.example.com/index.html" required="required">
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="page.description" id="page.description" data-ng-model="page.description" data-parsley-group="step4" placeholder="Optional - describe this page" class="form-control" />
+                            </div>
                         </fieldset>
+                        <fieldset>
+                            <button type="button" class="btn btn-labeled btn-primary" ng-click="newPlacement()">
+                                <span class="btn-label"><i class="fa fa-plus"></i></span>Add a New Placement
+                            </button>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name *</th>
+                                            <th>Dimensions *</th>
+                                            <th>Position *</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="placement in page.placements">
+                                        <td><input type="text" data-ng-model="placement.name" data-parsley-group="step4" placeholder="ex. Right Sidebar 300x250" required="required" class="form-control"/></td>
+                                        <td>
+                                            <select name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="step4" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                                                <option value=""></option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="position" data-ng-model="placement.position" data-parsley-group="step4" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                                                <option value=""></option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                        {{ page.placements }}
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(3)">
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
-                            <li class="next" ng-show="uploads_completed">
+                            <li class="next">
                                 <a href="#" ng-click="wizard.go(5)"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>

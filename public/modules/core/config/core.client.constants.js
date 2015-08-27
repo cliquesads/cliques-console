@@ -46,4 +46,13 @@ angular.module('core')
     .constant('REGEXES', {
         domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/
     })
+    .constant('OPENRTB', {
+        positions: [
+            {name: "Header", code: 4},
+            {name: "Footer", code: 5},
+            {name: "Sidebar", code: 6},
+            {name: "Above the Fold", code: 1},
+            {name: "Below the Fold", code: 3}
+        ]
+    })
 ;

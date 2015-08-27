@@ -1,3 +1,4 @@
+/* global _, angular, moment, user */
 'use strict';
 
 angular.module('publisher').controller('PublisherWizardController', ['$scope',
@@ -11,7 +12,9 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'BID_FLOOR_SETTINGS',
     'TOOLTIPS',
     'REGEXES',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS, REGEXES) {
+    'CREATIVE_SIZES',
+    'OPENRTB',
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -19,6 +22,9 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
+        $scope.CREATIVE_SIZES = CREATIVE_SIZES;
+        $scope.OPENRTB = OPENRTB;
+
         // something weird about storing regexes as scope vars, they don't bind
         // to the template properly to have to convert to string
         $scope.domain_regex = String(REGEXES.domain);
@@ -44,6 +50,35 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             domain_name:    null,
             clique:         null,
             blacklist:      []
+
+        };
+        $scope.page = {
+            name: null,
+            description: null,
+            url: null,
+            placements: []
+        };
+
+        /**
+         * Adds new placement in placement step
+         */
+        $scope.newPlacement = function(){
+            this.page.placements.push({
+                name: null,
+                dimensions: null,
+                h: null,
+                w: null,
+                pos: null,
+                active: true
+            });
+        };
+
+        /**
+         * Removes placement from array
+         */
+        $scope.removePlacement = function(placement){
+            var ind = _.findIndex(this.page.placements, function(obj){ return obj === placement});
+            this.page.placements.splice(ind, 1);
         };
 
         /**
