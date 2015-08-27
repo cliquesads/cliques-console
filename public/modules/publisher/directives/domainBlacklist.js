@@ -9,12 +9,16 @@ angular.module('publisher').directive('domainBlacklist', ['REGEXES',function(REG
             model: '=',
             wizardstep: '@'
         },
-        template: '<input type="text" tagsinput="tagsinput" ng-value="ngValue" ng-model="model" class="form-control" data-parsley-group="{{ wizardstep }}"/>',
+        template: '<input type="text" tagsinput="tagsinput" ng-value="ngValue" ng-model="model" class="form-control" data-parsley-group="{{ wizardstep }}"/><span ng-show="invalidDomain" class="text-danger" style="">Not a valid domain name</span>',
         link: function(scope, element, attrs){
             element.on('beforeItemAdd', function(event){
+                scope.invalidDomain = false;
                 var valid = REGEXES.domain.test(event.item);
                 if (!valid){
                     event.cancel = true;
+                    scope.$apply(function(){
+                        scope.invalidDomain = true;
+                    });
                 }
             });
             scope.ngValue = scope.model.join(',');
