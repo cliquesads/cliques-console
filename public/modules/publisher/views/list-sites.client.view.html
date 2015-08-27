@@ -1,0 +1,60 @@
+<h3>Campaigns
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+<section data-ng-controller="CampaignController" data-ng-init="findAdvertisers()">
+    <div class="page-header">
+        <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="advertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="width: 100%">
+            <option value=""></option>
+        </select>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
+            <div class="row row-table">
+                <div class="col-sm-1">
+                    <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
+                </div>
+                <div class="col-sm-2">
+                    <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>
+                    <p class="list-group-item-text">{{ campaign.clique }}</p>
+                </div>
+                <div class="col-sm-2">
+                    <h4 class="list-group-item-heading">{{ campaign.end_date | date:'MM/dd/yyyy' }}</h4>
+                    <p class="list-group-item-text">Ends</p>
+                </div>
+                <div class="col-sm-2">
+                    <h4 class="list-group-item-heading">{{ campaign.budget | currency:"$":"0" }}</h4>
+                    <p class="list-group-item-text">Budget</p>
+                </div>
+                <div class="col-sm-1">
+                    <h4 class="list-group-item-heading">{{ (campaign.spend||0) | currency:"$":"0" }}</h4>
+                    <p class="list-group-item-text">Spent</p>
+                </div>
+                <div class="col-sm-1">
+                    <radial percent="campaign.percent_spent" size="sm"></radial>
+                </div>
+                <div class="col-sm-1">
+                    <h4 class="list-group-item-heading">{{ (campaign.imps||0) | number:"0" }}</h4>
+                    <p class="list-group-item-text">Impressions</p>
+                </div>
+                <div class="col-sm-1">
+                    <h4 class="list-group-item-heading">{{ (campaign.ecpm||0) | currency:"$":"2" }}</h4>
+                    <p class="list-group-item-text">Average CPM</p>
+                </div>
+                <div class="col-sm-1">
+                    <h4 class="list-group-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
+                    <p class="list-group-item-text">CTR</p>
+                </div>
+            </div>
+            <!--<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>-->
+        </a>
+    </div>
+	<div class="well well-lg text-center pv-lg" data-ng-if="advertiser.campaigns.length == 0 || !advertiser">
+		<span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No campaigns to show.</em>
+	</div>
+</section>

@@ -1,0 +1,274 @@
+<h3>New Publisher
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+
+<section data-ng-controller="PublisherWizardController">
+    <div class="panel panel-default">
+        <!--DEBUGGING-->
+        <!--<div class="panel-heading">Start Date = {{ site.start_date }}, End date = {{ site.end_date }}</div>-->
+        <div class="panel-body">
+            <form name="publisherForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="6">
+                <div class="form-wizard wizard-vertical">
+                    <!-- START wizard steps indicator-->
+                    <ol>
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
+                            <h4>1. Publisher</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
+                            <h4>2. Site Basics</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
+                            <h4>3. Choose a Clique</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
+                            <h4>4. Targeting Details</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
+                            <h4>5. Creatives</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
+                            <h4>6. Review & Submit</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                    </ol>
+                    <!-- END wizard steps indicator-->
+
+                    <!-- START Publisher inputs -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset>
+                            <legend>Basic publisher info</legend>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <div class="controls">
+                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
+                                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Website *</label>
+                                <div class="controls">
+                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <div class="controls">
+                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
+                                </div>
+                            </div>
+                        </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Publisher Step inputs -->
+
+                    <!-- START SITE inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+                        <legend>Tell us about your first site.</legend>
+                        <fieldset>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="site.description" id="site.description" data-ng-model="site.description" data-parsley-group="step2" placeholder="Optional - describe your site" class="form-control" />
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <label>Budget *</label>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="#" tooltip="{{ TOOLTIPS.budget }}">
+                                <em class="fa fa-question-circle"></em>
+                            </a>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input type="number" data-parsley-type="integer" name="site.budget" id="site.budget" data-ng-model="site.budget" data-parsley-group="step2" placeholder="10000" class="form-control" required="required"/>
+                                <span class="input-group-addon">.00</span>
+                            </div>
+                        </fieldset>
+                        <!--Start Flight Dates Row-->
+                        <fieldset>
+                            <div class="row">
+                                <flight-dates width="6" wizardstep="step2" enddatemodel="site.end_date" startdatemodel="site.start_date"></flight-dates>
+                            </div>
+                        </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(1)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="step3" ng-show="wizard.active(3)">
+                        <legend>Choose the Clique that best describes your site</legend>
+                        <fieldset>
+                            <input style="display: None" type="text" name="site.clique" id="site.clique" data-ng-model="site.clique" data-parsley-group="step3" placeholder="{{ site.clique }}" required="required" class="form-control" />
+                            <!--<p class="form-control-static">{{ site.clique }}</p>-->
+                            <div class="form-group">
+                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                            </div>
+                        </fieldset>
+                        <div class="alert alert-success" data-ng-show="site.clique"><b>Selected:</b> {{ site.clique }}</div>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(2)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- START SITE inputs -->
+                    <div id="step4" ng-show="wizard.active(4)">
+                        <legend>Set your bids & targeting specifics</legend>
+                        <!-- START row -->
+                        <fieldset>
+                            <label>Base Bid (CPM) *</label>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="#" tooltip="{{ TOOLTIPS.base_bid }}">
+                                <em class="fa fa-question-circle"></em>
+                            </a>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input data-parsley-type="number" name="site.base_bid" id="site.base_bid" ng-model="site.base_bid" placeholder="7.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                            </div>
+                            <br/>
+                            <label>Max Bid (CPM) *</label>
+                            &nbsp;&nbsp;&nbsp;
+                            <a href="#" tooltip="{{ TOOLTIPS.max_bid }}">
+                                <em class="fa fa-question-circle"></em>
+                            </a>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
+                                <input data-parsley-type="number" name="site.max_bid" id="site.max_bid" ng-model="site.max_bid" placeholder="20.00" data-parsley-group="step4" min="{{ site.base_bid }}" class="form-control" required="required"/>
+                            </div>
+                        </fieldset>
+
+                        <!--BEGIN DMA slider controls-->
+                        <fieldset>
+                            <div class="row">
+                                <bid-modifier width="10" targets="site.dma_targets" options="dmas" site="site" wizardstep="step4" title="DMAs"></bid-modifier>
+                            </div>
+                        </fieldset>
+                        <!--END DMA slider controls-->
+
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(3)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(5)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+
+                    <!-- START CREATIVE UPLOAD STEP-->
+                    <div id="step5" ng-show="wizard.active(5)">
+                        <legend>Now add some creatives to your site</legend>
+                        <fieldset>
+                            <creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(4)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next" ng-show="uploads_completed">
+                                <a href="#" ng-click="wizard.go(6)"> Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+
+                    <!-- START Wizard Step inputs -->
+                    <div id="step6" ng-show="wizard.active(6)">
+                        <legend>Review your new publisher</legend>
+                        <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Publisher&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2">Name</div><div class="col-sm-10">{{ name }}</div>
+                            <div class="col-sm-2">Website</div><div class="col-sm-10">{{ website }}</div>
+                            <div class="col-sm-2">Description</div><div class="col-sm-10">{{ description || &apos;empty&apos; }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ site.name }}</div>
+                            <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ site.description || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ site.budget | currency:"$":0 }}</div>
+                            <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ site.start_date | date:"shortDate":"EST" }}</div>
+                            <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ site.end_date | date:"shortDate":"EST" }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ site.clique }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ site.base_bid | currency:"$":2 }}</div>
+                            <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ site.max_bid | currency:"$":2 }}</div>
+                            <div class="col-sm-2"><b>DMA Targets</b></div><div class="col-sm-10">
+                                <div ng-repeat="target in site.dma_targets">
+                                    {{ target.name }} - {{ Math.min(target.weight * site.base_bid, site.max_bid) | currency : "$" : 2}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
+                            <div ng-repeat="fileItem in uploader.queue">
+                                <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                            </div>
+                        </div>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(5)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li ng-show="loading">
+                                <div class="ball-pulse">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </li>
+                            <li class="next">
+                                <a href="#" ng-click="create()"> Submit <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

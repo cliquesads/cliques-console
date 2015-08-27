@@ -1,0 +1,110 @@
+'use strict';
+
+angular.module('publisher').controller('PublisherWizardController', ['$scope',
+    '$stateParams',
+    '$location',
+    '$q',
+    'Authentication',
+    'Publisher',
+    'getCliqueTree',
+    'DMA',
+    'FileUploader',
+    'PublisherUtils',
+    'BID_SETTINGS',
+    'TOOLTIPS',
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, getCliqueTree, DMA, FileUploader, PublisherUtils, BID_SETTINGS, TOOLTIPS) {
+
+        //##################################//
+        //###### INIT SCOPE VARIABLES ######//
+        //##################################//
+
+        $scope.authentication = Authentication;
+        $scope.TOOLTIPS = TOOLTIPS;
+
+        // Populate tree data for tree visualization
+        $scope.cliques = [];
+        getCliqueTree($scope);
+        $scope.set_clique = function(branch) {
+            $scope.site.clique = branch.label;
+        };
+        var tree;
+        // This is our API control variable
+        $scope.my_tree = tree = {};
+
+        $scope.dmas = DMA.query();
+
+        // Set mins & maxes
+        $scope.min_base_bid = BID_SETTINGS.min_base_bid;
+        $scope.max_base_bid = BID_SETTINGS.max_base_bid;
+
+        // Basic models
+        $scope.publisher = {
+            name: null,
+            description: null,
+            website: null,
+            cliques: null,
+            sites: []
+        };
+        $scope.site = {
+            name:           null,
+            description:    null,
+            budget:         null,
+            start_date:     null,
+            end_date:       null,
+            base_bid:       null,
+            max_bid:        null,
+            frequency:      null,
+            clique:         null,
+            dma_targets:    null,
+            placement_targets: null
+        };
+
+        /**
+         * Method called to submit Publisher to API
+         * @returns {boolean}
+         */
+        $scope.create = function() {
+            if (this.publisherForm.$valid) {
+                $scope.loading = true;
+                // Construct publisher JSON to POST to API
+                //var creatives = PublisherUtils.getCreativesFromUploadQueue(uploader);
+                //var creativegroups = PublisherUtils.groupCreatives(creatives, $scope.site.name);
+                // now create new publisher object
+                var site = this.site;
+
+                // convert target arrays to weightedSchema format
+                site = PublisherUtils.convertAllTargetArrays(site);
+
+                site.creativegroups = creativegroups;
+                var publisher = new Publisher({
+                    name:           this.name,
+                    description:    this.description,
+                    website:        this.website,
+                    sites: [site]
+                });
+                publisher.$create(function(response){
+                    $scope.loading = false;
+                    $scope.name = '';
+                    $scope.description= '';
+                    $scope.site = '';
+                    $scope.creatives = '';
+                    $scope.cliques = '';
+                    $scope.website = '';
+                    //On success, redirect to publisher detail page
+                    var publisherId = response._id;
+                    $location.url('/publisher/' + publisherId);
+                }, function (errorResponse) {
+                    $scope.loading = false;
+                    $scope.creation_error = errorResponse.data.message;
+                });
+            } else {
+                return false;
+            }
+        };
+
+        $scope.validateInput = function(name, type) {
+            var input = this.publisherForm[name];
+            return (input.$dirty || $scope.submitted) && input.$error[type];
+        };
+	}
+]);
