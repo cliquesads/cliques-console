@@ -88,12 +88,13 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         $scope.create = function() {
             if (this.publisherForm.$valid) {
                 $scope.loading = true;
-                // Construct publisher JSON to POST to API
-                //var creatives = PublisherUtils.getCreativesFromUploadQueue(uploader);
-                //var creativegroups = PublisherUtils.groupCreatives(creatives, $scope.site.name);
-                // now create new publisher object
                 var site = this.site;
-
+                site.pages = [this.page];
+                site.pages[0].placements.forEach(function(p){
+                    var dims = p.dimensions.split('x');
+                    p.w = Number(dims[0]);
+                    p.h = Number(dims[1]);
+                });
                 var publisher = new Publisher({
                     name:           this.name,
                     description:    this.description,

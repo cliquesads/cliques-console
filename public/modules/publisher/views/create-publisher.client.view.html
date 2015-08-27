@@ -217,7 +217,6 @@
                                 </table>
                             </div>
                         </fieldset>
-                        {{ page.placements }}
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(3)">
@@ -243,30 +242,25 @@
                         </div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
-                            <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ site.name }}</div>
-                            <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ site.description || &apos;empty&apos; }}</div>
-                            <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ site.budget | currency:"$":0 }}</div>
-                            <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ site.start_date | date:"shortDate":"EST" }}</div>
-                            <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ site.end_date | date:"shortDate":"EST" }}</div>
+                            <div class="col-sm-2"><b>Site Name</b></div><div class="col-sm-10">{{ site.name }}</div>
+                            <div class="col-sm-2"><b>Site Description</b></div><div class="col-sm-10">{{ site.description || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Site Domain</b></div><div class="col-sm-10">{{ site.domain_name || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Bid Floor</b></div><div class="col-sm-10">{{ site.bid_floor | currency:"$":0 }}</div>
+                            <div class="col-sm-2"><b>Advertiser Blacklist</b></div><div class="col-sm-10">{{ site.blacklist || &apos;empty&apos; }}</div>
                         </div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Site Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
                             <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ site.clique }}</div>
                         </div>
                         <div class="col-md-12 box-placeholder">
-                            <h4>Site Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
-                            <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ site.base_bid | currency:"$":2 }}</div>
-                            <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ site.max_bid | currency:"$":2 }}</div>
-                            <div class="col-sm-2"><b>DMA Targets</b></div><div class="col-sm-10">
-                                <div ng-repeat="target in site.dma_targets">
-                                    {{ target.name }} - {{ Math.min(target.weight * site.base_bid, site.max_bid) | currency : "$" : 2}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 box-placeholder">
-                            <h4>Site Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
-                            <div ng-repeat="fileItem in uploader.queue">
-                                <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                            <h4>Page & Placements &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Page Name</b></div><div class="col-sm-10">{{ page.name || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Page URL</b></div><div class="col-sm-10">{{ page.url || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Page Description</b></div><div class="col-sm-10">{{ page.description || &apos;empty&apos; }}</div>
+                            <br/>
+                            <h4>Placements&nbsp;&nbsp;&nbsp;&nbsp;</h4>
+                            <div ng-repeat="placement in page.placements">
+                                <div class="col-sm-3"><b>{{ placement.name }}</b></div><div class="col-sm-4">{{ placement.dimensions }}</div><div class="col-sm-4">{{ placement.position }}</div>
                             </div>
                         </div>
                         <ul class="pager">
