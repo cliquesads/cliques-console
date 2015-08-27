@@ -1,16 +1,22 @@
 /**
  * Created by bliang on 8/27/15.
  */
-angular.module('publisher').directive('domainBlacklist', ['REGEXES',function(REGEXES) {
+angular.module('publisher').directive('domainInput', ['REGEXES',function(REGEXES) {
     'use strict';
     return {
         restrict: 'E',
         scope: {
             model: '=',
-            wizardstep: '@'
+            wizardstep: '@',
+            required: '@'
         },
-        template: '<input type="text" tagsinput="tagsinput" data-width="100%" ng-value="ngValue" ng-model="model" placeholder="Ex: If you want to block Walmart, enter \'walmart.com\'" class="form-control" data-parsley-group="{{ wizardstep }}"/><span ng-show="invalidDomain" class="text-danger" style="">Not a valid domain name</span>',
+        template: '<input name="domain_name" type="text" data-ng-model="model" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="http://www.example.com" required="{{ required }}">',
         link: function(scope, element, attrs){
+            window.Parsley.addValidator('domain', {
+                requirementType: 'string',
+
+
+            });
             element.on('beforeItemAdd', function(event){
                 scope.invalidDomain = false;
                 var valid = REGEXES.domain.test(event.item);

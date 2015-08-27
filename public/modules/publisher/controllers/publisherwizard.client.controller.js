@@ -10,7 +10,8 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'getCliqueTree',
     'BID_FLOOR_SETTINGS',
     'TOOLTIPS',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS) {
+    'REGEXES',
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS, REGEXES) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -18,6 +19,9 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
+        // something weird about storing regexes as scope vars, they don't bind
+        // to the template properly to have to convert to string
+        $scope.domain_regex = String(REGEXES.domain);
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
@@ -54,9 +58,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                 //var creativegroups = PublisherUtils.groupCreatives(creatives, $scope.site.name);
                 // now create new publisher object
                 var site = this.site;
-
-                // convert target arrays to weightedSchema format
-                site = PublisherUtils.convertAllTargetArrays(site);
 
                 var publisher = new Publisher({
                     name:           this.name,

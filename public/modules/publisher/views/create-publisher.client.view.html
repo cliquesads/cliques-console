@@ -30,14 +30,10 @@
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>4. Advertiser Settings</h4>
-                            <small class="text-muted"></small>
-                        </li>
-                        <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
                             <h4>5. Placements</h4>
                             <small class="text-muted"></small>
                         </li>
-                        <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
+                        <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
                             <h4>6. Review & Submit</h4>
                             <small class="text-muted"></small>
                         </li>
@@ -99,23 +95,24 @@
                                 <a href="#" tooltip="{{ TOOLTIPS.domain_name }}">
                                     <em class="fa fa-question-circle"></em>
                                 </a>
-                                <input name="domain_name" type="url" data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="http://www.example.com" required="required">
+                                <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input name="domain_name" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                                </div>
                             </div>
                             <br/>
                             <div class="form-group">
-                                <label>Bid Floor (CPM)
+                                <label>Bid Floor (CPM)</label>
                                 &nbsp;&nbsp;&nbsp;
                                 <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}">
                                     <em class="fa fa-question-circle"></em>
                                 </a>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="1.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control" required="required"/>
+                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control" required="required"/>
                                 </div>
-                                <span class="help-block">Min $1.00, Max $5.00</span>
                             </div>
-                        </fieldset>
-                        <fieldset>
+                            <br/>
                             <div class="form-group">
                                 <label class="control-label">Block Advertisers by Domain Name</label>
                                 <a href="#" tooltip="{{ TOOLTIPS.blacklist }}">
@@ -123,7 +120,7 @@
                                 </a>
                                 <div class="text-sm text-muted">Type and press Enter</div>
                                 <domain-blacklist model="site.blacklist" wizardstep="step2"></domain-blacklist>
-                                <span class="help-block">Ex: If you want to block Walmart, enter 'walmart.com' </span>
+                                <!--<span class="help-block">Ex: If you want to block Walmart, enter 'walmart.com' </span>-->
                             </div>
                         </fieldset>
                         <small class="text-muted">* Required</small>
