@@ -1,0 +1,27 @@
+<h4>Advertiser Info</h4>
+<div class="form-horizontal">
+    <div class="form-group m0">
+        <label class="col-sm-4 control-label">Name</label>
+        <div class="col-sm-8">
+            <p class="form-control-static">
+                <span editable-text="advertiser.name" e-name="name" onaftersave="update()" e-required>{{ advertiser.name }}</span>
+            </p>
+        </div>
+    </div>
+    <div class="form-group m0">
+        <label class="col-sm-4 control-label">Website</label>
+        <div class="col-sm-8">
+            <p class="form-control-static">
+                <span editable-url="advertiser.website" e-name="url" onaftersave="update()" e-required>{{ advertiser.website}}</span>
+            </p>
+        </div>
+    </div>
+    <div class="form-group m0">
+        <label class="col-sm-4 control-label">Description</label>
+        <div class="col-sm-8">
+            <p class="form-control-static">
+                <span editable-textarea="advertiser.description" e-rows="3" e-cols="30" onaftersave="update()" e-name="description" >{{ advertiser.description }}</span>
+            </p>
+        </div>
+    </div>
+</div>

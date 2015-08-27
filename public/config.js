@@ -24,7 +24,8 @@ var ApplicationConfiguration = (function() {
         'angularBootstrapNavTree',
         'angularFileUpload',
         'xeditable',
-        'ngDialog'
+        'ngDialog',
+        'bootstrap-tagsinput'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
