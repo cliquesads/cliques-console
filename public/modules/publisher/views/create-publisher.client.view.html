@@ -30,11 +30,11 @@
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>4. Targeting Details</h4>
+                            <h4>4. Advertiser Settings</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                            <h4>5. Creatives</h4>
+                            <h4>5. Placements</h4>
                             <small class="text-muted"></small>
                         </li>
                         <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
@@ -85,30 +85,45 @@
                         <fieldset>
                             <div class="form-group">
                                 <label>Name *</label>
-                                <input type="text" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
+                                <input type="text" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-up Enduro Dot Com" required="required" class="form-control" />
                             </div>
                             <br/>
                             <div class="form-group">
                                 <label>Description</label>
                                 <input type="text" name="site.description" id="site.description" data-ng-model="site.description" data-parsley-group="step2" placeholder="Optional - describe your site" class="form-control" />
                             </div>
-                        </fieldset>
-                        <fieldset>
-                            <label>Budget *</label>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="{{ TOOLTIPS.budget }}">
-                                <em class="fa fa-question-circle"></em>
-                            </a>
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input type="number" data-parsley-type="integer" name="site.budget" id="site.budget" data-ng-model="site.budget" data-parsley-group="step2" placeholder="10000" class="form-control" required="required"/>
-                                <span class="input-group-addon">.00</span>
+                            <br/>
+                            <div class="form-group">
+                                <label>Domain Name *</label>
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="#" tooltip="{{ TOOLTIPS.domain_name }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <input name="domain_name" type="url" data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="http://www.example.com" required="required">
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Bid Floor (CPM)
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="1.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control" required="required"/>
+                                </div>
+                                <span class="help-block">Min $1.00, Max $5.00</span>
                             </div>
                         </fieldset>
-                        <!--Start Flight Dates Row-->
                         <fieldset>
-                            <div class="row">
-                                <flight-dates width="6" wizardstep="step2" enddatemodel="site.end_date" startdatemodel="site.start_date"></flight-dates>
+                            <div class="form-group">
+                                <label class="control-label">Block Advertisers by Domain Name</label>
+                                <a href="#" tooltip="{{ TOOLTIPS.blacklist }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="text-sm text-muted">Type and press Enter</div>
+                                <domain-blacklist model="site.blacklist" wizardstep="step2"></domain-blacklist>
+                                <span class="help-block">Ex: If you want to block Walmart, enter 'walmart.com' </span>
                             </div>
                         </fieldset>
                         <small class="text-muted">* Required</small>
@@ -145,73 +160,27 @@
                         </ul>
                     </div>
 
-                    <!-- START SITE inputs -->
+                    <!-- START PLACEMENT CREATION STEP-->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <legend>Set your bids & targeting specifics</legend>
-                        <!-- START row -->
+                        <legend>Now add some creatives to your site</legend>
                         <fieldset>
-                            <label>Base Bid (CPM) *</label>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="{{ TOOLTIPS.base_bid }}">
-                                <em class="fa fa-question-circle"></em>
-                            </a>
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input data-parsley-type="number" name="site.base_bid" id="site.base_bid" ng-model="site.base_bid" placeholder="7.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
-                            </div>
-                            <br/>
-                            <label>Max Bid (CPM) *</label>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="#" tooltip="{{ TOOLTIPS.max_bid }}">
-                                <em class="fa fa-question-circle"></em>
-                            </a>
-                            <div class="input-group">
-                                <span class="input-group-addon">$</span>
-                                <input data-parsley-type="number" name="site.max_bid" id="site.max_bid" ng-model="site.max_bid" placeholder="20.00" data-parsley-group="step4" min="{{ site.base_bid }}" class="form-control" required="required"/>
-                            </div>
+                            <!--<creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>-->
                         </fieldset>
-
-                        <!--BEGIN DMA slider controls-->
-                        <fieldset>
-                            <div class="row">
-                                <bid-modifier width="10" targets="site.dma_targets" options="dmas" site="site" wizardstep="step4" title="DMAs"></bid-modifier>
-                            </div>
-                        </fieldset>
-                        <!--END DMA slider controls-->
-
                         <ul class="pager">
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(3)">
                                     <span>&larr; Previous</span>
                                 </a>
                             </li>
-                            <li class="next"><a href="#" ng-click="wizard.go(5)">Next <span>&rarr;</span></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- END Wizard Step inputs -->
-
-                    <!-- START CREATIVE UPLOAD STEP-->
-                    <div id="step5" ng-show="wizard.active(5)">
-                        <legend>Now add some creatives to your site</legend>
-                        <fieldset>
-                            <creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
-                        </fieldset>
-                        <ul class="pager">
-                            <li class="previous">
-                                <a href="#" ng-click="wizard.go(4)">
-                                    <span>&larr; Previous</span>
-                                </a>
-                            </li>
                             <li class="next" ng-show="uploads_completed">
-                                <a href="#" ng-click="wizard.go(6)"> Next <span>&rarr;</span></a>
+                                <a href="#" ng-click="wizard.go(5)"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
                     <!-- END Wizard Step inputs -->
 
                     <!-- START Wizard Step inputs -->
-                    <div id="step6" ng-show="wizard.active(6)">
+                    <div id="step5" ng-show="wizard.active(5)">
                         <legend>Review your new publisher</legend>
                         <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
                         <div class="col-md-12 box-placeholder">

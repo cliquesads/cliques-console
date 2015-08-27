@@ -6,13 +6,11 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     '$q',
     'Authentication',
     'Publisher',
+    'Advertiser',
     'getCliqueTree',
-    'DMA',
-    'FileUploader',
-    'PublisherUtils',
-    'BID_SETTINGS',
+    'BID_FLOOR_SETTINGS',
     'TOOLTIPS',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, getCliqueTree, DMA, FileUploader, PublisherUtils, BID_SETTINGS, TOOLTIPS) {
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -31,32 +29,17 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // This is our API control variable
         $scope.my_tree = tree = {};
 
-        $scope.dmas = DMA.query();
-
         // Set mins & maxes
-        $scope.min_base_bid = BID_SETTINGS.min_base_bid;
-        $scope.max_base_bid = BID_SETTINGS.max_base_bid;
+        $scope.min_base_bid = BID_FLOOR_SETTINGS.min_bid_floor;
+        $scope.max_base_bid = BID_FLOOR_SETTINGS.max_bid_floor;
 
-        // Basic models
-        $scope.publisher = {
-            name: null,
-            description: null,
-            website: null,
-            cliques: null,
-            sites: []
-        };
         $scope.site = {
             name:           null,
             description:    null,
-            budget:         null,
-            start_date:     null,
-            end_date:       null,
-            base_bid:       null,
-            max_bid:        null,
-            frequency:      null,
+            bid_floor:      null,
+            domain_name:    null,
             clique:         null,
-            dma_targets:    null,
-            placement_targets: null
+            blacklist:      []
         };
 
         /**
@@ -75,7 +58,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                 // convert target arrays to weightedSchema format
                 site = PublisherUtils.convertAllTargetArrays(site);
 
-                site.creativegroups = creativegroups;
                 var publisher = new Publisher({
                     name:           this.name,
                     description:    this.description,
@@ -87,7 +69,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     $scope.name = '';
                     $scope.description= '';
                     $scope.site = '';
-                    $scope.creatives = '';
                     $scope.cliques = '';
                     $scope.website = '';
                     //On success, redirect to publisher detail page

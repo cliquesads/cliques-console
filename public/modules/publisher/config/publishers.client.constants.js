@@ -1,14 +1,12 @@
 angular.module('publisher')
-    .constant('FLOOR_PRICE_SETTINGS', {
+    .constant('BID_FLOOR_SETTINGS', {
         // Set mins & maxes
-        min_base_bid: 1,
-        max_base_bid: 20
+        min_bid_floor: 1,
+        max_bid_floor: 5
     })
     .constant('TOOLTIPS',{
         budget: "Tell us how much money you would like to spend over the lifetime of this campaign.  Don't worry, our bidders will pace your budget evenly over the lifetime of the campaign (set below)",
-        base_bid: "Your base bid is what you'd like your average bid to be for qualified impressions.  (CPM = Cost per Thousand Impressions)",
-        max_bid: "Your max bid is the absolute most amount you'd ever want to spend on an impression. All targeting settings will respect your max bid.  (CPM = Cost per Thousand Impressions)",
-        view_lookback: "Match actions from this beacon to any impressions shown this many days prior (or more recently)",
-        click_lookback: "Match actions from this beacon to any clicks that occurred this many days prior (or more recently)",
-        actionbeacons: "View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI."
+        bid_floor: "The lowest price at which you're willing to sell impressions on your site, in CPM (Cost per Thousand Impressions). For the best fill rates, we recommend NOT setting this.",
+        domain_name: "The base domain name associated with your site.",
+        blacklist: "Let us know if there are any advertisers who are not allowed to purchase impressions on your site due to direct-sale or content restrictions.  Note: You must use the advertiser's domain name in order to ensure they are uniquely identified."
     });
