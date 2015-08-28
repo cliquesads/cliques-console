@@ -8,7 +8,7 @@ module.exports = function(app){
     app.route('/advertiser')
         .get(users.requiresLogin, advertisers.getMany)
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.updateOrCreate)
-        .post(users.requiresLogin, advertisers.hasAuthorization, advertisers.create);
+        .post(users.requiresLogin, advertisers.create);
 
     app.route('/advertiser/:advertiserId')
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.read)
