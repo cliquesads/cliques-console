@@ -151,7 +151,7 @@ module.exports = function(db) {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.roles.indexOf('admin') === -1){
-                if (req.advertiser.user != req.user.id) {
+                if (req.advertiser.user.id != req.user.id) {
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
