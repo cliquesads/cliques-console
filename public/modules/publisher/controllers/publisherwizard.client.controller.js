@@ -24,6 +24,10 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         $scope.TOOLTIPS = TOOLTIPS;
         $scope.CREATIVE_SIZES = CREATIVE_SIZES;
         $scope.OPENRTB = OPENRTB;
+        $scope.positions_object = {};
+        $scope.OPENRTB.positions.forEach(function(pos){
+            $scope.positions_object[pos.code] = pos.name;
+        });
 
         // something weird about storing regexes as scope vars, they don't bind
         // to the template properly to have to convert to string
