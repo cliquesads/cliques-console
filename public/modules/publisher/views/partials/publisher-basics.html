@@ -20,7 +20,7 @@
         <label class="col-sm-4 control-label">Description</label>
         <div class="col-sm-8">
             <p class="form-control-static">
-                <span editable-textarea="publisher.description" e-rows="3" e-cols="30" onaftersave="update()" e-name="description" >{{ publisher.description }}</span>
+                <span editable-textarea="publisher.description" e-rows="3" e-cols="30" onaftersave="update()" e-name="description" >{{ publisher.description || "empty" }}</span>
             </p>
         </div>
     </div>

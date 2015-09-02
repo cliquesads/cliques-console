@@ -51,7 +51,7 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
 
         $scope.publisherBasics = function(){
             ngDialog.open({
-                template: 'modules/publisher/views/partials/publisher-inline.html',
+                template: 'modules/publisher/views/partials/publisher-basics.html',
                 controller: ['$scope',function($scope){
                     $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.update = function() {

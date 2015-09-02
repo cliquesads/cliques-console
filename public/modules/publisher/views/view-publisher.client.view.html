@@ -3,11 +3,8 @@
 		<!--<a class="btn btn-primary" href="/#!/publisher/{{publisher._id}}/edit">-->
 			<!--<i class="fa fa-edit"></i>-->
 		<!--</a>-->
-		<a data-ng-click="publisherBasics();">
-			<i class="fa fa-cog"></i>
-		</a>
 	</div>
-	{{publisher.name}}
+	{{publisher.name}}&nbsp;&nbsp;&nbsp;<a data-ng-click="publisherBasics();" class="small"><i class="fa fa-edit"></i></a>
 	<ul class="breadcrumb">
 	  <li><a ui-sref="app.home">Home</a>
 	  </li>
@@ -44,16 +41,13 @@
                     <div class="col-sm-2">
                         <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
                         <p class="list-group-item-text">{{ site.clique }}</p>
                     </div>
-                    <div class="col-sm-3">
-                        <h4 class="list-group-item-heading">{{ site.budget | currency:"$":"0" }}</h4>
-                        <p class="list-group-item-text">Budget</p>
-                    </div>
-                    <div class="col-sm-2">
-                        <radial percent="site.percent_spent" size="sm"></radial>
+                    <div class="col-sm-5">
+                        <h4 class="list-group-item-heading"><span class="icon-docs"></span>   {{ site.pages.length }}</h4>
+                        <p class="list-group-item-text">Page{{ site.pages.length === 1 ? '' : 's' }}</p>
                     </div>
                 </div>
             </a>
