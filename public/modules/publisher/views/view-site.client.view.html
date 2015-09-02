@@ -115,86 +115,18 @@
                         </fieldset>
                     </tab>
                     <tab heading="Pages">
-                        <fieldset>
-                            <form editable-form name="bidsInline" onaftersave="update()">
-                                <div class="form-horizontal">
-                                    <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">Base Bid</label>
-                                        <div class="col-sm-6">
-                                            <p class="form-control-static">
-                                                <span editable-number="site.base_bid" e-name="base_bid" e-min="{{ min_base_bid }}" e-max="{{ site.max_bid }}" e-required>{{ site.base_bid | currency:"$":2 }}</span>
-                                            </p>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <a href="#" class="pull-right" ng-click="bidsInline.$show()" ng-show="!bidsInline.$visible">
-                                                <span class="fa fa-edit"></span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">Max Bid</label>
-                                        <div class="col-sm-6">
-                                            <p class="form-control-static">
-                                                <span editable-number="site.max_bid" e-name="name" e-min="{{ site.base_bid }}" e-required>{{ site.max_bid | currency:"$":2 }}</span>
-                                            </p>
-                                        </div>
-                                    </div>
+                        <a data-ng-repeat="page in site.pages" href="#" class="list-group-item">
+                            <div class="row row-table">
+                                <div class="col-sm-4">
+                                    <h4 class="list-group-item-heading" data-ng-bind="page.name"></h4>
+                                    <p class="list-group-item-text">{{ page.clique }}</p>
                                 </div>
-                                <div class="pull-right">
-                                    <!-- buttons to submit / cancel form -->
-                                    <span ng-show="bidsInline.$visible">
-                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="bidsInline.$waiting">
-                                            Save
-                                        </button>
-                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="bidsInline.$waiting" ng-click="bidsInline.$cancel()">
-                                            Cancel
-                                        </button>
-                                    </span>
-                                </div>
-                            </form>
-                        </fieldset>
-                    </tab>
-                    <tab heading="Targeting">
-                        <fieldset>
-                            <small><em class="text-muted">Geographical</em></small>
-                            <div class="form-group m0">
-                                <label class="col-sm-4 control-label">DMAs</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">
-                                        <a href="#" ng-click="editDMATargets()">{{ site.dma_targets.length || 0 }} DMA Targets Set</a>
-                                    </p>
+                                <div class="col-sm-3">
+                                    <h4 class="list-group-item-heading"><span class="icon-docs"></span>   {{ page.placements.length }}</h4>
+                                    <p class="list-group-item-text">Placement{{ page.placements.length === 1 ? '' : 's' }}</p>
                                 </div>
                             </div>
-                        </fieldset>
-                            <small><em class="text-muted">Inventory</em></small>
-                            <div class="form-group m0">
-                                <label class="col-sm-4 control-label">Placements</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">
-                                        <a href="#" ng-click="">{{ site.placement_targets.length || 0 }} Placement Targets Set</a>
-                                    </p>
-                                </div>
-                            </div>
-                        <fieldset>
-
-                        </fieldset>
-                    </tab>
-                    <tab heading="Creatives">
-                        <a href="#" class="pull-right" ng-click="editCreatives()">
-                            <span class="fa fa-edit"></span>
                         </a>
-                        <div class="box-placeholder" ng-show="!site.creativegroups.length">
-                            <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No creatives yet.</em>
-                        </div>
-                        <div ng-repeat="creativegroup in site.creativegroups">
-                            <fieldset>
-                                <div ng-repeat="creative in creativegroup.creatives">
-                                    <div class="col-sm-3"><img src="{{ creative.url }}" class="smallthumbnail"/></div>
-                                    <div class="col-sm-6"><b>{{ creative.name }}</b></div>
-                                    <div class="col-sm-3">{{ creativegroup.w }}x{{ creativegroup.h }}</div>
-                                </div>
-                            </fieldset>
-                        </div>
                     </tab>
                 </tabset>
             </div>
@@ -232,11 +164,11 @@
                         <div class="h3">{{ clicks | number: 0 }}</div>
                     </div>
                     <div class="col-sm-3 col-xs-6 text-center">
-                        <p>Spend</p>
+                        <p>Revenue</p>
                         <div class="h3">{{ spend | currency:"$":"0" }}</div>
                     </div>
                     <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Avg. CPM</p>
+                        <p>Avg. RPM</p>
                         <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
                     </div>
                 </div>
