@@ -1,0 +1,36 @@
+<h4>{{ page.name }}</h4>
+<div class="col-md-12 alert alert-error" ng-show="saveerror">{{ saveerror }}</div>
+<fieldset>
+    <div class="form-horizontal">
+        <div class="form-group m0">
+            <label class="col-sm-4 control-label">Name</label>
+            <div class="col-sm-8">
+                <p class="form-control-static">
+                    <span editable-text="page.name" e-name="name" onaftersave="update()" e-required>{{ page.name }}</span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group m0">
+            <label class="col-sm-4 control-label">URL</label>
+            <div class="col-sm-8">
+                <p class="form-control-static">
+                    <span editable-url="page.url" e-name="url" onaftersave="update()" e-required>{{ page.url }}</span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group m0">
+            <label class="col-sm-4 control-label">Description</label>
+            <div class="col-sm-8">
+                <p class="form-control-static">
+                    <span editable-textarea="page.description" e-rows="3" e-cols="30" e-name="name" onaftersave="update()">{{ page.description }}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</fieldset>
+<fieldset>
+    <placement-form page="page"></placement-form>
+</fieldset>
+<div class="text-center">
+    <button type="button" ng-click="update()" class="btn btn-info btn-large">Save</button>
+</div>

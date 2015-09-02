@@ -115,7 +115,7 @@
                         </fieldset>
                     </tab>
                     <tab heading="Pages">
-                        <a data-ng-repeat="page in site.pages" href="#" class="list-group-item">
+                        <a data-ng-repeat="page in site.pages" ng-click="editPage(page)" href="#" class="list-group-item">
                             <div class="row row-table">
                                 <div class="col-sm-8">
                                     <h4 class="list-group-item-heading" data-ng-bind="page.name"></h4>

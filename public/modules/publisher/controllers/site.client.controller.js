@@ -7,14 +7,6 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
 
-        $scope.validateInput = function(name, type) {
-            var input = this.siteForm[name];
-            return (input.$dirty || $scope.submitted) && input.$error[type];
-        };
-        $scope.findPublishers = function() {
-            // on query return, get site spend data to augment $scope.publishers
-            $scope.publishers = Publisher.query();
-        };
 		$scope.update = function() {
 			var publisher = $scope.publisher;
 
@@ -61,19 +53,12 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
         // ######################################### //
-        $scope.editDMATargets = function(){
-            ngDialog.open({
-                template: 'modules/publisher/views/partials/dma-targets.html',
-                controller: 'dmaTargetsController',
-                data: {publisher: $scope.publisher, site: $scope.site}
-            });
-        };
-        $scope.editCreatives = function(){
+        $scope.editPage = function(page){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/edit-creatives.html',
-                controller: 'editCreativesController',
-                data: {publisher: $scope.publisher, site: $scope.site}
+                template: 'modules/publisher/views/partials/edit-page.html',
+                controller: 'editPageController',
+                data: {publisher: $scope.publisher, site: $scope.site, page: page}
             });
         };
 
