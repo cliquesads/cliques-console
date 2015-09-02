@@ -53,7 +53,6 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             end_date:       null,
             base_bid:       null,
             max_bid:        null,
-            frequency:      null,
             clique:         null,
             dma_targets:    null,
             placement_targets: null
