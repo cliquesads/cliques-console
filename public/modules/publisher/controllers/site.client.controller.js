@@ -14,6 +14,11 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 				$scope.error = errorResponse.data.message;
 			});
 		};
+
+        $scope.findPublishers = function() {
+            // on query return, get site spend data to augment $scope.publishers
+            $scope.publishers = Publisher.query();
+        };
 		$scope.findOne = function() {
 			Publisher.get({publisherId: $stateParams.publisherId})
                 .$promise
