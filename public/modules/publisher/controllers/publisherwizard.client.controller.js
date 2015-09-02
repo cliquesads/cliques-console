@@ -64,28 +64,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         };
 
         /**
-         * Adds new placement in placement step
-         */
-        $scope.newPlacement = function(){
-            this.page.placements.push({
-                name: null,
-                dimensions: null,
-                h: null,
-                w: null,
-                pos: null,
-                active: true
-            });
-        };
-
-        /**
-         * Removes placement from array
-         */
-        $scope.removePlacement = function(placement){
-            var ind = _.findIndex(this.page.placements, function(obj){ return obj === placement});
-            this.page.placements.splice(ind, 1);
-        };
-
-        /**
          * Method called to submit Publisher to API
          * @returns {boolean}
          */

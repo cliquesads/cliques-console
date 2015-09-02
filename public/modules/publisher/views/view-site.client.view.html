@@ -117,11 +117,11 @@
                     <tab heading="Pages">
                         <a data-ng-repeat="page in site.pages" href="#" class="list-group-item">
                             <div class="row row-table">
-                                <div class="col-sm-4">
+                                <div class="col-sm-8">
                                     <h4 class="list-group-item-heading" data-ng-bind="page.name"></h4>
-                                    <p class="list-group-item-text">{{ page.clique }}</p>
+                                    <p class="list-group-item-text">{{ page.url }}</p>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-4">
                                     <h4 class="list-group-item-heading"><span class="icon-docs"></span>   {{ page.placements.length }}</h4>
                                     <p class="list-group-item-text">Placement{{ page.placements.length === 1 ? '' : 's' }}</p>
                                 </div>
