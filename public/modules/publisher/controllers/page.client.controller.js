@@ -1,8 +1,8 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('editPageController', ['$scope','Publisher','ngDialog','TOOLTIPS',
-	function($scope, Publisher,ngDialog,TOOLTIPS) {
+angular.module('publisher').controller('editPageController', ['$scope','TOOLTIPS',
+	function($scope,TOOLTIPS){
         $scope.publisher = $scope.ngDialogData.publisher;
 
         // Set refs to nested documents in parent Publisher so $update method
@@ -36,6 +36,5 @@ angular.module('publisher').controller('editPageController', ['$scope','Publishe
                 return false;
             }
         };
-
 	}
 ]);

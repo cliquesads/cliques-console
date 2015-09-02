@@ -21,7 +21,7 @@ angular.module('publisher').directive('domainBlacklist', ['REGEXES',function(REG
                     });
                 }
             });
-            scope.ngValue = scope.model.join(',');
+            scope.ngValue = scope.model ? scope.model.join(','): '';
         }
     };
 }]);
