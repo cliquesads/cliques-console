@@ -41,11 +41,11 @@
                     <div class="col-sm-2">
                         <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-7">
                         <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
                         <p class="list-group-item-text">{{ site.clique }}</p>
                     </div>
-                    <div class="col-sm-5">
+                    <div class="col-sm-3">
                         <h4 class="list-group-item-heading"><span class="icon-docs"></span>   {{ site.pages.length }}</h4>
                         <p class="list-group-item-text">Page{{ site.pages.length === 1 ? '' : 's' }}</p>
                     </div>
