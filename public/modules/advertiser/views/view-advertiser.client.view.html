@@ -3,11 +3,9 @@
 		<!--<a class="btn btn-primary" href="/#!/advertiser/{{advertiser._id}}/edit">-->
 			<!--<i class="fa fa-edit"></i>-->
 		<!--</a>-->
-		<a data-ng-click="advertiserBasics();">
-			<i class="fa fa-cog"></i>
-		</a>
+
 	</div>
-	{{advertiser.name}}
+	{{advertiser.name}}&nbsp;&nbsp;&nbsp;<a data-ng-click="advertiserBasics();" class="small"><i class="fa fa-edit"></i></a>
 	<ul class="breadcrumb">
 	  <li><a ui-sref="app.home">Home</a>
 	  </li>
