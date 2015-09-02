@@ -14,6 +14,13 @@ angular.module('publisher').directive('placementForm', ['CREATIVE_SIZES','OPENRT
             scope.OPENRTB.positions.forEach(function(pos){
                 scope.positions_object[pos.code] = pos.name;
             });
+
+            if (scope.page.placements){
+                scope.page.placements.forEach(function(placement){
+                    placement.dimensions = placement.w + 'x' + placement.h;
+                });
+            }
+
             /**
              * Adds new placement in placement step
              */
