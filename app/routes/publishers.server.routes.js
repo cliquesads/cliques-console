@@ -15,5 +15,8 @@ module.exports = function(app){
         .patch(users.requiresLogin, publishers.hasAuthorization, publishers.update)
         .delete(users.requiresLogin, publishers.hasAuthorization, publishers.remove);
 
+    app.route('/publisher/:publisherId/placement/:placementId')
+        .get(users.requiresLogin, publishers.hasAuthorization, publishers.placement.getTag);
+
     app.param('publisherId', publishers.publisherByID);
 };

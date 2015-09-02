@@ -3,9 +3,16 @@
 /**
  * Module dependencies.
  */
-var models = require('cliques_node_utils').mongodb.models,
-	errorHandler = require('./errors.server.controller'),
+var node_utils = require('cliques_node_utils'),
+    models = node_utils.mongodb.models,
+    tags = node_utils.tags,
 	_ = require('lodash');
+
+
+// Global vars to render action beacon tags
+var config = require('config');
+var exchangeHostname = config.get('Exchange.http.external.hostname');
+var exchangePort = config.get('Exchange.http.external.port');
 
 module.exports = function(db) {
     var publisherModels = new models.PublisherModels(db);
@@ -151,6 +158,24 @@ module.exports = function(db) {
                 }
             }
             next();
+        },
+
+        placement: {
+            getTag: function (req, res) {
+                var tag = new tags.PubTag(exchangeHostname,{
+                    port: exchangePort,
+                    secure: JSON.parse(req.query.secure)
+                });
+                publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', function(err, placement){
+                    if (err){
+                        return res.status(400).send({message: 'Error looking up placement ID ' +
+                        req.param('placementId') + ' ' + err});
+                    }
+                    var rendered = tag.render(placement);
+                    return res.json({tag: rendered});
+                });
+            }
         }
+
     };
 };
