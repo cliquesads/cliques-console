@@ -78,7 +78,7 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
          * Method called to submit Advertiser to API
          * @returns {boolean}
          */
-        $scope.create = function() {
+        $scope.createCampaign = function() {
             if (this.campaignForm.$valid) {
                 $scope.loading = true;
                 // Construct advertiser JSON to POST to API
