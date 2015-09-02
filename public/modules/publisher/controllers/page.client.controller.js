@@ -17,5 +17,20 @@ angular.module('publisher').controller('editPageController', ['$scope','Publishe
         });
         $scope.page = $scope.publisher.sites[site_ind].pages[page_ind];
 
+        $scope.updateAndClose = function(){
+            this.page.placements.forEach(function(placement){
+                if (!placement.w && !placement.h){
+                    var dims = placement.dimensions.split('x');
+                    placement.w = Number(dims[0]);
+                    placement.h = Number(dims[1]);
+                }
+            });
+            this.publisher.$update(function() {
+                $scope.closeThisDialog('Success');
+            }, function(errorResponse){
+                $scope.saveerror = errorResponse.data.message;
+            });
+        };
+
 	}
 ]);

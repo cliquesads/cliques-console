@@ -2,22 +2,22 @@
 <div class="col-md-12 alert alert-error" ng-show="saveerror">{{ saveerror }}</div>
 <fieldset>
     <div class="form-inline">
-        <div class="form-group m0 col-sm-4">
+        <div class="form-group m0 col-sm-3">
             <label class="control-label">Name</label>
             <p class="form-control-static">
                 <span editable-text="page.name" e-name="name" onaftersave="update()" e-required>{{ page.name }}</span>
             </p>
         </div>
-        <div class="form-group m0 col-sm-4">
+        <div class="form-group m0 col-sm-3">
             <label class="control-label">URL</label>
             <p class="form-control-static">
                 <span editable-url="page.url" e-name="url" onaftersave="update()" e-required>{{ page.url }}</span>
             </p>
         </div>
-        <div class="form-group m0 col-sm-4">
+        <div class="form-group m0 col-sm-6">
             <label class="control-label">Description</label>
             <p class="form-control-static">
-                <span editable-textarea="page.description" e-rows="3" e-cols="30" e-name="name" onaftersave="update()">{{ page.description }}</span>
+                <span editable-textarea="page.description" e-rows="3" e-cols="30" e-name="name" onaftersave="update()">{{ page.description || "empty" }}</span>
             </p>
         </div>
     </div>
@@ -26,5 +26,5 @@
     <placement-form page="page"></placement-form>
 </fieldset>
 <div class="text-center">
-    <button type="button" ng-click="update()" class="btn btn-info btn-large">Save</button>
+    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
 </div>
