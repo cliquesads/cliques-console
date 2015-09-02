@@ -1,0 +1,271 @@
+<h3>New Publisher
+	<ul class="breadcrumb">
+	  <li><a ui-sref="app.home">Home</a>
+	  </li>
+	  <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+	     <span ng-switch-when="true">{{state.title}}</span>
+	  </li>
+	</ul>
+</h3>
+
+<section data-ng-controller="PublisherWizardController">
+    <div class="panel panel-default">
+        <!--DEBUGGING-->
+        <!--<div class="panel-heading">Start Date = {{ site.start_date }}, End date = {{ site.end_date }}</div>-->
+        <div class="panel-body">
+            <form name="publisherForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="6">
+                <div class="form-wizard wizard-vertical">
+                    <!-- START wizard steps indicator-->
+                    <ol>
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
+                            <h4>1. Publisher</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
+                            <h4>2. Site Basics</h4>
+                            <small class="text-muted">You can set up more sites under this publisher later</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
+                            <h4>3. Choose a Clique</h4>
+                            <small class="text-muted">Your site's Clique determines what type of advertisers get to bid on your impressions.</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
+                            <h4>5. Pages & Placements</h4>
+                            <small class="text-muted">Describe the page on your site where you'd like to place ads. You can add more pages later.</small>
+                        </li>
+                        <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
+                            <h4>6. Review & Submit</h4>
+                            <small class="text-muted"></small>
+                        </li>
+                    </ol>
+                    <!-- END wizard steps indicator-->
+
+                    <!-- START Publisher inputs -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset>
+                            <legend>Basic publisher info</legend>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <div class="controls">
+                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
+                                    <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Website *</label>
+                                <div class="controls">
+                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <div class="controls">
+                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
+                                </div>
+                            </div>
+                        </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Publisher Step inputs -->
+
+                    <!-- START SITE inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+                        <legend>Tell us about your first site.</legend>
+                        <fieldset>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-up Enduro Dot Com" required="required" class="form-control" />
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="site.description" id="site.description" data-ng-model="site.description" data-parsley-group="step2" placeholder="Optional - describe your site" class="form-control" />
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Domain Name *</label>
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="#" tooltip="{{ TOOLTIPS.domain_name }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input name="domain_name" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Bid Floor (CPM)</label>
+                                &nbsp;&nbsp;&nbsp;
+                                <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label class="control-label">Block Advertisers by Domain Name</label>
+                                <a href="#" tooltip="{{ TOOLTIPS.blacklist }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="text-sm text-muted">Type and press Enter</div>
+                                <domain-blacklist model="site.blacklist" wizardstep="step2"></domain-blacklist>
+                                <!--<span class="help-block">Ex: If you want to block Walmart, enter 'walmart.com' </span>-->
+                            </div>
+                        </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(1)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="step3" ng-show="wizard.active(3)">
+                        <legend>Choose the Clique that best describes your site</legend>
+                        <fieldset>
+                            <input style="display: None" type="text" name="site.clique" id="site.clique" data-ng-model="site.clique" data-parsley-group="step3" placeholder="{{ site.clique }}" required="required" class="form-control" />
+                            <!--<p class="form-control-static">{{ site.clique }}</p>-->
+                            <div class="form-group">
+                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                            </div>
+                        </fieldset>
+                        <div class="alert alert-success" data-ng-show="site.clique"><b>Selected:</b> {{ site.clique }}</div>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(2)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- START PLACEMENT CREATION STEP-->
+                    <div id="step4" ng-show="wizard.active(4)">
+                        <legend>Set up a page & add placements</legend>
+                        <em><small class="text-muted"></small></em>
+                        <fieldset>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <input type="text" name="page.name" id="page.name" data-ng-model="page.name" data-parsley-group="step4" placeholder="Homepage" required="required" class="form-control" />
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>URL *</label>
+                                <a href="#" tooltip="{{ TOOLTIPS.page_url }}">
+                                    <em class="fa fa-question-circle"></em>
+                                </a>
+                                <div class="controls">
+                                    <input name="page_url" type="url" data-ng-model="page.url" id="page_url" data-parsley-group="step4" class="form-control" placeholder="http://www.example.com/index.html" required="required">
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="page.description" id="page.description" data-ng-model="page.description" data-parsley-group="step4" placeholder="Optional - describe this page" class="form-control" />
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <placement-form wizardstep="step4" page="page"></placement-form>
+                        </fieldset>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(3)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li class="next">
+                                <a href="#" ng-click="wizard.go(5)"> Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+
+                    <!-- START Wizard Step inputs -->
+                    <div id="step5" ng-show="wizard.active(5)">
+                        <legend>Review your new publisher</legend>
+                        <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Publisher&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2">Name</div><div class="col-sm-10">{{ name }}</div>
+                            <div class="col-sm-2">Website</div><div class="col-sm-10">{{ website }}</div>
+                            <div class="col-sm-2">Description</div><div class="col-sm-10">{{ description || &apos;empty&apos; }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Site Name</b></div><div class="col-sm-10">{{ site.name }}</div>
+                            <div class="col-sm-2"><b>Site Description</b></div><div class="col-sm-10">{{ site.description || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Site Domain</b></div><div class="col-sm-10">{{ site.domain_name || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Bid Floor</b></div><div class="col-sm-10">{{ site.bid_floor | currency:"$":0 }}</div>
+                            <div class="col-sm-2"><b>Adv. Blacklist</b></div><div class="col-sm-8">{{ site.blacklist || &apos;empty&apos; }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Site Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ site.clique }}</div>
+                        </div>
+                        <div class="col-md-12 box-placeholder">
+                            <h4>Page & Placements &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
+                            <div class="col-sm-2"><b>Page Name</b></div><div class="col-sm-10">{{ page.name || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Page URL</b></div><div class="col-sm-10">{{ page.url || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Page Description</b></div><div class="col-sm-10">{{ page.description || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2"><b>Placements</b></div>
+                            <div class="table-responsive col-sm-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Dimensions</th>
+                                            <th>Position</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="placement in page.placements">
+                                            <td><b>{{ placement.name }}</b></td>
+                                            <td>{{ placement.dimensions }}</td>
+                                            <td>{{ positions_object[placement.pos] }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(5)">
+                                    <span>&larr; Previous</span>
+                                </a>
+                            </li>
+                            <li ng-show="loading">
+                                <div class="ball-pulse">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </li>
+                            <li class="next">
+                                <a href="#" ng-click="create()"> Submit <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END Wizard Step inputs -->
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

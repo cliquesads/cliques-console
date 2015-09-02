@@ -1,0 +1,181 @@
+<h3>
+    <div class="pull-right">
+        <span class="icon-share"></span>&nbsp;&nbsp;{{ site.clique }}
+    </div>
+    {{site.name}}
+    <ul class="breadcrumb">
+        <li><a ui-sref="app.home">Home</a>
+        </li>
+        <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
+            <span ng-switch-when="true">{{state.title}}</span>
+        </li>
+    </ul>
+</h3>
+<section data-ng-init="findOne()">
+    <!--<div>-->
+        <!--<small>-->
+            <!--<em class="text-muted">-->
+                <!--Created on-->
+                <!--<span data-ng-bind="site.tstamp | date:'mediumDate'"></span>-->
+                <!--by-->
+                <!--<span data-ng-bind="publisher.user.displayName"></span>-->
+            <!--</em>-->
+        <!--</small>-->
+    <!--</div>-->
+    <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+    <div class="col-md-5">
+        <!--BEGIN Site Basics Panel-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Site Settings
+                </div>
+            </div>
+            <div class="panel-body">
+                <tabset>
+                    <tab heading="Basics">
+                        <fieldset>
+                            <small><em class="text-muted">Basics</em></small>
+                            <form editable-form name="siteBasicsInline" onaftersave="update()">
+                                <div class="form-horizontal">
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Name</label>
+                                        <div class="col-sm-6">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.name" e-name="name" e-required>{{ site.name }}</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <a href="#" class="pull-right" ng-click="siteBasicsInline.$show()" ng-show="!siteBasicsInline.$visible">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Description</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.description" e-name="description" >{{ site.description }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Domain Name</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.domain_name" e-name="domain_name" >{{ site.domain_name }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="siteBasicsInline.$visible">
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="siteBasicsInline.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="siteBasicsInline.$waiting" ng-click="siteBasicsInline.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
+                        <fieldset>
+                            <small><em class="text-muted">Advertiser Settings</em></small>
+                            <form editable-form name="blacklistForm" onaftersave="update()">
+                                <div class="form-group m0">
+                                    <span ng-show="!blacklistForm.$visible">
+                                        <label tooltip="{{ TOOLTIPS.blacklist }}" class="col-sm-4 control-label">Adv. Blacklist&nbsp;&nbsp;</label>
+                                        <div class="col-sm-6">{{ site.blacklist.length ? site.blacklist : "[empty]" }}</div>
+                                        <div class="col-sm-2">
+                                            <a href="#" class="pull-right" ng-click="blacklistForm.$show()" ng-show="!blacklistForm.$visible">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                        </div>
+                                    </span>
+                                    <div class="col-sm-12" ng-show="blacklistForm.$visible">
+                                        <div class="text-sm text-muted">Type and press Enter</div>
+                                        <domain-blacklist model="site.blacklist"></domain-blacklist>
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="blacklistForm.$visible">
+                                        <br/>
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="blacklistForm.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="blacklistForm.$waiting" ng-click="blacklistForm.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </tab>
+                    <tab heading="Pages">
+                        <a data-ng-repeat="page in site.pages" ng-click="editPage(page)" href="#" class="list-group-item">
+                            <div class="row row-table">
+                                <div class="col-sm-8">
+                                    <h4 class="list-group-item-heading" data-ng-bind="page.name"></h4>
+                                    <p class="list-group-item-text">{{ page.url }}</p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <h4 class="list-group-item-heading"><span class="icon-docs"></span>   {{ page.placements.length }}</h4>
+                                    <p class="list-group-item-text">Placement{{ page.placements.length === 1 ? '' : 's' }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div id="siteGraphPanel" class="panel panel-default" data-ng-init="getSiteGraph('7d')">
+            <div class="panel-heading">
+                <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
+                    &nbsp&nbsp&nbsp
+                    <small>
+                        <em class="text-muted">
+                            Reporting Timezone: {{ authentication.user.tz }}
+                        </em>
+                    </small>
+                    <span class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="getSiteGraph('7d')">7d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getSiteGraph('30d')">30d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getSiteGraph('90d')">90d</button>
+                    </span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>Impressions</p>
+                        <div class="h3">{{ impressions | number: 0 }}</div>
+                    </div>
+                    <div class="col-sm-2 col-xs-6 text-center">
+                        <p>CTR</p>
+                        <div class="h3">{{ CTR | percentage:2 }}</div>
+                    </div>
+                    <div class="col-sm-2 col-xs-6 text-center">
+                        <p>Clicks</p>
+                        <div class="h3">{{ clicks | number: 0 }}</div>
+                    </div>
+                    <div class="col-sm-3 col-xs-6 text-center">
+                        <p>Revenue</p>
+                        <div class="h3">{{ spend | currency:"$":"0" }}</div>
+                    </div>
+                    <div class="col-sm-2 col-xs-6 text-center">
+                        <p>Avg. RPM</p>
+                        <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
+            </div>
+        </div>
+    </div>
+</section>

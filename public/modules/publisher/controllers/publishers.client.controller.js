@@ -1,87 +1,87 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, TOOLTIPS) {
+angular.module('publisher').controller('PublisherController', ['$scope', '$stateParams', '$location',
+    'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','TOOLTIPS',
+	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, TOOLTIPS) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
 
-		$scope.remove = function(advertiser) {
-			if (advertiser) {
-				advertiser.$remove();
+		$scope.remove = function(publisher) {
+			if (publisher) {
+				publisher.$remove();
 
-				for (var i in $scope.advertiser) {
-					if ($scope.advertiser[i] === advertiser) {
-						$scope.advertiser.splice(i, 1);
+				for (var i in $scope.publisher) {
+					if ($scope.publisher[i] === publisher) {
+						$scope.publisher.splice(i, 1);
 					}
 				}
 			} else {
-				$scope.advertiser.$remove(function() {
-					$location.path('advertiser');
+				$scope.publisher.$remove(function() {
+					$location.path('publisher');
 				});
 			}
 		};
 
         $scope.validateInput = function(name, type) {
-            var input = this.advertiserForm[name];
+            var input = this.publisherForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
 		$scope.find = function() {
-            // on query return, get campaign spend data to augment $scope.advertisers
-			$scope.advertisers = Advertiser.query();
+            // on query return, get site spend data to augment $scope.publishers
+			$scope.publishers = Publisher.query();
 		};
 		$scope.findOne = function() {
-			$scope.advertiser = Advertiser.get({
-				advertiserId: $stateParams.advertiserId
+			$scope.publisher = Publisher.get({
+				publisherId: $stateParams.publisherId
 			}, function(){
-                HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
-                    groupBy: 'campaign'
+                HourlyAdStat.advQuery({publisherId: $stateParams.publisherId},{
+                    groupBy: 'site'
                 }).then(function(response){
-                    response.data.forEach(function(campaign_data){
-                        var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
-                            return campaign._id === campaign_data._id.campaign;
+                    response.data.forEach(function(site_data){
+                        var i = _.findIndex($scope.publisher.sites, function(site){
+                            return site._id === site_data._id.site;
                         });
-                        $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend/$scope.advertiser.campaigns[i].budget).toFixed(4);
+                        $scope.publisher.sites[i].percent_spent = (site_data.spend/$scope.publisher.sites[i].budget).toFixed(4);
                     });
                 });
             });
 		};
 
-        $scope.advertiserBasics = function(){
+        $scope.publisherBasics = function(){
             ngDialog.open({
-                template: 'modules/advertiser/views/partials/advertiser-inline.html',
+                template: 'modules/publisher/views/partials/publisher-basics.html',
                 controller: ['$scope',function($scope){
-                    $scope.advertiser = $scope.ngDialogData.advertiser;
+                    $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.update = function() {
-                        var advertiser = $scope.advertiser;
-                        advertiser.$update(function() {
-                            $location.path('advertiser/' + advertiser._id);
+                        var publisher = $scope.publisher;
+                        publisher.$update(function() {
+                            $location.path('publisher/' + publisher._id);
                         }, function(errorResponse) {
                             $scope.error = errorResponse.data.message;
                         });
                     };
                 }],
-                data: {advertiser: $scope.advertiser}
+                data: {publisher: $scope.publisher}
             });
         };
 
-        $scope.newCampaign = function(){
+        $scope.newSite = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/advertiser/views/partials/create-campaign.client.view.html',
-                controller: 'CampaignWizardController',
-                data: {advertiser: $scope.advertiser}
+                template: 'modules/publisher/views/partials/create-site.client.view.html',
+                controller: 'SiteWizardController',
+                data: {publisher: $scope.publisher}
             });
         };
 
         $scope.actionBeacons = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth600',
-                template: 'modules/advertiser/views/partials/actionbeacons.html',
+                template: 'modules/publisher/views/partials/actionbeacons.html',
                 controller: 'actionBeaconController',
-                data: {advertiser: $scope.advertiser}
+                data: {publisher: $scope.publisher}
             });
         };
 
@@ -94,7 +94,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
 
-        $scope.getAdvertiserGraph = function(dateShortCode){
+        $scope.getPublisherGraph = function(dateShortCode){
             dateShortCode = dateShortCode || $scope.dateRangeSelection;
             var startDate = $scope.dateRanges[dateShortCode].startDate;
             var endDate = $scope.dateRanges[dateShortCode].endDate;
@@ -107,7 +107,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             var timeUnit = 'day';
 
             // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
+            HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
                 dateGroupBy: timeUnit,
                 startDate: startDate,
                 endDate: endDate

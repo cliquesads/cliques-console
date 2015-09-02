@@ -52,7 +52,9 @@ module.exports = {
                 'public/lib/lodash/lodash.min.js',
                 'public/lib/moment/min/moment.min.js',
                 'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js',
-                'public/lib/ngDialog/js/ngDialog.min.js'
+                'public/lib/ngDialog/js/ngDialog.min.js',
+                'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
+                'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.min.js'
 			]
 		},
 		css: [
@@ -64,7 +66,8 @@ module.exports = {
             'public/lib/loaders.css/loaders.min.css',
             'public/lib/angular-xeditable/dist/css/xeditable.css',
             'public/lib/ngDialog/css/ngDialog.min.css',
-            'public/lib/ngDialog/css/ngDialog-theme-default.min.css'
+            'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
+            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css'
 		],
 		js: [
 			'public/config.js',
