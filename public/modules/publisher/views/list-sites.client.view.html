@@ -19,34 +19,23 @@
                 <div class="col-sm-1">
                     <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
                     <p class="list-group-item-text">{{ site.clique }}</p>
                 </div>
                 <div class="col-sm-2">
-                    <h4 class="list-group-item-heading">{{ site.end_date | date:'MM/dd/yyyy' }}</h4>
-                    <p class="list-group-item-text">Ends</p>
+                    <h4 class="list-group-item-heading">{{ (site.spend||0) | currency:"$":"0" }}</h4>
+                    <p class="list-group-item-text">Revenue</p>
                 </div>
                 <div class="col-sm-2">
-                    <h4 class="list-group-item-heading">{{ site.budget | currency:"$":"0" }}</h4>
-                    <p class="list-group-item-text">Budget</p>
-                </div>
-                <div class="col-sm-1">
-                    <h4 class="list-group-item-heading">{{ (site.spend||0) | currency:"$":"0" }}</h4>
-                    <p class="list-group-item-text">Spent</p>
-                </div>
-                <div class="col-sm-1">
-                    <radial percent="site.percent_spent" size="sm"></radial>
-                </div>
-                <div class="col-sm-1">
                     <h4 class="list-group-item-heading">{{ (site.imps||0) | number:"0" }}</h4>
                     <p class="list-group-item-text">Impressions</p>
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-2">
                     <h4 class="list-group-item-heading">{{ (site.ecpm||0) | currency:"$":"2" }}</h4>
-                    <p class="list-group-item-text">Average CPM</p>
+                    <p class="list-group-item-text">Average RPM</p>
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-2">
                     <h4 class="list-group-item-heading">{{ (site.ctr||0) | percentage:"2" }}</h4>
                     <p class="list-group-item-text">CTR</p>
                 </div>
