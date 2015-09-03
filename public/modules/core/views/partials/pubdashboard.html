@@ -1,0 +1,61 @@
+<section data-ng-controller="PublisherDashboardController">
+    <div class="jumbotron text-center">
+        <div class="text-center">
+            Thanks for being a part of the Cliques Beta Program!
+        </div>
+        <br>
+        <div class="row">
+            <p class="lead">
+                The dashboard is a work in progress, please check back soon for a comprehensive, real-time view of your Cliques sites, data & revenue.
+            </p>
+        </div>
+        <div class="row" ng-show="publishers.length == 0">
+            <p>
+                <a class="btn btn-primary btn-lg" href="#!/publisher/create">Create your First Publisher!</a>
+            </p>
+        </div>
+    </div>
+    <!--<div>-->
+        <!--<p>To get started, you'll need:</p>-->
+        <!--<ul>-->
+            <!--<li>-->
+                <!--<em>Signup</em>-->
+                <!--to get started.-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--Configure your app to work with your social accounts, by editing the-->
+                <!--<em>/config/env/*.js</em>-->
+                <!--files.-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--Edit your users module.-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--Add new CRUD modules.-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--Have fun...-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <div class="row">
+        <div class="col-md-4">
+            <h2>
+                <strong>P</strong>ublishers & Sites
+            </h2>
+            <p>A Publisher is a top-level entity, and can contain many Sites. For example, "Conde Nast" would be a Publisher, "GQ" would be a Site. Most of the settings that actually do anything (bid floors, blacklists, placements, etc.) are stored in Sites, and their child Pages. Use the menu items on the left to create, view & edit your Publisher & Site settings.</p>
+        </div>
+        <div class="col-md-4">
+            <h2>
+                <strong>F</strong>eedback
+            </h2>
+            <p>Cliques is built for you, and only you can help make it better! As a beta tester, we strongly encourage you to send us feedback on the platform. Please email <a href="mailto:bliang@cliquesads.com">bliang@cliquesads.com</a> with all feedback.</p>
+        </div>
+        <div class="col-md-4">
+            <h2>
+                <strong>R</strong>esources & Support
+            </h2>
+            <p>If you have any quick questions or issues, or want to learn more about our technology, please wander over to our <a target="_blank" href="http://support.cliquesads.com/">Support Center</a></p>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,71 @@
+<section data-ng-controller="AdminDashboardController">
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <!-- START widget-->
+            <div class="panel widget bg-primary">
+                <div class="row row-table">
+                    <div class="col-xs-4 text-center bg-primary-dark pv-lg">
+                        <em class="icon-bar-chart fa-3x"></em>
+                    </div>
+                    <div class="col-xs-8 pv-lg">
+                        <div class="h2 mt0">{{ advertisers.length }}</div>
+                        <div class="text-uppercase">Advertisers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <!-- START widget-->
+            <div class="panel widget bg-green">
+                <div class="row row-table">
+                    <div class="col-xs-4 text-center bg-green-dark pv-lg">
+                        <em class="icon-book-open fa-3x"></em>
+                    </div>
+                    <div class="col-xs-8 pv-lg">
+                        <div class="h2 mt0">{{ publishers.length }}</div>
+                        <div class="text-uppercase">Publishers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <!-- START widget-->
+            <div class="panel widget bg-primary-light">
+                <div class="row row-table">
+                    <div class="col-xs-4 text-center bg-primary pv-lg">
+                        <em class="icon-graph fa-3x"></em>
+                    </div>
+                    <div class="col-xs-8 pv-lg">
+                        <div class="h2 mt0">{{ adStats[0].imps | number:"0" }}</div>
+                        <div class="text-uppercase">Impressions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <!-- START widget-->
+            <div class="panel widget bg-green-light">
+                <div class="row row-table">
+                    <div class="col-xs-4 text-center bg-green pv-lg">
+                        <em class="icon-graph fa-3x"></em>
+                    </div>
+                    <div class="col-xs-8 pv-lg">
+                        <div class="h2 mt0">{{ adStats[0].spend | currency:"$":"0" }}</div>
+                        <div class="text-uppercase">Total Ad Spend</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="jumbotron text-center">
+        <div class="text-center">
+            Admin Dashboard
+        </div>
+        <br>
+        <div class="row">
+            <p class="lead">
+                You are an admin, you know that this is a WORK IN PROGRESS!
+            </p>
+        </div>
+    </div>
+</section>

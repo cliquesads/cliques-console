@@ -16,5 +16,15 @@
    <small>{{ 'dashboard.WELCOME' | translate:{ appName: app.name } }} !</small>
 </h3>
 <section>
-    <div ng-include="'/modules/core/views/partials/advdashboard.html'"></div>
+    <div ng-switch on="role">
+        <div ng-switch-when="advertiser">
+            <div ng-include="'/modules/core/views/partials/advdashboard.html'"></div>
+        </div>
+        <div ng-switch-when="publisher">
+            <div ng-include="'/modules/core/views/partials/pubdashboard.html'"></div>
+        </div>
+        <div ng-switch-when="admin">
+            <div ng-include="'/modules/core/views/partials/admindashboard.html'"></div>
+        </div>
+    </div>
 </section>

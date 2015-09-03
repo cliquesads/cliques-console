@@ -14,6 +14,15 @@ angular.module('core').controller('AppController',
     // Redirect users to signin page if not logged in
     if (!user){
           $location.path('signin');
+    } else {
+        // TODO: FIX THIS
+        if (user.roles.indexOf('admin') > -1){
+            $scope.role = 'admin';
+        } else if (user.roles.indexOf('advertiser') > -1){
+            $scope.role = 'advertiser';
+        } else if (user.roles.indexOf('publisher') > -1){
+            $scope.role = 'publisher'
+        }
     }
 
     // Loading bar transition
