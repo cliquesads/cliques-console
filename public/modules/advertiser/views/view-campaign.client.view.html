@@ -197,10 +197,16 @@
                         </div>
                         <div ng-repeat="creativegroup in campaign.creativegroups">
                             <fieldset>
-                                <div ng-repeat="creative in creativegroup.creatives">
-                                    <div class="col-sm-3"><img src="{{ creative.url }}" class="smallthumbnail"/></div>
-                                    <div class="col-sm-6"><b>{{ creative.name }}</b></div>
-                                    <div class="col-sm-3">{{ creativegroup.w }}x{{ creativegroup.h }}</div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr ng-repeat="creative in creativegroup.creatives">
+                                                <td class="col-sm-3"><img src="{{ creative.url }}" class="smallthumbnail"/></td>
+                                                <td class="col-sm-6"><b>{{ creative.name }}</b></td>
+                                                <td class="col-sm-3">{{ creativegroup.w }}x{{ creativegroup.h }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </fieldset>
                         </div>
