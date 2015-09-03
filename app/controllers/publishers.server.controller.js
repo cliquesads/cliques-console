@@ -6,6 +6,7 @@
 var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
     tags = node_utils.tags,
+    errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
 
 
