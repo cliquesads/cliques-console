@@ -80,13 +80,13 @@ module.exports = function(db) {
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, adv){
+                        publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
                                 });
                             }
-                            res.json(adv);
+                            res.status(200).json(pub).send();
                         });
                     }
                 }
@@ -104,13 +104,13 @@ module.exports = function(db) {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, adv){
+                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
-                        res.json(adv);
+                        res.status(200).json(pub).send();;
                     });
                 }
             });
@@ -126,7 +126,7 @@ module.exports = function(db) {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    res.json(publisher);
+                    res.status(200).json(publisher).send();
                 }
             });
         },
