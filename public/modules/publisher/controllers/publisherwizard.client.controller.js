@@ -67,7 +67,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
          * Method called to submit Publisher to API
          * @returns {boolean}
          */
-        $scope.create = function() {
+        $scope.createPublisher = function() {
             if (this.publisherForm.$valid) {
                 $scope.loading = true;
                 var site = this.site;
