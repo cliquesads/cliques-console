@@ -40,7 +40,7 @@ angular.module('publisher').directive('placementForm', ['CREATIVE_SIZES','OPENRT
              * Removes placement from array
              */
             scope.removePlacement = function(placement){
-                var ind = _.findIndex(scope.page.placements, function(obj){ return obj === placement});
+                var ind = _.findIndex(scope.page.placements, function(obj){ return obj === placement;});
                 scope.page.placements.splice(ind, 1);
             };
 

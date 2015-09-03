@@ -110,7 +110,7 @@ module.exports = function(db) {
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
-                        res.status(200).json(pub).send();;
+                        res.status(200).json(pub).send();
                     });
                 }
             });
