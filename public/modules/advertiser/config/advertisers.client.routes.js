@@ -13,7 +13,7 @@ angular.module('advertiser').config(['$stateProvider',
 		state('app.createAdvertiser', {
 			url: '/advertiser/create',
 			title: 'New Advertiser',
-			templateUrl: 'modules/advertiser/views/create-publisher.client.view.html',
+			templateUrl: 'modules/advertiser/views/create-advertiser.client.view.html',
             controller: 'AdvertiserWizardController'
 		}).
         state('app.listCampaign', {
