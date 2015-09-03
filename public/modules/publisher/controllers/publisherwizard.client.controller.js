@@ -46,21 +46,25 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // Set mins & maxes
         $scope.min_base_bid = BID_FLOOR_SETTINGS.min_bid_floor;
         $scope.max_base_bid = BID_FLOOR_SETTINGS.max_bid_floor;
-
         $scope.site = {
-            name:           null,
-            description:    null,
-            bid_floor:      null,
-            domain_name:    null,
+            name:           '',
+            description:    '',
+            bid_floor:      '',
+            domain_name:    '',
             clique:         null,
+            bidfloor:       null,
             blacklist:      []
-
         };
         $scope.page = {
             name: null,
             description: null,
             url: null,
             placements: []
+        };
+
+        $scope.sameAsPub = {
+            name: false,
+            domain_name: false
         };
 
         /**
@@ -71,9 +75,17 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             if (this.publisherForm.$valid) {
                 $scope.loading = true;
                 var site = this.site;
+                if (this.sameAsPub.name){
+                    site.name = this.name;
+                }
+                if (this.sameAsPub.domain_name){
+                    site.domain_name = this.website;
+                }
                 //TODO: Set page clique to site clique for now, might want to make
                 //TODO: separate option later
                 this.page.clique = site.clique;
+                this.page.url = 'http://' + this.page.url;
+
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
                     var dims = p.dimensions.split('x');
@@ -83,7 +95,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                 var publisher = new Publisher({
                     name:           this.name,
                     description:    this.description,
-                    website:        this.website,
+                    website:        'http://' + this.website,
                     sites: [site]
                 });
                 publisher.$create(function(response){

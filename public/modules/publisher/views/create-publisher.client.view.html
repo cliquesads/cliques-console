@@ -47,16 +47,16 @@
                             <div class="form-group">
                                 <label>Name *</label>
                                 <div class="controls">
-                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
+                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Outdoor Lyfestyle Magz LLC" required="required">
                                     <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
                             <br/>
                             <div class="form-group">
                                 <label>Website *</label>
-                                <div class="controls">
-                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
-                                    <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
+                                <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="outdoorlyfeindustriez.com" required="required">
                                 </div>
                             </div>
                             <br/>
@@ -81,12 +81,19 @@
                         <fieldset>
                             <div class="form-group">
                                 <label>Name *</label>
-                                <input type="text" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-up Enduro Dot Com" required="required" class="form-control" />
-                            </div>
-                            <br/>
-                            <div class="form-group">
-                                <label>Description</label>
-                                <input type="text" name="site.description" id="site.description" data-ng-model="site.description" data-parsley-group="step2" placeholder="Optional - describe your site" class="form-control" />
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <input type="text" placeholder="{{ name }}" disabled="" class="form-control" ng-show="sameAsPub.name">
+                                        <input type="text" ng-hide="sameAsPub.name" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-up Enduro Dot Com" ng-required="!sameAsPub.name" class="form-control" />
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="checkbox c-checkbox">
+                                            <label>
+                                                <input type="checkbox" checked="" data-ng-model="sameAsPub.name" />
+                                                <span class="fa fa-check"></span>Same as Publisher</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <br/>
                             <div class="form-group">
@@ -95,10 +102,27 @@
                                 <a href="#" tooltip="{{ TOOLTIPS.domain_name }}">
                                     <em class="fa fa-question-circle"></em>
                                 </a>
-                                <div class="input-group">
-                                    <span class="input-group-addon">http://</span>
-                                    <input name="domain_name" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">http://</span>
+                                            <input type="text" placeholder="{{ website }}" disabled="" class="form-control" ng-show="sameAsPub.domain_name">
+                                            <input ng-hide="sameAsPub.domain_name" name="domain_name" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="backcountrystandupenduro.com" ng-required="!sameAsPub.domain_name">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="checkbox c-checkbox">
+                                            <label>
+                                                <input type="checkbox" checked="" data-ng-model="sameAsPub.domain_name"/>
+                                                <span class="fa fa-check"></span>Same as Publisher</label>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="site.description" id="site.description" data-ng-model="site.description" data-parsley-group="step2" placeholder="Optional - describe your site" class="form-control" />
                             </div>
                             <br/>
                             <div class="form-group">
@@ -109,7 +133,7 @@
                                 </a>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
-                                    <input data-parsley-type="number" name="site.bid_floor" id="site.bid_floor" ng-model="site.bid_floor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
+                                    <input data-parsley-type="number" name="site.bidfloor" id="site.bidfloor" ng-model="site.bidfloor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
                                 </div>
                             </div>
                             <br/>
@@ -173,7 +197,7 @@
                                     <em class="fa fa-question-circle"></em>
                                 </a>
                                 <div class="controls">
-                                    <input name="page_url" type="url" data-ng-model="page.url" id="page_url" data-parsley-group="step4" class="form-control" placeholder="http://www.example.com/index.html" required="required">
+                                    <input name="page_url" type="text" data-ng-model="page.url" id="page_url" data-parsley-group="step4" class="form-control" placeholder="www.example.com/post.html" required="required">
                                 </div>
                             </div>
                             <br/>
