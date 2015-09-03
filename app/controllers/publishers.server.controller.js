@@ -50,24 +50,18 @@ module.exports = function(db) {
         create: function (req, res) {
             var publisher = new publisherModels.Publisher(req.body);
             publisher.user = req.user;
-
-            console.log('About to try to save...');
             publisher.save(function (err) {
                 if (err) {
-                    console.log('ERROR: ' + err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    console.log('No save errors, made it this far!');
                     publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
                         if (err) {
-                            console.log('ERROR: ' + err);
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
-                        console.log('Made it to the end (populated user), should be working!');
                         res.status(200).json(pub).send();
                     });
                 }

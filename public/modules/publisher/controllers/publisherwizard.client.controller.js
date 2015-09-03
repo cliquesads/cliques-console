@@ -71,6 +71,9 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             if (this.publisherForm.$valid) {
                 $scope.loading = true;
                 var site = this.site;
+                //TODO: Set page clique to site clique for now, might want to make
+                //TODO: separate option later
+                this.page.clique = site.clique;
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
                     var dims = p.dimensions.split('x');
