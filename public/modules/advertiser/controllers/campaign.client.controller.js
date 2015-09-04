@@ -13,10 +13,9 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
-        $scope.findAdvertisers = function() {
-            // on query return, get campaign spend data to augment $scope.advertisers
-            $scope.advertisers = Advertiser.query();
-        };
+
+        $scope.advertisers = Advertiser.query();
+
 		$scope.update = function() {
 			var advertiser = $scope.advertiser;
 

@@ -28,10 +28,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
-		$scope.find = function() {
-            // on query return, get campaign spend data to augment $scope.advertisers
-			$scope.advertisers = Advertiser.query();
-		};
+        $scope.advertisers = Advertiser.query();
+
 		$scope.findOne = function() {
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId

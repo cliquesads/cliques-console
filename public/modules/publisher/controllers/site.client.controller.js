@@ -6,6 +6,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,TOOLTIPS) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
+        $scope.publishers = Publisher.query();
 
 		$scope.update = function() {
 			var publisher = $scope.publisher;
@@ -15,10 +16,10 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 			});
 		};
 
-        $scope.findPublishers = function() {
-            // on query return, get site spend data to augment $scope.publishers
-            $scope.publishers = Publisher.query();
-        };
+        //$scope.findPublishers = function() {
+        //    // on query return, get site spend data to augment $scope.publishers
+        //    $scope.publishers = Publisher.query();
+        //};
 		$scope.findOne = function() {
 			Publisher.get({publisherId: $stateParams.publisherId})
                 .$promise

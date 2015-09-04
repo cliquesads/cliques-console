@@ -7,7 +7,7 @@
 	  </li>
 	</ul>
 </h3>
-<section data-ng-controller="PublisherController" data-ng-init="find()">
+<section data-ng-controller="PublisherController">
 	<div class="list-group">
 		<a data-ng-repeat="publisher in publishers" data-ng-href="#!/publisher/{{publisher._id}}" class="list-group-item">
 			<h4 class="list-group-item-heading" data-ng-bind="publisher.name"></h4>

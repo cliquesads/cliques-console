@@ -6,6 +6,7 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
 	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, TOOLTIPS) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = TOOLTIPS;
+        $scope.publishers = Publisher.query();
 
 		$scope.remove = function(publisher) {
 			if (publisher) {
@@ -28,10 +29,10 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
-		$scope.find = function() {
-            // on query return, get site spend data to augment $scope.publishers
-			$scope.publishers = Publisher.query();
-		};
+		//$scope.find = function() {
+         //   // on query return, get site spend data to augment $scope.publishers
+         //   $scope.publishers = Publisher.query();
+		//};
 		$scope.findOne = function() {
 			$scope.publisher = Publisher.get({
 				publisherId: $stateParams.publisherId
