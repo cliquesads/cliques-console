@@ -1,30 +1,32 @@
-<h4>{{ page.name }}</h4>
+<h4>{{ page.name || 'New Page' }}</h4>
 <div class="col-md-12 alert alert-error" ng-show="saveerror">{{ saveerror }}</div>
 <fieldset>
-    <div class="form-group m0 col-sm-3">
-        <label class="control-label">Name</label>
-        <p class="form-control-static">
-            <span editable-text="page.name" e-name="name" onaftersave="update()" e-required>{{ page.name }}</span>
-        </p>
-    </div>
-    <div class="form-group m0 col-sm-3">
-        <label class="control-label">URL</label>
-        <p class="form-control-static">
-            <span editable-url="page.url" e-name="url" onaftersave="update()" e-required>{{ page.url }}</span>
-        </p>
-    </div>
-    <div class="form-group m0 col-sm-4">
-        <label class="control-label">Description</label>
-        <p class="form-control-static">
-            <span editable-textarea="page.description" e-rows="3" e-cols="30" e-name="name" onaftersave="update()">{{(page.description || "empty") | limitTo:64 }} ...</span>
-        </p>
-    </div>
-    <div class="form-group m0 col-sm-2">
-        <label class="control-label">Clique</label>
-        <p class="form-control-static">
-            {{ page.clique || "empty" }}
-        </p>
-    </div>
+    <form id="pageForm">
+        <div class="form-group m0 col-sm-2">
+            <label class="control-label">Name</label>
+            <p class="form-control-static">
+                <input type="text" data-ng-model="page.name" name="name" id="name" class="form-control" placeholder="Homepage" required="required"/>
+            </p>
+        </div>
+        <div class="form-group m0 col-sm-4">
+            <label class="control-label">URL</label>
+            <p class="form-control-static">
+                <input name="url" type="text" data-ng-model="page.url" id="url" class="form-control" placeholder="example.com/post.html" required="required">
+            </p>
+        </div>
+        <div class="form-group m0 col-sm-4">
+            <label class="control-label">Description</label>
+            <p class="form-control-static">
+                <input type="text" data-ng-model="page.description" name="decription" id="description" class="form-control" placeholder="Homepage"/>
+            </p>
+        </div>
+        <div class="form-group m0 col-sm-2">
+            <label class="control-label">Clique</label>
+            <p class="form-control-static">
+                {{ page.clique || "empty" }}
+            </p>
+        </div>
+    </form>
 </fieldset>
 <fieldset>
     <placement-form page="page" publisher="publisher"></placement-form>

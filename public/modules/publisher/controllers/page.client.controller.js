@@ -12,13 +12,14 @@ angular.module('publisher').controller('editPageController', ['$scope','PUBLISHE
             return site._id === $scope.ngDialogData.site._id;
         });
         $scope.site = $scope.publisher.sites[site_ind];
-        var page_ind = _.findIndex($scope.site.pages, function(page){
-            return page._id === $scope.ngDialogData.page._id;
-        });
-        $scope.page = $scope.publisher.sites[site_ind].pages[page_ind];
+
+        //var page_ind = _.findIndex($scope.site.pages, function(page){
+        //    return page._id === $scope.ngDialogData.page._id;
+        //});
+        $scope.page = $scope.ngDialogData.page;
 
         $scope.updateAndClose = function(){
-            var valid = $('#placementForm').parsley().validate();
+            var valid = $('#placementForm').parsley().validate() && $('#pageForm').parsley().validate();
             if (valid){
                 this.page.placements.forEach(function(placement){
                     if (!placement.w && !placement.h){

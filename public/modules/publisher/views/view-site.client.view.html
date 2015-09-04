@@ -115,6 +115,11 @@
                         </fieldset>
                     </tab>
                     <tab heading="Pages">
+                        <li class="list-group-item">
+                            <button type="button" class="btn btn-labeled btn-primary btn-xs" ng-click="newPage()">
+                                <span class="btn-label"><i class="fa fa-plus"></i></span>New Page
+                            </button>
+                        </li>
                         <a data-ng-repeat="page in site.pages" ng-click="editPage(page)" href="#" class="list-group-item">
                             <div class="row row-table">
                                 <div class="col-sm-8">

@@ -67,6 +67,30 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 data: {publisher: $scope.publisher, site: $scope.site, page: page}
             });
         };
+        $scope.newPage = function(){
+            var newPage = {
+                clique: $scope.site.clique,
+                placements: []
+            };
+            $scope.site.pages.push(newPage);
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/publisher/views/partials/edit-page.html',
+                controller: 'editPageController',
+                data: {publisher: $scope.publisher, site: $scope.site, page: newPage},
+                preCloseCallback: function(value){
+                    if (value != 'Success'){
+                        var page_ind = _.findIndex($scope.site.pages, function(page){
+                            return page === newPage;
+                        });
+                        $scope.$apply(function(){
+                            $scope.site.pages.splice(page_ind, 1);
+                        });
+                        return true;
+                    }
+                }
+            });
+        };
 
 
         // ######################################### //
