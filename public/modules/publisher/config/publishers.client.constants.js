@@ -4,7 +4,7 @@ angular.module('publisher')
         min_bid_floor: 1,
         max_bid_floor: 5
     })
-    .constant('TOOLTIPS',{
+    .constant('PUBLISHER_TOOLTIPS',{
         budget: "Tell us how much money you would like to spend over the lifetime of this campaign.  Don't worry, our bidders will pace your budget evenly over the lifetime of the campaign (set below)",
         bid_floor: "The lowest price at which you're willing to sell impressions on your site, in CPM (Cost per Thousand Impressions). For the best fill rates, we recommend NOT setting this.",
         domain_name: "The base domain name associated with your site.",

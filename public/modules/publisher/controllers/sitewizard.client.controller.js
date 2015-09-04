@@ -1,7 +1,7 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('PublisherWizardController', ['$scope',
+angular.module('publisher').controller('SiteWizardController', ['$scope',
     '$stateParams',
     '$location',
     '$q',
@@ -10,18 +10,18 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'Advertiser',
     'getCliqueTree',
     'BID_FLOOR_SETTINGS',
-    'PUBLISHER_TOOLTIPS',
+    'TOOLTIPS',
     'REGEXES',
     'CREATIVE_SIZES',
     'OPENRTB',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
         //##################################//
 
         $scope.authentication = Authentication;
-        $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
+        $scope.TOOLTIPS = TOOLTIPS;
         $scope.CREATIVE_SIZES = CREATIVE_SIZES;
         $scope.OPENRTB = OPENRTB;
         $scope.positions_object = {};
@@ -61,44 +61,27 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             url: null,
             placements: []
         };
-
-        $scope.sameAsPub = {
-            name: false,
-            domain_name: false
-        };
-
         /**
          * Method called to submit Publisher to API
          * @returns {boolean}
          */
-        $scope.createPublisher = function() {
-            if (this.publisherForm.$valid) {
+        $scope.createSite = function() {
+            if (this.siteForm.$valid) {
                 $scope.loading = true;
                 var site = this.site;
-                if (this.sameAsPub.name){
-                    site.name = this.name;
-                }
-                if (this.sameAsPub.domain_name){
-                    site.domain_name = this.website;
-                }
                 //TODO: Set page clique to site clique for now, might want to make
                 //TODO: separate option later
                 this.page.clique = site.clique;
                 this.page.url = 'http://' + this.page.url;
-
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
                     var dims = p.dimensions.split('x');
                     p.w = Number(dims[0]);
                     p.h = Number(dims[1]);
                 });
-                var publisher = new Publisher({
-                    name:           this.name,
-                    description:    this.description,
-                    website:        'http://' + this.website,
-                    sites: [site]
-                });
-                publisher.$create(function(response){
+                var advertiser = $scope.ngDialogData.advertiser;
+                advertiser.sites.push(site);
+                publisher.$update(function(response){
                     $scope.loading = false;
                     $scope.name = '';
                     $scope.description= '';
@@ -107,7 +90,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     $scope.website = '';
                     //On success, redirect to publisher detail page
                     var publisherId = response._id;
-                    $location.url('/publisher/' + publisherId);
+                    $scope.closeThisDialog('Success');
                 }, function (errorResponse) {
                     $scope.loading = false;
                     $scope.creation_error = errorResponse.data.message;
@@ -115,11 +98,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             } else {
                 return false;
             }
-        };
-
-        $scope.validateInput = function(name, type) {
-            var input = this.publisherForm[name];
-            return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 	}
 ]);

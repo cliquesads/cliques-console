@@ -2,10 +2,10 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, TOOLTIPS) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS) {
 		$scope.authentication = Authentication;
-        $scope.TOOLTIPS = TOOLTIPS;
+        $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
 		$scope.remove = function(advertiser) {
 			if (advertiser) {

@@ -32,10 +32,16 @@
         <!--BEGIN CAMPAIGN PANEL-->
         <ul class="list-group">
             <li class="list-group-item">
-                <strong>Campaigns</strong>
-                <a href="#" class="pull-right ng-click-active" ng-click="newCampaign()" tooltip="Create a new campaign">
-                    <span class="fa fa-plus-square-o"></span>
-                </a>
+                <!--<strong>Campaigns</strong>-->
+                <!--<a href="#" class="pull-right ng-click-active" ng-click="newCampaign()" tooltip="Create a new campaign">-->
+                    <!--<span class="fa fa-plus-square-o"></span>-->
+                <!--</a>-->
+                <h4>
+                    <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newCampaign()">
+                        <span class="btn-label"><i class="fa fa-plus"></i></span>New Campaign
+                    </button>
+                    Campaigns
+                </h4>
             </li>
             <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
                 <div class="row row-table">
@@ -57,7 +63,7 @@
             </a>
         </ul>
         <!--BEGIN ACTION BEACON PANEL-->
-        <div id="actionbeacons" class="panel widget" ng-click="actionBeacons()" tooltip="{{ TOOLTIPS.actionbeacons }}">
+        <div id="actionbeacons" class="panel widget" ng-click="actionBeacons()" tooltip="{{ TOOLTIPS.actionbeacons }}" tooltip-trigger tooltip-placement="top">
             <div class="row row-table row-flush">
                 <div class="col-xs-4 bg-primary-light text-center">
                     <em class="fa fa-code fa-2x"></em>

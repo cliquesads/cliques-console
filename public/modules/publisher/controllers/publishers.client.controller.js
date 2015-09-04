@@ -2,10 +2,10 @@
 'use strict';
 
 angular.module('publisher').controller('PublisherController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, TOOLTIPS) {
+    'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
+	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
 		$scope.authentication = Authentication;
-        $scope.TOOLTIPS = TOOLTIPS;
+        $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
 
 		$scope.remove = function(publisher) {

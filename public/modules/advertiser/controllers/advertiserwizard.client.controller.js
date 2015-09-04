@@ -11,15 +11,15 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'FileUploader',
     'AdvertiserUtils',
     'BID_SETTINGS',
-    'TOOLTIPS',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, TOOLTIPS) {
+    'ADVERTISER_TOOLTIPS',
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
         //##################################//
 
         $scope.authentication = Authentication;
-        $scope.TOOLTIPS = TOOLTIPS;
+        $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
