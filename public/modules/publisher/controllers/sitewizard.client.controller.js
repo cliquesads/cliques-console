@@ -10,18 +10,18 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
     'Advertiser',
     'getCliqueTree',
     'BID_FLOOR_SETTINGS',
-    'TOOLTIPS',
+    'PUBLISHER_TOOLTIPS',
     'REGEXES',
     'CREATIVE_SIZES',
     'OPENRTB',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
         //##################################//
 
         $scope.authentication = Authentication;
-        $scope.TOOLTIPS = TOOLTIPS;
+        $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.CREATIVE_SIZES = CREATIVE_SIZES;
         $scope.OPENRTB = OPENRTB;
         $scope.positions_object = {};
@@ -79,8 +79,8 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
                     p.w = Number(dims[0]);
                     p.h = Number(dims[1]);
                 });
-                var advertiser = $scope.ngDialogData.advertiser;
-                advertiser.sites.push(site);
+                var publisher = $scope.ngDialogData.publisher;
+                publisher.sites.push(site);
                 publisher.$update(function(response){
                     $scope.loading = false;
                     $scope.name = '';
@@ -89,7 +89,6 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
                     $scope.cliques = '';
                     $scope.website = '';
                     //On success, redirect to publisher detail page
-                    var publisherId = response._id;
                     $scope.closeThisDialog('Success');
                 }, function (errorResponse) {
                     $scope.loading = false;
