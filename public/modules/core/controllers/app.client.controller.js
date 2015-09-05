@@ -11,22 +11,25 @@ angular.module('core').controller('AppController',
     // This provides Authentication context.
     $scope.authentication = Authentication;
 
+    // TODO: This is all a horrible hack to temporarily put in place an access code scheme
     // Redirect users to signin page if not logged in
-    if (!user){
+    if (!user && !$scope.authentication.hasaccesscode && $location.path() != '/beta-access'){
           $location.path('signin');
     } else {
-        // TODO: FIX THIS
-        if (user.roles.indexOf('admin') > -1){
-            $scope.role = 'admin';
-        } else if (user.roles.indexOf('advertiser') > -1){
-            $scope.role = 'advertiser';
-        } else if (user.roles.indexOf('publisher') > -1){
-            $scope.role = 'publisher'
+        if (user){
+            // TODO: FIX THIS
+            if (user.roles.indexOf('admin') > -1){
+                $scope.role = 'admin';
+            } else if (user.roles.indexOf('advertiser') > -1){
+                $scope.role = 'advertiser';
+            } else if (user.roles.indexOf('publisher') > -1){
+                $scope.role = 'publisher'
+            }
         }
     }
 
     // Loading bar transition
-    // ----------------------------------- 
+    // -----------------------------------
     var thBar;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if($('.wrapper > section').length) // check if bar container exists
@@ -88,7 +91,7 @@ angular.module('core').controller('AppController',
       $localStorage.layout = $scope.app.layout;
     }, true);
 
-    
+
     // Allows to use branding color with interpolation
     // {{ colorByName('primary') }}
     $scope.colorByName = colors.byName;

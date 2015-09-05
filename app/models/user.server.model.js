@@ -145,3 +145,58 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 };
 
 mongoose.model('User', UserSchema);
+
+
+/**
+ * Access codes for private beta to allow users to sign up
+ * @type {Schema}
+ */
+var AccessCodeSchema = new Schema({
+    code: {
+        type: String,
+        default: '',
+        validate: [validateLocalStrategyPassword, 'Code should be longer']
+    },
+    salt: {
+        type: String
+    },
+    created: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+/**
+ * Hook a pre save method to hash the password
+ */
+AccessCodeSchema.pre('save', function(next) {
+    if (this.code && this.code.length > 6) {
+        this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+        this.code = this.hashCode(this.code);
+    }
+    next();
+});
+AccessCodeSchema.methods.hashCode = function(code) {
+    if (this.salt && code) {
+        return crypto.pbkdf2Sync(code, this.salt, 10000, 64).toString('base64');
+    } else {
+        return code;
+    }
+};
+AccessCodeSchema.statics.validate = function(code, callback) {
+    var _this = this;
+    _this.find({}, function(err, codes) {
+        if (!err){
+            var valid = false;
+            codes.forEach(function(c){
+                if (c.code === c.hashCode(code)){
+                    valid = true;
+                }
+            });
+            return callback(null, valid);
+        } else {
+            return callback(err);
+        }
+    });
+};
+exports.AccessCode = mongoose.model('AccessCode', AccessCodeSchema);

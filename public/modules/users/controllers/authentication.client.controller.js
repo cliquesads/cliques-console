@@ -13,13 +13,23 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
             tz: 'America/New_York'
         };
 
+        $scope.requestAccess = function(){
+            $http.post('/auth/access-signup', {code: $scope.accesscode}).success(function(response){
+                $scope.authentication.hassaccesscode = true;
+                // And redirect to the signup page
+                $location.path('/signup');
+            }).error(function(response){
+                $scope.error = response.message;
+            })
+        };
+
 		$scope.signup = function() {
 			$http.post('/auth/signup', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
-
+                $scope.authentication.hasaccesscode = false;
 				// And redirect to the index page
-				$location.path('/');
+                $window.location.href = '/';
 			}).error(function(response) {
 				$scope.error = response.message;
 			});

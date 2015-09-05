@@ -9,9 +9,13 @@ angular.module('users').config(['$stateProvider',
 			url: '/signin',
 			templateUrl: 'modules/users/views/authentication/signin.client.view.html'
 		}).
-        state('page.signup', {
+        state('app.signup', {
             url: '/signup',
             templateUrl: 'modules/users/views/authentication/signup.client.view.html'
+        }).
+        state('app.requestaccess', {
+            url: '/beta-access',
+            templateUrl: 'modules/users/views/authentication/requestaccess.client.view.html'
         }).
 		state('app.forgot', {
 			url: '/password/forgot',
