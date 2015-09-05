@@ -238,7 +238,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        self.aggregationModels.HourlyAdStat
+        var query = self.aggregationModels.HourlyAdStat
             .aggregate([
                 { $match: match },
                 { $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
@@ -252,16 +252,21 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                         click_convs: {$sum: "$click_convs"}
                     }
                 }
-            ])
-            .exec(function(err, hourlyAdStats){
-                if (err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                } else {
-                    res.json(hourlyAdStats);
-                }
-            });
+            ]);
+        //catch populate query param here
+        //TODO: Only supports one populate path right now
+        if (req.query.populate){
+            query.populate(req.query.populate);
+        }
+        query.exec(function(err, hourlyAdStats){
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                res.json(hourlyAdStats);
+            }
+        });
     };
 };
 
