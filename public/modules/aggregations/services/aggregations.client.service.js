@@ -1,12 +1,18 @@
 'use strict';
 
-//Articles service used for communicating with the articles REST endpoints
+/**
+ * Factory to help query HourlyAdStat API endpoints.
+ *
+ *
+ */
 angular.module('aggregations').factory('HourlyAdStat', ['$http',
 	function($http) {
         var base_path    = '/hourlyadstat';
         var adv_path     = base_path + '/adv';
         var pub_path     = base_path + '/pub';
-        var clique_path  = base_path + 'clique';
+        var advSummary_path = base_path + '/advSummary';
+        var pubSummary_path = base_path + '/pubSummary';
+        var clique_path  = base_path + '/clique';
         var hourlyadstatfactory = {};
 
         // Wrapper for query function so you don't have to
@@ -26,6 +32,12 @@ angular.module('aggregations').factory('HourlyAdStat', ['$http',
         }
         hourlyadstatfactory.query = function(queryParams){
             return $http.get(base_path, queryParams);
+        };
+        hourlyadstatfactory.advSummaryQuery = function(queryParams){
+            return $http.get(advSummary_path, queryParams);
+        };
+        hourlyadstatfactory.pubSummaryQuery = function(queryParams){
+            return $http.get(pubSummary_path, queryParams);
         };
         hourlyadstatfactory.advQuery = constructQueryFunc(['advertiserId', 'campaignId', 'creativegroupId','creativeId'], adv_path);
         hourlyadstatfactory.pubQuery = constructQueryFunc(['publisherId', 'siteId', 'pageId','placementId'], pub_path);
