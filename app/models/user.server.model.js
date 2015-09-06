@@ -89,7 +89,11 @@ var UserSchema = new Schema({
 	},
 	resetPasswordExpires: {
 		type: Date
-	}
+	},
+    accessCodeUsed: {
+        type: Schema.ObjectId,
+        ref: 'AccessCode'
+    }
 });
 
 /**
@@ -188,14 +192,16 @@ AccessCodeSchema.statics.validate = function(code, callback) {
     _this.find({}, function(err, codes) {
         if (!err){
             var valid = false;
+            var accesscode;
             codes.forEach(function(c){
                 if (c.code === c.hashCode(code)){
                     valid = true;
+                    accesscode = c;
                 }
             });
-            return callback(null, valid);
+            callback(null, valid, accesscode);
         } else {
-            return callback(err);
+            callback(err);
         }
     });
 };

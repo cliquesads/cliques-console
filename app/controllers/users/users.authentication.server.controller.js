@@ -17,15 +17,14 @@ exports.authorizeAccessCode = function(req, res) {
     // For security measurement we remove the roles from the req.body object
 
     var code = req.body.code;
-    console.log(code);
-    AccessCode.validate(code, function(err, valid){
+    AccessCode.validate(code, function(err, valid, accesscode){
         if (err){
             res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
             });
         } else {
             if (valid){
-                res.status(200)
+                res.json({accesscode: accesscode});
             } else {
                 res.status(400).send({message: 'Invalid Code'})
             }
