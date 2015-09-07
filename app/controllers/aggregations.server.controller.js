@@ -353,6 +353,12 @@ module.exports = function(db) {
             getMany: function (req, res) {
                 return hourlyAdStatAPI.getMany(req, res);
             },
+            getManyAdvertiserSummary: function (req, res) {
+                return hourlyAdStatAPI.getManyAdvertiserSummary(req, res);
+            },
+            getManyPublisherSummary: function (req, res) {
+                return hourlyAdStatAPI.getManyPublisherSummary(req, res);
+            },
             getManyAdvertiser: function (req, res) {
                 return hourlyAdStatAPI.getManyAdvertiser(req, res);
             },
