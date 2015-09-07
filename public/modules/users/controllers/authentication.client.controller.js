@@ -12,14 +12,33 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
         $scope.credentials = {
             tz: 'America/New_York'
         };
+        $scope.roleChoices = [{name: 'Advertiser', value: 'advertiser'},{name: 'Publisher', value: 'publisher'}];
+
+        $scope.requestAccess = function(){
+            $http.post('/auth/access-signup', {code: $scope.accesscode}).success(function(response){
+                $scope.authentication.accesscode = response.accesscode;
+                // And redirect to the signup page
+                $location.path('/signup');
+            }).error(function(response){
+                $scope.error = response.message;
+            });
+        };
+
+        //$scope.$watch(function(scope){ return scope.credentials.username }, function(){
+        //    // ghetto copy email property
+        //    $scope.credentials.username = JSON.parse(JSON.stringify($scope.credentials.email));
+        //});
 
 		$scope.signup = function() {
+            // Add access code ref to user before submitting for tracking purposes
+            $scope.credentials.accesscode = $scope.authentication.accesscode;
+            $scope.credentials.roles = [$scope.role];
 			$http.post('/auth/signup', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
-
+                $scope.authentication.accesscode = null;
 				// And redirect to the index page
-				$location.path('/');
+                $window.location.href = '/';
 			}).error(function(response) {
 				$scope.error = response.message;
 			});

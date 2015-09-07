@@ -1,31 +1,45 @@
 'use strict';
 
 // Setting up route
-angular.module('users').config(['$stateProvider',
-	function($stateProvider) {
+angular.module('users').config(['$stateProvider','RouteHelpersProvider',
+	function($stateProvider,helper) {
 		// Users state routing
 		$stateProvider.
-		state('app.signin', {
+        state('loggedout',{
+                // url: '/',
+                abstract: true,
+                templateUrl: 'modules/core/views/core.client.view.html',
+                resolve: helper.resolveFor('modernizr', 'icons'),
+                data: {
+                    requireLogin: false
+                }
+            }
+        ).
+		state('loggedout.signin', {
 			url: '/signin',
 			templateUrl: 'modules/users/views/authentication/signin.client.view.html'
 		}).
-        state('page.signup', {
+        state('loggedout.signup', {
             url: '/signup',
             templateUrl: 'modules/users/views/authentication/signup.client.view.html'
         }).
-		state('app.forgot', {
+        state('loggedout.beta-access', {
+            url: '/beta-access',
+            templateUrl: 'modules/users/views/authentication/requestaccess.client.view.html'
+        }).
+		state('loggedout.forgot', {
 			url: '/password/forgot',
 			templateUrl: 'modules/users/views/password/forgot-password.client.view.html'
 		}).
-		state('app.reset-invalid', {
+		state('loggedout.reset-invalid', {
 			url: '/password/reset/invalid',
 			templateUrl: 'modules/users/views/password/reset-password-invalid.client.view.html'
 		}).
-		state('app.reset-success', {
+		state('loggedout.reset-success', {
 			url: '/password/reset/success',
 			templateUrl: 'modules/users/views/password/reset-password-success.client.view.html'
 		}).
-		state('app.reset', {
+		state('loggedout.reset', {
 			url: '/password/reset/:token',
 			templateUrl: 'modules/users/views/password/reset-password.client.view.html'
 		}).

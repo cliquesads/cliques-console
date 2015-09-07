@@ -1,0 +1,21 @@
+<section class="row" data-ng-controller="AuthenticationController">
+	<h3 class="col-md-12 text-center">Enter Access Code to Signup</h3>
+	<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4 panel panel-default">
+		<form data-ng-submit="requestAccess()" class="signin form-horizontal panel-body" autocomplete="off">
+			<div class="panel-body">
+            <fieldset>
+				<div class="form-group">
+					<label for="accesscode">Access Code</label>
+					<input type="text" id="accesscode" name="accesscode" class="form-control" data-ng-model="accesscode" placeholder="Super Secret Code">
+				</div>
+				<div class="text-center form-group mt">
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+                <div data-ng-show="error" class="text-center text-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
+            </fieldset>
+            </div>
+		</form>
+	</div>
+</section>

@@ -7,14 +7,38 @@ var _ = require('lodash'),
 	errorHandler = require('../errors.server.controller'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
-	User = mongoose.model('User');
+	User = mongoose.model('User'),
+    AccessCode = mongoose.model('AccessCode');
+
+/**
+ * Endpoint to gain access to signup page
+ */
+exports.authorizeAccessCode = function(req, res) {
+    // For security measurement we remove the roles from the req.body object
+
+    var code = req.body.code;
+    AccessCode.validate(code, function(err, valid, accesscode){
+        if (err){
+            res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(err)
+            });
+        } else {
+            if (valid){
+                res.json({accesscode: accesscode._id});
+            } else {
+                res.status(400).send({message: 'Invalid Code'})
+            }
+        }
+    });
+};
+
 
 /**
  * Signup
  */
 exports.signup = function(req, res) {
 	// For security measurement we remove the roles from the req.body object
-	delete req.body.roles;
+	//delete req.body.roles;
 
 	// Init Variables
 	var user = new User(req.body);
