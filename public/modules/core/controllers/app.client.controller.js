@@ -11,20 +11,14 @@ angular.module('core').controller('AppController',
     // This provides Authentication context.
     $scope.authentication = Authentication;
 
-    // TODO: This is all a horrible hack to temporarily put in place an access code scheme
-    // Redirect users to signin page if not logged in
-    if (!user && !$scope.authentication.hasaccesscode && $location.path() != '/beta-access'){
-          $location.path('signin');
-    } else {
-        if (user){
-            // TODO: FIX THIS
-            if (user.roles.indexOf('admin') > -1){
-                $scope.role = 'admin';
-            } else if (user.roles.indexOf('advertiser') > -1){
-                $scope.role = 'advertiser';
-            } else if (user.roles.indexOf('publisher') > -1){
-                $scope.role = 'publisher'
-            }
+    if (user){
+        // TODO: FIX THIS
+        if (user.roles.indexOf('admin') > -1){
+            $scope.role = 'admin';
+        } else if (user.roles.indexOf('advertiser') > -1){
+            $scope.role = 'advertiser';
+        } else if (user.roles.indexOf('publisher') > -1){
+            $scope.role = 'publisher';
         }
     }
 
@@ -32,6 +26,16 @@ angular.module('core').controller('AppController',
     // -----------------------------------
     var thBar;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+        // evalulate requireLogin data param here for toState
+        if (toState.data.requireLogin && !user){
+            $location.path('/signin');
+        }
+        // TODO: This is all a horrible hack to temporarily put in place an access code scheme
+        // Redirect users to signin page if not logged in
+        if (!$scope.authentication.accesscode && $location.path() === '/signup'){
+            $location.path('/beta-access');
+        }
+
         if($('.wrapper > section').length) // check if bar container exists
           thBar = $timeout(function() {
             cfpLoadingBar.start();

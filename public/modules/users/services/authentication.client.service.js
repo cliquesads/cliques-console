@@ -7,7 +7,7 @@ angular.module('users').factory('Authentication', [
 
 		_this._data = {
 			user: window.user,
-            hasaccesscode: false
+            accesscode: null
 		};
 
 		return _this._data;

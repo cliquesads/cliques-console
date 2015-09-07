@@ -90,7 +90,7 @@ var UserSchema = new Schema({
 	resetPasswordExpires: {
 		type: Date
 	},
-    accessCodeUsed: {
+    accesscode: {
         type: Schema.ObjectId,
         ref: 'AccessCode'
     }

@@ -24,7 +24,7 @@ exports.authorizeAccessCode = function(req, res) {
             });
         } else {
             if (valid){
-                res.json({accesscode: accesscode});
+                res.json({accesscode: accesscode._id});
             } else {
                 res.status(400).send({message: 'Invalid Code'})
             }
@@ -38,7 +38,7 @@ exports.authorizeAccessCode = function(req, res) {
  */
 exports.signup = function(req, res) {
 	// For security measurement we remove the roles from the req.body object
-	delete req.body.roles;
+	//delete req.body.roles;
 
 	// Init Variables
 	var user = new User(req.body);
