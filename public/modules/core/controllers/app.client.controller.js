@@ -27,7 +27,7 @@ angular.module('core').controller('AppController',
     var thBar;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         // evalulate requireLogin data param here for toState
-        if (toState.data.requireLogin && !user){
+        if (toState.data.requireLogin && !$scope.authentication.user){
             $location.path('/signin');
         }
         // TODO: This is all a horrible hack to temporarily put in place an access code scheme

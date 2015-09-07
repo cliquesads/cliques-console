@@ -24,6 +24,7 @@ exports.forgot = function(req, res, next) {
 				var token = buffer.toString('hex');
 				done(err, token);
 			});
+
 		},
 		// Lookup user by username
 		function(token, done) {
@@ -78,7 +79,6 @@ exports.forgot = function(req, res, next) {
 						message: 'An email has been sent to ' + user.email + ' with further instructions.'
 					});
 				}
-
 				done(err);
 			});
 		}

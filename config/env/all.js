@@ -1,4 +1,7 @@
-/* jshint node: true */ /* jshint node: true */ 'use strict';
+/* jshint node: true */
+'use strict';
+
+var cliquesConfig = require('config');
 
 module.exports = {
 	app: {
@@ -58,7 +61,6 @@ module.exports = {
 			]
 		},
 		css: [
-			// 'public/modules/**/css/*.css'
             'public/lib/chosen/chosen.min.css',
 			'public/dist/application.min.css',
             'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
@@ -81,10 +83,20 @@ module.exports = {
 		]
 	},
     mongodb: {
-        user: "exchangerw",
-        pwd: "yb3CSw76Cru8qpUdDP8xxyKLHzZpNRhQG8MNQWoqdKdGPU5miEc4DuU",
-        host: "146.148.94.184",
-        port: 27017,
-        db: "exchange"
+        user: cliquesConfig.get('Console.mongodb.exchange.user'),
+        pwd: cliquesConfig.get('Console.mongodb.exchange.pwd'),
+        host: cliquesConfig.get('Console.mongodb.exchange.host'),
+        port: cliquesConfig.get('Console.mongodb.exchange.port'),
+        db: cliquesConfig.get('Console.mongodb.exchange.db')
+    },
+    mailer: {
+        from: cliquesConfig.get('Email.Support.username'),
+        options: {
+            service: cliquesConfig.get('Email.Support.service'),
+            auth: {
+                user: cliquesConfig.get('Email.Support.username'),
+                pass: cliquesConfig.get('Email.Support.password')
+            }
+        }
     }
 };
