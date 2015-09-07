@@ -20,7 +20,7 @@ module.exports = function(app){
 
     /* ---- GENERAL ROUTES ---- */
     app.route('/hourlyadstat')
-        .get(users.requiresLogin, users.hasAuthorization('admin'), aggregations.hourlyAdStat.getMany);
+        .get(users.requiresLogin, users.hasAuthorization(['admin']), aggregations.hourlyAdStat.getMany);
 
     // TODO: Technically this isn't totally safe, someone could theoretically pass
     // TODO: in entity ID's for entities which did not belong to them.  However I think
