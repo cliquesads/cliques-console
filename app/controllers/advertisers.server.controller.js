@@ -13,6 +13,8 @@ var node_utils = require('cliques_node_utils'),
 var config = require('config');
 var adserverHostname = config.get('AdServer.http.external.hostname');
 var adserverPort = config.get('AdServer.http.external.port');
+var adserverSecureHostname = config.get('AdServer.https.external.hostname');
+var adserverSecurePort = config.get('AdServer.https.external.port');
 
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
@@ -165,8 +167,9 @@ module.exports = function(db) {
         },
         actionbeacon: {
             getTag: function (req, res) {
-                var tag = new tags.ActionBeaconTag(adserverHostname, {
-                    port: adserverPort,
+                var secure = JSON.parse(req.query.secure);
+                var tag = new tags.ActionBeaconTag(secure ? adserverSecureHostname:adserverHostname, {
+                    port: secure ? adserverSecurePort : adserverPort,
                     secure: JSON.parse(req.query.secure)
                 });
                 var actionbeaconId = req.param('actionbeaconId');
