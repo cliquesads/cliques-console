@@ -71,7 +71,7 @@ var UserSchema = new Schema({
 	roles: {
 		type: [{
 			type: String,
-			enum: ['user','advertiser','publisher','admin']
+			enum: ['advertiser','publisher','admin']
 		}],
 		default: ['advertiser']
 	},
@@ -149,6 +149,17 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 };
 
 mongoose.model('User', UserSchema);
+
+/**
+ * Groups of users, used for internal purposes
+ *
+ * @type {Schema}
+ */
+var UserGroupSchema = new Schema({
+    name: { type: String, required: true },
+    users: [{ type: Schema.ObjectId, ref: 'User'}]
+});
+mongoose.model('UserGroup', UserSchema);
 
 
 /**
