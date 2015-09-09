@@ -43,7 +43,7 @@ angular.module('advertiser').controller('editCreativesController', [
                     });
                     // if creativegroup of same size exists, add to this creative group
                     if (ind > -1) {
-                        $scope.campaign.creativegroups[ind] = _.union($scope.campaign.creativegroups[ind], crg);
+                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
                     } else {
                         $scope.campaign.creativegroups.push(crg);
                     }
