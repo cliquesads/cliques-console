@@ -1,5 +1,14 @@
 <h4>Creatives</h4>
-<div class="col-md-12 alert alert-error" ng-show="saveerror">{{ saveerror }}</div>
+<div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+<p>
+    <button type="button" class="btn btn-labeled btn-primary" ng-click="formVisible = !formVisible">
+        <div ng-show="!formVisible"><span class="btn-label"><i class="fa fa-plus"></i></span>Add New Creative</div>
+        <div ng-show="formVisible"><span class="btn-label"><i class="fa fa-minus"></i></span>Hide</div>
+    </button>
+</p>
+<fieldset ng-show="formVisible">
+    <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
+</fieldset>
 <fieldset>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -23,9 +32,6 @@
             </tbody>
         </table>
     </div>
-</fieldset>
-<fieldset>
-    <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
 </fieldset>
 <!--<div class="text-center">-->
     <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->

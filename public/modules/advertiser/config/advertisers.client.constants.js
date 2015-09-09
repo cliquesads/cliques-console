@@ -4,6 +4,7 @@ angular.module('advertiser')
         min_base_bid: 1,
         max_base_bid: 20
     })
+    .constant('MAX_CREATIVE_SIZE_KB',120)
     .constant('ADVERTISER_TOOLTIPS',{
         budget: "Tell us how much money you would like to spend over the lifetime of this campaign.  Don't worry, our bidders will pace your budget evenly over the lifetime of the campaign (set below)",
         base_bid: "Your base bid is what you'd like your average bid to be for qualified impressions.  (CPM = Cost per Thousand Impressions)",
