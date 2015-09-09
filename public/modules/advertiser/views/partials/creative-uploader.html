@@ -1,9 +1,14 @@
-<div class="col-md-{{ width }}">
+<div class="col-md-{{ width }}" style="overflow: scroll">
     <div ng-show="creative_upload_error" class="alert alert-danger">{{ creative_upload_error }}</div>
     <div class="row">
         <div nv-file-drop="" uploader="uploader">
             <div ng-show="uploader.isHTML5">
-                <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">Drag Creatives Here (Supported types: .png .jpeg .gif)</div>
+                <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
+                    <h4>Drag Creatives Here</h4>
+                    <p><small class="text-muted">Supported types:<em>.png .jpeg .gif</em></small></p>
+                    <p><small class="text-muted">Supported dimensions (Standard & Retina 2x):<em> {{ CREATIVE_SIZES.supported_dimensions.join(' ,') }}</em></small></p>
+                    <p><small class="text-muted">Max File Size:<em> {{ MAX_CREATIVE_SIZE_KB }} KB</em></small></p>
+                </div>
             </div>
             <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
         </div>

@@ -16,6 +16,9 @@ angular.module('advertiser').directive('creativeUploader', [
             },
             templateUrl: 'modules/advertiser/views/partials/creative-uploader.html',
             link: function(scope, element, attrs){
+                scope.CREATIVE_SIZES = CREATIVE_SIZES;
+                scope.MAX_CREATIVE_SIZE_KB = MAX_CREATIVE_SIZE_KB;
+
                 //##### FILTERS ######
                 scope.uploader.filters.push({
                     name: 'mimetypeFilter',
@@ -72,10 +75,12 @@ angular.module('advertiser').directive('creativeUploader', [
                                     fileItem.width = self.width / 2;
                                     fileItem.height = self.height / 2;
                                     fileItem.dimensions = universal_dimensions;
+                                    fileItem.retina = true;
                                 } else {
                                     fileItem.width = self.width;
                                     fileItem.height = self.height;
                                     fileItem.dimensions = dimensions;
+                                    fileItem.retina = false;
                                 }
 
                                 // Now check to make sure dimensions are supported, calling callback

@@ -8,6 +8,9 @@ angular.module('advertiser').controller('editCreativesController', [
     'FileUploader',
     'ngDialog',
     function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
+        // Set form hidden by default
+        $scope.formVisible = false;
+
         $scope.advertiser = $scope.ngDialogData.advertiser;
         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
             return campaign._id === $scope.ngDialogData.campaign._id;
@@ -86,7 +89,7 @@ angular.module('advertiser').controller('editCreativesController', [
                     var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative; });
                     // remove from creatives document array
                     $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
-                    // remove creative group if it doesn't contain any creatives anymore
+                    //remove creative group if it doesn't contain any creatives anymore
                     if ($scope.campaign.creativegroups[crg_ind].creatives.length === 0){
                         $scope.campaign.creativegroups.splice(crg_ind, 1);
                     }

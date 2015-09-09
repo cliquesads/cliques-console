@@ -17,6 +17,7 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
                         click_url: fileItem.click_url,
                         w: fileItem.width,
                         h: fileItem.height,
+                        retina: fileItem.retina,
                         url: fileItem.url
                     });
                 }
