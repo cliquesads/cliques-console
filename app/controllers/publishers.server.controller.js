@@ -13,6 +13,7 @@ var node_utils = require('cliques_node_utils'),
 // Global vars to render action beacon tags
 var config = require('config');
 var exchangeHostname = config.get('Exchange.http.external.hostname');
+var exchangeSecureHostname = config.get('Exchange.https.external.hostname');
 var exchangePort = config.get('Exchange.http.external.port');
 
 module.exports = function(db) {
@@ -163,6 +164,7 @@ module.exports = function(db) {
         placement: {
             getTag: function (req, res) {
                 var tag = new tags.PubTag(exchangeHostname,{
+                    secure_hostname: exchangeSecureHostname,
                     port: exchangePort,
                     secure: JSON.parse(req.query.secure)
                 });
