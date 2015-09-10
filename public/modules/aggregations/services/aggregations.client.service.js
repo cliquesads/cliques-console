@@ -31,18 +31,18 @@ angular.module('aggregations').factory('HourlyAdStat', ['$http',
             };
         }
         hourlyadstatfactory.query = function(queryParams){
-            return $http.get(base_path, queryParams);
+            return $http.get(base_path, {params: queryParams});
         };
         hourlyadstatfactory.advSummaryQuery = function(queryParams){
-            return $http.get(advSummary_path, queryParams);
+            return $http.get(advSummary_path, {params: queryParams});
         };
         hourlyadstatfactory.pubSummaryQuery = function(queryParams){
-            return $http.get(pubSummary_path, queryParams);
+            return $http.get(pubSummary_path, {params: queryParams});
         };
         hourlyadstatfactory.advQuery = constructQueryFunc(['advertiserId', 'campaignId', 'creativegroupId','creativeId'], adv_path);
         hourlyadstatfactory.pubQuery = constructQueryFunc(['publisherId', 'siteId', 'pageId','placementId'], pub_path);
         hourlyadstatfactory.cliqueQuery = function(queryParams){
-            return $http.get(clique_path, queryParams);
+            return $http.get(clique_path, {params: queryParams});
         };
 
         return hourlyadstatfactory;

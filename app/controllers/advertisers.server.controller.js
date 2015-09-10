@@ -7,7 +7,20 @@ var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
     tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
+    BidderPubSub = node_utils.google.pubsub.BidderPubSub,
 	_ = require('lodash');
+
+
+if (process.env.NODE_ENV != 'production'){
+    var pubsub_options = {
+        projectId: 'mimetic-codex-781',
+        test: true
+    }
+} else {
+    pubsub_options = {projectId: 'mimetic-codex-781'};
+}
+var service = new BidderPubSub(pubsub_options);
+
 
 // Global vars to render action beacon tags
 var config = require('config');
@@ -113,7 +126,12 @@ module.exports = function(db) {
                             });
                         }
                         res.json(adv);
+                        //TODO: This is lazy, should figure out whether campaign has changed or not
+                        adv.campaigns.forEach(function(campaign){
+                            service.publishers.updateBidder(campaign._id);
+                        });
                     });
+
                 }
             });
         },
