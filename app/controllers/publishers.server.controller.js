@@ -161,6 +161,25 @@ module.exports = function(db) {
             next();
         },
 
+        site: {
+            getSitesInClique: function(req, res){
+                var sites = [];
+                var cliqueId = req.param('cliqueId');
+                publisherModels.Publisher.find({"sites.clique": cliqueId}, function(err, pubs){
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        pubs.forEach(function(pub){
+                            sites = sites.concat(pub.sites.filter(function(site){ return site.clique === cliqueId }));
+                        });
+                        res.json(sites);
+                    };
+                });
+            }
+        },
+
         placement: {
             getTag: function (req, res) {
                 var tag = new tags.PubTag(exchangeHostname,{

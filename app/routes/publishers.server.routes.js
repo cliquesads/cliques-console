@@ -10,6 +10,9 @@ module.exports = function(app){
         .put(users.requiresLogin, publishers.hasAuthorization, publishers.updateOrCreate)
         .post(users.requiresLogin, publishers.create);
 
+    app.route('/sitesinclique/:cliqueId')
+        .get(users.requiresLogin, users.hasAuthorization(['admin','advertiser']), publishers.site.getSitesInClique);
+
     app.route('/publisher/:publisherId')
         .get(users.requiresLogin, publishers.hasAuthorization, publishers.read)
         .patch(users.requiresLogin, publishers.hasAuthorization, publishers.update)
