@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<div class="controls">
+    <p ng-show="model.logo.url">Preview</p>
+    <img src="{{ model.logo.url }}" class="box-placeholder-logo-preview"/>
+    <small class="text-muted">PNG or JPG file, < {{ max_size_kb }} KB, {{ max_width }}px max. width, {{ max_height }}px max. height</small>
+    <div class="form-group">
+        <input filestyle="" type="file" data-button-text="Choose a Logo File" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
+        <br/>
+        <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
+    </div>
+</div>
