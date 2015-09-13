@@ -41,7 +41,7 @@ angular.module('core')
 
   })
     .constant('CREATIVE_SIZES', {
-        supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100']
+        supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100', '970x90']
     })
     .constant('REGEXES', {
         domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z\-]{2,})+$/
@@ -54,5 +54,10 @@ angular.module('core')
             {name: "Above the Fold", code: 1},
             {name: "Below the Fold", code: 3}
         ]
+    })
+    .constant('LOGO', {
+        max_size_kb: 6,
+        max_width: 200,
+        max_height: 200
     })
 ;
