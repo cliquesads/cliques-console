@@ -182,6 +182,22 @@ module.exports = function(db) {
 
         campaign: {
             //TODO: Campaign controllers here
+            getCampaignsInClique: function(req, res){
+                var camps = [];
+                var cliqueId = req.param('cliqueId');
+                advertiserModels.Advertiser.find({"campaigns.clique": cliqueId}, function(err, advs){
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        advs.forEach(function(adv){
+                            camps = camps.concat(adv.campaigns.filter(function(camp){ return camp.clique === cliqueId }));
+                        });
+                        res.json(camps);
+                    }
+                });
+            }
         },
         actionbeacon: {
             getTag: function (req, res) {
