@@ -56,8 +56,10 @@ angular.module('core')
         ]
     })
     .constant('LOGO', {
-        max_size_kb: 6,
+        max_size_kb: 20,
         max_width: 200,
-        max_height: 200
+        max_height: 200,
+        default_url: 'http://storage.googleapis.com/cliquesads-console-logos-us/default-logo.png',
+        default_secure_url: 'https://storage.googleapis.com/cliquesads-console-logos-us/default-logo.png'
     })
 ;

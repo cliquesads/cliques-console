@@ -15,7 +15,8 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'REGEXES',
     'CREATIVE_SIZES',
     'OPENRTB',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
+    'LOGO',
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -55,7 +56,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             name: '',
             website: '',
             description: '',
-            logo: null
+            logo_url: LOGO.default_url
         };
         $scope.site = {
             name:           '',

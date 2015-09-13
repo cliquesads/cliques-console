@@ -20,6 +20,7 @@ angular.module('core').directive('logoUploader', [
                 scope.max_size_kb = LOGO.max_size_kb;
                 scope.max_width = LOGO.max_width;
                 scope.max_height = LOGO.max_height;
+                scope.default_logo_url = LOGO.default_url;
 
                 //##### FILTERS ######
                 scope.uploader.filters.push({
@@ -81,6 +82,7 @@ angular.module('core').directive('logoUploader', [
                     if (scope.upload_error){
                         scope.upload_error = null;
                     }
+                    scope.logo_loading = true;
                     scope.uploader.uploadAll();
                 };
 
@@ -89,9 +91,8 @@ angular.module('core').directive('logoUploader', [
                     if (!scope.model.logo){
                         scope.model.logo = {};
                     }
-                    scope.model.logo.url = response.url;
-                    scope.model.logo.secureUrl = response.secureUrl;
-                    scope.model.logo.name = fileItem.file.name;
+                    scope.model.logo_url = response.url;
+                    scope.logo_loading = false;
                 };
             }
         };

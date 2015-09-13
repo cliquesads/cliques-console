@@ -30,11 +30,11 @@
                             <small class="text-muted">Your site's Clique determines what type of advertisers get to bid on your impressions.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>5. Pages & Placements</h4>
+                            <h4>4. Pages & Placements</h4>
                             <small class="text-muted">Describe the page on your site where you'd like to place ads. You can add more pages later.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                            <h4>6. Review & Submit</h4>
+                            <h4>5. Review & Submit</h4>
                             <small class="text-muted"></small>
                         </li>
                     </ol>
@@ -61,15 +61,14 @@
                             </div>
                             <br/>
                             <div class="form-group">
+                                <label>Logo</label>
+                                <logo-uploader model="publisher" uploader="uploader" width="10"></logo-uploader>
+                            </div>
+                            <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
                                     <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
                                 </div>
-                            </div>
-                            <br/>
-                            <div class="form-group">
-                                <label>Logo</label>
-                                <logo-uploader model="publisher" uploader="uploader" width="10"></logo-uploader>
                             </div>
                         </fieldset>
                         <small class="text-muted">* Required</small>

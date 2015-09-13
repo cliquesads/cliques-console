@@ -1,10 +1,29 @@
 <div class="controls">
-    <p ng-show="model.logo.url">Preview</p>
-    <img src="{{ model.logo.url }}" class="box-placeholder-logo-preview"/>
-    <small class="text-muted">PNG or JPG file, < {{ max_size_kb }} KB, {{ max_width }}px max. width, {{ max_height }}px max. height</small>
-    <div class="form-group">
-        <input filestyle="" type="file" data-button-text="Choose a Logo File" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
-        <br/>
-        <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>
+                        <img ng-hide="logo_loading" src="{{ model.logo_url }}" class="box-placeholder-logo-preview"/>
+                        <div ng-show="logo_loading">
+                            <div class="ball-clip-rotate">
+                                <div></div>
+                            </div>
+                        </div>
+                        <div ng-show="model.logo_url != default_logo_url" style="text-align: center">
+                            <a ng-click="model.logo_url = default_logo_url" href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>
+                        </div>
+                    </td>
+                    <td>
+                        <small class="text-muted">PNG or JPG file, {{ max_size_kb }} KB Max, {{ max_width }}px x {{ max_height }}px max dimensions</small>
+                        <div class="form-group">
+                            <input filestyle="" type="file" data-button-text="Choose a Logo File" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
+                            <br/>
+                            <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
