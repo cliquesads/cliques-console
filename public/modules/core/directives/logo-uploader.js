@@ -8,8 +8,7 @@ angular.module('core').directive('logoUploader', [
             restrict: 'E',
             scope: {
                 model: '=',
-                uploader: '=',
-                width: '@'
+                uploader: '='
             },
             templateUrl: 'modules/core/views/partials/logo-uploader.html',
             link: function(scope, element, attrs){

@@ -65,6 +65,10 @@
                             </div>
                             <br/>
                             <div class="form-group">
+                                <label>Logo</label>
+                                <logo-uploader model="advertiser" uploader="logo_uploader"></logo-uploader>
+                            </div>
+                            <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
                                     <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
@@ -195,7 +199,7 @@
                     <div id="step5" ng-show="wizard.active(5)">
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
-                            <creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                            <creative-uploader wizardstep="step5" uploader="creative_uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
                         </fieldset>
                         <ul class="pager">
                             <li class="previous">

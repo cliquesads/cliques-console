@@ -12,7 +12,8 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'AdvertiserUtils',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS) {
+    'LOGO',
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -43,6 +44,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             description: null,
             website: null,
             cliques: null,
+            logo_url: LOGO.default_url,
             campaigns: []
         };
         $scope.campaign = {
@@ -61,11 +63,14 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         //#################################//
         //######### FILE UPLOADER #########//
         //#################################//
+        var logo_uploader = $scope.logo_uploader = new FileUploader({
+            url: 'logos'
+        });
 
-        var uploader = $scope.uploader = new FileUploader({
+        var creative_uploader = $scope.creative_uploader = new FileUploader({
             url: 'creativeassets'
         });
-        $scope.uploader.onCompleteAll = function(){
+        $scope.creative_uploader.onCompleteAll = function(){
             $scope.uploads_completed = true;
         };
         /**
@@ -78,7 +83,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             // pre_callback should be validation step for other various
             // form elements, and return true if validation passes
             if (validateFunc){
-                uploader.uploadAll();
+                creative_uploader.uploadAll();
             }
         };
 
@@ -90,7 +95,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             if (this.advertiserForm.$valid) {
                 $scope.loading = true;
                 // Construct advertiser JSON to POST to API
-                var creatives = AdvertiserUtils.getCreativesFromUploadQueue(uploader);
+                var creatives = AdvertiserUtils.getCreativesFromUploadQueue(creative_uploader);
                 var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
                 // now create new advertiser object
                 var campaign = this.campaign;
