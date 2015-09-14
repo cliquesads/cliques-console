@@ -4,14 +4,19 @@
             <tbody>
                 <tr>
                     <td>
-                        <img ng-hide="logo_loading" src="{{ model.logo_url }}" class="box-placeholder-logo-preview"/>
-                        <div ng-show="logo_loading">
-                            <div class="ball-clip-rotate">
-                                <div></div>
+                        <div class="box-placeholder-logo-preview">
+                            <div ng-show="model.logo_url != default_logo_url" ng-click="model.logo_url = default_logo_url" class="logo-preview-delete-button">
+                                <span class="fa fa-close fa-border bg-danger-light"></span>
                             </div>
-                        </div>
-                        <div ng-show="model.logo_url != default_logo_url" style="text-align: center">
-                            <a ng-click="model.logo_url = default_logo_url" href="#" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span></a>
+                            <div class="logo-preview-container">
+                                <img ng-hide="logo_loading" src="{{ model.logo_url || default_logo_url }}" class="client-logo-md"/>
+                                <div ng-show="logo_loading">
+                                    <div class="ball-clip-rotate">
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </td>
                     <td>

@@ -7,7 +7,8 @@ angular.module('core').directive('logoWidget', [
         return {
             restrict: 'E',
             scope: {
-                model: '='
+                model: '=',
+                oncompleteall: '&'
             },
             templateUrl: 'modules/core/views/partials/logo-widget.html',
             link: function(scope, element, attrs){
@@ -19,7 +20,7 @@ angular.module('core').directive('logoWidget', [
                 console.log(scope.model);
                 scope.openUploader = function(){
                     ngDialog.open({
-                        template: '<logo-uploader model="model" uploader="uploader"></logo-uploader>',
+                        template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader"></logo-uploader>',
                         plain: true,
                         data: {model: scope.model, uploader: scope.uploader },
                         controller: ['$scope', function ($scope) {
@@ -27,6 +28,11 @@ angular.module('core').directive('logoWidget', [
                             $scope.uploader = $scope.ngDialogData.uploader;
                         }]
                     });
+                };
+
+                // Hook for update method after upload complete
+                scope.uploader.onCompleteAll = function(){
+                    return scope.oncompleteall();
                 }
             }
         };
