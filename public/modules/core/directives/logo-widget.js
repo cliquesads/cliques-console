@@ -9,6 +9,7 @@ angular.module('core').directive('logoWidget', [
             scope: {
                 model: '=',
                 oncompleteall: '&',
+                onremove: '&',
                 size: '@'
             },
             template: '<img class="client-logo-{{ size }}" src="{{ model.logo_url || default_url }}" ng-click="openUploader()"/>',
@@ -22,12 +23,13 @@ angular.module('core').directive('logoWidget', [
                 console.log(scope.model);
                 scope.openUploader = function(){
                     ngDialog.open({
-                        template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader"></logo-uploader>',
+                        template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader" onremove="onremove()"></logo-uploader>',
                         plain: true,
                         data: {model: scope.model, uploader: scope.uploader },
                         controller: ['$scope', function ($scope) {
                             $scope.model = $scope.ngDialogData.model;
                             $scope.uploader = $scope.ngDialogData.uploader;
+                            $scope.onremove = scope.onremove;
                         }]
                     });
                 };

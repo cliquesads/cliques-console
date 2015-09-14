@@ -1,6 +1,7 @@
 <h3>
-    <div class="pull-right">
-        <span class="icon-share"></span>&nbsp;&nbsp;{{ site.clique }}
+    <div class="pull-right col-sm-1" style="text-align: right">
+        <logo-widget model="publisher" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
+        <small class="text-muted"><span class="icon-share"></span>&nbsp;&nbsp;{{ site.clique }}</small>
     </div>
     {{site.name}}
     <ul class="breadcrumb">

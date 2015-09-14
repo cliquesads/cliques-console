@@ -1,9 +1,7 @@
 <h3>
-	<div class="pull-right">
-		<!--<a class="btn btn-primary" href="/#!/publisher/{{publisher._id}}/edit">-->
-			<!--<i class="fa fa-edit"></i>-->
-		<!--</a>-->
-	</div>
+    <div class="pull-right">
+        <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>
+    </div>
 	{{publisher.name}}&nbsp;&nbsp;&nbsp;<a data-ng-click="publisherBasics();" class="small"><i class="fa fa-edit"></i></a>
 	<ul class="breadcrumb">
 	  <li><a ui-sref="app.home">Home</a>

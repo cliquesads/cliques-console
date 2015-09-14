@@ -7,7 +7,8 @@ angular.module('core').directive('logoUploader', [
             restrict: 'E',
             scope: {
                 model: '=',
-                uploader: '='
+                uploader: '=',
+                onremove: '&'
             },
             templateUrl: 'modules/core/views/partials/logo-uploader.html',
             link: function(scope, element, attrs){
@@ -92,6 +93,13 @@ angular.module('core').directive('logoUploader', [
                     scope.model.logo_url = response.url;
                     scope.logo_loading = false;
                 };
+
+                scope.removeLogo = function(){
+                    scope.model.logo_url = scope.default_logo_url;
+                    if (scope.onremove){
+                        scope.onremove();
+                    }
+                }
             }
         };
     }

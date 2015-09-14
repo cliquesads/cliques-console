@@ -24,6 +24,15 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
 			}
 		};
 
+        $scope.update = function() {
+            var publisher = $scope.publisher;
+            publisher.$update(function() {
+                $location.path('publisher/' + publisher._id);
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
         $scope.validateInput = function(name, type) {
             var input = this.publisherForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
@@ -55,16 +64,9 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
                 template: 'modules/publisher/views/partials/publisher-basics.html',
                 controller: ['$scope',function($scope){
                     $scope.publisher = $scope.ngDialogData.publisher;
-                    $scope.update = function() {
-                        var publisher = $scope.publisher;
-                        publisher.$update(function() {
-                            $location.path('publisher/' + publisher._id);
-                        }, function(errorResponse) {
-                            $scope.error = errorResponse.data.message;
-                        });
-                    };
+                    $scope.update = $scope.ngDialogData.update;
                 }],
-                data: {publisher: $scope.publisher}
+                data: {publisher: $scope.publisher, update: $scope.update}
             });
         };
 
