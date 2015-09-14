@@ -8,13 +8,15 @@ angular.module('core').directive('logoWidget', [
             restrict: 'E',
             scope: {
                 model: '=',
-                oncompleteall: '&'
+                oncompleteall: '&',
+                size: '@'
             },
-            templateUrl: 'modules/core/views/partials/logo-widget.html',
+            template: '<img class="client-logo-{{ size }}" src="{{ model.logo_url || default_url }}" ng-click="openUploader()"/>',
             link: function(scope, element, attrs){
                 var uploader = scope.uploader = new FileUploader({
                     url: '/logos'
                 });
+                scope.size = scope.size || 'md';
                 scope.default_url = LOGO.default_url;
                 console.log(scope.default_url);
                 console.log(scope.model);

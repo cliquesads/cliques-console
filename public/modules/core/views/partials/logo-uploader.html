@@ -5,7 +5,7 @@
                 <tr>
                     <td>
                         <div class="box-placeholder-logo-preview">
-                            <div ng-show="model.logo_url != default_logo_url" ng-click="model.logo_url = default_logo_url" class="logo-preview-delete-button">
+                            <div ng-show="model.logo_url && model.logo_url != default_logo_url" ng-click="model.logo_url = default_logo_url" class="logo-preview-delete-button">
                                 <span class="fa fa-close fa-border bg-danger-light"></span>
                             </div>
                             <div class="logo-preview-container">
