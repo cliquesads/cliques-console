@@ -1,4 +1,3 @@
-
 angular.module('core').directive('logoUploader', [
     'FileUploader',
     'LOGO',
