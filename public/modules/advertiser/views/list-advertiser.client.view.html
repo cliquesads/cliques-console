@@ -10,8 +10,17 @@
 <section data-ng-controller="AdvertiserController">
 	<div class="list-group">
 		<a data-ng-repeat="advertiser in advertisers" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
-			<h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>
-			<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>
+            <div class="row row-table">
+                <div class="col-md-1">
+                    <img src="{{ advertiser.logo_url }}" class="client-logo-md"/>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>
+                    <p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>
+                </div>
+                <div class="col-md-8"></div>
+                <div class="col-md-1"></div>
+            </div>
 		</a>
 	</div>
 	<h4 class="alert alert-purple text-center pv-lg" data-ng-if="advertiser.$resolved && !advertiser.length">
