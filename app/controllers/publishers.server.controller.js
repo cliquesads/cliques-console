@@ -172,10 +172,10 @@ module.exports = function(db) {
                         });
                     } else {
                         pubs.forEach(function(pub){
-                            sites = sites.concat(pub.sites.filter(function(site){ return site.clique === cliqueId }));
+                            sites = sites.concat(pub.sites.filter(function(site){ return site.clique === cliqueId; }));
                         });
                         res.json(sites);
-                    };
+                    }
                 });
             }
         },

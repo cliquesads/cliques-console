@@ -99,7 +99,7 @@ angular.module('core').directive('logoUploader', [
                     if (scope.onremove){
                         scope.onremove();
                     }
-                }
+                };
             }
         };
     }

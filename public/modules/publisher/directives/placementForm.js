@@ -78,5 +78,5 @@ angular.module('publisher').directive('placementForm', ['CREATIVE_SIZES','OPENRT
                 });
             };
         }
-    }
+    };
 }]);

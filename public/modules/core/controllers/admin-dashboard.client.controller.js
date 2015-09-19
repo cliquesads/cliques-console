@@ -48,7 +48,7 @@ angular.module('core').controller('AdminDashboardController',
                 // TODO: Need to provide error callback for query promise as well
 
                 $scope.dateRangeSelection = dateShortCode;
-            }
+            };
         }
     ]
 );

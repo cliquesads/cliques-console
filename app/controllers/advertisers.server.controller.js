@@ -15,7 +15,7 @@ if (process.env.NODE_ENV != 'production'){
     var pubsub_options = {
         projectId: 'mimetic-codex-781',
         test: true
-    }
+    };
 } else {
     pubsub_options = {projectId: 'mimetic-codex-781'};
 }
@@ -192,7 +192,7 @@ module.exports = function(db) {
                         });
                     } else {
                         advs.forEach(function(adv){
-                            camps = camps.concat(adv.campaigns.filter(function(camp){ return camp.clique === cliqueId }));
+                            camps = camps.concat(adv.campaigns.filter(function(camp){ return camp.clique === cliqueId; }));
                         });
                         res.json(camps);
                     }

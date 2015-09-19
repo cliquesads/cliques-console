@@ -37,7 +37,7 @@ angular.module('core').directive('logoWidget', [
                 // Hook for update method after upload complete
                 scope.uploader.onCompleteAll = function(){
                     return scope.oncompleteall();
-                }
+                };
             }
         };
     }
