@@ -12,7 +12,7 @@
 		<a data-ng-repeat="advertiser in advertisers" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
             <div class="row row-table">
                 <div class="col-md-1">
-                    <img src="{{ advertiser.logo_url }}" class="client-logo-md"/>
+                    <img src="{{ advertiser.logo_secure_url }}" class="client-logo-md"/>
                 </div>
                 <div class="col-md-2">
                     <h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>

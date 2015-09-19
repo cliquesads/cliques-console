@@ -12,7 +12,7 @@ angular.module('core').directive('logoWidget', [
                 onremove: '&',
                 size: '@'
             },
-            template: '<img class="client-logo-{{ size }}" src="{{ model.logo_url || default_url }}" ng-click="openUploader()"/>',
+            template: '<img class="client-logo-{{ size }}" src="{{ model.logo_secure_url || default_url }}" ng-click="openUploader()"/>',
             link: function(scope, element, attrs){
                 var uploader = scope.uploader = new FileUploader({
                     url: '/logos'

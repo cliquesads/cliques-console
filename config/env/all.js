@@ -15,6 +15,7 @@ module.exports = {
 	sessionCollection: 'sessions',
 	assets: {
 		lib: {
+            css: [],
             js: [
                 'public/dist/vendor.min.js'
             ]
