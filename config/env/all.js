@@ -29,7 +29,9 @@ module.exports = {
             'public/lib/angular-xeditable/dist/css/xeditable.css',
             'public/lib/ngDialog/css/ngDialog.min.css',
             'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
-            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css'
+            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css'
 		],
 		js: [
 			'public/config.js',
@@ -81,7 +83,8 @@ module.exports = {
             'public/lib/moment-timezone/builds/moment-timezone-with-data.min.js',
             'public/lib/ngDialog/js/ngDialog.min.js',
             'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
-            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.min.js'
+            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.min.js',
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.js'
         ]
     },
     mongodb: {

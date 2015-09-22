@@ -25,7 +25,8 @@ var ApplicationConfiguration = (function() {
         'angularFileUpload',
         'xeditable',
         'ngDialog',
-        'bootstrap-tagsinput'
+        'bootstrap-tagsinput',
+        'ivh.treeview'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

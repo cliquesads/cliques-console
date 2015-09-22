@@ -54,4 +54,11 @@ angular.module('core').run(['Menus',
                                         '</button>';
 
     }
-]);
+])
+.config(['ivhTreeviewOptionsProvider', function(ivhTreeviewOptionsProvider){
+    ivhTreeviewOptionsProvider.set({
+        twistieCollapsedTpl: '<span class="fa fa-plus"></span>',
+        twistieExpandedTpl: '<span class="fa fa-minus"></span>',
+        twistieLeafTpl: '&#9679;'
+    });
+}]);
