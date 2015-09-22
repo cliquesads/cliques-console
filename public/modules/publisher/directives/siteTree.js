@@ -5,13 +5,9 @@ angular.module('publisher').directive('siteTree', [function() {
         scope: {
             sites: '='
         },
-        template: '<div ivh-treeview="sites"></div>',
+        templateUrl: 'modules/publisher/views/partials/site-tree.html',
         link: function (scope, element, attrs) {
-            scope.options = {
-                twistieCollapsedTpl: '<span class="fa fa-plus"></span>',
-                twistieExpandedTpl: '<span class="fa fa-minus"></span>',
-                twistieLeafTpl: '&#9679;'
-            }
+            scope.templateStr = '<img src="{{ node.logo_secure_url }}"/> {{ trvw.label(node) }}'
         }
     };
 }]);

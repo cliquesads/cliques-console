@@ -1,8 +1,8 @@
 /* global _, angular */
 'use strict';
 
-angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', 'Authentication', 'Clique','getCliqueTree','ngDialog',
-	function($scope, $stateParams, $location, Authentication, Clique, getCliqueTree, ngDialog) {
+angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication', 'Clique','getCliqueTree','getSitesInCliqueTree','ngDialog',
+	function($scope, $stateParams, $location, $http,Authentication, Clique, getCliqueTree, getSitesInCliqueTree, ngDialog) {
 		$scope.authentication = Authentication;
 
         // Populate tree data for tree visualization
@@ -19,6 +19,7 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
         $scope.set_clique = function(branch) {
             $scope.clique._id = branch.label;
             $scope.clique.name = branch.label;
+            getSitesInCliqueTree(branch.label, $scope);
         };
 
         var tree;

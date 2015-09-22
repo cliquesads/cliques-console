@@ -20,9 +20,11 @@ angular.module('publisher').factory('getSitesInCliqueTree', ['$http', function($
                 var sites = response.data;
                 var treedata = [];
                 sites.forEach(function(site){
-                    var leaf = {label: site.name,value: site._id,children: []};
+                    var site_label = site.name + ' (' + site.pages.length + ' Page' + (site.pages.length != 1 ? 's': '') +')';
+                    var leaf = {label: site_label ,value: site._id, logo_secure_url: site.logo_secure_url, url: 'http://' + site.domain_name, children: []};
                     site.pages.forEach(function(page){
-                        var page_leaf = {label: page.name,value: page._id,children: []};
+                        var page_label = page.name + ' (' + page.placements.length + ' Placement' + (page.placements.length != 1 ? 's': '') +')';
+                        var page_leaf = {label: page_label,value: page._id, url: page.url, children: []};
                         page.placements.forEach(function(placement){
                             var placement_node = {label: placement.name, value: placement._id};
                             page_leaf.children.push(placement_node);
