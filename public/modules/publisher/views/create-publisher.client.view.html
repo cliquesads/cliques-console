@@ -47,7 +47,7 @@
                             <div class="form-group">
                                 <label>Name *</label>
                                 <div class="controls">
-                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Outdoor Lyfestyle Magz LLC" required="required">
+                                    <input name="name" type="text" data-ng-model="publisher.name" id="name" data-parsley-group="step1" class="form-control" placeholder="Outdoor Lyfestyle Magz LLC" required="required">
                                     <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
@@ -56,7 +56,7 @@
                                 <label>Website *</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">http://</span>
-                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="outdoorlyfeindustriez.com" required="required">
+                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="publisher.website" id="website" data-parsley-group="step1" class="form-control" placeholder="outdoorlyfeindustriez.com" required="required">
                                 </div>
                             </div>
                             <br/>
@@ -67,7 +67,7 @@
                             <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
-                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
+                                    <input name="description" type="text" data-ng-model="publisher.description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
                                 </div>
                             </div>
                         </fieldset>

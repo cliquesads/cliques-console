@@ -108,7 +108,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     name:           this.publisher.name,
                     description:    this.publisher.description,
                     website:        'http://' + this.publisher.website,
-                    logo:           this.publisher.logo,
+                    logo_url:           this.publisher.logo_url,
                     sites: [site]
                 });
                 publisher.$create(function(response){
