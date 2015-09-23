@@ -11,7 +11,9 @@ module.exports = {
                 'public/lib/angular-xeditable/dist/css/xeditable.css',
                 'public/lib/ngDialog/css/ngDialog.min.css',
                 'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
-                'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css'
+                'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+                'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
+                'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css'
 			],
 			js: [
 				'public/dist/vendor.min.js'
