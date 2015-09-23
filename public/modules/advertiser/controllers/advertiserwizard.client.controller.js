@@ -105,9 +105,10 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
 
                 campaign.creativegroups = creativegroups;
                 var advertiser = new Advertiser({
-                    name:           this.name,
-                    description:    this.description,
-                    website:        this.website,
+                    name:           this.advertiser.name,
+                    description:    this.advertiser.description,
+                    website:        this.advertiser.website,
+                    logo_url:       this.advertiser.logo_url,
                     campaigns: [campaign]
                 });
                 advertiser.$create(function(response){
