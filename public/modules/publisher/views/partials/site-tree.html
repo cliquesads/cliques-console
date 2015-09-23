@@ -13,6 +13,7 @@
                 &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
             </span>
             <slider ng-show="node.selected" ng-model="node.weight" min="0" max="10" step="0.1" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
+            {{ Math.min(node.weight * base_bid, max_bid) | currency : "$" : 2}}
             <div ivh-treeview-children></div>
         </div>
     </script>
