@@ -27,9 +27,9 @@
                             </span>
                         </td>
                         <td>
-                            <slider ng-show="node.selected" ng-model="node.weight" min="0" max="node.Math.round(node.max_bid/node.base_bid * 10) / 10" step="(node.max_bid - node.base_bid) / 100" precision="2" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
+                            <slider ng-show="node.selected" ng-model="node.weight" min="0" max="node.Math.round(node.max_bid/node.base_bid * 10) / 10" step="(node.max_bid - node.base_bid)/1000" precision="2" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
                         </td>
-                        <td ng-show="node.selected">{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</td>
+                        <td ng-show="node.selected">&nbsp;{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</td>
                     </tr>
                 </tbody>
             </table>
