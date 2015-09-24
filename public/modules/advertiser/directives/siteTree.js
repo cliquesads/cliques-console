@@ -1,17 +1,26 @@
-angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', function(getSitesInCliqueTree) {
+angular.module('advertiser').directive('siteTree', [function() {
     'use strict';
     return {
         restrict: 'E',
         scope: {
-            sites: '='
+            sites: '=',
+            base_bid: '@',
+            max_bid: '@'
         },
-        templateUrl: 'modules/publisher/views/partials/site-tree.html',
+        templateUrl: 'modules/advertiser/views/partials/site-tree.html',
         link: function (scope, element, attrs) {
+            // templateStr passed to IVH node template directive in tree rendering
             scope.templateStr = '<img src="{{ node.logo_secure_url }}"/> {{ trvw.label(node) }}';
-            scope.base_bid = 10;
-            scope.max_bid = 20;
-            scope.Math = Math;
 
+            /**
+             * Lightweight class just to handle some gruntwork involved in management of
+             * client-side site tree object.
+             *
+             * @param node
+             * @param type
+             * @param parent
+             * @constructor
+             */
             var SiteTreeNode = function(node, type, parent){
                 this.value      = node._id;
                 this.weight     = 1;
@@ -20,7 +29,7 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 // hacks to sneak bid variables into transcluded scope of node template in site-tree.html
                 this.base_bid   = scope.base_bid;
                 this.max_bid    = scope.max_bid;
-                this.Math       = scope.Math;
+                this.Math       = Math;
 
                 this.override   = false;
                 if (type === 'site'){
@@ -38,7 +47,6 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                     this.parent = parent;
                 }
             };
-
             SiteTreeNode.prototype._overrideChildWeights = function(){
                 var self = this;
                 if (self.nodeType === 'site'){
@@ -53,6 +61,9 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 }
             };
 
+            /**
+             * This watcher just handles updating of site data from parent scope
+             */
             scope.$watch(function(scope){ return scope.sites; }, function(newSites, oldSites){
                 var treedata = [];
                 // Loop through sites array and format for ivh-treeview (label, value, children)
@@ -73,6 +84,14 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 }
             });
 
+            /**
+             * This scope watch handles overriding of child entity weights when parent is
+             * changed.
+             *
+             * TODO: This is hacky and terrible, and probably causes performance problems.
+             * TODO: Would be much cleaner to have individual event emitters tied to each SiteTreeNode
+             * TODO: instance, but couldn't figure out an easy way to do that.
+             */
             scope.$watch(function(scope){ return scope.siteTree; }, function(newSiteTree, oldSiteTree){
                 if (newSiteTree){
                     for (var i=0; i < newSiteTree.length; i++){
