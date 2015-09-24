@@ -16,7 +16,12 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 this.value      = node._id;
                 this.weight     = 1;
                 this.nodeType   = type;
-                this.override   = false;
+
+                // hacks to sneak bid variables into transcluded scope of node template in site-tree.html
+                this.base_bid   = scope.base_bid;
+                this.max_bid    = scope.max_bid;
+                this.Math       = scope.Math;
+
                 if (type === 'site'){
                     this.logo_secure_url = node.logo_secure_url;
                     this.url             = 'http://' + node.domain_name;
@@ -24,6 +29,7 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                     this.children        = [];
                 } else if (type === 'page'){
                     this.label = node.name + ' (' + node.placements.length + ' Placement' + (node.placements.length != 1 ? 's': '') +')';
+                    this.url   = node.url;
                     this.children = [];
                     this.parent = parent;
                 } else if (type === 'placement'){
@@ -34,12 +40,12 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
 
             SiteTreeNode.prototype._overrideChildWeights = function(){
                 var self = this;
-                if (self.type === 'site'){
+                if (self.nodeType === 'site'){
                     self.children.forEach(function(page){
                         page.weight = self.weight;
                         page._overrideChildWeights();
                     });
-                } else if (self.type === 'page'){
+                } else if (self.nodeType === 'page'){
                     self.children.forEach(function(placement){
                         placement.weight = self.weight;
                     });
@@ -63,6 +69,23 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 });
                 scope.siteTree = treedata;
             });
+
+            scope.$watch(function(scope){ return scope.siteTree; }, function(newSiteTree, oldSiteTree){
+                for (var i=0; i < newSiteTree.length; i++){
+                    var newSite = newSiteTree[i];
+                    var oldSite = oldSiteTree[i];
+                    if (newSite.weight != oldSite.weight){
+                        newSite._overrideChildWeights();
+                    }
+                    for (var j=0; j < newSite.children.length; j++){
+                        var newPage = newSite.children[j];
+                        var oldPage = oldSite.children[j];
+                        if (newPage.weight != oldPage.weight){
+                            newPage._overrideChildWeights();
+                        }
+                    }
+                }
+            }, true);
         }
     };
 }]);
