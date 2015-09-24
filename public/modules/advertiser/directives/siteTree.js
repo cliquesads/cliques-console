@@ -42,6 +42,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                     this.children = [];
                 } else if (type === 'placement'){
                     this.label = node.name;
+                    this.override = true;
                 }
             };
             SiteTreeNode.prototype._overrideChildWeights = function(){
@@ -148,6 +149,14 @@ angular.module('advertiser').directive('siteTree', [function() {
                 }
             });
 
+            function allWeightsEqual(nodesArray){
+                var equal = true;
+                var weight = nodesArray[0].weight;
+                nodesArray.forEach(function(node){
+                   equal = weight === node.weight;
+                });
+                return equal;
+            }
             /**
              * This scope watch handles overriding of child entity weights when parent is
              * changed.
@@ -161,13 +170,19 @@ angular.module('advertiser').directive('siteTree', [function() {
                     for (var i=0; i < newSiteTree.length; i++){
                         var newSite = newSiteTree[i];
                         var oldSite = oldSiteTree ? oldSiteTree[i] : {};
+                        // If all child nodes have equal weighting, override is on
+                        newSite.override = allWeightsEqual(newSite.children);
                         if (newSite.weight != oldSite.weight){
+                            newSite.override = true;
                             newSite._overrideChildWeights();
                         }
                         for (var j=0; j < newSite.children.length; j++){
                             var newPage = newSite.children[j];
                             var oldPage = oldSite.children ? oldSite.children[j] : {};
+                            // If all child nodes have equal weighting, override is on
+                            newPage.override = allWeightsEqual(newPage.children);
                             if (newPage.weight != oldPage.weight){
+                                newPage.override = true;
                                 newPage._overrideChildWeights();
                             }
                         }
