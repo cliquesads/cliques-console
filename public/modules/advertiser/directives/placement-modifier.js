@@ -4,7 +4,7 @@ angular.module('advertiser').directive('placementModifier', [function() {
     return {
         restrict: 'E',
         scope: {
-            sites: '=',
+            clique: '=',
             campaign: '='
         },
         templateUrl: 'modules/advertiser/views/partials/placement-modifier.html',

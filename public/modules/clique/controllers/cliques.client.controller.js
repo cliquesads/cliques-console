@@ -19,7 +19,9 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
         $scope.set_clique = function(branch) {
             $scope.clique._id = branch.label;
             $scope.clique.name = branch.label;
-            getSitesInCliqueTree(branch.label, $scope);
+            getSitesInCliqueTree(branch.label).then(function(response){
+                $scope.sites = response.data;
+            });
         };
 
         var tree;
