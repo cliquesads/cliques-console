@@ -178,7 +178,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                     newSiteTree.forEach(function(tree){
                         targets = targets.concat(tree.toWeightTargetSchema());
                     });
-                    scope.targets = targets;
+                    scope.campaign.placement_targets = targets;
                 }
             }, true);
         }
