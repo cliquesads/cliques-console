@@ -1,19 +1,29 @@
 <div ivh-treeview="siteTree" ivh-treeview-node-tpl="template" ivh-treeview-change-handler="changeHandler">
     <script type="text/ng-template">
         <div title="{{trvw.label(node)}}">
-            <span ivh-treeview-toggle>
-                <span ivh-treeview-twistie></span>
-            </span>
-            &nbsp;
-            <span ng-if="trvw.useCheckboxes()" ivh-treeview-checkbox></span>
-            &nbsp;
-            <img src="{{ node.logo_secure_url }}" class="client-logo-xs"/>
-            <span class="ivh-treeview-node-label" ng-class="node.selected ? 'treeview-selected': ''" ivh-treeview-toggle>
-                {{trvw.label(node)}}
-                &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
-            </span>
-            <slider class="pull-right" ng-show="node.selected" ng-model="node.weight" min="0" max="10" step="0.1" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
-            <span class="pull-right" ng-show="node.selected">{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</span>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span ivh-treeview-toggle>
+                                <span ivh-treeview-twistie></span>
+                            </span>
+                            &nbsp;
+                            <span ng-if="trvw.useCheckboxes()" ivh-treeview-checkbox></span>
+                            &nbsp;
+                            <img src="{{ node.logo_secure_url }}" class="client-logo-xs"/>
+                            <span class="ivh-treeview-node-label" ng-class="node.selected ? 'treeview-selected': ''" ivh-treeview-toggle>
+                                {{trvw.label(node)}}
+                                &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
+                            </span>
+                        </td>
+                        <td>
+                            <slider ng-show="node.selected" ng-model="node.weight" min="0" max="10" step="0.1" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
+                        </td>
+                        <td ng-show="node.selected">{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
             <div ivh-treeview-children></div>
         </div>
     </script>
