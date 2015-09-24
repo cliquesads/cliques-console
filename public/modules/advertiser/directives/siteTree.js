@@ -22,6 +22,7 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 this.max_bid    = scope.max_bid;
                 this.Math       = scope.Math;
 
+                this.override   = false;
                 if (type === 'site'){
                     this.logo_secure_url = node.logo_secure_url;
                     this.url             = 'http://' + node.domain_name;
@@ -42,12 +43,12 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
                 var self = this;
                 if (self.nodeType === 'site'){
                     self.children.forEach(function(page){
-                        page.weight = self.weight;
+                        page.weight     = self.weight;
                         page._overrideChildWeights();
                     });
                 } else if (self.nodeType === 'page'){
                     self.children.forEach(function(placement){
-                        placement.weight = self.weight;
+                        placement.weight    = self.weight;
                     });
                 }
             };
