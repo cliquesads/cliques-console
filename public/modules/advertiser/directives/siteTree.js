@@ -113,10 +113,10 @@ angular.module('advertiser').directive('siteTree', [function() {
                             child.applyPresetTargets(targets);
                         });
                         if (_.every(self.children, 'selected', true)){
-                            self.__ivhTreeviewExpanded = true;
+                            self.expandMe  = true;
                             self.selected = true;
                         } else if (_.some(self.children, 'selected') || _.some(self.children, '__ivhTreeviewIndeterminate')){
-                            self.__ivhTreeviewExpanded = true;
+                            self.expandMe = true;
                             self.__ivhTreeviewIndeterminate = true;
                         }
                     }
