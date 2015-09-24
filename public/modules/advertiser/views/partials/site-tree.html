@@ -1,3 +1,9 @@
+<div class="well well-sm">
+    <p><strong><span class="fa fa-question-circle fa-lg text-muted"></span>  Tips</strong></p>
+    <p class="text-muted">If you really really want a specific site, page or placement, bid high for it! You'll only pay as much as the second-highest bidder.</p>
+    <p class="text-muted">If no individual bids are set, the default bid is your base bid <strong>({{ campaign.base_bid | currency : "$" : 2 }}).</strong></p>
+    <p class="text-muted">If you really DON'T want a site, bid $0 for it. Also, <a href="mailto:support@cliquesads.com">tell us</a>, because we don't want this to be the case.</p>
+</div>
 <table>
     <tbody>
     <tr>
@@ -6,7 +12,6 @@
     </tr>
     </tbody>
 </table>
-
 <div ivh-treeview="siteTree" ivh-treeview-node-tpl="template" ivh-treeview-change-handler="changeHandler">
     <script type="text/ng-template">
         <div title="{{trvw.label(node)}}">

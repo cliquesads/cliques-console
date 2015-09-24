@@ -171,7 +171,9 @@
                                 <label class="col-sm-4 control-label">Sites</label>
                                 <div class="col-sm-8">
                                     <p class="form-control-static">
-                                        <a href="#" ng-click="editPlacementTargets()">{{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
+                                        <strong>
+                                            <a href="#" ng-click="editPlacementTargets()"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
+                                        </strong>
                                     </p>
                                 </div>
                             </div>
@@ -182,7 +184,9 @@
                                 <label class="col-sm-4 control-label">DMAs</label>
                                 <div class="col-sm-8">
                                     <p class="form-control-static">
-                                        <a href="#" ng-click="editDMATargets()">{{ campaign.dma_targets.length || 0 }} DMA Targets Set</a>
+                                        <strong>
+                                            <a href="#" ng-click="editDMATargets()"><span class="fa fa-sliders"></span>  {{ campaign.dma_targets.length || 0 }} DMA Targets Set</a>
+                                        </strong>
                                     </p>
                                 </div>
                             </div>
