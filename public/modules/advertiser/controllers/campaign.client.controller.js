@@ -117,10 +117,11 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 endDate: endDate
             }).then(function(response){
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                    {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend']});
+                    {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend', 'view_convs', 'click_convs']});
                 $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1];});
                 $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1];});
                 $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
+                $scope.actions = _.sum($scope.timeSeries.view_convs, function(item){ return item[1];}) + _.sum($scope.timeSeries.click_convs, function(item){ return item[1];});
                 $scope.CTR = $scope.clicks / $scope.impressions;
             });
             // TODO: Need to provide error callback for query promise as well
