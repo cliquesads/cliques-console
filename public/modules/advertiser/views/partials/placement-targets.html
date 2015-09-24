@@ -1,1 +1,7 @@
-<site-tree sites="clique" campaign="campaign"></site-tree>
+<div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
+<div class="row">
+    <site-tree sites="sites" base_bid="campaign.base_bid" max_bid="campaign.max_bid" targets="campaign.placement_targets"></site-tree>
+</div>
+<div class="text-center">
+    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+</div>

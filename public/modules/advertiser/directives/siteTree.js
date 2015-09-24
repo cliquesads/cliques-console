@@ -4,8 +4,9 @@ angular.module('advertiser').directive('siteTree', [function() {
         restrict: 'E',
         scope: {
             sites: '=',
-            base_bid: '@',
-            max_bid: '@'
+            targets: '=',
+            base_bid: '=',
+            max_bid: '='
         },
         templateUrl: 'modules/advertiser/views/partials/site-tree.html',
         link: function (scope, element, attrs) {
@@ -41,10 +42,8 @@ angular.module('advertiser').directive('siteTree', [function() {
                     this.label = node.name + ' (' + node.placements.length + ' Placement' + (node.placements.length != 1 ? 's': '') +')';
                     this.url   = node.url;
                     this.children = [];
-                    this.parent = parent;
                 } else if (type === 'placement'){
                     this.label = node.name;
-                    this.parent = parent;
                 }
             };
             SiteTreeNode.prototype._overrideChildWeights = function(){
@@ -62,6 +61,69 @@ angular.module('advertiser').directive('siteTree', [function() {
             };
 
             /**
+             * Pseudo-recursive function to translate SiteTreeNode into
+             * weight targeting schema for persistance to Mongo
+             */
+            SiteTreeNode.prototype.toWeightTargetSchema = function(){
+                var self = this;
+                // only return if node is placement, currently don't do targeting
+                // at higher levels
+                if (self.nodeType === 'placement'){
+                    if (self.selected){
+                        return {
+                            target: self.value,
+                            weight: self.weight
+                        }
+                    }
+                }
+                // pseudo-recursive steps
+                // get child targeting schemas for pages & placements & return array of them
+                if (self.nodeType === 'page'){
+                    var targets = [];
+                    self.children.forEach(function(placement){
+                        var schema = placement.toWeightTargetSchema();
+                        if (schema){
+                            targets.push(schema);
+                        }
+                    });
+                    return targets;
+                }
+                if (self.nodeType === 'site'){
+                    var all_targets = [];
+                    self.children.forEach(function(page){
+                        all_targets = all_targets.concat(page.toWeightTargetSchema());
+                    });
+                    return all_targets;
+                }
+            };
+
+            SiteTreeNode.prototype.applyPresetTargets = function(targets){
+                var self = this;
+                if (self.nodeType === 'placement'){
+                    var target = targets.filter(function(t){ return t.target === self.value })[0];
+                    if (target){
+                        self.weight = target.weight;
+                        self.selected = true;
+                    }
+                }
+                // recursive step
+                // go down to child placements & apply targets, then set selected,
+                // expanded & indeterminate properties on the way back up
+                if (self.nodeType === 'page' || self.nodeType === 'site'){
+                    self.children.forEach(function(child){
+                        child.applyPresetTargets(targets);
+                    });
+                    if (_.every(self.children, 'selected', true)){
+                        self.__ivhTreeviewExpanded = true;
+                        self.selected = true;
+                    } else if (_.some(self.children, 'selected') || _.some(self.children, '__ivhTreeviewIndeterminate')){
+                        self.__ivhTreeviewExpanded = true;
+                        self.__ivhTreeviewIndeterminate = true;
+                    }
+                }
+            };
+
+            /**
              * This watcher just handles updating of site data from parent scope
              */
             scope.$watch(function(scope){ return scope.sites; }, function(newSites, oldSites){
@@ -71,13 +133,15 @@ angular.module('advertiser').directive('siteTree', [function() {
                     newSites.forEach(function(site){
                         var leaf = new SiteTreeNode(site, 'site');
                         site.pages.forEach(function(page){
-                            var page_leaf = new SiteTreeNode(page, 'page', site);
+                            var page_leaf = new SiteTreeNode(page, 'page');
                             page.placements.forEach(function(placement){
-                                var placement_node = new SiteTreeNode(placement, 'placement', page);
+                                var placement_node = new SiteTreeNode(placement, 'placement');
                                 page_leaf.children.push(placement_node);
                             });
                             leaf.children.push(page_leaf);
                         });
+                        // apply targets here
+                        leaf.applyPresetTargets(scope.targets);
                         treedata.push(leaf);
                     });
                     scope.siteTree = treedata;
@@ -93,21 +157,28 @@ angular.module('advertiser').directive('siteTree', [function() {
              * TODO: instance, but couldn't figure out an easy way to do that.
              */
             scope.$watch(function(scope){ return scope.siteTree; }, function(newSiteTree, oldSiteTree){
-                if (newSiteTree){
+                if (newSiteTree && oldSiteTree){
                     for (var i=0; i < newSiteTree.length; i++){
                         var newSite = newSiteTree[i];
-                        var oldSite = oldSiteTree[i];
+                        var oldSite = oldSiteTree ? oldSiteTree[i] : {};
                         if (newSite.weight != oldSite.weight){
                             newSite._overrideChildWeights();
                         }
                         for (var j=0; j < newSite.children.length; j++){
                             var newPage = newSite.children[j];
-                            var oldPage = oldSite.children[j];
+                            var oldPage = oldSite.children ? oldSite.children[j] : {};
                             if (newPage.weight != oldPage.weight){
                                 newPage._overrideChildWeights();
                             }
                         }
                     }
+
+                    // Now update targets in scope with new placement targets
+                    var targets = [];
+                    newSiteTree.forEach(function(tree){
+                        targets = targets.concat(tree.toWeightTargetSchema());
+                    });
+                    scope.targets = targets;
                 }
             }, true);
         }
