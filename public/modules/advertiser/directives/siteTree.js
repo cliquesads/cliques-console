@@ -99,26 +99,28 @@ angular.module('advertiser').directive('siteTree', [function() {
 
             SiteTreeNode.prototype.applyPresetTargets = function(targets){
                 var self = this;
-                if (self.nodeType === 'placement'){
-                    var target = targets.filter(function(t){ return t.target === self.value })[0];
-                    if (target){
-                        self.weight = target.weight;
-                        self.selected = true;
+                if (targets){
+                    if (self.nodeType === 'placement'){
+                        var target = targets.filter(function(t){ return t.target === self.value })[0];
+                        if (target){
+                            self.weight = target.weight;
+                            self.selected = true;
+                        }
                     }
-                }
-                // recursive step
-                // go down to child placements & apply targets, then set selected,
-                // expanded & indeterminate properties on the way back up
-                if (self.nodeType === 'page' || self.nodeType === 'site'){
-                    self.children.forEach(function(child){
-                        child.applyPresetTargets(targets);
-                    });
-                    if (_.every(self.children, 'selected', true)){
-                        self.__ivhTreeviewExpanded = true;
-                        self.selected = true;
-                    } else if (_.some(self.children, 'selected') || _.some(self.children, '__ivhTreeviewIndeterminate')){
-                        self.__ivhTreeviewExpanded = true;
-                        self.__ivhTreeviewIndeterminate = true;
+                    // recursive step
+                    // go down to child placements & apply targets, then set selected,
+                    // expanded & indeterminate properties on the way back up
+                    if (self.nodeType === 'page' || self.nodeType === 'site'){
+                        self.children.forEach(function(child){
+                            child.applyPresetTargets(targets);
+                        });
+                        if (_.every(self.children, 'selected', true)){
+                            self.__ivhTreeviewExpanded = true;
+                            self.selected = true;
+                        } else if (_.some(self.children, 'selected') || _.some(self.children, '__ivhTreeviewIndeterminate')){
+                            self.__ivhTreeviewExpanded = true;
+                            self.__ivhTreeviewIndeterminate = true;
+                        }
                     }
                 }
             };
