@@ -2,7 +2,7 @@
 <fieldset>
     <div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
     <div>
-        <site-tree sites="sites" base_bid="campaign.base_bid" max_bid="campaign.max_bid" targets="campaign.placement_targets"></site-tree>
+        <site-tree sites="sites" campaign="campaign"></site-tree>
     </div>
 </fieldset>
 <div class="text-center">

@@ -4,9 +4,7 @@ angular.module('advertiser').directive('siteTree', [function() {
         restrict: 'E',
         scope: {
             sites: '=',
-            targets: '=',
-            base_bid: '=',
-            max_bid: '='
+            campaign: '='
         },
         templateUrl: 'modules/advertiser/views/partials/site-tree.html',
         link: function (scope, element, attrs) {
@@ -28,8 +26,8 @@ angular.module('advertiser').directive('siteTree', [function() {
                 this.nodeType   = type;
 
                 // hacks to sneak bid variables into transcluded scope of node template in site-tree.html
-                this.base_bid   = scope.base_bid;
-                this.max_bid    = scope.max_bid;
+                this.base_bid   = scope.campaign.base_bid;
+                this.max_bid    = scope.campaign.max_bid;
                 this.Math       = Math;
 
                 this.override   = false;
@@ -143,7 +141,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                             leaf.children.push(page_leaf);
                         });
                         // apply targets here
-                        leaf.applyPresetTargets(scope.targets);
+                        leaf.applyPresetTargets(scope.campaign.placement_targets);
                         treedata.push(leaf);
                     });
                     scope.siteTree = treedata;
