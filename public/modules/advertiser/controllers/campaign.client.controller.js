@@ -80,6 +80,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 
         $scope.editPlacementTargets = function(){
             ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
                 template: 'modules/advertiser/views/partials/placement-targets.html',
                 controller: 'placementTargetsController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}

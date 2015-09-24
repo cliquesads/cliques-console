@@ -1,7 +1,10 @@
-<div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
-<div class="row">
-    <site-tree sites="sites" base_bid="campaign.base_bid" max_bid="campaign.max_bid" targets="campaign.placement_targets"></site-tree>
-</div>
+<h4> Site Targeting for {{ advertiser.name }}</h4>
+<fieldset>
+    <div ng-show="saveerror" class="alert alert-danger col-md-12">{{ saveerror }}</div>
+    <div>
+        <site-tree sites="sites" base_bid="campaign.base_bid" max_bid="campaign.max_bid" targets="campaign.placement_targets"></site-tree>
+    </div>
+</fieldset>
 <div class="text-center">
     <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
 </div>

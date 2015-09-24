@@ -166,6 +166,17 @@
                     </tab>
                     <tab heading="Targeting">
                         <fieldset>
+                            <small><em class="text-muted">Inventory</em></small>
+                            <div class="form-group m0">
+                                <label class="col-sm-4 control-label">Sites</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">
+                                        <a href="#" ng-click="editPlacementTargets()">{{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
                             <small><em class="text-muted">Geographical</em></small>
                             <div class="form-group m0">
                                 <label class="col-sm-4 control-label">DMAs</label>
@@ -175,18 +186,6 @@
                                     </p>
                                 </div>
                             </div>
-                        </fieldset>
-                            <small><em class="text-muted">Inventory</em></small>
-                            <div class="form-group m0">
-                                <label class="col-sm-4 control-label">Placements</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">
-                                        <a href="#" ng-click="editPlacementTargets()">{{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
-                                    </p>
-                                </div>
-                            </div>
-                        <fieldset>
-
                         </fieldset>
                     </tab>
                     <tab heading="Creatives">
