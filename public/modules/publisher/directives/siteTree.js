@@ -55,33 +55,37 @@ angular.module('publisher').directive('siteTree', ['getSitesInCliqueTree', funct
             scope.$watch(function(scope){ return scope.sites; }, function(newSites, oldSites){
                 var treedata = [];
                 // Loop through sites array and format for ivh-treeview (label, value, children)
-                newSites.forEach(function(site){
-                    var leaf = new SiteTreeNode(site, 'site');
-                    site.pages.forEach(function(page){
-                        var page_leaf = new SiteTreeNode(page, 'page', site);
-                        page.placements.forEach(function(placement){
-                            var placement_node = new SiteTreeNode(placement, 'placement', page);
-                            page_leaf.children.push(placement_node);
+                if (newSites){
+                    newSites.forEach(function(site){
+                        var leaf = new SiteTreeNode(site, 'site');
+                        site.pages.forEach(function(page){
+                            var page_leaf = new SiteTreeNode(page, 'page', site);
+                            page.placements.forEach(function(placement){
+                                var placement_node = new SiteTreeNode(placement, 'placement', page);
+                                page_leaf.children.push(placement_node);
+                            });
+                            leaf.children.push(page_leaf);
                         });
-                        leaf.children.push(page_leaf);
+                        treedata.push(leaf);
                     });
-                    treedata.push(leaf);
-                });
-                scope.siteTree = treedata;
+                    scope.siteTree = treedata;
+                }
             });
 
             scope.$watch(function(scope){ return scope.siteTree; }, function(newSiteTree, oldSiteTree){
-                for (var i=0; i < newSiteTree.length; i++){
-                    var newSite = newSiteTree[i];
-                    var oldSite = oldSiteTree[i];
-                    if (newSite.weight != oldSite.weight){
-                        newSite._overrideChildWeights();
-                    }
-                    for (var j=0; j < newSite.children.length; j++){
-                        var newPage = newSite.children[j];
-                        var oldPage = oldSite.children[j];
-                        if (newPage.weight != oldPage.weight){
-                            newPage._overrideChildWeights();
+                if (newSiteTree){
+                    for (var i=0; i < newSiteTree.length; i++){
+                        var newSite = newSiteTree[i];
+                        var oldSite = oldSiteTree[i];
+                        if (newSite.weight != oldSite.weight){
+                            newSite._overrideChildWeights();
+                        }
+                        for (var j=0; j < newSite.children.length; j++){
+                            var newPage = newSite.children[j];
+                            var oldPage = oldSite.children[j];
+                            if (newPage.weight != oldPage.weight){
+                                newPage._overrideChildWeights();
+                            }
                         }
                     }
                 }
