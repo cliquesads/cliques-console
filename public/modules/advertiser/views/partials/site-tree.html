@@ -1,18 +1,12 @@
-<div class="well well-sm">
-    <p><strong><span class="fa fa-question-circle fa-lg text-muted"></span>  Tips</strong></p>
-    <p class="text-muted">If you really really want a specific site, page or placement, bid high for it! You'll only pay as much as the second-highest bidder.</p>
-    <p class="text-muted">If no individual bids are set, the default bid is your base bid <strong>({{ campaign.base_bid | currency : "$" : 2 }}).</strong></p>
-    <p class="text-muted">If you really DON'T want a site, bid $0 for it. Also, <a href="mailto:support@cliquesads.com">tell us</a>, because we don't want this to be the case.</p>
-</div>
 <table>
     <tbody>
     <tr>
-        <td style="width: 300px; text-align: center"><em class="text-muted">Sites - {{ campaign.clique }}</em></td>
-        <td style="width: 200px; text-align: center"><em class="text-muted">Weighting & Bids</em></td>
+        <td ng-show="campaign" style="width: 300px; text-align: center"><em class="text-muted">Sites - {{ campaign.clique || clique }}</em></td>
+        <td ng-show="campaign" style="width: 200px; text-align: center"><em class="text-muted">Weighting & Bids</em></td>
     </tr>
     </tbody>
 </table>
-<div ivh-treeview="siteTree" ivh-treeview-node-tpl="template" ivh-treeview-change-handler="changeHandler">
+<div ivh-treeview="siteTree" ivh-treeview-use-checkboxes="campaign ? true : false" ivh-treeview-node-tpl="template" ivh-treeview-change-handler="changeHandler">
     <script type="text/ng-template">
         <div title="{{trvw.label(node)}}">
             <table>
@@ -31,11 +25,11 @@
                                 &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
                             </span>
                         </td>
-                        <td>
+                        <td ng-show="node.base_bid">
                             <slider ng-show="node.selected" ng-model="node.weight" min="0" max="node.Math.round(node.max_bid/node.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>
                         </td>
-                        <td ng-show="node.selected && node.getOverride()">&nbsp;&nbsp;{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</td>
-                        <td ng-hide="node.selected && node.getOverride()">&nbsp;&nbsp;<span class="fa fa-level-down text-muted"></span></td>
+                        <td ng-show="node.selected && node.getOverride() && node.base_bid">&nbsp;&nbsp;{{ node.Math.min(node.weight * node.base_bid, node.max_bid) | currency : "$" : 2 }}</td>
+                        <td ng-hide="(node.selected && node.getOverride()) || !node.base_bid">&nbsp;&nbsp;<span class="fa fa-level-down text-muted"></span></td>
                     </tr>
                 </tbody>
             </table>

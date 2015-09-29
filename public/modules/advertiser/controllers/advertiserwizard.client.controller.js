@@ -7,13 +7,14 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'Authentication',
     'Advertiser',
     'getCliqueTree',
+    'getSitesInCliqueTree',
     'DMA',
     'FileUploader',
     'AdvertiserUtils',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
     'LOGO',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS, LOGO) {
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, getSitesInCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -27,6 +28,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         getCliqueTree($scope);
         $scope.set_clique = function(branch) {
             $scope.campaign.clique = branch.label;
+            getSitesInCliqueTree(branch.label).then(function(response){
+                $scope.sites = response.data;
+            });
         };
         var tree;
         // This is our API control variable

@@ -1,13 +1,23 @@
+/**
+ * Renders customized treeview of given collection of Sites, using
+ * IVH-treeview module.
+ *
+ * Additionally, if a Campaign object is provided, will show sliders & checkboxes
+ * to allow users to target Site Tree objects, and will bind existing campaign
+ * targeting settings to internal treeview object on init.
+ */
 angular.module('advertiser').directive('siteTree', [function() {
     'use strict';
     return {
         restrict: 'E',
         scope: {
             sites: '=',
-            campaign: '='
+            campaign: '=',
+            clique: '='
         },
         templateUrl: 'modules/advertiser/views/partials/site-tree.html',
         link: function (scope, element, attrs) {
+
             // templateStr passed to IVH node template directive in tree rendering
             scope.templateStr = '<img src="{{ node.logo_secure_url }}"/> {{ trvw.label(node) }}';
 
@@ -26,9 +36,9 @@ angular.module('advertiser').directive('siteTree', [function() {
                 this.nodeType   = type;
 
                 // hacks to sneak bid variables into transcluded scope of node template in site-tree.html
-                this.base_bid   = scope.campaign.base_bid;
-                this.max_bid    = scope.campaign.max_bid;
-                this.Math       = Math;
+                this.base_bid   = scope.campaign ? scope.campaign.base_bid : false;
+                this.max_bid    = scope.campaign ? scope.campaign.max_bid : false;
+                this.Math       = scope.campaign ? Math : null;
 
                 this.override   = false;
                 if (type === 'site'){
@@ -161,7 +171,9 @@ angular.module('advertiser').directive('siteTree', [function() {
                             leaf.children.push(page_leaf);
                         });
                         // apply targets here
-                        leaf.applyPresetTargets(scope.campaign.placement_targets);
+                        if (scope.campaign){
+                            leaf.applyPresetTargets(scope.campaign.placement_targets);
+                        }
                         treedata.push(leaf);
                     });
                     scope.siteTree = treedata;
@@ -200,7 +212,9 @@ angular.module('advertiser').directive('siteTree', [function() {
                     newSiteTree.forEach(function(tree){
                         targets = targets.concat(tree.toWeightTargetSchema());
                     });
-                    scope.campaign.placement_targets = targets;
+                    if (scope.campaign){
+                        scope.campaign.placement_targets = targets;
+                    }
                 }
             }, true);
         }
