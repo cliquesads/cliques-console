@@ -18,7 +18,7 @@ angular.module('core').directive('logoWidget', [
                     url: '/logos'
                 });
                 scope.size = scope.size || 'md';
-                scope.default_url = LOGO.default_url;
+                scope.default_url = LOGO.default_secure_url;
                 console.log(scope.default_url);
                 console.log(scope.model);
                 scope.openUploader = function(){
