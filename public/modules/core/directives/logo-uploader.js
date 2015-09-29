@@ -19,7 +19,7 @@ angular.module('core').directive('logoUploader', [
                 scope.max_size_kb = LOGO.max_size_kb;
                 scope.max_width = LOGO.max_width;
                 scope.max_height = LOGO.max_height;
-                scope.default_logo_url = LOGO.default_url;
+                scope.default_logo_url = LOGO.default_secure_url;
 
                 //##### FILTERS ######
                 scope.uploader.filters.push({

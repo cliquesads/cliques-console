@@ -48,7 +48,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             description: null,
             website: null,
             cliques: null,
-            logo_url: LOGO.default_url,
+            logo_url: LOGO.default_secure_url,
             campaigns: []
         };
         $scope.campaign = {

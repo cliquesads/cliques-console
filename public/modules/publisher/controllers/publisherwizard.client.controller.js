@@ -56,7 +56,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             name: '',
             website: '',
             description: '',
-            logo_url: LOGO.default_url
+            logo_url: LOGO.default_secure_url
         };
         $scope.site = {
             name:           '',
