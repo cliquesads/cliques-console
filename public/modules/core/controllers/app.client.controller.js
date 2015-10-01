@@ -28,7 +28,8 @@ angular.module('core').controller('AppController',
             $last_name: user.lastName,
             $name: user.displayName,
             $created: user.created,
-            $email: user.email
+            $email: user.email,
+            roles: user.roles
         });
     }
 
