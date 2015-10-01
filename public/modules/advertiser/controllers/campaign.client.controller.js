@@ -2,12 +2,35 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
+    'Authentication', 'Advertiser','CampaignActivator','Notify', 'HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, CampaignActivator, Notify, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
         $scope.max_base_bid = 20;
+
+        $scope.toggleCampaignActive = function(){
+            if (!this.campaign.active){
+                CampaignActivator.deactivate({
+                    advertiserId: $stateParams.advertiserId,
+                    campaignId: $stateParams.campaignId
+                }).then(function(response){
+                    Notify.alert('Your campaign was successfully deactivated.',{});
+                }, function(errorResponse){
+                    Notify.alert('Error deactivating campaign: ' + errorResponse.message,{status: 'danger'});
+                });
+            } else {
+                CampaignActivator.activate({
+                    advertiserId: $stateParams.advertiserId,
+                    campaignId: $stateParams.campaignId
+                }).then(function(response){
+                    Notify.alert('Your campaign was successfully activated. Let\'s do this thing.',{});
+                }, function(errorResponse){
+                    Notify.alert('Error activating campaign: ' + errorResponse.message,{status: 'danger'});
+                });
+            }
+
+        };
 
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];

@@ -35,14 +35,15 @@
             <div class="panel-body">
                 <tabset>
                     <tab heading="Basics">
-                        <fieldset>
+                        <!--Only show activate controls for admins right now-->
+                        <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
                             <small><em class="text-muted">Status</em></small>
                             <div class="form-horizontal">
                                 <div class="form-group m0">
                                     <label class="col-sm-4 control-label">Active</label>
                                     <div class="col-sm-8 form-control-static">
                                         <label class="switch">
-                                            <input type="checkbox" checked="checked" ng-model="campaign.active" />
+                                            <input type="checkbox" checked="checked" ng-model="campaign.active" ng-click="toggleCampaignActive()"/>
                                             <span></span>
                                         </label>
                                         <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
