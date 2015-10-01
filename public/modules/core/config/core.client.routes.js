@@ -31,6 +31,10 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
       url: '/home',
       templateUrl: 'modules/core/views/home.client.view.html'
     })
+      .state('app.privacy', {
+          url: '/privacy-policy',
+          templateUrl: 'modules/core/views/privacy-policy.client.view.html'
+      })
     // 
     // CUSTOM RESOLVES
     //   Add your own resolves properties
