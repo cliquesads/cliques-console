@@ -128,6 +128,11 @@
 
                     <div id="step3" ng-show="wizard.active(3)">
                         <legend>Choose the Clique that best describes your campaign</legend>
+                        <p>
+                            <em class="text-muted">
+                                Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
+                            </em>
+                        </p>
                         <fieldset>
                             <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                             <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
@@ -135,11 +140,12 @@
                                 <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
                             </div>
                             <div ng-show="campaign.clique" class="col-md-5 box-placeholder">
+                                <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
                                 <site-tree sites="sites" clique="campaign.clique"></site-tree>
                                 <div ng-show="sites.length == 0" class="text-center">
                                     <span class="fa fa-meh-o fa-2x"></span>
                                     <h4>Lame</h4>
-                                    <p>This Clique doesn't have any sites yet.</p>
+                                    <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
                                     <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
                                 </div>
                             </div>

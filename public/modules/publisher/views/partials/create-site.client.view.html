@@ -95,6 +95,11 @@
 
         <div id="step3" ng-show="wizard.active(3)">
             <legend>Choose the Clique that best describes your site</legend>
+            <p>
+                <em class="text-muted">
+                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/58-choosing-a-clique" target="_blank">here</a>
+                </em>
+            </p>
             <fieldset>
                 <input style="display: None" type="text" name="site.clique" id="site.clique" data-ng-model="site.clique" data-parsley-group="step3" placeholder="{{ site.clique }}" required="required" class="form-control" />
                 <!--<p class="form-control-static">{{ site.clique }}</p>-->
