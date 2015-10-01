@@ -4,8 +4,8 @@
  =========================================================*/
 
 angular.module('core').controller('AppController',
-  ['$rootScope', '$scope', '$state', '$translate', '$location','$window', '$localStorage', '$timeout', 'colors', 'browser', 'cfpLoadingBar', 'Authentication',
-  function($rootScope, $scope, $state, $translate, $location, $window, $localStorage, $timeout, colors, browser, cfpLoadingBar, Authentication) {
+  ['$rootScope', '$scope', '$state', '$translate', '$location','$window', '$localStorage', '$timeout', '$analytics','colors', 'browser', 'cfpLoadingBar', 'Authentication',
+  function($rootScope, $scope, $state, $translate, $location, $window, $localStorage, $timeout, $analytics, colors, browser, cfpLoadingBar, Authentication) {
     "use strict";
 
     // This provides Authentication context.
@@ -20,6 +20,16 @@ angular.module('core').controller('AppController',
         } else if (user.roles.indexOf('publisher') > -1){
             $scope.role = 'publisher';
         }
+        // Now set MixPanel user properties
+        $analytics.setUsername(user.username);
+        $analytics.setAlias(user.displayName);
+        $analytics.setUserProperties({
+            $first_name: user.firstName,
+            $last_name: user.lastName,
+            $name: user.displayName,
+            $created: user.created,
+            $email: user.email
+        });
     }
 
     // Loading bar transition
