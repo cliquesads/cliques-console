@@ -43,6 +43,8 @@
     "angular-ui-router": "0.2.13",
     "angular-ui-utils": "0.2.2",
     "angular-xeditable": "~0.1.9",
+    "angulartics": "~0.20.1",
+    "angulartics-mixpanel": "~0.1.1",
     "bootstrap-filestyle": "~1.1.2",
     "bootstrap-tagsinput": "~0.5.0",
     "chosen": "~1.4.2",

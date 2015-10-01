@@ -84,7 +84,9 @@ module.exports = {
             'public/lib/ngDialog/js/ngDialog.min.js',
             'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
             'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.min.js',
-            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.js'
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.js',
+            'public/lib/angulartics/dist/angulartics.min.js',
+            'public/lib/angulartics-mixpanel/dist/angulartics-mixpanel.min.js'
         ]
     },
     mongodb: {

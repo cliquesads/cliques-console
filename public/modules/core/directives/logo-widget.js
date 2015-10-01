@@ -19,8 +19,6 @@ angular.module('core').directive('logoWidget', [
                 });
                 scope.size = scope.size || 'md';
                 scope.default_url = LOGO.default_secure_url;
-                console.log(scope.default_url);
-                console.log(scope.model);
                 scope.openUploader = function(){
                     ngDialog.open({
                         template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader" onremove="onremove()"></logo-uploader>',

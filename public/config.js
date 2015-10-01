@@ -26,7 +26,9 @@ var ApplicationConfiguration = (function() {
         'xeditable',
         'ngDialog',
         'bootstrap-tagsinput',
-        'ivh.treeview'
+        'ivh.treeview',
+        'angulartics',
+        'angulartics.mixpanel'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
