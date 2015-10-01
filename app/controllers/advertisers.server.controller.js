@@ -198,6 +198,71 @@ module.exports = function(db) {
                         res.json(camps);
                     }
                 });
+            },
+
+            activate: function(req, res){
+                // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
+                var advertiser = req.advertiser;
+                var campaignId = req.param('campaignId');
+                var ind = _.findIndex(req.advertiser.campaigns, function(c){ return c._id == campaignId; });
+                var campaign = advertiser.campaigns[ind];
+                if (!campaign){
+                    return res.status(404).send({
+                        message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
+                    });
+                }
+                if (campaign.active) {
+                    return res.status(400).send({
+                        message: "Campaign already active, cannot activate!"
+                    });
+                } else {
+                    // Publish message to create new bidding agent
+                    service.publishers.createBidder(campaignId);
+                    // Now set to active and save
+                    advertiser.campaigns[ind].active = true;
+                    advertiser.save(function(err){
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        } else {
+                            return res.status(200).send();
+                        }
+                    });
+                }
+            },
+
+            deactivate: function(req, res){
+                // Checks if campaign is inactive.  If not, publishes 'stopBidder' message and sets campaign to inactive
+                var advertiser = req.advertiser;
+                var campaignId = req.param('campaignId');
+                var ind = _.findIndex(req.advertiser.campaigns, function(c){ return c._id == campaignId; });
+                var campaign = advertiser.campaigns[ind];
+                if (!campaign){
+                    return res.status(404).send({
+                        message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
+                    });
+                }
+                if (!campaign.active) {
+                    return res.status(400).send({
+                        message: "Campaign already inactive, cannot deactivate!"
+                    });
+                } else {
+                    // Publish message to create new bidding agent
+                    service.publishers.stopBidder(campaignId);
+                    // Now set to active and save
+                    advertiser.campaigns[ind].active = false;
+                    advertiser.save(function(err){
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        } else {
+                            return res.status(200).send();
+                        }
+                    });
+                }
+
             }
         },
         actionbeacon: {
