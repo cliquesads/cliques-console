@@ -5,6 +5,7 @@
  */
 var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
+    mongoose = require('mongoose'),
     tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
     BidderPubSub = node_utils.google.pubsub.BidderPubSub,
@@ -48,7 +49,7 @@ module.exports = function(db) {
             if (req.user.roles.indexOf('admin') === -1){
                 req.query.user = req.user.id;
             }
-            advertiserModels.Advertiser.apiQuery(req.query, function (err, advertisers) {
+            advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -63,7 +64,7 @@ module.exports = function(db) {
          */
         create: function (req, res) {
             var advertiser = new advertiserModels.Advertiser(req.body);
-            advertiser.user = req.user;
+            advertiser.user = [req.user];
 
             advertiser.save(function (err) {
                 if (err) {
@@ -171,7 +172,7 @@ module.exports = function(db) {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.roles.indexOf('admin') === -1){
-                if (req.advertiser.user.id != req.user.id) {
+                if (req.advertiser.user.filter(function(u){return u.id == req.user.id;}).length === 0){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
