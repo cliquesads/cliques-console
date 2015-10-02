@@ -28,7 +28,8 @@ var ApplicationConfiguration = (function() {
         'bootstrap-tagsinput',
         'ivh.treeview',
         'angulartics',
-        'angulartics.mixpanel'
+        'angulartics.mixpanel',
+        'datatables'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

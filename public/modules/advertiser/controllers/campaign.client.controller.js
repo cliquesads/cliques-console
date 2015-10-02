@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','CampaignActivator','Notify', 'HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-	function($scope, $stateParams, $location, Authentication, Advertiser, CampaignActivator, Notify, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
+    'Authentication', 'Advertiser','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -146,6 +146,33 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.actions = _.sum($scope.timeSeries.view_convs, function(item){ return item[1];}) + _.sum($scope.timeSeries.click_convs, function(item){ return item[1];});
                 $scope.CTR = $scope.clicks / $scope.impressions;
+            });
+            // TODO: Need to provide error callback for query promise as well
+
+            $scope.dateRangeSelection = dateShortCode;
+        };
+
+        $scope.getCreativeData = function(dateShortCode){
+            dateShortCode = dateShortCode || $scope.dateRangeSelection;
+            var startDate = $scope.dateRanges[dateShortCode].startDate;
+            var endDate = $scope.dateRanges[dateShortCode].endDate;
+
+            // query HourlyAdStats api endpoint
+            HourlyAdStat.advQuery({
+                advertiserId: $stateParams.advertiserId,
+                campaignId: $stateParams.campaignId
+            },{
+                groupBy: 'creative',
+                startDate: startDate,
+                endDate: endDate
+            }).then(function(response){
+                $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers');
+                $scope.dtColumnDefs = [
+                    DTColumnDefBuilder.newColumnDef(0),
+                    DTColumnDefBuilder.newColumnDef(1),
+                    DTColumnDefBuilder.newColumnDef(2)
+                ];
+                $scope.creativeData = response.data;
             });
             // TODO: Need to provide error callback for query promise as well
 

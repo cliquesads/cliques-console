@@ -32,9 +32,9 @@
                     Campaign Settings
                 </div>
             </div>
-            <div class="panel-body">
-                <tabset>
-                    <tab heading="Basics">
+            <tabset>
+                <tab heading="Basics">
+                    <div class="panel-body">
                         <!--Only show activate controls for admins right now-->
                         <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
                             <small><em class="text-muted">Status</em></small>
@@ -139,8 +139,10 @@
                                 </div>
                             </form>
                         </fieldset>
-                    </tab>
-                    <tab heading="Bids">
+                    </div>
+                </tab>
+                <tab heading="Bids">
+                    <div class="panel-body">
                         <fieldset>
                             <form editable-form name="bidsInline" onaftersave="update()">
                                 <div class="form-horizontal">
@@ -179,8 +181,10 @@
                                 </div>
                             </form>
                         </fieldset>
-                    </tab>
-                    <tab heading="Targeting">
+                    </div>
+                </tab>
+                <tab heading="Targeting">
+                    <div class="panel-body">
                         <fieldset>
                             <small><em class="text-muted">Inventory</em></small>
                             <div class="form-group m0">
@@ -207,8 +211,10 @@
                                 </div>
                             </div>
                         </fieldset>
-                    </tab>
-                    <tab heading="Creatives">
+                    </div>
+                </tab>
+                <tab heading="Creatives">
+                    <div class="panel-body">
                         <a href="#" class="pull-right" ng-click="editCreatives()">
                             <span class="fa fa-edit"></span>
                         </a>
@@ -230,15 +236,30 @@
                                 </div>
                             </fieldset>
                         </div>
-                    </tab>
-                </tabset>
-            </div>
+                    </div>
+                </tab>
+            </tabset>
         </div>
     </div>
     <div class="col-md-7">
+        <!--<div class="well well-sm">-->
+            <!--View:-->
+            <!--<div dropdown="dropdown" class="btn-group">-->
+                <!--<button type="button" class="btn btn-default">Summary</button>-->
+                <!--<button type="button" dropdown-toggle="" class="btn dropdown-toggle btn-default">-->
+                    <!--<span class="caret"></span>-->
+                    <!--<span class="sr-only">default</span>-->
+                <!--</button>-->
+                <!--<ul role="menu" class="dropdown-menu">-->
+                    <!--<li><a href="#">Creatives</a></li>-->
+                    <!--<li><a href="#">Sites</a></li>-->
+                <!--</ul>-->
+            <!--</div>-->
+        <!--</div>-->
         <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getCampaignGraph('7d')">
             <div class="panel-heading">
-                <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
+                <div class="panel-title">
+                    {{ dateRanges[dateRangeSelection].label }}
                     &nbsp&nbsp&nbsp
                     <small>
                         <em class="text-muted">
@@ -252,37 +273,65 @@
                     </span>
                 </div>
             </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Impressions</p>
-                        <div class="h3">{{ impressions | number: 0 }}</div>
+            <tabset>
+                <tab heading="Performance Summary" select="getCampaignGraph(dateRangeSelection)">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>Impressions</p>
+                                <div class="h3">{{ impressions | number: 0 }}</div>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>CTR</p>
+                                <div class="h3">{{ CTR | percentage:2 }}</div>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>Clicks</p>
+                                <div class="h3">{{ clicks | number: 0 }}</div>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>Actions</p>
+                                <div class="h3">{{ actions | number: 0 }}</div>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>Spend</p>
+                                <div class="h3">{{ spend | currency:"$":"0" }}</div>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <p>Avg. CPM</p>
+                                <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>CTR</p>
-                        <div class="h3">{{ CTR | percentage:2 }}</div>
+                    <div class="panel-body">
+                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
                     </div>
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Clicks</p>
-                        <div class="h3">{{ clicks | number: 0 }}</div>
-                    </div>
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Actions</p>
-                        <div class="h3">{{ actions | number: 0 }}</div>
-                    </div>
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Spend</p>
-                        <div class="h3">{{ spend | currency:"$":"0" }}</div>
-                    </div>
-                    <div class="col-sm-2 col-xs-6 text-center">
-                        <p>Avg. CPM</p>
-                        <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-body">
-                <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
-            </div>
+                </tab>
+                <tab heading="Sites">
+                </tab>
+                <tab heading="Creatives" select="getCreativeData(dateRangeSelection)">
+                    <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                        <thead>
+                        <tr>
+                            <th>Creative Name</th>
+                            <th>Impressions</th>
+                            <th>Clicks</th>
+                            <th>View Convs</th>
+                            <th>Click Convs</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in creativeData">
+                            <td>{{ row._id.creative }}</td>
+                            <td>{{ row.imps }}</td>
+                            <td>{{ row.clicks }}</td>
+                            <td>{{ row.view_convs }}</td>
+                            <td>{{ row.click_convs }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </tab>
+            </tabset>
         </div>
     </div>
 </section>

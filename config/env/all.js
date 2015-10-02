@@ -31,7 +31,8 @@ module.exports = {
             'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
             'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
             'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
-            'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css'
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css',
+            'public/lib/datatables/media/css/jquery.dataTables.min.css'
 		],
 		js: [
 			'public/config.js',
@@ -86,7 +87,9 @@ module.exports = {
             'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-angular.min.js',
             'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.js',
             'public/lib/angulartics/dist/angulartics.min.js',
-            'public/lib/angulartics-mixpanel/dist/angulartics-mixpanel.min.js'
+            'public/lib/angulartics-mixpanel/dist/angulartics-mixpanel.min.js',
+            'public/lib/datatables/media/js/jquery.dataTables.min.js',
+            'public/lib/angular-datatables/dist/angular-datatables.min.js'
         ]
     },
     mongodb: {
