@@ -245,6 +245,19 @@ String.prototype.toProperCase = function () {
  * @private
  */
 HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_results, group, callback){
+    // I'm not proud of this, there should be an easier way to do this.
+    //
+    // Basically this loops through the fields passed in by req.param.populate
+    // and determines which tree (Advertiser or Publisher) those fields belong to.
+    //
+    // Then, for each field, it calls the Model form of 'populate' to populate the
+    // top-level node of that tree (which, based on how populate/Mongo works, is the
+    // only field that represents an ID belonging to a collection rather than a sub-doc,
+    // and is thus the only field that CAN be populated).
+    //
+    // Finally, once the query result is populated with the top-level doc from the respective
+    // tree, it maps the appropriate child doc to the populate field in each query result row.
+    // So net-net, calls the DB once per populate field provided (I think).
     var self = this;
     var populates = populateQueryString.split(',');
     var asyncFieldFuncs = [];
@@ -286,6 +299,8 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                         }
                     );
                 };
+                // TODO: Don't have to populate here if top-level node has already
+                // TODO: been populated, can save a trip to the database
                 // have to populate top level first before doing anything at child-level
                 self[treeDocument][parentModelName].populate(query_results, {
                     path: '_id.' + parentFieldName,
@@ -308,7 +323,6 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
             } else {
                 return callback('Populate field not in group: ' + field);
             }
-
         });
     });
     async.series(asyncFieldFuncs, function(err, result){
