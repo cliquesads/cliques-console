@@ -163,6 +163,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 campaignId: $stateParams.campaignId
             },{
                 groupBy: 'creative',
+                populate: 'creative',
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response){

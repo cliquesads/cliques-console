@@ -4,8 +4,10 @@
  * Module dependencies.
  */
 var models = require('cliques_node_utils').mongodb.models,
+    mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash'),
+    async = require('async'),
     moment = require('moment-timezone');
 
 /**
@@ -219,6 +221,102 @@ var HourlyAdStatAPI = function(aggregationModels, advertiserModels, publisherMod
     all_params = all_params.concat(this.clique_params);
     this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([],all_params, 'hour');
 };
+
+/**
+ * Method to proper-case a string, used for resolving populate query params to model names
+ */
+String.prototype.toProperCase = function () {
+    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+};
+
+/**
+ * Sub-method just to handle field population logic, as populating fields
+ * for aggregation pipeline results is not natively supported in Mongo or Mongoose.
+ *
+ * THIS IS NOT VERY EFFICIENT, WOULD LOVE TO FIGURE OUT BETTER WAY TO HANDLE THIS.
+ *
+ * ACTUALLY, IT'S HORRIBLY INEFFCIENT AND PROBABLY SHOULDN'T BE USED FOR ANY
+ * LARGER DATASETS WHATSOEVER.
+ *
+ * @param populateQueryString
+ * @param query_results
+ * @param group
+ * @param callback
+ * @private
+ */
+HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_results, group, callback){
+    var self = this;
+    var populates = populateQueryString.split(',');
+    var asyncFieldFuncs = [];
+    populates.forEach(function(field){
+        asyncFieldFuncs.push(function(callback){
+            // throw out populate param if populate not in group
+            if (Object.keys(group).indexOf(field) > -1){
+                var modelName = field.toProperCase();
+                // First determine whether field is in Publisher or Advertiser tree.
+                // If neither, skip it.
+                if (self.advertiserModels.hasOwnProperty(modelName)){
+                    var treeDocument = 'advertiserModels';
+                    var parentFieldName =  'advertiser';
+                    var parentModelName = 'Advertiser';
+                } else if (self.publisherModels.hasOwnProperty(modelName)){
+                    treeDocument = 'publisherModels';
+                    parentFieldName =  'publisher';
+                    parentModelName = 'Publisher';
+                } else {
+                    return callback('Populate field not recognized: ' + field);
+                }
+                // sub routine to pass to async.map. Just gets child document given
+                // populated top-level node doc
+                var populateChildField = function(doc, cb) {
+                    self[treeDocument].getChildDocument(
+                        doc._id[field],
+                        modelName,
+                        doc._id[parentFieldName],
+                        function (err, child) {
+                            if (err) return cb(err);
+                            if (populates.indexOf(parentFieldName) == -1){
+                                // strip off advertiser object for compactness if it's not required
+                                // by the API call
+                                doc._id[parentFieldName] = doc._id[parentFieldName]._id;
+                            }
+                            // replace doc ID with object & callback
+                            doc._id[field] = child;
+                            return cb(null, doc);
+                        }
+                    );
+                };
+                // have to populate top level first before doing anything at child-level
+                self[treeDocument][parentModelName].populate(query_results, {
+                    path: '_id.' + parentFieldName,
+                    model: parentModelName
+                }, function (err, result) {
+                    if (err) return callback(err);
+                    if (modelName === parentModelName) {
+                        query_results = result;
+                        return callback(null, true);
+                    } else {
+                        // For non-top-level populates, have to loop over results and populate manually
+                        // by finding nested docs in populated top-level docs.
+                        async.map(result, populateChildField, function(err, result){
+                            if (err) return callback(err);
+                            query_results = result;
+                            return callback(null, true);
+                        });
+                    }
+                });
+            } else {
+                return callback('Populate field not in group: ' + field);
+            }
+
+        });
+    });
+    async.series(asyncFieldFuncs, function(err, result){
+        if (err) return callback(err);
+        return callback(null, query_results);
+    })
+};
+
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     var self = this;
     return function (req, res) {
@@ -253,18 +351,25 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     }
                 }
             ]);
-        //catch populate query param here
-        //TODO: Only supports one populate path right now
-        if (req.query.populate){
-            query.populate(req.query.populate);
-        }
         query.exec(function(err, hourlyAdStats){
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                res.json(hourlyAdStats);
+                //catch populate query param here and call model populate
+                // NOTE: Can only pass populate for object in 'group' object
+                // otherwise this will throw out the populate param
+                if (req.query.populate){
+                    self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
+                        if (err) {
+                            return res.status(400).send({ message: err });
+                        }
+                        res.json(results);
+                    });
+                } else {
+                    res.json(hourlyAdStats);
+                }
             }
         });
     };
@@ -302,6 +407,7 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
         advertisers.forEach(function(doc){
             ids.push(doc._id);
         });
+
         req.query.advertiser = '{in}' + ids.join(',');
         return self._getManyWrapper(self.genPipelineBuilder)(req, res);
     });
