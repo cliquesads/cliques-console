@@ -324,7 +324,7 @@
                         <tbody>
                         <tr ng-repeat="row in creativeData">
                             <td><img src="{{ row._id.creative.secureUrl }}" class="xsthumbnail"/></td>
-                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.creative.name | <em>'Deleted'</em>}}</td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.creative.name || 'Deleted'}}</td>
                             <td>{{ row._id.creative.w }}{{ row._id.creative.w ? 'x' : ''}}{{ row._id.creative.h }}</td>
                             <td>{{ row.imps | number: 0 }}</td>
                             <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
