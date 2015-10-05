@@ -281,7 +281,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                 }
                 // sub routine to pass to async.map. Just gets child document given
                 // populated top-level node doc
-                var populateChildField = function(doc, cb) {
+                var populateChildField = function(doc, callback) {
                     self[treeDocument].getChildDocument(
                         doc._id[field],
                         modelName,
@@ -292,7 +292,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                                     // this means the object was deleted, just don't populate anything
                                     child = null;
                                 } else {
-                                    return cb(err);
+                                    return callback(err);
                                 }
                             }
                             if (populates.indexOf(parentFieldName) == -1){
@@ -302,7 +302,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                             }
                             // replace doc ID with object & callback
                             doc._id[field] = child;
-                            return cb(null, doc);
+                            return callback(null, doc);
                         }
                     );
                 };
