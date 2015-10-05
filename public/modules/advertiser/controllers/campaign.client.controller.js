@@ -177,7 +177,39 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     console.log(err);
                 });
             },
-            sites: null
+            sites: function(dateShortCode){
+                var startDate = $scope.dateRanges[dateShortCode].startDate;
+                var endDate = $scope.dateRanges[dateShortCode].endDate;
+                // query HourlyAdStats api endpoint
+                HourlyAdStat.advQuery({
+                    advertiserId: $stateParams.advertiserId,
+                    campaignId: $stateParams.campaignId
+                },{
+                    groupBy: 'publisher,site',
+                    populate: 'site',
+                    startDate: startDate,
+                    endDate: endDate
+                }).then(function(response){
+                    // build datatables options object
+                    $scope.dtOptions_site = DTOptionsBuilder.newOptions();
+                    $scope.dtOptions_site.withOption('paging', false);
+                    $scope.dtOptions_site.withOption('searching', false);
+                    $scope.dtOptions_site.withOption('scrollX', true);
+                    $scope.dtOptions_site.withOption('order', [[3,'desc']]);
+                    // Not entirely sure if this is necessary
+                    $scope.dtColumnDefs = [
+                        DTColumnDefBuilder.newColumnDef(0),
+                        DTColumnDefBuilder.newColumnDef(1),
+                        DTColumnDefBuilder.newColumnDef(2),
+                        DTColumnDefBuilder.newColumnDef(3),
+                        DTColumnDefBuilder.newColumnDef(4),
+                        DTColumnDefBuilder.newColumnDef(5)
+                    ];
+                    $scope.siteData = response.data;
+                }, function(err){
+                    console.log(err);
+                });
+            }
         };
         $scope.activeTab = 'summary';
         $scope.getTabData = function(dateShortCode, tab){

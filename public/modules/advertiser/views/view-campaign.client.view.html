@@ -307,7 +307,29 @@
                         <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
                     </div>
                 </tab>
-                <tab heading="Sites">
+                <tab heading="Sites" select="getTabData(dateRangeSelection,'sites')">
+                    <table datatable="ng" dt-options="dtOptions_site" dt-column-defs="dtColumnDefs_site" class="row-border hover">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Spend</th>
+                            <th>Impressions</th>
+                            <th>CTR</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in siteData">
+                            <td><img src="{{ row._id.site.logo_secure_url }}" class="client-logo-sm"/></td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.site.name }}<em ng-hide="row._id.site.name">Deleted Site!</em></td>
+                            <td>{{ row.spend | currency:"$":"0" }}</td>
+                            <td>{{ row.imps | number: 0 }}</td>
+                            <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
+                            <td>{{ row.view_convs + row.click_convs }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </tab>
                 <tab heading="Creatives" select="getTabData(dateRangeSelection,'creatives')">
                     <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
