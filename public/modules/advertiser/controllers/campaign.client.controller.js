@@ -117,74 +117,73 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // See service in aggregations module for details on aggregationDateRanges object
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
-
-        $scope.getCampaignGraph = function(dateShortCode){
-            dateShortCode = dateShortCode || $scope.dateRangeSelection;
-            var startDate = $scope.dateRanges[dateShortCode].startDate;
-            var endDate = $scope.dateRanges[dateShortCode].endDate;
-
-            // Pass "show-points" to graph directive to toggle line points
-            // Only have this so points won't show for lines with tons of data
-            $scope.showPoints = $scope.dateRanges[dateShortCode].showPoints;
-
-            // For grouping & MongoTimeSeries generation
-            var timeUnit = 'day';
-
-            // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({
-                advertiserId: $stateParams.advertiserId,
-                campaignId: $stateParams.campaignId
-            },{
-                dateGroupBy: timeUnit,
-                startDate: startDate,
-                endDate: endDate
-            }).then(function(response){
-                $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                    {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend', 'view_convs', 'click_convs']});
-                $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1];});
-                $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1];});
-                $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
-                $scope.actions = _.sum($scope.timeSeries.view_convs, function(item){ return item[1];}) + _.sum($scope.timeSeries.click_convs, function(item){ return item[1];});
-                $scope.CTR = $scope.clicks / $scope.impressions;
-            });
-            // TODO: Need to provide error callback for query promise as well
-
-            $scope.dateRangeSelection = dateShortCode;
+        $scope.tabFunctions = {
+            summary: function(dateShortCode){
+                var startDate = $scope.dateRanges[dateShortCode].startDate;
+                var endDate = $scope.dateRanges[dateShortCode].endDate;
+                // Pass "show-points" to graph directive to toggle line points
+                // Only have this so points won't show for lines with tons of data
+                $scope.showPoints = $scope.dateRanges[dateShortCode].showPoints;
+                // For grouping & MongoTimeSeries generation
+                var timeUnit = 'day';
+                // query HourlyAdStats api endpoint
+                HourlyAdStat.advQuery({
+                    advertiserId: $stateParams.advertiserId,
+                    campaignId: $stateParams.campaignId
+                },{
+                    dateGroupBy: timeUnit,
+                    startDate: startDate,
+                    endDate: endDate
+                }).then(function(response){
+                    $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
+                        {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend', 'view_convs', 'click_convs']});
+                    $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1];});
+                    $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1];});
+                    $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
+                    $scope.actions = _.sum($scope.timeSeries.view_convs, function(item){ return item[1];}) + _.sum($scope.timeSeries.click_convs, function(item){ return item[1];});
+                    $scope.CTR = $scope.clicks / $scope.impressions;
+                });
+                // TODO: Need to provide error callback for query promise as well
+            },
+            creatives: function(dateShortCode){
+                var startDate = $scope.dateRanges[dateShortCode].startDate;
+                var endDate = $scope.dateRanges[dateShortCode].endDate;
+                // query HourlyAdStats api endpoint
+                HourlyAdStat.advQuery({
+                    advertiserId: $stateParams.advertiserId,
+                    campaignId: $stateParams.campaignId
+                },{
+                    groupBy: 'creative',
+                    populate: 'creative',
+                    startDate: startDate,
+                    endDate: endDate
+                }).then(function(response){
+                    // build datatables options object
+                    $scope.dtOptions = DTOptionsBuilder.newOptions();
+                    $scope.dtOptions.withOption('paging', false);
+                    $scope.dtOptions.withOption('searching', false);
+                    $scope.dtOptions.withOption('scrollX', true);
+                    $scope.dtOptions.withOption('order', [[3,'desc']]);
+                    // Not entirely sure if this is necessary
+                    $scope.dtColumnDefs = [
+                        DTColumnDefBuilder.newColumnDef(0),
+                        DTColumnDefBuilder.newColumnDef(1),
+                        DTColumnDefBuilder.newColumnDef(2),
+                        DTColumnDefBuilder.newColumnDef(3),
+                        DTColumnDefBuilder.newColumnDef(4)
+                    ];
+                    $scope.creativeData = response.data;
+                }, function(err){
+                    console.log(err);
+                });
+            },
+            sites: null
         };
-
-        $scope.getCreativeData = function(dateShortCode){
-            dateShortCode = dateShortCode || $scope.dateRangeSelection;
-            var startDate = $scope.dateRanges[dateShortCode].startDate;
-            var endDate = $scope.dateRanges[dateShortCode].endDate;
-
-            // query HourlyAdStats api endpoint
-            HourlyAdStat.advQuery({
-                advertiserId: $stateParams.advertiserId,
-                campaignId: $stateParams.campaignId
-            },{
-                groupBy: 'creative',
-                populate: 'creative',
-                startDate: startDate,
-                endDate: endDate
-            }).then(function(response){
-                // build datatables options object
-                $scope.dtOptions = DTOptionsBuilder.newOptions();
-                $scope.dtOptions.withOption('paging', false);
-                $scope.dtOptions.withOption('searching', false);
-                $scope.dtOptions.withOption('order', [[1,'desc']]);
-                // Not entirely sure if this is necessary
-                $scope.dtColumnDefs = [
-                    DTColumnDefBuilder.newColumnDef(0),
-                    DTColumnDefBuilder.newColumnDef(1),
-                    DTColumnDefBuilder.newColumnDef(2),
-                    DTColumnDefBuilder.newColumnDef(3),
-                    DTColumnDefBuilder.newColumnDef(4),
-                    DTColumnDefBuilder.newColumnDef(5)
-                ];
-                $scope.creativeData = response.data;
-            });
-            // TODO: Need to provide error callback for query promise as well
-
+        $scope.activeTab = 'summary';
+        $scope.getTabData = function(dateShortCode, tab){
+            tab = tab || $scope.activeTab;
+            $scope.activeTab = tab;
+            $scope.tabFunctions[tab](dateShortCode);
             $scope.dateRangeSelection = dateShortCode;
         };
 	}

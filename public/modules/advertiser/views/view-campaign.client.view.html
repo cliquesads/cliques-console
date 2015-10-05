@@ -256,7 +256,7 @@
                 <!--</ul>-->
             <!--</div>-->
         <!--</div>-->
-        <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getCampaignGraph('7d')">
+        <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getTabData(dateRangeSelection)">
             <div class="panel-heading">
                 <div class="panel-title">
                     {{ dateRanges[dateRangeSelection].label }}
@@ -267,14 +267,14 @@
                         </em>
                     </small>
                     <span class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('7d')">7d</button>
-                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('30d')">30d</button>
-                        <button class="btn btn-sm btn-default" ng-click="getCampaignGraph('90d')">90d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
                     </span>
                 </div>
             </div>
             <tabset>
-                <tab heading="Performance Summary" select="getCampaignGraph(dateRangeSelection)">
+                <tab heading="Performance Summary" select="getTabData(dateRangeSelection, 'summary')">
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-sm-2 col-xs-6 text-center">
@@ -309,24 +309,24 @@
                 </tab>
                 <tab heading="Sites">
                 </tab>
-                <tab heading="Creatives" select="getCreativeData(dateRangeSelection)">
+                <tab heading="Creatives" select="getTabData(dateRangeSelection,'creatives')">
                     <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
                         <thead>
                         <tr>
-                            <th>Creative Name</th>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Size</th>
                             <th>Impressions</th>
-                            <th>Spend</th>
-                            <th>Clicks</th>
                             <th>CTR</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="row in creativeData">
-                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.creative.name }}</td>
+                            <td><img src="{{ row._id.creative.secureUrl }}" class="xsthumbnail"/></td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.creative.name | <em>'Deleted'</em>}}</td>
+                            <td>{{ row._id.creative.w }}{{ row._id.creative.w ? 'x' : ''}}{{ row._id.creative.h }}</td>
                             <td>{{ row.imps | number: 0 }}</td>
-                            <td>{{ row.spend | currency:"$":"0"  }}</td>
-                            <td>{{ row.clicks| number: 0 }}</td>
                             <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                             <td>{{ row.view_convs + row.click_convs }}</td>
                         </tr>

@@ -287,7 +287,14 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                         modelName,
                         doc._id[parentFieldName],
                         function (err, child) {
-                            if (err) return cb(err);
+                            if (err) {
+                                if (err instanceof ReferenceError){
+                                    // this means the object was deleted, just don't populate anything
+                                    child = null;
+                                } else {
+                                    return cb(err);
+                                }
+                            }
                             if (populates.indexOf(parentFieldName) == -1){
                                 // strip off advertiser object for compactness if it's not required
                                 // by the API call
