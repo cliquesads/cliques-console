@@ -156,7 +156,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     var groupBy = req.query.groupBy;
     if (groupBy){
         if (groupBy.indexOf(',') > -1){
-            groupBy = JSON.parse("[" + groupBy + "]");
+            groupBy = groupBy.split(',');
             groupBy.forEach(function(field){
                 group[field] = '$' + field;
             });
