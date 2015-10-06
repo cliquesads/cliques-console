@@ -170,7 +170,8 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                         DTColumnDefBuilder.newColumnDef(1),
                         DTColumnDefBuilder.newColumnDef(2),
                         DTColumnDefBuilder.newColumnDef(3),
-                        DTColumnDefBuilder.newColumnDef(4)
+                        DTColumnDefBuilder.newColumnDef(4),
+                        DTColumnDefBuilder.newColumnDef(5)
                     ];
                     $scope.creativeData = response.data;
                 }, function(err){
@@ -197,7 +198,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     $scope.dtOptions_site.withOption('scrollX', true);
                     $scope.dtOptions_site.withOption('order', [[3,'desc']]);
                     // Not entirely sure if this is necessary
-                    $scope.dtColumnDefs = [
+                    $scope.dtColumnDefs_site = [
                         DTColumnDefBuilder.newColumnDef(0),
                         DTColumnDefBuilder.newColumnDef(1),
                         DTColumnDefBuilder.newColumnDef(2),
