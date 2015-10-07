@@ -10,31 +10,44 @@ function insertMacros(url){
 }
 
 //Articles service used for communicating with the articles REST endpoints
-angular.module('advertiser').factory('DoubleClickTags', [
+angular.module('advertiser').factory('DoubleClickTag', [
     function() {
+        var JavascriptTag = function(tag){
+            this.tag = $(tag);
+            this.script = this.tag[0];
+            this.noscript = $(this.tag[1]);
+            this.noscript_contents = $(this.noscript.contents()[0].textContent);
+        };
+        JavascriptTag.prototype.insertMacros = function(){
+            // First inject macros into script portion
+            var script = this.script;
+            var src = script.getAttribute('src');
+            src = insertMacros(src);
+            script.setAttribute('src', src);
+
+            //actual <a><img></img></a> tag is stored as text in noscript
+            var a = this.noscript_contents[0];
+            var noscript_href = a.getAttribute('href');
+            noscript_href = insertMacros(noscript_href);
+            a.setAttribute('href', noscript_href);
+
+            // Don't know why you can't just use jQuery to cast array of HTML
+            // objects back to HTML string, so have to do this instead.
+            return $(script).prop('outerHTML') + '<noscript>\"' +
+                $(a).prop('outerHTML') + '\"</noscript>';
+        };
+        JavascriptTag.prototype.getDimensions = function() {
+            //actual <a><img></img></a> tag is stored as text in noscript
+            var img = this.noscript_contents[1];
+            var width = img.getAttribute('width');
+            var height = img.getAttribute('height');
+            return {
+                h: Number(height),
+                w: Number(width)
+            };
+        };
         return {
-            javascriptTagMacroExpander: function(tag){
-                tag = $(tag);
-                // First inject macros into script portion
-                var script = tag[0];
-                var src = script.getAttribute('src');
-                src = insertMacros(src);
-                script.setAttribute('src', src);
-
-                //Get noscript element as separate thing
-                var noscript = $(elem[1]);
-                //actual <a><img></img></a> tag is stored as text in noscript
-                var noscript_text = noscript.contents()[0].textContent;
-                var noscript_elem = $(noscript_text)[0];
-                var noscript_href = noscript_elem.getAttribute('href');
-                noscript_href = insertMacros(noscript_href);
-                noscript_elem.setAttribute('href', noscript_href);
-
-                // Don't know why you can't just use jQuery to cast array of HTML
-                // objects back to HTML string, so have to do this instead.
-                return $(script).prop('outerHTML') + '<noscript>\"' +
-                    $(noscript_elem).prop('outerHTML') + '\"</noscript>';
-            }
-        }
+            javascript: JavascriptTag
+        };
     }
 ]);
