@@ -24,7 +24,39 @@
         </form>
     </fieldset>
     <div class="row text-center">
-        <button ng-click="processAndUpload()" class="btn btn-primary"><span class="icon-cloud-upload mr"></span>
-            Analyze & Upload</button>
+        <button ng-click="processTag()" class="btn btn-primary">
+            Verify & Prepare for Upload
+        </button>
+    </div>
+    <div ng-if="creatives.length">
+        <table ng-if="creatives.length" class="table">
+            <thead>
+                <tr>
+                    <th width="30%">Name</th>
+                    <th>Dimensions</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in creatives">
+                <td>
+                    <strong>{{ item.name }}</strong>
+                </td>
+                <td>
+                    {{ item.w }}x{{ item.h }}
+                </td>
+                <td nowrap="">
+                    <button type="button" ng-click="removeFromQueue(item)" class="btn btn-danger btn-xs">
+                        <span class="icon-trash mr"></span>Remove</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row text-center">
+        <button ng-click="upload()" ng-show="creatives.length" class="btn btn-primary">
+            <span class="icon-cloud-upload mr"></span>
+            Upload
+        </button>
     </div>
 </div>

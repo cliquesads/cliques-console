@@ -2,21 +2,27 @@
  * Created by bliang on 10/8/15
  */
 angular.module('advertiser').directive('doubleclickCreativeUploader', [
-    'CREATIVE_SIZES','DoubleClickTag','AdvertiserUtils','Notify',
-    function(CREATIVE_SIZES,DoubleClickTag,AdvertiserUtils,Notify){
+    'CREATIVE_SIZES','DoubleClickTag',
+    function(CREATIVE_SIZES,DoubleClickTag){
         'use strict';
         return {
             restrict: 'E',
             scope: {
                 campaign: '=',
-                onProcessingComplete: '&'
+                onUpload: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/doubleclick-creative-uploader.html',
             link: function(scope, element, attrs){
                 scope.SUPPORTED_DIMENSIONS = CREATIVE_SIZES.supported_dimensions;
-                scope.processAndUpload = function(){
+
+                // creative queue
+                scope.creatives = [];
+
+                // Validates tag & creative form, inserts macros & adds to creative queue
+                scope.processTag = function(){
                     var valid = $('#doubleClickForm').parsley().validate();
                     if (valid){
+                        // Validate that the tag is proper DCM Javascript
                         try {
                             var js_tag = new DoubleClickTag.Javascript(scope.dfa_tag);
                             scope.upload_error = false;
@@ -30,7 +36,7 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                             scope.upload_error = 'File dimensions not supported. Creative dimensions must be one of the following: ' + scope.SUPPORTED_DIMENSIONS.join(', ');
                         } else {
                             scope.dfa_tag = js_tag.insertMacros();
-                            var creative = [{
+                            var creative = {
                                 name: scope.creative_name,
                                 w: js_tag.w,
                                 h: js_tag.h,
@@ -38,15 +44,28 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                                 tag: scope.dfa_tag,
                                 click_url: '<doubleclick>',
                                 url: js_tag.img_src
-                            }];
-                            var creativeGroup = AdvertiserUtils.groupCreatives(creative, scope.campaign.name);
-                            AdvertiserUtils.updateCreativeGroups(creativeGroup, scope.campaign);
+                            };
+                            scope.creatives.push(creative);
                             scope.dfa_tag = '';
                             scope.creative_name = '';
-                            scope.onProcessingComplete();
                         }
                     }
-                }
+                };
+
+                // Hook for upload method
+                scope.upload = function(){
+                    if (scope.creatives.length > 0){
+                        scope.onUpload({creatives: scope.creatives});
+                        scope.creatives = [];
+                    }
+                };
+
+                scope.removeFromQueue = function(creative){
+                    var ind = _.findIndex(scope.creatives, function(cr){
+                        return cr === creative;
+                    });
+                    scope.creatives.splice(ind, 1);
+                };
             }
         };
     }

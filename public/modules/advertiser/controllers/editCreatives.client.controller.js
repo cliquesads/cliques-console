@@ -29,9 +29,11 @@ angular.module('advertiser').controller('editCreativesController', [
         };
 
         // Function to pass to DoubleClick creative uploader
-        $scope.onProcessingComplete = function(){
+        $scope.onDCMUpload = function(creatives){
+            var creativeGroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
+            AdvertiserUtils.updateCreativeGroups(creativeGroups, $scope.campaign);
             this.advertiser.$update(function(){
-                Notify.alert('Success! Your doubleClick creative was added to your campaign.', {status: 'success'})
+                Notify.alert('Success! Your doubleClick creative was added to your campaign.', {status: 'success'});
             },function(errorResponse){
                 Notify.alert('Oops, something went wrong: ' + errorResponse.data.message, {status: 'danger'});
             });
