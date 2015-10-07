@@ -7,7 +7,8 @@ angular.module('advertiser').controller('editCreativesController', [
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
-    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog){
+    'Notify',
+    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify){
         // Set form hidden by default
         $scope.formVisible = false;
 
@@ -24,6 +25,15 @@ angular.module('advertiser').controller('editCreativesController', [
             this.advertiser.$update(function(){
             },function(errorResponse){
                 $scope.saveerror = errorResponse.data.message;
+            });
+        };
+
+        // Function to pass to DoubleClick creative uploader
+        $scope.onProcessingComplete = function(){
+            this.advertiser.$update(function(){
+                Notify.alert('Success! Your doubleClick creative was added to your campaign.', {status: 'success'})
+            },function(errorResponse){
+                Notify.alert('Oops, something went wrong: ' + errorResponse.data.message, {status: 'danger'});
             });
         };
 

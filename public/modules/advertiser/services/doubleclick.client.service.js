@@ -19,6 +19,11 @@ angular.module('advertiser').factory('DoubleClickTag', [
             this.script = this.tag[0];
             this.noscript = $(this.tag[1]);
             this.noscript_contents = $(this.noscript.contents()[0].textContent);
+
+            this.img = this.noscript_contents[0].children[0];
+            this.img_src = this.img.getAttribute('src');
+            this.w = this.img.getAttribute('width');
+            this.h = this.img.getAttribute('height');
         };
         JavascriptTag.prototype.insertMacros = function(){
             // First inject macros into script portion
@@ -37,16 +42,6 @@ angular.module('advertiser').factory('DoubleClickTag', [
             // objects back to HTML string, so have to do this instead.
             return $(script).prop('outerHTML') + '<noscript>' +
                 $(a).prop('outerHTML') + '</noscript>';
-        };
-        JavascriptTag.prototype.getDimensions = function() {
-            //actual <a><img></img></a> tag is stored as text in noscript
-            var img = this.noscript_contents[1];
-            var width = img.getAttribute('width');
-            var height = img.getAttribute('height');
-            return {
-                h: Number(height),
-                w: Number(width)
-            };
         };
         return {
             Javascript: JavascriptTag

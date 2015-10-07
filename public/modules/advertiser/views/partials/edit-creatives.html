@@ -14,7 +14,7 @@
             </div>
         </tab>
         <tab heading="DoubleClick">
-            <doubleclick-creative-uploader></doubleclick-creative-uploader>
+            <doubleclick-creative-uploader campaign="campaign" on-processing-complete="onProcessingComplete()"></doubleclick-creative-uploader>
         </tab>
     </tabset>
 </fieldset>
@@ -32,10 +32,15 @@
             </thead>
             <tbody ng-repeat="creativegroup in campaign.creativegroups">
                 <tr ng-repeat="creative in creativegroup.creatives">
-                    <td><img src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
+                    <td><img src="{{ creative.url }}" class="smallthumbnail"/></td>
                     <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a></p></td>
                     <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
-                    <td><p class="form-control-static"><a href="#" editable-url="creative.click_url" onaftersave="update()" e-required>{{ creative.click_url }}</a></p></td>
+                    <td>
+                        <p class="form-control-static">
+                            <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required>{{ creative.click_url }}</a>
+                            <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
+                        </p>
+                    </td>
                     <td><button type="button" ng-click="remove(creativegroup, creative)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button></td>
                 </tr>
             </tbody>

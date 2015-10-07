@@ -42,7 +42,7 @@ angular.module('advertiser').directive('creativeUploader', [
                     if (filter.name === 'mimetypeFilter'){
                         scope.creative_upload_error = 'File must be JPG, PNG or GIF';
                     } else if (filter.name === 'sizeFilter'){
-                        scope.creative_upload_error = 'File must be less than 60 KB';
+                        scope.creative_upload_error = 'File must be less than 120 KB';
                     }
                 };
 

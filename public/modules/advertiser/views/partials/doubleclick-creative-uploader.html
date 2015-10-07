@@ -1,8 +1,25 @@
 <div>
     <fieldset>
-        <textarea name="dfa_tag" data-ng-model="dfa_tag" id="dfa_tag" class="form-control" placeholder="Paste Javascript Tag Here"></textarea>
+        <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
+        <form id="doubleClickForm" name="doubleClickForm">
+            <div class="form-group">
+                <label class="col-sm-3">Name *</label>
+                <div class="col-sm-9 controls">
+                    <input name="Name" type="text" data-ng-model="creative_name" id="creative_name" class="form-control" placeholder="Name this creative!" required="required">
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <div class="form-group">
+                <label class="col-sm-3">Javascript Tag *</label>
+                <div class="controls col-sm-9">
+                    <textarea name="dfa_tag" rows="4" data-ng-model="dfa_tag" id="dfa_tag" class="form-control" placeholder="Paste Javascript Tag Here" required="required"></textarea>
+                </div>
+            </div>
+        </form>
     </fieldset>
     <div class="row text-center">
-        <button ng-click="insertMacros()" class="btn btn-primary">Insert Cliques Macros</button>
+        <button ng-click="processAndUpload()" class="btn btn-primary"><span class="icon-cloud-upload mr"></span>
+            Analyze & Upload</button>
     </div>
 </div>
