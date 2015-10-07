@@ -213,7 +213,16 @@
                     <div id="step5" ng-show="wizard.active(5)">
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
-                            <creative-uploader wizardstep="step5" uploader="creative_uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                            <tabset>
+                                <tab heading="Cliques Hosted">
+                                    <div class="row">
+                                        <creative-uploader wizardstep="step5" uploader="creative_uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                                    </div>
+                                </tab>
+                                <tab heading="DoubleClick">
+                                    <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                                </tab>
+                            </tabset>
                         </fieldset>
                         <ul class="pager">
                             <li class="previous">

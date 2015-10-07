@@ -10,7 +10,8 @@
             <div class="form-group">
                 <label class="col-sm-3">Name *</label>
                 <div class="col-sm-9 controls">
-                    <input name="Name" type="text" data-ng-model="creative_name" id="creative_name" class="form-control" placeholder="Name this creative!" required="required">
+                    <input name="creative_name" type="text" data-ng-model="creative_name" id="creative_name" class="form-control" placeholder="Name this creative!" required data-parsley-excluded="true">
+                    <span ng-show="validateInput('creative_name', 'required')" class="text-danger">This field is required</span>
                 </div>
             </div>
             <br/>
@@ -18,17 +19,19 @@
             <div class="form-group">
                 <label class="col-sm-3">Javascript Tag *</label>
                 <div class="controls col-sm-9">
-                    <textarea name="dfa_tag" rows="4" data-ng-model="dfa_tag" id="dfa_tag" class="form-control" placeholder="Paste Javascript Tag Here" required="required"></textarea>
+                    <textarea name="dfa_tag" rows="4" data-ng-model="dfa_tag" id="dfa_tag" class="form-control" placeholder="Paste Javascript Tag Here" required data-parsley-excluded="true"></textarea>
+                    <span ng-show="validateInput('dfa_tag', 'required')" class="text-danger">This field is required</span>
                 </div>
             </div>
         </form>
     </fieldset>
-    <div class="row text-center">
+    <div class="row text-right">
         <button ng-click="processTag()" class="btn btn-primary">
             Verify & Prepare for Upload
         </button>
     </div>
     <div ng-if="creatives.length">
+        <p><strong>DCM Tags To Upload</strong></p>
         <table ng-if="creatives.length" class="table">
             <thead>
                 <tr>
@@ -53,7 +56,7 @@
             </tbody>
         </table>
     </div>
-    <div class="row text-center">
+    <div class="row text-right">
         <button ng-click="upload()" ng-show="creatives.length" class="btn btn-primary">
             <span class="icon-cloud-upload mr"></span>
             Upload

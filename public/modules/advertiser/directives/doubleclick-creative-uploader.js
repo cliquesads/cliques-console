@@ -8,7 +8,6 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
         return {
             restrict: 'E',
             scope: {
-                campaign: '=',
                 onUpload: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/doubleclick-creative-uploader.html',
@@ -18,10 +17,18 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                 // creative queue
                 scope.creatives = [];
 
+                $('#doubleClickForm').parsley().destroy();
+
+                scope.submitted = false;
+                scope.validateInput = function(name, type) {
+                    var input = scope.doubleClickForm[name];
+                    return (input.$dirty || scope.submitted) && input.$error[type];
+                };
+
                 // Validates tag & creative form, inserts macros & adds to creative queue
                 scope.processTag = function(){
-                    var valid = $('#doubleClickForm').parsley().validate();
-                    if (valid){
+                    scope.submitted = true;
+                    if (scope.doubleClickForm.$valid){
                         // Validate that the tag is proper DCM Javascript
                         try {
                             var js_tag = new DoubleClickTag.Javascript(scope.dfa_tag);
@@ -46,9 +53,17 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                                 url: js_tag.img_src
                             };
                             scope.creatives.push(creative);
+
+                            // Now clean up form
+                            scope.submitted = false;
                             scope.dfa_tag = '';
                             scope.creative_name = '';
+                            scope.doubleClickForm.$setPristine();
+                            // Have to do this for the wizard step, built-in validation and
+                            // Parsely don't play well together
                         }
+                    } else {
+                        return false;
                     }
                 };
 
