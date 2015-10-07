@@ -68,6 +68,7 @@ module.exports = function(db) {
 
             advertiser.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -92,6 +93,7 @@ module.exports = function(db) {
                 {'upsert': true},
                 function (err, advertiser) {
                     if (err) {
+                        console.log(err);
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
@@ -116,6 +118,7 @@ module.exports = function(db) {
             advertiser = _.extend(advertiser, req.body);
             advertiser.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -132,7 +135,6 @@ module.exports = function(db) {
                             service.publishers.updateBidder(campaign._id);
                         });
                     });
-
                 }
             });
         },
@@ -143,6 +145,7 @@ module.exports = function(db) {
             var advertiser = req.advertiser;
             advertiser.remove(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });

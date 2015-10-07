@@ -38,6 +38,7 @@ module.exports = function(db) {
             }
             publisherModels.Publisher.find(req.query, function (err, publishers) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -54,6 +55,7 @@ module.exports = function(db) {
             publisher.user = [req.user];
             publisher.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -77,6 +79,7 @@ module.exports = function(db) {
                 req.body,
                 {'upsert': true},
                 function (err, publisher) {
+                    console.log(err);
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -102,6 +105,7 @@ module.exports = function(db) {
             publisher = _.extend(publisher, req.body);
             publisher.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -124,6 +128,7 @@ module.exports = function(db) {
             var publisher = req.publisher;
             publisher.remove(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
