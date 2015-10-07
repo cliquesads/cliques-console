@@ -3,7 +3,7 @@
 function insertMacros(url){
     // insert click param & macro right before ord param
     // TODO: this seems super fragile, needs fixing
-    url = url.replace(';ord',';click=${CLICK_URL};ord');
+    url = url.replace(';ord=[timestamp]',';click=${CLICK_URL};ord=[timestamp]');
     // [timestamp] comes pretty standard with most DFA tags
     url = url.replace('[timestamp]','${CACHEBUSTER}');
     return url;
@@ -13,6 +13,8 @@ function insertMacros(url){
 angular.module('advertiser').factory('DoubleClickTag', [
     function() {
         var JavascriptTag = function(tag){
+            // replace newlines
+            tag = tag.replace(/(?:\r\n|\r|\n)/g, '');
             this.tag = $(tag);
             this.script = this.tag[0];
             this.noscript = $(this.tag[1]);
@@ -33,8 +35,8 @@ angular.module('advertiser').factory('DoubleClickTag', [
 
             // Don't know why you can't just use jQuery to cast array of HTML
             // objects back to HTML string, so have to do this instead.
-            return $(script).prop('outerHTML') + '<noscript>\"' +
-                $(a).prop('outerHTML') + '\"</noscript>';
+            return $(script).prop('outerHTML') + '<noscript>' +
+                $(a).prop('outerHTML') + '</noscript>';
         };
         JavascriptTag.prototype.getDimensions = function() {
             //actual <a><img></img></a> tag is stored as text in noscript
@@ -47,7 +49,7 @@ angular.module('advertiser').factory('DoubleClickTag', [
             };
         };
         return {
-            javascript: JavascriptTag
+            Javascript: JavascriptTag
         };
     }
 ]);
