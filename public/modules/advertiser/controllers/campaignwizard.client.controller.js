@@ -78,34 +78,40 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
             }
         };
 
+        $scope.onDCMUpload = function(creatives){
+            $scope.dcm_creatives = creatives;
+            $scope.uploads_completed = true;
+        };
+
         /**
          * Method called to submit Advertiser to API
          * @returns {boolean}
          */
         $scope.createCampaign = function() {
-            if (this.campaignForm.$valid) {
-                $scope.loading = true;
-                // Construct advertiser JSON to POST to API
-                var creatives = AdvertiserUtils.getCreativesFromUploadQueue(uploader);
-                var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
-                // now create new advertiser object
-                var campaign = this.campaign;
+            //if (this.campaignForm.$valid) {
+            $scope.loading = true;
+            // Construct advertiser JSON to POST to API
+            var creatives = AdvertiserUtils.getCreativesFromUploadQueue(uploader);
 
-                // convert target arrays to weightedSchema format
-                campaign = AdvertiserUtils.convertAllTargetArrays(campaign);
+            // also get creatives from DCM Queue
+            creatives = creatives.concat($scope.dcm_creatives);
 
-                campaign.creativegroups = creativegroups;
-                var advertiser = $scope.ngDialogData.advertiser;
-                advertiser.campaigns.push(campaign);
-                advertiser.$update(function(){
-                    $scope.closeThisDialog('Success');
-                }, function (errorResponse){
-                    $scope.loading = false;
-                    $scope.creation_error = errorResponse.data.message;
-                });
-            } else {
-                return false;
-            }
+            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
+            // now create new advertiser object
+            var campaign = this.campaign;
+
+            // convert target arrays to weightedSchema format
+            campaign = AdvertiserUtils.convertAllTargetArrays(campaign);
+
+            campaign.creativegroups = creativegroups;
+            var advertiser = $scope.ngDialogData.advertiser;
+            advertiser.campaigns.push(campaign);
+            advertiser.$update(function(){
+                $scope.closeThisDialog('Success');
+            }, function (errorResponse){
+                $scope.loading = false;
+                $scope.creation_error = errorResponse.data.message;
+            });
         };
 
         $scope.validateInput = function(name, type) {

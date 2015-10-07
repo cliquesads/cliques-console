@@ -271,8 +271,17 @@
                         </div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
-                            <div ng-repeat="fileItem in uploader.queue">
-                                <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                            <div ng-repeat="fileItem in creative_uploader.queue">
+                                <div class="col-sm-4 text-center">
+                                    <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
+                                    <img src="{{ fileItem.url }}" class="smallthumbnail">
+                                </div>
+                            </div>
+                            <div ng-repeat="creative in dcm_creatives">
+                                <div class="col-sm-4 text-center">
+                                    <div class="col-sm-12"><em>{{ creative.name }}</em></div>
+                                    <img src="{{ creative.url }}" class="smallthumbnail">
+                                </div>
                             </div>
                         </div>
                         <ul class="pager">

@@ -143,9 +143,16 @@
         <div id="step4" ng-show="wizard.active(4)">
             <legend>Add some creatives</legend>
             <small><em class="text-muted">You can also skip and add these later</em></small>
-            <fieldset>
-                <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
-            </fieldset>
+            <tabset>
+                <tab heading="Cliques Hosted">
+                    <div class="row">
+                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                    </div>
+                </tab>
+                <tab heading="DoubleClick">
+                    <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                </tab>
+            </tabset>
             <ul class="pager">
                 <li class="previous">
                     <a href="#" ng-click="wizard.go(3)">
@@ -183,7 +190,16 @@
             <fieldset>
                 <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="fileItem in uploader.queue">
-                    <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                    <div class="col-sm-4 text-center">
+                        <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
+                        <img src="{{ fileItem.url }}" class="smallthumbnail">
+                    </div>
+                </div>
+                <div ng-repeat="creative in dcm_creatives">
+                    <div class="col-sm-4 text-center">
+                        <div class="col-sm-12"><em>{{ creative.name }}</em></div>
+                        <img src="{{ creative.url }}" class="smallthumbnail">
+                    </div>
                 </div>
             </fieldset>
             <ul class="pager">

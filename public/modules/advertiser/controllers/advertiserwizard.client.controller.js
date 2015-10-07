@@ -154,8 +154,5 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 $scope.creation_error = errorResponse.data.message;
             });
         };
-        //else {
-        //        return false;
-        //    }
 	}
 ]);
