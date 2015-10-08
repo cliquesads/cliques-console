@@ -74,7 +74,7 @@ Mailer.prototype.sendMailToGroup = function(subject, templateName, data, groupNa
             // Send single email to all users
             // Could loop through and send multiple emails to individual users
             // but no need to right now
-            var to = group.users.map(function(user){ return user.email });
+            var to = group.users.map(function(user){ return user.email; });
             self.sendMail(subject, templateName, data, to);
         });
 };
@@ -87,5 +87,5 @@ Mailer.prototype.sendMailToGroup = function(subject, templateName, data, groupNa
  * @param {User} user instance of user model
  */
 Mailer.prototype.sendMailToUser = function(subject, templateName, data, user){
-    self.sendMail(subject, templateName, data, user.email);
+    this.sendMail(subject, templateName, data, user.email);
 };

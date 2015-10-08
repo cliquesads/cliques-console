@@ -8,7 +8,7 @@
 	</ul>
 </h3>
 
-<section data-ng-controller="PublisherWizardController">
+<section>
     <div class="panel panel-default">
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ site.start_date }}, End date = {{ site.end_date }}</div>-->
@@ -30,11 +30,11 @@
                             <small class="text-muted">Your site's Clique determines what type of advertisers get to bid on your impressions.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                            <h4>5. Pages & Placements</h4>
+                            <h4>4. Pages & Placements</h4>
                             <small class="text-muted">Describe the page on your site where you'd like to place ads. You can add more pages later.</small>
                         </li>
                         <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                            <h4>6. Review & Submit</h4>
+                            <h4>5. Review & Submit</h4>
                             <small class="text-muted"></small>
                         </li>
                     </ol>
@@ -47,7 +47,7 @@
                             <div class="form-group">
                                 <label>Name *</label>
                                 <div class="controls">
-                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Outdoor Lyfestyle Magz LLC" required="required">
+                                    <input name="name" type="text" data-ng-model="publisher.name" id="name" data-parsley-group="step1" class="form-control" placeholder="Outdoor Lyfestyle Magz LLC" required="required">
                                     <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
@@ -56,14 +56,18 @@
                                 <label>Website *</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">http://</span>
-                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="outdoorlyfeindustriez.com" required="required">
+                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="publisher.website" id="website" data-parsley-group="step1" class="form-control" placeholder="outdoorlyfeindustriez.com" required="required">
                                 </div>
                             </div>
                             <br/>
                             <div class="form-group">
+                                <label>Logo</label>
+                                <logo-uploader model="publisher" uploader="uploader"></logo-uploader>
+                            </div>
+                            <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
-                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
+                                    <input name="description" type="text" data-ng-model="publisher.description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Publisher">
                                 </div>
                             </div>
                         </fieldset>
@@ -83,7 +87,7 @@
                                 <label>Name *</label>
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        <input type="text" placeholder="{{ name }}" disabled="" class="form-control" ng-show="sameAsPub.name">
+                                        <input type="text" placeholder="{{ publisher.name }}" disabled="" class="form-control" ng-show="sameAsPub.name">
                                         <input type="text" ng-hide="sameAsPub.name" name="site.name" id="site.name" data-ng-model="site.name" data-parsley-group="step2" placeholder="Backcountry Stand-up Enduro Dot Com" ng-required="!sameAsPub.name" class="form-control" />
                                     </div>
                                     <div class="col-sm-4">
@@ -106,7 +110,7 @@
                                     <div class="col-sm-8">
                                         <div class="input-group">
                                             <span class="input-group-addon">http://</span>
-                                            <input type="text" placeholder="{{ website }}" disabled="" class="form-control" ng-show="sameAsPub.domain_name">
+                                            <input type="text" placeholder="{{ publisher.website }}" disabled="" class="form-control" ng-show="sameAsPub.domain_name">
                                             <input ng-hide="sameAsPub.domain_name" name="domain_name" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid domain name." data-ng-model="site.domain_name" id="domain_name" data-parsley-group="step2" class="form-control" placeholder="backcountrystandupenduro.com" ng-required="!sameAsPub.domain_name">
                                         </div>
                                     </div>
@@ -161,6 +165,11 @@
 
                     <div id="step3" ng-show="wizard.active(3)">
                         <legend>Choose the Clique that best describes your site</legend>
+                        <p>
+                            <em class="text-muted">
+                                Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/58-choosing-a-clique" target="_blank">here</a>
+                            </em>
+                        </p>
                         <fieldset>
                             <input style="display: None" type="text" name="site.clique" id="site.clique" data-ng-model="site.clique" data-parsley-group="step3" placeholder="{{ site.clique }}" required="required" class="form-control" />
                             <!--<p class="form-control-static">{{ site.clique }}</p>-->

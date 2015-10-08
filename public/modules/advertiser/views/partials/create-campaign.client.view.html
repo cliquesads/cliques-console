@@ -64,11 +64,26 @@
 
         <div id="step2" ng-show="wizard.active(2)">
             <legend>Choose a Clique</legend>
+            <p>
+                <em class="text-muted">
+                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
+                </em>
+            </p>
             <fieldset>
                 <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                 <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
-                <div class="form-group">
+                <div class="form-group col-md-6">
                     <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                </div>
+                <div ng-show="campaign.clique" class="col-md-6 box-placeholder">
+                    <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
+                    <site-tree sites="sites" clique="campaign.clique"></site-tree>
+                    <div ng-show="sites.length == 0" class="text-center">
+                        <span class="fa fa-meh-o fa-2x"></span>
+                        <h4>Lame</h4>
+                        <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
+                        <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
+                    </div>
                 </div>
             </fieldset>
             <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
@@ -128,9 +143,16 @@
         <div id="step4" ng-show="wizard.active(4)">
             <legend>Add some creatives</legend>
             <small><em class="text-muted">You can also skip and add these later</em></small>
-            <fieldset>
-                <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
-            </fieldset>
+            <tabset>
+                <tab heading="Cliques Hosted">
+                    <div class="row">
+                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                    </div>
+                </tab>
+                <tab heading="DoubleClick">
+                    <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                </tab>
+            </tabset>
             <ul class="pager">
                 <li class="previous">
                     <a href="#" ng-click="wizard.go(3)">
@@ -168,7 +190,16 @@
             <fieldset>
                 <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="fileItem in uploader.queue">
-                    <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                    <div class="col-sm-4 text-center">
+                        <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
+                        <img src="{{ fileItem.url }}" class="smallthumbnail">
+                    </div>
+                </div>
+                <div ng-repeat="creative in dcm_creatives">
+                    <div class="col-sm-4 text-center">
+                        <div class="col-sm-12"><em>{{ creative.name }}</em></div>
+                        <img src="{{ creative.url }}" class="smallthumbnail">
+                    </div>
                 </div>
             </fieldset>
             <ul class="pager">

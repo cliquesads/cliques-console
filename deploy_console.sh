@@ -3,6 +3,7 @@
 source ./activate_production.sh
 nvm use 0.12.0
 npm install
+rm -rf ./public/dist/*
 grunt build
 
 if [ ! -d $HOME"/repositories/cliques-config" ]; then

@@ -47,6 +47,15 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             });
 		};
 
+        $scope.update = function() {
+            var advertiser = $scope.advertiser;
+            advertiser.$update(function() {
+                $location.path('advertiser/' + advertiser._id);
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
         $scope.advertiserBasics = function(){
             ngDialog.open({
                 template: 'modules/advertiser/views/partials/advertiser-inline.html',

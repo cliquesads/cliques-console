@@ -54,6 +54,20 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             return creativegroups;
         },
 
+        updateCreativeGroups: function(newCreativeGroups, campaign){
+            newCreativeGroups.forEach(function (crg) {
+                var ind = _.findIndex(campaign.creativegroups, function (cg) {
+                    return cg.w === crg.w && cg.h === crg.h;
+                });
+                // if creativegroup of same size exists, add to this creative group
+                if (ind > -1) {
+                    campaign.creativegroups[ind].creatives = campaign.creativegroups[ind].creatives.concat(crg.creatives);
+                } else {
+                    campaign.creativegroups.push(crg);
+                }
+            });
+        },
+
         /**
          * Converts array of weighted targets with whole target object in each element
          * to array of objects that conform with respective weightedTargetSchema

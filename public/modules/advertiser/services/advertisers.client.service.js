@@ -11,4 +11,19 @@ angular.module('advertiser').factory('Advertiser', ['$resource',
 		    }
         );
 	}
-]);
+])
+.factory('CampaignActivator', ['$http',
+        function($http){
+            var activator = {};
+            activator.activate = function(params){
+                var path = '/advertiser/' + params.advertiserId + '/campaign/' + params.campaignId + '/activate';
+                return $http.put(path);
+            };
+            activator.deactivate = function(params){
+                var path = '/advertiser/' + params.advertiserId + '/campaign/' + params.campaignId + '/deactivate';
+                return $http.put(path);
+            };
+            return activator;
+        }
+    ]
+);

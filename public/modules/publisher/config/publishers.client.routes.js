@@ -8,7 +8,8 @@ angular.module('publisher').config(['$stateProvider',
 		state('app.listPublishers', {
 			url: '/publisher',
 			title: 'List Publishers',
-			templateUrl: 'modules/publisher/views/list-publisher.client.view.html'
+			templateUrl: 'modules/publisher/views/list-publisher.client.view.html',
+            controller: 'PublisherController'
 		}).
 		state('app.createPublisher', {
 			url: '/publisher/create',

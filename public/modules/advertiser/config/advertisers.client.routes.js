@@ -8,7 +8,8 @@ angular.module('advertiser').config(['$stateProvider',
 		state('app.listAdvertiser', {
 			url: '/advertiser',
 			title: 'List Advertiser',
-			templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html'
+			templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
+            controller: 'AdvertiserController'
 		}).
 		state('app.createAdvertiser', {
 			url: '/advertiser/create',

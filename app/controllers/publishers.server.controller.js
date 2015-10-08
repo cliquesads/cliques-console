@@ -5,6 +5,7 @@
  */
 var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
+    mongoose = require('mongoose'),
     tags = node_utils.tags,
     errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
@@ -13,6 +14,7 @@ var node_utils = require('cliques_node_utils'),
 // Global vars to render action beacon tags
 var config = require('config');
 var exchangeHostname = config.get('Exchange.http.external.hostname');
+var exchangeSecureHostname = config.get('Exchange.https.external.hostname');
 var exchangePort = config.get('Exchange.http.external.port');
 
 module.exports = function(db) {
@@ -34,8 +36,9 @@ module.exports = function(db) {
             if (req.user.roles.indexOf('admin') === -1){
                 req.query.user = req.user.id;
             }
-            publisherModels.Publisher.apiQuery(req.query, function (err, publishers) {
+            publisherModels.Publisher.find(req.query, function (err, publishers) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -49,9 +52,10 @@ module.exports = function(db) {
          */
         create: function (req, res) {
             var publisher = new publisherModels.Publisher(req.body);
-            publisher.user = req.user;
+            publisher.user = [req.user];
             publisher.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -75,6 +79,7 @@ module.exports = function(db) {
                 req.body,
                 {'upsert': true},
                 function (err, publisher) {
+                    console.log(err);
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -100,6 +105,7 @@ module.exports = function(db) {
             publisher = _.extend(publisher, req.body);
             publisher.save(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -122,6 +128,7 @@ module.exports = function(db) {
             var publisher = req.publisher;
             publisher.remove(function (err) {
                 if (err) {
+                    console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
@@ -151,7 +158,7 @@ module.exports = function(db) {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.roles.indexOf('admin') === -1){
-                if (req.publisher.user.id != req.user.id) {
+                if (req.publisher.user.filter(function(u){return u.id == req.user.id;}).length === 0){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
@@ -160,9 +167,29 @@ module.exports = function(db) {
             next();
         },
 
+        site: {
+            getSitesInClique: function(req, res){
+                var sites = [];
+                var cliqueId = req.param('cliqueId');
+                publisherModels.Publisher.find({"sites.clique": cliqueId}, function(err, pubs){
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        pubs.forEach(function(pub){
+                            sites = sites.concat(pub.sites.filter(function(site){ return site.clique === cliqueId; }));
+                        });
+                        res.json(sites);
+                    }
+                });
+            }
+        },
+
         placement: {
             getTag: function (req, res) {
                 var tag = new tags.PubTag(exchangeHostname,{
+                    secure_hostname: exchangeSecureHostname,
                     port: exchangePort,
                     secure: JSON.parse(req.query.secure)
                 });

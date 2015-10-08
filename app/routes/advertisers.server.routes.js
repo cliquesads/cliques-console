@@ -15,6 +15,12 @@ module.exports = function(app){
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
 
+    app.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
+        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.activate);
+
+    app.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
+        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.deactivate);
+
     app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
 

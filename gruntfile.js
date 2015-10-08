@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		serverViews: ['app/views/**/*.*'],
 		serverJS: ['gruntfile.js', 'server.js', 'config/**/*.js', 'app/**/*.js'],
 		clientViews: ['public/modules/**/views/**/*.html'],
-		clientJS: ['public/js/*.js', 'public/modules/**/*.js'],
+		clientJS: ['public/config.js','public/application.js','public/modules/*/*.js','public/modules/*/*[!tests]*/*.js'],
 		// clientCSS: ['public/modules/**/*.css'],
 		clientCSS: ['public/dist/application.min.css', 'public/modules/**/*.css'],
 		clientLESS:  ['public/less/**/*.less', 'public/modules/**/*.less'],
@@ -119,13 +119,26 @@ module.exports = function(grunt) {
 				src: watchFiles.clientCSS
 			}
 		},
+        concat: {
+            options: {
+                // define a string to put between each file in the concatenated output
+                separator: '; \n'
+            },
+            dist: {
+                // the files to concatenate
+                src: '<%= vendorJavaScriptFiles %>',
+                // the location of the resulting JS file
+                dest: 'public/dist/vendor.js'
+            }
+        },
 		uglify: {
 			production: {
 				options: {
 					mangle: false
 				},
 				files: {
-					'public/dist/application.min.js': 'public/dist/application.js'
+					'public/dist/application.min.js': 'public/dist/application.js',
+                    'public/dist/vendor.min.js': 'public/dist/vendor.js'
 				}
 			}
 		},
@@ -163,7 +176,7 @@ module.exports = function(grunt) {
 		ngAnnotate: {
 			production: {
 				files: {
-					'public/dist/application.js': '<%= applicationJavaScriptFiles %>'
+					'public/dist/application.js': watchFiles.clientJS
 				}
 			}
 		},
@@ -212,7 +225,7 @@ module.exports = function(grunt) {
 		var init = require('./config/init')();
 		var config = require('./config/config');
 
-		grunt.config.set('applicationJavaScriptFiles', config.assets.js);
+		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
 		grunt.config.set('applicationCSSFiles', config.assets.css);
 	});
 
@@ -229,7 +242,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['env:development' /* THIS IS A HACK, DUE TO HOW CONFIG IS SET UP (ASSETS.JS) YOU HAVE TO SET ENV=DEV OTHERWISE JS WILL NOT BUILD AT ALL*/,'loadConfig', 'ngAnnotate','uglify', /*'cssmin'*/ 'less' ]);
+	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less' ]);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

@@ -26,7 +26,7 @@ exports.authorizeAccessCode = function(req, res) {
             if (valid){
                 res.json({accesscode: accesscode._id});
             } else {
-                res.status(400).send({message: 'Invalid Code'})
+                res.status(400).send({message: 'Invalid Code'});
             }
         }
     });

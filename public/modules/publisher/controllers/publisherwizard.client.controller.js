@@ -9,12 +9,14 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'Publisher',
     'Advertiser',
     'getCliqueTree',
+    'FileUploader',
     'BID_FLOOR_SETTINGS',
     'PUBLISHER_TOOLTIPS',
     'REGEXES',
     'CREATIVE_SIZES',
     'OPENRTB',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
+    'LOGO',
+	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -43,9 +45,19 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // This is our API control variable
         $scope.my_tree = tree = {};
 
+        $scope.uploader = new FileUploader({
+            url: 'logos'
+        });
+
         // Set mins & maxes
         $scope.min_base_bid = BID_FLOOR_SETTINGS.min_bid_floor;
         $scope.max_base_bid = BID_FLOOR_SETTINGS.max_bid_floor;
+        $scope.publisher = {
+            name: '',
+            website: '',
+            description: '',
+            logo_url: LOGO.default_secure_url
+        };
         $scope.site = {
             name:           '',
             description:    '',
@@ -76,10 +88,10 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                 $scope.loading = true;
                 var site = this.site;
                 if (this.sameAsPub.name){
-                    site.name = this.name;
+                    site.name = this.publisher.name;
                 }
                 if (this.sameAsPub.domain_name){
-                    site.domain_name = this.website;
+                    site.domain_name = this.publisher.website;
                 }
                 //TODO: Set page clique to site clique for now, might want to make
                 //TODO: separate option later
@@ -93,9 +105,10 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     p.h = Number(dims[1]);
                 });
                 var publisher = new Publisher({
-                    name:           this.name,
-                    description:    this.description,
-                    website:        'http://' + this.website,
+                    name:           this.publisher.name,
+                    description:    this.publisher.description,
+                    website:        'http://' + this.publisher.website,
+                    logo_url:           this.publisher.logo_url,
                     sites: [site]
                 });
                 publisher.$create(function(response){

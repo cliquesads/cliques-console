@@ -148,18 +148,15 @@ module.exports = function(db) {
 		});
 	});
 
-	if (process.env.NODE_ENV === 'secure') {
+	if (process.env.NODE_ENV === 'production') {
 		// Log SSL usage
 		console.log('Securely using https protocol');
 
-		// Load SSL key and certificate
-		var privateKey = fs.readFileSync('./config/sslcerts/key.pem', 'utf8');
-		var certificate = fs.readFileSync('./config/sslcerts/cert.pem', 'utf8');
-
 		// Create HTTPS Server
 		var httpsServer = https.createServer({
-			key: privateKey,
-			cert: certificate
+            key: fs.readFileSync('./cliques-config/cert/star_cliquesads_com.key'),
+            cert: fs.readFileSync('./cliques-config/cert/star_cliquesads_com.crt'),
+            ca: fs.readFileSync('./cliques-config/cert/DigiCertCA.crt')
 		}, app);
 
 		// Return HTTPS server instance

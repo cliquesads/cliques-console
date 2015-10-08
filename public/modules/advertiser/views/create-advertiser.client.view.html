@@ -7,8 +7,7 @@
 	  </li>
 	</ul>
 </h3>
-
-<section data-ng-controller="AdvertiserWizardController">
+<section>
     <div class="panel panel-default">
         <!--DEBUGGING-->
         <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
@@ -51,7 +50,7 @@
                             <div class="form-group">
                                 <label>Name *</label>
                                 <div class="controls">
-                                    <input name="name" type="text" data-ng-model="name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
+                                    <input name="name" type="text" data-ng-model="advertiser.name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
                                     <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
                                 </div>
                             </div>
@@ -59,15 +58,19 @@
                             <div class="form-group">
                                 <label>Website *</label>
                                 <div class="controls">
-                                    <input name="website" type="url" data-ng-model="website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <input name="website" type="url" data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
                                     <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
                                 </div>
                             </div>
                             <br/>
                             <div class="form-group">
+                                <label>Logo</label>
+                                <logo-uploader model="advertiser" uploader="logo_uploader"></logo-uploader>
+                            </div>
+                            <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
-                                    <input name="description" type="text" data-ng-model="description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
+                                    <input name="description" type="text" data-ng-model="advertiser.description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
                                 </div>
                             </div>
                         </fieldset>
@@ -125,11 +128,26 @@
 
                     <div id="step3" ng-show="wizard.active(3)">
                         <legend>Choose the Clique that best describes your campaign</legend>
+                        <p>
+                            <em class="text-muted">
+                                Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
+                            </em>
+                        </p>
                         <fieldset>
                             <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                             <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
-                            <div class="form-group">
+                            <div class="form-group col-md-7">
                                 <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                            </div>
+                            <div ng-show="campaign.clique" class="col-md-5 box-placeholder">
+                                <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
+                                <site-tree sites="sites" clique="campaign.clique"></site-tree>
+                                <div ng-show="sites.length == 0" class="text-center">
+                                    <span class="fa fa-meh-o fa-2x"></span>
+                                    <h4>Lame</h4>
+                                    <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
+                                    <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
+                                </div>
                             </div>
                         </fieldset>
                         <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
@@ -195,7 +213,16 @@
                     <div id="step5" ng-show="wizard.active(5)">
                         <legend>Now add some creatives to your campaign</legend>
                         <fieldset>
-                            <creative-uploader wizardstep="step5" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                            <tabset>
+                                <tab heading="Cliques Hosted">
+                                    <div class="row">
+                                        <creative-uploader wizardstep="step5" uploader="creative_uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                                    </div>
+                                </tab>
+                                <tab heading="DoubleClick">
+                                    <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                                </tab>
+                            </tabset>
                         </fieldset>
                         <ul class="pager">
                             <li class="previous">
@@ -216,9 +243,9 @@
                         <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Advertiser&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
-                            <div class="col-sm-2">Name</div><div class="col-sm-10">{{ name }}</div>
-                            <div class="col-sm-2">Website</div><div class="col-sm-10">{{ website }}</div>
-                            <div class="col-sm-2">Description</div><div class="col-sm-10">{{ description || &apos;empty&apos; }}</div>
+                            <div class="col-sm-2">Name</div><div class="col-sm-10">{{ advertiser.name }}</div>
+                            <div class="col-sm-2">Website</div><div class="col-sm-10">{{ advertiser.website }}</div>
+                            <div class="col-sm-2">Description</div><div class="col-sm-10">{{ advertiser.description || &apos;empty&apos; }}</div>
                         </div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
@@ -244,8 +271,17 @@
                         </div>
                         <div class="col-md-12 box-placeholder">
                             <h4>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
-                            <div ng-repeat="fileItem in uploader.queue">
-                                <div class="col-sm-4"><b>{{ fileItem.file.name }}</b></div><div class="col-sm-8"><span class="icon-cursor mr"></span>{{ fileItem.click_url }}</div>
+                            <div ng-repeat="fileItem in creative_uploader.queue">
+                                <div class="col-sm-4 text-center">
+                                    <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
+                                    <img src="{{ fileItem.url }}" class="smallthumbnail">
+                                </div>
+                            </div>
+                            <div ng-repeat="creative in dcm_creatives">
+                                <div class="col-sm-4 text-center">
+                                    <div class="col-sm-12"><em>{{ creative.name }}</em></div>
+                                    <img src="{{ creative.url }}" class="smallthumbnail">
+                                </div>
                             </div>
                         </div>
                         <ul class="pager">

@@ -25,7 +25,12 @@ var ApplicationConfiguration = (function() {
         'angularFileUpload',
         'xeditable',
         'ngDialog',
-        'bootstrap-tagsinput'
+        'bootstrap-tagsinput',
+        'ivh.treeview',
+        'angulartics',
+        'angulartics.mixpanel',
+        'datatables',
+        'akoenig.deckgrid'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

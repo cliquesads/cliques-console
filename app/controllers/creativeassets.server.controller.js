@@ -5,7 +5,8 @@ var auth = require('cliques_node_utils').google.auth,
 var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
 var PROJECT_ID = 'mimetic-codex-781';
 var BUCKET = 'cliquesads-creativeassets-us';
-var BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
+// Use non-secure URL for now, secureURL is virtual field on creative model
+var BASE_URL = 'http://storage.googleapis.com/'+BUCKET+'/';
 
 module.exports = function(db) {
     return {
