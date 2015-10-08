@@ -343,8 +343,9 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
     return function (req, res) {
         var group;
         try {
-            group = pipelineBuilder.getGroup(req);
+             group = pipelineBuilder.getGroup(req);
         } catch (e) {
+            console.log("error in group: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
@@ -353,6 +354,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
         try {
             match = pipelineBuilder.getMatch(req);
         } catch (e) {
+            console.log("error in match: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
@@ -374,6 +376,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
             ]);
         query.exec(function(err, hourlyAdStats){
             if (err) {
+                console.log("error in query: " + err);
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
@@ -426,10 +429,9 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
     self.advertiserModels.Advertiser.find(filter_query, function(err, advertisers){
         var ids = [];
         advertisers.forEach(function(doc){
-            ids.push(doc._id);
+            ids.push(doc.id);
         });
-
-        req.query.advertiser = '{in}' + ids.join(',');
+        req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
         return self._getManyWrapper(self.genPipelineBuilder)(req, res);
     });
 };
@@ -451,9 +453,9 @@ HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
     self.publisherModels.Publisher.find(filter_query, function(err, publishers){
         var ids = [];
         publishers.forEach(function(doc){
-            ids.push(doc._id);
+            ids.push(doc.id);
         });
-        req.query.publisher = '{in}' + ids.join(',');
+        req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
         return self._getManyWrapper(self.genPipelineBuilder)(req, res);
     });
 };
