@@ -1,4 +1,6 @@
 <section data-ng-controller="AdminDashboardController">
+    <em>Lifetime Stats</em>
+    <br/><br/>
     <div class="row">
         <div class="col-lg-3 col-sm-6">
             <!-- START widget-->
@@ -61,6 +63,9 @@
             </div>
         </div>
     </div>
+    <hr/>
+    <em>Graphs & Stuff</em>
+    <br/><br/>
     <div class="row">
         <div class="col-md-6">
             <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
@@ -183,13 +188,10 @@
             </div>
         </div>
     </div>
-    <!--<div class="thumbnail overlay">-->
-        <!--<a href="http://www.cyclocosm.com">Link</a>-->
-        <!--<iframe src="http://www.cyclocosm.com"></iframe>-->
-    <!--</div>-->
+    <hr/>
+    <em>Creative Showcase</em>
+    <br/><br/>
     <div class="row">
-        <hr/>
-        <h3 class="text-center">Creative Showcase</h3>
         <div class="container-fluid">
             <div deckgrid="" source="creatives" cardtemplate="dist/grid-masonry-deck-card.html" class="deckgrid clearfix"></div>
         </div>
