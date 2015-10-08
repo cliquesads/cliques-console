@@ -29,7 +29,8 @@ var ApplicationConfiguration = (function() {
         'ivh.treeview',
         'angulartics',
         'angulartics.mixpanel',
-        'datatables'
+        'datatables',
+        'akoenig.deckgrid'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

@@ -8,7 +8,25 @@
 angular.module('core').controller('AdminDashboardController',
     ['$scope','$location','$window','Advertiser','Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
         function($scope, $location, $window, Advertiser, Publisher,HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
-            $scope.advertisers = Advertiser.query();
+            $scope.creatives = [];
+            $scope.advertisers = Advertiser.query(function(advertisers){
+                advertisers.forEach(function(adv){
+                    adv.campaigns.forEach(function(camp){
+                        camp.creativegroups.forEach(function(crg){
+                            crg.creatives.forEach(function(cr){
+                                var description = camp.name + ' - ' + cr.name;
+                                $scope.creatives.push({
+                                    id: cr._id,
+                                    title: adv.name,
+                                    description: description,
+                                    src: cr.url
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+
             $scope.publishers = Publisher.query();
             HourlyAdStat.query({}).then(function(response){
                 $scope.adStats = response.data;

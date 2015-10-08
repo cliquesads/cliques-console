@@ -89,7 +89,8 @@ module.exports = {
             'public/lib/angulartics/dist/angulartics.min.js',
             'public/lib/angulartics-mixpanel/dist/angulartics-mixpanel.min.js',
             'public/lib/datatables/media/js/jquery.dataTables.min.js',
-            'public/lib/angular-datatables/dist/angular-datatables.min.js'
+            'public/lib/angular-datatables/dist/angular-datatables.min.js',
+            'public/lib/angular-deckgrid/angular-deckgrid.js'
         ]
     },
     mongodb: {

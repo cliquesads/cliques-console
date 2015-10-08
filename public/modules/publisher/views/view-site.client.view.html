@@ -200,7 +200,7 @@
                         <tbody>
                         <tr ng-repeat="row in campaignData">
                             <td><img src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Site!</em></td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
                             <td>{{ row.spend | currency:"$":"0" }}</td>
                             <td>{{ row.imps | number: 0 }}</td>
                             <td>{{ row.spend / row.imps * 1000 | currency:"$":"2"  }}</td>
@@ -224,8 +224,8 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="row in placementData">
-                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.page.name }}<em ng-hide="row._id.page.name ">Deleted Page!</em></td>
-                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.placement.name }}<em ng-hide="row._id.placement.name ">Deleted Placement!</em></td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.page.name }}<em ng-hide="row._id.page.name ">Deleted Page</em></td>
+                            <td style="max-width: 150px; word-wrap: break-word">{{ row._id.placement.name }}<em ng-hide="row._id.placement.name ">Deleted Placement</em></td>
                             <td>{{ row._id.placement.w }}{{ row._id.placement.w ? 'x' : ''}}{{ row._id.placement.h }}</td>
                             <td>{{ row.spend | currency:"$":"0" }}</td>
                             <td>{{ row.imps | number: 0 }}</td>

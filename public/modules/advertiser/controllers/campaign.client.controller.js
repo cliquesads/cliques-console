@@ -29,7 +29,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     Notify.alert('Error activating campaign: ' + errorResponse.message,{status: 'danger'});
                 });
             }
-
         };
 
         $scope.validateInput = function(name, type) {
@@ -196,7 +195,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     $scope.dtOptions_site.withOption('paging', false);
                     $scope.dtOptions_site.withOption('searching', false);
                     $scope.dtOptions_site.withOption('scrollX', true);
-                    $scope.dtOptions_site.withOption('order', [[3,'desc']]);
+                    $scope.dtOptions_site.withOption('order', [[2,'desc']]);
                     // Not entirely sure if this is necessary
                     $scope.dtColumnDefs_site = [
                         DTColumnDefBuilder.newColumnDef(0),
@@ -204,7 +203,8 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                         DTColumnDefBuilder.newColumnDef(2),
                         DTColumnDefBuilder.newColumnDef(3),
                         DTColumnDefBuilder.newColumnDef(4),
-                        DTColumnDefBuilder.newColumnDef(5)
+                        DTColumnDefBuilder.newColumnDef(5),
+                        DTColumnDefBuilder.newColumnDef(6)
                     ];
                     $scope.siteData = response.data;
                 }, function(err){
