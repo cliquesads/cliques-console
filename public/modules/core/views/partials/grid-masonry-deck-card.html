@@ -1,0 +1,20 @@
+<div class="photo">
+   <a href="{{ card.link }}">
+      <!--<div data-ng-if="card.showIndex" class="photo-index">-->
+         <!--<p>The $index of the card is</p>-->
+         <!--<p class="balloon-wrapper">-->
+            <!--<span class="balloon">{{card.description}}</span>-->
+         <!--</p>-->
+      <!--</div>-->
+      <div class="photo-wrapper">
+         <img src="" data-ng-src="{{card.src}}" data-imageloaded="" data-loadedclass="photoloaded" class="img-responsive" />
+         <div class="photo-loader">
+            <div class="sk-spinner sk-spinner-rotating-plane"></div>
+         </div>
+      </div>
+      <div class="photo-description">
+         <h4>{{card.title}}</h4>
+         <p>{{card.description}}</p>
+      </div>
+   </div>
+</div>
