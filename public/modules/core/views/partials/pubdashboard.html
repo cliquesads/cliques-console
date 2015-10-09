@@ -139,7 +139,7 @@
                                 <tbody>
                                 <tr ng-repeat="row in advertiserData">
                                     <td><img src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Publisher!</em></td>
+                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
                                     <td>{{ row.imps | number: 0 }}</td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>

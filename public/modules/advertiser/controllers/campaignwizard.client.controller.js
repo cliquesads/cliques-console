@@ -94,7 +94,9 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
             var creatives = AdvertiserUtils.getCreativesFromUploadQueue(uploader);
 
             // also get creatives from DCM Queue
-            creatives = creatives.concat($scope.dcm_creatives);
+            if ($scope.dcm_creatives){
+                creatives = creatives.concat($scope.dcm_creatives);
+            }
 
             var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             // now create new advertiser object
