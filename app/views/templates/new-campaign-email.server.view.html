@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+	<p>A new campaign was created by {{ user.displayName }}. You can view the
+        new campaign <a href="https://console.cliquesads.com/#!/advertiser/{{ advertiser.id }}">here.</a></p>
+	<p>Please check all creatives, Clique selection & other parameters to ensure this campaign meets Cliques standards.</p>
+    <p>If so, please activate this campaign & notify the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    <p>If not, please contact the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a> and work with them to resolve any issues.</p>
+	<br>
+	<p>The {{appName}} Support Team</p>
+</body>
+</html>

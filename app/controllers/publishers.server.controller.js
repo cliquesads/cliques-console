@@ -7,15 +7,17 @@ var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
     mongoose = require('mongoose'),
     tags = node_utils.tags,
+    mail = require('./mailer.server.controller'),
     errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
-
 
 // Global vars to render action beacon tags
 var config = require('config');
 var exchangeHostname = config.get('Exchange.http.external.hostname');
 var exchangeSecureHostname = config.get('Exchange.https.external.hostname');
 var exchangePort = config.get('Exchange.http.external.port');
+
+var mailer = new mail.Mailer();
 
 module.exports = function(db) {
     var publisherModels = new models.PublisherModels(db);
@@ -67,6 +69,14 @@ module.exports = function(db) {
                             });
                         }
                         res.status(200).json(pub).send();
+                        if (process.env.NODE_ENV === 'production'){
+                            mailer.sendMailFromUser('New Publisher & Site Created',
+                                'new-publisher-email.server.view.html',
+                                { publisher: pub, user: req.user },
+                                req.user,
+                                'support@cliquesads.com'
+                            );
+                        }
                     });
                 }
             });
@@ -102,6 +112,7 @@ module.exports = function(db) {
          */
         update: function (req, res) {
             var publisher = req.publisher;
+            var initSites = req.publisher.sites;
             publisher = _.extend(publisher, req.body);
             publisher.save(function (err) {
                 if (err) {
@@ -117,6 +128,17 @@ module.exports = function(db) {
                             });
                         }
                         res.status(200).json(pub).send();
+                        // Send internal email notifying of new campaign, if any
+                        if (pub.sites.length > initSites.length){
+                            if (process.env.NODE_ENV === 'production') {
+                                mailer.sendMailFromUser('New Site Created',
+                                    'new-publisher-email.server.view.html',
+                                    { publisher: pub, user: req.user },
+                                    req.user,
+                                    'support@cliquesads.com'
+                                );
+                            }
+                        }
                     });
                 }
             });

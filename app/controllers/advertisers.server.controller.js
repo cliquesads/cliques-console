@@ -8,6 +8,7 @@ var node_utils = require('cliques_node_utils'),
     mongoose = require('mongoose'),
     tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
+    mail = require('./mailer.server.controller'),
     BidderPubSub = node_utils.google.pubsub.BidderPubSub,
 	_ = require('lodash');
 
@@ -21,7 +22,7 @@ if (process.env.NODE_ENV != 'production'){
     pubsub_options = {projectId: 'mimetic-codex-781'};
 }
 var service = new BidderPubSub(pubsub_options);
-
+var mailer = new mail.Mailer();
 
 // Global vars to render action beacon tags
 var config = require('config');
@@ -80,6 +81,15 @@ module.exports = function(db) {
                             });
                         }
                         res.json(adv);
+                        // Now send internal email notifying team of creation
+                        if (process.env.NODE_ENV === 'production'){
+                            mailer.sendMailFromUser('New Advertiser & Campaign Created',
+                                'new-campaign-email.server.view.html',
+                                { advertiser: advertiser, user: req.user },
+                                req.user,
+                                'support@cliquesads.com'
+                            );
+                        }
                     });
                 }
             });
@@ -115,6 +125,7 @@ module.exports = function(db) {
          */
         update: function (req, res) {
             var advertiser = req.advertiser;
+            var initCampaigns = advertiser.campaigns;
             advertiser = _.extend(advertiser, req.body);
             advertiser.save(function (err) {
                 if (err) {
@@ -130,10 +141,22 @@ module.exports = function(db) {
                             });
                         }
                         res.json(adv);
+
+                        // Now publisher update message to bidders
                         //TODO: This is lazy, should figure out whether campaign has changed or not
                         adv.campaigns.forEach(function(campaign){
                             service.publishers.updateBidder(campaign._id);
                         });
+                        // Send internal email notifying of new campaign, if any
+                        if (adv.campaigns.length > initCampaigns.length){
+                            if (process.env.NODE_ENV === 'production') {
+                                mailer.sendMailFromUser('New Campaign Created', 'new-campaign-email.server.view.html',
+                                    {advertiser: advertiser, user: req.user},
+                                    req.user,
+                                    'support@cliquesads.com'
+                                );
+                            }
+                        }
                     });
                 }
             });

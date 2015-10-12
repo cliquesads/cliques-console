@@ -159,8 +159,7 @@ var UserGroupSchema = new Schema({
     name: { type: String, required: true },
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
-mongoose.model('UserGroup', UserSchema);
-
+exports.UserGroup = mongoose.model('UserGroup', UserGroupSchema);
 
 /**
  * Access codes for private beta to allow users to sign up

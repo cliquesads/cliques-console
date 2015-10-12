@@ -11,6 +11,7 @@ module.exports = {
 	},
 	port: process.env.PORT || 5000,
 	templateEngine: 'swig',
+    templatePath: 'app/views/templates',
 	sessionSecret: 'MEAN',
 	sessionCollection: 'sessions',
 	assets: {
@@ -101,7 +102,6 @@ module.exports = {
         db: cliquesConfig.get('Console.mongodb.exchange.db')
     },
     mailer: {
-        from: cliquesConfig.get('Email.Support.username'),
         options: {
             service: cliquesConfig.get('Email.Support.service'),
             auth: {
