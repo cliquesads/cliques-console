@@ -12,9 +12,10 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     'FileUploader',
     'AdvertiserUtils',
     'BID_SETTINGS',
+    'REGEXES',
     'ADVERTISER_TOOLTIPS',
     'LOGO',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, getSitesInCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS, LOGO) {
+	function($scope, $stateParams, $location, $q, Authentication, Advertiser, getCliqueTree, getSitesInCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS,REGEXES,ADVERTISER_TOOLTIPS, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -22,6 +23,10 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+
+        // something weird about storing regexes as scope vars, they don't bind
+        // to the template properly to have to convert to string
+        $scope.domain_regex = String(REGEXES.domain);
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
