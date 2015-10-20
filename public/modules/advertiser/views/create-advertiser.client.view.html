@@ -58,7 +58,7 @@
                             <div class="form-group">
                                 <label>Website *</label>
                                 <div class="controls">
-                                    <input name="website" type="url" data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="http://www.example.com" required="required">
+                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="www.example.com" required="required">
                                     <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
                                 </div>
                             </div>
@@ -137,7 +137,7 @@
                             <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                             <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
                             <div class="form-group col-md-7">
-                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
                             </div>
                             <div ng-show="campaign.clique" class="col-md-5 box-placeholder">
                                 <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>

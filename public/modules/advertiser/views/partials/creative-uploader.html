@@ -23,8 +23,8 @@
                     <thead>
                     <tr>
                         <th width="30%">Name</th>
-                        <th>Dimensions</th>
-                        <th ng-show="uploader.isHTML5">Size</th>
+                        <!--<th>Dimensions</th>-->
+                        <!--<th ng-show="uploader.isHTML5">Size</th>-->
                         <th>Click URL</th>
                         <th>Actions</th>
                         <th ng-show="uploader.isHTML5">Progress</th>
@@ -36,10 +36,10 @@
                         <td>
                             <strong>{{ item.file.name }}</strong>
                         </td>
-                        <td>
-                            {{ item.dimensions }}
-                        </td>
-                        <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>
+                        <!--<td>-->
+                            <!--{{ item.dimensions }}-->
+                        <!--</td>-->
+                        <!--<td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024|number:2 }} KB</td>-->
                         <td>
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
