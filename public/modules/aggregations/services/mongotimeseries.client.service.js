@@ -4,9 +4,17 @@
 function getDatesArray(startDate, stopDate, unit){
     var dateArray = [];
     var currentDate = startDate;
+    var oldOffset, newOffset;
     while (currentDate.isBefore(stopDate) || currentDate.isSame(stopDate)) {
         dateArray.push( currentDate.valueOf() );
+        oldOffset = currentDate._offset;
         currentDate.add(1,unit + 's');
+        newOffset = currentDate._offset;
+        // Have to do this for days when DST comes on/off, else day timestamps will not line up
+        // TODO: This will break if hours are used as units, find better solution
+        if (oldOffset != newOffset){
+            currentDate.add(newOffset - oldOffset, 'minutes');
+        }
     }
     return dateArray;
 }
