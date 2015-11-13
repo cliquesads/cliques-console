@@ -109,6 +109,15 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             });
         };
 
+        $scope.creativePreview = function(creative){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/advertiser/views/partials/creative-preview.html',
+                controller: 'creativePreviewController',
+                data: {creative: creative, advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+        };
+
         // ######################################### //
         // ######### GRAPH VARS & FUNCTIONS ######## //
         // ######################################### //

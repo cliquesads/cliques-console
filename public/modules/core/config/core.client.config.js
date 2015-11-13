@@ -61,4 +61,13 @@ angular.module('core').run(['Menus',
         twistieExpandedTpl: '<span class="fa fa-minus-square fa-lg"></span>',
         twistieLeafTpl: '&#9679;'
     });
-}]);
+}])
+.config(function($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist([
+            // Allow same origin resource loads.
+            'self',
+            // Allow loading from our assets domain.  Notice the difference between * and **.
+            'https://adsrvs.cliquesads.com/**'
+        ]);
+    }
+);
