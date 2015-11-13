@@ -110,8 +110,12 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         };
 
         $scope.creativePreview = function(creative){
+            var dialogClass = 'dialogwidth800';
+            if (creative.w >= 800) {
+                dialogClass = 'dialogwidth1000';
+            }
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
+                className: 'ngdialog-theme-default ' + dialogClass,
                 template: 'modules/advertiser/views/partials/creative-preview.html',
                 controller: 'creativePreviewController',
                 data: {creative: creative, advertiser: $scope.advertiser, campaign: $scope.campaign}
