@@ -1,38 +1,48 @@
-<h4>Creative Preview</h4>
-<div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
-<div>
-    <p><small><em class="text-muted">Click to test landing page</em></small></p>
-    <iframe id="creativePreview" src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
-</div>
-<div>
-    <fieldset>
-        <h4>Creative Details</h4>
-        <div class="form-horizontal">
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Name</label>
-                <div class="col-sm-6">
-                    <p class="form-control-static">
-                        <a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a>
-                    </p>
+<div id="wrapper">
+    <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+    <div class="{{ creative.w < 350 ? 'col-sm-5': 'col-sm-12'}}">
+        <h4>Creative Preview</h4>
+        <p><small><em class="text-muted">Click to test landing page</em></small></p>
+        <iframe id="creativePreview" src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
+    </div>
+    <div class="col-sm-7">
+        <fieldset>
+            <h4>Creative Details</h4>
+            <div class="form-horizontal well well-sm">
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Name</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Dimensions</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{ creative.w }}x{{ creative.h }}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Type</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{ creative.type ? creative.type : 'hosted' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Click URL</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required>{{ creative.click_url }}</a>
+                            <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Dimensions</label>
-                <div class="col-sm-8">
-                    <p class="form-control-static">
-                        {{ creative.w }}x{{ creative.h }}
-                    </p>
-                </div>
-            </div>
-            <div class="form-group m0">
-                <label class="col-sm-4 control-label">Click URL</label>
-                <div class="col-sm-8">
-                    <p class="form-control-static">
-                        <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required>{{ creative.click_url }}</a>
-                        <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </fieldset>
+        </fieldset>
+    </div>
 </div>
