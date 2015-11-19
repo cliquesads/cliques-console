@@ -57,8 +57,9 @@
                             <br/>
                             <div class="form-group">
                                 <label>Website *</label>
-                                <div class="controls">
-                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="www.example.com" required="required">
+                                <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="example.com" required="required">
                                     <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
                                 </div>
                             </div>
