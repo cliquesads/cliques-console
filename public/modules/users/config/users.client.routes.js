@@ -8,7 +8,7 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
         state('loggedout',{
                 // url: '/',
                 abstract: true,
-                templateUrl: 'modules/core/views/core.client.view.html',
+                templateUrl: 'modules/users/views/users.client.view.html',
                 resolve: helper.resolveFor('modernizr', 'icons'),
                 data: {
                     requireLogin: false

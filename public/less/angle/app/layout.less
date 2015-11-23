@@ -55,6 +55,31 @@ html, body {
     display: none;
   }
 
+  > .loggedout {
+    margin-top: @navbar-hg;
+    position: relative;
+    height: 100%;
+    margin-left: 0;
+    // overflow: hidden;
+    z-index: @z-index-main-section;
+    margin-bottom: @footer-hg !important; // ensure a space for the footer
+  }
+
+  > img.bg {
+    /* Set rules to fill background */
+    height: 100%;
+    min-width: 1024px;
+
+    /* Set up proportionate scaling */
+    width: 100%;
+
+    z-index: -1;
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
   // Contains the main sidebar
   > .aside {
     // visibility: hidden;
