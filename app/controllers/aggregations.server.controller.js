@@ -362,7 +362,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
         var query = self.aggregationModels.HourlyAdStat
             .aggregate([
                 { $match: match },
-                { $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
+                //{ $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
                 { $group: {
                         _id: group,
                         bids: {$sum: "$bids"},
