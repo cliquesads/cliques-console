@@ -38,10 +38,9 @@ angular.module('core')
     modules: [
       // { name: 'toaster', files: ['/lib/angularjs-toaster/toaster.js','/lib/angularjs-toaster/toaster.css'] }
     ]
-
   })
     .constant('CREATIVE_SIZES', {
-        supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100', '970x90']
+        supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100','468x60','970x90']
     })
     .constant('REGEXES', {
         domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z\-]{2,})+$/
