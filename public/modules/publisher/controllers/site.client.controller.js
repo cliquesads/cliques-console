@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('publisher').controller('SiteController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Publisher','DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS) {
+    'Authentication', 'Publisher','DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS','Notify',
+	function($scope, $stateParams, $location, Authentication, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS, Notify) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
@@ -16,6 +16,14 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 			});
 		};
 
+        function setSite(){
+            var i = _.findIndex($scope.publisher.sites, function(site){
+                return site._id === $stateParams.siteId;
+            });
+            //$scope.site as pointer to site in publisher.sites array
+            //this way, all Publisher resource methods will work
+            $scope.site = $scope.publisher.sites[i];
+        }
         //$scope.findPublishers = function() {
         //    // on query return, get site spend data to augment $scope.publishers
         //    $scope.publishers = Publisher.query();
@@ -25,12 +33,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 .$promise
                 .then(function(publisher){
                     $scope.publisher = publisher;
-                    var i = _.findIndex($scope.publisher.sites, function(site){
-                        return site._id === $stateParams.siteId;
-                    });
-                    //$scope.site as pointer to site in publisher.sites array
-                    //this way, all Publisher resource methods will work
-                    $scope.site = $scope.publisher.sites[i];
+                    setSite();
                 });
 		};
 
@@ -55,6 +58,37 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 });
             }
         });
+
+        // Only accessible to admins
+        $scope.toggleSiteActive = function(){
+            if (!this.site.active){
+                this.site.pages.forEach(function(page){
+                    page.active = false;
+                    page.placements.forEach(function(placement){
+                        placement.active = false;
+                    })
+                });
+                this.publisher.$update(function(response){
+                    Notify.alert('Your site was successfully deactivated.',{});
+                    setSite();
+                }, function(errorResponse){
+                    Notify.alert('Error deactivating site: ' + errorResponse.message,{status: 'danger'});
+                });
+            } else {
+                this.site.pages.forEach(function(page){
+                    page.active = true;
+                    page.placements.forEach(function(placement){
+                        placement.active = true;
+                    })
+                });
+                this.publisher.$update(function(response){
+                    Notify.alert('Your site was successfully activated. Let\'s do this thing.',{});
+                    setSite();
+                }, function(errorResponse){
+                    Notify.alert('Error activating site: ' + errorResponse.message,{status: 'danger'});
+                });
+            }
+        };
 
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //

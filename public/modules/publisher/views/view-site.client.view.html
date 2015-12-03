@@ -35,6 +35,21 @@
             <div class="panel-body">
                 <tabset>
                     <tab heading="Basics">
+                        <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
+                            <small><em class="text-muted">Status</em></small>
+                            <div class="form-horizontal">
+                                <div class="form-group m0">
+                                    <label class="col-sm-4 control-label">Active</label>
+                                    <div class="col-sm-8 form-control-static">
+                                        <label class="switch">
+                                            <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
+                                            <span></span>
+                                        </label>
+                                        <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                         <fieldset>
                             <small><em class="text-muted">Basics</em></small>
                             <form editable-form name="siteBasicsInline" onaftersave="update()">
