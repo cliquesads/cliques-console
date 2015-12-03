@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-    <p>{{ placements.length }} new placements{% if placements.length > 1 %}s{% endif %} created by {{ user.displayName }} under
+    <p>{{ placements.length }} new placement{% if placements.length > 1 %}s{% endif %} created by {{ user.displayName }} under
         publisher <a href="https://console.cliquesads.com/#!/publisher/{{ publisher.id }}">{{ publisher.name }}</a></p>
     <ul>
         {% for placement in placements %}
@@ -11,7 +11,7 @@
         {% endfor %}
     </ul>
     <p>Please check these to ensure they meets Cliques standards.</p>
-    <p>If so, please activate these sites & notify the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    <p>If so, please activate these placements & notify the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
     <p>If not, please contact the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a> and work with them to resolve any issues.</p>
     <br>
     <p>The {{appName}} Support Team</p>

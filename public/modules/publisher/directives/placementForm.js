@@ -36,7 +36,7 @@ angular.module('publisher').directive('placementForm', ['CREATIVE_SIZES','OPENRT
                     h: null,
                     w: null,
                     pos: null,
-                    active: true
+                    active: false
                 });
             };
 
