@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+    <p>{{ pages.length }} new page{% if pages.length > 1 %}s{% endif %} created by {{ user.displayName }} under
+        publisher <a href="https://console.cliquesads.com/#!/publisher/{{ publisher.id }}">{{ publisher.name }}</a></p>
+    <ul>
+        {% for page in pages %}
+        <li><a href="https://console.cliquesads.com/#!/publisher/{{ publisher.id }}">{{ page.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <p>Please check these to ensure they meets Cliques standards.</p>
+    <p>If so, please activate these sites & notify the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+    <p>If not, please contact the user at: <a href="mailto:{{ user.email }}">{{ user.email }}</a> and work with them to resolve any issues.</p>
+    <br>
+    <p>The {{appName}} Support Team</p>
+</body>
+</html>

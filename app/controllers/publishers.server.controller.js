@@ -81,38 +81,44 @@ module.exports = function(db) {
                 }
             });
         },
-        /**
-         * Get or create publisher, updating w/ body if exists
-         */
-        updateOrCreate: function (req, res) {
-            publisherModels.Publisher.findOneAndUpdate({'name': req.body.name},
-                req.body,
-                {'upsert': true},
-                function (err, publisher) {
-                    console.log(err);
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    } else {
-                        publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
-                            if (err) {
-                                return res.status(400).send({
-                                    message: errorHandler.getAndLogErrorMessage(err)
-                                });
-                            }
-                            res.status(200).json(pub).send();
-                        });
-                    }
-                }
-            );
-        },
+        ///**
+        // * Get or create publisher, updating w/ body if exists
+        // */
+        //updateOrCreate: function (req, res) {
+        //    publisherModels.Publisher.findOneAndUpdate({'name': req.body.name},
+        //        req.body,
+        //        {'upsert': true},
+        //        function (err, publisher) {
+        //            console.log(err);
+        //            if (err) {
+        //                return res.status(400).send({
+        //                    message: errorHandler.getAndLogErrorMessage(err)
+        //                });
+        //            } else {
+        //                publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
+        //                    if (err) {
+        //                        return res.status(400).send({
+        //                            message: errorHandler.getAndLogErrorMessage(err)
+        //                        });
+        //                    }
+        //                    res.status(200).json(pub).send();
+        //                });
+        //            }
+        //        }
+        //    );
+        //},
         /**
          * Update existing publisher
          */
         update: function (req, res) {
-            var publisher = req.publisher;
-            var initSites = req.publisher.sites;
+            // Capture initial publisher state to diff against new.
+            // Use this to determine whether to call email hooks or not.
+            var publisher = req.publisher,
+                initSites = req.publisher.sites,
+                initPages = _.reduce(initSites, function(result, site){ return result.concat(site.pages); }, []),
+                initPlacements = _.reduce(initPages, function(result, page){ return result.concat(page.placements); }, []);
+
+            // Now extend with request body
             publisher = _.extend(publisher, req.body);
             publisher.save(function (err) {
                 if (err) {
@@ -121,22 +127,29 @@ module.exports = function(db) {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
+                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub) {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
                         res.status(200).json(pub).send();
-                        // Send internal email notifying of new campaign, if any
-                        if (pub.sites.length > initSites.length){
-                            if (process.env.NODE_ENV === 'production') {
-                                mailer.sendMailFromUser('New Site Created',
-                                    'new-publisher-email.server.view.html',
-                                    { publisher: pub, user: req.user },
-                                    req.user,
-                                    'support@cliquesads.com'
-                                );
+
+                        // ============== EMAIL HOOKS ==============//
+                        if (process.env.NODE_ENV === 'production') {
+                            var newSites = pub.sites,
+                                newPages = _.reduce(newSites, function (result, site) {return result.concat(site.pages);}, []),
+                                newPlacements = _.reduce(newPages, function (result, page) { return result.concat(page.placements); }, []);
+                            // Send internal email notifying of new campaign, if any
+                            if (newSites.length > initSites.length) {
+                                var sitesCreated = _.difference(newSites, initSites);
+                                mailer.sendMailFromUser('New Site(s) Created','new-sites-email.server.view.html',{publisher: pub, user: req.user, sites: sitesCreated},req.user,'support@cliquesads.com');
+                            } else if (newPages.length > initPages.length) {
+                                var pagesCreated = _.difference(newPages, initPages);
+                                mailer.sendMailFromUser('New Page(s) Created','new-pages-email.server.view.html',{publisher: pub, user: req.user, pages: pagesCreated},req.user,'support@cliquesads.com');
+                            } else if (newPages.length > initPages.length) {
+                                var placementsCreated = _.difference(newPlacements, initPlacements);
+                                mailer.sendMailFromUser('New Page(s) Created','new-placements-email.server.view.html',{publisher: pub, user: req.user, placements: placementsCreated},req.user,'support@cliquesads.com');
                             }
                         }
                     });

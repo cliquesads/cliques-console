@@ -6,6 +6,7 @@
     <table class="table table-striped">
         <thead>
         <tr>
+            <th data-ng-hide="wizardstep"></th>
             <th>Name *</th>
             <th>Dimensions *</th>
             <th>Position *</th>
@@ -14,6 +15,9 @@
         </thead>
         <tbody>
             <tr ng-repeat="placement in page.placements">
+                <td data-ng-hide="wizardstep">
+                    <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
+                </td>
                 <td><input type="text" data-ng-model="placement.name" data-parsley-group="{{ wizardstep }}" placeholder="ex. Right Sidebar 300x250" required="required" class="form-control"/></td>
                 <td>
                     <select name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
