@@ -7,7 +7,6 @@ module.exports = function(app){
     /* ---- Publisher API Routes ---- */
     app.route('/publisher')
         .get(users.requiresLogin, publishers.getMany)
-        .put(users.requiresLogin, publishers.hasAuthorization, publishers.updateOrCreate)
         .post(users.requiresLogin, publishers.create);
 
     app.route('/sitesinclique/:cliqueId')

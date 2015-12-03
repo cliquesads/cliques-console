@@ -6,8 +6,7 @@ angular.module('publisher').factory('Publisher', ['$resource',
 		return $resource('publisher/:publisherId', { publisherId: '@_id'},
             {
 			    update: { method: 'PATCH'},
-                create: { method: 'POST'},
-                updateOrCreate: { method: 'PUT'}
+                create: { method: 'POST'}
 		    }
         );
 	}
