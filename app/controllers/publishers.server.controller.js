@@ -136,7 +136,7 @@ module.exports = function(db) {
                         res.status(200).json(pub).send();
 
                         // ============== EMAIL HOOKS ==============//
-                        //if (process.env.NODE_ENV === 'production') {
+                        if (process.env.NODE_ENV === 'production') {
                             var newSites = pub.sites,
                                 newPages = _.reduce(newSites, function (result, site) {return result.concat(site.pages);}, []),
                                 newPlacements = _.reduce(newPages, function (result, page) { return result.concat(page.placements); }, []);
@@ -151,7 +151,7 @@ module.exports = function(db) {
                                 var placementsCreated = _.difference(newPlacements, initPlacements);
                                 mailer.sendMailFromUser('New Placement(s) Created','new-placements-email.server.view.html',{publisher: pub, user: req.user, placements: placementsCreated},req.user,'support@cliquesads.com');
                             }
-                        //}
+                        }
                     });
                 }
             });
