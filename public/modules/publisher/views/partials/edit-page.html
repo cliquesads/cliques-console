@@ -1,5 +1,21 @@
 <h4>{{ page.name || 'New Page' }}</h4>
 <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+<!--Only show activate controls for admins right now-->
+<fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
+    <div class="form-horizontal">
+        <div class="form-group m0">
+            <label class="col-sm-1 control-label">Active</label>
+            <div class="col-sm-2 form-control-static">
+                <label class="switch">
+                    <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
+                    <span></span>
+                </label>
+                <div class="label" ng-class="page.active ? 'label-success':'label-default'">{{ page.active ? "Active":"Inactive"}}</div>
+            </div>
+            <div class="col-sm-9"></div>
+        </div>
+    </div>
+</fieldset>
 <fieldset>
     <form id="pageForm">
         <div class="form-group m0 col-sm-2">
