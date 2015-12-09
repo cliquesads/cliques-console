@@ -4,13 +4,7 @@
         <small class="text-muted"><span class="icon-share"></span>&nbsp;&nbsp;{{ campaign.clique }}</small>
     </div>
     {{campaign.name}}
-    <ul class="breadcrumb">
-        <li><a ui-sref="app.home">Home</a>
-        </li>
-        <li ng-repeat="state in $state.$current.path" ng-switch="$last" ng-if="!state.abstract" ng-class="{active: $last}"><a ng-switch-when="false" href="#{{state.url.format($stateParams)}}">{{state.title}}</a>
-            <span ng-switch-when="true">{{state.title}}</span>
-        </li>
-    </ul>
+    <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
 </h3>
 <section data-ng-init="findOne()">
     <!--<div>-->
