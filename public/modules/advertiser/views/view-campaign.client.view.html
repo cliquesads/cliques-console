@@ -193,6 +193,19 @@
                             </div>
                         </fieldset>
                         <fieldset>
+                            <small><em class="text-muted">Sites</em></small>
+                            <div class="form-group m0">
+                                <label class="col-sm-4 control-label">Test</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">
+                                        <strong>
+                                            <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/placementtargets"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
                             <small><em class="text-muted">Geographical</em></small>
                             <div class="form-group m0">
                                 <label class="col-sm-4 control-label">DMAs</label>

@@ -22,3 +22,9 @@ angular.module('publisher').factory('getSitesInCliqueTree', ['$http', function($
         return $http.get('/sitesinclique/' + clique_id,{})
     }
 }]);
+
+angular.module('publisher').factory('getSitesInCliqueBranch', ['$http', function($http){
+    return function(clique_id){
+        return $http.get('/sitesincliquebranch/' + clique_id,{})
+    }
+}]);

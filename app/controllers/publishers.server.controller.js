@@ -21,6 +21,7 @@ var mailer = new mail.Mailer();
 
 module.exports = function(db) {
     var publisherModels = new models.PublisherModels(db);
+    var cliqueModels = new models.CliquesModels(db);
 
     return {
         /**
@@ -81,32 +82,6 @@ module.exports = function(db) {
                 }
             });
         },
-        ///**
-        // * Get or create publisher, updating w/ body if exists
-        // */
-        //updateOrCreate: function (req, res) {
-        //    publisherModels.Publisher.findOneAndUpdate({'name': req.body.name},
-        //        req.body,
-        //        {'upsert': true},
-        //        function (err, publisher) {
-        //            console.log(err);
-        //            if (err) {
-        //                return res.status(400).send({
-        //                    message: errorHandler.getAndLogErrorMessage(err)
-        //                });
-        //            } else {
-        //                publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
-        //                    if (err) {
-        //                        return res.status(400).send({
-        //                            message: errorHandler.getAndLogErrorMessage(err)
-        //                        });
-        //                    }
-        //                    res.status(200).json(pub).send();
-        //                });
-        //            }
-        //        }
-        //    );
-        //},
         /**
          * Update existing publisher
          */
@@ -218,6 +193,36 @@ module.exports = function(db) {
                         res.json(sites);
                     }
                 });
+            },
+            /**
+             * Gets all sites in request Clique, plus all sites in child Cliques
+             * @param req
+             * @param res
+             */
+            getSitesInCliqueBranch: function(req, res){
+                var sites = [];
+                var cliqueId = req.param('cliqueId');
+                cliqueModels.Clique.find({ ancestors: cliqueId }, function(err, cliques) {
+                    var ids = _.map(cliques, function (clique) {
+                        return clique._id;
+                    });
+                    ids.push(cliqueId);
+                    publisherModels.Publisher.find({"sites.clique": {$in: ids}}, function (err, pubs) {
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        } else {
+                            pubs.forEach(function (pub) {
+                                sites = sites.concat(pub.sites.filter(function (site) {
+                                    return ids.indexOf(site.clique) > -1;
+                                }));
+                            });
+                            sites = _.groupBy(sites, function(site){return site.clique;});
+                            res.json(sites);
+                        }
+                    });
+                });
             }
         },
 
@@ -238,6 +243,5 @@ module.exports = function(db) {
                 });
             }
         }
-
     };
 };

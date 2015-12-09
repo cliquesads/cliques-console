@@ -11,6 +11,8 @@ module.exports = function(app){
 
     app.route('/sitesinclique/:cliqueId')
         .get(users.requiresLogin, users.hasAuthorization(['admin','advertiser']), publishers.site.getSitesInClique);
+    app.route('/sitesincliquebranch/:cliqueId')
+        .get(users.requiresLogin, users.hasAuthorization(['admin','advertiser']), publishers.site.getSitesInCliqueBranch);
 
     app.route('/publisher/:publisherId')
         .get(users.requiresLogin, publishers.hasAuthorization, publishers.read)
