@@ -30,7 +30,8 @@ var ApplicationConfiguration = (function() {
         'angulartics',
         'angulartics.mixpanel',
         'datatables',
-        'akoenig.deckgrid'
+        'akoenig.deckgrid',
+        'ntt.TreeDnD'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
