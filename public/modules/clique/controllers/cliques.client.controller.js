@@ -5,16 +5,25 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
 	function($scope, $stateParams, $location, $http,Authentication, Clique, getCliqueTree, getSitesInCliqueTree, ngDialog) {
 		$scope.authentication = Authentication;
 
+        // This is our API control variable
+        var tree;
+        $scope.my_tree = tree = {};
+
         // Populate tree data for tree visualization
         $scope.cliques = [];
 		$scope.find = function() {
             getCliqueTree($scope);
 		};
 
+        $scope.$watch(function(scope){ return scope.cliques }, function(newVal, oldVal){
+            $scope.my_tree.expand_all();
+        });
+
         $scope.clique = {
             _id: null,
             name: null
         };
+
 
         $scope.set_clique = function(branch) {
             $scope.clique._id = branch.label;
@@ -24,9 +33,7 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
             });
         };
 
-        var tree;
-        // This is our API control variable
-        $scope.my_tree = tree = {};
+
 
         // recursive function to get ancestors to save new clique
         function get_clique_ancestors(branch,ancestors) {

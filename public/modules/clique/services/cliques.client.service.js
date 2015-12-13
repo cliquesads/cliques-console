@@ -62,11 +62,12 @@ angular.module('clique').factory('Clique', ['$resource',
 	}
 ]).
 factory('getCliqueTree', ['Clique', function(Clique){
-        return function(scope){
+        return function(scope, callback){
             Clique.query(function(){
                 // Populate tree data for tree visualization
                 var query_result = Clique.query(function(){
                     scope.cliques = format_cliques_collection_for_tree(query_result);
+                    callback();
                 });
             });
         };
