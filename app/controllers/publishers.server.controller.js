@@ -207,7 +207,7 @@ module.exports = function(db) {
                         return clique._id;
                     });
                     ids.push(cliqueId);
-                    publisherModels.Publisher.find({"sites.clique": {$in: ids}}, function (err, pubs) {
+                    publisherModels.Publisher.find({"sites.clique": {$in: ids}},function (err, pubs) {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -219,7 +219,18 @@ module.exports = function(db) {
                                 }));
                             });
                             sites = _.groupBy(sites, function(site){return site.clique;});
-                            res.json(sites);
+                            // Restructure a tad to make more friendly for client-side tree utils
+                            var tree = [];
+                            Object.keys(sites).forEach(function(clique){
+                                if (sites.hasOwnProperty(clique)){
+                                    tree.push({
+                                        _id: clique,
+                                        name: clique,
+                                        sites: sites[clique]
+                                    });
+                                }
+                            });
+                            res.json(tree);
                         }
                     });
                 });
