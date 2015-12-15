@@ -60,9 +60,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                         },
                         {
                             displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-success btn-sm" ng-click="all_sites.control.target(node)">' +
+                            cellTemplate: '<button type="button" class="btn btn-success btn-sm" ng-click="all_sites.control.target(node)" tooltip="Add to Targets">' +
                             '<i class="fa fa-lg fa-check-circle"></i></button>  ' +
-                            '<button type="button" class="btn btn-danger btn-sm" ng-click="all_sites.control.block(node)">' +
+                            '<button type="button" class="btn btn-danger btn-sm" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
                             '<i class="fa fa-lg fa-minus-circle"></i></button>'
                         }]
                 };
@@ -86,7 +86,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     columns: [
                     {
                         displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-primary btn-sm" ng-click="target_sites.control.remove(node)">' +
+                        cellTemplate: '<button type="button" class="btn btn-sm" ng-click="target_sites.control.remove(node)" tooltip="Remove">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }]
                 };
@@ -110,8 +110,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                     columns: [
                         {
                             displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-danger btn-sm" ng-click="blocked_sites.control.remove(node)">' +
-                            '<i class="fa fa-lg fa-minus-circle"></i></button>'
+                            cellTemplate: '<button type="button" class="btn btn-sm" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+                            '<i class="fa fa-lg fa-remove"></i></button>'
                         }]
                 };
 
