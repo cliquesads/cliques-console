@@ -35,9 +35,11 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.all_sites = {
                     data: [],
                     control: {
-                        addFunction: function (node) {
-                            console.log(node);
-                            alert('Function added in Controller "App.js"');
+                        target: function (node) {
+                            $scope.target_sites.data.push(node);
+                        },
+                        block: function (node) {
+                            $scope.blocked_sites.data.push(node);
                         }
                     },
                     expanding_property: {
@@ -55,6 +57,13 @@ angular.module('advertiser').controller('SiteTargetingController',
                             field: "w",
                             displayName:  'Size',
                             cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
+                        },
+                        {
+                            displayName:  'Actions',
+                            cellTemplate: '<button type="button" class="btn btn-labeled btn-success btn-xs" ng-click="all_sites.control.target(node)">' +
+                            '<span class="btn-label"><i class="fa fa-bullseye"></i></span>Target</button>  ' +
+                            '<button type="button" class="btn btn-labeled btn-danger btn-xs" ng-click="all_sites.control.block(node)">' +
+                            '<span class="btn-label"><i class="fa fa-times"></i></span>Block</button>'
                         }]
                 };
 
