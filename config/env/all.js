@@ -93,7 +93,7 @@ module.exports = {
             'public/lib/datatables/media/js/jquery.dataTables.min.js',
             'public/lib/angular-datatables/dist/angular-datatables.min.js',
             'public/lib/angular-deckgrid/angular-deckgrid.js',
-            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.js'
+            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.js'
         ]
     },
     mongodb: {
