@@ -60,10 +60,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                         },
                         {
                             displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-labeled btn-success btn-xs" ng-click="all_sites.control.target(node)">' +
-                            '<span class="btn-label"><i class="fa fa-bullseye"></i></span>Target</button>  ' +
-                            '<button type="button" class="btn btn-labeled btn-danger btn-xs" ng-click="all_sites.control.block(node)">' +
-                            '<span class="btn-label"><i class="fa fa-times"></i></span>Block</button>'
+                            cellTemplate: '<button type="button" class="btn btn-success btn-sm" ng-click="all_sites.control.target(node)">' +
+                            '<i class="fa fa-lg fa-check-circle"></i></button>  ' +
+                            '<button type="button" class="btn btn-danger btn-sm" ng-click="all_sites.control.block(node)">' +
+                            '<i class="fa fa-lg fa-minus-circle"></i></button>'
                         }]
                 };
 
@@ -73,9 +73,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.target_sites = {
                     data: [],
                     control: {
-                        addFunction: function (node) {
-                            console.log(node);
-                            alert('Function added in Controller "App.js"');
+                        remove: function (node) {
+                            $scope.all_sites.data.push(node);
                         }
                     },
                     expanding_property: {
@@ -85,23 +84,11 @@ angular.module('advertiser').controller('SiteTargetingController',
                         displayName: 'Name'
                     },
                     columns: [
-                        {
-                            displayName: 'Logo',
-                            cellTemplate: '<img src="{{ node.logo_secure_url }}" class="client-logo-xs"/>'
-                        },
-                        {
-                            field:        "Description",
-                            titleStyle:   {
-                                'width': '80pt'
-                            },
-                            titleClass:   'text-center',
-                            cellClass:    'v-middle text-center',
-                            displayName:  'Description'
-                        },
-                        {
-                            displayName:  'Function',
-                            cellTemplate: '<button ng-click="tree.addFunction(node)" class="btn btn-default btn-sm">Added Controller!</button>'
-                        }]
+                    {
+                        displayName:  'Actions',
+                        cellTemplate: '<button type="button" class="btn btn-primary btn-sm" ng-click="target_sites.control.remove(node)">' +
+                        '<i class="fa fa-lg fa-remove"></i></button>'
+                    }]
                 };
 
                 /**
@@ -110,9 +97,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.blocked_sites = {
                     data: [],
                     control: {
-                        addFunction: function (node) {
-                            console.log(node);
-                            alert('Function added in Controller "App.js"');
+                        remove: function (node) {
+                            $scope.all_sites.data.push(node);
                         }
                     },
                     expanding_property: {
@@ -123,22 +109,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                     },
                     columns: [
                         {
-                            displayName: 'Logo',
-                            cellTemplate: '<img src="{{ node.logo_secure_url }}" class="client-logo-xs"/>'
-                        },
-                        {
-                            field:        "Description",
-                            titleStyle:   {
-                                'width': '80pt'
-                            },
-                            titleClass:   'text-center',
-                            cellClass:    'v-middle text-center',
-                            displayName:  'Description',
-                            cellTemplate: "<i class=\"fa {{ !node.description ? 'fa-times text-danger-lter' : 'fa-check text-success' }} text\"></i>"
-                        },
-                        {
-                            displayName:  'Function',
-                            cellTemplate: '<button ng-click="tree.addFunction(node)" class="btn btn-default btn-sm">Added Controller!</button>'
+                            displayName:  'Actions',
+                            cellTemplate: '<button type="button" class="btn btn-danger btn-sm" ng-click="blocked_sites.control.remove(node)">' +
+                            '<i class="fa fa-lg fa-minus-circle"></i></button>'
                         }]
                 };
 

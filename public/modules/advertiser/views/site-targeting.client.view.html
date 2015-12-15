@@ -1,4 +1,4 @@
-<div class="col-sm-6">
+<div class="col-sm-7">
     <div class="panel panel-primary" title="Site Targets">
         <div class="panel-heading">Available Sites</div>
         <div class="panel-body">
@@ -19,11 +19,12 @@
         </div>
     </div>
 </div>
-<div class="col-sm-6">
+<div class="col-sm-5">
     <div class="panel panel-success">
-        <div class="panel-heading">Targets</div>
+        <div class="panel-heading"><i class="fa fa-check-circle"></i>  Targets</div>
         <div class="panel-body">
             <tree-dnd
+                    template-url="dist/sites-tree-table-dnd.html"
                     tree-data="target_sites.data"
                     tree-control="target_sites.control"
                     column-defs="target_sites.columns"
@@ -38,9 +39,10 @@
         </div>
     </div>
     <div class="panel panel-danger">
-        <div class="panel-heading">Blocked</div>
+        <div class="panel-heading"><i class="fa fa-minus-circle"></i>  Blocked</div>
         <div class="panel-body">
             <tree-dnd
+                    template-url="dist/sites-tree-table-dnd.html"
                     tree-data="blocked_sites.data"
                     tree-control="blocked_sites.control"
                     column-defs="blocked_sites.columns"
