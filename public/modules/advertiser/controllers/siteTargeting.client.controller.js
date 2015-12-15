@@ -36,10 +36,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         target: function (node) {
-                            $scope.target_sites.data.push(node);
+                            var parent = $scope.target_sites.control.get_parent(node);
+                            $scope.target_sites.control.add_node(parent, node);
+                            this.remove_node(node);
                         },
                         block: function (node) {
-                            $scope.blocked_sites.data.push(node);
+                            var parent = $scope.blocked_sites.control.get_parent(node);
+                            $scope.blocked_sites.control.add_node(parent, node);
+                            this.remove_node(node);
                         }
                     },
                     expanding_property: {
@@ -74,12 +78,13 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         remove: function (node) {
-                            $scope.all_sites.data.push(node);
+                            var parent = $scope.all_sites.control.get_parent(node);
+                            $scope.all_sites.control.add_node(parent, node);
+                            this.remove_node(node);
                         }
                     },
                     expanding_property: {
                         field: "name",
-                        titleClass: 'text-center',
                         cellClass: 'v-middle',
                         displayName: 'Name'
                     },
@@ -98,12 +103,13 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         remove: function (node) {
-                            $scope.all_sites.data.push(node);
+                            var parent = $scope.all_sites.control.get_parent(node);
+                            $scope.all_sites.control.add_node(parent, node);
+                            this.remove_node(node);
                         }
                     },
                     expanding_property: {
                         field: "name",
-                        titleClass: 'text-center',
                         cellClass: 'v-middle',
                         displayName: 'Name'
                     },
