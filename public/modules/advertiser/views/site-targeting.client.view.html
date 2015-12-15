@@ -3,6 +3,7 @@
         <div class="panel-heading">Available Sites</div>
         <div class="panel-body">
             <tree-dnd
+                    template-url="dist/sites-tree-table-dnd.html"
                     tree-data="all_sites.data"
                     tree-control="all_sites.control"
                     column-defs="all_sites.columns"
@@ -11,8 +12,8 @@
                     enable-drag="true"
                     enable-drop="true"
                     icon-leaf="fa fa-lg fa-tags"
-                    icon-expand="fa fa-lg fa-angle-down"
-                    icon-collapse="fa fa-lg fa-angle-right"
+                    icon-expand="fa fa-lg fa-minus"
+                    icon-collapse="fa fa-lg fa-plus-circle"
             ></tree-dnd>
         </div>
     </div>

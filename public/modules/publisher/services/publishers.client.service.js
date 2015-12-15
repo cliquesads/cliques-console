@@ -38,20 +38,25 @@ angular.module('publisher').factory('Publisher', ['$resource',
         var flattened = [];
         sitesInCliqueBranch.forEach(function(clique){
             var c = _.clone(clique);
+            c.nodeType = 'Clique';
             delete c.sites;
             c.parentId = null;
             flattened.push(c);
             clique.sites.forEach(function(site){
                 var s = _.clone(site);
+                s.nodeType = 'Site';
                 delete s.pages;
                 s.parentId = clique._id;
                 flattened.push(s);
                 site.pages.forEach(function(page){
                     var p = _.clone(page);
+                    p.nodeType = 'Page';
+                    delete p.placements;
                     p.parentId = site._id;
                     flattened.push(p);
                     page.placements.forEach(function(placement){
                         var pl = _.clone(placement);
+                        pl.nodeType = 'Placement';
                         pl.parentId = page._id;
                         flattened.push(pl);
                     });
