@@ -4,67 +4,123 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB',
         function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB){
+
+            /**
+             * Made most sense to wrap treeData in class containing some methods to handle
+             * commonly-used logic around this particular data structure
+             *
+             * @param treeData
+             * @constructor
+             */
+            var SiteTree = function(treeData){
+                this.data = treeData || [];
+            };
+
+            SiteTree.fromResponseData = function(response){
+                var sitesInCliqueBranch = response.data;
+                var flattened = [];
+                sitesInCliqueBranch.forEach(function(clique){
+                    var c = _.clone(clique);
+                    c.nodeType = 'Clique';
+                    delete c.sites;
+                    c.parentId = null;
+                    flattened.push(c);
+                    clique.sites.forEach(function(site){
+                        var s = _.clone(site);
+                        s.nodeType = 'Site';
+                        delete s.pages;
+                        s.parentId = clique._id;
+                        flattened.push(s);
+                        site.pages.forEach(function(page){
+                            var p = _.clone(page);
+                            p.nodeType = 'Page';
+                            delete p.placements;
+                            p.parentId = site._id;
+                            flattened.push(p);
+                            page.placements.forEach(function(placement){
+                                var pl = _.clone(placement);
+                                pl.nodeType = 'Placement';
+                                pl.parentId = page._id;
+                                flattened.push(pl);
+                            });
+                        });
+                    });
+                });
+                var converted_data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
+                return new SiteTree(converted_data);
+            };
+
+            /**
+             * Sort of BS that the Tree DND plugin doesn't have this, so have to write silly little
+             * function just to set the initial expand level.
+             */
+            SiteTree.prototype.setExpandLevel = function(level, _currentLevel, _treeData){
+                var self = this;
+                _treeData = _treeData || self.data;
+                _currentLevel = _currentLevel || 0;
+                _treeData.forEach(function(node){
+                    node.__expanded__ = (_currentLevel < level);
+                    if (node.__children__){
+                        node.__children__ = self.setExpandLevel(level, _currentLevel + 1, node.__children__);
+                    }
+                });
+                return _treeData;
+            };
+
+            /**
+             * Fucking control get_parent doesn't work properly for nested nodes,
+             * so have to write my own function to get parent
+             *
+             * This could be written more elegantly, but it works. JS recursion is wonky.
+             */
+            SiteTree.prototype.getNodeById = function(id, _tree){
+                _tree = _tree || this.data;
+                var parent = null;
+                for (var i=0; i < _tree.length; i++){
+                    var n = _tree[i];
+                    if (n._id === id){
+                        parent = n;
+                        break
+                    } else if (n.__children__){
+                        parent = this.getNodeById(id, n.__children__);
+                        if (parent) break
+                    }
+                }
+                return parent;
+            };
+
+            /**
+             * Adds node & all ancestor nodes to destination treeData.
+             * Assumes that all necessary ancestor nodes are present in origin tree.
+             */
+            //add_node_and_ancestors: function(node, originTreeData, destinationTreeData){
+            //
+            //
+            //},
+
+            $scope.positions = function(posCode){
+                return _.find(OPENRTB.positions, function(pos_obj){
+                    return pos_obj.code === posCode;
+                });
+            };
+
             Campaign.fromStateParams($stateParams, function(err, advertiser, campaign){
                 $scope.advertiser = advertiser;
                 $scope.campaign = campaign;
 
                 /**
-                 * Sort of BS that the Tree DND plugin doesn't have this, so have to write silly little
-                 * function just to set the initial expand level.
-                 */
-                function setExpandLevel(tree, level, _currentLevel){
-                    _currentLevel = _currentLevel || 0;
-                    tree.forEach(function(node){
-                        node.__expanded__ = (_currentLevel < level);
-                        if (node.__children__){
-                            node.__children__ = setExpandLevel(node.__children__, level, _currentLevel + 1);
-                        }
-                    });
-                    return tree;
-                }
-
-                /**
-                 * Fucking control get_parent doesn't work properly for nested nodes,
-                 * so have to write my own function to get parent
-                 */
-                function getActualParent(node, treeData){
-                    if (node.nodeType === 'Clique'){
-                        return null;
-                    }
-                    var parent = null;
-                    for (var i=0; i < treeData.length; i++){
-                        var n = treeData[i];
-                        if (n._id === node.parentId){
-                            parent = n;
-                            break
-                        } else if (n.__children__){
-                            parent = getActualParent(node, n.__children__);
-                            if (parent) break
-                        }
-                    }
-                    return parent;
-                }
-
-                $scope.positions = function(posCode){
-                    return _.find(OPENRTB.positions, function(pos_obj){
-                        return pos_obj.code === posCode;
-                    });
-                };
-
-
-                /**
                  * Namespace for All Available Sites tree vars
                  */
                 $scope.all_sites = {
-                    data: [],
+                    siteTree: null,
                     control: {
                         target: function (node) {
-                            var parent = getActualParent(node, $scope.target_sites.data);
+                            var parent = $scope.target_sites.siteTree.getNodeById(node.parentId);
                             $scope.target_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         },
                         block: function (node) {
-                            var parent = getActualParent(node, $scope.blocked_sites.data);
+                            var parent = $scope.blocked_sites.siteTree.getNodeById(node.parentId);
                             $scope.blocked_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
@@ -98,10 +154,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                  * Namespace for Target Sites tree vars
                  */
                 $scope.target_sites = {
-                    data: [],
+                    siteTree: new SiteTree(),
                     control: {
                         remove: function (node) {
-                            var parent = getActualParent(node, $scope.all_sites.data);
+                            var parent = $scope.all_sites.siteTree.getNodeById(node.parentId);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
@@ -123,10 +179,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                  * Namespace for Blocked Sites tree vars
                  */
                 $scope.blocked_sites = {
-                    data: [],
+                    siteTree: new SiteTree(),
                     control: {
                         remove: function (node) {
-                            var parent = getActualParent(node, $scope.all_sites.data);
+                            var parent = $scope.all_sites.siteTree.getNodeById(node.parentId);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
@@ -145,8 +201,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 };
 
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
-                    var available_sites = $TreeDnDConvert.line2tree(flattenSiteCliques(response.data), '_id', 'parentId');
-                    $scope.all_sites.data = setExpandLevel(available_sites,0);
+                    $scope.all_sites.siteTree = SiteTree.fromResponseData(response);
+                    $scope.all_sites.siteTree.setExpandLevel(1);
                 });
             });
 
