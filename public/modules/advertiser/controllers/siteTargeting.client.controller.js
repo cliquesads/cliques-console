@@ -31,16 +31,18 @@ angular.module('advertiser').controller('SiteTargetingController',
                     if (node.nodeType === 'Clique'){
                         return null;
                     }
+                    var parent = null;
                     for (var i=0; i < treeData.length; i++){
                         var n = treeData[i];
                         if (n._id === node.parentId){
-                            return n;
+                            parent = n;
+                            break
                         } else if (n.__children__){
-                            getActualParent(node, n.__children__);
-                        } else {
-                            return null;
+                            parent = getActualParent(node, n.__children__);
+                            if (parent) break
                         }
                     }
+                    return parent;
                 }
 
                 $scope.positions = function(posCode){
