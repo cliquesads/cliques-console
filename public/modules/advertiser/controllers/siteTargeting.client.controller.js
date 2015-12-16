@@ -102,16 +102,25 @@ angular.module('advertiser').controller('SiteTargetingController',
                 return parent;
             };
 
-            /**
-             * Adds node & all ancestor nodes to this siteTree.
-             * Assumes that all necessary ancestor nodes are present in origin tree.
-             */
-            SiteTree.prototype.addNodeAndAncestors = function(node, originSiteTree){
-
-
+            SiteTree.prototype.getAncestorBranch = function(node, _ancestors){
+                _ancestors = _ancestors || [];
+                var parent = this.control.get_parent(node);
+                if (parent) {
+                    _ancestors.unshift(parent);
+                    return this.getAncestorBranch(parent, _ancestors);
+                } else {
+                    return _ancestors;
+                }
             };
 
-
+            /**
+             * Adds node & all ancestor nodes that don't already exist to this siteTree.
+             * Assumes that all necessary ancestor nodes are present in origin tree.
+             */
+            SiteTree.addNodeAndAncestors = function(node, originSiteTree, destinationSiteTree){
+                var ancestors = originSiteTree.getAncestorBranch(node);
+                var k;
+            };
 
             $scope.positions = function(posCode){
                 return _.find(OPENRTB.positions, function(pos_obj){
@@ -130,6 +139,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                      {
                         target: function (node) {
                             var parent = $scope.target_sites.getNodeById(node.parentId);
+                            SiteTree.addNodeAndAncestors(node, $scope.all_sites, $scope.target_sites);
                             $scope.target_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         },
@@ -216,6 +226,5 @@ angular.module('advertiser').controller('SiteTargetingController',
                     $scope.all_sites.setExpandLevel(1);
                 });
             });
-
         }
 ]);
