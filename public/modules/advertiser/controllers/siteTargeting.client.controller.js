@@ -10,13 +10,27 @@ angular.module('advertiser').controller('SiteTargetingController',
              * commonly-used logic around this particular data structure
              *
              * @param treeData
+             * @param control
+             * @param expanding_property
+             * @param columns
              * @constructor
              */
-            var SiteTree = function(treeData){
+            var SiteTree = function(treeData, control, expanding_property,columns){
                 this.data = treeData || [];
+                this.control = control || {};
+                this.expanding_property = expanding_property || {};
+                this.columns = columns || [];
             };
 
-            SiteTree.fromResponseData = function(response){
+            /**
+             * Loads this.data from API 'sitesincliquesbranch' endpoint response
+             *
+             * Basically flattens returned data, then passes to $TreeDnDConvert function
+             * so it can be prepared for tree
+             *
+             * @param response
+             */
+            SiteTree.prototype.loadResponseData = function(response){
                 var sitesInCliqueBranch = response.data;
                 var flattened = [];
                 sitesInCliqueBranch.forEach(function(clique){
@@ -46,8 +60,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                         });
                     });
                 });
-                var converted_data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-                return new SiteTree(converted_data);
+                this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
             };
 
             /**
@@ -90,13 +103,15 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             /**
-             * Adds node & all ancestor nodes to destination treeData.
+             * Adds node & all ancestor nodes to this siteTree.
              * Assumes that all necessary ancestor nodes are present in origin tree.
              */
-            //add_node_and_ancestors: function(node, originTreeData, destinationTreeData){
-            //
-            //
-            //},
+            SiteTree.prototype.addNodeAndAncestors = function(node, originSiteTree){
+
+
+            };
+
+
 
             $scope.positions = function(posCode){
                 return _.find(OPENRTB.positions, function(pos_obj){
@@ -111,26 +126,25 @@ angular.module('advertiser').controller('SiteTargetingController',
                 /**
                  * Namespace for All Available Sites tree vars
                  */
-                $scope.all_sites = {
-                    siteTree: null,
-                    control: {
+                $scope.all_sites = new SiteTree([],
+                     {
                         target: function (node) {
-                            var parent = $scope.target_sites.siteTree.getNodeById(node.parentId);
+                            var parent = $scope.target_sites.getNodeById(node.parentId);
                             $scope.target_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         },
                         block: function (node) {
-                            var parent = $scope.blocked_sites.siteTree.getNodeById(node.parentId);
+                            var parent = $scope.blocked_sites.getNodeById(node.parentId);
                             $scope.blocked_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
                     },
-                    expanding_property: {
+                    {
                         field: "name",
                         cellClass: 'v-middle',
                         displayName: 'Name'
                     },
-                    columns: [
+                    [
                         {
                             field:        "pos",
                             displayName:  'Position',
@@ -147,62 +161,59 @@ angular.module('advertiser').controller('SiteTargetingController',
                             '<i class="fa fa-lg fa-check-circle"></i></button>  ' +
                             '<button type="button" class="btn btn-danger btn-sm" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
                             '<i class="fa fa-lg fa-minus-circle"></i></button>'
-                        }]
-                };
+                        }
+                    ]
+                );
 
                 /**
-                 * Namespace for Target Sites tree vars
+                 * Target Sites tree vars
                  */
-                $scope.target_sites = {
-                    siteTree: new SiteTree(),
-                    control: {
+                $scope.target_sites = new SiteTree([],
+                    {
                         remove: function (node) {
-                            var parent = $scope.all_sites.siteTree.getNodeById(node.parentId);
+                            var parent = $scope.all_sites.getNodeById(node.parentId);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
                     },
-                    expanding_property: {
+                    {
                         field: "name",
                         cellClass: 'v-middle',
                         displayName: 'Name'
                     },
-                    columns: [
-                    {
+                    [{
                         displayName:  'Actions',
                         cellTemplate: '<button type="button" class="btn btn-sm" ng-click="target_sites.control.remove(node)" tooltip="Remove">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }]
-                };
+                );
 
                 /**
                  * Namespace for Blocked Sites tree vars
                  */
-                $scope.blocked_sites = {
-                    siteTree: new SiteTree(),
-                    control: {
+                $scope.blocked_sites = new SiteTree([],
+                    {
                         remove: function (node) {
-                            var parent = $scope.all_sites.siteTree.getNodeById(node.parentId);
+                            var parent = $scope.all_sites.getNodeById(node.parentId);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
                     },
-                    expanding_property: {
+                    {
                         field: "name",
                         cellClass: 'v-middle',
                         displayName: 'Name'
                     },
-                    columns: [
-                        {
-                            displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-sm" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
-                            '<i class="fa fa-lg fa-remove"></i></button>'
-                        }]
-                };
+                    [{
+                        displayName:  'Actions',
+                        cellTemplate: '<button type="button" class="btn btn-sm" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+                        '<i class="fa fa-lg fa-remove"></i></button>'
+                    }]
+                );
 
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
-                    $scope.all_sites.siteTree = SiteTree.fromResponseData(response);
-                    $scope.all_sites.siteTree.setExpandLevel(1);
+                    $scope.all_sites.loadResponseData(response);
+                    $scope.all_sites.setExpandLevel(1);
                 });
             });
 
