@@ -4,7 +4,6 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB',
         function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB){
-
             /**
              * Made most sense to wrap treeData in class containing some methods to handle
              * commonly-used logic around this particular data structure
@@ -102,6 +101,13 @@ angular.module('advertiser').controller('SiteTargetingController',
                 return parent;
             };
 
+            /**
+             * Gets array of ancestor nodes, each w/ __children__ consisting of
+             * only descendants in specified branch
+             * @param node
+             * @param _ancestors
+             * @returns {*}
+             */
             SiteTree.prototype.getAncestorBranch = function(node, _ancestors){
                 _ancestors = _ancestors || [node];
                 var parent = this.control.get_parent(node);
@@ -115,35 +121,51 @@ angular.module('advertiser').controller('SiteTargetingController',
                 }
             };
 
+            /**
+             * Effectively "merges" an entire tree branch into this tree.
+             *
+             * Given a array representing branch of nodes, will check existence of each ancestor
+             * in THIS tree. If an ancestor is missing, it will be added to this tree using
+             * this.control.add_node().
+             *
+             * Will also add all children of last node in branch array to same node's children in
+             * this tree.
+             *
+             * This means that if node A is the last element in `branch`, but node A exists
+             * in this.data, node A's children in this.data will consist of the union of `branch`
+             * node A's children & its own.
+             *
+             * @param branch array of nodes in branch (use tree.getAncestorBranch to generate)
+             * @param _parentNode
+             */
             SiteTree.prototype.populateNodeAncestorBranch = function(branch, _parentNode){
                 var self = this;
-                if (branch.length > 0){
-                    var children = _parentNode ? self.control.get_children(_parentNode) : self.data;
-                    // Assumes branch array is ordered top-to-bottom from 0 to n,
-                    // i.e. top-most ancestor ('oldest') is 0th element
-                    var oldestAncestor = branch[0];
-                    // Now check if oldest ancestor in branch exists in parent's children
-                    // Need to lookup nodes by id, probably bad idea to perform object comparison
-                    var existingNode = _.find(children, function(n){
-                        return n._id === oldestAncestor._id;
-                    });
-                    if (existingNode){
+                var children = _parentNode ? self.control.get_children(_parentNode) : self.data;
+                // Assumes branch array is ordered top-to-bottom from 0 to n,
+                // i.e. top-most ancestor ('oldest') is 0th element
+                var oldestAncestor = _.clone(branch[0]);
+                // Now check if oldest ancestor in branch exists in parent's children
+                // Need to lookup nodes by id, probably bad idea to perform object comparison
+                var existingNode = _.find(children, function(n){
+                    return n._id === oldestAncestor._id;
+                });
+                if (existingNode){
+                    // If we've reached the bottom of the ancestor branch and
+                    // the node exists, add all origin node's children to destination's
+                    // children as well
+                    if (branch.length === 1){
+                        oldestAncestor.__children__.forEach(function(child){
+                            self.control.add_node(existingNode, child);
+                        });
+                    } else {
+                        // pop oldest ancestor off and recurse to next-lowest level
                         branch.shift();
                         self.populateNodeAncestorBranch(branch, existingNode);
-                    } else {
-                        // assumes oldestAncestor node already has branch seeded in its __children__ array.
-                        self.control.add_node(_parentNode, oldestAncestor);
                     }
+                } else {
+                    // assumes oldestAncestor node already has branch seeded in its  __children__ array.
+                    self.control.add_node(_parentNode, oldestAncestor);
                 }
-            };
-
-            /**
-             * Adds node & all ancestor nodes that don't already exist to this siteTree.
-             * Assumes that all necessary ancestor nodes are present in origin tree.
-             */
-            SiteTree.addNodeAndAncestors = function(node, originSiteTree, destinationSiteTree){
-                var ancestors = originSiteTree.getAncestorBranch(node);
-                destinationSiteTree.data
             };
 
             $scope.positions = function(posCode){
