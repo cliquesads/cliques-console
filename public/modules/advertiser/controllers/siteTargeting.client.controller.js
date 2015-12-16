@@ -103,13 +103,37 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             SiteTree.prototype.getAncestorBranch = function(node, _ancestors){
-                _ancestors = _ancestors || [];
+                _ancestors = _ancestors || [node];
                 var parent = this.control.get_parent(node);
                 if (parent) {
-                    _ancestors.unshift(parent);
+                    var parentClone = _.clone(parent);
+                    parentClone.__children__ = [node];
+                    _ancestors.unshift(parentClone);
                     return this.getAncestorBranch(parent, _ancestors);
                 } else {
                     return _ancestors;
+                }
+            };
+
+            SiteTree.prototype.populateNodeAncestorBranch = function(branch, _parentNode){
+                var self = this;
+                if (branch.length > 0){
+                    var children = _parentNode ? self.control.get_children(_parentNode) : self.data;
+                    // Assumes branch array is ordered top-to-bottom from 0 to n,
+                    // i.e. top-most ancestor ('oldest') is 0th element
+                    var oldestAncestor = branch[0];
+                    // Now check if oldest ancestor in branch exists in parent's children
+                    // Need to lookup nodes by id, probably bad idea to perform object comparison
+                    var existingNode = _.find(children, function(n){
+                        return n._id === oldestAncestor._id;
+                    });
+                    if (existingNode){
+                        branch.shift();
+                        self.populateNodeAncestorBranch(branch, existingNode);
+                    } else {
+                        // assumes oldestAncestor node already has branch seeded in its __children__ array.
+                        self.control.add_node(_parentNode, oldestAncestor);
+                    }
                 }
             };
 
@@ -119,7 +143,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              */
             SiteTree.addNodeAndAncestors = function(node, originSiteTree, destinationSiteTree){
                 var ancestors = originSiteTree.getAncestorBranch(node);
-                var k;
+                destinationSiteTree.data
             };
 
             $scope.positions = function(posCode){
@@ -138,14 +162,15 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.all_sites = new SiteTree([],
                      {
                         target: function (node) {
-                            var parent = $scope.target_sites.getNodeById(node.parentId);
-                            SiteTree.addNodeAndAncestors(node, $scope.all_sites, $scope.target_sites);
-                            $scope.target_sites.control.add_node(parent, node);
+                            // Add whole ancestor branch to new tree, as necessary
+                            var branch = $scope.all_sites.getAncestorBranch(node);
+                            $scope.target_sites.populateNodeAncestorBranch(branch);
                             this.remove_node(node);
                         },
                         block: function (node) {
-                            var parent = $scope.blocked_sites.getNodeById(node.parentId);
-                            $scope.blocked_sites.control.add_node(parent, node);
+                            // Add whole ancestor branch to new tree, as necessary
+                            var branch = $scope.all_sites.getAncestorBranch(node);
+                            $scope.blocked_sites.populateNodeAncestorBranch(branch);
                             this.remove_node(node);
                         }
                     },
@@ -181,8 +206,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.target_sites = new SiteTree([],
                     {
                         remove: function (node) {
-                            var parent = $scope.all_sites.getNodeById(node.parentId);
-                            $scope.all_sites.control.add_node(parent, node);
+                            // Add whole ancestor branch to new tree, as necessary
+                            var branch = $scope.target_sites.getAncestorBranch(node);
+                            $scope.all_sites.populateNodeAncestorBranch(branch);
                             this.remove_node(node);
                         }
                     },
@@ -204,8 +230,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.blocked_sites = new SiteTree([],
                     {
                         remove: function (node) {
-                            var parent = $scope.all_sites.getNodeById(node.parentId);
-                            $scope.all_sites.control.add_node(parent, node);
+                            // Add whole ancestor branch to new tree, as necessary
+                            var branch = $scope.blocked_sites.getAncestorBranch(node);
+                            $scope.all_sites.populateNodeAncestorBranch(branch);
                             this.remove_node(node);
                         }
                     },
