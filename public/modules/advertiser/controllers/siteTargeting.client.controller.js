@@ -23,11 +23,32 @@ angular.module('advertiser').controller('SiteTargetingController',
                     return tree;
                 }
 
+                /**
+                 * Fucking control get_parent doesn't work properly for nested nodes,
+                 * so have to write my own function to get parent
+                 */
+                function getActualParent(node, treeData){
+                    if (node.nodeType === 'Clique'){
+                        return null;
+                    }
+                    for (var i=0; i < treeData.length; i++){
+                        var n = treeData[i];
+                        if (n._id === node.parentId){
+                            return n;
+                        } else if (n.__children__){
+                            getActualParent(node, n.__children__);
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+
                 $scope.positions = function(posCode){
                     return _.find(OPENRTB.positions, function(pos_obj){
                         return pos_obj.code === posCode;
                     });
                 };
+
 
                 /**
                  * Namespace for All Available Sites tree vars
@@ -36,12 +57,12 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         target: function (node) {
-                            var parent = $scope.target_sites.control.get_parent(node);
+                            var parent = getActualParent(node, $scope.target_sites.data);
                             $scope.target_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         },
                         block: function (node) {
-                            var parent = $scope.blocked_sites.control.get_parent(node);
+                            var parent = getActualParent(node, $scope.blocked_sites.data);
                             $scope.blocked_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
@@ -78,7 +99,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         remove: function (node) {
-                            var parent = $scope.all_sites.control.get_parent(node);
+                            var parent = getActualParent(node, $scope.all_sites.data);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
@@ -103,7 +124,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     data: [],
                     control: {
                         remove: function (node) {
-                            var parent = $scope.all_sites.control.get_parent(node);
+                            var parent = getActualParent(node, $scope.all_sites.data);
                             $scope.all_sites.control.add_node(parent, node);
                             this.remove_node(node);
                         }
