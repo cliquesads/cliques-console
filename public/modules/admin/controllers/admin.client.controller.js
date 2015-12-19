@@ -16,6 +16,8 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     $scope.$apply(function () {
                         $scope[sumVar].spend = _.sum(data, function(row){ return Number( row[3].replace(/[^0-9\.]+/g,"")); });
                         $scope[sumVar].imps = _.sum(data, function(row){ return Number( row[2].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].fees = _.sum(data, function(row){ return Number( row[6].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].gross = _.sum(data, function(row){ return Number( row[7].replace(/[^0-9\.]+/g,"")); });
                         var footer = $templateCache.get(templateId),
                             $tfoot = angular.element(tfoot),
                             content = $compile(footer)($scope);
@@ -35,19 +37,25 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response){
-                $scope.dtOptions_pub = DTOptionsBuilder.newOptions();
-                $scope.dtOptions_pub.withOption('paging', false);
-                $scope.dtOptions_pub.withOption('searching', false);
-                $scope.dtOptions_pub.withOption('scrollX', true);
-                $scope.dtOptions_pub.withOption('order', [[2,'desc']]);
-                $scope.dtOptions_pub.withOption('footerCallback', $scope.footerCallback('pubSums', 'pubTableFooter'));
-                // Not entirely sure if this is necessary
+                $scope.dtOptions_pub = DTOptionsBuilder.newOptions()
+                    .withOption('paging', false)
+                    .withOption('searching', false)
+                    .withOption('scrollX', true)
+                    .withOption('order', [[3,'desc']])
+                    .withOption('footerCallback', $scope.footerCallback('pubSums', 'pubTableFooter'))
+                    .withButtons(['excel', 'copy'])
+                    .withBootstrap();
+                    // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_pub = [
                     DTColumnDefBuilder.newColumnDef(0),
                     DTColumnDefBuilder.newColumnDef(1),
                     DTColumnDefBuilder.newColumnDef(2),
                     DTColumnDefBuilder.newColumnDef(3),
-                    DTColumnDefBuilder.newColumnDef(4)
+                    DTColumnDefBuilder.newColumnDef(4),
+                    DTColumnDefBuilder.newColumnDef(5),
+                    DTColumnDefBuilder.newColumnDef(6),
+                    DTColumnDefBuilder.newColumnDef(7)
+                    //DTColumnDefBuilder.newColumnDef(8)
                 ];
                 $scope.pubData = response.data;
             });
@@ -63,7 +71,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                 $scope.dtOptions_adv.withOption('paging', false);
                 $scope.dtOptions_adv.withOption('searching', false);
                 $scope.dtOptions_adv.withOption('scrollX', true);
-                $scope.dtOptions_adv.withOption('order', [[2,'desc']]);
+                $scope.dtOptions_adv.withOption('order', [[3,'desc']]);
                 $scope.dtOptions_adv.withOption('footerCallback', $scope.footerCallback('advSums', 'advTableFooter'));
                 // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_adv = [
@@ -71,7 +79,11 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     DTColumnDefBuilder.newColumnDef(1),
                     DTColumnDefBuilder.newColumnDef(2),
                     DTColumnDefBuilder.newColumnDef(3),
-                    DTColumnDefBuilder.newColumnDef(4)
+                    DTColumnDefBuilder.newColumnDef(4),
+                    DTColumnDefBuilder.newColumnDef(5),
+                    DTColumnDefBuilder.newColumnDef(6),
+                    DTColumnDefBuilder.newColumnDef(7)
+                    //DTColumnDefBuilder.newColumnDef(8)
                 ];
                 $scope.advData = response.data;
             });

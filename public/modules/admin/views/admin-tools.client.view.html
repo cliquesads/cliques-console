@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<div class="col-sm-6">
+<div class="col-sm-10">
     <div class="panel panel-success">
         <div class="panel-heading">
             <h4><i class="icon-book-open"></i>  Publisher Data</h4>
@@ -34,9 +34,12 @@
                     <tr>
                         <th></th>
                         <th>Name</th>
-                        <th>Impressions</th>
+                        <th>Imps</th>
                         <th>Spend</th>
-                        <th>Avg. CPM</th>
+                        <th>CPM</th>
+                        <th>Share %</th>
+                        <th>Share</th>
+                        <th>Net</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -46,6 +49,9 @@
                             <td>{{ row.imps | number: 0 }}</td>
                             <td>{{ row.spend | currency:"$":"0" }}</td>
                             <td>{{ row.spend / row.imps * 1000 | currency:"$":"2" }}</td>
+                            <td>{{ row._id.publisher.revenue_share | percentage: 1 }}</td>
+                            <td>{{ row._id.publisher.revenue_share * row.spend | currency:"$":"2" }}</td>
+                            <td>{{ row.spend - (row._id.publisher.revenue_share * row.spend) | currency:"$":"2" }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
@@ -57,7 +63,7 @@
     </div>
 </div>
 
-<div class="col-sm-6">
+<div class="col-sm-10">
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h4><i class="icon-book-open"></i>  Advertiser Data</h4>
@@ -78,9 +84,12 @@
                     <tr>
                         <th></th>
                         <th>Name</th>
-                        <th>Impressions</th>
+                        <th>Imps</th>
                         <th>Spend</th>
-                        <th>Avg. CPM</th>
+                        <th>CPM</th>
+                        <th>Fee %</th>
+                        <th>Fee </th>
+                        <th>Gross</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -90,6 +99,9 @@
                         <td>{{ row.imps | number: 0 }}</td>
                         <td>{{ row.spend | currency:"$":"2" }}</td>
                         <td>{{ row.spend / row.imps * 1000 | currency:"$":"2" }}</td>
+                        <td>{{ row._id.advertiser.advertiser_fee| percentage: 1 }}</td>
+                        <td>{{ row._id.advertiser.advertiser_fee * row.spend | currency:"$":"2" }}</td>
+                        <td>{{ row.spend + (row._id.advertiser.advertiser_fee * row.spend) | currency:"$":"2" }}</td>
                     </tr>
                     </tbody>
                     <tfoot>
@@ -107,6 +119,9 @@
     <th>{{ pubSums.imps | number: 0 }}</th>
     <th>{{ pubSums.spend | currency:"$":"2" }}</th>
     <th></th>
+    <th></th>
+    <th>{{ pubSums.fees | currency:"$":"2" }}</th>
+    <th>{{ pubSums.gross | currency:"$":"2" }}</th>
 </script>
 
 <script type="text/ng-template" id="advTableFooter">
@@ -115,4 +130,7 @@
     <th>{{ advSums.imps | number: 0 }}</th>
     <th>{{ advSums.spend | currency:"$":"2" }}</th>
     <th></th>
+    <th></th>
+    <th>{{ advSums.fees | currency:"$":"2" }}</th>
+    <th>{{ advSums.gross | currency:"$":"2" }}</th>
 </script>
