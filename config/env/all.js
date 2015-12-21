@@ -17,8 +17,12 @@ module.exports = {
 	assets: {
 		lib: {
             css: [
+                'public/dist/common.css',
+                'public/dist/mixins.css',
+                'public/dist/buttons.foundation.css',
+                'public/dist/buttons.dataTables.css',
                 'public/dist/buttons.bootstrap.css',
-                'public/dist/buttons.dataTables.css'
+                'public/dist/buttons.jqueryui.css'
             ],
             js: [
                 'public/dist/vendor.min.js'

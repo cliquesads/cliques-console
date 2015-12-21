@@ -2,14 +2,14 @@
 'use strict';
 
 angular.module('admin').controller('AdminController', ['$scope', '$stateParams', '$location','$templateCache','$compile',
-    'Authentication','HourlyAdStat','DTOptionsBuilder', 'DTColumnDefBuilder',
-	function($scope, $stateParams, $location, $templateCache, $compile, Authentication, HourlyAdStat, DTOptionsBuilder, DTColumnDefBuilder) {
+    'Authentication','HourlyAdStat','DTOptionsBuilder', 'DTColumnDefBuilder','DatatableUtils',
+	function($scope, $stateParams, $location, $templateCache, $compile, Authentication, HourlyAdStat, DTOptionsBuilder, DTColumnDefBuilder, DatatableUtils) {
         $scope.authentication = Authentication;
         $scope.dates = {};
         $scope.pubSums = {};
         $scope.advSums = {};
 
-        $scope.footerCallback = function(sumVar, templateId){
+        $scope.footerCallback = function(templateId){
             return function (tfoot, data) {
                 if (data.length > 0) {
                     // Need to call $apply in order to call the next digest
@@ -27,6 +27,12 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
             }
         };
 
+        // Bind awful jQuery hack to each table's buttons bar
+        $('table[id*=datatable_]').each(function(index,table){
+            $(table).on('draw.dt', DatatableUtils.restyleButtonsHack);
+        });
+
+
         $scope.getStats = function(){
             var startDate = moment($scope.dates.startDate).tz('UTC').startOf('day').toISOString();
             var endDate = moment($scope.dates.endDate).tz( 'UTC').endOf('day').toISOString();
@@ -43,8 +49,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     .withOption('scrollX', true)
                     .withOption('order', [[3,'desc']])
                     .withOption('footerCallback', $scope.footerCallback('pubSums', 'pubTableFooter'))
-                    .withButtons(['excel', 'copy'])
-                    .withBootstrap();
+                    .withButtons(['excel', 'copy','pdf']);
                     // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_pub = [
                     DTColumnDefBuilder.newColumnDef(0),
@@ -67,12 +72,13 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response){
-                $scope.dtOptions_adv = DTOptionsBuilder.newOptions();
-                $scope.dtOptions_adv.withOption('paging', false);
-                $scope.dtOptions_adv.withOption('searching', false);
-                $scope.dtOptions_adv.withOption('scrollX', true);
-                $scope.dtOptions_adv.withOption('order', [[3,'desc']]);
-                $scope.dtOptions_adv.withOption('footerCallback', $scope.footerCallback('advSums', 'advTableFooter'));
+                $scope.dtOptions_adv = DTOptionsBuilder.newOptions()
+                    .withOption('paging', false)
+                    .withOption('searching', false)
+                    .withOption('scrollX', true)
+                    .withOption('order', [[3,'desc']])
+                    .withOption('footerCallback', $scope.footerCallback('advSums', 'advTableFooter'))
+                    .withButtons(['excel','copy','pdf']);
                 // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_adv = [
                     DTColumnDefBuilder.newColumnDef(0),

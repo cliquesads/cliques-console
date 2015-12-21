@@ -148,8 +148,12 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
+                    'public/dist/common.css': 'public/lib/datatables-buttons/css/common.scss',
+                    'public/dist/mixins.css': 'public/lib/datatables-buttons/css/mixins.scss',
+                    'public/dist/buttons.foundation.css': 'public/lib/datatables-buttons/css/buttons.foundation.scss',
+                    'public/dist/buttons.dataTables.css': 'public/lib/datatables-buttons/css/buttons.dataTables.scss',
                     'public/dist/buttons.bootstrap.css': 'public/lib/datatables-buttons/css/buttons.bootstrap.scss',
-                    'public/dist/buttons.dataTables.css': 'public/lib/datatables-buttons/css/buttons.dataTables.scss'
+                    'public/dist/buttons.jqueryui.css': 'public/lib/datatables-buttons/css/buttons.jqueryui.scss'
                 }
             }
         },
