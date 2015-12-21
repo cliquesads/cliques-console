@@ -9,7 +9,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
         $scope.pubSums = {};
         $scope.advSums = {};
 
-        $scope.footerCallback = function(templateId){
+        $scope.footerCallback = function(sumVar,templateId){
             return function (tfoot, data) {
                 if (data.length > 0) {
                     // Need to call $apply in order to call the next digest
