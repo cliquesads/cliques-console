@@ -2,12 +2,15 @@
 'use strict';
 
 angular.module('admin').controller('AdminController', ['$scope', '$stateParams', '$location','$templateCache','$compile',
-    'Authentication','HourlyAdStat','DTOptionsBuilder', 'DTColumnDefBuilder','DatatableUtils',
-	function($scope, $stateParams, $location, $templateCache, $compile, Authentication, HourlyAdStat, DTOptionsBuilder, DTColumnDefBuilder, DatatableUtils) {
+    'Authentication','HourlyAdStat','DTOptionsBuilder', 'DTColumnDefBuilder','DatatableUtils','aggregationDateRanges',
+	function($scope, $stateParams, $location, $templateCache, $compile, Authentication, HourlyAdStat, DTOptionsBuilder,
+             DTColumnDefBuilder, DatatableUtils,aggregationDateRanges) {
         $scope.authentication = Authentication;
         $scope.dates = {};
         $scope.pubSums = {};
         $scope.advSums = {};
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+        $scope.range = 'yesterday';
 
         $scope.footerCallback = function(sumVar,templateId){
             return function (tfoot, data) {
@@ -16,8 +19,8 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     $scope.$apply(function () {
                         $scope[sumVar].spend = _.sum(data, function(row){ return Number( row[3].replace(/[^0-9\.]+/g,"")); });
                         $scope[sumVar].imps = _.sum(data, function(row){ return Number( row[2].replace(/[^0-9\.]+/g,"")); });
-                        $scope[sumVar].fees = _.sum(data, function(row){ return Number( row[6].replace(/[^0-9\.]+/g,"")); });
-                        $scope[sumVar].gross = _.sum(data, function(row){ return Number( row[7].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].fees = _.sum(data, function(row){ return Number( row[5].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].gross = _.sum(data, function(row){ return Number( row[6].replace(/[^0-9\.]+/g,"")); });
                         var footer = $templateCache.get(templateId),
                             $tfoot = angular.element(tfoot),
                             content = $compile(footer)($scope);
@@ -34,8 +37,9 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
 
 
         $scope.getStats = function(){
-            var startDate = moment($scope.dates.startDate).tz('UTC').startOf('day').toISOString();
-            var endDate = moment($scope.dates.endDate).tz( 'UTC').endOf('day').toISOString();
+            var custom = ($scope.range === 'custom');
+            var startDate = custom ? moment($scope.dates.startDate).tz('UTC').startOf('day').toISOString() : $scope.dateRanges[$scope.range].startDate;
+            var endDate = custom ? moment($scope.dates.endDate).tz( 'UTC').add(1,'day').startOf('day').toISOString() : $scope.dateRanges[$scope.range].endDate;
             // query HourlyAdStats api endpoint
             HourlyAdStat.query({
                 groupBy: 'publisher',
@@ -59,7 +63,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     DTColumnDefBuilder.newColumnDef(4),
                     DTColumnDefBuilder.newColumnDef(5),
                     DTColumnDefBuilder.newColumnDef(6),
-                    DTColumnDefBuilder.newColumnDef(7)
+                    //DTColumnDefBuilder.newColumnDef(7)
                     //DTColumnDefBuilder.newColumnDef(8)
                 ];
                 $scope.pubData = response.data;
@@ -88,7 +92,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     DTColumnDefBuilder.newColumnDef(4),
                     DTColumnDefBuilder.newColumnDef(5),
                     DTColumnDefBuilder.newColumnDef(6),
-                    DTColumnDefBuilder.newColumnDef(7)
+                    //DTColumnDefBuilder.newColumnDef(7)
                     //DTColumnDefBuilder.newColumnDef(8)
                 ];
                 $scope.advData = response.data;

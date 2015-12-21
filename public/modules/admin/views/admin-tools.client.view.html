@@ -1,9 +1,14 @@
-<div class="col-sm-8">
+<div class="col-sm-7">
     <div class="panel">
+        <div class="panel-heading">
+            Report Settings
+        </div>
         <div class="panel-body">
-            <custom-dates width="5" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
+            <div class="col-sm-10">
+                <select id="daterange" name="daterange" class="form-control" data-ng-model="range" ng-options="key as value.label for (key, value) in dateRanges"></select>
+            </div>
+            <custom-dates ng-show="range === 'custom'" width="5" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
             <div class="col-md-2">
-                <label> </label>
                 <div class="input-group">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-primary" ng-click="getStats()">Go</button>
@@ -13,7 +18,7 @@
         </div>
     </div>
 </div>
-<div class="col-sm-10">
+<div class="col-sm-6">
     <div class="panel panel-success">
         <div class="panel-heading">
             <h4><i class="icon-book-open"></i>  Publisher Data</h4>
@@ -37,19 +42,19 @@
                         <th>Imps</th>
                         <th>Spend</th>
                         <th>CPM</th>
-                        <th>Share %</th>
+                        <!--<th>Share %</th>-->
                         <th>Share</th>
                         <th>Net</th>
                     </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="row in pubData">
-                            <td><img src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
-                            <td style="max-width: 120px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
+                            <td><img src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-xs"/></td>
+                            <td style="max-width: 70px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
                             <td>{{ row.imps | number: 0 }}</td>
                             <td>{{ row.spend | currency:"$":"0" }}</td>
                             <td>{{ row.spend / row.imps * 1000 | currency:"$":"2" }}</td>
-                            <td>{{ row._id.publisher.revenue_share | percentage: 1 }}</td>
+                            <!--<td>{{ row._id.publisher.revenue_share | percentage: 1 }}</td>-->
                             <td>{{ row._id.publisher.revenue_share * row.spend | currency:"$":"2" }}</td>
                             <td>{{ row.spend - (row._id.publisher.revenue_share * row.spend) | currency:"$":"2" }}</td>
                         </tr>
@@ -63,10 +68,10 @@
     </div>
 </div>
 
-<div class="col-sm-10">
+<div class="col-sm-6">
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h4><i class="icon-book-open"></i>  Advertiser Data</h4>
+            <h4><i class="icon-bar-chart"></i>  Advertiser Data</h4>
         </div>
         <div class="panel-body">
             <!--BEGIN Data Table-->
@@ -87,19 +92,19 @@
                         <th>Imps</th>
                         <th>Spend</th>
                         <th>CPM</th>
-                        <th>Fee %</th>
+                        <!--<th>Fee %</th>-->
                         <th>Fee </th>
                         <th>Gross</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in advData">
-                        <td><img src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                        <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser!</em></td>
+                        <td><img src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-xs"/></td>
+                        <td style="max-width: 70px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser!</em></td>
                         <td>{{ row.imps | number: 0 }}</td>
                         <td>{{ row.spend | currency:"$":"2" }}</td>
                         <td>{{ row.spend / row.imps * 1000 | currency:"$":"2" }}</td>
-                        <td>{{ row._id.advertiser.advertiser_fee| percentage: 1 }}</td>
+                        <!--<td>{{ row._id.advertiser.advertiser_fee| percentage: 1 }}</td>-->
                         <td>{{ row._id.advertiser.advertiser_fee * row.spend | currency:"$":"2" }}</td>
                         <td>{{ row.spend + (row._id.advertiser.advertiser_fee * row.spend) | currency:"$":"2" }}</td>
                     </tr>
@@ -119,7 +124,7 @@
     <th>{{ pubSums.imps | number: 0 }}</th>
     <th>{{ pubSums.spend | currency:"$":"2" }}</th>
     <th></th>
-    <th></th>
+    <!--<th></th>-->
     <th>{{ pubSums.fees | currency:"$":"2" }}</th>
     <th>{{ pubSums.gross | currency:"$":"2" }}</th>
 </script>
@@ -130,7 +135,7 @@
     <th>{{ advSums.imps | number: 0 }}</th>
     <th>{{ advSums.spend | currency:"$":"2" }}</th>
     <th></th>
-    <th></th>
+    <!--<th></th>-->
     <th>{{ advSums.fees | currency:"$":"2" }}</th>
     <th>{{ advSums.gross | currency:"$":"2" }}</th>
 </script>
