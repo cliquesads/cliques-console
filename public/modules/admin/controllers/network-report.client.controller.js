@@ -1,7 +1,7 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('admin').controller('AdminController', ['$scope', '$stateParams', '$location','$templateCache','$compile',
+angular.module('admin').controller('NetworkReportController', ['$scope', '$stateParams', '$location','$templateCache','$compile',
     'Authentication','HourlyAdStat','DTOptionsBuilder', 'DTColumnDefBuilder','DatatableUtils','aggregationDateRanges',
 	function($scope, $stateParams, $location, $templateCache, $compile, Authentication, HourlyAdStat, DTOptionsBuilder,
              DTColumnDefBuilder, DatatableUtils,aggregationDateRanges) {
@@ -62,9 +62,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     DTColumnDefBuilder.newColumnDef(3),
                     DTColumnDefBuilder.newColumnDef(4),
                     DTColumnDefBuilder.newColumnDef(5),
-                    DTColumnDefBuilder.newColumnDef(6),
-                    //DTColumnDefBuilder.newColumnDef(7)
-                    //DTColumnDefBuilder.newColumnDef(8)
+                    DTColumnDefBuilder.newColumnDef(6)
                 ];
                 $scope.pubData = response.data;
             });
@@ -91,9 +89,7 @@ angular.module('admin').controller('AdminController', ['$scope', '$stateParams',
                     DTColumnDefBuilder.newColumnDef(3),
                     DTColumnDefBuilder.newColumnDef(4),
                     DTColumnDefBuilder.newColumnDef(5),
-                    DTColumnDefBuilder.newColumnDef(6),
-                    //DTColumnDefBuilder.newColumnDef(7)
-                    //DTColumnDefBuilder.newColumnDef(8)
+                    DTColumnDefBuilder.newColumnDef(6)
                 ];
                 $scope.advData = response.data;
             });

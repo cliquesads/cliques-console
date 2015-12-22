@@ -10,16 +10,16 @@ angular.module('advertiser').config(['$stateProvider',
             abstract: true,
             templateUrl: 'modules/admin/views/admin-layout.client.view.html'
         }).
-		state('app.admin.main', {
-            url: '/admin',
-            title: 'Admin Tools',
+		state('app.admin.networkReport', {
+            url: '/admin/network-report',
+            title: 'Network Report',
             views: {
                 'main': {
-                    templateUrl: 'modules/admin/views/admin-tools.client.view.html',
-                    controller: 'AdminController'
+                    templateUrl: 'modules/admin/views/network-report.client.view.html',
+                    controller: 'NetworkReportController'
                 },
                 'titleBar': {
-                    template: 'Admin Tools'
+                    template: 'Cliques Network Report'
                 }
             }
 		});
