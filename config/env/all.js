@@ -6,7 +6,7 @@ var cliquesConfig = require('config');
 module.exports = {
 	app: {
 		title: 'Cliques Console',
-		description: 'Bootstrap Admin Theme + Meanjs',
+		description: 'Meanjs App for Cliques Labs Inc.',
 		keywords: 'MongoDB, Express, AngularJS, Node.js'
 	},
 	port: process.env.PORT || 5000,
@@ -16,14 +16,22 @@ module.exports = {
 	sessionCollection: 'sessions',
 	assets: {
 		lib: {
-            css: [],
+            css: [
+                'public/dist/common.css',
+                'public/dist/mixins.css',
+                'public/dist/buttons.foundation.css',
+                'public/dist/buttons.dataTables.css',
+                'public/dist/buttons.bootstrap.css',
+                'public/dist/buttons.jqueryui.css'
+            ],
             js: [
                 'public/dist/vendor.min.js'
             ]
 		},
 		css: [
             'public/lib/chosen/chosen.min.css',
-			'public/dist/application.min.css',
+            'public/lib/bootstrap/dist/css/bootstrap.min.css',
+            'public/dist/application.min.css',
             'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
             'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
             'public/lib/loaders.css/loaders.min.css',
@@ -91,9 +99,24 @@ module.exports = {
             'public/lib/angulartics/dist/angulartics.min.js',
             'public/lib/angulartics-mixpanel/dist/angulartics-mixpanel.min.js',
             'public/lib/datatables/media/js/jquery.dataTables.min.js',
+            'public/lib/datatables/media/js/dataTables.bootstrap.min.js',
+            'public/lib/datatables-buttons/js/dataTables.buttons.js',
+            'public/lib/datatables-buttons/js/buttons.bootstrap.js',
+            'public/lib/datatables-buttons/js/buttons.colVis.js',
+            'public/lib/datatables-buttons/js/buttons.flash.js',
+            'public/lib/datatables-buttons/js/buttons.foundation.js',
+            'public/lib/datatables-buttons/js/buttons.html5.js',
+            'public/lib/datatables-buttons/js/buttons.jqueryui.js',
+            'public/lib/datatables-buttons/js/buttons.print.js',
             'public/lib/angular-datatables/dist/angular-datatables.min.js',
             'public/lib/angular-deckgrid/angular-deckgrid.js',
-            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.js'
+            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.js',
+            'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
+            'public/lib/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js'
+        ],
+        sass: [
+            'public/lib/datatables-buttons/css/buttons.dataTables.scss',
+            'public/lib/datatables-buttons/css/buttons.bootstrap.scss'
         ]
     },
     mongodb: {

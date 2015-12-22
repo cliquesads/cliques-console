@@ -143,7 +143,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 var children = _parentNode ? self.control.get_children(_parentNode) : self.data;
                 // Assumes branch array is ordered top-to-bottom from 0 to n,
                 // i.e. top-most ancestor ('oldest') is 0th element
-                var oldestAncestor = _.clone(branch[0]);
+                var oldestAncestor = branch[0];
                 // Now check if oldest ancestor in branch exists in parent's children
                 // Need to lookup nodes by id, probably bad idea to perform object comparison
                 var existingNode = _.find(children, function(n){
