@@ -115,7 +115,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     var parentClone = _.clone(parent);
                     parentClone.__children__ = [node];
                     _ancestors.unshift(parentClone);
-                    return this.getAncestorBranch(parent, _ancestors);
+                    return this.getAncestorBranch(parentClone, _ancestors);
                 } else {
                     return _ancestors;
                 }
