@@ -33,9 +33,11 @@
                     <span ng-switch-when="Site">
                         <img src="{{ node.logo_secure_url }}" class="client-logo-sm"/>
                         <strong> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Page{{node.__children__.length != 1 ? 's': null}})</strong>
+                        &nbsp;<a href="http://{{ node.domain_name }}" ng-show="node.domain_name" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
                     </span>
                     <span ng-switch-when="Page">
                         <i class="fa fa-file"></i> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Placement{{node.__children__.length != 1 ? 's': null}})
+                        &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
                     </span>
                     <span ng-switch-when="Placement">
                         {{node[expandingProperty.field] || node[expandingProperty]}}
