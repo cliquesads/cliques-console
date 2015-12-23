@@ -2,6 +2,7 @@
     <div class="panel panel-default" title="Site Targets">
         <div class="panel-heading"><h4>Available Sites</h4></div>
         <div class="panel-body">
+            <tree-expand-toggle-buttons control="all_sites.control"></tree-expand-toggle-buttons>
             <tree-dnd
                     template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
                     tree-data="all_sites.data"
@@ -25,6 +26,7 @@
             <h4><i class="fa fa-check-circle"></i>  Targets</h4>
         </div>
         <div class="panel-body">
+            <tree-expand-toggle-buttons control="target_sites.control" ng-show="target_sites.data"></tree-expand-toggle-buttons>
             <tree-dnd
                     template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
                     tree-data="target_sites.data"
@@ -46,6 +48,7 @@
             <h4><i class="fa fa-minus-circle"></i>  Blocked</h4>
         </div>
         <div class="panel-body">
+            <tree-expand-toggle-buttons control="blocked_sites.control" ng-show="blocked_sites.data"></tree-expand-toggle-buttons>
             <tree-dnd
                     template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
                     tree-data="blocked_sites.data"
