@@ -168,6 +168,25 @@ angular.module('advertiser').controller('SiteTargetingController',
                 }
             };
 
+
+            /**
+             * Extension of self.control.remove_node function that removes node
+             * and any empty ancestors
+             *
+             * @param node
+             */
+            SiteTree.prototype.removeNodeAndEmptyAncestors = function(node){
+                var self = this;
+                var parent = self.control.get_parent(node);
+                self.control.remove_node(node);
+                if (parent){
+                    var children = self.control.get_children(parent);
+                    if (children.length === 0){
+                        self.removeNodeAndEmptyAncestors(parent);
+                    }
+                }
+            };
+
             $scope.positions = function(posCode){
                 return _.find(OPENRTB.positions, function(pos_obj){
                     return pos_obj.code === posCode;
@@ -187,13 +206,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                             // Add whole ancestor branch to new tree, as necessary
                             var branch = $scope.all_sites.getAncestorBranch(node);
                             $scope.target_sites.populateNodeAncestorBranch(branch);
-                            this.remove_node(node);
+                            $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                            //this.remove_node(node);
                         },
                         block: function (node) {
                             // Add whole ancestor branch to new tree, as necessary
                             var branch = $scope.all_sites.getAncestorBranch(node);
                             $scope.blocked_sites.populateNodeAncestorBranch(branch);
-                            this.remove_node(node);
+                            $scope.all_sites.removeNodeAndEmptyAncestors(node);
                         }
                     },
                     {
@@ -231,7 +251,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             // Add whole ancestor branch to new tree, as necessary
                             var branch = $scope.target_sites.getAncestorBranch(node);
                             $scope.all_sites.populateNodeAncestorBranch(branch);
-                            this.remove_node(node);
+                            $scope.target_sites.removeNodeAndEmptyAncestors(node);
                         }
                     },
                     {
@@ -255,7 +275,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             // Add whole ancestor branch to new tree, as necessary
                             var branch = $scope.blocked_sites.getAncestorBranch(node);
                             $scope.all_sites.populateNodeAncestorBranch(branch);
-                            this.remove_node(node);
+                            $scope.blocked_sites.removeNodeAndEmptyAncestors(node);
                         }
                     },
                     {
@@ -272,7 +292,7 @@ angular.module('advertiser').controller('SiteTargetingController',
 
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
                     $scope.all_sites.loadResponseData(response);
-                    $scope.all_sites.setExpandLevel(1);
+                    $scope.all_sites.setExpandLevel(0);
                 });
             });
         }
