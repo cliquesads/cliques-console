@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('SiteTargetingController',
-    ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB',
-        function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB){
+    ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
+        function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
             /**
              * Made most sense to wrap treeData in class containing some methods to handle
              * commonly-used logic around this particular data structure
@@ -197,6 +197,17 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.advertiser = advertiser;
                 $scope.campaign = campaign;
 
+                $scope.getAllSitesHelp = function(){
+                    ngDialog.open({
+                        className: 'ngdialog-theme-default',
+                        template: 'modules/advertiser/views/partials/all-sites-help-text.html',
+                        controller: ['$scope', function ($scope) {
+                            $scope.campaign = $scope.ngDialogData.campaign;
+                        }],
+                        data: {campaign: $scope.campaign}
+                    });
+                };
+
                 /**
                  * Namespace for All Available Sites tree vars
                  */
@@ -234,9 +245,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                         },
                         {
                             displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-success btn-sm" ng-click="all_sites.control.target(node)" tooltip="Add to Targets">' +
-                            '<i class="fa fa-lg fa-check-circle"></i></button>  ' +
-                            '<button type="button" class="btn btn-danger btn-sm" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
+                            cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
+                            '<i class="fa fa-lg fa-sliders"></i></button>  ' +
+                            '<button type="button" class="btn bg-danger btn-xs" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
                             '<i class="fa fa-lg fa-minus-circle"></i></button>'
                         }
                     ]
@@ -261,7 +272,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     },
                     [{
                         displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-sm" ng-click="target_sites.control.remove(node)" tooltip="Remove">' +
+                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }]
                 );
@@ -285,7 +296,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     },
                     [{
                         displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-sm" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }]
                 );

@@ -1,6 +1,12 @@
 <div class="col-sm-7">
     <div class="panel panel-default" title="Site Targets">
-        <div class="panel-heading"><h4>Available Sites</h4></div>
+        <div class="panel-heading">
+            <h4>
+                <i class="fa fa-sitemap"></i>&nbsp;&nbsp;Default Bidding
+                <a class="fa fa-lg fa-question-circle pull-right" ng-click="getAllSitesHelp()" tooltip="Inventory Targeting Help" ></a>
+            </h4>
+            <em class="text-muted">Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all sites in this list.</em>
+        </div>
         <div class="panel-body">
             <tree-expand-toggle-buttons control="all_sites.control"></tree-expand-toggle-buttons>
             <tree-dnd
@@ -23,7 +29,7 @@
 <div class="col-sm-5">
     <div class="panel panel-success">
         <div class="panel-heading">
-            <h4><i class="fa fa-check-circle"></i>  Targets</h4>
+            <h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
         </div>
         <div class="panel-body">
             <tree-expand-toggle-buttons control="target_sites.control" ng-show="target_sites.data"></tree-expand-toggle-buttons>
@@ -43,8 +49,8 @@
                     ></tree-dnd>
         </div>
     </div>
-    <div class="panel panel-danger">
-        <div class="panel-heading">
+    <div class="panel panel-danger-light">
+        <div class="panel-heading bg-danger">
             <h4><i class="fa fa-minus-circle"></i>  Blocked</h4>
         </div>
         <div class="panel-body">
