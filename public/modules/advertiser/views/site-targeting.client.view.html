@@ -1,5 +1,15 @@
-<div class="col-sm-7">
-    <div class="panel panel-default" title="Site Targets">
+<div class="topsavebar bg-primary-light" ng-show="dirty">
+    <div class="text-center">
+        <button type="button" class="btn btn-lg btn-primary">
+            Save
+        </button>
+        <button type="button" class="btn btn-lg btn-default">
+            Reset
+        </button>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="panel" title="Site Targets">
         <div class="panel-heading">
             <h4>
                 <i class="fa fa-sitemap"></i>&nbsp;&nbsp;Default Bidding
@@ -26,9 +36,9 @@
         </div>
     </div>
 </div>
-<div class="col-sm-5">
-    <div class="panel panel-success">
-        <div class="panel-heading">
+<div class="col-sm-6">
+    <div class="panel">
+        <div class="panel-heading bg-success">
             <h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
         </div>
         <div class="panel-body">
@@ -49,7 +59,7 @@
                     ></tree-dnd>
         </div>
     </div>
-    <div class="panel panel-danger-light">
+    <div class="panel">
         <div class="panel-heading bg-danger">
             <h4><i class="fa fa-minus-circle"></i>  Blocked</h4>
         </div>
