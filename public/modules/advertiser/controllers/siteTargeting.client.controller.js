@@ -4,6 +4,63 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
         function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
+            $scope.Math = Math;
+            $scope.dirty = false;
+
+            /**
+             * Adds custom methods & properties to tree node object.
+             *
+             * Wrapping in custom prototype won't work because site-tree-dnd relies
+             * on certain ownProperties of node objects, so pushing these up the
+             * prototype chain breaks it.  So this is sort of a hack to add methods
+             * & properties directly to clones of raw node instances.
+             *
+             * @param node
+             * @param nodeType
+             * @param parentId
+             * @returns {node}
+             */
+            var _initializeSiteTreeNode = function(node, nodeType, parentId){
+                // Create node clone
+                var newNode = _.clone(node);
+
+                // Add custom node properties
+                newNode.parentId = parentId; //Needed for conversion to Site Tree DND format
+                newNode.nodeType = nodeType;
+
+                // Clear old children properties, since children will be repopulated
+                // under unified param __children__ when converted into Site Tree DND format
+                if (nodeType === 'Clique'){
+                    delete newNode.sites;
+                } else if (nodeType === 'Site'){
+                    delete newNode.pages;
+                } else if (nodeType === 'Page'){
+                    delete newNode.placements;
+                }
+
+                // ============================================== //
+                // ========= BEGIN Node Instance Methods ======== //
+                // ============================================== //
+                newNode.overrideChildWeights = function(){
+                    var self = this;
+                    if (self.nodeType === 'Clique' || self.nodeType === 'Site') {
+                        self.__children__.forEach(function(node) {
+                            node.weight = self.weight;
+                            node.overrideChildWeights();
+                        });
+                    } else if (self.nodeType === 'Page'){
+                        self.__children__.forEach(function(placement){
+                            placement.weight    = self.weight;
+                        });
+                    }
+                };
+                return newNode;
+            };
+
+            //====================================================//
+            //=============== BEGIN SiteTree Class ===============//
+            //====================================================//
+
             /**
              * Made most sense to wrap treeData in class containing some methods to handle
              * commonly-used logic around this particular data structure
@@ -29,37 +86,53 @@ angular.module('advertiser').controller('SiteTargetingController',
              *
              * @param response
              */
-            SiteTree.prototype.loadResponseData = function(response){
+            SiteTree.prototype.fromSitesInCliquesBranchResponse = function(response){
                 var sitesInCliqueBranch = response.data;
                 var flattened = [];
                 sitesInCliqueBranch.forEach(function(clique){
-                    var c = _.clone(clique);
-                    c.nodeType = 'Clique';
-                    delete c.sites;
-                    c.parentId = null;
+                    var c = _initializeSiteTreeNode(clique, 'Clique',null);
                     flattened.push(c);
                     clique.sites.forEach(function(site){
-                        var s = _.clone(site);
-                        s.nodeType = 'Site';
-                        delete s.pages;
-                        s.parentId = clique._id;
+                        var s = _initializeSiteTreeNode(site, 'Site',clique._id);
                         flattened.push(s);
                         site.pages.forEach(function(page){
-                            var p = _.clone(page);
-                            p.nodeType = 'Page';
-                            delete p.placements;
-                            p.parentId = site._id;
+                            var p = _initializeSiteTreeNode(page, 'Page',site._id);
                             flattened.push(p);
                             page.placements.forEach(function(placement){
-                                var pl = _.clone(placement);
-                                pl.nodeType = 'Placement';
-                                pl.parentId = page._id;
+                                var pl = _initializeSiteTreeNode(placement, 'Placement', page._id);
                                 flattened.push(pl);
                             });
                         });
                     });
                 });
                 this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
+            };
+
+            /**
+             * Converts treeData to Campaign.inventory_target schema format for saving.
+             *
+             * @returns {*}
+             */
+            SiteTree.prototype.toInventoryTargetsSchema = function(){
+                var self = this;
+                function inner(thisSubtree, targetsTree){
+                    targetsTree = targetsTree || [];
+                    thisSubtree.forEach(function(node){
+                        var targetObj = {
+                            target: node._id,
+                            weight: node.weight || null,
+                            children: null
+                        };
+                        var children = self.control.get_children(node);
+                        targetsTree.push(targetObj);
+                        if (children.length > 0){
+                            targetObj.children = [];
+                            inner(children, targetObj.children);
+                        }
+                    });
+                    return targetsTree
+                }
+                return inner(this.data);
             };
 
             /**
@@ -187,26 +260,67 @@ angular.module('advertiser').controller('SiteTargetingController',
                 }
             };
 
+            /**
+             * Applies all applicable weight overrides from parents to children,
+             * depending on if parent weights have changes from prior state.  Meant to
+             * only be used in $scope.$watch hook, where oldSiteTree is the older version
+             * of the SiteTree instance which has been modified.
+             *
+             * @param oldSiteTree old SiteTree instance in $scope
+             */
+            SiteTree.prototype.applyParentOverrides = function(oldSiteTree) {
+                var self = this;
+                for (var i = 0; i < self.data.length; i++) {
+                    var newClique = self.data[i];
+                    var oldClique = oldSiteTree.data.length > 0 ? oldSiteTree.data[i] : {};
+                    if (newClique.weight != oldClique.weight) {
+                        newClique.overrideChildWeights();
+                    }
+                    var newSites = self.control.get_children(newClique);
+                    var oldSites = oldSiteTree.control.get_children(oldClique);
+                    for (var k = 0; k < newSites.length; k++) {
+                        var newSite = newSites[k];
+                        var oldSite = oldSites ? oldSites[k] : {};
+                        if (newSite.weight != oldSite.weight) {
+                            newSite.overrideChildWeights();
+                        }
+                        var newPages = self.control.get_children(newSite);
+                        var oldPages = self.control.get_children(oldSite);
+                        for (var j = 0; j < newPages.length; j++) {
+                            var newPage = newPages[j];
+                            var oldPage = oldPages ? oldPages[j] : {};
+                            if (newPage.weight != oldPage.weight) {
+                                newPage.overrideChildWeights();
+                            }
+                        }
+                    }
+                }
+            };
+
+            //====================================================//
+            //=============== END SiteTree Class =================//
+            //====================================================//
+
             $scope.positions = function(posCode){
                 return _.find(OPENRTB.positions, function(pos_obj){
                     return pos_obj.code === posCode;
                 });
             };
 
+            $scope.getAllSitesHelp = function(){
+                ngDialog.open({
+                    className: 'ngdialog-theme-default',
+                    template: 'modules/advertiser/views/partials/all-sites-help-text.html',
+                    controller: ['$scope', function ($scope) {
+                        $scope.campaign = $scope.ngDialogData.campaign;
+                    }],
+                    data: {campaign: $scope.campaign}
+                });
+            };
+
             Campaign.fromStateParams($stateParams, function(err, advertiser, campaign){
                 $scope.advertiser = advertiser;
                 $scope.campaign = campaign;
-
-                $scope.getAllSitesHelp = function(){
-                    ngDialog.open({
-                        className: 'ngdialog-theme-default',
-                        template: 'modules/advertiser/views/partials/all-sites-help-text.html',
-                        controller: ['$scope', function ($scope) {
-                            $scope.campaign = $scope.ngDialogData.campaign;
-                        }],
-                        data: {campaign: $scope.campaign}
-                    });
-                };
 
                 /**
                  * Namespace for All Available Sites tree vars
@@ -218,6 +332,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             var branch = $scope.all_sites.getAncestorBranch(node);
                             $scope.target_sites.populateNodeAncestorBranch(branch);
                             $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                            $scope.dirty = true;
                             //this.remove_node(node);
                         },
                         block: function (node) {
@@ -225,6 +340,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             var branch = $scope.all_sites.getAncestorBranch(node);
                             $scope.blocked_sites.populateNodeAncestorBranch(branch);
                             $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                            $scope.dirty = true;
                         }
                     },
                     {
@@ -263,6 +379,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             var branch = $scope.target_sites.getAncestorBranch(node);
                             $scope.all_sites.populateNodeAncestorBranch(branch);
                             $scope.target_sites.removeNodeAndEmptyAncestors(node);
+                            $scope.dirty = true;
                         }
                     },
                     {
@@ -271,6 +388,16 @@ angular.module('advertiser').controller('SiteTargetingController',
                         displayName: 'Name'
                     },
                     [{
+                        field: "weight",
+                        displayName: "Weight",
+                        cellTemplate: '<slider ng-model="node.weight" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>'
+                    },
+                    {
+                        field: 'bid',
+                        displayName: "Bid",
+                        cellTemplate: '<span>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
+                    },
+                    {
                         displayName:  'Actions',
                         cellTemplate: '<button type="button" class="btn btn-xs" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
@@ -287,6 +414,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             var branch = $scope.blocked_sites.getAncestorBranch(node);
                             $scope.all_sites.populateNodeAncestorBranch(branch);
                             $scope.blocked_sites.removeNodeAndEmptyAncestors(node);
+                            $scope.dirty = true;
                         }
                     },
                     {
@@ -302,9 +430,19 @@ angular.module('advertiser').controller('SiteTargetingController',
                 );
 
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
-                    $scope.all_sites.loadResponseData(response);
+                    $scope.all_sites.fromSitesInCliquesBranchResponse(response);
                     $scope.all_sites.setExpandLevel(0);
                 });
+
+                /**
+                 * This scope watch handles overriding of child entity weights when parent is
+                 * changed.
+                 */
+                $scope.$watch(function(scope){ return scope.target_sites; },function(newTargetSites, oldTargetSites) {
+                    if (newTargetSites && oldTargetSites){
+                        newTargetSites.applyParentOverrides(oldTargetSites);
+                    }
+                }, true);
             });
         }
 ]);
