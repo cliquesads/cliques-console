@@ -27,6 +27,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 // Add custom node properties
                 newNode.parentId = parentId; //Needed for conversion to Site Tree DND format
                 newNode.nodeType = nodeType;
+                newNode.__hideSlider__ = false;
 
                 // Clear old children properties, since children will be repopulated
                 // under unified param __children__ when converted into Site Tree DND format
@@ -241,7 +242,6 @@ angular.module('advertiser').controller('SiteTargetingController',
                 }
             };
 
-
             /**
              * Extension of self.control.remove_node function that removes node
              * and any empty ancestors
@@ -297,6 +297,62 @@ angular.module('advertiser').controller('SiteTargetingController',
                 }
             };
 
+            /**
+             * Sets __hideSlider__ property on this tree, given a masterTree
+             * to perform diff on.
+             *
+             * ONLY USE IF YOU PLAN TO ALWAYS REMOVE NON-BASE LEVEL LEAF NODES FROM
+             * MASTER TREE (I.E. NODES WITHOUT ANY CHILDREN)
+             *
+             * __hideSlider__ property is meant to indicate that the "weighting"
+             * slider UI element should be hidden, which will prevent users from
+             * setting a weight for this node.
+             *
+             * The logic encapsulated in this method dictates that sliders be hidden
+             * for any nodes that exist in the provided "Master" SiteTree instance.
+             * The KEY ASSUMPTION here is that once a Master tree node no longer has
+             * any children, it is removed from the master tree.
+             *
+             * The `SiteTree.removeNodeAndEmptyAncestors` method does exactly this,
+             * so as long as you use this method to clean up the master tree when
+             * nodes are added to this tree, you're fine.
+             *
+             * @param masterTree master SiteTree instance w/ record of all nodes
+             */
+            SiteTree.prototype.setSliderHiders = function(masterTree){
+                // If you need to unhide a node slider, you also need to unhide
+                // all child node sliders, so this is just a quick method to hide
+                // node & all child sliders recursively
+                function unhideSliders(node){
+                    node.__hideSlider__ = false;
+                    if (node.__children__ && node.__children__.length > 0){
+                        node.__children__.forEach(function(child){
+                            unhideSliders(child);
+                        });
+                    }
+                }
+
+                function inner(masterTree, slaveTree){
+                    slaveTree.forEach(function(node){
+                        var existingNode = _.find(masterTree, function(n){
+                            return n._id === node._id;
+                        });
+                        // If node exists in master tree, set hideSlider to true
+                        // so user can't set weight on a node whose children are
+                        // not all present
+                        if (existingNode){
+                            node.__hideSlider__ = true;
+                            if (node.__children__.length > 0){
+                                inner(existingNode.__children__, node.__children__);
+                            }
+                        } else {
+                            unhideSliders(node);
+                        }
+                    });
+                }
+                return inner(masterTree.data, this.data);
+            };
+
             //====================================================//
             //=============== END SiteTree Class =================//
             //====================================================//
@@ -330,10 +386,15 @@ angular.module('advertiser').controller('SiteTargetingController',
                         target: function (node) {
                             // Add whole ancestor branch to new tree, as necessary
                             var branch = $scope.all_sites.getAncestorBranch(node);
+                            // Now populate whole ancestor branch in target_sites
                             $scope.target_sites.populateNodeAncestorBranch(branch);
+                            // Clean up all_sites tree by removing node & any empty (no children)
+                            // ancestor nodes
                             $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                            // Set target_sites __hideSlider__ properties for nodes
+                            // not present in $scope.all_sites
+                            $scope.target_sites.setSliderHiders($scope.all_sites);
                             $scope.dirty = true;
-                            //this.remove_node(node);
                         },
                         block: function (node) {
                             // Add whole ancestor branch to new tree, as necessary
@@ -390,12 +451,12 @@ angular.module('advertiser').controller('SiteTargetingController',
                     [{
                         field: "weight",
                         displayName: "Weight",
-                        cellTemplate: '<slider ng-model="node.weight" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>'
+                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>'
                     },
                     {
                         field: 'bid',
                         displayName: "Bid",
-                        cellTemplate: '<span>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
+                        cellTemplate: '<span ng-hide="node.__hideSlider__">{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
                     },
                     {
                         displayName:  'Actions',
