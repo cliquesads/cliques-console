@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('SiteTargetingController',
-    ['$scope','$stateParams','Notify','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
-        function($scope, $stateParams, Notify, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
+    ['$scope','$stateParams','Notify','$timeout','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
+        function($scope, $stateParams, Notify, $timeout, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
             $scope.Math = Math;
             $scope.dirty = false;
 
@@ -468,6 +468,20 @@ angular.module('advertiser').controller('SiteTargetingController',
                 eval(callback);
             };
 
+            $scope.onStart = function(sliderId){
+                function inner(tree){
+                    tree.forEach(function(node){
+                        if (node._id === sliderId){
+                            node.__overridden__ = false;
+                        } else {
+                            if (node.__children__ && node.__children__.length > 0){
+                                inner(node.__children__);
+                            }
+                        }
+                    });
+                }
+                return inner($scope.target_sites.data);
+            };
 
             /**
              * Target Sites tree vars
@@ -491,7 +505,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     {
                         field: "weight",
                         displayName: "Weight",
-                        cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
+                        cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
                         '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
                     },
                     {
@@ -561,6 +575,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 if (newTargetSites.data.length > 0 && oldTargetSites.data.length > 0){
                     newTargetSites.applyParentOverrides(oldTargetSites);
                 }
+                $timeout(function () {
+                    $scope.$broadcast('rzSliderForceRender');
+                });
             }, true);
 
             /**
