@@ -32,7 +32,8 @@ var ApplicationConfiguration = (function() {
         'akoenig.deckgrid',
         'ntt.TreeDnD',
         'datatables.buttons',
-        'datatables.bootstrap'
+        'datatables.bootstrap',
+        'rzModule'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

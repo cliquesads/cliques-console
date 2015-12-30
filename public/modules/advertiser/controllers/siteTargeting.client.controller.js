@@ -31,6 +31,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 //Set initial state as overridden so that it only can be set false
                 // when slider is engaged by user
                 newNode.__overridden__ = true;
+                newNode.__lock__ = false;
+                newNode.weight = node.weight || 1.0;
 
                 // Clear old children properties, since children will be repopulated
                 // under unified param __children__ when converted into Site Tree DND format
@@ -44,17 +46,22 @@ angular.module('advertiser').controller('SiteTargetingController',
 
                 // ========= BEGIN Node Instance Methods ======== //
                 newNode.overrideChildWeights = function(){
+                    //this.__overridden__ = false;
                     var self = this;
                     if (self.nodeType === 'Clique' || self.nodeType === 'Site') {
                         self.__children__.forEach(function(node) {
+                            //node.__lock__ = true;
                             node.weight = self.weight;
                             node.__overridden__ = true;
                             node.overrideChildWeights();
+                            //node.__lock__ = false;
                         });
                     } else if (self.nodeType === 'Page'){
                         self.__children__.forEach(function(placement){
+                            //node.__lock__ = true;
                             node.__overridden__ = true;
                             placement.weight    = self.weight;
+                            //node.__lock__ = false;
                         });
                     }
                 };
@@ -129,7 +136,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var targetObj = {
                             target: node._id,
                             weight: weight,
-                            children: null
+                            children: null,
+                            __overridden__: node.__overridden__
                         };
                         var children = self.control.get_children(node);
                         targetsTree.push(targetObj);
@@ -153,7 +161,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             for (var b=0; b < clique.children.length; b++){
                                 var site = clique.children[b];
                                 if (site.children){
-                                    for (var c=0; c < site.children.length; b++) {
+                                    for (var c=0; c < site.children.length; c++) {
                                         var page = site.children[c];
                                         if (page.children){
                                             for (var d=0; d < page.children.length; d++){
@@ -324,7 +332,15 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var newNode = newSiteTree[i];
                         var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
                         if (newNode.weight != oldNode.weight) {
-                            newNode.__overridden__ = false;
+                            // Next conditional is to combat a nasty race condition.
+                            // If lock is on, it means that the node weight has changed
+                            // due to an override from one of its ancestors.  In that case,
+                            // don't flip override to false, because this clashes with changes
+                            // to this parameter done by parent
+                            //if (!newNode.__lock__){
+                            //    newNode.__override__ = false;
+                            //}
+                            newNode.__override__ = false;
                             newNode.overrideChildWeights();
                         }
                         inner(newNode.__children__, oldNode.__children__)
@@ -448,9 +464,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                 ]
             );
 
-            $scope.onSlide = function(val){
-                console.log('it worked');
-            }
+            $scope.onSlide = function(callback){
+                eval(callback);
+            };
+
 
             /**
              * Target Sites tree vars
@@ -474,7 +491,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     {
                         field: "weight",
                         displayName: "Weight",
-                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" on-start-slide="onSlide" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>' +
+                        cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
                         '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
                     },
                     {
@@ -541,7 +558,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              * changed.
              */
             $scope.$watch(function(scope){ return scope.target_sites; },function(newTargetSites, oldTargetSites) {
-                if (newTargetSites && oldTargetSites){
+                if (newTargetSites.data.length > 0 && oldTargetSites.data.length > 0){
                     newTargetSites.applyParentOverrides(oldTargetSites);
                 }
             }, true);

@@ -42,7 +42,8 @@ module.exports = {
             'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
             'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css',
             'public/lib/datatables/media/css/jquery.dataTables.min.css',
-            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css'
+            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
+            'public/lib/angularjs-slider/dist/rzslider.min.css'
 		],
 		js: [
 			'public/config.js',
@@ -112,7 +113,8 @@ module.exports = {
             'public/lib/angular-deckgrid/angular-deckgrid.js',
             'public/lib/angular-tree-dnd/dist/ng-tree-dnd.js',
             'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
-            'public/lib/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js'
+            'public/lib/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js',
+            'public/lib/angularjs-slider/dist/rzslider.min.js'
         ],
         sass: [
             'public/lib/datatables-buttons/css/buttons.dataTables.scss',
