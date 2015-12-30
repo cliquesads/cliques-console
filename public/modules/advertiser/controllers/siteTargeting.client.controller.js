@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('SiteTargetingController',
-    ['$scope','$stateParams','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
-        function($scope, $stateParams, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
+    ['$scope','$stateParams','Notify','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
+        function($scope, $stateParams, Notify, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
             $scope.Math = Math;
             $scope.dirty = false;
 
@@ -39,9 +39,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     delete newNode.placements;
                 }
 
-                // ============================================== //
                 // ========= BEGIN Node Instance Methods ======== //
-                // ============================================== //
                 newNode.overrideChildWeights = function(){
                     var self = this;
                     if (self.nodeType === 'Clique' || self.nodeType === 'Site') {
@@ -357,6 +355,128 @@ angular.module('advertiser').controller('SiteTargetingController',
             //=============== END SiteTree Class =================//
             //====================================================//
 
+            //==========================================================//
+            //=============== BEGIN SiteTree Instances =================//
+            //==========================================================//
+            /**
+             * SiteTree for All Available Sites tree vars
+             */
+            $scope.all_sites = new SiteTree([],
+                {
+                    target: function (node) {
+                        // Add whole ancestor branch to new tree, as necessary
+                        var branch = $scope.all_sites.getAncestorBranch(node);
+                        // Now populate whole ancestor branch in target_sites
+                        $scope.target_sites.populateNodeAncestorBranch(branch);
+                        // Clean up all_sites tree by removing node & any empty (no children)
+                        // ancestor nodes
+                        $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                        // Set target_sites __hideSlider__ properties for nodes
+                        // not present in $scope.all_sites
+                        $scope.target_sites.setSliderHiders($scope.all_sites);
+                        $scope.dirty = true;
+                    },
+                    block: function (node) {
+                        // Add whole ancestor branch to new tree, as necessary
+                        var branch = $scope.all_sites.getAncestorBranch(node);
+                        $scope.blocked_sites.populateNodeAncestorBranch(branch);
+                        $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                        $scope.dirty = true;
+                    }
+                },
+                {
+                    field: "name",
+                    cellClass: 'v-middle',
+                    displayName: 'Name'
+                },
+                [
+                    {
+                        field:        "pos",
+                        displayName:  'Position',
+                        cellTemplate: '<div>{{ positions(node.pos).name }}</div>'
+                    },
+                    {
+                        field: "w",
+                        displayName:  'Size',
+                        cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
+                    },
+                    {
+                        displayName:  'Actions',
+                        cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
+                        '<i class="fa fa-lg fa-sliders"></i></button>  ' +
+                        '<button type="button" class="btn bg-danger btn-xs" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
+                        '<i class="fa fa-lg fa-minus-circle"></i></button>'
+                    }
+                ]
+            );
+
+            /**
+             * Target Sites tree vars
+             */
+            $scope.target_sites = new SiteTree([],
+                {
+                    remove: function (node) {
+                        // Add whole ancestor branch to new tree, as necessary
+                        var branch = $scope.target_sites.getAncestorBranch(node);
+                        $scope.all_sites.populateNodeAncestorBranch(branch);
+                        $scope.target_sites.removeNodeAndEmptyAncestors(node);
+                        $scope.dirty = true;
+                    }
+                },
+                {
+                    field: "name",
+                    cellClass: 'v-middle',
+                    displayName: 'Name'
+                },
+                [
+                    {
+                        field: "weight",
+                        displayName: "Weight",
+                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>' +
+                        '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
+                    },
+                    {
+                        field: 'bid',
+                        displayName: "Bid",
+                        cellTemplate: '<span ng-hide="node.__hideSlider__">{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
+                    },
+                    {
+                        displayName:  'Actions',
+                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
+                        '<i class="fa fa-lg fa-remove"></i></button>'
+                    }
+                ]
+            );
+
+            /**
+             * SiteTree for Blocked Sites tree vars
+             */
+            $scope.blocked_sites = new SiteTree([],
+                {
+                    remove: function (node) {
+                        // Add whole ancestor branch to new tree, as necessary
+                        var branch = $scope.blocked_sites.getAncestorBranch(node);
+                        $scope.all_sites.populateNodeAncestorBranch(branch);
+                        $scope.blocked_sites.removeNodeAndEmptyAncestors(node);
+                        $scope.dirty = true;
+                    }
+                },
+                {
+                    field: "name",
+                    cellClass: 'v-middle',
+                    displayName: 'Name'
+                },
+                [{
+                    displayName:  'Actions',
+                    cellTemplate: '<button type="button" class="btn btn-xs" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+                    '<i class="fa fa-lg fa-remove"></i></button>'
+                }]
+            );
+
+            //==========================================================//
+            //================= END SiteTree Instances =================//
+            //==========================================================//
+
             $scope.positions = function(posCode){
                 return _.find(OPENRTB.positions, function(pos_obj){
                     return pos_obj.code === posCode;
@@ -374,136 +494,30 @@ angular.module('advertiser').controller('SiteTargetingController',
                 });
             };
 
+            /**
+             * This scope watch handles overriding of child entity weights when parent is
+             * changed.
+             */
+            $scope.$watch(function(scope){ return scope.target_sites; },function(newTargetSites, oldTargetSites) {
+                if (newTargetSites && oldTargetSites){
+                    newTargetSites.applyParentOverrides(oldTargetSites);
+                }
+            }, true);
+
+            /**
+             * Get Campaign from URL state params on load
+             */
             Campaign.fromStateParams($stateParams, function(err, advertiser, campaign){
                 $scope.advertiser = advertiser;
                 $scope.campaign = campaign;
 
-                /**
-                 * Namespace for All Available Sites tree vars
-                 */
-                $scope.all_sites = new SiteTree([],
-                     {
-                        target: function (node) {
-                            // Add whole ancestor branch to new tree, as necessary
-                            var branch = $scope.all_sites.getAncestorBranch(node);
-                            // Now populate whole ancestor branch in target_sites
-                            $scope.target_sites.populateNodeAncestorBranch(branch);
-                            // Clean up all_sites tree by removing node & any empty (no children)
-                            // ancestor nodes
-                            $scope.all_sites.removeNodeAndEmptyAncestors(node);
-                            // Set target_sites __hideSlider__ properties for nodes
-                            // not present in $scope.all_sites
-                            $scope.target_sites.setSliderHiders($scope.all_sites);
-                            $scope.dirty = true;
-                        },
-                        block: function (node) {
-                            // Add whole ancestor branch to new tree, as necessary
-                            var branch = $scope.all_sites.getAncestorBranch(node);
-                            $scope.blocked_sites.populateNodeAncestorBranch(branch);
-                            $scope.all_sites.removeNodeAndEmptyAncestors(node);
-                            $scope.dirty = true;
-                        }
-                    },
-                    {
-                        field: "name",
-                        cellClass: 'v-middle',
-                        displayName: 'Name'
-                    },
-                    [
-                        {
-                            field:        "pos",
-                            displayName:  'Position',
-                            cellTemplate: '<div>{{ positions(node.pos).name }}</div>'
-                        },
-                        {
-                            field: "w",
-                            displayName:  'Size',
-                            cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
-                        },
-                        {
-                            displayName:  'Actions',
-                            cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
-                            '<i class="fa fa-lg fa-sliders"></i></button>  ' +
-                            '<button type="button" class="btn bg-danger btn-xs" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
-                            '<i class="fa fa-lg fa-minus-circle"></i></button>'
-                        }
-                    ]
-                );
-
-                /**
-                 * Target Sites tree vars
-                 */
-                $scope.target_sites = new SiteTree([],
-                    {
-                        remove: function (node) {
-                            // Add whole ancestor branch to new tree, as necessary
-                            var branch = $scope.target_sites.getAncestorBranch(node);
-                            $scope.all_sites.populateNodeAncestorBranch(branch);
-                            $scope.target_sites.removeNodeAndEmptyAncestors(node);
-                            $scope.dirty = true;
-                        }
-                    },
-                    {
-                        field: "name",
-                        cellClass: 'v-middle',
-                        displayName: 'Name'
-                    },
-                    [{
-                        field: "weight",
-                        displayName: "Weight",
-                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>'
-                    },
-                    {
-                        field: 'bid',
-                        displayName: "Bid",
-                        cellTemplate: '<span ng-hide="node.__hideSlider__">{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
-                    },
-                    {
-                        displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
-                        '<i class="fa fa-lg fa-remove"></i></button>'
-                    }]
-                );
-
-                /**
-                 * Namespace for Blocked Sites tree vars
-                 */
-                $scope.blocked_sites = new SiteTree([],
-                    {
-                        remove: function (node) {
-                            // Add whole ancestor branch to new tree, as necessary
-                            var branch = $scope.blocked_sites.getAncestorBranch(node);
-                            $scope.all_sites.populateNodeAncestorBranch(branch);
-                            $scope.blocked_sites.removeNodeAndEmptyAncestors(node);
-                            $scope.dirty = true;
-                        }
-                    },
-                    {
-                        field: "name",
-                        cellClass: 'v-middle',
-                        displayName: 'Name'
-                    },
-                    [{
-                        displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
-                        '<i class="fa fa-lg fa-remove"></i></button>'
-                    }]
-                );
-
+                // Get all available sites to this campaign, then load into $scope.all_sites
+                // SiteTree instance
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
                     $scope.all_sites.fromSitesInCliquesBranchResponse(response);
+                    // Set default expand level to 0;
                     $scope.all_sites.setExpandLevel(0);
                 });
-
-                /**
-                 * This scope watch handles overriding of child entity weights when parent is
-                 * changed.
-                 */
-                $scope.$watch(function(scope){ return scope.target_sites; },function(newTargetSites, oldTargetSites) {
-                    if (newTargetSites && oldTargetSites){
-                        newTargetSites.applyParentOverrides(oldTargetSites);
-                    }
-                }, true);
             });
         }
 ]);
