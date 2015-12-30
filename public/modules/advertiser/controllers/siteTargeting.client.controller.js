@@ -112,7 +112,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              *
              * @returns {*}
              */
-            SiteTree.prototype.toInventoryTargetsSchema = function(){
+            SiteTree.prototype.toInventoryTargetsSchema = function(callback){
                 var self = this;
                 function inner(thisSubtree, targetsTree){
                     targetsTree = targetsTree || [];
@@ -129,9 +129,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                             inner(children, targetObj.children);
                         }
                     });
-                    return targetsTree
+                    return targetsTree;
                 }
-                return inner(this.data);
+                var targetsTree = inner(this.data);
+                return callback(null, targetsTree);
             };
 
             /**
@@ -505,11 +506,29 @@ angular.module('advertiser').controller('SiteTargetingController',
             }, true);
 
             /**
+             * Save handler.  Converts target_sites SiteTree to inventory_targets DB format,
+             * and converts blocked_sites to DB format, updates advertiser.
+             */
+            $scope.save = function(){
+                $scope.target_sites.toInventoryTargetsSchema(function(err, targetsArray){
+                    $scope.advertiser.campaigns[$scope.campaignIndex].inventory_targets = targetsArray;
+                    $scope.advertiser.$update(function(){
+                        $scope.dirty = false;
+                        Notify.alert('Thanks! Your settings have been saved.',{});
+                    }, function(errorResponse){
+                        $scope.dirty = false;
+                        Notify.alert('Error saving settings: ' + errorResponse.message,{status: 'danger'});
+                    });
+                });
+            };
+
+            /**
              * Get Campaign from URL state params on load
              */
-            Campaign.fromStateParams($stateParams, function(err, advertiser, campaign){
+            Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex){
                 $scope.advertiser = advertiser;
-                $scope.campaign = campaign;
+                $scope.campaignIndex = campaignIndex; // for Save method
+                $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
 
                 // Get all available sites to this campaign, then load into $scope.all_sites
                 // SiteTree instance
