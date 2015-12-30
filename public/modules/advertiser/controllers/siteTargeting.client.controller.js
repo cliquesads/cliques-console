@@ -168,28 +168,33 @@ angular.module('advertiser').controller('SiteTargetingController',
                                                 var placement = page.children[d];
                                                 if (placement.__overridden__){
                                                     page.children.splice(d,1);
+                                                    d = d-1;
                                                 }
                                             }
                                             //Now work our way back up the tree to clean up
                                             //any nodes without any children left
-                                            if (!page.children && page.__overridden__){
+                                            if (page.children.length === 0 && page.__overridden__){
                                                 site.children.splice(c,1);
+                                                c = c - 1;
                                             }
                                         }
                                     }
-                                    if (!site.children && site.__overridden__){
+                                    if (site.children.length === 0 && site.__overridden__){
                                         clique.children.splice(b,1);
+                                        b = b - 1;
                                     }
                                 }
                             }
-                            if (!clique.children && clique.__overridden__){
+                            if (clique.children.length === 0 && clique.__overridden__){
                                 targetsTree.splice(a,1);
+                                a = a -1;
                             }
                         }
                     }
+                    return targetsTree;
                 }
                 var targetsTree = inner(this.data);
-                pruneOverriddenChildren(targetsTree);
+                targetsTree = pruneOverriddenChildren(targetsTree);
                 return callback(null, targetsTree);
             };
 
