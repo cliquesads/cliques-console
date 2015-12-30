@@ -28,6 +28,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 newNode.parentId = parentId; //Needed for conversion to Site Tree DND format
                 newNode.nodeType = nodeType;
                 newNode.__hideSlider__ = false;
+                //Set initial state as overridden so that it only can be set false
+                // when slider is engaged by user
+                newNode.__overridden__ = true;
 
                 // Clear old children properties, since children will be repopulated
                 // under unified param __children__ when converted into Site Tree DND format
@@ -45,10 +48,12 @@ angular.module('advertiser').controller('SiteTargetingController',
                     if (self.nodeType === 'Clique' || self.nodeType === 'Site') {
                         self.__children__.forEach(function(node) {
                             node.weight = self.weight;
+                            node.__overridden__ = true;
                             node.overrideChildWeights();
                         });
                     } else if (self.nodeType === 'Page'){
                         self.__children__.forEach(function(placement){
+                            node.__overridden__ = true;
                             placement.weight    = self.weight;
                         });
                     }
@@ -110,6 +115,9 @@ angular.module('advertiser').controller('SiteTargetingController',
             /**
              * Converts treeData to Campaign.inventory_target schema format for saving.
              *
+             * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
+             * all overridden children.
+             *
              * @returns {*}
              */
             SiteTree.prototype.toInventoryTargetsSchema = function(callback){
@@ -117,9 +125,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                 function inner(thisSubtree, targetsTree){
                     targetsTree = targetsTree || [];
                     thisSubtree.forEach(function(node){
+                        var weight = node.__overridden__ ? null: node.weight;
                         var targetObj = {
                             target: node._id,
-                            weight: node.weight || null,
+                            weight: weight,
                             children: null
                         };
                         var children = self.control.get_children(node);
@@ -131,7 +140,48 @@ angular.module('advertiser').controller('SiteTargetingController',
                     });
                     return targetsTree;
                 }
+
+                // Can't just ignore any overridden child since it may have grandchildren
+                // that aren't overridden, so have to do another sweep of the tree to prune
+                // any overridden branches
+                // I think it's more efficient to do this non-recursively, despite how terrible
+                // it looks
+                function pruneOverriddenChildren(targetsTree){
+                    for (var a=0; a < targetsTree.length; a++){
+                        var clique = targetsTree[a];
+                        if (clique.children){
+                            for (var b=0; b < clique.children.length; b++){
+                                var site = clique.children[b];
+                                if (site.children){
+                                    for (var c=0; c < site.children.length; b++) {
+                                        var page = site.children[c];
+                                        if (page.children){
+                                            for (var d=0; d < page.children.length; d++){
+                                                var placement = page.children[d];
+                                                if (placement.__overridden__){
+                                                    page.children.splice(d,1);
+                                                }
+                                            }
+                                            //Now work our way back up the tree to clean up
+                                            //any nodes without any children left
+                                            if (!page.children && page.__overridden__){
+                                                site.children.splice(c,1);
+                                            }
+                                        }
+                                    }
+                                    if (!site.children && site.__overridden__){
+                                        clique.children.splice(b,1);
+                                    }
+                                }
+                            }
+                            if (!clique.children && clique.__overridden__){
+                                targetsTree.splice(a,1);
+                            }
+                        }
+                    }
+                }
                 var targetsTree = inner(this.data);
+                pruneOverriddenChildren(targetsTree);
                 return callback(null, targetsTree);
             };
 
@@ -269,31 +319,18 @@ angular.module('advertiser').controller('SiteTargetingController',
              */
             SiteTree.prototype.applyParentOverrides = function(oldSiteTree) {
                 var self = this;
-                for (var i = 0; i < self.data.length; i++) {
-                    var newClique = self.data[i];
-                    var oldClique = oldSiteTree.data.length > 0 ? oldSiteTree.data[i] : {};
-                    if (newClique.weight != oldClique.weight) {
-                        newClique.overrideChildWeights();
-                    }
-                    var newSites = self.control.get_children(newClique);
-                    var oldSites = oldSiteTree.control.get_children(oldClique);
-                    for (var k = 0; k < newSites.length; k++) {
-                        var newSite = newSites[k];
-                        var oldSite = oldSites ? oldSites[k] : {};
-                        if (newSite.weight != oldSite.weight) {
-                            newSite.overrideChildWeights();
+                function inner(newSiteTree, oldSiteTree) {
+                    for (var i = 0; i < newSiteTree.length; i++) {
+                        var newNode = newSiteTree[i];
+                        var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
+                        if (newNode.weight != oldNode.weight) {
+                            newNode.__overridden__ = false;
+                            newNode.overrideChildWeights();
                         }
-                        var newPages = self.control.get_children(newSite);
-                        var oldPages = self.control.get_children(oldSite);
-                        for (var j = 0; j < newPages.length; j++) {
-                            var newPage = newPages[j];
-                            var oldPage = oldPages ? oldPages[j] : {};
-                            if (newPage.weight != oldPage.weight) {
-                                newPage.overrideChildWeights();
-                            }
-                        }
+                        inner(newNode.__children__, oldNode.__children__)
                     }
                 }
+                return inner(self.data, oldSiteTree.data);
             };
 
             /**
@@ -411,6 +448,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                 ]
             );
 
+            $scope.onSlide = function(val){
+                console.log('it worked');
+            }
+
             /**
              * Target Sites tree vars
              */
@@ -433,7 +474,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     {
                         field: "weight",
                         displayName: "Weight",
-                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>' +
+                        cellTemplate: '<slider ng-model="node.weight" ng-hide="node.__hideSlider__" on-start-slide="onSlide" min="0" max="Math.round(campaign.max_bid/campaign.base_bid * 10) / 10" step="0.0001" precision="4" slider-tooltip="hide" value="1.0" orientation="horizontal" class="bs-slider slider-horizontal pull-right"></slider>' +
                         '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
                     },
                     {
@@ -511,7 +552,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              */
             $scope.save = function(){
                 $scope.target_sites.toInventoryTargetsSchema(function(err, targetsArray){
-                    $scope.advertiser.campaigns[$scope.campaignIndex].inventory_targets = targetsArray;
+                    $scope.campaign.inventory_targets = targetsArray;
                     $scope.advertiser.$update(function(){
                         $scope.dirty = false;
                         Notify.alert('Thanks! Your settings have been saved.',{});
@@ -522,12 +563,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                 });
             };
 
+
+
             /**
              * Get Campaign from URL state params on load
              */
             Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex){
                 $scope.advertiser = advertiser;
-                $scope.campaignIndex = campaignIndex; // for Save method
+                $scope.campaignIndex = campaignIndex;
                 $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
 
                 // Get all available sites to this campaign, then load into $scope.all_sites
