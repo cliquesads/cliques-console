@@ -651,6 +651,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.target_sites.toInventoryTargetsSchema(function(err, targetsArray){
                     $scope.campaign.inventory_targets = targetsArray;
                     $scope.advertiser.$update(function(){
+                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
                         $scope.dirty = false;
                         Notify.alert('Thanks! Your settings have been saved.',{});
                     }, function(errorResponse){

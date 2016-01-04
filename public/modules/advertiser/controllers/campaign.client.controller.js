@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-	function($scope, $stateParams, $location, Authentication, Advertiser, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
+    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -38,26 +38,21 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 
         $scope.advertisers = Advertiser.query();
 
-		$scope.update = function() {
-			var advertiser = $scope.advertiser;
-
-			advertiser.$update(function(){}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
 		$scope.findOne = function() {
-			Advertiser.get({advertiserId: $stateParams.advertiserId})
-                .$promise
-                .then(function(advertiser){
-                    $scope.advertiser = advertiser;
-                    var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
-                        return campaign._id === $stateParams.campaignId;
-                    });
-                    //$scope.campaign as pointer to campaign in advertiser.campaigns array
-                    //this way, all Advertiser resource methods will work
-                    $scope.campaign = $scope.advertiser.campaigns[i];
-                });
+            Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex) {
+                $scope.advertiser = advertiser;
+                $scope.campaignIndex = campaignIndex;
+                $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
+            });
 		};
+
+        $scope.update = function() {
+            $scope.advertiser.$update(function(){
+                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
 
         // Listener to update quickstats when advertiser var changes
         $scope.$watch(function(scope){ return scope.advertiser; }, function(newAdv, oldAdv){
