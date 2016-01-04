@@ -73,22 +73,41 @@ angular.module('advertiser').controller('SiteTargetingController',
             //====================================================//
 
             /**
-             * Made most sense to wrap treeData in class containing some methods to handle
-             * commonly-used logic around this particular data structure
+             * Wraps treeData in class containing some methods to handle commonly-used
+             * logic & routines around this particular data structure.
              *
-             * @param treeData
-             * @param control
-             * @param expanding_property
-             * @param columns
-             * @param rootNodeType string nodeType value for top-level nodes in this tree
+             * The model bound to the `tree-dnd` directive is stored in `this.data`. Most/all
+             * methods manipulate shared this.data data model to accomplish desired actions
+             * on corresponding tree-dnd object.
+             *
+             * Tree control handler should be bound to `this.control`.
+             *
+             * Wherever possible, I have used built-in tree-dnd control methods to
+             * accomplish tasks like getting children, adding nodes, removing nodes, etc..
+             *
+             * HOWEVER, because of some hidden fuckery in the tree-dnd directive, some base control methods
+             * have had to be re-written to operate properly on shared data model.  See comments in
+             * this._removeNode for details.
+             *
+             * TODO: This class has a VERY finnicky relationship with AngularTreeDND class in
+             * TODO: angular-tree-dnd directive. Needs to be refactored to either subclass AngularTreeDND
+             * TODO: somehow, or make dependencies more clear
+             *
+             * TODO: This should be split into a base class in a service, then extended here to contain
+             * TODO: Inventory-specific methods.
+             *
+             * @param treeData shared tree data model with tree-dnd directive.
+             * @param control tree-dnd control object. Will default to base methods when bound to directive, but
+             *      can pass in an object containing custom control methods.
+             * @param expanding_property tree-dnd `expanding property` model
+             * @param columns tree-dnd column model
              * @constructor
              */
-            var SiteTree = function(treeData, control, expanding_property,columns, rootNodeType){
+            var SiteTree = function(treeData, control, expanding_property,columns){
                 this.data = treeData || [];
                 this.control = control || {};
                 this.expanding_property = expanding_property || {};
                 this.columns = columns || [];
-                this.rootNodeType = rootNodeType || 'Clique';
             };
 
             /**
@@ -253,6 +272,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var _parent = parent.__children__;
                     } else {
                         _parent = self.data;
+                        var clearme = true;
+                    }
+                    //BUG FIX, tree_nodes does not clear when last element
+                    //is removed
+                    if (clearme){
+                        if (node.__index__ === 0){
+                            self.control._clear_tree_nodes();
+                        }
                     }
                     _.remove(_parent, function(n){return n._id === node._id;});
                 }
@@ -359,11 +386,13 @@ angular.module('advertiser').controller('SiteTargetingController',
                     for (var i = 0; i < newSiteTree.length; i++) {
                         var newNode = newSiteTree[i];
                         var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
-                        if (newNode.weight != oldNode.weight) {
-                            newNode.__override__ = false;
-                            newNode.overrideChildWeights();
+                        if (newNode && oldNode){
+                            if (newNode.weight != oldNode.weight) {
+                                newNode.__override__ = false;
+                                newNode.overrideChildWeights();
+                            }
+                            inner(newNode.__children__, oldNode.__children__)
                         }
-                        inner(newNode.__children__, oldNode.__children__)
                     }
                 }
                 return inner(self.data, oldSiteTree.data);
@@ -429,7 +458,21 @@ angular.module('advertiser').controller('SiteTargetingController',
             //=============== END SiteTree Class =================//
             //====================================================//
 
-            function _moveNode(originTree, destinationTree, node){
+            /**
+             * Helper function to move node from one SiteTree instance
+             * to another, according to following algorithm:
+             *
+             * 1) Get entire ancestor branch in origin tree
+             * 2) From top to bottom, if ancestor exists in destination tree, move to its children.
+             *  Else, add ancestor to new tree under its appropriate parent (recurvsively).
+             * 3) Clear node from origin tree, and clear any ancestors that no longer contain
+             *  any children (recursively).
+             *
+             * @param originTree origin SiteTree instance
+             * @param destinationTree destination SiteTree instance
+             * @param node node you want to move
+             */
+            function moveNode(originTree, destinationTree, node){
                 // Add whole ancestor branch to new tree, as necessary
                 var branch = originTree.getAncestorBranch(node);
                 // Now populate whole ancestor branch in target_sites
@@ -437,36 +480,6 @@ angular.module('advertiser').controller('SiteTargetingController',
                 // Clean up all_sites tree by removing node & any empty (no children)
                 // ancestor nodes
                 originTree.removeNodeAndEmptyAncestors(node);
-            }
-
-            /**
-             * Populates contents of target_sites tree given a campaign's
-             * inventory_target's settings from DB.
-             *
-             * @param inventory_targets
-             * @param all_sites
-             * @private
-             */
-            function _initializeTargetSiteTree(inventory_targets, all_sites){
-                all_sites = all_sites || $scope.all_sites.data;
-                inventory_targets.forEach(function(node){
-                    // look up node by id in tree
-                    var treeNode = _.find(all_sites, function(n){ return n._id === node.target; });
-                    if (treeNode){
-                        if (node.weight !== null){
-                            // Only move nodes with weights set, others are just parent placeholders;
-                            _moveNode($scope.all_sites, $scope.target_sites, treeNode);
-                            treeNode.weight = node.weight;
-                            treeNode.overrideChildWeights();
-                        }
-                        if (node.children.length > 0){
-                            _initializeTargetSiteTree(node.children, treeNode.__children__);
-                        }
-                    }
-                });
-                // Set target_sites __hideSlider__ properties for nodes
-                // not present in $scope.all_sites
-                $scope.target_sites.setSliderHiders($scope.all_sites);
             }
 
             //==========================================================//
@@ -478,23 +491,12 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.all_sites = new SiteTree([],
                 {
                     target: function (node) {
-                        // Add whole ancestor branch to new tree, as necessary
-                        var branch = $scope.all_sites.getAncestorBranch(node);
-                        // Now populate whole ancestor branch in target_sites
-                        $scope.target_sites.populateNodeAncestorBranch(branch);
-                        // Clean up all_sites tree by removing node & any empty (no children)
-                        // ancestor nodes
-                        $scope.all_sites.removeNodeAndEmptyAncestors(node);
-                        // Set target_sites __hideSlider__ properties for nodes
-                        // not present in $scope.all_sites
+                        moveNode($scope.all_sites, $scope.target_sites, node);
                         $scope.target_sites.setSliderHiders($scope.all_sites);
                         $scope.dirty = true;
                     },
                     block: function (node) {
-                        // Add whole ancestor branch to new tree, as necessary
-                        var branch = $scope.all_sites.getAncestorBranch(node);
-                        $scope.blocked_sites.populateNodeAncestorBranch(branch);
-                        $scope.all_sites.removeNodeAndEmptyAncestors(node);
+                        moveNode($scope.all_sites, $scope.blocked_sites, node);
                         $scope.dirty = true;
                     }
                 },
@@ -556,9 +558,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 {
                     remove: function (node) {
                         // Add whole ancestor branch to new tree, as necessary
-                        var branch = $scope.target_sites.getAncestorBranch(node);
-                        $scope.all_sites.populateNodeAncestorBranch(branch);
-                        $scope.target_sites.removeNodeAndEmptyAncestors(node);
+                        moveNode($scope.target_sites, $scope.all_sites, node);
                         $scope.dirty = true;
                     }
                 },
@@ -593,10 +593,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.blocked_sites = new SiteTree([],
                 {
                     remove: function (node) {
-                        // Add whole ancestor branch to new tree, as necessary
-                        var branch = $scope.blocked_sites.getAncestorBranch(node);
-                        $scope.all_sites.populateNodeAncestorBranch(branch);
-                        $scope.blocked_sites.removeNodeAndEmptyAncestors(node);
+                        moveNode($scope.blocked_sites, $scope.all_sites, node);
                         $scope.dirty = true;
                     }
                 },
@@ -662,6 +659,36 @@ angular.module('advertiser').controller('SiteTargetingController',
                     });
                 });
             };
+
+            /**
+             * Populates contents of target_sites tree given a campaign's
+             * inventory_target's settings from DB.
+             *
+             * @param inventory_targets
+             * @param all_sites
+             * @private
+             */
+            function _initializeTargetSiteTree(inventory_targets, all_sites){
+                all_sites = all_sites || $scope.all_sites.data;
+                inventory_targets.forEach(function(node){
+                    // look up node by id in tree
+                    var treeNode = _.find(all_sites, function(n){ return n._id === node.target; });
+                    if (treeNode){
+                        if (node.weight !== null){
+                            // Only move nodes with weights set, others are just parent placeholders;
+                            moveNode($scope.all_sites, $scope.target_sites, treeNode);
+                            treeNode.weight = node.weight;
+                            treeNode.overrideChildWeights();
+                        }
+                        if (node.children.length > 0){
+                            _initializeTargetSiteTree(node.children, treeNode.__children__);
+                        }
+                    }
+                });
+                // Set target_sites __hideSlider__ properties for nodes
+                // not present in $scope.all_sites
+                $scope.target_sites.setSliderHiders($scope.all_sites);
+            }
 
 
             /**
