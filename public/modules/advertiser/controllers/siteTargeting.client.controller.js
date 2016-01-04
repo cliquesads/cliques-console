@@ -80,13 +80,15 @@ angular.module('advertiser').controller('SiteTargetingController',
              * @param control
              * @param expanding_property
              * @param columns
+             * @param rootNodeType string nodeType value for top-level nodes in this tree
              * @constructor
              */
-            var SiteTree = function(treeData, control, expanding_property,columns){
+            var SiteTree = function(treeData, control, expanding_property,columns, rootNodeType){
                 this.data = treeData || [];
                 this.control = control || {};
                 this.expanding_property = expanding_property || {};
                 this.columns = columns || [];
+                this.rootNodeType = rootNodeType || 'Clique';
             };
 
             /**
@@ -96,8 +98,9 @@ angular.module('advertiser').controller('SiteTargetingController',
              * so it can be prepared for tree
              *
              * @param response
+             * @param callback
              */
-            SiteTree.prototype.fromSitesInCliquesBranchResponse = function(response){
+            SiteTree.prototype.fromSitesInCliquesBranchResponse = function(response, callback){
                 var sitesInCliqueBranch = response.data;
                 var flattened = [];
                 sitesInCliqueBranch.forEach(function(clique){
@@ -117,6 +120,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     });
                 });
                 this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
+                callback(null, null);
             };
 
             /**
@@ -238,6 +242,23 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             /**
+             * THIS IS AN UGLY HACK. Basically paste of control.remove_node that doesn't
+             * rely on control.get_parent method, which will NOT WORK before DOM is
+             * fully rendered, and therefore won't work for any pre-load tree manipulation.
+             */
+            SiteTree.prototype._removeNode = function(node, parent){
+                var self = this;
+                if (node) {
+                    if (parent) {
+                        var _parent = parent.__children__;
+                    } else {
+                        _parent = self.data;
+                    }
+                    _.remove(_parent, function(n){return n._id === node._id;});
+                }
+            };
+
+            /**
              * Gets array of ancestor nodes, each w/ __children__ consisting of
              * only descendants in specified branch
              * @param node
@@ -246,7 +267,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              */
             SiteTree.prototype.getAncestorBranch = function(node, _ancestors){
                 _ancestors = _ancestors || [node];
-                var parent = this.control.get_parent(node);
+                var parent = this.getNodeById(node.parentId);
                 if (parent) {
                     var parentClone = _.clone(parent);
                     parentClone.__children__ = [node];
@@ -308,14 +329,16 @@ angular.module('advertiser').controller('SiteTargetingController',
              * Extension of self.control.remove_node function that removes node
              * and any empty ancestors
              *
+             * NOTE: Had to hack this to
+             *
              * @param node
              */
             SiteTree.prototype.removeNodeAndEmptyAncestors = function(node){
                 var self = this;
-                var parent = self.control.get_parent(node);
-                self.control.remove_node(node);
+                var parent = self.getNodeById(node.parentId);
+                self._removeNode(node, parent);
                 if (parent){
-                    var children = self.control.get_children(parent);
+                    var children = parent.__children__;
                     if (children.length === 0){
                         self.removeNodeAndEmptyAncestors(parent);
                     }
@@ -337,14 +360,6 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var newNode = newSiteTree[i];
                         var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
                         if (newNode.weight != oldNode.weight) {
-                            // Next conditional is to combat a nasty race condition.
-                            // If lock is on, it means that the node weight has changed
-                            // due to an override from one of its ancestors.  In that case,
-                            // don't flip override to false, because this clashes with changes
-                            // to this parameter done by parent
-                            //if (!newNode.__lock__){
-                            //    newNode.__override__ = false;
-                            //}
                             newNode.__override__ = false;
                             newNode.overrideChildWeights();
                         }
@@ -414,6 +429,46 @@ angular.module('advertiser').controller('SiteTargetingController',
             //=============== END SiteTree Class =================//
             //====================================================//
 
+            function _moveNode(originTree, destinationTree, node){
+                // Add whole ancestor branch to new tree, as necessary
+                var branch = originTree.getAncestorBranch(node);
+                // Now populate whole ancestor branch in target_sites
+                destinationTree.populateNodeAncestorBranch(branch);
+                // Clean up all_sites tree by removing node & any empty (no children)
+                // ancestor nodes
+                originTree.removeNodeAndEmptyAncestors(node);
+            }
+
+            /**
+             * Populates contents of target_sites tree given a campaign's
+             * inventory_target's settings from DB.
+             *
+             * @param inventory_targets
+             * @param all_sites
+             * @private
+             */
+            function _initializeTargetSiteTree(inventory_targets, all_sites){
+                all_sites = all_sites || $scope.all_sites.data;
+                inventory_targets.forEach(function(node){
+                    // look up node by id in tree
+                    var treeNode = _.find(all_sites, function(n){ return n._id === node.target; });
+                    if (treeNode){
+                        if (node.weight !== null){
+                            // Only move nodes with weights set, others are just parent placeholders;
+                            _moveNode($scope.all_sites, $scope.target_sites, treeNode);
+                            treeNode.weight = node.weight;
+                            treeNode.overrideChildWeights();
+                        }
+                        if (node.children.length > 0){
+                            _initializeTargetSiteTree(node.children, treeNode.__children__);
+                        }
+                    }
+                });
+                // Set target_sites __hideSlider__ properties for nodes
+                // not present in $scope.all_sites
+                $scope.target_sites.setSliderHiders($scope.all_sites);
+            }
+
             //==========================================================//
             //=============== BEGIN SiteTree Instances =================//
             //==========================================================//
@@ -469,10 +524,15 @@ angular.module('advertiser').controller('SiteTargetingController',
                 ]
             );
 
-            $scope.onSlide = function(callback){
-                eval(callback);
-            };
-
+            /**
+             * Event Handler to be bound to each slider `onStart` event.
+             *
+             * Sets __override__ param for node being changed to true, and
+             * sets $scope.dirty to true as well.
+             *
+             * @param sliderId
+             * @returns {*}
+             */
             $scope.onStart = function(sliderId){
                 function inner(tree){
                     tree.forEach(function(node){
@@ -485,6 +545,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                         }
                     });
                 }
+                $scope.dirty = true;
                 return inner($scope.target_sites.data);
             };
 
@@ -603,7 +664,6 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
 
-
             /**
              * Get Campaign from URL state params on load
              */
@@ -615,9 +675,12 @@ angular.module('advertiser').controller('SiteTargetingController',
                 // Get all available sites to this campaign, then load into $scope.all_sites
                 // SiteTree instance
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
-                    $scope.all_sites.fromSitesInCliquesBranchResponse(response);
-                    // Set default expand level to 0;
-                    $scope.all_sites.setExpandLevel(0);
+                    $scope.all_sites.fromSitesInCliquesBranchResponse(response, function(err, data){
+                        // Set default expand level to 0;
+                        $scope.all_sites.setExpandLevel(0);
+                        //$scope.all_sites.control.reload_data();
+                        _initializeTargetSiteTree($scope.campaign.inventory_targets);
+                    });
                 });
             });
         }
