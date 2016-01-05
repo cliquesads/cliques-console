@@ -1,0 +1,22 @@
+<div class="panel">
+    <div class="panel-body">
+        <div class="col-sm-2">
+            <img src="{{ site.logo_secure_url }}" class="client-logo-md"/>&nbsp;
+        </div>
+        <div class="col-sm-10">
+            <h4 class="mt0 mb-sm">{{ site.name }}</h4>
+            <p class="text-muted text-md"><i class="icon cliquesicons-black-q-logo"></i> {{ site.clique }}</p>
+        </div>
+        <div class="col-sm-12">
+            <span class="text-md">
+                <strong><i class="fa fa-info-circle"></i> Description</strong>
+                <p>{{ site.description }}</p>
+                <strong><i class="fa fa-external-link"></i> Link</strong>
+                <p><a href="http://{{ site.domain_name }}" target="_blank">{{ site.domain_name}}</a></p>
+            </span>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <p><em class="text-muted">Created by Publisher <strong>{{ site.parent_publisher.name }}</strong> on {{ site.tstamp | date:'mediumDate' }}</em></p>
+    </div>
+</div>
