@@ -15,7 +15,8 @@ module.exports = {
                 'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
                 'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css',
                 'public/lib/datatables/media/css/jquery.dataTables.min.css',
-                'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css'
+                'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
+                'public/lib/angularjs-slider/dist/rzslider.min.css'
 			],
 			js: [
 				'public/dist/vendor.min.js'
