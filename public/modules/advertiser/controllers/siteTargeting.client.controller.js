@@ -34,6 +34,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 newNode.__lock__ = false;
                 newNode.weight = node.weight || 1.0;
 
+                //Properties used by blocked_inventory settings
+                newNode.explicit = false;
+
                 // Clear old children properties, since children will be repopulated
                 // under unified param __children__ when converted into Site Tree DND format
                 if (nodeType === 'Clique'){
@@ -143,6 +146,63 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             /**
+             * Helper function to prune any unnecessary children from client-side tree data
+             * before persisting to DB. This is useful because of the "sparse tree" format
+             * that targeting trees are stored in.
+             *
+             * Can't just ignore any overridden child since it may have grandchildren
+             * that aren't overridden, so have to do another sweep of the tree to prune
+             * any overridden branches
+             *
+             * I think it's more efficient to do this non-recursively, despite how terrible
+             * it looks
+             *
+             * @param targetsTree tree data
+             * @param overrideFunction function which returns boolean indicating whether to throw
+             *  node out or not.  `true` means node will be discarded if its unnecessary, `false` means
+             *  keep it.
+             */
+            function pruneOverriddenChildren(targetsTree, overrideFunction){
+                for (var a=0; a < targetsTree.length; a++){
+                    var clique = targetsTree[a];
+                    if (clique.children){
+                        for (var b=0; b < clique.children.length; b++){
+                            var site = clique.children[b];
+                            if (site.children){
+                                for (var c=0; c < site.children.length; c++) {
+                                    var page = site.children[c];
+                                    if (page.children){
+                                        for (var d=0; d < page.children.length; d++){
+                                            var placement = page.children[d];
+                                            if (overrideFunction(placement)){
+                                                page.children.splice(d,1);
+                                                d = d-1;
+                                            }
+                                        }
+                                        //Now work our way back up the tree to clean up
+                                        //any nodes without any children left
+                                        if (page.children.length === 0 && overrideFunction(page)){
+                                            site.children.splice(c,1);
+                                            c = c - 1;
+                                        }
+                                    }
+                                }
+                                if (site.children.length === 0 && overrideFunction(site)){
+                                    clique.children.splice(b,1);
+                                    b = b - 1;
+                                }
+                            }
+                        }
+                        if (clique.children.length === 0 && overrideFunction(clique)){
+                            targetsTree.splice(a,1);
+                            a = a -1;
+                        }
+                    }
+                }
+                return targetsTree;
+            }
+
+            /**
              * Converts treeData to Campaign.inventory_target schema format for saving.
              *
              * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
@@ -171,54 +231,41 @@ angular.module('advertiser').controller('SiteTargetingController',
                     });
                     return targetsTree;
                 }
+                var targetsTree = inner(this.data);
+                targetsTree = pruneOverriddenChildren(targetsTree, function(obj){ return obj.__overridden__; });
+                return callback(null, targetsTree);
+            };
 
-                // Can't just ignore any overridden child since it may have grandchildren
-                // that aren't overridden, so have to do another sweep of the tree to prune
-                // any overridden branches
-                // I think it's more efficient to do this non-recursively, despite how terrible
-                // it looks
-                function pruneOverriddenChildren(targetsTree){
-                    for (var a=0; a < targetsTree.length; a++){
-                        var clique = targetsTree[a];
-                        if (clique.children){
-                            for (var b=0; b < clique.children.length; b++){
-                                var site = clique.children[b];
-                                if (site.children){
-                                    for (var c=0; c < site.children.length; c++) {
-                                        var page = site.children[c];
-                                        if (page.children){
-                                            for (var d=0; d < page.children.length; d++){
-                                                var placement = page.children[d];
-                                                if (placement.__overridden__){
-                                                    page.children.splice(d,1);
-                                                    d = d-1;
-                                                }
-                                            }
-                                            //Now work our way back up the tree to clean up
-                                            //any nodes without any children left
-                                            if (page.children.length === 0 && page.__overridden__){
-                                                site.children.splice(c,1);
-                                                c = c - 1;
-                                            }
-                                        }
-                                    }
-                                    if (site.children.length === 0 && site.__overridden__){
-                                        clique.children.splice(b,1);
-                                        b = b - 1;
-                                    }
-                                }
-                            }
-                            if (clique.children.length === 0 && clique.__overridden__){
-                                targetsTree.splice(a,1);
-                                a = a -1;
-                            }
+            /**
+             * Converts treeData to Campaign.blocked_inventory schema format for saving.
+             *
+             * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
+             * all overridden children.
+             *
+             * @returns {*}
+             */
+            SiteTree.prototype.toBlockedInventorySchema = function(callback){
+                var self = this;
+                function inner(thisSubtree, targetsTree){
+                    targetsTree = targetsTree || [];
+                    thisSubtree.forEach(function(node){
+                        var targetObj = {
+                            target: node._id,
+                            children: null,
+                            explicit: node.explicit
+                        };
+                        var children = self.control.get_children(node);
+                        targetsTree.push(targetObj);
+                        if (children.length > 0){
+                            targetObj.children = [];
+                            inner(children, targetObj.children);
                         }
-                    }
+                    });
                     return targetsTree;
                 }
-                var targetsTree = inner(this.data);
-                targetsTree = pruneOverriddenChildren(targetsTree);
-                return callback(null, targetsTree);
+                var blockedTree = inner(this.data);
+                blockedTree = pruneOverriddenChildren(blockedTree, function(obj){ return obj.explicit === false; });
+                return callback(null, blockedTree);
             };
 
             /**
@@ -496,7 +543,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                         $scope.dirty = true;
                     },
                     block: function (node) {
+                        node.explicit = true;
                         moveNode($scope.all_sites, $scope.blocked_sites, node);
+                        //setting this node.explicit to true means this node will persist to DB
                         $scope.dirty = true;
                     }
                 },
@@ -650,13 +699,16 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.save = function(){
                 $scope.target_sites.toInventoryTargetsSchema(function(err, targetsArray){
                     $scope.campaign.inventory_targets = targetsArray;
-                    $scope.advertiser.$update(function(){
-                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-                        $scope.dirty = false;
-                        Notify.alert('Thanks! Your settings have been saved.',{});
-                    }, function(errorResponse){
-                        $scope.dirty = false;
-                        Notify.alert('Error saving settings: ' + errorResponse.message,{status: 'danger'});
+                    $scope.blocked_sites.toBlockedInventorySchema(function(err, blockedArray){
+                        $scope.campaign.blocked_inventory = blockedArray;
+                        $scope.advertiser.$update(function(){
+                            $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                            $scope.dirty = false;
+                            Notify.alert('Thanks! Your settings have been saved.',{});
+                        }, function(errorResponse){
+                            $scope.dirty = false;
+                            Notify.alert('Error saving settings: ' + errorResponse.message,{status: 'danger'});
+                        });
                     });
                 });
             };
@@ -691,6 +743,32 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.target_sites.setSliderHiders($scope.all_sites);
             }
 
+            /**
+             * Populates contents of blocked_sites tree given a campaign's
+             * blocked_inventory's settings from DB.
+             *
+             * @param blocked_inventory
+             * @param all_sites
+             * @private
+             */
+            function _initializeBlockedInventoryTree(blocked_inventory, all_sites){
+                all_sites = all_sites || $scope.all_sites.data;
+                blocked_inventory.forEach(function(node){
+                    // look up node by id in tree
+                    var treeNode = _.find(all_sites, function(n){ return n._id === node.target; });
+                    if (treeNode){
+                        if (node.explicit){
+                            // Only move nodes with weights set, others are just parent placeholders;
+                            moveNode($scope.all_sites, $scope.blocked_sites, treeNode);
+                            treeNode.explicit = true;
+                        }
+                        if (node.children && node.children.length > 0){
+                            _initializeBlockedInventoryTree(node.children, treeNode.__children__);
+                        }
+                    }
+                });
+            }
+
 
             /**
              * Get Campaign from URL state params on load
@@ -708,6 +786,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                         $scope.all_sites.setExpandLevel(0);
                         //$scope.all_sites.control.reload_data();
                         _initializeTargetSiteTree($scope.campaign.inventory_targets);
+                        _initializeBlockedInventoryTree($scope.campaign.blocked_inventory)
                     });
                 });
             });
