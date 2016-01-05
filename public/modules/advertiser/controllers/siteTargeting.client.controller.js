@@ -49,22 +49,17 @@ angular.module('advertiser').controller('SiteTargetingController',
 
                 // ========= BEGIN Node Instance Methods ======== //
                 newNode.overrideChildWeights = function(){
-                    //this.__overridden__ = false;
                     var self = this;
                     if (self.nodeType === 'Clique' || self.nodeType === 'Site') {
                         self.__children__.forEach(function(node) {
-                            //node.__lock__ = true;
                             node.weight = self.weight;
                             node.__overridden__ = true;
                             node.overrideChildWeights();
-                            //node.__lock__ = false;
                         });
                     } else if (self.nodeType === 'Page'){
                         self.__children__.forEach(function(placement){
-                            //node.__lock__ = true;
-                            node.__overridden__ = true;
+                            placement.__overridden__ = true;
                             placement.weight    = self.weight;
-                            //node.__lock__ = false;
                         });
                     }
                 };
@@ -443,7 +438,6 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
                         if (newNode && oldNode){
                             if (newNode.weight != oldNode.weight) {
-                                newNode.__overridden__ = false;
                                 newNode.overrideChildWeights();
                             }
                             inner(newNode.__children__, oldNode.__children__)
@@ -740,11 +734,22 @@ angular.module('advertiser').controller('SiteTargetingController',
                     var treeNode = _.find(all_sites, function(n){ return n._id === node.target; });
                     if (treeNode){
                         if (node.weight !== null){
-                            // Only move nodes with weights set, others are just parent placeholders;
-                            moveNode($scope.all_sites, $scope.target_sites, treeNode);
-                            treeNode.weight = node.weight;
-                            treeNode.__overridden__ = false;
-                            treeNode.overrideChildWeights();
+                            //Have to check if node has already been moved to target tree, which will happen
+                            //if parent node has a weight set.
+                            //TODO: Might be a more efficient way to do this check if inventory_sites
+                            //TODO: array is passed through recursive step
+                            var target_node = $scope.target_sites.getNodeById(node.target);
+                            var realNode;
+                            if (target_node){
+                                realNode = target_node;
+                            } else {
+                                // Only move nodes with weights set, others are just parent placeholders;
+                                moveNode($scope.all_sites, $scope.target_sites, treeNode);
+                                realNode = treeNode;
+                            }
+                            realNode.weight = node.weight;
+                            realNode.__overridden__ = false;
+                            realNode.overrideChildWeights();
                         }
                         if (node.children && node.children.length > 0){
                             $scope.initializeTargetSiteTree(node.children, treeNode.__children__);
