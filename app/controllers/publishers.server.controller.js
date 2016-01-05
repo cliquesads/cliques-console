@@ -233,7 +233,6 @@ module.exports = function(db) {
                                     newSite.parent_publisher = pubAttrs;
                                     return newSite;
                                 });
-                                console.log(sitesInClique);
                                 sites = sites.concat(sitesInClique);
                             });
                             sites = _.groupBy(sites, function(site){return site.clique;});
