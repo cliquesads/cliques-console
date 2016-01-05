@@ -31,8 +31,8 @@
                         </h4>
                     </span>
                     <span ng-switch-when="Site">
-                        <img src="{{ node.logo_secure_url }}" class="client-logo-sm"/>
-                        <strong> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Page{{node.__children__.length != 1 ? 's': null}})</strong>
+                        <img src="{{ node.logo_secure_url }}" class="client-logo-sm" ng-click="getSiteDescription(node)"/>
+                        <strong ng-click="getSiteDescription(node)"> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Page{{node.__children__.length != 1 ? 's': null}})</strong>
                         &nbsp;<a href="http://{{ node.domain_name }}" ng-show="node.domain_name" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
                     </span>
                     <span ng-switch-when="Page">
@@ -41,6 +41,7 @@
                     </span>
                     <span ng-switch-when="Placement">
                         {{node[expandingProperty.field] || node[expandingProperty]}}
+                        <p><em class="text-muted">{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }} {{ positions(node.pos).name }}</em></p>
                     </span>
                 </span>
             </td>

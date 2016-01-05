@@ -9,7 +9,7 @@
     </div>
 </div>
 <div class="col-sm-6">
-    <div class="panel" title="Site Targets">
+    <div class="panel" title="Default Bidding">
         <div class="panel-heading">
             <h4>
                 <i class="fa fa-sitemap"></i>&nbsp;&nbsp;Default Bidding
@@ -32,12 +32,14 @@
                     icon-leaf="fa fa-lg fa-tags"
                     icon-expand="fa fa-lg fa-minus"
                     icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
             ></tree-dnd>
         </div>
     </div>
 </div>
 <div class="col-sm-6">
-    <div class="panel">
+    <div class="panel" title="Custom Bidding">
         <div class="panel-heading bg-success">
             <h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
         </div>
@@ -56,12 +58,14 @@
                     icon-leaf="fa fa-lg fa-tags"
                     icon-expand="fa fa-lg fa-minus"
                     icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
                     ></tree-dnd>
         </div>
     </div>
-    <div class="panel">
+    <div class="panel" title="Blocked">
         <div class="panel-heading bg-danger">
-            <h4><i class="fa fa-minus-circle"></i>  Blocked</h4>
+            <h4><i class="fa fa-ban"></i>  Blocked</h4>
         </div>
         <div class="panel-body">
             <tree-expand-toggle-buttons control="blocked_sites.control" ng-show="blocked_sites.data"></tree-expand-toggle-buttons>
@@ -78,6 +82,8 @@
                     icon-leaf="fa fa-lg fa-tags"
                     icon-expand="fa fa-lg fa-minus"
                     icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
                     ></tree-dnd>
         </div>
     </div>

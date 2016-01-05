@@ -557,22 +557,22 @@ angular.module('advertiser').controller('SiteTargetingController',
                     displayName: 'Name'
                 },
                 [
-                    {
-                        field:        "pos",
-                        displayName:  'Position',
-                        cellTemplate: '<div>{{ positions(node.pos).name }}</div>'
-                    },
-                    {
-                        field: "w",
-                        displayName:  'Size',
-                        cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
-                    },
+                    //{
+                    //    field:        "pos",
+                    //    displayName:  'Position',
+                    //    cellTemplate: '<div>{{ positions(node.pos).name }}</div>'
+                    //},
+                    //{
+                    //    field: "w",
+                    //    displayName:  'Size',
+                    //    cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
+                    //},
                     {
                         displayName:  'Actions',
                         cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
-                        '<i class="fa fa-lg fa-sliders"></i></button>  ' +
+                        '<i class="fa fa-sliders"></i></button>  ' +
                         '<button type="button" class="btn bg-danger btn-xs" ng-click="all_sites.control.block(node)" tooltip="Add to Block List">' +
-                        '<i class="fa fa-lg fa-minus-circle"></i></button>'
+                        '<i class="fa fa-ban"></i></button>'
                     }
                 ]
             );
@@ -678,6 +678,17 @@ angular.module('advertiser').controller('SiteTargetingController',
                         $scope.campaign = $scope.ngDialogData.campaign;
                     }],
                     data: {campaign: $scope.campaign}
+                });
+            };
+
+            $scope.getSiteDescription = function(site){
+                ngDialog.open({
+                    className: 'ngdialog-theme-default',
+                    template: 'modules/advertiser/views/partials/site-description-dialog.html',
+                    controller: ['$scope', function ($scope) {
+                        $scope.site = $scope.ngDialogData.site;
+                    }],
+                    data: {site: site}
                 });
             };
 
