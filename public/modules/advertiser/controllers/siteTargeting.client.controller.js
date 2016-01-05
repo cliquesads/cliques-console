@@ -145,6 +145,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                 callback(null, null);
             };
 
+            SiteTree.prototype.clearTreeData = function(callback){
+                var self = this;
+                this.data.forEach(function(topLevelNode){
+                    self._removeNode(topLevelNode, null);
+                });
+                return callback(null)
+            };
+
             /**
              * Helper function to prune any unnecessary children from client-side tree data
              * before persisting to DB. This is useful because of the "sparse tree" format
@@ -435,7 +443,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                         var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
                         if (newNode && oldNode){
                             if (newNode.weight != oldNode.weight) {
-                                newNode.__override__ = false;
+                                newNode.__overridden__ = false;
                                 newNode.overrideChildWeights();
                             }
                             inner(newNode.__children__, oldNode.__children__)
@@ -713,6 +721,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                 });
             };
 
+            //======================================================================//
+            //================= BEGIN Tree Initialization Handlers =================//
+            //======================================================================//
+
             /**
              * Populates contents of target_sites tree given a campaign's
              * inventory_target's settings from DB.
@@ -721,7 +733,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              * @param all_sites
              * @private
              */
-            function _initializeTargetSiteTree(inventory_targets, all_sites){
+            $scope.initializeTargetSiteTree = function(inventory_targets, all_sites){
                 all_sites = all_sites || $scope.all_sites.data;
                 inventory_targets.forEach(function(node){
                     // look up node by id in tree
@@ -731,17 +743,18 @@ angular.module('advertiser').controller('SiteTargetingController',
                             // Only move nodes with weights set, others are just parent placeholders;
                             moveNode($scope.all_sites, $scope.target_sites, treeNode);
                             treeNode.weight = node.weight;
+                            treeNode.__overridden__ = false;
                             treeNode.overrideChildWeights();
                         }
-                        if (node.children.length > 0){
-                            _initializeTargetSiteTree(node.children, treeNode.__children__);
+                        if (node.children && node.children.length > 0){
+                            $scope.initializeTargetSiteTree(node.children, treeNode.__children__);
                         }
                     }
                 });
                 // Set target_sites __hideSlider__ properties for nodes
                 // not present in $scope.all_sites
                 $scope.target_sites.setSliderHiders($scope.all_sites);
-            }
+            };
 
             /**
              * Populates contents of blocked_sites tree given a campaign's
@@ -751,7 +764,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              * @param all_sites
              * @private
              */
-            function _initializeBlockedInventoryTree(blocked_inventory, all_sites){
+            $scope.initializeBlockedInventoryTree = function(blocked_inventory, all_sites){
                 all_sites = all_sites || $scope.all_sites.data;
                 blocked_inventory.forEach(function(node){
                     // look up node by id in tree
@@ -763,12 +776,37 @@ angular.module('advertiser').controller('SiteTargetingController',
                             treeNode.explicit = true;
                         }
                         if (node.children && node.children.length > 0){
-                            _initializeBlockedInventoryTree(node.children, treeNode.__children__);
+                            $scope.initializeBlockedInventoryTree(node.children, treeNode.__children__);
                         }
                     }
                 });
-            }
+            };
 
+            /**
+             * Wrapper to initialize all trees, starting with all sites, then moving
+             * necessary nodes & branches to targets & blocked & initializing accordingly.
+             */
+            $scope.initializeAllTrees = function(){
+                // Get all available sites to this campaign, then load into $scope.all_sites
+                // SiteTree instance
+                getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
+                    $scope.all_sites.fromSitesInCliquesBranchResponse(response, function(err, data){
+                        // Set default expand level to 0;
+                        $scope.all_sites.setExpandLevel(0);
+                        $scope.target_sites.clearTreeData(function(err){
+                            $scope.initializeTargetSiteTree($scope.campaign.inventory_targets);
+                        });
+                        $scope.blocked_sites.clearTreeData(function(err){
+                            $scope.initializeBlockedInventoryTree($scope.campaign.blocked_inventory);
+                        });
+                        $scope.dirty = false;
+                    });
+                });
+            };
+
+            //======================================================================//
+            //================= END Tree Initialization Handlers ===================//
+            //======================================================================//
 
             /**
              * Get Campaign from URL state params on load
@@ -777,18 +815,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 $scope.advertiser = advertiser;
                 $scope.campaignIndex = campaignIndex;
                 $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
-
-                // Get all available sites to this campaign, then load into $scope.all_sites
-                // SiteTree instance
-                getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
-                    $scope.all_sites.fromSitesInCliquesBranchResponse(response, function(err, data){
-                        // Set default expand level to 0;
-                        $scope.all_sites.setExpandLevel(0);
-                        //$scope.all_sites.control.reload_data();
-                        _initializeTargetSiteTree($scope.campaign.inventory_targets);
-                        _initializeBlockedInventoryTree($scope.campaign.blocked_inventory)
-                    });
-                });
+                $scope.initializeAllTrees();
             });
         }
 ]);
