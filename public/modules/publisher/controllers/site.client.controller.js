@@ -9,9 +9,9 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
         $scope.publishers = Publisher.query();
 
 		$scope.update = function() {
-			var publisher = $scope.publisher;
-
-			publisher.$update(function(){}, function(errorResponse) {
+			$scope.publisher.$update(function(){
+                setSite();
+            }, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 		};
