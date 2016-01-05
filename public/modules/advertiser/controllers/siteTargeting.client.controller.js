@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('SiteTargetingController',
-    ['$scope','$stateParams','Notify','$timeout','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog',
-        function($scope, $stateParams, Notify, $timeout, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog){
+    ['$scope','$stateParams','Notify','$timeout','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
+        function($scope, $stateParams, Notify, $timeout, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat, MongoTimeSeries, aggregationDateRanges){
             $scope.Math = Math;
             $scope.dirty = false;
 
@@ -137,7 +137,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     });
                 });
                 this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-                callback(null, null);
+                callback(null, this.data);
             };
 
             SiteTree.prototype.clearTreeData = function(callback){
@@ -557,11 +557,12 @@ angular.module('advertiser').controller('SiteTargetingController',
                     displayName: 'Name'
                 },
                 [
-                    //{
-                    //    field:        "pos",
-                    //    displayName:  'Position',
-                    //    cellTemplate: '<div>{{ positions(node.pos).name }}</div>'
-                    //},
+                    {
+                        field:        "stats.cpm",
+                        displayName:  'Avg. CPM',
+                        cellTemplate: '<div ng-show="node.stats.cpm">{{ node.stats.cpm | currency:"$":2 }}</div>' +
+                        '<small ng-hide="node.stats.cpm" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
+                    },
                     //{
                     //    field: "w",
                     //    displayName:  'Size',
@@ -798,6 +799,72 @@ angular.module('advertiser').controller('SiteTargetingController',
                 });
             };
 
+            $scope.dateRanges = aggregationDateRanges(user.tz);
+            $scope.defaultDateRange = '30d';
+
+            /**
+             * Quick helper function to calculate CPMs for grouped hourlyadstats data
+             * @param groupedData
+             * @returns {{}}
+             * @private
+             */
+            function _getCpms(groupedData){
+                var cpms = {};
+                for (var id in groupedData){
+                    if (groupedData.hasOwnProperty(id)){
+                        var imps = _.sum(groupedData[id], function(row){ return row.imps; });
+                        var spend = _.sum(groupedData[id], function(row){ return row.spend; });
+                        var cpm = spend / imps * 1000;
+                        cpms[id] = {
+                            imps: imps,
+                            spend: spend,
+                            cpm: cpm
+                        }
+                    }
+                }
+                return cpms;
+            }
+
+            /**
+             * Gets impression, spend & CPM totals for given date range from HourlyAdStats,
+             * groups by all Cliques, Sites, Pages & Placements for efficient retrieval
+             *
+             * @param siteTree
+             * @param dateRange
+             */
+            $scope.getSiteTreeStats = function(siteTree, dateRange){
+                var startDate = $scope.dateRanges[dateRange].startDate;
+                var endDate = $scope.dateRanges[dateRange].endDate;
+                var cliques = [];
+                siteTree.forEach(function(clique){
+                    cliques.push(clique._id);
+                });
+                var cliquesQueryStr = '{in}' + cliques.join(',');
+                HourlyAdStat.pubSummaryQuery({
+                    groupBy: 'pub_clique,site,page,placement',
+                    pub_clique: cliquesQueryStr,
+                    startDate: startDate,
+                    endDate: endDate
+                }).then(function (response) {
+                    var allSitesStats = {
+                        Clique: _getCpms(_.groupBy(response.data, '_id.pub_clique')),
+                        Site: _getCpms(_.groupBy(response.data, '_id.site')),
+                        Page: _getCpms(_.groupBy(response.data, '_id.page')),
+                        Placement: _getCpms(_.groupBy(response.data, '_id.placement'))
+                    };
+                    // Now bind to siteTree data to use in template
+                    function inner(treeData){
+                        treeData.forEach(function(node){
+                            node.stats = allSitesStats[node.nodeType][node._id];
+                            if (node.__children__ && node.__children__.length > 0) {
+                                inner(node.__children__);
+                            }
+                        });
+                    }
+                    inner(siteTree);
+                });
+            };
+
             /**
              * Wrapper to initialize all trees, starting with all sites, then moving
              * necessary nodes & branches to targets & blocked & initializing accordingly.
@@ -808,6 +875,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 getSitesInCliqueBranch($scope.campaign.clique).then(function(response){
                     $scope.all_sites.fromSitesInCliquesBranchResponse(response, function(err, data){
                         // Set default expand level to 0;
+                        $scope.getSiteTreeStats(data, $scope.defaultDateRange);
                         $scope.all_sites.setExpandLevel(0);
                         $scope.target_sites.clearTreeData(function(err){
                             $scope.initializeTargetSiteTree($scope.campaign.inventory_targets);
