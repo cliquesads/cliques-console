@@ -2,7 +2,7 @@
 'use strict';
 var mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    UserGroup = mongoose.model('UserGroup'),
+    Organization = mongoose.model('Organization'),
     config = require('../../config/config'),
     nodemailer = require('nodemailer'),
     swig = require('swig'),
@@ -65,16 +65,16 @@ Mailer.prototype.sendMail = function(mailOptions){
  * @param {String} subject email subject
  * @param {String} templateName name of template file stored in self.templatePath
  * @param {Object} data data passed to template to compile
- * @param {String} groupName name of Organization instance
+ * @param {String} orgName name of Organization instance
  */
-Mailer.prototype.sendMailToGroup = function(subject, templateName, data, groupName){
+Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, orgName){
     var self = this;
-    UserGroup
-        .findOne({name: groupName})
+    Organization
+        .findOne({name: orgName})
         .populate('users')
         .exec(function(err, group){
             if (err){
-                return console.error('Error looking up groupName ' + groupName + ' : ' + err);
+                return console.error('Error looking up orgName ' + orgName + ' : ' + err);
             }
             // Send single email to all users
             // Could loop through and send multiple emails to individual users
