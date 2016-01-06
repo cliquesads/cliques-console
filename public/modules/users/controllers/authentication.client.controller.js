@@ -24,11 +24,6 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
             });
         };
 
-        //$scope.$watch(function(scope){ return scope.credentials.username }, function(){
-        //    // ghetto copy email property
-        //    $scope.credentials.username = JSON.parse(JSON.stringify($scope.credentials.email));
-        //});
-
 		$scope.signup = function() {
             // Add access code ref to user before submitting for tracking purposes
             $scope.credentials.accesscode = $scope.authentication.accesscode;

@@ -60,12 +60,12 @@ Mailer.prototype.sendMail = function(mailOptions){
 };
 
 /**
- * Convenience method to send email to all users in UserGroup
+ * Convenience method to send email to all users in Organization
  *
  * @param {String} subject email subject
  * @param {String} templateName name of template file stored in self.templatePath
  * @param {Object} data data passed to template to compile
- * @param {String} groupName name of UserGroup instance
+ * @param {String} groupName name of Organization instance
  */
 Mailer.prototype.sendMailToGroup = function(subject, templateName, data, groupName){
     var self = this;
