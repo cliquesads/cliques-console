@@ -1,4 +1,4 @@
-<section class="row" data-ng-controller="AuthenticationController">
+<section class="row" data-ng-controller="SignUpController">
 	<!--<h3 class="col-md-12 text-center">Sign up using your social accounts</h3>-->
 	<!--<div class="col-md-12 text-center">-->
 		<!--<a href="/auth/facebook" class="undecorated-link">-->
@@ -20,45 +20,90 @@
 	<h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
     <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 panel panel-default">
         <div class="panel-body">
-            <form name="userForm" data-ng-submit="signup()" class="signin form-horizontal" novalidate autocomplete="off">
-                <fieldset>
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" required id="firstName" name="firstName" class="form-control" data-ng-model="credentials.firstName" placeholder="First Name">
+            <form name="userForm" data-ng-submit="signup()" form-wizard="" validate-steps="true" steps="3" novalidate autocomplete="off">
+                <div class="form-wizard wizard-horizontal">
+                    <!-- START wizard steps indicator-->
+                    <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-sm-4 p-lg">
+                            <h4>Account Setup</h4>
+                        </li>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-4 p-lg">
+                            <h4>Company & Billing Info</h4>
+                        </li>
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-md-4 p-lg">
+                            <h4>Terms & Conditions</h4>
+                        </li>
+                    </ol>
+                    <!-- END wizard steps indicator-->
+
+                    <!-- START User Inputs -->
+                    <div id="step1" ng-show="wizard.active(1)">
+                        <fieldset>
+                            <legend>Basic Info</legend>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input type="text" required id="firstName" name="firstName" class="form-control" data-ng-model="credentials.firstName" placeholder="First Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input type="text" id="lastName" name="lastName" class="form-control" data-ng-model="credentials.lastName" placeholder="Last Name">
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="email" class="form-control" data-ng-model="credentials.email" placeholder="Email">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="tz">Advertiser or Publisher?</label>
+                                        <select id="role" name="role" class="form-control" ng-options="role.value as role.name for role in roleChoices" data-ng-model="role"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="tz">Reporting Timezone</label>
+                                        <select id="tz" name="tz" class="form-control" ng-options="timezone.value as timezone.name for timezone in timezoneChoices" data-ng-model="credentials.tz"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Create a Username & Password</legend>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" class="form-control" data-ng-model="credentials.lastName" placeholder="Last Name">
+                    <div id="step2">
+
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" data-ng-model="credentials.email" placeholder="Email">
+                    <div class="text-center form-group mt">
+                        <button type="submit" class="btn btn-large btn-primary">Sign up!</button><!--&nbsp; or&nbsp;-->
+                        <!--<a href="/#!/signin" class="show-signup">Sign in</a>-->
                     </div>
-                    <div class="form-group">
-                        <label for="tz">Advertiser or Publisher?</label>
-                        <select id="role" name="role" class="form-control" ng-options="role.value as role.name for role in roleChoices" data-ng-model="role"></select>
+                    <div data-ng-show="error" class="text-center text-danger">
+                        <strong data-ng-bind="error"></strong>
                     </div>
-                    <div class="form-group">
-                        <label for="tz">Reporting Timezone</label>
-                        <select id="tz" name="tz" class="form-control" ng-options="timezone.value as timezone.name for timezone in timezoneChoices" data-ng-model="credentials.tz"></select>
-                    </div>
-                </fieldset>
-                <fieldset>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
-                    </div>
-                </fieldset>
-                <div class="text-center form-group mt">
-                    <button type="submit" class="btn btn-large btn-primary">Sign up!</button><!--&nbsp; or&nbsp;-->
-                    <!--<a href="/#!/signin" class="show-signup">Sign in</a>-->
-                </div>
-                <div data-ng-show="error" class="text-center text-danger">
-                    <strong data-ng-bind="error"></strong>
                 </div>
             </form>
         </div>
