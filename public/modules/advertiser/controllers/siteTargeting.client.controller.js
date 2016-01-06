@@ -633,7 +633,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     },
                     {
                         displayName:  'Actions',
-                        cellTemplate: '<button type="button" class="btn btn-xs" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
+                        cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }
                 ]
@@ -656,7 +656,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 },
                 [{
                     displayName:  'Actions',
-                    cellTemplate: '<button type="button" class="btn btn-xs" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+                    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
                     '<i class="fa fa-lg fa-remove"></i></button>'
                 }]
             );
