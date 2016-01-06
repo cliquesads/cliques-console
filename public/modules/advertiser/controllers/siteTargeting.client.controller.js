@@ -534,6 +534,17 @@ angular.module('advertiser').controller('SiteTargetingController',
             //==========================================================//
             //=============== BEGIN SiteTree Instances =================//
             //==========================================================//
+
+            var cpmColumnDef = {
+                    field:        "stats.cpm",
+                    displayName:  'Avg. CPM',
+                    titleTemplate: '<a href="#" tooltip="Average CPM on the Cliques Exchange for the {{ dateRanges[defaultDateRange].label }}">' +
+                    '<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM</a></div>',
+                    titleClass:   'wd-xxs text-center',
+                    cellClass:    'wd-xxs text-center',
+                    cellTemplate: '<div ng-show="node.stats.cpm">{{ node.stats.cpm | currency:"$":2 }}</div>' +
+                    '<small ng-hide="node.stats.cpm" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
+                };
             /**
              * SiteTree for All Available Sites tree vars
              */
@@ -557,17 +568,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     displayName: 'Name'
                 },
                 [
-                    {
-                        field:        "stats.cpm",
-                        displayName:  'Avg. CPM',
-                        cellTemplate: '<div ng-show="node.stats.cpm">{{ node.stats.cpm | currency:"$":2 }}</div>' +
-                        '<small ng-hide="node.stats.cpm" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
-                    },
-                    //{
-                    //    field: "w",
-                    //    displayName:  'Size',
-                    //    cellTemplate: '<div>{{ node.w }}{{ node.w ? "x" : null }}{{ node.h }}</div>'
-                    //},
+                    cpmColumnDef,
                     {
                         displayName:  'Actions',
                         cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
@@ -616,12 +617,14 @@ angular.module('advertiser').controller('SiteTargetingController',
                 },
                 {
                     field: "name",
-                    cellClass: 'v-middle',
-                    displayName: 'Name'
+                    cellClass: 'v-middle wd-md',
+                    displayName: 'Name',
+                    logoSize: 'xs'
                 },
                 [
                     {
                         field: "weight",
+                        titleClass:  'text-center',
                         displayName: "Weight",
                         cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
                         '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
@@ -629,10 +632,16 @@ angular.module('advertiser').controller('SiteTargetingController',
                     {
                         field: 'bid',
                         displayName: "Bid",
-                        cellTemplate: '<span ng-hide="node.__hideSlider__">{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</span>'
+                        titleClass:   'wd-xxs text-center',
+                        cellClass:    'wd-xxs text-center',
+                        cellTemplate: '<span ng-hide="node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">' +
+                        '<strong>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</strong></span>'
                     },
+                    cpmColumnDef,
                     {
                         displayName:  'Actions',
+                        titleClass:   'wd-xxs text-center',
+                        cellClass:    'wd-xxs text-center',
                         cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
                         '<i class="fa fa-lg fa-remove"></i></button>'
                     }

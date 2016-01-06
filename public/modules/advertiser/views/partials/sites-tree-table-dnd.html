@@ -5,10 +5,8 @@
                 compile="expandingProperty.titleTemplate">
                 {{expandingProperty.displayName || expandingProperty.field || expandingProperty}}
             </th>
-            <th ng-repeat="col in colDefinitions" ng-class="col.titleClass" ng-style="col.titleStyle"
-                compile="col.titleTemplate">
+            <th ng-repeat="col in colDefinitions" ng-class="col.titleClass" ng-style="col.titleStyle" compile="col.titleTemplate">
                 {{col.displayName || col.field}}
-                <a ng-show="col.field === 'stats.cpm'"href="#" tooltip="Average CPM on the Cliques Exchange for the {{ dateRanges[defaultDateRange].label }}">&nbsp;<i class="fa fa-line-chart"></i></a>
             </th>
         </tr>
     </thead>
@@ -32,7 +30,7 @@
                         </h4>
                     </span>
                     <span ng-switch-when="Site">
-                        <img src="{{ node.logo_secure_url }}" class="client-logo-sm" ng-click="getSiteDescription(node)"/>
+                        <img src="{{ node.logo_secure_url }}" ng-class="expandingProperty.logoSize === 'xs' ? 'client-logo-xs' : 'client-logo-sm'" ng-click="getSiteDescription(node)"/>
                         <strong ng-click="getSiteDescription(node)"> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Page{{node.__children__.length != 1 ? 's': null}})</strong>
                         &nbsp;<a href="#" ng-click="getSiteDescription(node)"><i class="fa fa-info-circle"></i></a>
                     </span>
