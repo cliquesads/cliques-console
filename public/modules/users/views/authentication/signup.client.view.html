@@ -1,22 +1,4 @@
-<section class="row" data-ng-controller="SignUpController">
-	<!--<h3 class="col-md-12 text-center">Sign up using your social accounts</h3>-->
-	<!--<div class="col-md-12 text-center">-->
-		<!--<a href="/auth/facebook" class="undecorated-link">-->
-			<!--<img src="/modules/users/img/buttons/facebook.png">-->
-		<!--</a>-->
-		<!--<a href="/auth/twitter" class="undecorated-link">-->
-			<!--<img src="/modules/users/img/buttons/twitter.png">-->
-		<!--</a>-->
-		<!--<a href="/auth/google" class="undecorated-link">-->
-			<!--<img src="/modules/users/img/buttons/google.png">-->
-		<!--</a>-->
-		<!--<a href="/auth/linkedin" class="undecorated-link">-->
-			<!--<img src="/modules/users/img/buttons/linkedin.png">-->
-		<!--</a>-->
-		<!--<a href="/auth/github" class="undecorated-link">-->
-			<!--<img src="/modules/users/img/buttons/github.png">-->
-		<!--</a>-->
-	<!--</div>-->
+<section class="row">
 	<h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
     <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 panel panel-default">
         <div class="panel-body">
@@ -24,14 +6,14 @@
                 <div class="form-wizard wizard-horizontal">
                     <!-- START wizard steps indicator-->
                     <ol class="row" style="margin-left: -15px; margin-right: -15px">
-                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-sm-4 p-lg">
-                            <h4>Account Setup</h4>
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-sm-4 skinny">
+                            <h4><i class="fa fa-user"></i> Account Setup</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-4 p-lg">
-                            <h4>Company & Billing Info</h4>
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-4 skinny">
+                            <h4><i class="fa fa-building-o"></i> Organization Setup</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-md-4 p-lg">
-                            <h4>Terms & Conditions</h4>
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-md-4 skinny">
+                            <h4><i class="fa fa-file-text-o"></i> Terms & Conditions</h4>
                         </li>
                     </ol>
                     <!-- END wizard steps indicator-->
@@ -41,37 +23,44 @@
                         <fieldset>
                             <legend>Basic Info</legend>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="firstName">First Name</label>
-                                        <input type="text" required id="firstName" name="firstName" class="form-control" data-ng-model="credentials.firstName" placeholder="First Name">
+                                        <label for="firstName">First Name *</label>
+                                        <input type="text" required="required" id="firstName" name="firstName" class="form-control" data-ng-model="credentials.firstName" data-parsley-group="step1"  placeholder="First Name">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="lastName">Last Name</label>
-                                        <input type="text" id="lastName" name="lastName" class="form-control" data-ng-model="credentials.lastName" placeholder="Last Name">
+                                        <label for="lastName">Last Name *</label>
+                                        <input type="text" required="required" id="lastName" name="lastName" class="form-control" data-ng-model="credentials.lastName" data-parsley-group="step1" placeholder="Last Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" required="required" id="email" name="email" class="form-control" data-ng-model="credentials.email" data-parsley-group="step1" placeholder="Email">
                                     </div>
                                 </div>
                             </div>
                             <br/>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="email">Email</label>
-                                        <input type="email" id="email" name="email" class="form-control" data-ng-model="credentials.email" placeholder="Email">
+                                        <label for="tz">Advertiser or Publisher? *</label>
+                                        <div ng-repeat="r in roleChoices" class="radio c-radio">
+                                            <label>
+                                                <input type="radio" name="role" ng-model="role" value="{{ r.value }}" />
+                                                <span class="fa fa-circle"></span><strong>{{ r.name }}</strong>: {{ r.description }} </label>
+                                        </div>
+                                        <!--<select id="role" required="required" name="role" class="form-control" ng-options="role.value as role.name for role in roleChoices" data-parsley-group="step1" data-ng-model="role"></select>-->
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="tz">Advertiser or Publisher?</label>
-                                        <select id="role" name="role" class="form-control" ng-options="role.value as role.name for role in roleChoices" data-ng-model="role"></select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="tz">Reporting Timezone</label>
-                                        <select id="tz" name="tz" class="form-control" ng-options="timezone.value as timezone.name for timezone in timezoneChoices" data-ng-model="credentials.tz"></select>
+                                        <label for="tz">Reporting Timezone *</label>
+                                        <select id="tz" name="tz" required="required" class="form-control" ng-options="timezone.value as timezone.name for timezone in timezoneChoices" data-parsley-group="step1" data-ng-model="credentials.tz"></select>
                                     </div>
                                 </div>
                             </div>
@@ -82,27 +71,94 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="username">Username</label>
-                                        <input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
+                                        <input type="text" id="username" required="required" name="username" ng-init="credentials.username = credentials.email" data-parsley-group="step1" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="password">Password</label>
-                                        <input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
+                                        <input type="password" required="required" id="password" name="password" tr-trustpass="{special: false, messageGuide: 'Make sure your password meets these requirements:'}" ng-minlength="8" class="form-control" data-ng-model="credentials.password"  data-parsley-group="step1" placeholder="Password">
                                     </div>
                                 </div>
                             </div>
                         </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="next">
+                                <a href="#" ng-click="wizard.go(2)"> Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
                     </div>
-                    <div id="step2">
+                    <!-- START Organization Inputs -->
+                    <div id="step2" ng-show="wizard.active(2)">
+                        <fieldset>
+                            <legend>Organization Info</legend>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="firstName">Company Name *</label>
+                                        <input type="text" required="required" id="orgName" name="orgName" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="orgAddress">Address *</label>
+                                        <input type="text" required="required" id="orgAddress" name="orgAddress" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln.">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="orgAddress2">Address 2</label>
+                                        <input type="text" id="orgAddress2" name="orgAddress2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2">
+                                        <small class="text-muted">Apartment, suite, unit, building, floor, etc.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="orgCountry">Country *</label>
+                                        <div id="orgCountry" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="orgState">State/Province/Region *</label>
+                                        <div id="orgState" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="orgState">Zip/Postal Code</label>
+                                        <input type="text" id="orgZip" name="orgZip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip">
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <small class="text-muted">* Required</small>
+                        <ul class="pager">
+                            <li class="previous">
+                                <a href="#" ng-click="wizard.go(1)"><span>&larr; Previous</span></a>
+                            </li>
+                            <li class="next">
+                                <a href="#" ng-click="wizard.go(3)"> Next <span>&rarr;</span></a>
+                            </li>
+                        </ul>
+                    </div>
 
-                    </div>
-                    <div class="text-center form-group mt">
-                        <button type="submit" class="btn btn-large btn-primary">Sign up!</button><!--&nbsp; or&nbsp;-->
-                        <!--<a href="/#!/signin" class="show-signup">Sign in</a>-->
-                    </div>
-                    <div data-ng-show="error" class="text-center text-danger">
-                        <strong data-ng-bind="error"></strong>
+                    <!-- Start Terms & Conditions Stuff -->
+                    <div id="step3" ng-show="wizard.active(3)">
+                        <div class="text-center form-group mt">
+                            <button type="submit" class="btn btn-large btn-primary">Sign up!</button><!--&nbsp; or&nbsp;-->
+                            <!--<a href="/#!/signin" class="show-signup">Sign in</a>-->
+                        </div>
+                        <div data-ng-show="error" class="text-center text-danger">
+                            <strong data-ng-bind="error"></strong>
+                        </div>
                     </div>
                 </div>
             </form>

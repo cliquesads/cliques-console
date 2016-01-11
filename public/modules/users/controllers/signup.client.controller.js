@@ -12,7 +12,30 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
         $scope.credentials = {
             tz: 'America/New_York'
         };
-        $scope.roleChoices = [{name: 'Advertiser', value: 'advertiser'},{name: 'Publisher', value: 'publisher'}];
+        $scope.organization = {
+            country: 'USA'
+        };
+        $scope.roleChoices = [
+            {
+                name: 'Advertiser',
+                description:'I\'d like to run advertising campaigns on Cliques',
+                value: 'advertiser'
+            },
+            {
+                name: 'Publisher',
+                description:'I\'d like to run Cliques ad placements on my website',
+                value: 'publisher'
+            }];
+
+        $scope.role = 'advertiser';
+
+        $scope.$watch(function(scope){ return scope.credentials.email; }, function(newEmail, oldEmail){
+            if (newEmail){
+                if (newEmail != oldEmail && !$scope.credentials.username){
+                    $scope.credentials.username = newEmail;
+                }
+            }
+        });
 
 		$scope.signup = function() {
             // Add access code ref to user before submitting for tracking purposes
