@@ -44,7 +44,8 @@ module.exports = {
             'public/lib/datatables/media/css/jquery.dataTables.min.css',
             'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
             'public/lib/angularjs-slider/dist/rzslider.min.css',
-            'public/lib/cliques-icons/styles.css'
+            'public/lib/cliques-icons/styles.css',
+            'public/lib/angular-trustpass/dist/tr-trustpass.min.css'
 		],
 		js: [
 			'public/config.js',
@@ -115,7 +116,9 @@ module.exports = {
             'public/lib/angular-tree-dnd/dist/ng-tree-dnd.js',
             'public/lib/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
             'public/lib/angular-datatables/dist/plugins/buttons/angular-datatables.buttons.js',
-            'public/lib/angularjs-slider/dist/rzslider.min.js'
+            'public/lib/angularjs-slider/dist/rzslider.min.js',
+            'public/lib/angular-country-state-select/dist/angular-country-state-select.js',
+            'public/lib/angular-trustpass/dist/tr-trustpass.min.js'
         ],
         sass: [
             'public/lib/datatables-buttons/css/buttons.dataTables.scss',
