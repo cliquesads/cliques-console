@@ -60,9 +60,12 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
 		$scope.signup = function() {
             // Add access code ref to user before submitting for tracking purposes
             $scope.credentials.accesscode = $scope.authentication.accesscode._id;
+            // Organization will be saved as separate document serverside
             $scope.credentials.organization = $scope.organization;
+            $scope.credentials.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
             $scope.credentials.roles = [$scope.credentials.role];
-			$http.post('/auth/signup', $scope.credentials).success(function(response){
+
+            $http.post('/auth/signup', $scope.credentials).success(function(response){
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
                 $scope.authentication.accesscode = null;

@@ -129,6 +129,12 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label for="orgCity">City</label>
+                                        <div id="orgCity" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                         <label for="orgState">State/Province/Region *</label>
                                         <div id="orgState" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
                                     </div>
