@@ -20,43 +20,44 @@
 
                     <!-- START User Inputs -->
                     <div id="step1" ng-show="wizard.active(1)">
+                        <legend>Account Type</legend>
+                        <div class="box-form">
+                            <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                                <li ng-class="{'active':credentials.role === 'advertiser'}" ng-click="credentials.role = 'advertiser'" class="col-sm-6">
+                                    <h4>{{ roleChoices.advertiser.name }}</h4>
+                                    <p>{{ roleChoices.advertiser.description }}</p>
+                                </li>
+                                <li ng-class="{'active':credentials.role === 'publisher'}" ng-click="credentials.role = 'publisher'" class="col-sm-6">
+                                    <h4>{{ roleChoices.publisher.name }}</h4>
+                                    <p>{{ roleChoices.publisher.description }}</p>
+                                </li>
+                            </ol>
+                        </div>
                         <fieldset>
                             <legend>Basic Info</legend>
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="firstName">First Name *</label>
                                         <input type="text" required="required" id="firstName" name="firstName" class="form-control" data-ng-model="credentials.firstName" data-parsley-group="step1"  placeholder="First Name">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="lastName">Last Name *</label>
                                         <input type="text" required="required" id="lastName" name="lastName" class="form-control" data-ng-model="credentials.lastName" data-parsley-group="step1" placeholder="Last Name">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="email">Email *</label>
-                                        <input type="email" required="required" id="email" name="email" class="form-control" data-ng-model="credentials.email" data-parsley-group="step1" placeholder="Email">
-                                    </div>
-                                </div>
                             </div>
                             <br/>
                             <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label for="tz">Advertiser or Publisher? *</label>
-                                        <div ng-repeat="r in roleChoices" class="radio c-radio">
-                                            <label>
-                                                <input type="radio" name="role" ng-model="role" value="{{ r.value }}" />
-                                                <span class="fa fa-circle"></span><strong>{{ r.name }}</strong>: {{ r.description }} </label>
-                                        </div>
-                                        <!--<select id="role" required="required" name="role" class="form-control" ng-options="role.value as role.name for role in roleChoices" data-parsley-group="step1" data-ng-model="role"></select>-->
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
+                                        <label for="email">Email *</label>
+                                        <input type="email" required="required" id="email" name="email" class="form-control" data-ng-model="credentials.email" data-parsley-group="step1" placeholder="Email">
+                                        <span class="fa fa-envelope form-control-feedback text-muted"></span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="tz">Reporting Timezone *</label>
@@ -68,10 +69,11 @@
                         <fieldset>
                             <legend>Create a Username & Password</legend>
                             <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
+                                <div class="col-md-6">
+                                    <div class="form-group has-feedback">
                                         <label for="username">Username</label>
                                         <input type="text" id="username" required="required" name="username" ng-init="credentials.username = credentials.email" data-parsley-group="step1" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
+                                        <span class="fa fa-user form-control-feedback text-muted"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -152,9 +154,20 @@
 
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step3" ng-show="wizard.active(3)">
+                        <fieldset>
+                            <legend>Terms & Conditions</legend>
+                            <p>Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
+                            <div terms-panel class="terms-text-narrow text-center" template="{{ template }}"></div>
+                            <div class="checkbox c-checkbox"><label><input type="checkbox" ><span class="fa fa-check"></span> I accept</label></div>
+                            <em>
+                                <small>
+                                    <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
+                                    <p>If you are accepting the Agreement on behalf of a company, business, corporation or entity, you and the applicable company, business, corporation or entity represent and warrant that you have the authority to bind such company, business, corporation or entity to the Agreement.  If you do not have such authority, do not complete this Service Form or indicate your acceptance to the Agreement.</p>
+                                </small>
+                            </em>
+                        </fieldset>
                         <div class="text-center form-group mt">
-                            <button type="submit" class="btn btn-large btn-primary">Sign up!</button><!--&nbsp; or&nbsp;-->
-                            <!--<a href="/#!/signin" class="show-signup">Sign in</a>-->
+                            <button type="submit" class="btn btn-large btn-primary">Finish</button><!--&nbsp; or&nbsp;-->
                         </div>
                         <div data-ng-show="error" class="text-center text-danger">
                             <strong data-ng-bind="error"></strong>
