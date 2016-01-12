@@ -18,7 +18,8 @@ module.exports = {
                 'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
                 'public/lib/angularjs-slider/dist/rzslider.min.css',
                 'public/lib/cliques-icons/styles.css',
-                'public/lib/angular-trustpass/dist/tr-trustpass.min.css'
+                'public/lib/angular-trustpass/dist/tr-trustpass.min.css',
+                'public/lib/intl-tel-input/build/css/intlTelInput.css'
 			],
 			js: [
 				'public/dist/vendor.min.js'
