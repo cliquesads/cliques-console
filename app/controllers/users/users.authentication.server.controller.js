@@ -24,7 +24,11 @@ exports.authorizeAccessCode = function(req, res) {
             });
         } else {
             if (valid){
-                res.json({accesscode: accesscode._id});
+                if (accesscode.active){
+                    res.json({accesscode: accesscode});
+                } else {
+                    res.status(400).send({message: 'This code has expired.'})
+                }
             } else {
                 res.status(400).send({message: 'Invalid Code'});
             }
