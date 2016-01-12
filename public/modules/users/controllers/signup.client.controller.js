@@ -58,22 +58,46 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
         });
 
 		$scope.signup = function() {
-            // Add access code ref to user before submitting for tracking purposes
-            $scope.credentials.accesscode = $scope.authentication.accesscode._id;
-            // Organization will be saved as separate document serverside
-            $scope.credentials.organization = $scope.organization;
-            $scope.credentials.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
-            $scope.credentials.roles = [$scope.credentials.role];
+            // Subfunction to just sign up user.
+            // Gets wrapped in organization creation logic, called
+            // as callback once we have org ID
+            function _signUpUser(organizationId){
+                // Add access code ref to user before submitting for tracking purposes
+                $scope.credentials.accesscode = $scope.authentication.accesscode._id;
+                $scope.credentials.roles = [$scope.credentials.role];
+                $scope.credentials.organization = organizationId;
+                // Post the request
+                $http.post('/auth/signup', $scope.credentials).success(function(response){
+                    // If successful we assign the response to the global user model
+                    $scope.authentication.user = response;
+                    $scope.authentication.accesscode = null;
+                    // And redirect to the index page
+                    $window.location.href = '/';
+                }).error(function(response) {
+                    $scope.error = response.message;
+                });
+            }
 
-            $http.post('/auth/signup', $scope.credentials).success(function(response){
-				// If successful we assign the response to the global user model
-				$scope.authentication.user = response;
-                $scope.authentication.accesscode = null;
-				// And redirect to the index page
-                $window.location.href = '/';
-			}).error(function(response) {
-				$scope.error = response.message;
-			});
+            // If organization is new, first need to create it before creating user.
+            // Otherwise, just pass its ID to signup function
+            if ($scope.organization._id){
+                $scope.credentials.isPrimaryContact = false;
+                _signUpUser($scope.organization._id)
+            } else {
+                // have to create a new organization first, then sign up user
+                $scope.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
+                $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
+
+                // if we're creating a new organization, make this user the primary contact
+                $scope.credentials.isPrimaryContact = true;
+
+                $http.post('/organization', $scope.organization).success(function(response){
+                    $scope.organization = response;
+                    _signUpUser($scope.organization._id);
+                }).error(function(response){
+                    $scope.error = response.message;
+                });
+            }
 		};
 	}
 ]);

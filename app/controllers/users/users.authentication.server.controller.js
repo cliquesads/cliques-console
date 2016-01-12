@@ -37,32 +37,20 @@ exports.authorizeAccessCode = function(req, res) {
     });
 };
 
-var _createUser = function(orgId, req, res, callback){
-    var user = new User(req.body);
-    var message = null;
+function handleError(res, err){
+    return res.status(400).send({
+        message: errorHandler.getAndLogErrorMessage(err)
+    });
+}
 
-    // Add missing user fields
-    user.organization = orgId;
-    user.provider = 'local';
-    user.displayName = user.firstName + ' ' + user.lastName;
-
-    // Then save the user
-    user.save(function(err) {
-        if (err) {
-
-        } else {
-            // Remove sensitive data before login
-            user.password = undefined;
-            user.salt = undefined;
-
-            req.login(user, function(err) {
-                if (err) {
-                    res.status(400).send(err);
-                } else {
-                    callback(null, user);
-                }
-            });
-        }
+/**
+ * Create a new organization
+ */
+exports.createOrganization = function(req, res){
+    var organization = new Organization(req.body);
+    organization.save(function(err, org){
+        if (err) return handleError(res, err);
+        return res.json(org);
     });
 };
 
@@ -70,66 +58,37 @@ var _createUser = function(orgId, req, res, callback){
  * Signup
  */
 exports.signup = function(req, res) {
-	// If org already exists, save with org ID
-    var orgId = req.body.organization._id;
-    if (!orgId){
-        // bit of a mess cause you have to save org first, then save user, then re-save org again
-        // to persist user relationship & primary contact before returning response
-        var organization = new Organization(req.body.organization);
-        organization.save(function(err, org){
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getAndLogErrorMessage(err)
-                });
+    // flag to tell whether or not user should be made
+    // primary contact for organization
+    var isPrimaryContact = req.body.isPrimaryContact;
+    var user = new User(req.body);
+    var message = null;
+
+    // Add missing user fields
+    user.provider = 'local';
+    user.displayName = user.firstName + ' ' + user.lastName;
+    // Then save the user
+    user.save(function(err, user) {
+        if (err) return handleError(res, err);
+        // Remove sensitive data before login
+        user.password = undefined;
+        user.salt = undefined;
+        // need to re-save organization with reference to user
+        Organization.findById(user.organization, function (err, org) {
+            if (isPrimaryContact) {
+                org.primary_contact = user.id;
             }
-            // now create user
-            _createUser(org._id, req, res, function(err, user){
-                if (err){
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                }
-                // if creating org for the first time, need to
-                // add primary contact as this user, and add to
-                // users list
-                org.primary_contact = user._id;
-                org.users.push(user._id);
-                org.save(function(err, o){
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    }
+            // Add user to organization users
+            org.users.push(user.id);
+            org.save(function (err, org) {
+                if (err) return handleError(res, err);
+                req.login(user, function (err) {
+                    if (err) return handleError(res, err);
                     return res.json(user);
                 });
             });
         });
-    } else {
-        _createUser(orgId, req, res, function(err, user){
-            if (err){
-                return res.status(400).send({
-                    message: errorHandler.getAndLogErrorMessage(err)
-                });
-            }
-            Organization.findById(orgId, function(err, org){
-                // Otherwise don't add as primary contact
-                if (err){
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                }
-                org.users.push(user._id);
-                org.save(function(err, o){
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    }
-                    return res.json(user);
-                });
-            });
-        });
-    }
+    });
 };
 
 /**
