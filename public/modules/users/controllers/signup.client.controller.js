@@ -26,7 +26,10 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
                 description:'Monetize a website with Cliques ad placements'
             }
         };
-
+        // Get advertiser & publisher fee schedules from accesscode
+        $scope.advertiserFees = _.find($scope.authentication.accesscode.fees, function(fee){ return fee.type === 'advertiser'; });
+        $scope.publisherFees = _.find($scope.authentication.accesscode.fees, function(fee){ return fee.type === 'publisher'; });
+        // Control for acceptance of terms
         $scope.acceptedTerms = false;
 
 
@@ -56,7 +59,8 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
 
 		$scope.signup = function() {
             // Add access code ref to user before submitting for tracking purposes
-            $scope.credentials.accesscode = $scope.authentication.accesscode;
+            $scope.credentials.accesscode = $scope.authentication.accesscode._id;
+            $scope.credentials.organization = $scope.organization;
             $scope.credentials.roles = [$scope.credentials.role];
 			$http.post('/auth/signup', $scope.credentials).success(function(response){
 				// If successful we assign the response to the global user model

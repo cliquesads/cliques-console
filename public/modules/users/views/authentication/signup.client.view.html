@@ -155,6 +155,20 @@
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step3" ng-show="wizard.active(3)">
                         <fieldset>
+                            <div ng-switch on="credentials.role">
+                                <div ng-switch-when="advertiser">
+                                    <legend>Cliques Fees</legend>
+                                    <p>For use of its services, Cliques charges a fee equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your total ad spend.</p>
+                                    <p>At the end of each calendar month, Cliques will send you an invoice for all ad spend & service fees accrued. Unless otherwise specified in the Service Form, the total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</p>
+                                </div>
+                                <div ng-switch-when="publisher">
+                                    <legend>Revenue Share</legend>
+                                    <p>For use of its services, Cliques charges a revenue share equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your gross advertising revenue.</p>
+                                    <p>Cliques will pay you your gross advertising revenue (minus {{ advertiserFees.percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset>
                             <legend>Terms & Conditions</legend>
                             <p>Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
                             <div terms-panel class="terms-text-narrow text-center" template="{{ template }}"></div>
