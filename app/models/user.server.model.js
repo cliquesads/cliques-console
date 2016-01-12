@@ -164,6 +164,7 @@ var termsAndConditionsSchema = new Schema({
     name: { type: String, required: true },
     type: {type: String, enum: ['advertiser', 'publisher']},
     templatePath: { type: String, required: true },
+    url: {type: String, required: true },
     notes: { type: String, required: true },
     active: { type: Boolean, required: true, default: false }
 });
@@ -221,6 +222,7 @@ var AccessCodeSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    active: { type: Boolean, default: true, require: true },
     fees: [feeSchema]
 });
 

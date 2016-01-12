@@ -60,6 +60,7 @@ Mailer.prototype.sendMail = function(mailOptions){
 };
 
 /**
+ *
  * Convenience method to send email to all users in Organization
  *
  * @param {String} subject email subject
