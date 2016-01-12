@@ -190,7 +190,7 @@ var organizationSchema = new Schema({
     name: { type: String, required: true },
     primaryContact: { type: Schema.ObjectId, ref: 'User'},
     address: { type: String, required: true },
-    address2: { type: String, required: true },
+    address2: { type: String, required: false },
     city: { type: String, required: true },
     state: { type: String, required: true },
     country: { type: String, required: true },
@@ -199,7 +199,7 @@ var organizationSchema = new Schema({
     accesscode: { type: Schema.ObjectId,ref: 'AccessCode' },
     // can agree to multiple terms & conditions
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
-    additionalTerms: { type: String, required: true },
+    additionalTerms: { type: String, required: false },
     fees: [feeSchema],
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });

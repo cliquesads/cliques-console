@@ -102,6 +102,12 @@
                                         <input type="text" required="required" id="orgName" name="orgName" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="firstName">Phone Number</label>
+                                        <input type="text" required="required" id="orgPhone" name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2"  placeholder="(888)-867-5309">
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
@@ -115,8 +121,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="orgAddress2">Address 2</label>
-                                        <input type="text" id="orgAddress2" name="orgAddress2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2">
-                                        <small class="text-muted">Apartment, suite, unit, building, floor, etc.</small>
+                                        <input type="text" id="orgAddress2" name="orgAddress2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc.">
                                     </div>
                                 </div>
                             </div>
@@ -127,22 +132,24 @@
                                         <div id="orgCountry" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="orgCity">City</label>
-                                        <div id="orgCity" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city"></div>
+                                        <label for="orgCity">City *</label>
+                                        <input type="text" id="orgCity" name="orgCity" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="orgState">State/Province/Region *</label>
                                         <div id="orgState" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="orgState">Zip/Postal Code</label>
-                                        <input type="text" id="orgZip" name="orgZip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip">
+                                        <label for="orgState">Zip/Postal Code *</label>
+                                        <input type="text" id="orgZip" name="orgZip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753">
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +186,9 @@
                             <p>Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
                             <div terms-panel class="terms-text-narrow text-center" template="{{ template }}"></div>
                             <div class="text-center">
-                                <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="acceptedTerms"><span class="fa fa-check"></span> I Accept</label></div>
+                                <div class="checkbox c-checkbox"><label>
+                                    <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" data-parsley-group="step3">
+                                    <span class="fa fa-check"></span> I Accept</label></div>
                             </div>
                             <em>
                                 <small>
