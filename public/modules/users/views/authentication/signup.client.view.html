@@ -158,7 +158,9 @@
                             <legend>Terms & Conditions</legend>
                             <p>Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
                             <div terms-panel class="terms-text-narrow text-center" template="{{ template }}"></div>
-                            <div class="checkbox c-checkbox"><label><input type="checkbox" ><span class="fa fa-check"></span> I accept</label></div>
+                            <div class="text-center">
+                                <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="acceptedTerms"><span class="fa fa-check"></span> I Accept</label></div>
+                            </div>
                             <em>
                                 <small>
                                     <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
@@ -167,7 +169,7 @@
                             </em>
                         </fieldset>
                         <div class="text-center form-group mt">
-                            <button type="submit" class="btn btn-large btn-primary">Finish</button><!--&nbsp; or&nbsp;-->
+                            <button type="submit" class="btn btn-large btn-primary" ng-show="acceptedTerms">Finish</button><!--&nbsp; or&nbsp;-->
                         </div>
                         <div data-ng-show="error" class="text-center text-danger">
                             <strong data-ng-bind="error"></strong>

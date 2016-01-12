@@ -27,6 +27,9 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
             }
         };
 
+        $scope.acceptedTerms = false;
+
+
         /**
          * Watcher to set default username to email address
          */
