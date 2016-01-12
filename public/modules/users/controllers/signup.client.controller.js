@@ -60,7 +60,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
         $scope.$watch(function(scope){ return scope.credentials.username }, function(newUsername, oldUsername){
             if (newUsername){
                 $http.get('/auth/is-username-taken/' + newUsername).success(function(response){
-                    $scope.taken = response.taken;
+                    $scope.userNameTaken = response.taken;
                 });
             }
         });
