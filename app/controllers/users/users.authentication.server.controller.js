@@ -8,6 +8,7 @@ var _ = require('lodash'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
 	User = mongoose.model('User'),
+    Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode');
 
 /**
@@ -36,42 +37,99 @@ exports.authorizeAccessCode = function(req, res) {
     });
 };
 
+var _createUser = function(orgId, req, res, callback){
+    var user = new User(req.body);
+    var message = null;
+
+    // Add missing user fields
+    user.organization = orgId;
+    user.provider = 'local';
+    user.displayName = user.firstName + ' ' + user.lastName;
+
+    // Then save the user
+    user.save(function(err) {
+        if (err) {
+
+        } else {
+            // Remove sensitive data before login
+            user.password = undefined;
+            user.salt = undefined;
+
+            req.login(user, function(err) {
+                if (err) {
+                    res.status(400).send(err);
+                } else {
+                    callback(null, user);
+                }
+            });
+        }
+    });
+};
 
 /**
  * Signup
  */
 exports.signup = function(req, res) {
-	// For security measurement we remove the roles from the req.body object
-	//delete req.body.roles;
-
-	// Init Variables
-	var user = new User(req.body);
-	var message = null;
-
-	// Add missing user fields
-	user.provider = 'local';
-	user.displayName = user.firstName + ' ' + user.lastName;
-
-	// Then save the user 
-	user.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getAndLogErrorMessage(err)
-			});
-		} else {
-			// Remove sensitive data before login
-			user.password = undefined;
-			user.salt = undefined;
-
-			req.login(user, function(err) {
-				if (err) {
-					res.status(400).send(err);
-				} else {
-					res.json(user);
-				}
-			});
-		}
-	});
+	// If org already exists, save with org ID
+    var orgId = req.body.organization._id;
+    if (!orgId){
+        // bit of a mess cause you have to save org first, then save user, then re-save org again
+        // to persist user relationship & primary contact before returning response
+        var organization = new Organization(req.body.organization);
+        organization.save(function(err, org){
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            }
+            // now create user
+            _createUser(org._id, req, res, function(err, user){
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                }
+                // if creating org for the first time, need to
+                // add primary contact as this user, and add to
+                // users list
+                org.primary_contact = user._id;
+                org.users.push(user._id);
+                org.save(function(err, o){
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    return res.json(user);
+                });
+            });
+        });
+    } else {
+        _createUser(orgId, req, res, function(err, user){
+            if (err){
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            }
+            Organization.findById(orgId, function(err, org){
+                // Otherwise don't add as primary contact
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                }
+                org.users.push(user._id);
+                org.save(function(err, o){
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    return res.json(user);
+                });
+            });
+        });
+    }
 };
 
 /**
