@@ -32,6 +32,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
         // Control for acceptance of terms
         $scope.acceptedTerms = false;
 
+        /**
+         * Have to manually add jQuery int-tel-input to orgPhone field
+         */
+        $('#orgPhone').intlTelInput({
+            utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
+            autoFormat: true
+        });
 
         /**
          * Watcher to set default username to email address

@@ -7,13 +7,13 @@
                     <!-- START wizard steps indicator-->
                     <ol class="row" style="margin-left: -15px; margin-right: -15px">
                         <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-sm-3 skinny">
-                            <h4><i class="fa fa-info"></i> Basics</h4>
+                            <h4><i class="fa fa-info"></i> Basic Info</h4>
                         </li>
                         <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-3 skinny">
-                            <h4><i class="fa fa-building-o"></i> Company</h4>
+                            <h4><i class="fa fa-building-o"></i> Organization Info</h4>
                         </li>
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-sm-3 skinny">
-                            <h4><i class="fa fa-user"></i> Account</h4>
+                            <h4><i class="fa fa-user"></i> Create an Account</h4>
                         </li>
                         <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny">
                             <h4><i class="fa fa-file-text-o"></i> Terms & Conditions</h4>
@@ -24,6 +24,7 @@
                     <!-- START User Inputs -->
                     <div id="step1" ng-show="wizard.active(1)">
                         <legend>Account Type</legend>
+                        <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
                         <div class="box-form">
                             <ol class="row" style="margin-left: -15px; margin-right: -15px">
                                 <li ng-class="{'active':credentials.role === 'advertiser'}" ng-click="credentials.role = 'advertiser'" class="col-sm-6">
@@ -80,6 +81,7 @@
                     <div id="step2" ng-show="wizard.active(2)">
                         <fieldset>
                             <legend>Organization Info</legend>
+                            <p class="legend-help-text text-muted">Please tell us about your company.  We will use this information for billing purposes only.</p>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
@@ -90,7 +92,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="firstName">Phone Number *</label>
-                                        <input type="text" required="required" id="orgPhone" name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2"  placeholder="(888)-867-5309">
+                                        <input type="text" required="required" id="orgPhone" name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
                                     </div>
                                 </div>
                             </div>
@@ -152,6 +154,7 @@
                     <div id="step3" ng-show="wizard.active(3)">
                         <fieldset>
                             <legend>Create a Username & Password</legend>
+                            <small class="text-muted">Please create a username & password for the Cliques Console.</small>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group has-feedback">
