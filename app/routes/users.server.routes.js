@@ -24,6 +24,7 @@ module.exports = function(app) {
 	app.route('/auth/signup').post(users.signup);
 	app.route('/auth/signin').post(users.signin);
 	app.route('/auth/signout').get(users.signout);
+    app.route('/auth/is-username-taken/:username').get(users.isUsernameTaken);
 
     app.route('/auth/access-signup').post(users.authorizeAccessCode);
 

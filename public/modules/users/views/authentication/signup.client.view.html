@@ -74,6 +74,8 @@
                                         <label for="username">Username</label>
                                         <input type="text" id="username" required="required" name="username" ng-init="credentials.username = credentials.email" data-parsley-group="step1" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
                                         <span class="fa fa-user form-control-feedback text-muted"></span>
+                                        <div ng-show="credentials.username && taken" class="form-message form-message-danger" style="">This username is already in use.</div>
+                                        <div ng-show="credentials.username && !taken" class="form-message form-message-success" style="">This username is available!</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

@@ -37,11 +37,29 @@ exports.authorizeAccessCode = function(req, res) {
     });
 };
 
+/**
+ * Shortcut to handle errors
+ */
 function handleError(res, err){
     return res.status(400).send({
         message: errorHandler.getAndLogErrorMessage(err)
     });
 }
+
+/**
+ * Checks if username is already taken using User.statics.isUsernameTaken
+ * @param req
+ * @param res
+ */
+exports.isUsernameTaken = function(req, res){
+    var username = req.param('username');
+    User.isUsernameTaken(username, function(err, taken){
+        if (err) return handleError(res, err);
+        return res.json({ taken: taken });
+    });
+};
+
+
 
 /**
  * Create a new organization

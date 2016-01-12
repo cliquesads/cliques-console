@@ -131,6 +131,20 @@ UserSchema.methods.authenticate = function(password) {
 };
 
 /**
+ * Check to see whether a given username is already taken
+ *
+ * @param username
+ * @param callback
+ */
+UserSchema.statics.isUsernameTaken = function(username, callback){
+    var _this = this;
+    _this.findOne({ username: username}, function(err, user){
+        if (err) return callback(err, null);
+        return callback(null, user ? true : false)
+    });
+};
+
+/**
  * Find possible not used username
  */
 UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {

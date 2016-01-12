@@ -1,0 +1,27 @@
+
+@trustpass-done-color: @brand-green-dark;
+@trustpass-done-background: @brand-green-dark;
+@trustpass-done-radius: 6px;
+@trustpass-done-text-size: 1em;
+
+// Override trustpass default styles with brand green as well
+.form-message {
+  display: block;
+  clear: both;
+  margin: 10px 0 0 0;
+  padding: 10px;
+  border-radius: @trustpass-done-radius !important;
+  font-size: @trustpass-done-text-size !important;
+}
+
+.trustpass-done, .form-message-success {
+  border-color: @trustpass-done-color !important;
+  color: #ffffff !important;
+  background: @trustpass-done-background !important;
+}
+
+.form-message-danger {
+  border-color: @brand-danger !important;
+  background: @brand-danger-light !important;
+  color: #ffffff;
+}
