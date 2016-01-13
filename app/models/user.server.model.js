@@ -166,7 +166,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	});
 };
 
-mongoose.model('User', UserSchema);
+exports.User = mongoose.model('User', UserSchema);
 
 /**
  * Small schema to store some important metadata about
@@ -201,6 +201,7 @@ var feeSchema = new Schema({
  * @type {Schema}
  */
 var organizationSchema = new Schema({
+    tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
     primaryContact: { type: Schema.ObjectId, ref: 'User'},
     address: { type: String, required: true },
