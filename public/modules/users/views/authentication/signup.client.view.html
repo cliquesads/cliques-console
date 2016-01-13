@@ -204,7 +204,7 @@
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <div ng-show="authentication.accesscode.promos" class="alert alert-success">
+                        <div ng-show="authentication.accesscode.promos[0]" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>
                                 <li ng-repeat="promo in authentication.accesscode.promos" class="text-md">{{ promo }}</li>
