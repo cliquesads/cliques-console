@@ -35,10 +35,12 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field
          */
-        $('#orgPhone').intlTelInput({
+        $('#phone').intlTelInput({
             utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
             autoFormat: true
         });
+        // jQuery hack to force input to fill whole column
+        $('div.intl-tel-input').addClass('col-md-12 p0');
 
         /**
          * Add custom validator for orgPhone field that just checks number validity
@@ -46,7 +48,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         window.ParsleyValidator
             .addValidator('intlphone', function (value, requirement) {
-                return $("#orgPhone").intlTelInput("isValidNumber");
+                return $("#phone").intlTelInput("isValidNumber");
             }, 32);
 
         /**
@@ -122,7 +124,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 // have to create a new organization first, then sign up user
                 $scope.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
                 $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
-                $scope.organization.phone = $('#orgPhone').intlTelInput('getNumber');
+                $scope.organization.phone = $('#phone').intlTelInput('getNumber');
 
                 // if we're creating a new organization, make this user the primary contact
                 $scope.credentials.isPrimaryContact = true;

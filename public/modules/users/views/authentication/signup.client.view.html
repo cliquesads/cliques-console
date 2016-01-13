@@ -39,7 +39,7 @@
                         </div>
                         <fieldset>
                             <legend>Basic Info</legend>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="firstName">First Name *</label>
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <br/>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-6">
                                     <div class="form-group has-feedback">
                                         <label for="email">Email *</label>
@@ -82,21 +82,23 @@
                         <fieldset>
                             <legend>Organization Info</legend>
                             <p class="legend-help-text text-muted">Please tell us about your company.  We will use this information for billing purposes only.</p>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="firstName">Company Name *</label>
-                                        <input type="text" required="required" id="orgName" name="orgName" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="firstName">Phone Number *</label>
-                                        <input type="text" required="required" id="orgPhone" data-parsley-intlphone name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
+                                        <label for="company">Company Name *</label>
+                                        <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number *</label>
+                                        <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt">
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="address">Address *</label>
@@ -104,7 +106,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="address2">Address 2</label>
@@ -112,7 +114,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="country">Country *</label>
@@ -120,7 +122,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="city">City *</label>
@@ -155,20 +157,21 @@
                         <fieldset>
                             <legend>Create a Username & Password</legend>
                             <p class="legend-help-text text-muted">Please create a username & password for the Cliques Console.</p>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-6">
                                     <div class="form-group has-feedback">
                                         <label for="username">Username</label>
-                                        <input type="text" id="username" required="required" ng-minlength=5 name="username" ng-init="credentials.username = credentials.email" data-parsley-group="step3" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
+                                        <input type="text" id="username" required="required" data-parsley-minlength="5" ng-minlength="5" name="username" ng-init="credentials.username = credentials.email" data-parsley-group="step3" class="form-control" data-ng-model="credentials.username" placeholder="{{ credentials.email }}">
                                         <span class="fa fa-user form-control-feedback text-muted"></span>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
+                                    <div ng-show="credentials.username.length < 5" class="form-message form-message-danger" style=""><i class="fa fa-exclamation-circle"></i> 5 characters min.</div>
                                     <div ng-show="credentials.username && userNameTaken" class="form-message form-message-danger" style=""><i class="fa fa-exclamation-circle"></i> This username is taken.</div>
                                     <div ng-show="credentials.username && !userNameTaken" class="form-message form-message-success" style=""><i class="fa fa-check-circle"></i> This username is available</div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="password">Password</label>
@@ -177,7 +180,7 @@
                                 </div>
                                 <div class="col-md-6" id="password-helper"></div>
                             </div>
-                            <div class="row">
+                            <div class="row pt">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="confirmpassword">Confirm Password</label>
@@ -219,7 +222,7 @@
                                     </ul>
                                     <div class="bs-callout bs-callout-primary">
                                         <h4>Don't worry</h4>
-                                        <p>Accepting the terms does not obligate you to spend any money. You will only be billed once you create a campaign and start a campaign.</p>
+                                        <p>Accepting the terms does not obligate you to spend any money. You will only be billed once you create and start a campaign.</p>
                                     </div>
                                 </div>
                                 <div ng-switch-when="publisher">
