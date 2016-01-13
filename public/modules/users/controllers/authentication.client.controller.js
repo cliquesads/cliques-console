@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$location', '$window','$compile','Authentication','Timezones',
-	function($scope, $http, $location, $window, $compile, Authentication, Timezones) {
+angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$analytics','$location', '$window','$compile','Authentication','Timezones',
+	function($scope, $http, $analytics, $location, $window, $compile, Authentication, Timezones) {
 		$scope.authentication = Authentication;
 
 		// If user is signed in then redirect back home
@@ -17,11 +17,13 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
         $scope.requestAccess = function(){
             $scope.loading = true;
             $http.post('/auth/access-signup', {code: $scope.accesscode}).success(function(response){
+                $analytics.eventTrack('AccessCodeValidated');
                 $scope.authentication.accesscode = response.accesscode;
                 // And redirect to the signup page
                 $scope.loading = false;
                 $location.path('/signup');
             }).error(function(response){
+                $analytics.eventTrack('InvalidAccessCode');
                 $scope.loading = false;
                 $scope.error = response.message;
             });
