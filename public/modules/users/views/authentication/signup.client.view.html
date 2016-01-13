@@ -185,6 +185,12 @@
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step4" ng-show="wizard.active(4)">
+                        <div ng-show="authentication.accesscode.promos" class="alert alert-info">
+                            <p>You've used an access code that comes a with the following promotions:</p>
+                            <ul>
+                                <li ng-repeat="promo in authentication.accesscode.promos" class="text-md">{{ promo }}</li>
+                            </ul>
+                        </div>
                         <div ng-switch on="credentials.role">
                             <div ng-switch-when="advertiser" class="alert alert-success">
                                 <h4>Cliques Fees</h4>

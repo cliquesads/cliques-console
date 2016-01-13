@@ -236,8 +236,9 @@ var AccessCodeSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    active: { type: Boolean, default: true, require: true },
-    fees: [feeSchema]
+    active: { type: Boolean, default: true, required: true },
+    fees: [feeSchema],
+    promos: [{ type: String, required: false }]
 });
 
 /**
