@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('SignUpController', ['$scope', '$http', '$location', '$window','Authentication','Timezones','TermsAndConditions',
-    function($scope, $http, $location, $window, Authentication, Timezones, TermsAndConditions) {
+angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location', '$window','Authentication','Timezones','TermsAndConditions',
+    function($scope, $timeout, $http, $location, $window, Authentication, Timezones, TermsAndConditions) {
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home
@@ -48,6 +48,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
             .addValidator('intlphone', function (value, requirement) {
                 return $("#orgPhone").intlTelInput("isValidNumber");
             }, 32);
+
+        /**
+         * Terrible jQuery hack to move password helpers to where I want them to go
+         */
+        $timeout(function(){
+            $('section.trustpass').appendTo('#password-helper');
+        });
 
         /**
          * Watcher to set default username to email address
