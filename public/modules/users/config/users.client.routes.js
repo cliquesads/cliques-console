@@ -21,7 +21,8 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 		}).
         state('loggedout.signup', {
             url: '/signup',
-            templateUrl: 'modules/users/views/authentication/signup.client.view.html'
+            templateUrl: 'modules/users/views/authentication/signup.client.view.html',
+            controller: 'SignUpController'
         }).
         state('loggedout.beta-access', {
             url: '/beta-access',

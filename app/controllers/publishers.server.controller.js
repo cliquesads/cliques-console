@@ -214,9 +214,26 @@ module.exports = function(db) {
                             });
                         } else {
                             pubs.forEach(function (pub) {
-                                sites = sites.concat(pub.sites.filter(function (site) {
+                                // Create shell publisher object w/ base model properties
+                                // to pass to site for client-side use
+                                var pubAttrs = {};
+                                var pubObj = pub.toObject();
+                                Object.keys(pubObj).forEach(function(key){
+                                    if (pubObj.hasOwnProperty(key) && key != 'sites'){
+                                        pubAttrs[key] = pubObj[key];
+                                    }
+                                });
+                                var sitesInClique = pub.sites.filter(function (site) {
                                     return ids.indexOf(site.clique) > -1;
-                                }));
+                                });
+                                // augment each site with 'parent_publisher' property, which
+                                // contains base model properties of publisher
+                                sitesInClique = sitesInClique.map(function(site){
+                                    var newSite = site.toObject();
+                                    newSite.parent_publisher = pubAttrs;
+                                    return newSite;
+                                });
+                                sites = sites.concat(sitesInClique);
                             });
                             sites = _.groupBy(sites, function(site){return site.clique;});
                             // Restructure a tad to make more friendly for client-side tree utils

@@ -1,9 +1,90 @@
-<section>
-    <tree-dnd
-            tree-data="sites"
-            tree-control="my_tree"
-            primary-key="_id"
-            column-defs="col_defs"
-            expand-on="expanding_property"
+<div class="topsavebar bg-primary-light" ng-show="dirty">
+    <div class="text-center">
+        <button type="button" class="btn btn-lg btn-primary" ng-click="save()">
+            Save
+        </button>
+        <button type="button" class="btn btn-lg btn-default" ng-click="initializeAllTrees()">
+            Reset
+        </button>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="panel">
+        <div class="panel-heading">
+            <h4>
+                <i class="fa fa-sitemap"></i>&nbsp;&nbsp;Default Bidding
+                <a class="fa fa-lg fa-question-circle pull-right" ng-click="getAllSitesHelp()"></a>
+            </h4>
+            <em class="text-muted">Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all sites in this list.</em>
+        </div>
+        <div class="panel-body">
+            <tree-expand-toggle-buttons control="all_sites.control"></tree-expand-toggle-buttons>
+            <tree-dnd
+                    template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
+                    tree-data="all_sites.data"
+                    tree-control="all_sites.control"
+                    column-defs="all_sites.columns"
+                    expand-on="all_sites.expanding_property"
+                    primary-key="_id"
+                    enable-drag="false"
+                    enable-drop="true"
+                    enable-move="false"
+                    icon-leaf="fa fa-lg fa-tags"
+                    icon-expand="fa fa-lg fa-minus"
+                    icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
             ></tree-dnd>
-</section>
+        </div>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="panel">
+        <div class="panel-heading bg-success">
+            <h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
+        </div>
+        <div class="panel-body">
+            <tree-expand-toggle-buttons control="target_sites.control" ng-show="target_sites.data"></tree-expand-toggle-buttons>
+            <tree-dnd
+                    template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
+                    tree-data="target_sites.data"
+                    tree-control="target_sites.control"
+                    column-defs="target_sites.columns"
+                    expand-on="target_sites.expanding_property"
+                    primary-key="_id"
+                    enable-drag="false"
+                    enable-drop="true"
+                    enable-move="false"
+                    icon-leaf="fa fa-lg fa-tags"
+                    icon-expand="fa fa-lg fa-minus"
+                    icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
+                    ></tree-dnd>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading bg-danger">
+            <h4><i class="fa fa-ban"></i>  Blocked</h4>
+        </div>
+        <div class="panel-body">
+            <tree-expand-toggle-buttons control="blocked_sites.control" ng-show="blocked_sites.data"></tree-expand-toggle-buttons>
+            <tree-dnd
+                    template-url="modules/advertiser/views/partials/sites-tree-table-dnd.html"
+                    tree-data="blocked_sites.data"
+                    tree-control="blocked_sites.control"
+                    column-defs="blocked_sites.columns"
+                    expand-on="blocked_sites.expanding_property"
+                    primary-key="_id"
+                    enable-drag="false"
+                    enable-drop="true"
+                    enable-move="false"
+                    icon-leaf="fa fa-lg fa-tags"
+                    icon-expand="fa fa-lg fa-minus"
+                    icon-collapse="fa fa-lg fa-plus-circle"
+                    data-indent="15"
+                    data-indent-unit="px"
+                    ></tree-dnd>
+        </div>
+    </div>
+</div>

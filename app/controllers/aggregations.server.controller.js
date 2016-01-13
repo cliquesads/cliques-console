@@ -447,7 +447,8 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
 HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
     var self = this;
     var filter_query = {};
-    if (req.user.roles.indexOf('admin') === -1){
+    // allow Advertisers & Admins to access publisher data
+    if (req.user.roles.indexOf('publisher') > -1){
         filter_query.user = req.user.id;
     }
     self.publisherModels.Publisher.find(filter_query, function(err, publishers){

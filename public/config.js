@@ -4,7 +4,6 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'cliquesConsole';
-	// var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils'];
 	var applicationModuleVendorDependencies = [
         'ngRoute',
         'ngAnimate',
@@ -31,7 +30,12 @@ var ApplicationConfiguration = (function() {
         'angulartics.mixpanel',
         'datatables',
         'akoenig.deckgrid',
-        'ntt.TreeDnD'
+        'ntt.TreeDnD',
+        'datatables.buttons',
+        'datatables.bootstrap',
+        'rzModule',
+        'ngCountryStateSelect',
+        'trTrustpass'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

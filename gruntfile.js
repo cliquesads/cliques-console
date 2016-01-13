@@ -142,6 +142,21 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+        sass: {
+            options: {
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    'public/dist/common.css': 'public/lib/datatables-buttons/css/common.scss',
+                    'public/dist/mixins.css': 'public/lib/datatables-buttons/css/mixins.scss',
+                    'public/dist/buttons.foundation.css': 'public/lib/datatables-buttons/css/buttons.foundation.scss',
+                    'public/dist/buttons.dataTables.css': 'public/lib/datatables-buttons/css/buttons.dataTables.scss',
+                    'public/dist/buttons.bootstrap.css': 'public/lib/datatables-buttons/css/buttons.bootstrap.scss',
+                    'public/dist/buttons.jqueryui.css': 'public/lib/datatables-buttons/css/buttons.jqueryui.scss'
+                }
+            }
+        },
 		/* Not needed for LESS
 		cssmin: {
 			combine: {
@@ -226,6 +241,7 @@ module.exports = function(grunt) {
 		var config = require('./config/config');
 
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
+        grunt.config.set('vendorSassFiles', config.vendor.sass);
 		grunt.config.set('applicationCSSFiles', config.assets.css);
 	});
 
@@ -242,7 +258,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less' ]);
+	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less','sass']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

@@ -21,6 +21,36 @@ angular.module('aggregations').factory('aggregationDateRanges',function(){
                 endDate: moment().tz(timezone).add(1,'days').startOf('day').toISOString(),
                 label: "Last 90 Days",
                 showPoints: false // Used for graphing purposes, might not be generic enough to keep in here
+            },
+            "lastMonth":{
+                startDate: moment().tz(timezone).subtract(1,'months').startOf('month').toISOString(),
+                endDate: moment().tz(timezone).startOf('month').startOf('day').toISOString(),
+                label: "Last Month",
+                showPoints: false
+            },
+            "mtd":{
+                startDate: moment().tz(timezone).startOf('month').startOf('day').toISOString(),
+                endDate: moment().tz(timezone).add(1,'days').startOf('day').toISOString(),
+                label: "Month to Date",
+                showPoints: false
+            },
+            "yesterday":{
+                startDate: moment().tz(timezone).subtract(1,'days').startOf('day').toISOString(),
+                endDate: moment().tz(timezone).startOf('day').toISOString(),
+                label: "Yesterday",
+                showPoints: false
+            },
+            "today":{
+                startDate: moment().tz(timezone).startOf('day').toISOString(),
+                endDate: moment().tz(timezone).add(1,'days').startOf('day').toISOString(),
+                label: "Today",
+                showPoints: false
+            },
+            "custom": {
+                startDate: null,
+                endDate: null,
+                label: "Custom...",
+                showPoints: false
             }
         };
     }

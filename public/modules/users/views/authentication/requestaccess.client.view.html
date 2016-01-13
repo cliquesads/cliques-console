@@ -4,6 +4,9 @@
 		<form data-ng-submit="requestAccess()" class="signin form-horizontal panel-body" autocomplete="off">
 			<div class="panel-body">
             <fieldset>
+                <div data-ng-show="error" class="alert alert-danger">
+                    <strong data-ng-bind="error"></strong>
+                </div>
 				<div class="form-group">
 					<label for="accesscode">Access Code</label>
 					<input type="text" id="accesscode" name="accesscode" class="form-control" data-ng-model="accesscode" placeholder="Super Secret Code">
@@ -11,8 +14,8 @@
 				<div class="text-center form-group mt">
 					<button type="submit" class="btn btn-primary">Submit</button>
 				</div>
-                <div data-ng-show="error" class="text-center text-danger">
-                    <strong data-ng-bind="error"></strong>
+                <div ng-show="loading" class="text-center ball-pulse">
+                    <div></div><div></div><div></div>
                 </div>
             </fieldset>
             </div>

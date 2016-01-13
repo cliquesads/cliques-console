@@ -38,8 +38,7 @@ angular.module('advertiser').factory('Advertiser', ['$resource',
                         });
                         //$scope.campaign as pointer to campaign in advertiser.campaigns array
                         //this way, all Advertiser resource methods will work
-                        var campaign = advertiser.campaigns[i];
-                        return callback(null, advertiser, campaign);
+                        return callback(null, advertiser, i);
                     });
             }
         }

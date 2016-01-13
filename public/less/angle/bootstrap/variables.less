@@ -17,7 +17,7 @@
 // Classic brand colors
 
 @brand-primary:          #5d9cec;
-@brand-success:          #27c24c;
+@brand-success:          #26d07c;
 @brand-info:             #23b7e5;
 @brand-warning:          #ff902b;
 @brand-danger:           #f05050;
@@ -48,6 +48,18 @@
 @brand-dark-light:             lighten(@brand-dark, @amountOfLight);
 @brand-yellow-light:           lighten(@brand-yellow, @amountOfLight);
 
+@brand-primary-very-light:     lighten(@brand-primary, 4 * @amountOfLight);
+@brand-success-very-light:     lighten(@brand-success, 4 * @amountOfLight);
+@brand-info-very-light:        lighten(@brand-info, 4 * @amountOfLight);
+@brand-warning-very-light:     lighten(@brand-warning, 4 * @amountOfLight);
+@brand-danger-very-light:      lighten(@brand-danger, 3 * @amountOfLight);
+@brand-inverse-very-light:     lighten(@brand-inverse, 4 * @amountOfLight);
+@brand-green-very-light:       lighten(@brand-green, 4 * @amountOfLight);
+@brand-pink-very-light:        lighten(@brand-pink, 4 * @amountOfLight);
+@brand-purple-very-light:      lighten(@brand-purple, 4 * @amountOfLight);
+@brand-dark-very-light:        lighten(@brand-dark, 4 * @amountOfLight);
+@brand-yellow-very-light:      lighten(@brand-yellow, 4 * @amountOfLight);
+
 @brand-primary-dark:           darken(@brand-primary, @amountOfLight);
 @brand-success-dark:           darken(@brand-success, @amountOfLight);
 @brand-info-dark:              darken(@brand-info, @amountOfLight);
@@ -59,6 +71,18 @@
 @brand-purple-dark:            darken(@brand-purple, @amountOfLight);
 @brand-dark-dark:              darken(@brand-dark, @amountOfLight);
 @brand-yellow-dark:            darken(@brand-yellow, @amountOfLight);
+
+@brand-primary-very-dark:           darken(@brand-primary, 3 * @amountOfLight);
+@brand-success-very-dark:           darken(@brand-success, 3 * @amountOfLight);
+@brand-info-very-dark:              darken(@brand-info, 3 * @amountOfLight);
+@brand-warning-very-dark:           darken(@brand-warning, 3 * @amountOfLight);
+@brand-danger-very-dark:            darken(@brand-danger, 3 * @amountOfLight);
+@brand-inverse-very-dark:           darken(@brand-inverse, 3 * @amountOfLight);
+@brand-green-very-dark:             darken(@brand-green, 3 * @amountOfLight);
+@brand-pink-very-dark:              darken(@brand-pink, 3 * @amountOfLight);
+@brand-purple-very-dark:            darken(@brand-purple, 3 * @amountOfLight);
+@brand-dark-very-dark:              darken(@brand-dark, 3 * @amountOfLight);
+@brand-yellow-very-dark:            darken(@brand-yellow, 3 * @amountOfLight);
 
 //== Scaffolding
 //
@@ -250,7 +274,7 @@
 @input-height-small:             (floor(@font-size-small * @line-height-small) + (@padding-small-vertical * 2) + 2);
 
 //** `.form-group` margin
-@form-group-margin-bottom:       15px;
+@form-group-margin-bottom:       13px;
 
 @legend-color:                   @gray-dark;
 @legend-border-color:            #e5e5e5;
@@ -360,7 +384,7 @@
 //** Number of columns in the grid.
 @grid-columns:              12;
 //** Padding between columns. Gets divided in half for the left and right.
-@grid-gutter-width:         30px;
+@grid-gutter-width:         10px;
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.
 @grid-float-breakpoint:     @screen-sm-min;
@@ -662,20 +686,20 @@
 @alert-border-radius:         @border-radius-small;
 @alert-link-font-weight:      bold;
 
-@alert-success-bg:            @brand-success;
-@alert-success-text:          #fff;
+@alert-success-bg:            @brand-success-very-light;
+@alert-success-text:          @brand-success-very-dark;
 @alert-success-border:        rgba(0,0,0,.1);
 
-@alert-info-bg:               @brand-info;
-@alert-info-text:             #fff;
+@alert-info-bg:               @brand-info-very-light;
+@alert-info-text:             @brand-info-very-dark;
 @alert-info-border:           rgba(0,0,0,.1);
 
-@alert-warning-bg:            @brand-warning;
-@alert-warning-text:          #fff;
+@alert-warning-bg:            @brand-warning-very-light;
+@alert-warning-text:          @brand-warning-very-dark;
 @alert-warning-border:        rgba(0,0,0,.1);
 
-@alert-danger-bg:             @brand-danger;
-@alert-danger-text:           #fff;
+@alert-danger-bg:             @brand-danger-very-light;
+@alert-danger-text:           @brand-danger-very-dark;
 @alert-danger-border:         rgba(0,0,0,.1);
 
 

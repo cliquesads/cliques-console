@@ -183,25 +183,25 @@ adding hook in parent template ---->
                             <div class="panel-body">
                                 <fieldset>
                                     <small><em class="text-muted">Inventory</em></small>
+                                    <!--<div class="form-group m0">-->
+                                        <!--<label class="col-sm-4 control-label">Sites</label>-->
+                                        <!--<div class="col-sm-8">-->
+                                            <!--<p class="form-control-static">-->
+                                                <!--<strong>-->
+                                                    <!--<a href="#" ng-click="editPlacementTargets()"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>-->
+                                                <!--</strong>-->
+                                            <!--</p>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</fieldset>-->
+                                <!--<fieldset>-->
+                                    <!--<small><em class="text-muted">Sites</em></small>-->
                                     <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">Sites</label>
+                                        <label class="col-sm-4 control-label">Sites, Pages & Placements</label>
                                         <div class="col-sm-8">
                                             <p class="form-control-static">
                                                 <strong>
-                                                    <a href="#" ng-click="editPlacementTargets()"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
-                                                </strong>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset>
-                                    <small><em class="text-muted">Sites</em></small>
-                                    <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">Test</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">
-                                                <strong>
-                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/placement-targets"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>
+                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/placement-targets"><span class="fa fa-sliders"></span>  {{ campaign.inventory_targets.length + campaign.blocked_inventory.length || 0 }} Inventory Targets Set</a>
                                                 </strong>
                                             </p>
                                         </div>
