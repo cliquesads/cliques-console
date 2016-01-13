@@ -166,7 +166,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	});
 };
 
-mongoose.model('User', UserSchema);
+exports.User = mongoose.model('User', UserSchema);
 
 /**
  * Small schema to store some important metadata about
@@ -201,6 +201,7 @@ var feeSchema = new Schema({
  * @type {Schema}
  */
 var organizationSchema = new Schema({
+    tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
     primaryContact: { type: Schema.ObjectId, ref: 'User'},
     address: { type: String, required: true },
@@ -219,6 +220,16 @@ var organizationSchema = new Schema({
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);
 
+
+/**
+ * Separate schema to handle promo
+ */
+var promoSchema = new Schema({
+    type: { type: String, enum: ['advertiser', 'publisher'] },
+    description: { type: String, required: true },
+    promoAmount: { type: Number, required: false },
+    promoInterval: { type: String, required: false }
+});
 /**
  * Access codes for private beta to allow users to sign up
  * @type {Schema}
@@ -238,7 +249,7 @@ var AccessCodeSchema = new Schema({
     },
     active: { type: Boolean, default: true, required: true },
     fees: [feeSchema],
-    promos: [{ type: String, required: false }]
+    promos: [promoSchema]
 });
 
 /**

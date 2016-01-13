@@ -26,19 +26,50 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 description:'Monetize a website with Cliques ad placements'
             }
         };
-        // Get advertiser & publisher fee schedules from accesscode
-        $scope.advertiserFees = _.find($scope.authentication.accesscode.fees, function(fee){ return fee.type === 'advertiser'; });
-        $scope.publisherFees = _.find($scope.authentication.accesscode.fees, function(fee){ return fee.type === 'publisher'; });
+
+        /**
+         * Initialize fees retrieved from accesscode used
+         * @type {{advertiser: null, publisher: null}}
+         */
+        $scope.fees = {
+            advertiser: null,
+            publisher: null
+        };
+        $scope.getAllFeesFromAccessCode = function(){
+            for (var role in $scope.fees){
+                if ($scope.fees.hasOwnProperty(role)){
+                    var feeObj = _.find($scope.authentication.accesscode.fees, function(fee){
+                        return fee.type === role;
+                    });
+                    feeObj = _.clone(feeObj);
+                    // Get rid of _id param
+                    delete feeObj._id;
+                    $scope.fees[role] = feeObj;
+                }
+            }
+        };
+        $scope.getAllFeesFromAccessCode();
+
+        /**
+         * Now get promos & group by role type
+         * @type {AccessCodeSchema.promos|*|promos}
+         */
+        var promos = $scope.authentication.accesscode.promos;
+        $scope.promos = _.groupBy(promos, function(p){ return p.type; });
+
+
         // Control for acceptance of terms
         $scope.acceptedTerms = false;
 
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field
          */
-        $('#orgPhone').intlTelInput({
+        $('#phone').intlTelInput({
             utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
             autoFormat: true
         });
+        // jQuery hack to force input to fill whole column
+        $('div.intl-tel-input').addClass('col-md-12 p0');
 
         /**
          * Add custom validator for orgPhone field that just checks number validity
@@ -46,7 +77,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         window.ParsleyValidator
             .addValidator('intlphone', function (value, requirement) {
-                return $("#orgPhone").intlTelInput("isValidNumber");
+                return $("#phone").intlTelInput("isValidNumber");
             }, 32);
 
         /**
@@ -120,9 +151,9 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 _signUpUser($scope.organization._id)
             } else {
                 // have to create a new organization first, then sign up user
-                $scope.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
+                $scope.organization.fees = [$scope.fees[$scope.credentials.role]];
                 $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
-                $scope.organization.phone = $('#orgPhone').intlTelInput('getNumber');
+                $scope.organization.phone = $('#phone').intlTelInput('getNumber');
 
                 // if we're creating a new organization, make this user the primary contact
                 $scope.credentials.isPrimaryContact = true;
