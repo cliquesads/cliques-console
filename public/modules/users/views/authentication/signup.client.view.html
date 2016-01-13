@@ -92,51 +92,51 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="firstName">Phone Number *</label>
-                                        <input type="text" required="required" id="orgPhone" name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
+                                        <input type="text" required="required" id="orgPhone" data-parsley-intlphone name="orgPhone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="orgAddress">Address *</label>
-                                        <input type="text" required="required" id="orgAddress" name="orgAddress" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln.">
+                                        <label for="address">Address *</label>
+                                        <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln.">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="orgAddress2">Address 2</label>
-                                        <input type="text" id="orgAddress2" name="orgAddress2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc.">
+                                        <label for="address2">Address 2</label>
+                                        <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc.">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                     <div class="form-group">
-                                        <label for="orgCountry">Country *</label>
-                                        <div id="orgCountry" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
+                                        <label for="country">Country *</label>
+                                        <div id="country" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="orgCity">City *</label>
-                                        <input type="text" id="orgCity" name="orgCity" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown">
+                                        <label for="city">City *</label>
+                                        <input type="text" id="city" name="city" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="orgState">State/Province/Region *</label>
-                                        <div id="orgState" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
+                                        <label for="state">State/Province/Region *</label>
+                                        <div id="state" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="orgState">Zip/Postal Code *</label>
-                                        <input type="text" id="orgZip" name="orgZip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753">
+                                        <label for="zip">Zip/Postal Code *</label>
+                                        <input type="text" id="zip" name="zip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753">
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +154,7 @@
                     <div id="step3" ng-show="wizard.active(3)">
                         <fieldset>
                             <legend>Create a Username & Password</legend>
-                            <small class="text-muted">Please create a username & password for the Cliques Console.</small>
+                            <p class="legend-help-text text-muted">Please create a username & password for the Cliques Console.</p>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group has-feedback">
@@ -185,20 +185,18 @@
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <fieldset>
-                            <div ng-switch on="credentials.role">
-                                <div ng-switch-when="advertiser">
-                                    <legend>Cliques Fees</legend>
-                                    <p>For use of its services, Cliques charges a fee equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your total ad spend.</p>
-                                    <p>At the end of each calendar month, Cliques will send you an invoice for all ad spend & service fees accrued. Unless otherwise specified in the Service Form, the total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</p>
-                                </div>
-                                <div ng-switch-when="publisher">
-                                    <legend>Revenue Share</legend>
-                                    <p>For use of its services, Cliques charges a revenue share equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your gross advertising revenue.</p>
-                                    <p>Cliques will pay you your gross advertising revenue (minus {{ advertiserFees.percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</p>
-                                </div>
+                        <div ng-switch on="credentials.role">
+                            <div ng-switch-when="advertiser" class="alert alert-success">
+                                <h4>Cliques Fees</h4>
+                                <p class="text-md">For use of its services, Cliques charges a fee equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your total ad spend.</p>
+                                <p class="text-md">At the end of each calendar month, Cliques will send you an invoice for all ad spend & service fees accrued. Unless otherwise specified in the Service Form, the total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</p>
                             </div>
-                        </fieldset>
+                            <div ng-switch-when="publisher" class="alert alert-success">
+                                <h4>Revenue Share</h4>
+                                <p class="text-md">For use of its services, Cliques charges a revenue share equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your gross advertising revenue.</p>
+                                <p class="text-md">Cliques will pay you your gross advertising revenue (minus {{ advertiserFees.percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</p>
+                            </div>
+                        </div>
                         <fieldset>
                             <legend>Terms & Conditions</legend>
                             <p>Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
@@ -208,6 +206,16 @@
                                     <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" data-parsley-group="step4" required="required">
                                     <span class="fa fa-check"></span> I Accept</label></div>
                             </div>
+                            <div class="text-center form-group mt">
+                                <button type="submit" class="btn btn-lg btn-primary" ng-show="acceptedTerms"><span class="text-md">Finish</span></button>
+                            </div>
+                            <br/>
+                            <div data-ng-show="error" class="alert alert-danger">
+                                <strong data-ng-bind="error"></strong>
+                            </div>
+                            <div ng-show="loading" class="text-center ball-pulse">
+                                <div></div><div></div><div></div>
+                            </div>
                             <em>
                                 <small>
                                     <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
@@ -215,12 +223,6 @@
                                 </small>
                             </em>
                         </fieldset>
-                        <div class="text-center form-group mt">
-                            <button type="submit" class="btn btn-large btn-primary" ng-show="acceptedTerms">Finish</button><!--&nbsp; or&nbsp;-->
-                        </div>
-                        <div data-ng-show="error" class="text-center text-danger">
-                            <strong data-ng-bind="error"></strong>
-                        </div>
                     </div>
                 </div>
             </form>

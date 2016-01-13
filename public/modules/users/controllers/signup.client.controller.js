@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$http', '$location', '$window','Authentication','Timezones','TermsAndConditions',
-	function($scope, $http, $location, $window, Authentication, Timezones, TermsAndConditions) {
-		$scope.authentication = Authentication;
+    function($scope, $http, $location, $window, Authentication, Timezones, TermsAndConditions) {
+        $scope.authentication = Authentication;
 
-		// If user is signed in then redirect back home
-		if ($scope.authentication.user) $location.path('/');
+        // If user is signed in then redirect back home
+        if ($scope.authentication.user) $location.path('/');
 
         // TODO: get this from model enum
         $scope.timezoneChoices = Timezones;
@@ -41,6 +41,15 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
         });
 
         /**
+         * Add custom validator for orgPhone field that just checks number validity
+         * of intlTelInput
+         */
+        window.ParsleyValidator
+            .addValidator('intlphone', function (value, requirement) {
+                return $("#orgPhone").intlTelInput("isValidNumber");
+            }, 32);
+
+        /**
          * Watcher to set default username to email address
          */
         $scope.$watch(function(scope){ return scope.credentials.email; }, function(newEmail, oldEmail){
@@ -72,7 +81,9 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
             }
         });
 
+        $scope.loading = false;
 		$scope.signup = function() {
+            $scope.loading = true;
             // Subfunction to just sign up user.
             // Gets wrapped in organization creation logic, called
             // as callback once we have org ID
@@ -87,8 +98,10 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
                     $scope.authentication.user = response;
                     $scope.authentication.accesscode = null;
                     // And redirect to the index page
+                    $scope.loading = false;
                     $window.location.href = '/';
                 }).error(function(response) {
+                    $scope.loading = false;
                     $scope.error = response.message;
                 });
             }
@@ -102,6 +115,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
                 // have to create a new organization first, then sign up user
                 $scope.organization.fees = $scope.credentials.role === 'advertiser' ? $scope.advertiserFees : $scope.publisherFees;
                 $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
+                $scope.organization.phone = $('#orgPhone').intlTelInput('getNumber');
 
                 // if we're creating a new organization, make this user the primary contact
                 $scope.credentials.isPrimaryContact = true;
@@ -110,6 +124,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$http', '$loc
                     $scope.organization = response;
                     _signUpUser($scope.organization._id);
                 }).error(function(response){
+                    $scope.loading = false;
                     $scope.error = response.message;
                 });
             }
