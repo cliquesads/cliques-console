@@ -18,23 +18,28 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
   // Application Routes
   // -----------------------------------   
   $stateProvider
-    .state('app', {
-      // url: '/',
-      abstract: true,
-      templateUrl: 'modules/core/views/core.client.view.html',
-      resolve: helper.resolveFor('modernizr', 'icons'),
-      data: {
-          requireLogin: true
-      }
-    })
-    .state('app.home', {
-      url: '/home',
-      templateUrl: 'modules/core/views/home.client.view.html'
-    })
-      .state('app.privacy', {
+        .state('app', {
+          // url: '/',
+          abstract: true,
+          templateUrl: 'modules/core/views/core.client.view.html',
+          resolve: helper.resolveFor('modernizr', 'icons'),
+          data: {
+              requireLogin: true
+          }
+        })
+        .state('app.home', {
+          url: '/home',
+          templateUrl: 'modules/core/views/home.client.view.html'
+        })
+        .state('app.privacy', {
           url: '/privacy-policy',
           templateUrl: 'modules/core/views/privacy-policy.client.view.html'
-      })
+        })
+        .state('app.terms-and-conditions',{
+          url: '/terms-and-conditions',
+          templateUrl: 'modules/core/views/terms-and-conditions.client.view.html',
+          controller: 'TermsAndConditionsController'
+        })
     // 
     // CUSTOM RESOLVES
     //   Add your own resolves properties
