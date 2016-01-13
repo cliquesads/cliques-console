@@ -33,7 +33,9 @@ var ApplicationConfiguration = (function() {
         'ntt.TreeDnD',
         'datatables.buttons',
         'datatables.bootstrap',
-        'rzModule'
+        'rzModule',
+        'ngCountryStateSelect',
+        'trTrustpass'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

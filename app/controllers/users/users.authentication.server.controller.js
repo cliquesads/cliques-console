@@ -8,6 +8,7 @@ var _ = require('lodash'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
 	User = mongoose.model('User'),
+    Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode');
 
 /**
@@ -24,7 +25,11 @@ exports.authorizeAccessCode = function(req, res) {
             });
         } else {
             if (valid){
-                res.json({accesscode: accesscode._id});
+                if (accesscode.active){
+                    res.json({accesscode: accesscode});
+                } else {
+                    res.status(400).send({message: 'This code has expired.'})
+                }
             } else {
                 res.status(400).send({message: 'Invalid Code'});
             }
@@ -32,42 +37,76 @@ exports.authorizeAccessCode = function(req, res) {
     });
 };
 
+/**
+ * Shortcut to handle errors
+ */
+function handleError(res, err){
+    return res.status(400).send({
+        message: errorHandler.getAndLogErrorMessage(err)
+    });
+}
+
+/**
+ * Checks if username is already taken using User.statics.isUsernameTaken
+ * @param req
+ * @param res
+ */
+exports.isUsernameTaken = function(req, res){
+    var username = req.param('username');
+    User.isUsernameTaken(username, function(err, taken){
+        if (err) return handleError(res, err);
+        return res.json({ taken: taken });
+    });
+};
+
+
+
+/**
+ * Create a new organization
+ */
+exports.createOrganization = function(req, res){
+    var organization = new Organization(req.body);
+    organization.save(function(err, org){
+        if (err) return handleError(res, err);
+        return res.json(org);
+    });
+};
 
 /**
  * Signup
  */
 exports.signup = function(req, res) {
-	// For security measurement we remove the roles from the req.body object
-	//delete req.body.roles;
+    // flag to tell whether or not user should be made
+    // primary contact for organization
+    var isPrimaryContact = req.body.isPrimaryContact;
+    var user = new User(req.body);
+    var message = null;
 
-	// Init Variables
-	var user = new User(req.body);
-	var message = null;
-
-	// Add missing user fields
-	user.provider = 'local';
-	user.displayName = user.firstName + ' ' + user.lastName;
-
-	// Then save the user 
-	user.save(function(err) {
-		if (err) {
-			return res.status(400).send({
-				message: errorHandler.getAndLogErrorMessage(err)
-			});
-		} else {
-			// Remove sensitive data before login
-			user.password = undefined;
-			user.salt = undefined;
-
-			req.login(user, function(err) {
-				if (err) {
-					res.status(400).send(err);
-				} else {
-					res.json(user);
-				}
-			});
-		}
-	});
+    // Add missing user fields
+    user.provider = 'local';
+    user.displayName = user.firstName + ' ' + user.lastName;
+    // Then save the user
+    user.save(function(err, user) {
+        if (err) return handleError(res, err);
+        // Remove sensitive data before login
+        user.password = undefined;
+        user.salt = undefined;
+        // need to re-save organization with reference to user
+        Organization.findById(user.organization, function (err, org) {
+            if (isPrimaryContact) {
+                org.primary_contact = user.id;
+            }
+            // Add user to organization users
+            org.users.push(user.id);
+            org.save(function (err, org) {
+                if (err) return handleError(res, err);
+                req.login(user, function (err) {
+                    if (err) return handleError(res, err);
+                    return res.json(user);
+                });
+            });
+        });
+    });
 };
 
 /**

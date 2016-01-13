@@ -93,6 +93,10 @@ var UserSchema = new Schema({
     accesscode: {
         type: Schema.ObjectId,
         ref: 'AccessCode'
+    },
+    organization: {
+        type: Schema.ObjectId,
+        ref: 'Organization'
     }
 });
 
@@ -127,6 +131,20 @@ UserSchema.methods.authenticate = function(password) {
 };
 
 /**
+ * Check to see whether a given username is already taken
+ *
+ * @param username
+ * @param callback
+ */
+UserSchema.statics.isUsernameTaken = function(username, callback){
+    var _this = this;
+    _this.findOne({ username: username}, function(err, user){
+        if (err) return callback(err, null);
+        return callback(null, user ? true : false)
+    });
+};
+
+/**
  * Find possible not used username
  */
 UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
@@ -151,15 +169,55 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 mongoose.model('User', UserSchema);
 
 /**
- * Groups of users, used for internal purposes
+ * Small schema to store some important metadata about
+ * Terms & Conditions agreements
+ * @type {Schema}
+ */
+var termsAndConditionsSchema = new Schema({
+    tstamp: {type: Date, default: Date.now},
+    name: { type: String, required: true },
+    type: {type: String, enum: ['advertiser', 'publisher']},
+    templatePath: { type: String, required: true },
+    url: {type: String, required: true },
+    notes: { type: String, required: true },
+    active: { type: Boolean, required: true, default: false }
+});
+exports.TermsAndConditions = mongoose.model('TermsAndConditions', termsAndConditionsSchema);
+
+/**
+ * Separate schema to handle fee logic
+ */
+var feeSchema = new Schema({
+    type: { type: String, enum: ['advertiser', 'publisher'] },
+    percentage: { type: Number, required: true, default: 0.10 },
+    // Futureproofing, in case we ever charge fixed fees for something
+    fixedFee: { type: Number, required: false },
+    fixedFeeInterval: { type: String, required: false }
+});
+
+/**
+ * Organization is a collection of users
  *
  * @type {Schema}
  */
-var UserGroupSchema = new Schema({
+var organizationSchema = new Schema({
     name: { type: String, required: true },
+    primaryContact: { type: Schema.ObjectId, ref: 'User'},
+    address: { type: String, required: true },
+    address2: { type: String, required: false },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    country: { type: String, required: true },
+    zip: { type: String, required: true },
+    phone: { type: String, required: true },
+    accesscode: { type: Schema.ObjectId,ref: 'AccessCode' },
+    // can agree to multiple terms & conditions
+    termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
+    additionalTerms: { type: String, required: false },
+    fees: [feeSchema],
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
-exports.UserGroup = mongoose.model('UserGroup', UserGroupSchema);
+exports.Organization = mongoose.model('Organization', organizationSchema);
 
 /**
  * Access codes for private beta to allow users to sign up
@@ -177,7 +235,10 @@ var AccessCodeSchema = new Schema({
     created: {
         type: Date,
         default: Date.now
-    }
+    },
+    active: { type: Boolean, default: true, required: true },
+    fees: [feeSchema],
+    promos: [{ type: String, required: false }]
 });
 
 /**
