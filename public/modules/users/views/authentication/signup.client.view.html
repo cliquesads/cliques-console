@@ -204,10 +204,10 @@
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <div ng-show="authentication.accesscode.promos[0]" class="alert alert-success">
+                        <div ng-show="promos[credentials.role].length > 0" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>
-                                <li ng-repeat="promo in authentication.accesscode.promos" class="text-md">{{ promo }}</li>
+                                <li ng-repeat="promo in promos[credentials.role]" class="text-md">{{ promo.description }}</li>
                             </ul>
                         </div>
                         <fieldset>
@@ -231,7 +231,7 @@
                                         <li>Cliques charges a revenue-share equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your gross advertising revenue.</li>
                                         <li>Cliques will pay you your gross advertising revenue (minus {{ advertiserFees.percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</li>
                                     </ul>
-                                    <div ng-switch-when="publisher" class="bs-callout bs-callout-primary">
+                                    <div class="bs-callout bs-callout-primary">
                                         <h4>Don't worry</h4>
                                         <p>Accepting the terms does not obligate you run Cliques placements on your site.  You will only begin to run ads once you create and export placements.</p>
                                     </div>

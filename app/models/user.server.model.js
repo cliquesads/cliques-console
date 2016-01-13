@@ -220,6 +220,16 @@ var organizationSchema = new Schema({
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);
 
+
+/**
+ * Separate schema to handle promo
+ */
+var promoSchema = new Schema({
+    type: { type: String, enum: ['advertiser', 'publisher'] },
+    description: { type: String, required: true },
+    promoAmount: { type: Number, required: false },
+    promoInterval: { type: String, required: false }
+});
 /**
  * Access codes for private beta to allow users to sign up
  * @type {Schema}
@@ -239,7 +249,7 @@ var AccessCodeSchema = new Schema({
     },
     active: { type: Boolean, default: true, required: true },
     fees: [feeSchema],
-    promos: [{ type: String, required: false }]
+    promos: [promoSchema]
 });
 
 /**
