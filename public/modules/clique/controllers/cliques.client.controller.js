@@ -1,9 +1,10 @@
 /* global _, angular */
 'use strict';
 
-angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication', 'Clique','getCliqueTree','getSitesInCliqueTree','ngDialog',
-	function($scope, $stateParams, $location, $http,Authentication, Clique, getCliqueTree, getSitesInCliqueTree, ngDialog) {
+angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication','Advertiser','Clique','getCliqueTree','getSitesInCliqueTree','ngDialog',
+	function($scope, $stateParams, $location, $http,Authentication,Advertiser, Clique, getCliqueTree, getSitesInCliqueTree, ngDialog) {
 		$scope.authentication = Authentication;
+        $scope.networkAdmin = $scope.authentication.user.roles.indexOf('networkAdmin') > 0;
 
         // This is our API control variable
         var tree;
@@ -12,28 +13,32 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
         // Populate tree data for tree visualization
         $scope.cliques = [];
 		$scope.find = function() {
-            getCliqueTree($scope);
+            getCliqueTree(function(err, cliques){
+                $scope.cliques = cliques;
+            });
 		};
 
-        $scope.$watch(function(scope){ return scope.cliques }, function(newVal, oldVal){
-            $scope.my_tree.expand_all();
-        });
+        $scope.rowTemplate = '<div class="col-md-3"><img ng-src="{{ option.logo_secure_url }}" class="client-logo-sm"/>' +
+                                '</div><div class="col-md-9"><h4 class="list-group-item-heading" data-ng-bind="option.name">' +
+                                '</h4><p class="list-group-item-text"> Active Campaigns: {{ option.campaigns.length }}</p></div>';
 
-        $scope.clique = {
-            _id: null,
-            name: null
+        $scope.clique = null;
+        $scope.advertisers = Advertiser.query();
+        $scope.editDefaultAdvertisers = false;
+
+        $scope.resetEditForm = function(){
+            $scope.editDefaultAdvertisers = false;
+            var b = tree.get_selected_branch();
+            $scope.clique = angular.copy(b.clique);
+            this.editCliqueForm.$setPristine();
         };
 
-
         $scope.set_clique = function(branch) {
-            $scope.clique._id = branch.label;
-            $scope.clique.name = branch.label;
+            $scope.clique = angular.copy(branch.clique);
             getSitesInCliqueTree(branch.label).then(function(response){
                 $scope.sites = response.data;
             });
         };
-
-
 
         // recursive function to get ancestors to save new clique
         function get_clique_ancestors(branch,ancestors) {
@@ -47,37 +52,15 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
             }
         }
 
-        $scope.create_new_clique = function(){
-            if (this.newCliqueForm.$valid) {
-                var b;
-                b = tree.get_selected_branch();
-                var ancestors = get_clique_ancestors(b);
-                var clique = new Clique({
-                    name: this.new_clique_name,
-                    parent: b.label,
-                    ancestors: ancestors
-                });
-                clique.$create(function(response){
-                    tree.add_branch(b, { label: $scope.new_clique_name});
-                    $scope.new_clique_name = '';
-                }, function(response){
-                    $scope.creation_error  = response.data.message;
-                });
-            } else {
-                return false;
-            }
-        };
-        $scope.update_clique = function(){
+        $scope.save = function(){
             if (this.editCliqueForm.$valid) {
-                var clique = new Clique({
-                    _id: this.clique._id,
-                    name: this.clique.name
-                });
-                clique.$update(function(response){
-                    var b;
-                    $scope.clique._id = $scope.clique.name;
-                    b = tree.get_selected_branch();
-                    b.label = $scope.clique._id;
+                $scope.clique.default_advertisers = $scope.clique.default_advertisers
+                    .map(function(adv){ return adv._id; });
+                $scope.clique.$update(function(response){
+                    var b = tree.get_selected_branch();
+                    b.clique = response;
+                    $scope.editCliqueForm.$setPristine();
+                    $scope.set_clique(b);
                 }, function(response){
                     $scope.update_error  = response.data.message;
                 });

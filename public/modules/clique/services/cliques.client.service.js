@@ -30,11 +30,11 @@ function format_cliques_collection_for_tree(query_result){
                 if (cliques_tree.hasOwnProperty(key)){
                     var obj = {
                         label: key,
-                        children: []
+                        children: [],
+                        clique: _.find(query_result, function(c){ return c._id === key; })
                     };
                     _reformat_tree(cliques_tree[key], obj.children);
                     _destination_array.push(obj);
-
                 }
             }
         }
@@ -62,12 +62,12 @@ angular.module('clique').factory('Clique', ['$resource',
 	}
 ]).
 factory('getCliqueTree', ['Clique', function(Clique){
-        return function(scope, callback){
+        return function(callback){
             Clique.query(function(){
                 // Populate tree data for tree visualization
                 var query_result = Clique.query(function(){
-                    scope.cliques = format_cliques_collection_for_tree(query_result);
-                    callback();
+                    var cliques = format_cliques_collection_for_tree(query_result);
+                    callback(null, cliques);
                 });
             });
         };
