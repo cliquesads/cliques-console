@@ -217,7 +217,7 @@
                                 <div ng-switch-when="advertiser">
                                     <p><strong>Service Fees Summary</strong></p>
                                     <ul>
-                                        <li>Cliques charges a fee equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your total ad spend.</li>
+                                        <li>Cliques charges a fee equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of your total ad spend.</li>
                                         <li>Cliques will send you an invoice for all ad spend & service fees at the end of each month. Unless otherwise specified, the total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</li>
                                     </ul>
                                     <div class="bs-callout bs-callout-primary">
