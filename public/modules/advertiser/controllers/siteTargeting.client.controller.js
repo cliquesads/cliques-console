@@ -2,8 +2,13 @@
 'use strict';
 
 angular.module('advertiser').controller('SiteTargetingController',
-    ['$scope','$stateParams','Notify','$timeout','getSitesInCliqueBranch','Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat','MongoTimeSeries','aggregationDateRanges',
-        function($scope, $stateParams, Notify, $timeout, getSitesInCliqueBranch, Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat, MongoTimeSeries, aggregationDateRanges){
+    ['$scope','$stateParams','Notify','$timeout','DndTreeWrapper','getSitesInCliqueBranch',
+        'Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
+        'MongoTimeSeries','aggregationDateRanges',
+        function($scope, $stateParams, Notify, $timeout, DndTreeWrapper, getSitesInCliqueBranch,
+                 Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
+                 MongoTimeSeries, aggregationDateRanges){
+
             $scope.Math = Math;
             $scope.dirty = false;
 
@@ -71,28 +76,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             //====================================================//
 
             /**
-             * Wraps treeData in class containing some methods to handle commonly-used
-             * logic & routines around this particular data structure.
-             *
-             * The model bound to the `tree-dnd` directive is stored in `this.data`. Most/all
-             * methods manipulate shared this.data data model to accomplish desired actions
-             * on corresponding tree-dnd object.
-             *
-             * Tree control handler should be bound to `this.control`.
-             *
-             * Wherever possible, I have used built-in tree-dnd control methods to
-             * accomplish tasks like getting children, adding nodes, removing nodes, etc..
-             *
-             * HOWEVER, because of some hidden fuckery in the tree-dnd directive, some base control methods
-             * have had to be re-written to operate properly on shared data model.  See comments in
-             * this._removeNode for details.
-             *
-             * TODO: This class has a VERY finnicky relationship with AngularTreeDND class in
-             * TODO: angular-tree-dnd directive. Needs to be refactored to either subclass AngularTreeDND
-             * TODO: somehow, or make dependencies more clear
-             *
-             * TODO: This should be split into a base class in a service, then extended here to contain
-             * TODO: Inventory-specific methods.
+             * Subclass of DndTreeWrapper with SiteTree specific methods
              *
              * @param treeData shared tree data model with tree-dnd directive.
              * @param control tree-dnd control object. Will default to base methods when bound to directive, but
@@ -102,11 +86,9 @@ angular.module('advertiser').controller('SiteTargetingController',
              * @constructor
              */
             var SiteTree = function(treeData, control, expanding_property,columns){
-                this.data = treeData || [];
-                this.control = control || {};
-                this.expanding_property = expanding_property || {};
-                this.columns = columns || [];
+                DndTreeWrapper.call(this, treeData, control, expanding_property, columns);
             };
+            SiteTree.prototype = Object.create(DndTreeWrapper.prototype);
 
             /**
              * Loads this.data from API 'sitesincliquesbranch' endpoint response
@@ -138,14 +120,6 @@ angular.module('advertiser').controller('SiteTargetingController',
                 });
                 this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
                 callback(null, this.data);
-            };
-
-            SiteTree.prototype.clearTreeData = function(callback){
-                var self = this;
-                this.data.forEach(function(topLevelNode){
-                    self._removeNode(topLevelNode, null);
-                });
-                return callback(null)
             };
 
             /**
@@ -272,157 +246,6 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             /**
-             * Sort of BS that the Tree DND plugin doesn't have this, so have to write silly little
-             * function just to set the initial expand level.
-             */
-            SiteTree.prototype.setExpandLevel = function(level, _currentLevel, _treeData){
-                var self = this;
-                _treeData = _treeData || self.data;
-                _currentLevel = _currentLevel || 0;
-                _treeData.forEach(function(node){
-                    node.__expanded__ = (_currentLevel < level);
-                    if (node.__children__){
-                        node.__children__ = self.setExpandLevel(level, _currentLevel + 1, node.__children__);
-                    }
-                });
-                return _treeData;
-            };
-
-            /**
-             * Fucking control get_parent doesn't work properly for nested nodes,
-             * so have to write my own function to get parent
-             *
-             * This could be written more elegantly, but it works. JS recursion is wonky.
-             */
-            SiteTree.prototype.getNodeById = function(id, _tree){
-                _tree = _tree || this.data;
-                var parent = null;
-                for (var i=0; i < _tree.length; i++){
-                    var n = _tree[i];
-                    if (n._id === id){
-                        parent = n;
-                        break
-                    } else if (n.__children__){
-                        parent = this.getNodeById(id, n.__children__);
-                        if (parent) break
-                    }
-                }
-                return parent;
-            };
-
-            /**
-             * THIS IS AN UGLY HACK. Basically paste of control.remove_node that doesn't
-             * rely on control.get_parent method, which will NOT WORK before DOM is
-             * fully rendered, and therefore won't work for any pre-load tree manipulation.
-             */
-            SiteTree.prototype._removeNode = function(node, parent){
-                var self = this;
-                if (node) {
-                    if (parent) {
-                        var _parent = parent.__children__;
-                    } else {
-                        _parent = self.data;
-                        var clearme = true;
-                    }
-                    //BUG FIX, tree_nodes does not clear when last element
-                    //is removed
-                    if (clearme){
-                        if (node.__index__ === 0){
-                            self.control._clear_tree_nodes();
-                        }
-                    }
-                    _.remove(_parent, function(n){return n._id === node._id;});
-                }
-            };
-
-            /**
-             * Gets array of ancestor nodes, each w/ __children__ consisting of
-             * only descendants in specified branch
-             * @param node
-             * @param _ancestors
-             * @returns {*}
-             */
-            SiteTree.prototype.getAncestorBranch = function(node, _ancestors){
-                _ancestors = _ancestors || [node];
-                var parent = this.getNodeById(node.parentId);
-                if (parent) {
-                    var parentClone = _.clone(parent);
-                    parentClone.__children__ = [node];
-                    _ancestors.unshift(parentClone);
-                    return this.getAncestorBranch(parentClone, _ancestors);
-                } else {
-                    return _ancestors;
-                }
-            };
-
-            /**
-             * Effectively "merges" an entire tree branch into this tree.
-             *
-             * Given a array representing branch of nodes, will check existence of each ancestor
-             * in THIS tree. If an ancestor is missing, it will be added to this tree using
-             * this.control.add_node().
-             *
-             * Will also add all children of last node in branch array to same node's children in
-             * this tree.
-             *
-             * This means that if node A is the last element in `branch`, but node A exists
-             * in this.data, node A's children in this.data will consist of the union of `branch`
-             * node A's children & its own.
-             *
-             * @param branch array of nodes in branch (use tree.getAncestorBranch to generate)
-             * @param _parentNode
-             */
-            SiteTree.prototype.populateNodeAncestorBranch = function(branch, _parentNode){
-                var self = this;
-                var children = _parentNode ? self.control.get_children(_parentNode) : self.data;
-                // Assumes branch array is ordered top-to-bottom from 0 to n,
-                // i.e. top-most ancestor ('oldest') is 0th element
-                var oldestAncestor = branch[0];
-                // Now check if oldest ancestor in branch exists in parent's children
-                // Need to lookup nodes by id, probably bad idea to perform object comparison
-                var existingNode = _.find(children, function(n){
-                    return n._id === oldestAncestor._id;
-                });
-                if (existingNode){
-                    // If we've reached the bottom of the ancestor branch and
-                    // the node exists, add all origin node's children to destination's
-                    // children as well
-                    if (branch.length === 1){
-                        oldestAncestor.__children__.forEach(function(child){
-                            self.control.add_node(existingNode, child);
-                        });
-                    } else {
-                        // pop oldest ancestor off and recurse to next-lowest level
-                        branch.shift();
-                        self.populateNodeAncestorBranch(branch, existingNode);
-                    }
-                } else {
-                    // assumes oldestAncestor node already has branch seeded in its  __children__ array.
-                    self.control.add_node(_parentNode, oldestAncestor);
-                }
-            };
-
-            /**
-             * Extension of self.control.remove_node function that removes node
-             * and any empty ancestors
-             *
-             * NOTE: Had to hack this to
-             *
-             * @param node
-             */
-            SiteTree.prototype.removeNodeAndEmptyAncestors = function(node){
-                var self = this;
-                var parent = self.getNodeById(node.parentId);
-                self._removeNode(node, parent);
-                if (parent){
-                    var children = parent.__children__;
-                    if (children.length === 0){
-                        self.removeNodeAndEmptyAncestors(parent);
-                    }
-                }
-            };
-
-            /**
              * Applies all applicable weight overrides from parents to children,
              * depending on if parent weights have changes from prior state.  Meant to
              * only be used in $scope.$watch hook, where oldSiteTree is the older version
@@ -433,14 +256,16 @@ angular.module('advertiser').controller('SiteTargetingController',
             SiteTree.prototype.applyParentOverrides = function(oldSiteTree) {
                 var self = this;
                 function inner(newSiteTree, oldSiteTree) {
-                    for (var i = 0; i < newSiteTree.length; i++) {
-                        var newNode = newSiteTree[i];
-                        var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
-                        if (newNode && oldNode){
-                            if (newNode.weight != oldNode.weight) {
-                                newNode.overrideChildWeights();
+                    if (newSiteTree){
+                        for (var i = 0; i < newSiteTree.length; i++) {
+                            var newNode = newSiteTree[i];
+                            var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
+                            if (newNode && oldNode){
+                                if (newNode.weight != oldNode.weight) {
+                                    newNode.overrideChildWeights();
+                                }
+                                inner(newNode.__children__, oldNode.__children__)
                             }
-                            inner(newNode.__children__, oldNode.__children__)
                         }
                     }
                 }
@@ -463,7 +288,7 @@ angular.module('advertiser').controller('SiteTargetingController',
              * The KEY ASSUMPTION here is that once a Master tree node no longer has
              * any children, it is removed from the master tree.
              *
-             * The `SiteTree.removeNodeAndEmptyAncestors` method does exactly this,
+             * The `SiteTree.reSiteTree.prototype.moveNodeAndEmptyAncestors` method does exactly this,
              * so as long as you use this method to clean up the master tree when
              * nodes are added to this tree, you're fine.
              *
@@ -506,30 +331,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             //====================================================//
             //=============== END SiteTree Class =================//
             //====================================================//
-
-            /**
-             * Helper function to move node from one SiteTree instance
-             * to another, according to following algorithm:
-             *
-             * 1) Get entire ancestor branch in origin tree
-             * 2) From top to bottom, if ancestor exists in destination tree, move to its children.
-             *  Else, add ancestor to new tree under its appropriate parent (recurvsively).
-             * 3) Clear node from origin tree, and clear any ancestors that no longer contain
-             *  any children (recursively).
-             *
-             * @param originTree origin SiteTree instance
-             * @param destinationTree destination SiteTree instance
-             * @param node node you want to move
-             */
-            function moveNode(originTree, destinationTree, node){
-                // Add whole ancestor branch to new tree, as necessary
-                var branch = originTree.getAncestorBranch(node);
-                // Now populate whole ancestor branch in target_sites
-                destinationTree.populateNodeAncestorBranch(branch);
-                // Clean up all_sites tree by removing node & any empty (no children)
-                // ancestor nodes
-                originTree.removeNodeAndEmptyAncestors(node);
-            }
+            
 
             //==========================================================//
             //=============== BEGIN SiteTree Instances =================//
@@ -551,13 +353,13 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.all_sites = new SiteTree([],
                 {
                     target: function (node) {
-                        moveNode($scope.all_sites, $scope.target_sites, node);
+                        SiteTree.prototype.moveNode($scope.all_sites, $scope.target_sites, node);
                         $scope.target_sites.setSliderHiders($scope.all_sites);
                         $scope.dirty = true;
                     },
                     block: function (node) {
                         node.explicit = true;
-                        moveNode($scope.all_sites, $scope.blocked_sites, node);
+                        SiteTree.prototype.moveNode($scope.all_sites, $scope.blocked_sites, node);
                         //setting this node.explicit to true means this node will persist to DB
                         $scope.dirty = true;
                     }
@@ -611,7 +413,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 {
                     remove: function (node) {
                         // Add whole ancestor branch to new tree, as necessary
-                        moveNode($scope.target_sites, $scope.all_sites, node);
+                        SiteTree.prototype.moveNode($scope.target_sites, $scope.all_sites, node);
                         $scope.dirty = true;
                     }
                 },
@@ -654,7 +456,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.blocked_sites = new SiteTree([],
                 {
                     remove: function (node) {
-                        moveNode($scope.blocked_sites, $scope.all_sites, node);
+                        SiteTree.prototype.moveNode($scope.blocked_sites, $scope.all_sites, node);
                         $scope.dirty = true;
                     }
                 },
@@ -765,7 +567,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                                 realNode = target_node;
                             } else {
                                 // Only move nodes with weights set, others are just parent placeholders;
-                                moveNode($scope.all_sites, $scope.target_sites, treeNode);
+                                SiteTree.prototype.moveNode($scope.all_sites, $scope.target_sites, treeNode);
                                 realNode = treeNode;
                             }
                             realNode.weight = node.weight;
@@ -798,7 +600,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     if (treeNode){
                         if (node.explicit){
                             // Only move nodes with weights set, others are just parent placeholders;
-                            moveNode($scope.all_sites, $scope.blocked_sites, treeNode);
+                            SiteTree.prototype.moveNode($scope.all_sites, $scope.blocked_sites, treeNode);
                             treeNode.explicit = true;
                         }
                         if (node.children && node.children.length > 0){
