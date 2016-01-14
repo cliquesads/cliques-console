@@ -23,7 +23,7 @@ module.exports = function(db) {
         getMany: function (req, res) {
             // this defaults to 10, kind of infuriating
             req.query.per_page = "1000000";
-            cliqueModels.Clique.apiQuery(req.query, function (err, cliques) {
+            cliqueModels.Clique.apiQuery(req.query).populate('default_advertisers').exec(function (err, cliques) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -72,40 +72,26 @@ module.exports = function(db) {
         },
         /**
          * Update existing clique
-         *
-         * WARNING: If name field is provided,
          */
         update: function (req, res) {
             var clique = req.clique;
-            function updateEverythingElse(thisClique){
-                thisClique = _.extend(thisClique, req.body);
-                thisClique.save(function (err) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    } else {
-                        res.json(thisClique);
-                    }
-                });
-            }
-            if (req.body.name){
-                cliqueModels.updateCliqueId(clique._id, req.body.name, function(err, newClique){
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    } else {
-                        _.omit(req.body, 'name');
-                        if (req.body != {}) {
-                            return updateEverythingElse(newClique);
+            var thisClique = _.extend(clique, req.body);
+            thisClique.save(function (err, newClique) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                } else {
+                    cliqueModels.Clique.populate(newClique, {path: 'default_advertisers'}, function(err, c) {
+                        if (err){
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
                         }
-                    }
-                });
-            } else {
-                return updateEverythingElse(req.clique);
-            }
-
+                        return res.json(c);
+                    });
+                }
+            });
         },
         /**
          * Delete an advertiser
@@ -127,7 +113,7 @@ module.exports = function(db) {
          * Advertiser middleware
          */
         cliqueByID: function (req, res, next, id) {
-            cliqueModels.Clique.findById(id).exec(function (err, clique) {
+            cliqueModels.Clique.findById(id).populate('default_advertisers').exec(function (err, clique) {
                 if (err) return next(err);
                 if (!clique) return next(new Error('Failed to load clique ' + id));
                 req.clique = clique;
