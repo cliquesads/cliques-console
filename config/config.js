@@ -5,7 +5,8 @@
  * Module dependencies.
  */
 var _ = require('lodash'),
-	glob = require('glob');
+	glob = require('glob'),
+    pjson = require('../package.json');
 
 /**
  * Load app configurations
@@ -14,6 +15,9 @@ module.exports = _.extend(
 	require('./env/all'),
 	require('./env/' + process.env.NODE_ENV) || {}
 );
+
+// Version from package.json
+module.exports.version = pjson.version;
 
 /**
  * Get files by glob patterns

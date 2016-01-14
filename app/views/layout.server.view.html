@@ -59,9 +59,10 @@
 	
 	{% block content %}{% endblock %}
 
-	<!--Embedding The User Object-->
+	<!--Embedding The User Object & version number-->
 	<script type="text/javascript">
 		var user = {{ user | json | safe }};
+        var consoleVersion = "{{ consoleVersion }}";
 	</script>
 
 	<!--Application JavaScript Files-->
