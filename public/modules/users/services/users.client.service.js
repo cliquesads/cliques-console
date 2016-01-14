@@ -17,9 +17,19 @@ angular.module('users').factory('Users', ['$resource',
          */
         function($http){
             return {
+                /**
+                 * Gets current terms & conditions by type
+                 * @param type advertiser or publisher
+                 * @returns {HttpPromise}
+                 */
                 getCurrent: function(type){
                     return $http.get('/terms-and-conditions/current/' + type);
                 },
+                /**
+                 * Get by ID
+                 * @param query.termsId ObjectId
+                 * @returns {HttpPromise}
+                 */
                 get: function(query){
                     return $http.get('/terms-and-conditions/by-id/' + query.termsId);
                 }

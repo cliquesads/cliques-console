@@ -35,11 +35,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/privacy-policy',
           templateUrl: 'modules/core/views/privacy-policy.client.view.html'
         })
-        .state('app.terms-and-conditions',{
-          url: '/terms-and-conditions',
-          templateUrl: 'modules/core/views/terms-and-conditions.client.view.html',
-          controller: 'TermsAndConditionsController'
-        })
     // 
     // CUSTOM RESOLVES
     //   Add your own resolves properties
