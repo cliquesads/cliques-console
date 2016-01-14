@@ -26,17 +26,11 @@
                     </div>
                     <div class="form-group">
                         <label>Default Advertisers &nbsp;
-                            <a href="#" class="pull-right" ng-click="editDefaultAdvertisers = !editDefaultAdvertisers">
+                            <a href="#" class="pull-right" ng-click="editDefaultAdvertisers()">
                             <span class="fa fa-edit"></span>
                         </a></label>
-                        <!--<div ng-show="editDefaultAdvertisers">-->
-                            <!--<div class="form-group">-->
-                                <!--<select chosen="{width: '100%'}" multiple="multiple" name="defaultAdvertisers" id="defaultAdvertisers" ng-options="adv.name for adv in advertisers" ng-model="clique.default_advertisers" data-placeholder="Choose Advertisers" class="chosen-select form-control" style="width: 100%"></select>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <row-multi-select base-model="clique.default_advertisers" row-template="{{ rowTemplate }}" options="advertisers"></row-multi-select>
                         <br/>
-                        <div ng-hide="editDefaultAdvertisers" data-ng-repeat="advertiser in clique.default_advertisers" class="list-group-item">
+                        <div data-ng-repeat="advertiser in clique.default_advertisers" class="list-group-item" ng-click="editDefaultAdvertisers()">
                             <div class="row row-table">
                                 <div class="col-md-3">
                                     <img ng-src="{{ advertiser.logo_secure_url }}" class="client-logo-sm"/>
