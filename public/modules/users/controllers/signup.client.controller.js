@@ -50,6 +50,14 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         };
         $scope.getAllFeesFromAccessCode();
 
+        /**
+         * Now get promos & group by role type
+         * @type {AccessCodeSchema.promos|*|promos}
+         */
+        var promos = $scope.authentication.accesscode.promos;
+        $scope.promos = _.groupBy(promos, function(p){ return p.type; });
+
+
         // Control for acceptance of terms
         $scope.acceptedTerms = false;
 
