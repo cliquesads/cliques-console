@@ -265,13 +265,13 @@
                         <div ng-repeat="fileItem in creative_uploader.queue">
                             <div class="col-sm-4 text-center">
                                 <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
-                                <img src="{{ fileItem.url }}" class="smallthumbnail">
+                                <img ng-src="{{ fileItem.url }}" class="smallthumbnail">
                             </div>
                         </div>
                         <div ng-repeat="creative in dcm_creatives">
                             <div class="col-sm-4 text-center">
                                 <div class="col-sm-12"><em>{{ creative.name }}</em></div>
-                                <img src="{{ creative.url }}" class="smallthumbnail">
+                                <img ng-src="{{ creative.url }}" class="smallthumbnail">
                             </div>
                         </div>
                     </div>

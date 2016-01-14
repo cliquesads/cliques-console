@@ -3,7 +3,7 @@
     <div class="{{ creative.w < 350 ? 'col-sm-5': 'col-sm-12'}}">
         <h4>Creative Preview</h4>
         <p><small><em class="text-muted">Click to test landing page</em></small></p>
-        <iframe id="creativePreview" src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
+        <iframe id="creativePreview" ng-src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
     </div>
     <div class="col-sm-7">
         <fieldset>

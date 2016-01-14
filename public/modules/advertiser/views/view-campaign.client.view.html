@@ -236,7 +236,7 @@ adding hook in parent template ---->
                                             <table class="table">
                                                 <tbody>
                                                     <tr ng-repeat="creative in creativegroup.creatives">
-                                                        <td class="col-sm-3" ng-click="creativePreview(creative)"><img src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
+                                                        <td class="col-sm-3" ng-click="creativePreview(creative)"><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
                                                         <td class="col-sm-6"><b>{{ creative.name }}</b></td>
                                                         <td class="col-sm-3">{{ creativegroup.w }}x{{ creativegroup.h }}</td>
                                                     </tr>
@@ -329,7 +329,7 @@ adding hook in parent template ---->
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in siteData">
-                                    <td><img src="{{ row._id.site.logo_secure_url }}" class="client-logo-sm"/></td>
+                                    <td><img ng-src="{{ row._id.site.logo_secure_url }}" class="client-logo-sm"/></td>
                                     <td style="max-width: 120px; word-wrap: break-word">{{ row._id.site.name }}<em ng-hide="row._id.site.name">Deleted Site!</em></td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
@@ -354,7 +354,7 @@ adding hook in parent template ---->
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in creativeData">
-                                    <td><img src="{{ row._id.creative.url }}" class="xsthumbnail"/></td>
+                                    <td><img ng-src="{{ row._id.creative.url }}" class="xsthumbnail"/></td>
                                     <td style="max-width: 150px; word-wrap: break-word">{{ row._id.creative.name }}<em ng-hide="row._id.creative.name">Deleted Creative!</em></td>
                                     <td>{{ row._id.creative.w }}{{ row._id.creative.w ? 'x' : ''}}{{ row._id.creative.h }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
