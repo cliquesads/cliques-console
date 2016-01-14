@@ -842,13 +842,20 @@ angular.module('advertiser').controller('SiteTargetingController',
              * @param dateRange
              */
             $scope.getSiteTreeStats = function(siteTree, dateRange){
+                // exit if was passed empty siteTree
+                if (!siteTree || siteTree.length === 0) return;
+
                 var startDate = $scope.dateRanges[dateRange].startDate;
                 var endDate = $scope.dateRanges[dateRange].endDate;
                 var cliques = [];
                 siteTree.forEach(function(clique){
                     cliques.push(clique._id);
                 });
-                var cliquesQueryStr = '{in}' + cliques.join(',');
+                if (cliques.length === 1){
+                    var cliquesQueryStr = cliques[0];
+                } else {
+                    cliquesQueryStr = '{in}' + cliques.join(',');
+                }
                 HourlyAdStat.pubSummaryQuery({
                     groupBy: 'pub_clique,site,page,placement',
                     pub_clique: cliquesQueryStr,
@@ -888,6 +895,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                         $scope.all_sites.setExpandLevel(0);
                         $scope.target_sites.clearTreeData(function(err){
                             $scope.initializeTargetSiteTree($scope.campaign.inventory_targets);
+                            $scope.getSiteTreeStats($scope.target_sites.data, $scope.defaultDateRange);
                         });
                         $scope.blocked_sites.clearTreeData(function(err){
                             $scope.initializeBlockedInventoryTree($scope.campaign.blocked_inventory);
