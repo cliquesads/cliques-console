@@ -1,0 +1,42 @@
+<div ng-switch on="stepControl.metaStep">
+    <!--BEGIN INIT STEP  to chooose campaign type-->
+    <div ng-switch-when="init">
+        <h4>New or Template?</h4>
+        <p class="text-muted">Please tell us what type of account you'd like to create.</p>
+        <div class="box-form">
+            <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                <li ng-class="{'active': !stepControl.useTemplate }" ng-click="stepControl.useTemplate = false" class="col-sm-6">
+                    <h4><i class="fa fa-asterisk"></i>&nbsp;Blank Campaign</h4>
+                    <p>Start a new campaign from scratch.</p>
+                </li>
+                <li ng-class="{'active': stepControl.useTemplate }" ng-click="stepControl.useTemplate = true" class="col-sm-6">
+                    <h4><i class="fa fa-files-o"></i>&nbsp;Use Existing Campaign as a Template</h4>
+                    <p>Use an existing campaign as a starting point.</p>
+                </li>
+            </ol>
+        </div>
+        <ul class="pager">
+            <li class="next">
+                <a href="#" ng-click="stepControl.goToSecondStep()">Next <span>&rarr;</span></a>
+            </li>
+        </ul>
+    </div>
+    <!--BEGIN Campaign Selection Step to chooose campaign type-->
+    <div ng-switch-when="select-campaign">
+        <h4>Choose an Existing Campaign to Start From</h4>
+        <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
+        <ul class="pager">
+            <li class="previous">
+                <a href="#" ng-click="stepControl.goToStep('init')">
+                <span>&larr; Previous</span>
+                </a>
+            </li>
+            <li ng-show="stepControl.campaign" class="next">
+                <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Next <span>&rarr;</span></a>
+            </li>
+        </ul>
+    </div>
+    <div ng-switch-when="campaign-wizard">
+        <campaign-wizard advertiser="advertiser" campaign="stepControl.campaign"></campaign-wizard>
+    </div>
+</div>

@@ -77,8 +77,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         $scope.newCampaign = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/advertiser/views/partials/create-campaign.client.view.html',
-                controller: 'CampaignWizardController',
+                template: 'modules/advertiser/views/partials/new-campaign-dialog.html',
+                controller: 'NewCampaignController',
                 data: {advertiser: $scope.advertiser}
             });
         };

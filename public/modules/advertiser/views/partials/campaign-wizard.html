@@ -57,7 +57,7 @@
             </fieldset>
             <small class="text-muted">* Required</small>
             <ul class="pager">
-                <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="loadCliqueStep(wizard.go, 2)">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -76,9 +76,8 @@
                     <div class="pb-lg">
                         <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
                     </div>
-                    <div class="text-md">
-                        <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
-                    </div>
+                    <!--controller will lazily load abn-tree directive and inject inside of this div-->
+                    <div class="text-md" id="cliquesTree"></div>
                 </div>
                 <div ng-show="campaign.clique" class="col-md-6 box-placeholder">
                     <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
@@ -142,7 +141,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="loadCreativeUploadStep(wizard.go, 4)">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -154,12 +153,10 @@
             <small><em class="text-muted">You can also skip and add these later</em></small>
             <tabset>
                 <tab heading="Cliques Hosted">
-                    <div class="row">
-                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
-                    </div>
+                    <div class="row" id="creativeUploader"></div>
                 </tab>
                 <tab heading="DoubleClick">
-                    <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                    <div class="row" id="dcmUploader"></div>
                 </tab>
             </tabset>
             <ul class="pager">
