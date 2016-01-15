@@ -1,8 +1,8 @@
 /* global _, angular */
 'use strict';
 
-angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication','Advertiser','Clique','getCliqueTree','getSitesInCliqueTree','ngDialog',
-	function($scope, $stateParams, $location, $http,Authentication,Advertiser, Clique, getCliqueTree, getSitesInCliqueTree, ngDialog) {
+angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication','Advertiser','Clique','getCliqueTree','getSitesInClique','ngDialog',
+	function($scope, $stateParams, $location, $http,Authentication,Advertiser, Clique, getCliqueTree, getSitesInClique,getSitesInCliqueBranch, ngDialog) {
 		$scope.authentication = Authentication;
         $scope.networkAdmin = $scope.authentication.user.roles.indexOf('networkAdmin') > 0;
 
@@ -13,7 +13,7 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
         // Populate tree data for tree visualization
         $scope.cliques = [];
 		$scope.find = function() {
-            getCliqueTree(function(err, cliques){
+            getCliqueTree({},function(err, cliques){
                 $scope.cliques = cliques;
             });
 		};
@@ -61,7 +61,7 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
 
         $scope.set_clique = function(branch) {
             $scope.clique = angular.copy(branch.clique);
-            getSitesInCliqueTree(branch.label).then(function(response){
+            getSitesInClique(branch.label).then(function(response){
                 $scope.sites = response.data;
             });
         };
