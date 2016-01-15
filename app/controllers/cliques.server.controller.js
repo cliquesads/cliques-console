@@ -76,6 +76,7 @@ module.exports = function(db) {
         update: function (req, res) {
             var clique = req.clique;
             var thisClique = _.extend(clique, req.body);
+            console.log(thisClique);
             thisClique.save(function (err, newClique) {
                 if (err) {
                     return res.status(400).send({

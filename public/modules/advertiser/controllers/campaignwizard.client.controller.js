@@ -6,13 +6,13 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
     'Authentication',
     'Advertiser',
     'getCliqueTree',
-    'getSitesInCliqueTree',
+    'getSitesInClique',
     'DMA',
     'FileUploader',
     'AdvertiserUtils',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Advertiser, getCliqueTree, getSitesInCliqueTree, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS) {
+	function($scope, $stateParams, $location, Authentication, Advertiser, getCliqueTree, getSitesInClique, DMA, FileUploader, AdvertiserUtils, BID_SETTINGS, ADVERTISER_TOOLTIPS) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -26,7 +26,7 @@ angular.module('advertiser').controller('CampaignWizardController', ['$scope',
         getCliqueTree($scope);
         $scope.set_clique = function(branch) {
             $scope.campaign.clique = branch.label;
-            getSitesInCliqueTree(branch.label).then(function(response){
+            getSitesInClique(branch.label).then(function(response){
                 $scope.sites = response.data;
             });
         };
