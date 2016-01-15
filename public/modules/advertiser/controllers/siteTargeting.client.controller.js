@@ -4,10 +4,10 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','Notify','$timeout','DndTreeWrapper','getSitesInCliqueBranch',
         'Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
-        'MongoTimeSeries','aggregationDateRanges',
+        'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog',
         function($scope, $stateParams, Notify, $timeout, DndTreeWrapper, getSitesInCliqueBranch,
                  Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
-                 MongoTimeSeries, aggregationDateRanges){
+                 MongoTimeSeries, aggregationDateRanges, openSiteDescriptionDialog){
 
             $scope.Math = Math;
             $scope.dirty = false;
@@ -494,14 +494,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             };
 
             $scope.getSiteDescription = function(site){
-                ngDialog.open({
-                    className: 'ngdialog-theme-default',
-                    template: 'modules/advertiser/views/partials/site-description-dialog.html',
-                    controller: ['$scope', function ($scope) {
-                        $scope.site = $scope.ngDialogData.site;
-                    }],
-                    data: {site: site}
-                });
+                openSiteDescriptionDialog(site);
             };
 
             /**

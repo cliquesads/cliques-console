@@ -1,8 +1,8 @@
 /**
  * Created by bliang on 1/14/16.
  */
-angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch',
-    function(getSitesInCliqueBranch) {
+angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog',
+    function(getSitesInCliqueBranch, openSiteDescriptionDialog) {
         return {
             restrict: 'E',
             scope: {
@@ -14,10 +14,17 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
                 scope.$watch('cliqueId', function(newVal, oldVal){
                     if (newVal){
                         getSitesInCliqueBranch(scope.cliqueId).then(function(response){
-                            scope.sites = response.data;
+                            var sites = response.data;
+                            // get primary clique and separate out sites into separate var
+                            var i = _.findIndex(sites, function(obj){ return obj._id === scope.cliqueId; });
+                            scope.primary_sites = sites.splice(i,1)[0];
+                            scope.sites = sites;
                         });
                     }
                 });
+                scope.getDescription = function(site){
+                    openSiteDescriptionDialog(site);
+                }
             }
         }
     }

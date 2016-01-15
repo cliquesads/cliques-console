@@ -1,7 +1,12 @@
 <section data-ng-init="find()">
     <div class="col-md-4">
         <div class="well wd-wide">
-            <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+            <div class="pb-lg">
+                <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
+            </div>
+            <div class="text-md">
+                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
@@ -63,14 +68,8 @@
         </div>
     </div>
     <div class="col-md-5">
-        <div class="panel panel-default" data-ng-show="clique._id">
-            <div class="panel-heading">
-                <b>Selected:</b> {{ clique._id }}
-                <!--<h4>{{ clique._id }} Sites</h4>-->
-                <div class="panel-body">
-                    <sites-in-clique-branch clique-id="clique._id"></sites-in-clique-branch>
-                </div>
-            </div>
+        <div data-ng-show="clique._id">
+            <sites-in-clique-branch clique-id="clique._id"></sites-in-clique-branch>
         </div>
     </div>
 </section>
