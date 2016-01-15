@@ -616,8 +616,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 var cpms = {};
                 for (var id in groupedData){
                     if (groupedData.hasOwnProperty(id)){
-                        var imps = _.sum(groupedData[id], function(row){ return row.imps; });
-                        var spend = _.sum(groupedData[id], function(row){ return row.spend; });
+                        var imps = _.sumBy(groupedData[id], function(row){ return row.imps; });
+                        var spend = _.sumBy(groupedData[id], function(row){ return row.spend; });
                         var cpm = spend / imps * 1000;
                         cpms[id] = {
                             imps: imps,
