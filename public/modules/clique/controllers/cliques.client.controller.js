@@ -1,8 +1,11 @@
 /* global _, angular */
 'use strict';
 
-angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location', '$http','Authentication','Advertiser','Clique','getCliqueTree','getSitesInClique','ngDialog',
-	function($scope, $stateParams, $location, $http,Authentication,Advertiser, Clique, getCliqueTree, getSitesInClique,getSitesInCliqueBranch, ngDialog) {
+angular.module('clique').controller('CliqueController', ['$scope', '$stateParams', '$location',
+    '$http','Authentication','Advertiser','Clique',
+    'getCliqueTree','getSitesInClique','getSitesInCliqueBranch','ngDialog',
+	function($scope, $stateParams, $location, $http,Authentication,Advertiser,
+             Clique, getCliqueTree, getSitesInClique,getSitesInCliqueBranch, ngDialog) {
 		$scope.authentication = Authentication;
         $scope.networkAdmin = $scope.authentication.user.roles.indexOf('networkAdmin') > 0;
 
@@ -61,9 +64,6 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
 
         $scope.set_clique = function(branch) {
             $scope.clique = angular.copy(branch.clique);
-            getSitesInClique(branch.label).then(function(response){
-                $scope.sites = response.data;
-            });
         };
 
         // recursive function to get ancestors to save new clique

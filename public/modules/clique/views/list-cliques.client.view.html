@@ -66,11 +66,9 @@
         <div class="panel panel-default" data-ng-show="clique._id">
             <div class="panel-heading">
                 <b>Selected:</b> {{ clique._id }}
-                <h4>{{ clique._id }} Sites</h4>
+                <!--<h4>{{ clique._id }} Sites</h4>-->
                 <div class="panel-body">
-                    <div>
-                        <site-tree sites="sites" clique="clique._id"></site-tree>
-                    </div>
+                    <sites-in-clique-branch clique-id="clique._id"></sites-in-clique-branch>
                 </div>
             </div>
         </div>

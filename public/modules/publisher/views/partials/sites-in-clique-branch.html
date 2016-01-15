@@ -1,0 +1,14 @@
+<div data-ng-repeat="clique in sites">
+    <p><strong class="text-md">{{ clique._id }}</strong></p>
+    <a data-ng-repeat="site in clique.sites" class="list-group-item">
+        <div class="row row-table">
+            <div class="col-md-3">
+                <img ng-src="{{ site.logo_secure_url }}" class="client-logo-sm"/>
+            </div>
+            <div class="col-md-9">
+                <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
+                <!--<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>-->
+            </div>
+        </div>
+    </a>
+</div>
