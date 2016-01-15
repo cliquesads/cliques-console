@@ -19,7 +19,7 @@
     </div>
 </div>
 <hr>
-<p class="text-muted">However, you can also bid on the following websites. If no bids are submitted in lower-level
+<p ng-show="sites.length > 0" class="text-muted">However, you can also bid on the following websites. If no bids are submitted in lower-level
     Cliques, you then get the chance to bid.</p>
 <div data-ng-repeat="clique in sites">
     <h4 class="text-gray-dark">{{ clique._id }}</h4>
