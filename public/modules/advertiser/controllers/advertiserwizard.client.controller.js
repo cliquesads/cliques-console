@@ -30,7 +30,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
-        getCliqueTree($scope);
+        getCliqueTree({active: true},function(err, cliques){
+            $scope.cliques = cliques;
+        });
         $scope.set_clique = function(branch) {
             $scope.campaign.clique = branch.label;
             getSitesInClique(branch.label).then(function(response){

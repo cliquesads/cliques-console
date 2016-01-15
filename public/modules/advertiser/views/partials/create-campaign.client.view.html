@@ -73,10 +73,19 @@
                 <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
                 <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
                 <div class="form-group col-md-6">
-                    <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                    <div class="pb-lg">
+                        <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
+                    </div>
+                    <div class="text-md">
+                        <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
+                    </div>
                 </div>
                 <div ng-show="campaign.clique" class="col-md-6 box-placeholder">
                     <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
+                    <div class="bs-callout bs-callout-primary">
+                        <h4>Don't worry</h4>
+                        <p>You can fine tune your site targeting after you've finished setting up your campaign.</p>
+                    </div>
                     <site-tree sites="sites" clique="campaign.clique"></site-tree>
                     <div ng-show="sites.length == 0" class="text-center">
                         <span class="fa fa-meh-o fa-2x"></span>
