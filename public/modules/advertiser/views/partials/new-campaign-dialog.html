@@ -23,7 +23,6 @@
     </div>
     <!--BEGIN Campaign Selection Step to chooose campaign type-->
     <div ng-switch-when="select-campaign">
-        {{ stepControl.campaign }}
         <h4>Choose an Existing Campaign to Start From</h4>
         <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
         <ul class="pager">

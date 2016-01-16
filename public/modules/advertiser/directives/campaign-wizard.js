@@ -42,12 +42,16 @@ angular.module('advertiser').directive('campaignWizard', [
 
                 // LAZY LOADERS
                 scope.loadCliqueStep = function(callback, callbackArg){
-                    var treeDirective = '<abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>';
+                    var treeDirective = '<abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2"></abn-tree>';
                     injectDirective('#cliquesTree', treeDirective);
-                    // Set initial selection
+                    // Set initial selection dynamically, can't use initial-selection param
                     if (scope.campaign.clique){
-                        scope.my_tree.select_branch(scope.campaign.clique);
+                        var branch = scope.my_tree.get_branch_by_label(scope.campaign.clique);
+                    } else {
+                        branch = scope.my_tree.get_first_branch();
                     }
+                    scope.my_tree.select_branch(branch);
+
                     return callback(callbackArg);
                 };
 
@@ -82,6 +86,24 @@ angular.module('advertiser').directive('campaignWizard', [
                 var tree;
                 // This is our API control variable
                 scope.my_tree = tree = {};
+
+                scope.my_tree.get_branch_by_label = function(label){
+                    function inner(branch){
+                        var selection;
+                        if (branch.label === label) {
+                            selection = branch;
+                        } else if (branch.children.length > 0){
+                            branch.children.forEach(function(child){
+                                var k = inner(child);
+                                if (k){
+                                    selection = k;
+                                }
+                            });
+                        }
+                        return selection;
+                    }
+                    return inner(this.get_first_branch());
+                };
 
                 scope.dmas = DMA.query();
 
