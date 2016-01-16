@@ -22,7 +22,9 @@ angular.module('core').directive('rowSelect', [
 
                 // _id is default key used to determine uniqueness
                 scope.key = scope.key || '_id';
-
+                scope.options.forEach(function(opt){
+                   opt.selected = false;
+                });
                 // initialize selected
                 scope.$watchGroup(['baseModel','options'], function(newValues, oldValues){
                     var newBaseModel = newValues[0];
