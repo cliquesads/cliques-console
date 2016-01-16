@@ -79,6 +79,10 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
         _.assign(this, campaignTemplate);
     };
 
+    ClientSideCampaign.prototype.removeCreative = function(creative){
+        _.remove(this.creatives, creative);
+    };
+
     /**
      * Base method to add creatives from arbitrary sources
      */
