@@ -7,42 +7,25 @@ angular.module('advertiser').directive('campaignWizard', [
     'getSitesInClique',
     'DMA',
     'FileUploader',
-    'AdvertiserUtils',
+    'ClientSideCampaign',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
 	function($compile, Authentication, Advertiser,
-             getCliqueTree, getSitesInClique, DMA, FileUploader, AdvertiserUtils,
+             getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,
              BID_SETTINGS, ADVERTISER_TOOLTIPS) {
         return {
             restrict: 'E',
             scope: {
                 advertiser: '=',
-                campaign: '='
+                existingCampaign: '=',
+                onPrevious : '&'
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
 
-                // prepare campaign data, if passed in
-                scope.campaign = angular.copy(scope.campaign);
-                function stripIds(obj){
-                    if (obj.hasOwnProperty('_id')){
-                        delete obj._id
-                    }
-                    Object.keys(obj).forEach(function(key){
-                        if (obj.hasOwnProperty(key)){
-                            if (typeof obj[key] === 'object' && obj[key] != null){
-                                if (obj[key].length === undefined){
-                                    stripIds(obj);
-                                } else {
-                                    obj[key].forEach(function(subObj){
-                                        stripIds(subObj);
-                                    });
-                                }
-                            }
-                        }
-                    });
-                }
-                stripIds(scope.campaign);
+                // Init new ClientSideCampaign, which handles all necessary duplication &
+                // pre-save prep logic
+                scope.campaign = new ClientSideCampaign(scope.existingCampaign);
 
                 // Horrible hack to lazy load sub-directives
                 // Weird shit happens they pre-load (they don't get the right
@@ -61,6 +44,10 @@ angular.module('advertiser').directive('campaignWizard', [
                 scope.loadCliqueStep = function(callback, callbackArg){
                     var treeDirective = '<abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>';
                     injectDirective('#cliquesTree', treeDirective);
+                    // Set initial selection
+                    if (scope.campaign.clique){
+                        scope.my_tree.select_branch(scope.campaign.clique);
+                    }
                     return callback(callbackArg);
                 };
 
@@ -102,18 +89,6 @@ angular.module('advertiser').directive('campaignWizard', [
                 scope.min_base_bid = BID_SETTINGS.min_base_bid;
                 scope.max_base_bid = BID_SETTINGS.max_base_bid;
 
-                scope.campaign = {
-                    name:           null,
-                    description:    null,
-                    budget:         null,
-                    start_date:     null,
-                    end_date:       null,
-                    base_bid:       null,
-                    max_bid:        null,
-                    clique:         null,
-                    dma_targets:    null,
-                    placement_targets: null
-                };
 
                 //#################################//
                 //######### FILE UPLOADER #########//
@@ -149,24 +124,11 @@ angular.module('advertiser').directive('campaignWizard', [
                  * @returns {boolean}
                  */
                 scope.createCampaign = function() {
-                    //if (this.campaignForm.$valid) {
                     scope.loading = true;
-                    // Construct advertiser JSON to POST to API
-                    var creatives = AdvertiserUtils.getCreativesFromUploadQueue(uploader);
+                    scope.campaign.ingestCreativeUploader(uploader);
+                    scope.campaign.ingestDCMCreatives(scope.dcm_creatives);
+                    var campaign = scope.campaign.getCampaignToSave();
 
-                    // also get creatives from DCM Queue
-                    if (scope.dcm_creatives){
-                        creatives = creatives.concat(scope.dcm_creatives);
-                    }
-
-                    var creativegroups = AdvertiserUtils.groupCreatives(creatives, scope.campaign.name);
-                    // now create new advertiser object
-                    var campaign = this.campaign;
-
-                    // convert target arrays to weightedSchema format
-                    campaign = AdvertiserUtils.convertAllTargetArrays(campaign);
-
-                    campaign.creativegroups = creativegroups;
                     var advertiser = scope.advertiser;
                     advertiser.campaigns.push(campaign);
                     advertiser.$update(function(){
