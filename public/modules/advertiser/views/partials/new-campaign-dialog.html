@@ -23,6 +23,7 @@
     </div>
     <!--BEGIN Campaign Selection Step to chooose campaign type-->
     <div ng-switch-when="select-campaign">
+        {{ stepControl.campaign }}
         <h4>Choose an Existing Campaign to Start From</h4>
         <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
         <ul class="pager">
@@ -37,6 +38,6 @@
         </ul>
     </div>
     <div ng-switch-when="campaign-wizard">
-        <campaign-wizard advertiser="advertiser" campaign="stepControl.campaign"></campaign-wizard>
+        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()"></campaign-wizard>
     </div>
 </div>

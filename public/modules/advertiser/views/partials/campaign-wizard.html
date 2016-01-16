@@ -57,6 +57,11 @@
             </fieldset>
             <small class="text-muted">* Required</small>
             <ul class="pager">
+                <li class="previous" ng-show="onPrevious">
+                    <a href="#" ng-click="onPrevious()">
+                        <span>&larr; Previous</span>
+                    </a>
+                </li>
                 <li class="next"><a href="#" ng-click="loadCliqueStep(wizard.go, 2)">Next <span>&rarr;</span></a>
                 </li>
             </ul>
@@ -152,6 +157,9 @@
             <legend>Add some creatives</legend>
             <small><em class="text-muted">You can also skip and add these later</em></small>
             <tabset>
+                <!--<tab heading="Existing Creatives">-->
+                    <!---->
+                <!--</tab>-->
                 <tab heading="Cliques Hosted">
                     <div class="row" id="creativeUploader"></div>
                 </tab>

@@ -29,6 +29,13 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope',
                     this.metaStep = 'campaign-wizard';
                 }
             },
+            goToStepPriorToWizard : function(){
+                if (this.useTemplate){
+                    this.metaStep = 'select-campaign';
+                } else {
+                    this.metaStep = 'init';
+                }
+            },
             campaign: null
         };
 
