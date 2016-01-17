@@ -18,7 +18,9 @@ angular.module('advertiser').directive('campaignWizard', [
             scope: {
                 advertiser: '=',
                 existingCampaign: '=',
-                onPrevious : '&'
+                onPrevious : '&',
+                onSaveSuccess: '&',
+                onSaveError: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
@@ -159,12 +161,13 @@ angular.module('advertiser').directive('campaignWizard', [
                     var advertiser = scope.advertiser;
                     advertiser.campaigns.push(campaign);
                     advertiser.$update(function(){
-                        scope.closeThisDialog('Success');
+                        scope.onSaveSuccess();
                     }, function (errorResponse){
                         scope.loading = false;
                         scope.creation_error = errorResponse.data.message;
                         // remove campaign from advertiser campaigns if error
                         _.remove(advertiser.campaigns, campaign);
+                        scope.onSaveError();
                     });
                 };
 

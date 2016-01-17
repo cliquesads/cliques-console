@@ -37,6 +37,6 @@
         </ul>
     </div>
     <div ng-switch-when="campaign-wizard">
-        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()"></campaign-wizard>
+        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()" on-save-success="closeThisDialog('Success')"></campaign-wizard>
     </div>
 </div>
