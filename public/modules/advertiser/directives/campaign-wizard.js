@@ -107,15 +107,6 @@ angular.module('advertiser').directive('campaignWizard', [
                     return callback(callbackArg);
                 };
 
-                scope.loadCreativeUploadStep = function(callback, callbackArg){
-                    var creativeUploader = '<creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>';
-                    //var dcmUploader = '<doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>';
-                    injectDirective('#creativeUploader', creativeUploader);
-                    injectDirective('#dcmUploader', dcmUploader);
-                    return callback(callbackArg);
-                };
-
-
                 //#################################//
                 //######### FILE UPLOADER #########//
                 //#################################//
@@ -126,11 +117,13 @@ angular.module('advertiser').directive('campaignWizard', [
                 scope.uploader.onCompleteAll = function(){
                     scope.uploads_completed = true;
                 };
+
                 /**
                  * Wrapper for uploader.uploadAll() which allows form to pass
                  * validation function to call first.
                  *
                  * @param validateFunc
+                 * @param funcArg
                  */
                 scope.validateAndUpload = function(validateFunc){
                     // pre_callback should be validation step for other various

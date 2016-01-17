@@ -146,7 +146,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="loadCreativeUploadStep(wizard.go, 4)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -157,7 +157,7 @@
             <legend>Add some creatives</legend>
             <small><em class="text-muted">You can also skip and add these later</em></small>
             <tabset>
-                <tab heading="Existing Creatives" ng-show="campaign.creatives">
+                <tab heading="Existing Creatives" ng-if="campaign.creatives">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -187,7 +187,9 @@
                     </div>
                 </tab>
                 <tab heading="Cliques Hosted">
-                    <div class="row" id="creativeUploader"></div>
+                    <div class="row" id="creativeUploader">
+                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                    </div>
                 </tab>
                 <tab heading="DoubleClick">
                     <div class="row" id="dcmUploader">
@@ -201,7 +203,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next">
+                <li class="next" ng-show="campaign.creatives || uploads_completed">
                     <a href="#" ng-click="ingestCreatives(wizard.go, 5)"> Next <span>&rarr;</span></a>
                 </li>
             </ul>
