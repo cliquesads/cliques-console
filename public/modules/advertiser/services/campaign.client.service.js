@@ -63,20 +63,43 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
 
         // Now figure out what to start with
         if (existingCampaign){
+
             // copy existingCampaign to ensure it doesn't get modified
             existingCampaign = angular.copy(existingCampaign);
+
             // strip off an _id fields
             stripIds(existingCampaign);
+
+            // rename all 'name' fields in campaign & subdocs
+            this.renameStuff(existingCampaign);
+
+            // set campaign status to inactive
+            existingCampaign.active = false;
+
             // Ingest all existing creatives in creativegroups
             this.ingestExistingCreativeGroups(existingCampaign.creativegroups);
+
             // Throw out old creative groups
             delete existingCampaign.creativeGroups;
+
             campaignTemplate = existingCampaign;
         } else {
             campaignTemplate = emptyCampaign;
         }
         // Finally, assign all own enumerable properties of campaignTemplate to this
         _.assign(this, campaignTemplate);
+    };
+
+    ClientSideCampaign.prototype.renameStuff = function(existingCampaign){
+        var NAME_SUFFIX = ' - Copy';
+        existingCampaign.name = existingCampaign.name + NAME_SUFFIX;
+        existingCampaign.creativegroups.forEach(function(crg){
+            crg.name = crg.name + NAME_SUFFIX;
+            crg.creatives.forEach(function(creative){
+                creative.name = creative.name + NAME_SUFFIX;
+            });
+        });
+        return existingCampaign;
     };
 
     ClientSideCampaign.prototype.removeCreative = function(creative){
