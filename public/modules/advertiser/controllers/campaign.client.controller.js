@@ -20,7 +20,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         };
         // this activates the modal
         $scope.showNewModal = function(){
-            if (JSON.parse($stateParams.newModal)){
+            if ($location.search().newModal){
                 $scope.newModal();
             }
         };
