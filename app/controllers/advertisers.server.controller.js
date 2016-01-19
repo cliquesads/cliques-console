@@ -31,6 +31,30 @@ var adserverPort = config.get('AdServer.http.external.port');
 var adserverSecureHostname = config.get('AdServer.https.external.hostname');
 var adserverSecurePort = config.get('AdServer.https.external.port');
 
+// This method is mostly just to handle redundant error logic.  I don't
+// want to bind this to middleware because draftId is fairly ambiguous
+var _getDraftById = function(req, callback){
+    var sess = req.session;
+    var draftId = req.param('draftId');
+    var advertiserId = req.advertiser.id;
+    if (!sess.campaignDrafts){
+        return callback({ message: 'No campaign drafts for this session'}, null);
+    } else {
+        if (!sess.campaignDrafts[advertiserId]) {
+            return callback({
+                message: 'No campaign drafts in this session for advertiser id '
+                + advertiserId
+            }, null);
+        } else {
+            if (!sess.campaignDrafts[advertiserId][draftId]) {
+                return callback({message: 'Draft ID ' + draftId + ' not found'});
+            } else {
+                return callback(null, sess.campaignDrafts[advertiserId][draftId]);
+            }
+        }
+    }
+};
+
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
 
@@ -222,30 +246,33 @@ module.exports = function(db) {
 
         campaign: {
             //TODO: Campaign controllers here
-            getCampaignsInClique: function(req, res){
+            getCampaignsInClique: function (req, res) {
                 var camps = [];
                 var cliqueId = req.param('cliqueId');
-                advertiserModels.Advertiser.find({"campaigns.clique": cliqueId}, function(err, advs){
-                    if (err){
+                advertiserModels.Advertiser.find({"campaigns.clique": cliqueId}, function (err, advs) {
+                    if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        advs.forEach(function(adv){
-                            camps = camps.concat(adv.campaigns.filter(function(camp){ return camp.clique === cliqueId; }));
+                        advs.forEach(function (adv) {
+                            camps = camps.concat(adv.campaigns.filter(function (camp) {
+                                return camp.clique === cliqueId;
+                            }));
                         });
                         res.json(camps);
                     }
                 });
             },
-
-            activate: function(req, res){
+            activate: function (req, res) {
                 // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
-                var ind = _.findIndex(req.advertiser.campaigns, function(c){ return c._id == campaignId; });
+                var ind = _.findIndex(req.advertiser.campaigns, function (c) {
+                    return c._id == campaignId;
+                });
                 var campaign = advertiser.campaigns[ind];
-                if (!campaign){
+                if (!campaign) {
                     return res.status(404).send({
                         message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
                     });
@@ -259,7 +286,7 @@ module.exports = function(db) {
                     service.publishers.createBidder(campaignId);
                     // Now set to active and save
                     advertiser.campaigns[ind].active = true;
-                    advertiser.save(function(err){
+                    advertiser.save(function (err) {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -271,13 +298,15 @@ module.exports = function(db) {
                 }
             },
 
-            deactivate: function(req, res){
+            deactivate: function (req, res) {
                 // Checks if campaign is inactive.  If not, publishes 'stopBidder' message and sets campaign to inactive
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
-                var ind = _.findIndex(req.advertiser.campaigns, function(c){ return c._id == campaignId; });
+                var ind = _.findIndex(req.advertiser.campaigns, function (c) {
+                    return c._id == campaignId;
+                });
                 var campaign = advertiser.campaigns[ind];
-                if (!campaign){
+                if (!campaign) {
                     return res.status(404).send({
                         message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
                     });
@@ -291,7 +320,7 @@ module.exports = function(db) {
                     service.publishers.stopBidder(campaignId);
                     // Now set to active and save
                     advertiser.campaigns[ind].active = false;
-                    advertiser.save(function(err){
+                    advertiser.save(function (err) {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -301,7 +330,68 @@ module.exports = function(db) {
                         }
                     });
                 }
-
+            },
+            /**
+             * Methods to handle campaign drafts saved to sessions
+             *
+             * Simple scheme
+             */
+            draft: {
+                getMany: function (req, res) {
+                    var sess = req.session;
+                    var advertiserId = req.advertiser.id;
+                    if (sess.campaignDrafts && sess.campaignDrafts[advertiserId]){
+                        return res.json(sess.campaignDrafts[advertiserId]);
+                    } else {
+                        return res.json([]);
+                    }
+                },
+                create: function (req, res) {
+                    var draft = req.body;
+                    draft.tstamp = new Date();
+                    var advertiserId = req.advertiser.id;
+                    var sess = req.session;
+                    var drafts;
+                    if (sess.campaignDrafts){
+                        drafts = sess.campaignDrafts;
+                    } else {
+                        drafts = {};
+                    }
+                    if (drafts[advertiserId]){
+                        // explicitly ID drafts in incrementing integers, just in case
+                        draft.draftId = sess.campaignDrafts[advertiserId].length;
+                        drafts[advertiserId].push(draft);
+                    } else {
+                        // explicitly ID drafts in incrementing integers, just in case
+                        draft.draftId = 0;
+                        drafts[advertiserId] = [draft];
+                        sess.campaignDrafts = drafts;
+                    }
+                    return res.json(drafts);
+                },
+                read: function (req, res) {
+                    _getDraftById(req, function(err, draft){
+                        if (err) return res.status(404).send(err);
+                        return res.json(draft);
+                    });
+                },
+                update: function (req, res) {
+                    _getDraftById(req, function(err, draft){
+                        if (err) return res.status(404).send(err);
+                        _.extend(draft, req.body);
+                        return res.json(draft);
+                    });
+                },
+                remove: function (req, res) {
+                    var sess = req.session;
+                    var draftId = req.param('draftId');
+                    var advertiserId = req.advertiser.id;
+                    _getDraftById(req, function(err, draft){
+                        if (err) return res.status(404).send(err);
+                        _.remove(sess.campaignDrafts[advertiserId], draft);
+                        return res.json(draft);
+                    });
+                }
             }
         },
         actionbeacon: {

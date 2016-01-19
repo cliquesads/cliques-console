@@ -15,6 +15,15 @@ module.exports = function(app){
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
 
+    app.route('/advertiser/:advertiserId/campaign/draft')
+        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.getMany)
+        .post(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.create);
+
+    app.route('/advertiser/:advertiserId/campaign/draft/:draftId')
+        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.read)
+        .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.update)
+        .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.remove);
+
     app.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.activate);
 
