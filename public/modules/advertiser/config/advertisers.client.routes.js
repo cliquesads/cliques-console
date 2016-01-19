@@ -50,7 +50,13 @@ angular.module('advertiser').config(['$stateProvider',
             }
         }).
 		state('app.advertiser.viewAdvertiser', {
-			url: '/advertiser/:advertiserId',
+			url: '/advertiser/:advertiserId?newModal',
+            params: {
+                newModal: {
+                    value: false,
+                    squash: true
+                }
+            },
 			title: 'View Advertiser',
             views: {
                 'main': {
@@ -64,8 +70,14 @@ angular.module('advertiser').config(['$stateProvider',
             }
 		}).
         state('app.advertiser.viewAdvertiser.viewCampaign', {
-            url: '/campaign/:campaignId',
+            url: '/campaign/:campaignId?newModal',
             title: 'View Campaign',
+            params: {
+                newModal: {
+                    value: false,
+                    squash: true
+                }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',

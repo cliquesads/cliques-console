@@ -2,12 +2,28 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME) {
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
-		$scope.remove = function(advertiser) {
+        /**
+         * Overlay campaign helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/new-campaign-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if (JSON.parse($stateParams.newModal)){
+                $scope.newModal();
+            }
+        };
+
+        $scope.remove = function(advertiser) {
 			if (advertiser) {
 				advertiser.$remove();
 

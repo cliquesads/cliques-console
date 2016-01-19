@@ -2,12 +2,28 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog) {
+    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog', 'REVIEW_TIME',
+	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog, REVIEW_TIME) {
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
         $scope.max_base_bid = 20;
+
+        /**
+         * Overlap campaign helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/new-campaign-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if (JSON.parse($stateParams.newModal)){
+                $scope.newModal();
+            }
+        };
 
         $scope.toggleCampaignActive = function(){
             if (!this.campaign.active){

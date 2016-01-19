@@ -1,3 +1,4 @@
+<section data-ng-init="showModal()"></section>
 <!--- This template switches between a ui-view hook & actual viewCampaign
 template, depending on the UI Router State. Not ideal, but couldn't figure out
 simple way to have full child template exist inside of parent state w/out
@@ -8,6 +9,8 @@ adding hook in parent template ---->
         <section data-ui-view="main"></section>
     </div>
     <div ng-switch-when="app.advertiser.viewAdvertiser.viewCampaign">
+        <!--showNewModal toggles on or off depending on query param showModal-->
+        <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
             <!--<div>-->
                 <!--<small>-->
