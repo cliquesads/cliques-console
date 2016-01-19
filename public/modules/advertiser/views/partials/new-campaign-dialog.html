@@ -2,7 +2,7 @@
     <!--BEGIN INIT STEP  to chooose campaign type-->
     <div ng-switch-when="init">
         <h4>New or Template?</h4>
-        <p class="text-muted">Please tell us what type of account you'd like to create.</p>
+        <p class="text-muted">Pick starting point for your new campaign.</p>
         <div class="box-form">
             <ol class="row" style="margin-left: -15px; margin-right: -15px">
                 <li ng-class="{'active': !stepControl.useTemplate }" ng-click="stepControl.useTemplate = false" class="col-sm-6">
@@ -38,6 +38,6 @@
         </ul>
     </div>
     <div ng-switch-when="campaign-wizard">
-        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()" on-save-success="onSaveSuccess(advertiser)"></campaign-wizard>
+        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()" on-submit="updateAdvertiser(campaign)"></campaign-wizard>
     </div>
 </div>

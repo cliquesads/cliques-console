@@ -41,15 +41,25 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
         };
 
         // Success handler
-        $scope.onSaveSuccess = function(advertiser){
-            $scope.closeThisDialog('Success');
-            var advertiserId = advertiser._id;
-            // Since directive just pushes campaign to campaigns array, assume the last campaign
-            // is the new one
-            var newCampaign = advertiser.campaigns[advertiser.campaigns.length - 1];
-            var campaignId = newCampaign._id;
-            // Go to new campaign page, passing in newModal param, which shows helper modal popup
-            $location.url('/advertiser/' + advertiserId + '/campaign/' + campaignId + '?newModal=true');
+        $scope.updateAdvertiser = function(campaign){
+            $scope.loading = true;
+            $scope.advertiser.campaigns.push(campaign);
+            $scope.advertiser.$update(function(){
+                $scope.loading = false;
+                $scope.closeThisDialog('Success');
+                var advertiserId = $scope.advertiser._id;
+                // Since directive just pushes campaign to campaigns array, assume the last campaign
+                // is the new one
+                var newCampaign = $scope.advertiser.campaigns[$scope.advertiser.campaigns.length - 1];
+                var campaignId = newCampaign._id;
+                // Go to new campaign page, passing in newModal param, which shows helper modal popup
+                $location.url('/advertiser/' + advertiserId + '/campaign/' + campaignId + '?newModal=true');
+            }, function (errorResponse){
+                $scope.loading = false;
+                $scope.creation_error = errorResponse.data.message;
+                // remove campaign from advertiser campaigns if error
+                _.remove($scope.advertiser.campaigns, campaign);
+            });
         }
     }
 ]);

@@ -16,11 +16,9 @@ angular.module('advertiser').directive('campaignWizard', [
         return {
             restrict: 'E',
             scope: {
-                advertiser: '=',
                 existingCampaign: '=',
                 onPrevious : '&',
-                onSaveSuccess: '&',
-                onSaveError: '&'
+                onSubmit: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
@@ -151,29 +149,16 @@ angular.module('advertiser').directive('campaignWizard', [
                 };
 
                 /**
-                 * Method called to submit Advertiser to API
-                 * @returns {boolean}
+                 * Method called when Submit button is clicked
+                 *
+                 * Calls scope.onSubmit to execute directive callback, and passes
+                 * it a campaign that's ready to save
                  */
-                scope.createCampaign = function() {
+                scope.submit = function() {
                     scope.loading = true;
+                    // clean up campaign object
                     var campaign = scope.campaign.getCampaignToSave();
-                    var advertiser = scope.advertiser;
-                    advertiser.campaigns.push(campaign);
-                    advertiser.$update(function(advertiser){
-                        scope.loading = false;
-                        scope.onSaveSuccess(advertiser);
-                    }, function (errorResponse){
-                        scope.loading = false;
-                        scope.creation_error = errorResponse.data.message;
-                        // remove campaign from advertiser campaigns if error
-                        _.remove(advertiser.campaigns, campaign);
-                        scope.onSaveError(errorResponse);
-                    });
-                };
-
-                scope.validateInput = function(name, type) {
-                    var input = this.advertiserForm[name];
-                    return (input.$dirty || scope.submitted) && input.$error[type];
+                    scope.onSubmit({campaign: campaign});
                 };
             }
         };
