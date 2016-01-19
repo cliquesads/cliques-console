@@ -159,14 +159,15 @@ angular.module('advertiser').directive('campaignWizard', [
                     var campaign = scope.campaign.getCampaignToSave();
                     var advertiser = scope.advertiser;
                     advertiser.campaigns.push(campaign);
-                    advertiser.$update(function(){
-                        scope.onSaveSuccess();
+                    advertiser.$update(function(advertiser){
+                        scope.loading = false;
+                        scope.onSaveSuccess(advertiser);
                     }, function (errorResponse){
                         scope.loading = false;
                         scope.creation_error = errorResponse.data.message;
                         // remove campaign from advertiser campaigns if error
                         _.remove(advertiser.campaigns, campaign);
-                        scope.onSaveError();
+                        scope.onSaveError(errorResponse);
                     });
                 };
 

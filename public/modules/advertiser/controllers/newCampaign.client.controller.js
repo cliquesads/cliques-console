@@ -1,10 +1,11 @@
 /**
  * Created by bliang on 1/15/16.
  */
-angular.module('advertiser').controller('NewCampaignController', ['$scope',
-    function($scope){
+angular.module('advertiser').controller('NewCampaignController', ['$scope','$location',
+    function($scope, $location){
         // first get advertiser from ngDialogData
         $scope.advertiser = $scope.ngDialogData.advertiser;
+        $scope.initCampaigns = $scope.advertiser.campaigns;
         $scope.campaign = null;
 
         $scope.rowTemplate = '<div class="col-sm-1"><div class="label" ng-class="option.active ? \'label-success\':\'label-default\'">{{ option.active ? "Active":"Inactive"}}</div></div>' +
@@ -39,5 +40,16 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope',
             campaign: null
         };
 
+        // Success handler
+        $scope.onSaveSuccess = function(advertiser){
+            $scope.closeThisDialog('Success');
+            var advertiserId = advertiser._id;
+            // Since directive just pushes campaign to campaigns array, assume the last campaign
+            // is the new one
+            var newCampaign = advertiser.campaigns[advertiser.campaigns.length - 1];
+            var campaignId = newCampaign._id;
+            // Go to new campaign page, passing in newModal param, which shows helper modal popup
+            $location.url('/advertiser/' + advertiserId + '/campaign/' + campaignId + '?newModal=true');
+        }
     }
 ]);

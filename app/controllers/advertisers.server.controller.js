@@ -121,7 +121,12 @@ module.exports = function(db) {
             );
         },
         /**
-         * Update existing advertiser
+         * Updates existing advertiser and performs a bunch of post-update operations
+         *
+         * 1) Extend advertiser with request body and saves
+         * 2) If any new campaigns were created, returns these new campaigns in response as well as full advertiser
+         * 3) Publish updateBidder message for existing campaigns
+         * 4) Send internal email notifying admins of new campaigns that were created, if any
          */
         update: function (req, res) {
             var advertiser = req.advertiser;
@@ -140,21 +145,29 @@ module.exports = function(db) {
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
+                        // now get new campaigns that were created
+                        var newCampaigns = _.difference(adv.campaigns, initCampaigns);
                         res.json(adv);
 
-                        // Now publisher update message to bidders
+                        // Now publish update message to bidders
+                        // Only update bidders for existing campaigns, as new campaigns don't have
+                        // active bidding agents yet.
                         //TODO: This is lazy, should figure out whether campaign has changed or not
-                        adv.campaigns.forEach(function(campaign){
+                        initCampaigns.forEach(function(campaign){
                             service.publishers.updateBidder(campaign._id);
                         });
-                        // Send internal email notifying of new campaign, if any
-                        if (adv.campaigns.length > initCampaigns.length){
-                            if (process.env.NODE_ENV === 'production') {
-                                mailer.sendMailFromUser('New Campaign Created', 'new-campaign-email.server.view.html',
-                                    {advertiser: advertiser, user: req.user},
-                                    req.user,
-                                    'support@cliquesads.com'
-                                );
+
+                        // Send internal email notifying of new campaign(s), if any
+                        if (newCampaigns.length > 0){
+                            if (process.env.NODE_ENV === 'production'){
+                                // send one email per campaign
+                                newCampaigns.forEach(function(campaign){
+                                    mailer.sendMailFromUser('New Campaign Created', 'new-campaign-email.server.view.html',
+                                        {advertiser: advertiser, campaign: campaign, user: req.user},
+                                        req.user,
+                                        'support@cliquesads.com'
+                                    );
+                                })
                             }
                         }
                     });
