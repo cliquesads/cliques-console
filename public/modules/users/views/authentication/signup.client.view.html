@@ -93,6 +93,17 @@
                             <div class="row pt">
                                 <div class="col-md-8">
                                     <div class="form-group">
+                                        <label>Website *</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">http://</span>
+                                            <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="organization.website" id="website" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row pt">
+                                <div class="col-md-8">
+                                    <div class="form-group">
                                         <label for="phone">Phone Number *</label>
                                         <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
                                     </div>
