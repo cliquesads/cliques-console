@@ -47,9 +47,6 @@ angular.module('advertiser').directive('campaignWizard', [
                 // Sets Clique and gets sites in Clique for visualization purposes
                 scope.set_clique = function(branch) {
                     scope.campaign.clique = branch.label;
-                    getSitesInClique(branch.label).then(function(response){
-                        scope.sites = response.data;
-                    });
                 };
 
                 var tree;

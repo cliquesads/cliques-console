@@ -9,7 +9,7 @@
     <div data-ng-repeat="site in primary_sites.sites" class="list-group-item" ng-click="getDescription(site)">
         <div class="row row-table">
             <div class="col-md-3">
-                <img ng-src="{{ site.logo_secure_url }}" class="client-logo-md"/>
+                <img ng-src="{{ site.logo_secure_url }}" ng-class="{'client-logo-sm': size === 'sm','client-logo-md': size === 'md'}"/>
             </div>
             <div class="col-md-9">
                 <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
@@ -26,7 +26,7 @@
     <div data-ng-repeat="site in clique.sites" class="list-group-item" ng-click="getDescription(site)">
         <div class="row row-table">
             <div class="col-md-3">
-                <img ng-src="{{ site.logo_secure_url }}" class="client-logo-sm"/>
+                <img ng-src="{{ site.logo_secure_url }}" ng-class="{'client-logo-xs': size === 'sm','client-logo-sm': size === 'md'}"/>
             </div>
             <div class="col-md-9">
                 <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>

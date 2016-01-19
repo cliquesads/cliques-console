@@ -69,38 +69,34 @@
 
         <div id="step2" ng-show="wizard.active(2)">
             <legend>Choose a Clique</legend>
-            <p>
+            <p class="legend-help-text">
                 <em class="text-muted">
                     Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
                 </em>
             </p>
-            <fieldset>
-                <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
-                <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
-                <div class="form-group col-md-6">
-                    <div class="pb-lg">
-                        <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
-                    </div>
-                    <!--controller will lazily load abn-tree directive and inject inside of this div-->
-                    <div class="text-md" id="cliquesTree"></div>
-                </div>
-                <div ng-show="campaign.clique" class="col-md-6 box-placeholder">
-                    <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
-                    <div class="bs-callout bs-callout-primary">
-                        <h4>Don't worry</h4>
-                        <p>You can fine tune your site targeting after you've finished setting up your campaign.</p>
-                    </div>
-                    <site-tree sites="sites" clique="campaign.clique"></site-tree>
-                    <div ng-show="sites.length == 0" class="text-center">
-                        <span class="fa fa-meh-o fa-2x"></span>
-                        <h4>Lame</h4>
-                        <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
-                        <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
-                    </div>
-                </div>
-            </fieldset>
             <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
-            <small class="text-muted">* Required</small>
+            <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
+            <div class="form-group col-md-5">
+                <div class="pb-lg">
+                    <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
+                </div>
+                <!--controller will lazily load abn-tree directive and inject inside of this div-->
+                <div class="text-md" id="cliquesTree"></div>
+            </div>
+            <div ng-show="campaign.clique" style="max-height: 400px; overflow: auto" class="col-md-7 box-placeholder">
+                <!--<h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>-->
+                <sites-in-clique-branch clique-id="campaign.clique" size="sm"></sites-in-clique-branch>
+                <div ng-show="sites.length == 0" class="text-center">
+                    <span class="fa fa-meh-o fa-2x"></span>
+                    <h4>Lame</h4>
+                    <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
+                    <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
+                </div>
+            </div>
+            <div class="bs-callout bs-callout-primary pl-sm pr-sm col-md-12">
+                <h4>Don't worry</h4>
+                <p>You can fine tune your site targeting after you've finished setting up your campaign.</p>
+            </div>
             <ul class="pager">
                 <li class="previous">
                     <a href="#" ng-click="wizard.go(1)">
@@ -115,7 +111,7 @@
         <!-- START CAMPAIGN inputs -->
         <div id="step3" ng-show="wizard.active(3)">
             <legend>Bid Settings</legend>
-            <small><em class="text-muted">You can set targeting specifics (DMA, Site) later</em></small>
+            <p class="legend-help-text"><em class="text-muted">You can set targeting specifics (DMA, Site) later</em></p>
             <br/>
             <!-- START row -->
             <fieldset>
