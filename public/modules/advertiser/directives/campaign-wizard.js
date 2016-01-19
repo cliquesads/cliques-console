@@ -37,6 +37,8 @@ angular.module('advertiser').directive('campaignWizard', [
 
                 // Populate tree data for tree visualization
                 scope.cliques = [];
+
+                // Get whole tree of active Cliques on load to render in ABN tree
                 getCliqueTree({active: true},function(err, cliques){
                     scope.cliques = cliques;
                 });

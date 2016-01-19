@@ -24,6 +24,7 @@
     <!--BEGIN Campaign Selection Step to chooose campaign type-->
     <div ng-switch-when="select-campaign">
         <h4>Choose an Existing Campaign to Start From</h4>
+        <p class="text-muted"> All of your old campaign settings will be copied into your new campaign, but you can still give everything a once-over on the next screen.</p>
         <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
         <ul class="pager">
             <li class="previous">
