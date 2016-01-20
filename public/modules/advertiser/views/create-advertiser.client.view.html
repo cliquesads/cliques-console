@@ -33,7 +33,7 @@
                             <div class="form-group">
                                 <label>Name *</label>
                                 <div class="controls">
-                                    <input name="name" type="text" data-ng-model="advertiserVals.name" id="name" class="form-control" placeholder="Name" required="required">
+                                    <input name="name" type="text" data-ng-model="advertiser.name" id="name" class="form-control" placeholder="Name" required="required">
                                     <span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                                 <label>Website *</label>
                                 <div class="input-group">
                                     <span class="input-group-addon">http://</span>
-                                    <input name="website" id="website" type="text" ng-pattern="{{ domain_regex }}" data-ng-model="advertiserVals.website" id="website" class="form-control" placeholder="example.com" required="required">
+                                    <input name="website" id="website" type="text" ng-pattern="{{ domain_regex }}" data-ng-model="advertiser.website" id="website" class="form-control" placeholder="example.com" required="required">
                                 </div>
                                     <span ng-show="validateInput('website', 'required')" class="text-danger">This field is required</span>
                                     <span ng-show="validateInput('website', 'pattern')" class="text-danger">This must be a valid website</span>
@@ -50,12 +50,12 @@
                             <br/>
                             <div class="form-group">
                                 <label>Logo</label>
-                                <logo-uploader model="advertiserVals" uploader="logo_uploader"></logo-uploader>
+                                <logo-uploader model="advertiser" uploader="logo_uploader"></logo-uploader>
                             </div>
                             <div class="form-group">
                                 <label>Description</label>
                                 <div class="controls">
-                                    <input name="description" type="text" data-ng-model="advertiserVals.description" id="description" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
+                                    <input name="description" type="text" data-ng-model="advertiser.description" id="description" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
                                 </div>
                             </div>
                         </form>
@@ -74,13 +74,35 @@
                             </div>
                         </li>
                         <li class="next">
-                            <a href="#" ng-click="createAdvertiser()">Save & Continue<span>&rarr;</span></a>
+                            <a href="#" ng-click="saveAdvertiser()">Save & Continue<span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div ng-switch-when="campaign-splash">
-
+                <div class="jumbotron bg-green text-center">
+                    <div class="row">
+                        <p class="lead">Sweet.</p>
+                        <p><strong>{{ advertiser.name }}</strong> has been created as an Advertiser</p>
+                    </div>
+                </div>
+                <br/>
+                <div class="text-md">
+                    <p>In the next steps, you will create this Advertiser's first <strong>Campaign</strong>. A campaign is what holds all of your targeting, budget & creative settings.</p>
+                </div>
+                <br/>
+                <div class="bs-callout bs-callout-primary">
+                    <h4>Don't worry</h4>
+                    <p>If you need to stop & want to save your progress, you can always click the <button class="btn btn-primary"><i class="fa fa-file-o"></i> Save Draft</button> button in the upper right corner.</p>
+                </div>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="stepControl.goToStep('advertiser-info')"><span>&larr; Previous</span></a>
+                    </li>
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Got it<span>&rarr;</span></a>
+                    </li>
+                </ul>
             </div>
             <div ng-switch-when="campaign-wizard">
                 <campaign-wizard on-previous="stepControl.goToStepPriorToWizard()" advertiser="advertiser" on-submit="createAdvertiser(campaign)" on-draft-save-success="onDraftSaveSuccess(draft)"></campaign-wizard>
