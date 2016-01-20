@@ -1,56 +1,76 @@
 <section data-ng-init="find()">
     <div class="col-md-4">
+        <p><em>Select a Clique from the menu below to browse sites.</em></p>
         <div class="well wd-wide">
-            <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+            <div class="pb-lg">
+                <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
+            </div>
+            <div class="text-md">
+                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+            </div>
         </div>
     </div>
-    <div class="col-md-8">
-        <div class="panel panel-default" data-ng-show="clique._id">
-            <div class="panel-heading">
-                <b>Selected:</b> {{ clique._id }}
-                <h4>{{ clique._id }} Sites</h4>
-                <div class="panel-body">
-                    <div>
-                        <site-tree sites="sites" clique="clique._id"></site-tree>
+    <div class="col-md-3">
+        <div class="panel panel-default" ng-show="clique._id">
+            <div class="panel-body">
+                <h4> Edit Clique</h4>
+                <form name="editCliqueForm" class="form-horizontal" validate-form="">
+                    <div ng-show="update_error" class="alert alert-danger col-md-12">{{ update_error }}</div>
+                    <div class="form-group form-control-static">
+                        <label class="control-label">Active</label>
+                        <div class="form-control-static text-center">
+                            <label class="switch">
+                                <input type="checkbox" checked="checked" ng-model="clique.active"/>
+                                <span></span>
+                            </label>
+                            <div class="label" ng-class="clique.active ? 'label-success':'label-default'">{{ clique.active ? "Active":"Inactive"}}</div>
+                        </div>
                     </div>
-                    <!--<div class="btn-group">-->
-                        <!--<button type="button" class="btn btn-default" ng-click="show_child_form = !show_child_form">Add Child</button>-->
-                        <!--<button type="button" class="btn btn-default" ng-click="show_edit_form = !show_edit_form">Edit</button>-->
-                    <!--</div>-->
-                    <!--<br/>-->
-                    <!--<br/>-->
-                    <!--BEGIN New Clique Form-->
-                    <!--<form name="newCliqueForm" class="form-horizontal" data-ng-show="show_child_form" validate-form="">-->
-                        <!--<div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>-->
-                        <!--<div class="form-group">-->
-                            <!--<label class="col-lg-2 control-label">Name</label>-->
-                            <!--<div class="col-lg-10">-->
-                                <!--<input name="new_clique_name" type="text" data-ng-model="new_clique_name" id="new_clique_name" class="form-control" placeholder="Name" required="required" />-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="form-group">-->
-                            <!--<div class="col-lg-offset-2 col-lg-10">-->
-                                <!--<button type="submit" class="btn btn-sm btn-primary" ng-click="create_new_clique()">Save</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</form>-->
-                    <!--END New Clique Form-->
-                    <!--<form name="editCliqueForm" class="form-horizontal" data-ng-show="show_edit_form" validate-form="">-->
-                        <!--<div ng-show="update_error" class="alert alert-danger col-md-12">{{ update_error }}</div>-->
-                        <!--<div class="form-group">-->
-                            <!--<label class="col-lg-2 control-label">Name</label>-->
-                            <!--<div class="col-lg-10">-->
-                                <!--<input name="clique_name" type="text" data-ng-model="clique.name" id="clique.name" class="form-control" placeholder="Name" required="required" />-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="form-group">-->
-                            <!--<div class="col-lg-offset-2 col-lg-10">-->
-                                <!--<button type="submit" class="btn btn-sm btn-primary" ng-click="update_clique()">Save</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</form>-->
-                </div>
+                    <div class="form-group">
+                        <label for="clique._id">Name</label>
+                        <input name="clique_name" disabled type="text" data-ng-model="clique._id" id="clique._id" class="form-control" placeholder="Name" required="required"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Default Advertisers &nbsp;
+                            <a href="#" class="pull-right" ng-click="editDefaultAdvertisers()">
+                            <span class="fa fa-edit"></span>
+                        </a></label>
+                        <br/>
+                        <div data-ng-repeat="advertiser in clique.default_advertisers" class="list-group-item" ng-click="editDefaultAdvertisers()">
+                            <div class="row row-table">
+                                <div class="col-md-3">
+                                    <img ng-src="{{ advertiser.logo_secure_url }}" class="client-logo-sm"/>
+                                </div>
+                                <div class="col-md-9">
+                                    <h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>
+                                    <p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="clique.bidder.url">Bidder URL</label>
+                        <input name="clique.bidder.url" ng-hide="networkAdmin" disabled type="text" data-ng-model="clique.bidder.url" id="clique.bidder.url" class="form-control" placeholder="none" />
+                        <input name="clique.bidder.url" ng-show="networkAdmin" type="text" data-ng-model="clique.bidder.url" id="adminclique.bidder.url" class="form-control" placeholder="none" />
+                    </div>
+                    <div class="form-group">
+                        <label for="clique.bidder.url">Bidder NURL</label>
+                        <input name="clique.bidder.nurl" ng-hide="networkAdmin" disabled type="text" data-ng-model="clique.bidder.nurl" id="clique.bidder.nurl" class="form-control" placeholder="none" />
+                        <input name="clique.bidder.nurl" ng-show="networkAdmin" type="text" data-ng-model="clique.bidder.nurl" id="adminclique.bidder.nurl" class="form-control" placeholder="none"/>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <button type="submit" ng-show="editCliqueForm.$dirty" class="btn btn-sm btn-primary" ng-click="save()">Save</button>
+                            <button type="button" ng-show="editCliqueForm.$dirty" class="btn btn-sm" ng-click="resetEditForm()">Reset</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div data-ng-show="clique._id">
+            <sites-in-clique-branch clique-id="clique._id"></sites-in-clique-branch>
         </div>
     </div>
 </section>

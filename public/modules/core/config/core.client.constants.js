@@ -43,7 +43,8 @@ angular.module('core')
         supported_dimensions: ['300x250','300x600','160x600','728x90','320x50','468x460','120x600','300x100','468x60','970x90']
     })
     .constant('REGEXES', {
-        domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z\-]{2,})+$/
+        domain: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z\-]{2,})+$/,
+        domainPattern: '[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z\-]{2,})+'
     })
     .constant('OPENRTB', {
         positions: [

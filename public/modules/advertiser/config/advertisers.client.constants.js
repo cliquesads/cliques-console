@@ -12,4 +12,5 @@ angular.module('advertiser')
         view_lookback: "Match actions from this beacon to any impressions shown this many days prior (or more recently)",
         click_lookback: "Match actions from this beacon to any clicks that occurred this many days prior (or more recently)",
         actionbeacons: "View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI."
-    });
+    })
+    .constant('REVIEW_TIME','2 - 4 Business Hours');

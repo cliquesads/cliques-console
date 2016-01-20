@@ -1,29 +1,23 @@
 <section class="row" data-ng-controller="AuthenticationController">
 	<h3 class="col-md-12 text-center text-white">Please Sign In</h3>
-	<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4 panel panel-default">
-		<form data-ng-submit="signin()" class="signin form-horizontal panel-body" autocomplete="off">
-			<div class="panel-body">
-            <fieldset>
-				<div class="form-group">
-					<label for="username">Username</label>
-					<input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="Username">
-				</div>
-				<div class="form-group">
-					<label for="password">Password</label>
-					<input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
-				</div>
-				<div class="text-center form-group mt">
-					<button type="submit" class="btn btn-primary">Sign in</button>
-				</div>
-                <div data-ng-show="error" class="text-center text-danger">
-                    <strong data-ng-bind="error"></strong>
-                </div>
-            </fieldset>
+	<div class="col-xs-offset-2 col-xs-8 col-md-offset-4 col-md-4">
+		<form data-ng-submit="signin()" class="signin form-horizontal" autocomplete="off">
+            <div class="form-group">
+                <label for="username" class="text-white">Username</label>
+                <input type="text" id="username" name="username" class="form-control" data-ng-model="credentials.username" placeholder="Username">
             </div>
-            <div class="panel-footer">
-				<div class="forgot-password text-center mt">
-					<a href="/#!/password/forgot" class="text-muted">Forgot your password?</a>
-				</div>
+            <div class="form-group pt-lg">
+                <label for="password" class="text-white">Password</label>
+                <input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
+            </div>
+            <div class="text-center form-group mt">
+                <button type="submit" class="btn btn-green">Sign in</button>
+            </div>
+            <div data-ng-show="error" class="text-center text-danger">
+                <strong data-ng-bind="error"></strong>
+            </div>
+            <div class="forgot-password text-center mt">
+                <a href="/#!/password/forgot" class="text-white">Forgot your password?</a>
             </div>
 		</form>
 	</div>

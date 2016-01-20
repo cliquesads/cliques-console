@@ -2,12 +2,28 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME) {
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
-		$scope.remove = function(advertiser) {
+        /**
+         * Overlay campaign helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/new-campaign-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
+
+        $scope.remove = function(advertiser) {
 			if (advertiser) {
 				advertiser.$remove();
 
@@ -77,8 +93,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         $scope.newCampaign = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/advertiser/views/partials/create-campaign.client.view.html',
-                controller: 'CampaignWizardController',
+                template: 'modules/advertiser/views/partials/new-campaign-dialog.html',
+                controller: 'NewCampaignController',
                 data: {advertiser: $scope.advertiser}
             });
         };
@@ -121,9 +137,9 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             }).then(function(response){
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
                     {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend']});
-                $scope.impressions = _.sum($scope.timeSeries.imps, function(item){ return item[1];});
-                $scope.clicks = _.sum($scope.timeSeries.clicks, function(item){ return item[1];});
-                $scope.spend = _.sum($scope.timeSeries.spend, function(item){ return item[1];});
+                $scope.impressions = _.sumBy($scope.timeSeries.imps, function(item){ return item[1];});
+                $scope.clicks = _.sumBy($scope.timeSeries.clicks, function(item){ return item[1];});
+                $scope.spend = _.sumBy($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.CTR = $scope.clicks / $scope.impressions;
             });
             // TODO: Need to provide error callback for query promise as well

@@ -55,6 +55,12 @@ module.exports = function(db) {
 		level: 9
 	}));
 
+    // Set console version header in all requests
+    app.use(function(req, res, next){
+        res.set('console-version', config.version);
+        next();
+    });
+
 	// Showing stack errors
 	app.set('showStackError', true);
 

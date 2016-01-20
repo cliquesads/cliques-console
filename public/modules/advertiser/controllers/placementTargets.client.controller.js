@@ -1,7 +1,7 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('advertiser').controller('placementTargetsController', ['$scope','getSitesInCliqueTree', 'Advertiser', function($scope, getSitesInCliqueTree, Advertiser){
+angular.module('advertiser').controller('placementTargetsController', ['$scope','getSitesInClique', 'Advertiser', function($scope, getSitesInClique, Advertiser){
     $scope.advertiser = $scope.ngDialogData.advertiser;
     var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
         return campaign._id === $scope.ngDialogData.campaign._id;
@@ -11,7 +11,7 @@ angular.module('advertiser').controller('placementTargetsController', ['$scope',
     //this way, all Advertiser resource methods will work
     $scope.campaign = $scope.advertiser.campaigns[i];
 
-    getSitesInCliqueTree($scope.campaign.clique).then(function(response){
+    getSitesInClique($scope.campaign.clique).then(function(response){
         $scope.sites = response.data;
     });
 

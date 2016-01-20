@@ -1,285 +1,70 @@
-<div class="panel panel-default">
-    <!--DEBUGGING-->
-    <!--<div class="panel-heading">Start Date = {{ campaign.start_date }}, End date = {{ campaign.end_date }}</div>-->
+<div class="panel panel-default col-md-10">
     <div class="panel-body">
-        <form name="advertiserForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="6">
-            <div class="form-wizard wizard-vertical">
-                <!-- START wizard steps indicator-->
-                <ol>
-                    <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
-                        <h4>1. Advertiser</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                    <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
-                        <h4>2. Campaign Basics</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                    <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
-                        <h4>3. Choose a Clique</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                    <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                        <h4>4. Targeting Details</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                    <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                        <h4>5. Creatives</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                    <li ng-class="{'active':wizard.active(6)}" ng-click="wizard.go(6)">
-                        <h4>6. Review & Submit</h4>
-                        <small class="text-muted"></small>
-                    </li>
-                </ol>
-                <!-- END wizard steps indicator-->
-
-                <!-- START Advertiser inputs -->
-                <div id="step1" ng-show="wizard.active(1)">
-                    <fieldset>
-                        <legend>Basic advertiser info</legend>
-                        <div class="form-group">
-                            <label>Name *</label>
-                            <div class="controls">
-                                <input name="name" type="text" data-ng-model="advertiser.name" id="name" data-parsley-group="step1" class="form-control" placeholder="Name" required="required">
-                                <!--<span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>-->
-                            </div>
-                        </div>
-                        <br/>
-                        <div class="form-group">
-                            <label>Website *</label>
-                            <div class="input-group">
-                                <span class="input-group-addon">http://</span>
-                                <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="advertiser.website" id="website" data-parsley-group="step1" class="form-control" placeholder="example.com" required="required">
-                                <!--<span ng-show="validateInput('website', 'url')" class="text-danger ng-hide">This field must be a valid url</span>-->
-                            </div>
-                        </div>
-                        <br/>
-                        <div class="form-group">
-                            <label>Logo</label>
-                            <logo-uploader model="advertiser" uploader="logo_uploader"></logo-uploader>
-                        </div>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <div class="controls">
-                                <input name="description" type="text" data-ng-model="advertiser.description" id="description" data-parsley-group="step1" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
-                            </div>
-                        </div>
-                    </fieldset>
-                    <small class="text-muted">* Required</small>
-                    <ul class="pager">
-                        <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+        <div ng-switch on="stepControl.metaStep">
+            <!--BEGIN Init step to choose between org info & new advertiser-->
+            <div ng-switch-when="init">
+                <h4>Use Organization Info?</h4>
+                <p class="text-muted">You can either create a new Advertiser from scratch, or use your Organization to pre-populate certain fields.</p>
+                <div class="box-form">
+                    <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                        <li ng-class="{'active': !stepControl.useOrganization }" style="min-height: 150px" ng-click="stepControl.useOrganization = false" class="col-sm-6 align-middle">
+                            <h4><i class="fa fa-asterisk"></i>&nbsp;New Advertiser</h4>
+                            <p>Create a brand new Advertiser.</p>
                         </li>
-                    </ul>
+                        <li ng-class="{'active': stepControl.useOrganization }" style="min-height: 150px" ng-click="stepControl.useOrganization = true" class="col-sm-6 align-middle">
+                            <h4><i class="fa fa-building-o"></i>&nbsp;Use Organization Info</h4>
+                            <p>Choose this option if you'd like to run advertising campaigns for <strong>{{ authentication.user.organization.name }}</strong></p>
+                        </li>
+                    </ol>
                 </div>
-                <!-- END Advertiser Step inputs -->
-
-                <!-- START CAMPAIGN inputs -->
-                <div id="step2" ng-show="wizard.active(2)">
-                    <legend>Tell us about your first campaign.</legend>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToSecondStep()">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!--BEGIN Advertiser Info step-->
+            <div ng-switch-when="advertiser-info">
+                <div class="p-lg">
                     <fieldset>
-                        <div class="form-group">
-                            <label>Name *</label>
-                            <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step2" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
-                        </div>
-                        <br/>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step2" placeholder="Optional - describe your campaign" class="form-control" />
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <label>Budget *</label>
-                        &nbsp;&nbsp;&nbsp;
-                        <a href="#" tooltip="{{ TOOLTIPS.budget }}">
-                            <em class="fa fa-question-circle"></em>
-                        </a>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input type="number" data-parsley-type="integer" name="campaign.budget" id="campaign.budget" data-ng-model="campaign.budget" data-parsley-group="step2" placeholder="10000" class="form-control" required="required"/>
-                            <span class="input-group-addon">.00</span>
-                        </div>
-                    </fieldset>
-                    <!--Start Flight Dates Row-->
-                    <fieldset>
-                        <div class="row">
-                            <flight-dates width="6" wizardstep="step2" enddatemodel="campaign.end_date" startdatemodel="campaign.start_date"></flight-dates>
-                        </div>
-                    </fieldset>
-                    <small class="text-muted">* Required</small>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="#" ng-click="wizard.go(1)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div id="step3" ng-show="wizard.active(3)">
-                    <legend>Choose the Clique that best describes your campaign</legend>
-                    <p>
-                        <em class="text-muted">
-                            Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
-                        </em>
-                    </p>
-                    <fieldset>
-                        <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step3" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
-                        <!--<p class="form-control-static">{{ campaign.clique }}</p>-->
-                        <div class="form-group col-md-7">
-                            <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
-                        </div>
-                        <div ng-show="campaign.clique" class="col-md-5 box-placeholder">
-                            <h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>
-                            <site-tree sites="sites" clique="campaign.clique"></site-tree>
-                            <div ng-show="sites.length == 0" class="text-center">
-                                <span class="fa fa-meh-o fa-2x"></span>
-                                <h4>Lame</h4>
-                                <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
-                                <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
-                            </div>
-                        </div>
-                    </fieldset>
-                    <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
-                    <small class="text-muted">* Required</small>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="#" ng-click="wizard.go(2)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- START CAMPAIGN inputs -->
-                <div id="step4" ng-show="wizard.active(4)">
-                    <legend>Set your bids & targeting specifics</legend>
-                    <!-- START row -->
-                    <fieldset>
-                        <label>Base Bid (CPM) *</label>
-                        &nbsp;&nbsp;&nbsp;
-                        <a href="#" tooltip="{{ TOOLTIPS.base_bid }}">
-                            <em class="fa fa-question-circle"></em>
-                        </a>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="7.00" data-parsley-group="step4" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
-                        </div>
-                        <br/>
-                        <label>Max Bid (CPM) *</label>
-                        &nbsp;&nbsp;&nbsp;
-                        <a href="#" tooltip="{{ TOOLTIPS.max_bid }}">
-                            <em class="fa fa-question-circle"></em>
-                        </a>
-                        <div class="input-group">
-                            <span class="input-group-addon">$</span>
-                            <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="20.00" data-parsley-group="step4" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
-                        </div>
-                    </fieldset>
-
-                    <!--BEGIN DMA slider controls-->
-                    <fieldset>
-                        <div class="row">
-                            <bid-modifier width="10" targets="campaign.dma_targets" options="dmas" campaign="campaign" wizardstep="step4" title="DMAs"></bid-modifier>
-                        </div>
-                    </fieldset>
-                    <!--END DMA slider controls-->
-
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="#" ng-click="wizard.go(3)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next"><a href="#" ng-click="wizard.go(5)">Next <span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs -->
-
-                <!-- START CREATIVE UPLOAD STEP-->
-                <div id="step5" ng-show="wizard.active(5)">
-                    <legend>Now add some creatives to your campaign</legend>
-                    <fieldset>
-                        <tabset>
-                            <tab heading="Cliques Hosted">
-                                <div class="row">
-                                    <creative-uploader wizardstep="step5" uploader="creative_uploader" onuploadall="validateAndUpload(wizard.validateStep(5))" width="12"> </creative-uploader>
+                        <form id="advertiserForm" name="advertiserForm" novalidate>
+                            <legend>Advertiser info</legend>
+                            <p class="legend-help-text text-muted">An Advertiser is just a container for Campaigns.  You will set up this Advertiser's first campaign on the following screen.</p>
+                            <div class="form-group">
+                                <label>Name *</label>
+                                <div class="controls">
+                                    <input name="name" type="text" data-ng-model="advertiser.name" id="name" class="form-control" placeholder="Name" required="required">
+                                    <span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>
                                 </div>
-                            </tab>
-                            <tab heading="DoubleClick">
-                                <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
-                            </tab>
-                        </tabset>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Website *</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">http://</span>
+                                    <input name="website" id="website" type="text" ng-pattern="{{ domain_regex }}" data-ng-model="advertiser.website" id="website" class="form-control" placeholder="example.com" required="required">
+                                </div>
+                                    <span ng-show="validateInput('website', 'required')" class="text-danger">This field is required</span>
+                                    <span ng-show="validateInput('website', 'pattern')" class="text-danger">This must be a valid website</span>
+                            </div>
+                            <br/>
+                            <div class="form-group">
+                                <label>Logo</label>
+                                <logo-uploader model="advertiser" uploader="logo_uploader"></logo-uploader>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <div class="controls">
+                                    <input name="description" type="text" data-ng-model="advertiser.description" id="description" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
+                                </div>
+                            </div>
+                        </form>
                     </fieldset>
+                    <small class="text-muted">* Required</small>
+                    <div class="alert alert-danger" ng-show="creation_error">{{ creation_error }}</div>
                     <ul class="pager">
                         <li class="previous">
-                            <a href="#" ng-click="wizard.go(4)">
-                                <span>&larr; Previous</span>
-                            </a>
-                        </li>
-                        <li class="next" ng-show="uploads_completed">
-                            <a href="#" ng-click="wizard.go(6)"> Next <span>&rarr;</span></a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END Wizard Step inputs -->
-
-                <!-- START Wizard Step inputs -->
-                <div id="step6" ng-show="wizard.active(6)">
-                    <legend>Review your new advertiser</legend>
-                    <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Advertiser&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2">Name</div><div class="col-sm-10">{{ advertiser.name }}</div>
-                        <div class="col-sm-2">Website</div><div class="col-sm-10">{{ advertiser.website }}</div>
-                        <div class="col-sm-2">Description</div><div class="col-sm-10">{{ advertiser.description || &apos;empty&apos; }}</div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ campaign.name }}</div>
-                        <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ campaign.description || &apos;empty&apos; }}</div>
-                        <div class="col-sm-2"><b>Budget</b></div><div class="col-sm-10">{{ campaign.budget | currency:"$":0 }}</div>
-                        <div class="col-sm-2"><b>Start Date</b></div><div class="col-sm-10">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
-                        <div class="col-sm-2"><b>End Date</b></div><div class="col-sm-10">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ campaign.clique }}</div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Targeting&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h4>
-                        <div class="col-sm-2"><b>Base Bid</b></div><div class="col-sm-10">{{ campaign.base_bid | currency:"$":2 }}</div>
-                        <div class="col-sm-2"><b>Max Bid</b></div><div class="col-sm-10">{{ campaign.max_bid | currency:"$":2 }}</div>
-                        <div class="col-sm-2"><b>DMA Targets</b></div><div class="col-sm-10">
-                            <div ng-repeat="target in campaign.dma_targets">
-                                {{ target.name }} - {{ Math.min(target.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 box-placeholder">
-                        <h4>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(5)"><span class="fa fa-edit"></span></a></h4>
-                        <div ng-repeat="fileItem in creative_uploader.queue">
-                            <div class="col-sm-4 text-center">
-                                <div class="col-sm-12"><em>{{ fileItem.file.name }}</em></div>
-                                <img src="{{ fileItem.url }}" class="smallthumbnail">
-                            </div>
-                        </div>
-                        <div ng-repeat="creative in dcm_creatives">
-                            <div class="col-sm-4 text-center">
-                                <div class="col-sm-12"><em>{{ creative.name }}</em></div>
-                                <img src="{{ creative.url }}" class="smallthumbnail">
-                            </div>
-                        </div>
-                    </div>
-                    <ul class="pager">
-                        <li class="previous">
-                            <a href="#" ng-click="wizard.go(5)">
-                                <span>&larr; Previous</span>
-                            </a>
+                            <a href="#" ng-click="stepControl.goToStep('init')"><span>&larr; Previous</span></a>
                         </li>
                         <li ng-show="loading">
                             <div class="ball-pulse">
@@ -288,13 +73,39 @@
                                 <div></div>
                             </div>
                         </li>
-                        <li class="next pull-right">
-                            <button type="button" class="btn btn-primary" ng-click="createAdvertiser()">Submit</button>
+                        <li class="next">
+                            <a href="#" ng-click="saveAdvertiser()">Save & Continue<span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
-                <!-- END Wizard Step inputs -->
             </div>
-        </form>
+            <div ng-switch-when="campaign-splash">
+                <div class="alert alert-success">
+                    <p class="lead">Sweet.</p>
+                    <p><strong>{{ advertiser.name }}</strong> has been created as an Advertiser</p>
+                </div>
+                <br/>
+                <div class="text-md">
+                    <p>Next, you will create this Advertiser's first <strong>Campaign</strong>. A campaign is what holds all of your targeting, budget & creative settings.</p>
+                </div>
+                <br/>
+                <div class="bs-callout bs-callout-primary">
+                    <h4>Don't worry</h4>
+                    <p>If you need to stop & want to save your progress, you can always click the <button class="btn btn-primary"><i class="fa fa-file-o"></i> Save Draft</button> button in the upper right corner.</p>
+                </div>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="stepControl.goToStep('advertiser-info')"><span>&larr; Previous</span></a>
+                    </li>
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Got it<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-switch-when="campaign-wizard">
+                <campaign-wizard on-previous="stepControl.goToStepPriorToWizard()" advertiser="advertiser" on-submit="createCampaign(campaign)"></campaign-wizard>
+            </div>
+        </div>
+        <!-- END Advertiser Step inputs -->
     </div>
 </div>

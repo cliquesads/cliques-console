@@ -6,6 +6,7 @@
 exports.index = function(req, res) {
 	res.render('index', {
 		user: req.user || null,
-		request: req
+		request: req,
+        consoleVersion: res._headers['console-version']
 	});
 };

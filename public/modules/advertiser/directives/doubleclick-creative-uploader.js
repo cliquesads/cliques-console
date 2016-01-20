@@ -17,7 +17,8 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                 // creative queue
                 scope.creatives = [];
 
-                $('#doubleClickForm').parsley().destroy();
+                var parsley = $('#doubleClickForm').parsley();
+                if (parsley) parsley.destroy();
 
                 scope.submitted = false;
                 scope.validateInput = function(name, type) {

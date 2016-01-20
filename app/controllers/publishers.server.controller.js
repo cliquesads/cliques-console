@@ -207,7 +207,9 @@ module.exports = function(db) {
                         return clique._id;
                     });
                     ids.push(cliqueId);
-                    publisherModels.Publisher.find({"sites.clique": {$in: ids}},function (err, pubs) {
+                    // Only get active sites in branch
+                    var query = {"sites.clique": {$in: ids}, "sites.active": true };
+                    publisherModels.Publisher.find(query,function (err, pubs) {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)

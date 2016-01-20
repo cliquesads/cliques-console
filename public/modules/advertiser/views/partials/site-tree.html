@@ -19,7 +19,7 @@
                             &nbsp;
                             <span ng-if="trvw.useCheckboxes()" ivh-treeview-checkbox></span>
                             &nbsp;
-                            <img src="{{ node.logo_secure_url }}" class="client-logo-xs"/>
+                            <img ng-src="{{ node.logo_secure_url }}" class="client-logo-xs"/>
                             <span class="ivh-treeview-node-label" ng-class="node.selected ? 'treeview-selected': ''" ivh-treeview-toggle>
                                 {{trvw.label(node)}}
                                 &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
