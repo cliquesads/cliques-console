@@ -85,6 +85,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
          * @returns {boolean}
          */
         $scope.saveAdvertiser = function() {
+            $scope.submitted = true;
             if (this.advertiserForm.$valid){
                 $scope.loading = true;
                 // if it's been created already, update
