@@ -5,6 +5,7 @@
  */
 var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
+    uuid = require('node-uuid'),
     mongoose = require('mongoose'),
     tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
@@ -36,21 +37,14 @@ var adserverSecurePort = config.get('AdServer.https.external.port');
 var _getDraftById = function(req, callback){
     var sess = req.session;
     var draftId = req.param('draftId');
-    var advertiserId = req.advertiser.id;
     if (!sess.campaignDrafts){
         return callback({ message: 'No campaign drafts for this session'}, null);
     } else {
-        if (!sess.campaignDrafts[advertiserId]) {
-            return callback({
-                message: 'No campaign drafts in this session for advertiser id '
-                + advertiserId
-            }, null);
+        var draft = _.find(sess.campaignDrafts, function(d){ return d.draftId === draftId; });
+        if (!draft) {
+            return callback({message: 'Draft ID ' + draftId + ' not found'});
         } else {
-            if (!sess.campaignDrafts[advertiserId][draftId]) {
-                return callback({message: 'Draft ID ' + draftId + ' not found'});
-            } else {
-                return callback(null, sess.campaignDrafts[advertiserId][draftId]);
-            }
+            return callback(null, draft);
         }
     }
 };
@@ -337,37 +331,38 @@ module.exports = function(db) {
              * Simple scheme
              */
             draft: {
-                getMany: function (req, res) {
+                getAllInSession: function(req, res){
+                    var sess = req.session;
+                    if (sess.campaignDrafts){
+                        return res.json(sess.campaignDrafts);
+                    } else {
+                        return res.json(null);
+                    }
+                },
+                getForAdvertiser: function (req, res) {
                     var sess = req.session;
                     var advertiserId = req.advertiser.id;
-                    if (sess.campaignDrafts && sess.campaignDrafts[advertiserId]){
-                        return res.json(sess.campaignDrafts[advertiserId]);
+                    if (sess.campaignDrafts){
+                        var drafts = sess.campaignDrafts.filter(function(draft){ return draft.advertiserId = advertiserId; });
+                        return res.json(drafts);
                     } else {
-                        return res.json([]);
+                        return res.json(null);
                     }
                 },
                 create: function (req, res) {
                     var draft = req.body;
+                    if (!draft.advertiserId){
+                        return res.status(400).send({
+                            message: 'CampaignDraft must contain an advertiserId'
+                        });
+                    }
                     draft.tstamp = new Date();
-                    var advertiserId = req.advertiser.id;
                     var sess = req.session;
-                    var drafts;
-                    if (sess.campaignDrafts){
-                        drafts = sess.campaignDrafts;
-                    } else {
-                        drafts = {};
-                    }
-                    if (drafts[advertiserId]){
-                        // explicitly ID drafts in incrementing integers, just in case
-                        draft.draftId = sess.campaignDrafts[advertiserId].length;
-                        drafts[advertiserId].push(draft);
-                    } else {
-                        // explicitly ID drafts in incrementing integers, just in case
-                        draft.draftId = 0;
-                        drafts[advertiserId] = [draft];
-                        sess.campaignDrafts = drafts;
-                    }
-                    return res.json(drafts);
+                    sess.campaignDrafts = sess.campaignDrafts || [];
+                    // explicitly ID drafts in incrementing integers, just in case
+                    draft.draftId = uuid.v1();
+                    sess.campaignDrafts.push(draft);
+                    return res.json(draft);
                 },
                 read: function (req, res) {
                     _getDraftById(req, function(err, draft){
@@ -379,16 +374,21 @@ module.exports = function(db) {
                     _getDraftById(req, function(err, draft){
                         if (err) return res.status(404).send(err);
                         _.extend(draft, req.body);
+                        // update timestamp
+                        draft.tstamp = new Date();
                         return res.json(draft);
                     });
                 },
                 remove: function (req, res) {
                     var sess = req.session;
                     var draftId = req.param('draftId');
-                    var advertiserId = req.advertiser.id;
                     _getDraftById(req, function(err, draft){
                         if (err) return res.status(404).send(err);
-                        _.remove(sess.campaignDrafts[advertiserId], draft);
+                        _.remove(sess.campaignDrafts, draft);
+                        // clear campaignDrafts if empty
+                        if (sess.campaignDrafts === []){
+                            delete sess.campaignDrafts;
+                        }
                         return res.json(draft);
                     });
                 }

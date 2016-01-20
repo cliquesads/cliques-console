@@ -15,15 +15,6 @@ module.exports = function(app){
         .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
         .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
 
-    app.route('/advertiser/:advertiserId/campaign/draft')
-        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.getMany)
-        .post(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.create);
-
-    app.route('/advertiser/:advertiserId/campaign/draft/:draftId')
-        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.read)
-        .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.update)
-        .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.draft.remove);
-
     app.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.activate);
 
@@ -32,6 +23,20 @@ module.exports = function(app){
 
     app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
+
+    // Campaign Draft Endpoints
+    app.route('/campaign-draft')
+        .get(users.requiresLogin, advertisers.campaign.draft.getAllInSession)
+        .post(users.requiresLogin, advertisers.campaign.draft.create);
+
+    app.route('/campaign-draft/:draftId')
+        .get(users.requiresLogin, advertisers.campaign.draft.read)
+        .patch(users.requiresLogin, advertisers.campaign.draft.update)
+        .delete(users.requiresLogin, advertisers.campaign.draft.remove);
+
+    // route to get by advertiserId
+    app.route('/advertiser/:advertiserId/campaign/draft')
+        .get(users.requiresLogin, advertisers.campaign.draft.getForAdvertiser);
 
     app.param('advertiserId', advertisers.advertiserByID);
 };
