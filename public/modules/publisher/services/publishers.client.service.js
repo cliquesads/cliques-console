@@ -11,7 +11,7 @@ angular.module('publisher').factory('Publisher', ['$resource',
         );
 	}
 ])
-.factory('getSitesInCliqueTree', ['$http', function($http){
+.factory('getSitesInClique', ['$http', function($http){
     /**
      * Gets sites in specific Clique and formats for IVH-treeview plugin, adding
      * additional params used by placement targeting directive (logo_url, objectType)

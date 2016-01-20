@@ -9,7 +9,7 @@
                                 <span class="fa fa-close fa-border bg-danger-light"></span>
                             </div>
                             <div class="logo-preview-container">
-                                <img ng-hide="logo_loading" src="{{ model.logo_url || default_logo_url }}" class="client-logo-md"/>
+                                <img ng-hide="logo_loading" ng-src="{{ model.logo_url || default_logo_url }}" class="client-logo-md"/>
                                 <div ng-show="logo_loading">
                                     <div class="ball-clip-rotate">
                                         <div></div>

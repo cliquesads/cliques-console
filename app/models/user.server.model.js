@@ -71,7 +71,7 @@ var UserSchema = new Schema({
 	roles: {
 		type: [{
 			type: String,
-			enum: ['advertiser','publisher','admin']
+			enum: ['advertiser','publisher','admin','networkAdmin']
 		}],
 		default: ['advertiser']
 	},
@@ -204,6 +204,7 @@ var organizationSchema = new Schema({
     tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
     primaryContact: { type: Schema.ObjectId, ref: 'User'},
+    website: { type: String, required: true },
     address: { type: String, required: true },
     address2: { type: String, required: false },
     city: { type: String, required: true },

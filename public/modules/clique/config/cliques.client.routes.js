@@ -22,6 +22,19 @@ angular.module('clique').config(['$stateProvider',
                     controller: 'CliqueController'
                 }
             }
-		});
+		}).
+        state('app.cliques.browseSites', {
+            url: '/browse-sites',
+            title: 'Browse All Sites',
+            views: {
+                'titleBar': {
+                    template: 'Site Browser'
+                },
+                'main': {
+                    templateUrl: 'modules/clique/views/browse-sites.client.view.html',
+                    controller: 'BrowseSitesController'
+                }
+            }
+        });
 	}
 ]);

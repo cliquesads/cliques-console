@@ -17,10 +17,10 @@ angular.module('admin').controller('NetworkReportController', ['$scope', '$state
                 if (data.length > 0) {
                     // Need to call $apply in order to call the next digest
                     $scope.$apply(function () {
-                        $scope[sumVar].spend = _.sum(data, function(row){ return Number( row[3].replace(/[^0-9\.]+/g,"")); });
-                        $scope[sumVar].imps = _.sum(data, function(row){ return Number( row[2].replace(/[^0-9\.]+/g,"")); });
-                        $scope[sumVar].fees = _.sum(data, function(row){ return Number( row[5].replace(/[^0-9\.]+/g,"")); });
-                        $scope[sumVar].gross = _.sum(data, function(row){ return Number( row[6].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].spend = _.sumBy(data, function(row){ return Number( row[3].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].imps = _.sumBy(data, function(row){ return Number( row[2].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].fees = _.sumBy(data, function(row){ return Number( row[5].replace(/[^0-9\.]+/g,"")); });
+                        $scope[sumVar].gross = _.sumBy(data, function(row){ return Number( row[6].replace(/[^0-9\.]+/g,"")); });
                         var footer = $templateCache.get(templateId),
                             $tfoot = angular.element(tfoot),
                             content = $compile(footer)($scope);

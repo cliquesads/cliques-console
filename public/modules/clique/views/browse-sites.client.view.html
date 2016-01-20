@@ -1,0 +1,23 @@
+<section data-ng-init="find()">
+    <div class="alert alert-info">
+        <h4>We're just getting started.</h4>
+        <p>The following websites have been kind enough to participate in our Beta program, and represent a sampling of the finest outdoor-focused publications in existence.</p>
+        <p><em>But this is only the beginning.</em> We'll keep you posted as more sites join Cliques in the coming months!</p>
+    </div>
+    <div class="col-md-4">
+        <strong>Select a Clique from the menu below to browse sites.</strong>
+        <div class="well wd-wide">
+            <div class="pb-lg">
+                <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
+            </div>
+            <div class="text-md">
+                <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="1" initial-selection="Outdoor"></abn-tree>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div data-ng-show="clique._id">
+            <sites-in-clique-branch clique-id="clique._id"></sites-in-clique-branch>
+        </div>
+    </div>
+</section>

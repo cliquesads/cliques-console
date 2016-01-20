@@ -32,7 +32,7 @@
             </thead>
             <tbody ng-repeat="creativegroup in campaign.creativegroups">
                 <tr ng-repeat="creative in creativegroup.creatives">
-                    <td><img src="{{ creative.url }}" class="smallthumbnail"/></td>
+                    <td><img ng-src="{{ creative.url }}" class="smallthumbnail"/></td>
                     <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a></p></td>
                     <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
                     <td>

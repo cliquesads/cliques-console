@@ -19,7 +19,7 @@ angular.module('advertiser').directive('siteTree', [function() {
         link: function (scope, element, attrs) {
 
             // templateStr passed to IVH node template directive in tree rendering
-            scope.templateStr = '<img src="{{ node.logo_secure_url }}"/> {{ trvw.label(node) }}';
+            scope.templateStr = '<img ng-src="{{ node.logo_secure_url }}"/> {{ trvw.label(node) }}';
 
             /**
              * Lightweight class just to handle some gruntwork involved in management of

@@ -10,6 +10,7 @@ angular.module('core').controller('AppController',
 
     // This provides Authentication context.
     $scope.authentication = Authentication;
+    $scope.consoleVersion = consoleVersion;
 
     if (user){
         // TODO: FIX THIS

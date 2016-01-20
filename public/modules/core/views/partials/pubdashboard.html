@@ -6,7 +6,7 @@
         <br>
         <div class="row">
             <p class="lead">
-                It looks like you haven't set up publisher yet.  <strong>Let's change that now.</strong>
+                It looks like you haven't set up a Site yet.  <strong>Let's change that now.</strong>
             </p>
         </div>
         <div class="row" ng-show="publishers.length == 0">
@@ -27,7 +27,7 @@
                             <div class="col-xs-4 text-center bg-primary-dark pv-md">
                                 <em class="icon-book-open fa-3x"></em>
                             </div>
-                            <div class="col-xs-8 pv-md">
+                            <div class="col-xs-8 pv-md pt pb">
                                 <div class="h3 mt0">{{ publishers.length }}</div>
                                 <div class="text-uppercase">Publisher{{ publisher.length != 1 ? 's' : ''}}</div>
                             </div>
@@ -42,7 +42,7 @@
                         <div class="col-xs-4 text-center bg-primary pv-md">
                             <em class="icon-graph fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].imps | number:"0" }}</div>
                             <div class="text-uppercase">Impressions</div>
                         </div>
@@ -56,7 +56,7 @@
                         <div class="col-xs-4 text-center bg-green pv-md">
                             <em class="icon-wallet fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].spend | currency:"$":"0" }}</div>
                             <div class="text-uppercase">Total Revenue</div>
                         </div>
@@ -70,7 +70,7 @@
                         <div class="col-xs-4 text-center bg-green-dark pv-md">
                             <em class="icon-cursor fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].clicks / adStats[0].imps | percentage : 2}}</div>
                             <div class="text-uppercase">CTR</div>
                         </div>
@@ -138,7 +138,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in advertiserData">
-                                    <td><img src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
+                                    <td><img ng-src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
                                     <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
                                     <td>{{ row.imps | number: 0 }}</td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
@@ -164,7 +164,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in publisherData">
-                                    <td><img src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
+                                    <td><img ng-src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
                                     <td style="max-width: 120px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
                                     <td>{{ row.imps | number: 0 }}</td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>

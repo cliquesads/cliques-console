@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location', '$window','Authentication','Timezones','TermsAndConditions',
-    function($scope, $timeout, $http, $location, $window, Authentication, Timezones, TermsAndConditions) {
+angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location', '$window','Authentication','Timezones','TermsAndConditions','REGEXES',
+    function($scope, $timeout, $http, $location, $window, Authentication, Timezones, TermsAndConditions, REGEXES) {
+        $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home

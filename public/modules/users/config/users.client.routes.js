@@ -51,6 +51,11 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 		state('app.profile', {
 			url: '/settings/profile',
 			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
-		});
+		}).
+        state('app.terms-and-conditions',{
+            url: '/terms-and-conditions',
+            templateUrl: 'modules/users/views/terms-and-conditions.client.view.html',
+            controller: 'TermsAndConditionsController'
+        })
 	}
 ]);
