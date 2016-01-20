@@ -27,7 +27,7 @@
                             <div class="col-xs-4 text-center bg-primary-dark pv-md">
                                 <em class="icon-book-open fa-3x"></em>
                             </div>
-                            <div class="col-xs-8 pv-md">
+                            <div class="col-xs-8 pv-md pt pb">
                                 <div class="h3 mt0">{{ publishers.length }}</div>
                                 <div class="text-uppercase">Publisher{{ publisher.length != 1 ? 's' : ''}}</div>
                             </div>
@@ -42,7 +42,7 @@
                         <div class="col-xs-4 text-center bg-primary pv-md">
                             <em class="icon-graph fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].imps | number:"0" }}</div>
                             <div class="text-uppercase">Impressions</div>
                         </div>
@@ -56,7 +56,7 @@
                         <div class="col-xs-4 text-center bg-green pv-md">
                             <em class="icon-wallet fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].spend | currency:"$":"0" }}</div>
                             <div class="text-uppercase">Total Revenue</div>
                         </div>
@@ -70,7 +70,7 @@
                         <div class="col-xs-4 text-center bg-green-dark pv-md">
                             <em class="icon-cursor fa-3x"></em>
                         </div>
-                        <div class="col-xs-8 pv-md">
+                        <div class="col-xs-8 pv-md pt pb">
                             <div class="h3 mt0">{{ adStats[0].clicks / adStats[0].imps | percentage : 2}}</div>
                             <div class="text-uppercase">CTR</div>
                         </div>
