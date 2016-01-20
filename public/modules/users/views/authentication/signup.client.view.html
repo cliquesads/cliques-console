@@ -228,8 +228,9 @@
                                 <div ng-switch-when="advertiser">
                                     <p><strong>Service Fees Summary</strong></p>
                                     <ul>
-                                        <li>Cliques charges a fee equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of your total ad spend.</li>
-                                        <li>Cliques will send you an invoice for all ad spend & service fees at the end of each month. Unless otherwise specified, the total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</li>
+                                        <li>The Cliques Fees (as defined in the Terms and Conditions) are equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of the Client Bid (as defined in the Terms and Conditions).</li>
+                                        <li>Cliques will send you an invoice for the Total Media Cost (as defined in the Terms and Conditions) at the end of each month.  The total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</li>
+                                        <li>Please see the complete payment terms set forth in the Terms and Conditions below.</li>
                                     </ul>
                                     <div class="bs-callout bs-callout-primary">
                                         <h4>Don't worry</h4>
@@ -265,10 +266,10 @@
                                 <div></div><div></div><div></div>
                             </div>
                             <em>
-                                <small>
+                                <div class="text-sm">
                                     <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
                                     <p>If you are accepting the Agreement on behalf of a company, business, corporation or entity, you and the applicable company, business, corporation or entity represent and warrant that you have the authority to bind such company, business, corporation or entity to the Agreement.  If you do not have such authority, do not complete this Service Form or indicate your acceptance to the Agreement.</p>
-                                </small>
+                                </div>
                             </em>
                         </fieldset>
                     </div>
