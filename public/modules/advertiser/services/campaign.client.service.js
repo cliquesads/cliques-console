@@ -162,4 +162,14 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
     };
 
     return ClientSideCampaign;
-}]);
+}])
+.factory('CampaignDraft', ['$resource',
+    function($resource) {
+        return $resource('campaign-draft/:draftId', { draftId: '@draftId' },
+            {
+                update: { method: 'PATCH'},
+                create: { method: 'POST'}
+            }
+        );
+    }
+]);

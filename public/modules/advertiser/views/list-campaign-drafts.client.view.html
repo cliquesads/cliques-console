@@ -1,0 +1,19 @@
+<div class="list-group col-md-8">
+    <div data-ng-repeat="draft in drafts" class="list-group-item">
+        <div class="row row-table">
+            <div class="col-md-6">
+                <h4 class="list-group-item-heading" data-ng-bind="draft.name"></h4>
+                <p class="list-group-item-text"> Last Modified: {{ draft.tstamp | date: 'medium' }}</p>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-xs" ng-click="edit(draft)"><i class="fa fa-edit"></i> Continue Editing</button>
+                <button class="btn btn-danger btn-xs" ng-click="remove(draft)"><i class="fa fa-trash"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-8">
+    <h4 class="alert alert-info text-center pv-lg" data-ng-if="drafts.$resolved && !drafts.length">
+        You don't have any working drafts
+    </h4>
+</div>

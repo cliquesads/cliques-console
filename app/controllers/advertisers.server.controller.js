@@ -334,6 +334,7 @@ module.exports = function(db) {
                 getAllInSession: function(req, res){
                     var sess = req.session;
                     if (sess.campaignDrafts){
+
                         return res.json(sess.campaignDrafts);
                     } else {
                         return res.json(null);

@@ -49,6 +49,19 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
+        state('app.advertiser.listCampaignDrafts', {
+            url: '/advertiser/campaign-drafts',
+            title: 'Campaigns Drafts',
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/list-campaign-drafts.client.view.html',
+                    controller: 'CampaignDraftController'
+                },
+                'titleBar': {
+                    template: 'Campaigns Drafts'
+                }
+            }
+        }).
 		state('app.advertiser.viewAdvertiser', {
 			url: '/advertiser/:advertiserId',
 			title: 'View Advertiser',

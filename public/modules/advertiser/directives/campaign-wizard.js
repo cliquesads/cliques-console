@@ -8,17 +8,21 @@ angular.module('advertiser').directive('campaignWizard', [
     'DMA',
     'FileUploader',
     'ClientSideCampaign',
+    'CampaignDraft',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
 	function($compile, Authentication, Advertiser,
-             getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,
+             getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
              BID_SETTINGS, ADVERTISER_TOOLTIPS) {
         return {
             restrict: 'E',
             scope: {
+                advertiser: '=',
                 existingCampaign: '=',
                 onPrevious : '&',
-                onSubmit: '&'
+                onSubmit: '&',
+                onDraftSaveSuccess: '&',
+                onDraftSaveError: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
@@ -145,7 +149,24 @@ angular.module('advertiser').directive('campaignWizard', [
                     // ingest DoubleClick creatives and reset scope var
                     scope.campaign.ingestDCMCreatives(scope.dcm_creatives);
                     scope.dcm_creatives = null;
-                    return callback(callbackArg);
+                    if (callback && callbackArg){
+                        return callback(callbackArg);
+                    }
+                };
+
+                /**
+                 * Saves draft campaign to user session
+                 */
+                scope.saveDraft = function(){
+                    scope.ingestCreatives();
+                    var campaign = scope.campaign.getCampaignToSave();
+                    campaign.advertiserId = scope.advertiser._id;
+                    var draft = new CampaignDraft(campaign);
+                    draft.$create(function(draft){
+                        scope.onDraftSaveSuccess({draft: draft});
+                    }, function(response){
+                        scope.onDraftSaveError({response: response});
+                    });
                 };
 
                 /**
