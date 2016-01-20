@@ -49,9 +49,9 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
-        state('app.advertiser.listCampaignDrafts', {
-            url: '/advertiser/campaign-drafts',
-            title: 'Campaigns Drafts',
+        state('app.advertiser.campaignDrafts', {
+            url: '/advertiser/campaign-draft',
+            title: 'My Campaigns Drafts',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-campaign-drafts.client.view.html',
@@ -59,6 +59,19 @@ angular.module('advertiser').config(['$stateProvider',
                 },
                 'titleBar': {
                     template: 'Campaigns Drafts'
+                }
+            }
+        }).
+        state('app.advertiser.campaignDrafts.editDraft', {
+            url: '/edit/:draftId',
+            title: 'Edit Draft',
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/edit-campaign-draft.client.view.html',
+                    controller: 'CampaignDraftController'
+                },
+                'titleBar': {
+                    template: 'Edit Campaign Draft'
                 }
             }
         }).

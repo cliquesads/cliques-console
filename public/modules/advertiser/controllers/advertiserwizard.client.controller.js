@@ -127,18 +127,5 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 $scope.creation_error = errorResponse.data.message;
             });
         };
-
-        $scope.onDraftSaveSuccess = function(draft){
-            ngDialog.open({
-                template: 'modules/advertiser/views/partials/campaign-draft-dialog.html',
-                controller: ['$scope', '$location', function ($scope, $location) {
-                    $scope.viewDrafts = function(){
-                        $location.url('/advertiser/campaign-drafts');
-                        $scope.closeThisDialog('Success');
-                    }
-                }],
-                data: { draft: draft }
-            })
-        }
 	}
 ]);

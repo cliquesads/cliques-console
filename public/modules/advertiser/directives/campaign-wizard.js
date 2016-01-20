@@ -11,14 +11,16 @@ angular.module('advertiser').directive('campaignWizard', [
     'CampaignDraft',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
+    'ngDialog',
 	function($compile, Authentication, Advertiser,
              getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
-             BID_SETTINGS, ADVERTISER_TOOLTIPS) {
+             BID_SETTINGS, ADVERTISER_TOOLTIPS, ngDialog) {
         return {
             restrict: 'E',
             scope: {
                 advertiser: '=',
                 existingCampaign: '=',
+                useSuffix: '=',
                 onPrevious : '&',
                 onSubmit: '&',
                 onDraftSaveSuccess: '&',
@@ -32,6 +34,7 @@ angular.module('advertiser').directive('campaignWizard', [
                 //##################################//
                 scope.authentication = Authentication;
                 scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+                scope.useSuffix = scope.useSuffix || true;
 
                 // Init new ClientSideCampaign, which handles all necessary duplication &
                 // pre-save prep logic
@@ -163,6 +166,16 @@ angular.module('advertiser').directive('campaignWizard', [
                     campaign.advertiserId = scope.advertiser._id;
                     var draft = new CampaignDraft(campaign);
                     draft.$create(function(draft){
+                        ngDialog.open({
+                            template: 'modules/advertiser/views/partials/campaign-draft-dialog.html',
+                            controller: ['$scope', '$location', function ($scope, $location) {
+                                $scope.viewDrafts = function(){
+                                    $location.url('/advertiser/campaign-draft');
+                                    $scope.closeThisDialog('Success');
+                                }
+                            }],
+                            data: { draft: draft }
+                        });
                         scope.onDraftSaveSuccess({draft: draft});
                     }, function(response){
                         scope.onDraftSaveError({response: response});

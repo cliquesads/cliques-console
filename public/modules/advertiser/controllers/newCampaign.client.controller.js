@@ -60,6 +60,6 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
                 // remove campaign from advertiser campaigns if error
                 _.remove($scope.advertiser.campaigns, campaign);
             });
-        }
+        };
     }
 ]);

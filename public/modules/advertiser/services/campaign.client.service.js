@@ -41,9 +41,13 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      * from this campaign.  Otherwise, will initialize a blank new campaign
      *
      * @param existingCampaign optional existing Campaign resource
+     * @param [options]
+     * @param [options.useSuffix=true] whether or not to use suffix if existingCampaign passed in
      * @constructor
      */
-    var ClientSideCampaign = function(existingCampaign){
+    var ClientSideCampaign = function(existingCampaign, options){
+        options = options || {};
+        var useSuffix = options.useSuffix || true;
         var emptyCampaign = {
             name:           null,
             description:    null,
@@ -71,7 +75,9 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
             stripIds(existingCampaign);
 
             // rename all 'name' fields in campaign & subdocs
-            this.renameStuff(existingCampaign);
+            if (useSuffix){
+                this.renameStuff(existingCampaign);
+            }
 
             // set campaign status to inactive
             existingCampaign.active = false;
@@ -110,10 +116,12 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      * Base method to add creatives from arbitrary sources
      */
     ClientSideCampaign.prototype._ingestCreatives = function(creatives){
-        if (!this.creatives){
-            this.creatives = []
+        if (creatives && creatives.length > 0){
+            if (!this.creatives){
+                this.creatives = [];
+            }
+            this.creatives = this.creatives.concat(creatives);
         }
-        this.creatives = this.creatives.concat(creatives);
     };
 
     /**
