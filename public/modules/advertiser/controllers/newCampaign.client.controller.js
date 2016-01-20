@@ -61,5 +61,9 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
                 _.remove($scope.advertiser.campaigns, campaign);
             });
         };
+
+        $scope.closeOnDraftSuccess = function(draft){
+            return $scope.closeThisDialog('Success');
+        }
     }
 ]);

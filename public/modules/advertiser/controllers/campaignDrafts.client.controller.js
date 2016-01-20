@@ -13,7 +13,7 @@ angular.module('advertiser').controller('CampaignDraftController', ['$scope', '$
         $scope.remove = function(draft){
             draft.$delete(function() {
                 _.remove($scope.drafts, draft);
-                ngDialog.open({ template: "This draft has been deleted.", plain: true });
+                ngDialog.open({ template: "<h4>This draft has been deleted.</h4>", plain: true });
             });
         };
         $scope.drafts = CampaignDraft.query();
@@ -28,7 +28,9 @@ angular.module('advertiser').controller('CampaignDraftController', ['$scope', '$
             $scope.loading = true;
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
-                $scope.remove($scope.campaignDraft);
+                $scope.campaignDraft.$delete(function(){
+                    _.remove($scope.drafts, $scope.campaignDraft);
+                });
                 $scope.loading = false;
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign

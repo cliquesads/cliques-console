@@ -176,7 +176,7 @@ module.exports = function(db) {
 
                         // Send internal email notifying of new campaign(s), if any
                         if (newCampaigns.length > 0){
-                            if (process.env.NODE_ENV === 'production'){
+                            //if (process.env.NODE_ENV === 'production'){
                                 // send one email per campaign
                                 newCampaigns.forEach(function(campaign){
                                     mailer.sendMailFromUser('New Campaign Created', 'new-campaign-email.server.view.html',
@@ -184,8 +184,8 @@ module.exports = function(db) {
                                         req.user,
                                         'support@cliquesads.com'
                                     );
-                                })
-                            }
+                                });
+                            //}
                         }
                     });
                 }
@@ -384,7 +384,7 @@ module.exports = function(db) {
                     var draftId = req.param('draftId');
                     _getDraftById(req, function(err, draft){
                         if (err) return res.status(404).send(err);
-                        _.remove(sess.campaignDrafts, draft);
+                        _.remove(sess.campaignDrafts, function(d){ return d.draftId === draft.draftId });
                         // clear campaignDrafts if empty
                         if (sess.campaignDrafts === []){
                             delete sess.campaignDrafts;

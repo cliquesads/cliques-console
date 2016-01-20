@@ -1,3 +1,4 @@
+<br/>
 <div ng-switch on="stepControl.metaStep">
     <!--BEGIN INIT STEP  to chooose campaign type-->
     <div ng-switch-when="init">
@@ -38,6 +39,13 @@
         </ul>
     </div>
     <div ng-switch-when="campaign-wizard">
-        <campaign-wizard advertiser="advertiser" existing-campaign="stepControl.campaign" on-previous="stepControl.goToStepPriorToWizard()" on-submit="updateAdvertiser(campaign)"></campaign-wizard>
+        <campaign-wizard
+                advertiser="advertiser"
+                existing-campaign="stepControl.campaign"
+                use-suffix="use-suffix"
+                on-previous="stepControl.goToStepPriorToWizard()"
+                on-submit="updateAdvertiser(campaign)"
+                on-draft-save-success="closeOnDraftSuccess(draft)">
+        </campaign-wizard>
     </div>
 </div>

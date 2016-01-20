@@ -125,7 +125,7 @@
                 </a>
                 <div class="input-group">
                     <span class="input-group-addon align-top">$</span>
-                    <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="10.00" data-parsley-group="step3" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
+                    <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="7.00" data-parsley-group="step3" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
                 </div>
                 <br/>
                 <label>Max Bid (CPM) *</label>
@@ -135,10 +135,9 @@
                 </a>
                 <div class="input-group">
                     <span class="input-group-addon align-top">$</span>
-                    <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="10.00" data-parsley-group="step3" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
+                    <input data-parsley-type="number" name="campaign.max_bid" id="campaign.max_bid" ng-model="campaign.max_bid" placeholder="15.00" data-parsley-group="step3" min="{{ campaign.base_bid }}" class="form-control" required="required"/>
                 </div>
             </fieldset>
-
             <ul class="pager">
                 <li class="previous">
                     <a href="#" ng-click="wizard.go(2)">

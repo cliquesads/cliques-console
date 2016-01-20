@@ -1,7 +1,11 @@
-<section data-ng-init="findOne()">
+<section>
     <div class="panel panel-default col-md-10">
         <div class="panel-body">
-            <campaign-wizard advertiser="advertiser" existing-campaign="campaignDraft" use-suffix="" on-submit="createCampaign(campaign)"></campaign-wizard>
+            <campaign-wizard
+                    advertiser="advertiser"
+                    existing-campaign="campaignDraft"
+                    on-submit="createCampaign(campaign)">
+            </campaign-wizard>
         </div>
     </div>
 </section>
