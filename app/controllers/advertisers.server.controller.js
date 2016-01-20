@@ -5,7 +5,6 @@
  */
 var node_utils = require('cliques_node_utils'),
     models = node_utils.mongodb.models,
-    uuid = require('node-uuid'),
     mongoose = require('mongoose'),
     tags = node_utils.tags,
 	errorHandler = require('./errors.server.controller'),
@@ -360,8 +359,8 @@ module.exports = function(db) {
                     draft.tstamp = new Date();
                     var sess = req.session;
                     sess.campaignDrafts = sess.campaignDrafts || [];
-                    // explicitly ID drafts in incrementing integers, just in case
-                    draft.draftId = uuid.v1();
+                    // Give draft a Mongo-style ObjectId
+                    draft.draftId = mongoose.Types.ObjectId();
                     sess.campaignDrafts.push(draft);
                     return res.json(draft);
                 },
