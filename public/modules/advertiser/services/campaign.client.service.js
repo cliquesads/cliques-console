@@ -47,7 +47,8 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      */
     var ClientSideCampaign = function(existingCampaign, options){
         options = options || {};
-        var useSuffix = options.useSuffix || true;
+        // accept literally anything for true other than null & undefined
+        var useSuffix = options.useSuffix != undefined && options.useSuffix != null;
         var emptyCampaign = {
             name:           null,
             description:    null,
@@ -132,10 +133,12 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      */
     ClientSideCampaign.prototype.ingestExistingCreativeGroups = function(creativeGroups){
         var creatives = [];
-        creativeGroups.forEach(function(creativeGroup){
-            creatives = creatives.concat(creativeGroup.creatives);
-        });
-        this._ingestCreatives(creatives);
+        if (creativeGroups){
+            creativeGroups.forEach(function(creativeGroup){
+                creatives = creatives.concat(creativeGroup.creatives);
+            });
+            this._ingestCreatives(creatives);
+        }
     };
 
     /**
@@ -164,7 +167,9 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      */
     ClientSideCampaign.prototype.getCampaignToSave = function(){
         var thisCopy = angular.copy(this);
-        thisCopy.creativegroups = AdvertiserUtils.groupCreatives(this.creatives, this.name);
+        if (this.creatives){
+            thisCopy.creativegroups = AdvertiserUtils.groupCreatives(this.creatives, this.name);
+        }
         AdvertiserUtils.convertAllTargetArrays(thisCopy);
         return thisCopy;
     };

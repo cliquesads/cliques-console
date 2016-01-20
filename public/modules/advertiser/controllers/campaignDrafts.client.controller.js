@@ -4,9 +4,12 @@
 angular.module('advertiser').controller('CampaignDraftController', ['$scope', '$stateParams', '$location',
     'Authentication', 'Advertiser','CampaignDraft','ngDialog',
     function($scope, $stateParams, $location, Authentication, Advertiser, CampaignDraft, ngDialog){
-        $scope.findOne = function(){
-            $scope.campaignDraft = CampaignDraft.get({draftId: $stateParams.draftId})
-        };
+        //$scope.findOne = function(){
+        //    CampaignDraft.get({draftId: $stateParams.draftId}, function(campaignDraft){
+        //        $scope.campaignDraft = campaignDraft;
+        //        $scope.advertiser = Advertiser.get({ advertiserId: campaignDraft.advertiserId });
+        //    });
+        //};
         $scope.remove = function(draft){
             draft.$delete(function() {
                 _.remove($scope.drafts, draft);
@@ -25,6 +28,7 @@ angular.module('advertiser').controller('CampaignDraftController', ['$scope', '$
             $scope.loading = true;
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
+                $scope.remove($scope.campaignDraft);
                 $scope.loading = false;
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign

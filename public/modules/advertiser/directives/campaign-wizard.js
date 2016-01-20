@@ -20,7 +20,7 @@ angular.module('advertiser').directive('campaignWizard', [
             scope: {
                 advertiser: '=',
                 existingCampaign: '=',
-                useSuffix: '=',
+                useSuffix: '@',
                 onPrevious : '&',
                 onSubmit: '&',
                 onDraftSaveSuccess: '&',
@@ -34,11 +34,14 @@ angular.module('advertiser').directive('campaignWizard', [
                 //##################################//
                 scope.authentication = Authentication;
                 scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
-                scope.useSuffix = scope.useSuffix || true;
 
                 // Init new ClientSideCampaign, which handles all necessary duplication &
                 // pre-save prep logic
-                scope.campaign = new ClientSideCampaign(scope.existingCampaign);
+                //scope.$watch(function(scope){ return scope.existingCampaign }, function(newVal, oldVal){
+                //    if (newVal){
+                scope.campaign = new ClientSideCampaign(scope.existingCampaign, { useSuffix: scope.useSuffix });
+                //    }
+                //});
 
                 // Populate tree data for tree visualization
                 scope.cliques = [];
