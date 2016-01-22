@@ -100,8 +100,8 @@ module.exports = function(db) {
                         res.json(adv);
                         // Now send internal email notifying team of creation
                         if (process.env.NODE_ENV === 'production'){
-                            mailer.sendMailFromUser('New Advertiser & Campaign Created',
-                                'new-campaign-email.server.view.html',
+                            mailer.sendMailFromUser('New Advertiser Created',
+                                'new-advertiser-email.server.view.html',
                                 { advertiser: advertiser, user: req.user },
                                 req.user,
                                 'support@cliquesads.com'
@@ -333,7 +333,6 @@ module.exports = function(db) {
                 getAllInSession: function(req, res){
                     var sess = req.session;
                     if (sess.campaignDrafts){
-
                         return res.json(sess.campaignDrafts);
                     } else {
                         return res.json(null);
