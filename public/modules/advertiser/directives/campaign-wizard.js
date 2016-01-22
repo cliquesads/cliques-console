@@ -37,11 +37,7 @@ angular.module('advertiser').directive('campaignWizard', [
 
                 // Init new ClientSideCampaign, which handles all necessary duplication &
                 // pre-save prep logic
-                //scope.$watch(function(scope){ return scope.existingCampaign }, function(newVal, oldVal){
-                //    if (newVal){
                 scope.campaign = new ClientSideCampaign(scope.existingCampaign, { useSuffix: scope.useSuffix });
-                //    }
-                //});
 
                 // Populate tree data for tree visualization
                 scope.cliques = [];
