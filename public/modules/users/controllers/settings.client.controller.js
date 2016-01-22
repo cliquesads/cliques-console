@@ -3,6 +3,7 @@
 angular.module('users').controller('SettingsController', ['$scope', '$http', '$location', 'Users', 'Authentication','Timezones',
 	function($scope, $http, $location, Users, Authentication, Timezones) {
 		$scope.user = Authentication.user;
+        $scope.organization = Authentication.user.organization;
 
 		// If user is not signed in then redirect back home
 		if (!$scope.user) $location.path('/');
@@ -56,6 +57,25 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 				$scope.submitted = true;
 			}
 		};
+
+        /**
+         * Have to manually add jQuery int-tel-input to orgPhone field
+         */
+        $('#phone').intlTelInput({
+            utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
+            autoFormat: true
+        });
+        // jQuery hack to force input to fill whole column
+        $('div.intl-tel-input').addClass('col-md-12 p0');
+
+        /**
+         * Add custom validator for orgPhone field that just checks number validity
+         * of intlTelInput
+         */
+        window.ParsleyValidator
+            .addValidator('intlphone', function (value, requirement) {
+                return $("#phone").intlTelInput("isValidNumber");
+            }, 32);
 
 		// Change user password
 		$scope.changeUserPassword = function() {
