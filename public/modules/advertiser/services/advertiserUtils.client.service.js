@@ -78,7 +78,7 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             var new_target_arr = [];
             arr.forEach(function (obj) {
                 new_target_arr.push({
-                    target: obj._id,
+                    target: obj.target || obj._id, // don't do anything if obj already has 'target' attr
                     weight: obj.weight
                 });
             });

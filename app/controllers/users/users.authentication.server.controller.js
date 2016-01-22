@@ -9,7 +9,10 @@ var _ = require('lodash'),
 	passport = require('passport'),
 	User = mongoose.model('User'),
     Organization = mongoose.model('Organization'),
-    AccessCode = mongoose.model('AccessCode');
+    AccessCode = mongoose.model('AccessCode'),
+    mail = require('../mailer.server.controller.js');
+
+var mailer = new mail.Mailer();
 
 /**
  * Endpoint to gain access to signup page
@@ -28,7 +31,7 @@ exports.authorizeAccessCode = function(req, res) {
                 if (accesscode.active){
                     res.json({accesscode: accesscode});
                 } else {
-                    res.status(400).send({message: 'This code has expired.'})
+                    res.status(400).send({message: 'This code has expired.'});
                 }
             } else {
                 res.status(400).send({message: 'Invalid Code'});
@@ -100,6 +103,15 @@ exports.signup = function(req, res) {
             org.users.push(user.id);
             org.save(function (err, org) {
                 if (err) return handleError(res, err);
+                // Email support team notifying of account creation
+                if (process.env.NODE_ENV === 'production') {
+                    mailer.sendMail({
+                        subject: 'New Cliques Console Account Created',
+                        templateName: 'new-user-email.server.view.html',
+                        to: 'support@cliquesads.com',
+                        data: {user: user, organization: org}
+                    });
+                }
                 req.login(user, function (err) {
                     if (err) return handleError(res, err);
                     return res.json(user);
