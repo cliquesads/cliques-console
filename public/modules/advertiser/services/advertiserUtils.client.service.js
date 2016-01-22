@@ -77,12 +77,10 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             if (arr === null) return arr;
             var new_target_arr = [];
             arr.forEach(function (obj) {
-                if (!obj.target){
-                    new_target_arr.push({
-                        target: obj._id,
-                        weight: obj.weight
-                    });
-                }
+                new_target_arr.push({
+                    target: obj.target || obj._id, // don't do anything if obj already has 'target' attr
+                    weight: obj.weight
+                });
             });
             return new_target_arr;
         },
