@@ -10,6 +10,7 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
     async = require('async'),
     moment = require('moment-timezone');
 
+
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
  * path params into MongoDB Aggregation Pipeline-compatible objects.
@@ -497,6 +498,12 @@ module.exports = function(db) {
             },
             getManyClique: function (req, res) {
                 return hourlyAdStatAPI.getManyClique(req, res);
+            },
+            getLatestHour: function(callback){
+                aggregationModels.HourlyAdStat.findOne().sort('-hour').exec(function(err, result){
+                    if (err) return callback(err);
+                    return callback(null, result.hour);
+                });
             }
         }
     };

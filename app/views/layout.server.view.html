@@ -65,6 +65,13 @@
 	<script type="text/javascript">
 		var user = {{ user | json | safe }};
         var consoleVersion = "{{ consoleVersion }}";
+        var latestHour = new Date("{{ latestHour }}");
+        latestHour = Date.UTC(
+                latestHour.getUTCFullYear(),
+                latestHour.getUTCMonth(),
+                latestHour.getUTCDate(),
+                latestHour.getUTCHours(),
+                59, 59);
 	</script>
 
 	<!--Application JavaScript Files-->
