@@ -80,7 +80,7 @@
                         <div class="row pt">
                             <div class="form-group">
                                 <label for="country">Country *</label>
-                                <div id="country" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
+                                <div id="country" required="required" class="form-control" data-ng-model="organization.country" country-select></div>
                             </div>
                         </div>
                         <div class="row pt">
@@ -113,6 +113,20 @@
                     <div data-ng-show="error" class="text-center text-danger">
                         <strong data-ng-bind="error"></strong>
                     </div>
+                </tab>
+                <tab heading="Billing">
+                    <!--<stripe-cc-form></stripe-cc-form>-->
+                    <form action="" method="POST">
+                        <script
+                                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                data-key="pk_test_ZuDCtX2NUeu3l4BZuibbu1mg"
+                                data-amount="2000"
+                                data-name="Demo Site"
+                                data-description="2 widgets ($20.00)"
+                                data-image="/128x128.png"
+                                data-locale="auto">
+                        </script>
+                    </form>
                 </tab>
             </tabset>
         </div>
