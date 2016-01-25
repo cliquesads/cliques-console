@@ -1,13 +1,28 @@
-<section class="row" data-ng-controller="SettingsController">
-    <div class="panel panel-default col-xs-offset-3 col-xs-6 col-md-offset-2 col-md-8">
-        <div class="panel-heading">
-            <div class="panel-title">
-                Profile Settings
+<div class="unwrap" data-ng-controller="SettingsController">
+    <div style="background-image: url(https://storage.googleapis.com/cliquesads-images/photo-1440688807730-73e4e2169fb8_sm.jpg)" class="bg-cover">
+        <div class="p-xl text-center text-white">
+            <img src="{{ user.profile_image_url }}" alt="Image" class="img-thumbnail img-circle thumb128" />
+            <h3 class="m0">{{ user.displayName }}</h3>
+            <p>{{ user.organization.name }}</p>
+        </div>
+    </div>
+    <div class="text-center bg-gray-dark">
+        <div class="row row-table">
+            <div class="col-xs-4 br p-lg mb-xl" ng-click="section = 'profile'" ng-class="{'bg-gray': section === 'profile'}">
+                <h4 class="m0">My Profile</h4>
+            </div>
+            <div class="col-xs-4 br p-lg mb-xl" ng-click="section = 'organization'" ng-class="{'bg-gray': section === 'organization'}">
+                <h4 class="m0">Organization</h4>
+            </div>
+            <div class="col-xs-4 p-lg mb-xl" ng-click="section = 'billing'" ng-class="{'bg-gray': section === 'billing'}">
+                <h4 class="m0">Billing</h4>
             </div>
         </div>
-        <div class="panel-body">
-            <tabset>
-                <tab heading="My Profile">
+    </div>
+    <div class="p-lg">
+        <div class="row">
+            <div class="col-lg-9">
+                <div ng-show="section === 'profile'" class="p-lg">
                     <form name="userForm" data-ng-submit="updateUserProfile(userForm.$valid)" class="signin form-horizontal" autocomplete="off">
                         <fieldset>
                             <div class="form-group">
@@ -41,8 +56,8 @@
                             </div>
                         </fieldset>
                     </form>
-                </tab>
-                <tab heading="Organization">
+                </div>
+                <div ng-show="section === 'organization'" class="p-lg">
                     <form name="orgForm" data-ng-submit="updateOrganization(orgForm.$valid)" class="signin form-horizontal" autocomplete="off">
                         <div class="row pt">
                             <div class="form-group">
@@ -113,8 +128,8 @@
                     <div data-ng-show="error" class="text-center text-danger">
                         <strong data-ng-bind="error"></strong>
                     </div>
-                </tab>
-                <tab heading="Billing">
+                </div>
+                <div ng-show="section === 'billing'" class="p-lg">
                     <!--<stripe-cc-form></stripe-cc-form>-->
                     <form action="" method="POST">
                         <script
@@ -127,8 +142,28 @@
                                 data-locale="auto">
                         </script>
                     </form>
-                </tab>
-            </tabset>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="text-center">
+                            <h3 class="mt0">Ted Berry</h3>
+                            <p>Lead director</p>
+                        </div>
+                        <hr/>
+                        <ul class="list-unstyled ph-xl">
+                            <li>
+                                <em class="fa fa-home fa-fw mr-lg"></em>Somewhere, Neverland</li>
+                            <li>
+                                <em class="fa fa-briefcase fa-fw mr-lg"></em><a href="#">Themicon.co</a>
+                            </li>
+                            <li>
+                                <em class="fa fa-graduation-cap fa-fw mr-lg"></em>Master Designer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-	</div>
-</section>
+    </div>
+</div>
