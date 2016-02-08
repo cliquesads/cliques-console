@@ -90,7 +90,7 @@ if [ $? -eq 127 ]; then
     return 1
 fi
 
-if [ $pm2version != $PM2_VERSION ]; then
+if [ "$pm2version" != "$PM2_VERSION" ]; then
     echo "ERROR: Environment requires pm2 version $PM2_VERSION, but version $pm2version currently installed. To fix this, run setup.sh" >&2
     return 1
 else
