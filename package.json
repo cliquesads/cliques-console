@@ -7,6 +7,10 @@
     "node": "0.10.x",
     "npm": "1.4.x"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cliquesads/cliques-console.git"
+  },
   "scripts": {
     "start": "grunt",
     "test": "grunt test",
