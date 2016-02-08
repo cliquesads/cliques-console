@@ -1,48 +1,39 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('publisher').controller('PublisherController', ['$scope', '$stateParams', '$location',
+angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$location',
     'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-	function($scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
+	function($rootScope, $scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
 
-		$scope.remove = function(publisher) {
-			if (publisher) {
-				publisher.$remove();
+        $scope.selectPublisher = function(lazy){
+            function openDialog(){
+                ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: 'modules/publisher/views/partials/list-publisher.html',
+                    controller: ['$scope', function ($scope) {
+                        $scope.publishers = $scope.ngDialogData.publishers;
+                        $scope.selectAndClose = function(publisher){
+                            $scope.closeThisDialog('Success');
+                            $location.url('/publisher/' + publisher.id);
+                            $rootScope.publisher = publisher;
+                        };
+                        $scope.createPublisher = function(){
+                            $scope.closeThisDialog('Success');
+                            $location.url('/publisher/create');
+                        };
+                    }],
+                    data: { publishers: $scope.publishers }
+                });
+            }
 
-				for (var i in $scope.publisher) {
-					if ($scope.publisher[i] === publisher) {
-						$scope.publisher.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.publisher.$remove(function() {
-					$location.path('publisher');
-				});
-			}
-		};
-
-        $scope.selectPublisher = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth600',
-                template: 'modules/publisher/views/partials/list-publisher.html',
-                controller: ['$scope', function ($scope) {
-                    $scope.publishers = $scope.ngDialogData.publishers;
-
-                    $scope.selectAndClose = function(publisher){
-                        $scope.closeThisDialog('Success');
-                        $location.url('/publisher/' + publisher.id);
-                    };
-
-                    $scope.createPublisher = function(){
-                        $scope.closeThisDialog('Success');
-                        $location.url('/publisher/create');
-                    };
-                }],
-                data: { publisher: $scope.publisher, publishers: $scope.publishers }
-            });
+            if (lazy && $rootScope.publisher){
+                $location.url('/publisher/' + $scope.publisher.id);
+            } else {
+                openDialog()
+            }
         };
 
         $scope.update = function() {
@@ -59,10 +50,6 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
-		//$scope.find = function() {
-         //   // on query return, get site spend data to augment $scope.publishers
-         //   $scope.publishers = Publisher.query();
-		//};
 		$scope.findOne = function() {
 			$scope.publisher = Publisher.get({
 				publisherId: $stateParams.publisherId
