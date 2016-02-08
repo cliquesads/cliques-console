@@ -8,17 +8,25 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
 
-        $scope.selectPublisher = function(lazy){
+        $scope.selectPublisher = function(force){
             function openDialog(){
                 ngDialog.open({
                     className: 'ngdialog-theme-default dialogwidth600',
                     template: 'modules/publisher/views/partials/list-publisher.html',
                     controller: ['$scope', function ($scope) {
                         $scope.publishers = $scope.ngDialogData.publishers;
+                        $scope.rememberSelection = true;
                         $scope.selectAndClose = function(publisher){
                             $scope.closeThisDialog('Success');
                             $location.url('/publisher/' + publisher.id);
-                            $rootScope.publisher = publisher;
+                            // Set publisher to rootScope if rememberSelection is true,
+                            // otherwise clear rootScope publisher var
+                            if ($scope.rememberSelection){
+                                $rootScope.publisher = publisher;
+                            } else {
+                                $rootScope.publisher = null;
+                            }
+
                         };
                         $scope.createPublisher = function(){
                             $scope.closeThisDialog('Success');
@@ -29,7 +37,7 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
                 });
             }
 
-            if (lazy && $rootScope.publisher){
+            if ($rootScope.publisher && !force){
                 $location.url('/publisher/' + $scope.publisher.id);
             } else {
                 openDialog()

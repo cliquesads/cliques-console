@@ -2,5 +2,6 @@
     <div class="pull-right">
         <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>
     </div>
-    {{publisher.name}}&nbsp;&nbsp;&nbsp;<a data-ng-click="publisherBasics();" class="small"><i class="fa fa-edit"></i></a>
+    <a ng-click="selectPublisher(true)" tooltip="Change Selected Publisher" tooltip-placement="bottom">{{publisher.name}}</a>&nbsp;&nbsp;
+    <a data-ng-click="publisherBasics();" class=""><i class="fa fa-cogs" tooltip="Edit Publisher Settings" tooltip-placement="bottom-right"></i></a>
 </section>
