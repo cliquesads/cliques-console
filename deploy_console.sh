@@ -65,6 +65,7 @@ rm -rf ./public/dist/*
 grunt build
 
 running=$(pm2 list -m | grep "$processname")
+redir_running=$(pm2 list -m | grep "https_redirect")
 
 if [ -z "$running" ]; then
     # hook PM2 up to web monitoring with KeyMetrics
@@ -73,4 +74,11 @@ if [ -z "$running" ]; then
     pm2 start server.js --name "$processname" -i 0
 else
     pm2 gracefulReload "$processname"
+fi
+
+if [ -z "$redir_running" ]; then
+    # start in cluster mode
+    pm2 start https_redirect.js -i 1 --name "https_redirect"
+else
+    pm2 gracefulReload "https_redirect"
 fi

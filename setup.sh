@@ -45,5 +45,3 @@ pm2 update
 # TODO: Add versions
 npm install mocha -g
 npm install bower -g
-npm install grunt -g
-npm install grunt-cli -g
