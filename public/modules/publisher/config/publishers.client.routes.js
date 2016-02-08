@@ -10,19 +10,19 @@ angular.module('publisher').config(['$stateProvider',
             abstract: true,
             templateUrl: 'modules/publisher/views/publisher-layout.client.view.html'
         }).
-		//state('app.publisher.listPublishers', {
-		//	url: '/publisher',
-		//	title: 'List Publishers',
-         //   views: {
-         //       'main': {
-         //           templateUrl: 'modules/publisher/views/list-publisher.client.view.html',
-         //           controller: 'PublisherController'
-         //       },
-         //       'titleBar': {
-         //           template: 'Publishers'
-         //       }
-         //   }
-		//}).
+		state('app.publisher.mySites', {
+			url: '/mysites',
+			title: 'My Sites',
+            views: {
+                'main': {
+                    templateUrl: 'modules/publisher/views/mysites.client.view.html',
+                    controller: 'PublisherController'
+                },
+                'titleBar': {
+                    template: 'Select a Publisher'
+                }
+            }
+		}).
 		state('app.publisher.createPublisher', {
 			url: '/publisher/create',
 			title: 'New Publisher',

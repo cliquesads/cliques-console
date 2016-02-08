@@ -27,9 +27,21 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
         $scope.selectPublisher = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth600',
-                template: 'modules/publisher/views/partials/actionbeacons.html',
-                controller: 'actionBeaconController',
-                data: {publisher: $scope.publisher}
+                template: 'modules/publisher/views/partials/list-publisher.html',
+                controller: ['$scope', function ($scope) {
+                    $scope.publishers = $scope.ngDialogData.publishers;
+
+                    $scope.selectAndClose = function(publisher){
+                        $scope.closeThisDialog('Success');
+                        $location.url('/publisher/' + publisher.id);
+                    };
+
+                    $scope.createPublisher = function(){
+                        $scope.closeThisDialog('Success');
+                        $location.url('/publisher/create');
+                    };
+                }],
+                data: { publisher: $scope.publisher, publishers: $scope.publishers }
             });
         };
 

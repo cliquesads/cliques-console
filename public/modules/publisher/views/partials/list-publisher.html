@@ -1,0 +1,22 @@
+<h4>Please select a Publisher to view its Sites</h4>
+<div style="overflow: auto; height: 400px">
+<div class="list-group">
+    <a data-ng-repeat="pub in publishers" ng-click="selectAndClose(pub)" class="list-group-item">
+        <div class="row row-table">
+            <div class="col-md-2">
+                <img ng-src="{{ pub.logo_secure_url }}" class="client-logo-md"/>
+            </div>
+            <div class="col-md-6">
+                <h4 class="list-group-item-heading" data-ng-bind="pub.name"></h4>
+                <p class="list-group-item-text"> Active Sites: {{ pub.sites.length }}</p>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2"></div>
+        </div>
+    </a>
+</div>
+<!--<h4 class="alert alert-purple text-center pv-lg" data-ng-if="publishers.$resolved && !publishers.length">-->
+<h4 class="alert alert-warning text-center pv-lg">
+    No publishers yet, why don't you <a ng-click="createPublisher()">create one</a>?
+</h4>
+</div>
