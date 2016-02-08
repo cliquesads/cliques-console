@@ -24,6 +24,15 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
 			}
 		};
 
+        $scope.selectPublisher = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: 'modules/publisher/views/partials/actionbeacons.html',
+                controller: 'actionBeaconController',
+                data: {publisher: $scope.publisher}
+            });
+        };
+
         $scope.update = function() {
             var publisher = $scope.publisher;
             publisher.$update(function() {
@@ -75,15 +84,6 @@ angular.module('publisher').controller('PublisherController', ['$scope', '$state
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/create-site.client.view.html',
                 controller: 'SiteWizardController',
-                data: {publisher: $scope.publisher}
-            });
-        };
-
-        $scope.actionBeacons = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth600',
-                template: 'modules/publisher/views/partials/actionbeacons.html',
-                controller: 'actionBeaconController',
                 data: {publisher: $scope.publisher}
             });
         };
