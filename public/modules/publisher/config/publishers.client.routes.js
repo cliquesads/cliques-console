@@ -36,19 +36,6 @@ angular.module('publisher').config(['$stateProvider',
                 }
             }
 		}).
-        //state('app.publisher.listSite', {
-        //    url: '/publisher/site',
-        //    title: 'List Sites',
-        //    views: {
-        //        'main': {
-        //            templateUrl: 'modules/publisher/views/list-sites.client.view.html',
-        //            controller: 'SiteController'
-        //        },
-        //        'titleBar': {
-        //            template: 'Sites'
-        //        }
-        //    }
-        //}).
 		state('app.publisher.viewPublisher', {
 			url: '/publisher/:publisherId',
 			title: 'View Publisher',
