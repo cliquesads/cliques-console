@@ -100,7 +100,7 @@ module.exports = function(grunt) {
 					'public/dist/application.min.css': 'public/less/application.less'
 				}
 			},
-			development: {
+			dev: {
 				options: {
 					sourceMap: true,
 					ieCompat:true,
@@ -204,9 +204,9 @@ module.exports = function(grunt) {
 			}
 		},
 		env: {
-            // Only added development environment to add dev env step to build task as a hack
-            development: {
-                NODE_ENV: 'development'
+            // Only added dev environment to add dev env step to build task as a hack
+            dev: {
+                NODE_ENV: 'dev'
             },
 			test: {
 				NODE_ENV: 'test'
