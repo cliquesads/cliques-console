@@ -27,7 +27,7 @@
     "express": "~4.10.1",
     "express-session": "~1.9.1",
     "forever": "~0.11.0",
-    "gcloud": "^0.16.0",
+    "gcloud": "^0.27.0",
     "glob": "~4.0.5",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-less": "^1.0.0",
