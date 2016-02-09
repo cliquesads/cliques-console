@@ -16,6 +16,7 @@ module.exports = [
     'public/lib/cliques-icons/styles.css',
     'public/lib/angular-trustpass/dist/tr-trustpass.min.css',
     'public/lib/intl-tel-input/build/css/intlTelInput.css',
+    'public/lib/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css',
 
     // Following files are all built from SASS sources
     'public/dist/common.css',

@@ -31,9 +31,13 @@ angular.module('admin').controller('NetworkReportController', ['$scope', '$state
         };
 
         // Bind awful jQuery hack to each table's buttons bar
-        $('table[id*=datatable_]').each(function(index,table){
-            $(table).on('draw.dt', DatatableUtils.restyleButtonsHack);
-        });
+        $scope.dtInstanceCallback = function(dtInstance){
+            dtInstance.DataTable.on('draw.dt', DatatableUtils.restyleButtonsHack);
+        };
+
+        //$('table[id*=datatable_]').each(function(index,table){
+        //    $(table).on('draw.dt', DatatableUtils.restyleButtonsHack);
+        //});
 
 
         $scope.getStats = function(){
@@ -47,13 +51,17 @@ angular.module('admin').controller('NetworkReportController', ['$scope', '$state
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response){
-                $scope.dtOptions_pub = DTOptionsBuilder.newOptions()
+                $scope.dtOptions_pub = DTOptionsBuilder.newOptions({})
                     .withOption('paging', false)
                     .withOption('searching', false)
                     .withOption('scrollX', true)
                     .withOption('order', [[3,'desc']])
                     .withOption('footerCallback', $scope.footerCallback('pubSums', 'pubTableFooter'))
-                    .withButtons(['excel', 'copy','pdf']);
+                    .withButtons([
+                        { extend: 'excel', className: 'btn btn-labeled btn-primary'},
+                        { extend: 'copy', className: 'btn btn-labeled btn-primary'},
+                        { extend: 'pdf', className: 'btn btn-labeled btn-primary'}
+                    ]);
                     // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_pub = [
                     DTColumnDefBuilder.newColumnDef(0),
@@ -74,13 +82,17 @@ angular.module('admin').controller('NetworkReportController', ['$scope', '$state
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response){
-                $scope.dtOptions_adv = DTOptionsBuilder.newOptions()
+                $scope.dtOptions_adv = DTOptionsBuilder.newOptions({})
                     .withOption('paging', false)
                     .withOption('searching', false)
                     .withOption('scrollX', true)
                     .withOption('order', [[3,'desc']])
                     .withOption('footerCallback', $scope.footerCallback('advSums', 'advTableFooter'))
-                    .withButtons(['excel','copy','pdf']);
+                    .withButtons([
+                        { extend: 'excel', className: 'btn btn-labeled btn-primary'},
+                        { extend: 'copy', className: 'btn btn-labeled btn-primary'},
+                        { extend: 'pdf', className: 'btn btn-labeled btn-primary'}
+                    ]);
                 // Not entirely sure if this is necessary
                 $scope.dtColumnDefs_adv = [
                     DTColumnDefBuilder.newColumnDef(0),
