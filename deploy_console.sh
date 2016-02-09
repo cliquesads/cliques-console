@@ -57,7 +57,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # run npm install to install any new dependencies
-npm install
+npm install --force
 npm install cliques-node-utils
 
 # run build step
