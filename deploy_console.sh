@@ -56,6 +56,11 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
+# Need to be logged into to get @cliques packages
+npm whoami
+if [ $? -ne 0 ]; then
+    npm login
+fi
 # run npm install to install any new dependencies
 npm install
 
