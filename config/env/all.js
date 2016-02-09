@@ -17,36 +17,14 @@ module.exports = {
 	assets: {
 		lib: {
             css: [
-                'public/dist/common.css',
-                'public/dist/mixins.css',
-                'public/dist/buttons.foundation.css',
-                'public/dist/buttons.dataTables.css',
-                'public/dist/buttons.bootstrap.css',
-                'public/dist/buttons.jqueryui.css'
+                'public/dist/vendor.min.css'
             ],
             js: [
                 'public/dist/vendor.min.js'
             ]
 		},
 		css: [
-            'public/lib/chosen/chosen.min.css',
-            'public/lib/bootstrap/dist/css/bootstrap.min.css',
-            'public/dist/application.min.css',
-            'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
-            'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
-            'public/lib/loaders.css/loaders.min.css',
-            'public/lib/angular-xeditable/dist/css/xeditable.css',
-            'public/lib/ngDialog/css/ngDialog.min.css',
-            'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
-            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
-            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
-            'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css',
-            'public/lib/datatables/media/css/jquery.dataTables.min.css',
-            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
-            'public/lib/angularjs-slider/dist/rzslider.min.css',
-            'public/lib/cliques-icons/styles.css',
-            'public/lib/angular-trustpass/dist/tr-trustpass.min.css',
-            'public/lib/intl-tel-input/build/css/intlTelInput.css'
+            'public/dist/application.min.css'
 		],
 		js: [
 			'public/config.js',
@@ -126,6 +104,33 @@ module.exports = {
         sass: [
             'public/lib/datatables-buttons/css/buttons.dataTables.scss',
             'public/lib/datatables-buttons/css/buttons.bootstrap.scss'
+        ],
+        css: [
+            'public/lib/chosen/chosen.min.css',
+            'public/lib/bootstrap/dist/css/bootstrap.min.css',
+            'public/lib/angular-bootstrap-nav-tree/dist/abn_tree.css',
+            'public/lib/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css',
+            'public/lib/loaders.css/loaders.min.css',
+            'public/lib/angular-xeditable/dist/css/xeditable.css',
+            'public/lib/ngDialog/css/ngDialog.min.css',
+            'public/lib/ngDialog/css/ngDialog-theme-default.min.css',
+            'public/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview.min.css',
+            'public/lib/angular-ivh-treeview/dist/ivh-treeview-theme-basic.css',
+            'public/lib/datatables/media/css/jquery.dataTables.min.css',
+            'public/lib/angular-tree-dnd/dist/ng-tree-dnd.min.css',
+            'public/lib/angularjs-slider/dist/rzslider.min.css',
+            'public/lib/cliques-icons/styles.css',
+            'public/lib/angular-trustpass/dist/tr-trustpass.min.css',
+            'public/lib/intl-tel-input/build/css/intlTelInput.css',
+
+            // Following files are all built from SASS sources
+            'public/dist/common.css',
+            'public/dist/mixins.css',
+            'public/dist/buttons.foundation.css',
+            'public/dist/buttons.dataTables.css',
+            'public/dist/buttons.bootstrap.css',
+            'public/dist/buttons.jqueryui.css'
         ]
     },
     mongodb: {
@@ -143,5 +148,32 @@ module.exports = {
                 pass: cliquesConfig.get('Email.Support.password')
             }
         }
+    },
+
+    // Strategies are unused for now
+    facebook: {
+        clientID: process.env.FACEBOOK_ID || 'APP_ID',
+        clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
+        callbackURL: '/auth/facebook/callback'
+    },
+    twitter: {
+        clientID: process.env.TWITTER_KEY || 'CONSUMER_KEY',
+        clientSecret: process.env.TWITTER_SECRET || 'CONSUMER_SECRET',
+        callbackURL: '/auth/twitter/callback'
+    },
+    google: {
+        clientID: process.env.GOOGLE_ID || 'APP_ID',
+        clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
+        callbackURL: '/auth/google/callback'
+    },
+    linkedin: {
+        clientID: process.env.LINKEDIN_ID || 'APP_ID',
+        clientSecret: process.env.LINKEDIN_SECRET || 'APP_SECRET',
+        callbackURL: '/auth/linkedin/callback'
+    },
+    github: {
+        clientID: process.env.GITHUB_ID || 'APP_ID',
+        clientSecret: process.env.GITHUB_SECRET || 'APP_SECRET',
+        callbackURL: '/auth/github/callback'
     }
 };

@@ -157,14 +157,14 @@ module.exports = function(grunt) {
                 }
             }
         },
-		/* Not needed for LESS
+
 		cssmin: {
 			combine: {
 				files: {
-					'public/dist/application.min.css': '<%= applicationCSSFiles %>'
+					'public/dist/vendor.min.css': '<%= vendorCSSFiles %>'
 				}
 			}
-		},*/
+		},
 		nodemon: {
 			dev: {
 				script: 'server.js',
@@ -208,8 +208,8 @@ module.exports = function(grunt) {
             dev: {
                 NODE_ENV: 'dev'
             },
-			test: {
-				NODE_ENV: 'test'
+			"local-test": {
+				NODE_ENV: 'local-test'
 			},
 			secure: {
 				NODE_ENV: 'secure'
@@ -242,7 +242,7 @@ module.exports = function(grunt) {
 
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
         grunt.config.set('vendorSassFiles', config.vendor.sass);
-		grunt.config.set('applicationCSSFiles', config.assets.css);
+		grunt.config.set('vendorCSSFiles', config.vendor.css);
 	});
 
 	// Default task(s).
@@ -258,7 +258,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less','sass']);
+	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify','less','sass','cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);
