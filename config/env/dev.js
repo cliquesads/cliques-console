@@ -6,8 +6,8 @@ module.exports = {
 	},
     assets: {
         lib: {
-            css: [ 'public/dist/vendor.min.css' ],
-            js: [ 'public/dist/vendor.min.js' ]
+            css: [ 'public/dist/vendor.css' ],
+            js: [ 'public/dist/vendor.js' ]
         },
         css: [
             'public/dist/application.min.css'
