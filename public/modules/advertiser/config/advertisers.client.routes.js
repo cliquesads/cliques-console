@@ -110,10 +110,6 @@ angular.module('advertiser').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/advertiser/views/site-targeting.client.view.html',
                     controller: 'SiteTargetingController'
-                },
-                'titleBar': {
-                    templateUrl: 'modules/advertiser/views/partials/titlebars/view-campaign.titlebar.html',
-                    controller: 'SiteTargetingController'
                 }
             }
         });
