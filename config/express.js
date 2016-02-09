@@ -71,16 +71,15 @@ module.exports = function(db) {
 	app.set('view engine', 'server.view.html');
 	app.set('views', './app/views');
 
+    // Enable logger (morgan)
+    app.use(morgan('dev'));
+
 	// Environment dependent middleware
 	if (process.env.NODE_ENV === 'dev') {
-		// Enable logger (morgan)
-		app.use(morgan('dev'));
-
 		// Disable views cache
 		app.set('view cache', false);
 	} else if (process.env.NODE_ENV === 'production') {
 		app.locals.cache = 'memory';
-        app.use(morgan('dev'));
 	}
 
 	// Request body parsing middleware should be above methodOverride
@@ -154,7 +153,7 @@ module.exports = function(db) {
 		});
 	});
 
-	if (process.env.NODE_ENV === 'production') {
+	if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'dev') {
 		// Log SSL usage
 		console.log('Securely using https protocol');
 

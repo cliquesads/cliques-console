@@ -94,6 +94,7 @@ module.exports = function(grunt) {
 				options: {
 					paths: ['public/less'],
 					cleancss: true,
+                    ieCompat:true,
 					compress: true
 				},
 				files: {
@@ -132,15 +133,15 @@ module.exports = function(grunt) {
             }
         },
 		uglify: {
-			production: {
-				options: {
-					mangle: false
-				},
-				files: {
-					'public/dist/application.min.js': 'public/dist/application.js',
+            default:{
+                options: {
+                    mangle: false
+                },
+                files: {
+                    'public/dist/application.min.js': 'public/dist/application.js',
                     'public/dist/vendor.min.js': 'public/dist/vendor.js'
-				}
-			}
+                }
+            }
 		},
         sass: {
             options: {
@@ -157,14 +158,14 @@ module.exports = function(grunt) {
                 }
             }
         },
-		/* Not needed for LESS
+
 		cssmin: {
 			combine: {
 				files: {
-					'public/dist/application.min.css': '<%= applicationCSSFiles %>'
+					'public/dist/vendor.min.css': '<%= vendorCSSFiles %>'
 				}
 			}
-		},*/
+		},
 		nodemon: {
 			dev: {
 				script: 'server.js',
@@ -173,7 +174,15 @@ module.exports = function(grunt) {
 					ext: 'js,html',
 					watch: watchFiles.serverViews.concat(watchFiles.serverJS)
 				}
-			}
+			},
+            "local-test": {
+                script: 'server.js',
+                options: {
+                    nodeArgs: ['--debug'],
+                    ext: 'js,html',
+                    watch: watchFiles.serverViews.concat(watchFiles.serverJS)
+                }
+            }
 		},
 		'node-inspector': {
 			custom: {
@@ -189,14 +198,15 @@ module.exports = function(grunt) {
 			}
 		},
 		ngAnnotate: {
-			production: {
-				files: {
-					'public/dist/application.js': watchFiles.clientJS
-				}
-			}
+            default:{
+                files: {
+                    'public/dist/application.js': watchFiles.clientJS
+                }
+            }
 		},
 		concurrent: {
-			default: ['nodemon', 'watch'],
+			"local-test": ['nodemon:local-test', 'watch'],
+            dev: ['nodemon:local-test', 'watch'],
 			debug: ['nodemon', 'watch', 'node-inspector'],
 			options: {
 				logConcurrentOutput: true,
@@ -208,12 +218,15 @@ module.exports = function(grunt) {
             dev: {
                 NODE_ENV: 'dev'
             },
-			test: {
-				NODE_ENV: 'test'
+			"local-test": {
+				NODE_ENV: 'local-test'
 			},
 			secure: {
 				NODE_ENV: 'secure'
-			}
+            },
+            production: {
+                NODE_ENV: 'production'
+            }
 		},
 		mochaTest: {
 			src: watchFiles.mochaTests,
@@ -235,6 +248,14 @@ module.exports = function(grunt) {
 	// Making grunt default to force in order not to break the project.
 	grunt.option('force', true);
 
+    //grunt.task.registerTask('parseEnv', 'Determines which NODE_ENV to use given command-line options', function(){
+    //    var env = grunt.option('env') || 'local-test';
+    //    // this seems super redundant but it's the only reliable way to pass NODE_ENV to all sub-tasks (i.e. through grunt-env)
+    //    // env sub-tasks delimited by :
+    //    var taskname = 'env:' + env;
+    //    grunt.task.run(taskname);
+    //});
+
 	// A Task for loading the configuration object
 	grunt.task.registerTask('loadConfig', 'Task that loads the config into a grunt option.', function() {
 		var init = require('./config/init')();
@@ -242,11 +263,15 @@ module.exports = function(grunt) {
 
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
         grunt.config.set('vendorSassFiles', config.vendor.sass);
-		grunt.config.set('applicationCSSFiles', config.assets.css);
+		grunt.config.set('vendorCSSFiles', config.vendor.css);
 	});
 
 	// Default task(s).
-	grunt.registerTask('default', ['lint', 'concurrent:default']);
+    // Only really should be run locally, hence the local-test env
+	grunt.registerTask('default', ['env:local-test','lint', 'concurrent:local-test']);
+
+    // Dev task(s).
+    grunt.registerTask('default-dev', ['env:dev','lint', 'concurrent:dev']);
 
 	// Debug task.
 	grunt.registerTask('debug', ['lint', 'concurrent:debug']);
@@ -258,7 +283,10 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less','sass']);
+	grunt.registerTask('build-dev', ['env:dev','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
+
+    // Build task(s).
+    grunt.registerTask('build-production', ['env:production','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);
