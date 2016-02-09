@@ -62,7 +62,7 @@ npm install cliques-node-utils
 
 # run build step
 rm -rf ./public/dist/*
-grunt build
+grunt build-"$env"
 
 running=$(pm2 list -m | grep "$processname")
 redir_running=$(pm2 list -m | grep "https_redirect")
