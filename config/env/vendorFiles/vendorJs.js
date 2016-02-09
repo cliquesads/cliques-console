@@ -59,5 +59,6 @@ module.exports = [
     'public/lib/angular-country-state-select/dist/angular-country-state-select.js',
     'public/lib/angular-trustpass/dist/tr-trustpass.min.js',
     'public/lib/intl-tel-input/lib/libphonenumber/build/utils.js',
-    'public/lib/intl-tel-input/build/js/intlTelInput.min.js'
+    'public/lib/intl-tel-input/build/js/intlTelInput.min.js',
+    'public/lib/angular-read-more/dist/readmore.min.js'
 ];

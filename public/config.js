@@ -35,7 +35,8 @@ var ApplicationConfiguration = (function() {
         'datatables.bootstrap',
         'rzModule',
         'ngCountryStateSelect',
-        'trTrustpass'
+        'trTrustpass',
+        'hm.readmore'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
