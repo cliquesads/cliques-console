@@ -1,6 +1,8 @@
 /* jshint node: true */
 'use strict';
 
+console.log(process.env.NODE_ENV);
+
 /**
  * Module dependencies.
  */
@@ -8,7 +10,7 @@ var init = require('./config/init')(),
 	config = require('./config/config'),
     pmx = require('pmx').init(),
     util = require('util'),
-    cliques_mongo = require('cliques_node_utils').mongodb,
+    cliques_mongo = require('@cliques/cliques-node-utils').mongodb,
     mongoose = require('mongoose'),
 	chalk = require('chalk');
 
@@ -55,7 +57,7 @@ require('./config/passport')();
 app.listen(config.port);
 
 // Expose app
-exports = module.exports = app;
+var exports = module.exports = app;
 
 // Logging initialization
 console.log('MEAN.JS application started on port ' + config.port);

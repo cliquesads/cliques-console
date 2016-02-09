@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var node_utils = require('cliques_node_utils'),
+var node_utils = require('@cliques/cliques-node-utils'),
     models = node_utils.mongodb.models,
     mongoose = require('mongoose'),
     tags = node_utils.tags,
