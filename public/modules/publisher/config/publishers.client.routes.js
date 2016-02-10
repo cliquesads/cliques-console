@@ -63,6 +63,20 @@ angular.module('publisher').config(['$stateProvider',
                     controller: 'SiteController'
                 }
             }
+        }).
+        state('app.publisher.viewPublisher.viewSite.viewPage', {
+            url: '/page/:pageId',
+            title: 'View Page',
+            views: {
+                'main': {
+                    templateUrl: 'modules/publisher/views/view-page.client.view.html',
+                    controller: 'PageController'
+                },
+                'titleBar': {
+                    templateUrl: 'modules/publisher/views/partials/titlebar/view-page.titlebar.html',
+                    controller: 'PageController'
+                }
+            }
         });
 	}
 ]);

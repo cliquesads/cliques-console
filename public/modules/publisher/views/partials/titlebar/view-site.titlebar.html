@@ -1,7 +1,15 @@
-<section data-ng-init="findOne()">
-    <div class="pull-right col-sm-1" style="text-align: right">
-        <logo-widget model="publisher" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
-        <small class="text-muted"><span class="icon-share"></span>&nbsp;&nbsp;{{ site.clique }}</small>
+<div ng-switch on="$state.$current.self.name">
+    <div ng-switch-default>
+        <!-- View hook for child views -->
+        <section data-ui-view="titleBar"></section>
     </div>
-    {{site.name}}
-</section>
+    <div ng-switch-when="app.publisher.viewPublisher.viewSite">
+        <section data-ng-init="findOne()">
+            <div class="pull-right col-sm-1" style="text-align: right">
+                <logo-widget model="publisher" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
+                <small class="text-muted"><span class="icon-share"></span>&nbsp;&nbsp;{{ site.clique }}</small>
+            </div>
+            {{site.name}}
+        </section>
+    </div>
+</div>

@@ -1,28 +1,33 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('editPageController', ['$scope','PUBLISHER_TOOLTIPS','Authentication','Notify',
-	function($scope,PUBLISHER_TOOLTIPS, Authentication, Notify){
+angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','Authentication','Notify',
+	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, Authentication, Notify){
         $scope.authentication = Authentication;
-        $scope.publisher = $scope.ngDialogData.publisher;
 
         function setPage(){
-
             // Set refs to nested documents in parent Publisher so $update method
             // can be used.  Don't know if this is entirely necessary but doing
             // to be safe, as I find Angular's handling of object refs kind of confusing
             var site_ind = _.findIndex($scope.publisher.sites, function(site){
-                return site._id === $scope.ngDialogData.site._id;
+                return site._id === $stateParams.siteId;
             });
             $scope.site = $scope.publisher.sites[site_ind];
 
             var page_ind = _.findIndex($scope.site.pages, function(page){
-                return page._id === $scope.ngDialogData.page._id;
+                return page._id === $stateParams.pageId;
             });
             $scope.page = $scope.site.pages[page_ind];
-            //$scope.page = $scope.ngDialogData.page;
         }
-        setPage();
+
+        $scope.findOne = function() {
+            Publisher.get({publisherId: $stateParams.publisherId})
+                .$promise
+                .then(function(publisher){
+                    $scope.publisher = publisher;
+                    setPage();
+                });
+        };
 
         // Only accessible to admins
         $scope.togglePageActive = function(){
