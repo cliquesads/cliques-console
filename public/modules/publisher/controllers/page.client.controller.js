@@ -1,8 +1,8 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','Authentication','Notify',
-	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, Authentication, Notify){
+angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','HourlyAdStat','aggregationDateRanges','Authentication','Notify',
+	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
         $scope.authentication = Authentication;
 
         function setPage(){
@@ -52,6 +52,26 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                     Notify.alert('Error activating page: ' + errorResponse.message,{status: 'danger'});
                 });
             }
+        };
+
+        // See service in aggregations module for details on aggregationDateRanges object
+        $scope.dateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+        $scope.getQuickStats = function(dateShortCode){
+            var startDate = $scope.dateRanges[dateShortCode].startDate;
+            var endDate = $scope.dateRanges[dateShortCode].endDate;
+            $scope.dateRangeSelection = dateShortCode;
+            // query HourlyAdStats api endpoint
+            HourlyAdStat.pubQuery({
+                publisherId: $stateParams.publisherId,
+                siteId: $stateParams.siteId,
+                pageId: $stateParams.pageId
+            },{
+                startDate: startDate,
+                endDate: endDate
+            }).then(function(response){
+                $scope.quickStats = response.data;
+            });
         };
 
         $scope.updateAndClose = function(){

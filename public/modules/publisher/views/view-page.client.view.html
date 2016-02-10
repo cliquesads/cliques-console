@@ -1,54 +1,112 @@
 <section data-ng-init="findOne()">
-    <h4>{{ page.name || 'New Page' }}</h4>
     <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
     <!--Only show activate controls for admins right now-->
-    <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
-        <div class="form-horizontal">
-            <div class="form-group m0">
-                <label class="col-sm-1 control-label">Active</label>
-                <div class="col-sm-2 form-control-static">
-                    <label class="switch">
-                        <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
-                        <span></span>
-                    </label>
-                    <div class="label" ng-class="page.active ? 'label-success':'label-default'">{{ page.active ? "Active":"Inactive"}}</div>
+    <div class="col-sm-10">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <span class="panel-title">Page Settings</span>
+            </div>
+            <div class="panel-body">
+                <div class="form-group m0 col-sm-2" ng-show="authentication.user.roles.indexOf('admin') > -1">
+                    <label class="control-label">Active</label>
+                    <div class="form-control-static">
+                        <label class="switch">
+                            <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
+                            <span></span>
+                        </label>
+                        <div class="label" ng-class="page.active ? 'label-success':'label-default'">{{ page.active ? "Active":"Inactive"}}</div>
+                    </div>
                 </div>
-                <div class="col-sm-9"></div>
+                <form editable-form name="pageForm" id="pageForm" onaftersave="update()">
+                    <div class="form-group m0 col-sm-2">
+                        <label class="control-label">Name</label>
+                        <p class="form-control-static">
+                            <span editable-text="page.name" e-name="name" id="name" required="required">{{ page.name }}</span>
+                        </p>
+
+                    </div>
+                    <div class="form-group m0 col-sm-3">
+                        <label class="control-label">URL</label>
+                        <p class="form-control-static">
+                            <span editable-text="page.url" e-name="url">{{ page.url }}</span>
+                        </p>
+                    </div>
+                    <div class="form-group m0 col-sm-3">
+                        <label class="control-label">Description</label>
+                        <p class="form-control-static">
+                            <span editable-text="page.description" e-name="description">
+                                <hm-read-more
+                                        hm-text="{{ page.description }}"
+                                        hm-limit="20"
+                                        hm-more-text="read more"
+                                        hm-less-text="read less"
+                                        hm-dots-class="dots"
+                                        hm-link-class="links">
+                                </hm-read-more></span>
+                        </p>
+                    </div>
+                    <div class="form-group m0 col-sm-1">
+                        <label class="control-label">Clique</label>
+                        <p class="form-control-static">
+                            <span>{{ page.clique || "empty" }}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-1">
+                        <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible">
+                            <span class="fa fa-edit"></span>
+                        </a>
+                    </div>
+                    <div class="pull-right">
+                        <!-- buttons to submit / cancel form -->
+                        <span ng-show="pageForm.$visible">
+                            <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
+                                Save
+                            </button>
+                            <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
+                                Cancel
+                            </button>
+                        </span>
+                    </div>
+                </form>
             </div>
         </div>
-    </fieldset>
-    <fieldset>
-        <form id="pageForm">
-            <div class="form-group m0 col-sm-2">
-                <label class="control-label">Name</label>
-                <p class="form-control-static">
-                    <input type="text" data-ng-model="page.name" name="name" id="name" class="form-control" placeholder="Homepage" required="required"/>
-                </p>
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <fieldset>
+                <placement-form page="page" publisher="publisher"></placement-form>
+            </fieldset>
+        </div>
+        </div>
+    </div>
+    <div class="col-sm-2" data-ng-init="getQuickStats(dateRangeSelection)">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">Quick Stats - {{ dateRanges[dateRangeSelection].label }}
+                    &nbsp;
+                    <small>
+                        <em class="text-muted">
+                            Reporting Timezone: {{ authentication.user.tz }}
+                        </em>
+                    </small>
+                    <span class="pull-right">
+                        <button class="btn btn-sm btn-default" ng-click="getQuickStats('7d')">7d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getQuickStats('30d')">30d</button>
+                        <button class="btn btn-sm btn-default" ng-click="getQuickStats('90d')">90d</button>
+                    </span>
+                </div>
             </div>
-            <div class="form-group m0 col-sm-4">
-                <label class="control-label">URL</label>
-                <p class="form-control-static">
-                    <input name="url" type="text" data-ng-model="page.url" id="url" class="form-control" placeholder="example.com/post.html" required="required">
-                </p>
-            </div>
-            <div class="form-group m0 col-sm-4">
-                <label class="control-label">Description</label>
-                <p class="form-control-static">
-                    <input type="text" data-ng-model="page.description" name="decription" id="description" class="form-control" placeholder="Homepage"/>
-                </p>
-            </div>
-            <div class="form-group m0 col-sm-2">
-                <label class="control-label">Clique</label>
-                <p class="form-control-static">
-                    {{ page.clique || "empty" }}
-                </p>
-            </div>
-        </form>
-    </fieldset>
-    <fieldset>
-        <placement-form page="page" publisher="publisher"></placement-form>
-    </fieldset>
-    <div class="text-center">
-        <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+            <div class="panel-body text-center ">
+            <p>Impressions</p>
+            <div class="h3">{{ quickStats[0].imps | number: 0 }}</div>
+            <p>CTR</p>
+            <div class="h3">{{ quickStats[0].clicks / quickStats[0].imps | percentage:2 }}</div>
+            <p>Clicks</p>
+            <div class="h3">{{ quickStats[0].clicks | number: 0 }}</div>
+            <p>Revenue</p>
+            <div class="h3">{{ quickStats[0].spend | currency:"$":"0" }}</div>
+            <p>Avg. RPM</p>
+            <div class="h3">{{ (quickStats[0].spend / quickStats[0].imps) * 1000 | currency:"$":"2" }}</div>
+        </div>
+        </div>
     </div>
 </section>
