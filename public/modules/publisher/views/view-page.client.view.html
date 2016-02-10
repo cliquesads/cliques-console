@@ -4,7 +4,9 @@
     <div class="col-sm-4">
         <div class="list-group">
             <div class="list-group-item">
-                <span class="panel-title">Page Settings</span>
+                <span class="panel-title">
+                    <i class="fa fa-cog"></i>&nbsp;Page Settings
+                </span>
             </div>
             <div class="list-group-item">
                 <div class="form-horizontal">
@@ -66,18 +68,18 @@
                                 <!--</p>-->
                             <!--</div>-->
                         <!--</div>-->
-                        <div class="pull-right">
-                            <!-- buttons to submit / cancel form -->
-                            <span ng-show="pageForm.$visible">
-                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
-                                    Save
-                                </button>
-                                <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
-                                    Cancel
-                                </button>
-                            </span>
-                        </div>
                     </form>
+                </div>
+            </div>
+            <div class="list-group-item" ng-show="pageForm.$visible">
+                <div class="text-center">
+                    <!-- buttons to submit / cancel form -->
+                    <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -126,9 +128,10 @@
         </div>
     </div>
     <div class="col-sm-8">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <div class="panel-title">
+                    <i class="fa fa-tags"></i>&nbsp;
                     Placement Manager
                 </div>
             </div>
