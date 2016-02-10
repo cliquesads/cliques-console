@@ -33,7 +33,9 @@ adding hook in parent template ---->
                         <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newSite()">
                             <span class="btn-label"><i class="fa fa-plus"></i></span>New Site
                         </button>
-                        <span class="panel-title">Sites</span>
+                        <span class="panel-title">
+                            <i class="fa fa-desktop"></i>&nbsp;Sites
+                        </span>
                     </li>
                     <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item">
                         <div class="row row-table">

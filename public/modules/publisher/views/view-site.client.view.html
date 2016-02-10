@@ -21,7 +21,9 @@ adding hook in parent template ---->
                         <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPage()">
                             <span class="btn-label"><i class="fa fa-plus"></i></span>New Page
                         </button>
-                        <span class="panel-title">Pages</span>
+                        <span class="panel-title">
+                            <i class="icon-docs"></i>&nbsp;Pages
+                        </span>
                     </li>
                     <a data-ng-repeat="page in site.pages" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}/page/{{page._id}}" class="list-group-item">
                         <div class="row row-table">
@@ -40,135 +42,134 @@ adding hook in parent template ---->
                     </a>
                 </ul>
                 <!--BEGIN Site Basics Panel-->
-                <div id="siteSettings" class="panel panel-primary">
+                <div id="siteSettings" class="list-group">
                     <!--<div ng-class="{'panel-heading-collapsed': siteSettings }" class="panel-heading">Site Settings-->
                         <!--<paneltool tool-collapse="tool-collapse"></paneltool>-->
                     <!--</div>-->
-                    <div class="panel-heading">
+                    <div class="list-group-item">
                         <span class="panel-title">
-                            <i class="fa fa-cogs"></i>&nbsp;Site Settings
+                            <i class="fa fa-cog"></i>&nbsp;Site Settings
                         </span>
                     </div>
-                    <div collapse="siteSettings" class="panel-wrapper">
-                        <div class="panel-body pt0">
-                            <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1" class="p-sm m0">
-                                <small><em class="text-muted">Status</em></small>
+                    <!--<div collapse="siteSettings" class="panel-wrapper">-->
+                    <div class="list-group-item pt0">
+                        <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1" class="p-sm m0">
+                            <small><em class="text-muted">Status</em></small>
+                            <div class="form-horizontal">
+                                <div class="form-group m0">
+                                    <label class="col-sm-3 control-label">Active</label>
+                                    <div class="col-sm-7 form-control-static">
+                                        <label class="switch">
+                                            <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
+                                            <span></span>
+                                        </label>
+                                        <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
+                                    </div>
+                                    <div class="col-sm-2"></div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="p-sm m0">
+                            <small><em class="text-muted">Settings</em></small>
+                            <form editable-form name="siteBasicsInline" onaftersave="update()">
                                 <div class="form-horizontal">
                                     <div class="form-group m0">
-                                        <label class="col-sm-3 control-label">Active</label>
-                                        <div class="col-sm-7 form-control-static">
-                                            <label class="switch">
-                                                <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
-                                                <span></span>
-                                            </label>
-                                            <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
+                                        <label class="col-sm-3 control-label">Name</label>
+                                        <div class="col-sm-7">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.name" e-name="name" e-required>{{ site.name }}</span>
+                                            </p>
                                         </div>
-                                        <div class="col-sm-2"></div>
+                                        <div class="col-sm-2">
+                                            <a href="#" class="pull-right" ng-click="siteBasicsInline.$show()" ng-show="!siteBasicsInline.$visible">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-3 control-label">Description</label>
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.description" e-name="description">
+                                                    <hm-read-more
+                                                        hm-text="{{ site.description }}"
+                                                        hm-limit="34"
+                                                        hm-more-text="read more"
+                                                        hm-less-text="read less"
+                                                        hm-dots-class="dots"
+                                                        hm-link-class="links">
+                                                    </hm-read-more></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-3 control-label">Domain Name</label>
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.domain_name" e-name="domain_name" >{{ site.domain_name }}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-3 control-label">Price Floor</label>
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static">
+                                                <span style="color: #656565" editable-number="site.bidfloor" e-name="bid_floor" >{{ (site.bidfloor | currency:"$":"2")  || 'none' }} </span>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </fieldset>
-                            <fieldset class="p-sm m0">
-                                <small><em class="text-muted">Settings</em></small>
-                                <form editable-form name="siteBasicsInline" onaftersave="update()">
-                                    <div class="form-horizontal">
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="siteBasicsInline.$visible">
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="siteBasicsInline.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="siteBasicsInline.$waiting" ng-click="siteBasicsInline.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
+                        <fieldset class="p-sm m0">
+                            <small><em class="text-muted">Advertiser Settings</em></small>
+                            <form editable-form name="blacklistForm" onaftersave="update()">
+                                <div class="form-horizontal">
+                                    <span ng-show="!blacklistForm.$visible">
                                         <div class="form-group m0">
-                                            <label class="col-sm-3 control-label">Name</label>
+                                            <label tooltip="{{ TOOLTIPS.blacklist }}" class="col-sm-3 control-label">Adv. Blacklist&nbsp;&nbsp;</label>
                                             <div class="col-sm-7">
                                                 <p class="form-control-static">
-                                                    <span editable-text="site.name" e-name="name" e-required>{{ site.name }}</span>
+                                                    {{ site.blacklist.length ? site.blacklist : "[empty]" }}
                                                 </p>
                                             </div>
                                             <div class="col-sm-2">
-                                                <a href="#" class="pull-right" ng-click="siteBasicsInline.$show()" ng-show="!siteBasicsInline.$visible">
+                                                <a href="#" class="pull-right" ng-click="blacklistForm.$show()" ng-show="!blacklistForm.$visible">
                                                     <span class="fa fa-edit"></span>
                                                 </a>
                                             </div>
                                         </div>
-                                        <div class="form-group m0">
-                                            <label class="col-sm-3 control-label">Description</label>
-                                            <div class="col-sm-9">
-                                                <p class="form-control-static">
-                                                    <span editable-text="site.description" e-name="description">
-                                                        <hm-read-more
-                                                            hm-text="{{ site.description }}"
-                                                            hm-limit="34"
-                                                            hm-more-text="read more"
-                                                            hm-less-text="read less"
-                                                            hm-dots-class="dots"
-                                                            hm-link-class="links">
-                                                        </hm-read-more></span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group m0">
-                                            <label class="col-sm-3 control-label">Domain Name</label>
-                                            <div class="col-sm-9">
-                                                <p class="form-control-static">
-                                                    <span editable-text="site.domain_name" e-name="domain_name" >{{ site.domain_name }}</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="form-group m0">
-                                            <label class="col-sm-3 control-label">Price Floor</label>
-                                            <div class="col-sm-9">
-                                                <p class="form-control-static">
-                                                    <span style="color: #656565" editable-number="site.bidfloor" e-name="bid_floor" >{{ (site.bidfloor | currency:"$":"2")  || 'none' }} </span>
-                                                </p>
-                                            </div>
-                                        </div>
+                                    </span>
+                                    <div class="col-sm-12" ng-show="blacklistForm.$visible">
+                                        <div class="text-sm text-muted">Type and press Enter</div>
+                                        <domain-blacklist model="site.blacklist"></domain-blacklist>
                                     </div>
-                                    <div class="pull-right">
-                                        <!-- buttons to submit / cancel form -->
-                                        <span ng-show="siteBasicsInline.$visible">
-                                            <button type="submit" class="btn btn-xs btn-primary" ng-disabled="siteBasicsInline.$waiting">
-                                                Save
-                                            </button>
-                                            <button type="button" class="btn btn-xs btn-default" ng-disabled="siteBasicsInline.$waiting" ng-click="siteBasicsInline.$cancel()">
-                                                Cancel
-                                            </button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </fieldset>
-                            <fieldset class="p-sm m0">
-                                <small><em class="text-muted">Advertiser Settings</em></small>
-                                <form editable-form name="blacklistForm" onaftersave="update()">
-                                    <div class="form-horizontal">
-                                        <span ng-show="!blacklistForm.$visible">
-                                            <div class="form-group m0">
-                                                <label tooltip="{{ TOOLTIPS.blacklist }}" class="col-sm-3 control-label">Adv. Blacklist&nbsp;&nbsp;</label>
-                                                <div class="col-sm-7">
-                                                    <p class="form-control-static">
-                                                        {{ site.blacklist.length ? site.blacklist : "[empty]" }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <a href="#" class="pull-right" ng-click="blacklistForm.$show()" ng-show="!blacklistForm.$visible">
-                                                        <span class="fa fa-edit"></span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </span>
-                                        <div class="col-sm-12" ng-show="blacklistForm.$visible">
-                                            <div class="text-sm text-muted">Type and press Enter</div>
-                                            <domain-blacklist model="site.blacklist"></domain-blacklist>
-                                        </div>
-                                    </div>
-                                    <div class="pull-right">
-                                        <!-- buttons to submit / cancel form -->
-                                        <span ng-show="blacklistForm.$visible">
-                                            <br/>
-                                            <button type="submit" class="btn btn-xs btn-primary" ng-disabled="blacklistForm.$waiting">
-                                                Save
-                                            </button>
-                                            <button type="button" class="btn btn-xs btn-default" ng-disabled="blacklistForm.$waiting" ng-click="blacklistForm.$cancel()">
-                                                Cancel
-                                            </button>
-                                        </span>
-                                    </div>
-                                </form>
-                            </fieldset>
-                        </div>
+                                </div>
+                                <div class="pull-right">
+                                    <!-- buttons to submit / cancel form -->
+                                    <span ng-show="blacklistForm.$visible">
+                                        <br/>
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="blacklistForm.$waiting">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="blacklistForm.$waiting" ng-click="blacklistForm.$cancel()">
+                                            Cancel
+                                        </button>
+                                    </span>
+                                </div>
+                            </form>
+                        </fieldset>
                     </div>
                 </div>
             </div>

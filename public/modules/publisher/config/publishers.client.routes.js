@@ -66,7 +66,7 @@ angular.module('publisher').config(['$stateProvider',
         }).
         state('app.publisher.viewPublisher.viewSite.viewPage', {
             url: '/page/:pageId',
-            title: 'View Page',
+            title: 'Page Manager',
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/view-page.client.view.html',
