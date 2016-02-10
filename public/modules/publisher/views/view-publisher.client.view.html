@@ -30,12 +30,10 @@ adding hook in parent template ---->
                 <!--BEGIN SITE PANEL-->
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <h4>
-                            <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newSite()">
-                                <span class="btn-label"><i class="fa fa-plus"></i></span>New Site
-                            </button>
-                            Sites
-                        </h4>
+                        <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newSite()">
+                            <span class="btn-label"><i class="fa fa-plus"></i></span>New Site
+                        </button>
+                        <span class="panel-title">Sites</span>
                     </li>
                     <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item">
                         <div class="row row-table">
