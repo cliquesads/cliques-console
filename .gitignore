@@ -11,6 +11,7 @@ config/env/local.js
 # ==========================
 .nodemonignore
 .sass-cache/
+.nvm/
 npm-debug.log
 node_modules/
 public/lib/
