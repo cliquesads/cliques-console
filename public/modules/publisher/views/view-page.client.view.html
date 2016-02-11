@@ -1,7 +1,7 @@
 <section data-ng-init="findOne()">
-    <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+    <div class="col-md-12 alert alert-danger" ng-show="error">{{ error }}</div>
     <!--Only show activate controls for admins right now-->
-    <div class="col-sm-5">
+    <div class="col-sm-4">
         <div class="list-group">
             <div class="list-group-item">
                 <span class="panel-title">
@@ -127,19 +127,19 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-7">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="panel-title">
-                    <i class="fa fa-tags"></i>&nbsp;
+    <div class="col-sm-8">
+        <div class="list-group">
+            <div class="list-group-item">
+                <i class="fa fa-tags"></i>&nbsp;
+                <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPlacement()">
+                    <span class="btn-label"><i class="fa fa-plus"></i></span>New Placement
+                </button>
+                <span class="panel-title">
                     Placement Manager
-                </div>
+                </span>
             </div>
-            <div class="panel-body">
+            <div class="list-group-item">
                 <fieldset>
-                    <button type="button" class="btn btn-labeled btn-primary btn-sm" ng-click="newPlacement()">
-                        <span class="btn-label"><i class="fa fa-plus"></i></span>New Placement
-                    </button>
                     <div class="table-responsive">
                         <form id="placementForm">
                             <table class="table table-striped">
@@ -156,22 +156,20 @@
                                     <td class="col-sm-1">
                                         <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
                                     </td>
-                                    <td class="col-sm-4">
-                                        <a href="#" ng-click="" class="pull-right">
-                                            <span class="fa fa-edit"></span>
-                                        </a>
+                                    <td class="col-sm-5">
                                         <h4 class="list-group-item-heading">{{ placement.name }}</h4>
                                         <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
                                     </td>
                                     <td class="col-sm-3">
-                                        {{ placement.defaultType }}
+                                        <p class="m0">{{ DEFAULT_TYPES[placement.defaultType].name }}</p>
+                                        <small class="text-muted">{{ DEFAULT_TYPES[placement.defaultType].description }}</small>
                                     </td>
-                                    <td class="col-sm-2">
+                                    <td class="col-sm-3">
                                         <span>
                                             <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
                                             <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
                                         </span>
-                                        <button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+                                        <!--<button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>-->
                                     </td>
                                 </tr>
                                 </tbody>

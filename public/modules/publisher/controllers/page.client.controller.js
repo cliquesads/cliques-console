@@ -1,10 +1,13 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','HourlyAdStat','aggregationDateRanges','Authentication','Notify',
-	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
+angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher',
+    'PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','DEFAULT_TYPES',
+    'HourlyAdStat','aggregationDateRanges','Authentication','Notify',
+	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES,
+             DEFAULT_TYPES, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
+        $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
-
         $scope.getPositionByCode = function(code){
             return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
         };
@@ -23,6 +26,14 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
             $scope.page = $scope.site.pages[page_ind];
         }
+
+        $scope.update = function() {
+            $scope.publisher.$update(function(){
+                setPage();
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
 
         $scope.findOne = function() {
             Publisher.get({publisherId: $stateParams.publisherId})
@@ -58,6 +69,10 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             }
         };
 
+        /**
+         * Utils to get QuickStats
+         * @type {string}
+         */
         // See service in aggregations module for details on aggregationDateRanges object
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
@@ -78,24 +93,42 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 
-        $scope.updateAndClose = function(){
-            var valid = $('#placementForm').parsley().validate() && $('#pageForm').parsley().validate();
-            if (valid){
-                this.page.placements.forEach(function(placement){
-                    if (!placement.w && !placement.h){
-                        var dims = placement.dimensions.split('x');
-                        placement.w = Number(dims[0]);
-                        placement.h = Number(dims[1]);
-                    }
-                });
-                this.publisher.$update(function() {
-                    $scope.closeThisDialog('Success');
-                }, function(errorResponse){
-                    $scope.saveerror = errorResponse.data.message;
-                });
-            } else {
-                return false;
-            }
+        /**
+         * Handler for get Ad Tag button, opens new dialog
+         * @param placement
+         */
+        $scope.getPlacementTag = function(placement){
+            ngDialog.open({
+                template: '\
+                    <section data-ng-init="getPlacementTag()">\
+                        <h4>Tag for {{placement.name}}</h4>\
+                        <div class="checkbox c-checkbox">\
+                            <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>\
+                        </div>\
+                        <pre>{{ tag }}</pre>\
+                    </section>',
+                plain: true,
+                controller: ['$scope','PlacementTag',function($scope,PlacementTag) {
+                    $scope.publisher = $scope.ngDialogData.publisher;
+                    $scope.placement = $scope.ngDialogData.placement;
+                    $scope.options = {
+                        secure: false
+                    };
+                    $scope.getPlacementTag = function(){
+                        PlacementTag.getTag({
+                            publisherId: $scope.publisher._id,
+                            placementId: $scope.placement._id,
+                            secure: $scope.options.secure
+                        }).then(function(response){
+                            $scope.tag = response.data.tag;
+                        });
+                    };
+                    $scope.$watch(function(scope){ return scope.options.secure; }, function(){
+                        $scope.getPlacementTag();
+                    });
+                }],
+                data: {publisher: $scope.publisher, placement: placement}
+            });
         };
 	}
 ]);
