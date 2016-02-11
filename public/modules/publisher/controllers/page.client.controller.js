@@ -1,9 +1,13 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','HourlyAdStat','aggregationDateRanges','Authentication','Notify',
-	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
+angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher','PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','HourlyAdStat','aggregationDateRanges','Authentication','Notify',
+	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
         $scope.authentication = Authentication;
+
+        $scope.getPositionByCode = function(code){
+            return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
+        };
 
         function setPage(){
             // Set refs to nested documents in parent Publisher so $update method

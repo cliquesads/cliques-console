@@ -1,7 +1,7 @@
 <section data-ng-init="findOne()">
     <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
     <!--Only show activate controls for admins right now-->
-    <div class="col-sm-4">
+    <div class="col-sm-5">
         <div class="list-group">
             <div class="list-group-item">
                 <span class="panel-title">
@@ -127,7 +127,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-8">
+    <div class="col-sm-7">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <div class="panel-title">
@@ -137,7 +137,47 @@
             </div>
             <div class="panel-body">
                 <fieldset>
-                    <placement-form page="page" publisher="publisher"></placement-form>
+                    <button type="button" class="btn btn-labeled btn-primary btn-sm" ng-click="newPlacement()">
+                        <span class="btn-label"><i class="fa fa-plus"></i></span>New Placement
+                    </button>
+                    <div class="table-responsive">
+                        <form id="placementForm">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Basics</th>
+                                    <th>Default Condition</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="placement in page.placements">
+                                    <td class="col-sm-1">
+                                        <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
+                                    </td>
+                                    <td class="col-sm-4">
+                                        <a href="#" ng-click="" class="pull-right">
+                                            <span class="fa fa-edit"></span>
+                                        </a>
+                                        <h4 class="list-group-item-heading">{{ placement.name }}</h4>
+                                        <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
+                                    </td>
+                                    <td class="col-sm-3">
+                                        {{ placement.defaultType }}
+                                    </td>
+                                    <td class="col-sm-2">
+                                        <span>
+                                            <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
+                                            <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
+                                        </span>
+                                        <button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
                 </fieldset>
             </div>
         </div>

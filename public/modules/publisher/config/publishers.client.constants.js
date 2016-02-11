@@ -10,4 +10,18 @@ angular.module('publisher')
         domain_name: "The base domain name associated with your site.",
         blacklist: "Let us know if there are any advertisers who are not allowed to purchase impressions on your site due to direct-sale or content restrictions.  Note: You must use the advertiser's domain name in order to ensure they are uniquely identified.",
         page_url: "The URL for this particular page.  If the URL is dynamic you can just use placeholders, e.g. http://example.com/[DATE]/[POST_NAME]"
+    })
+    .constant('DEFAULT_TYPES',{
+        passback: {
+            name: 'Passback Tag',
+            description: 'A snippet of HTML code.'
+        },
+        'hostedCreative': {
+            name: 'Custom Creative',
+            description: 'An uploaded image or HTML5 ad that fits this placement\'s dimensions.'
+        },
+        'hide': {
+            name: 'Hide',
+            description: 'Ad unit collapses & goes away.'
+        }
     });
