@@ -1,47 +1,62 @@
 <p class="text-md">{{ placement.name }}</p>
 <form id="placementForm" name="placementForm">
-    <div class="formHorizontal">
-        <div class="form-group m0" ng-show="authentication.user.roles.indexOf('admin') > -1">
-            <label class="control-label col-sm-3">Active</label>
-            <div class="col-sm-8">
-                <div class="form-control-static">
-                    <label class="switch">
-                        <input type="checkbox" checked="checked" ng-model="placement.active" ng-click="placement.active != placement.active"/>
-                        <span></span>
-                    </label>
-                    <status-label model="placement"></status-label>
+    <tabset>
+        <tab heading="Basic Settings">
+            <div class="form-horizontal">
+                <div class="form-group m0" ng-show="authentication.user.roles.indexOf('admin') > -1">
+                    <label class="control-label col-sm-3">Active</label>
+                    <div class="col-sm-8">
+                        <div class="form-control-static">
+                            <label class="switch">
+                                <input type="checkbox" checked="checked" ng-model="placement.active" ng-click="placement.active != placement.active"/>
+                                <span></span>
+                            </label>
+                            <status-label model="placement"></status-label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Name</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <input type="text" data-ng-model="placement.name" placeholder="ex. Right Sidebar 300x250" required="required" class="form-control"/>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Dimensions</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <select name="dimensions" data-ng-model="placement.dimensions" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Position</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <select name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group m0">
-            <label class="col-sm-3 control-label">Name</label>
-            <div class="col-sm-9">
-                <p class="form-control-static">
-                    <input type="text" data-ng-model="placement.name" placeholder="ex. Right Sidebar 300x250" required="required" class="form-control"/>
-                </p>
+        </tab>
+        <tab heading="Default Condition">
+            <div class="box-form m0">
+                <ol class="row">
+                    <li ng-repeat="(key, value) in DEFAULT_TYPES" ng-class="{'active': placement.defaultType === key }" ng-click="placement.defaultType = key" class="col-sm-4 align-middle" style="min-height: 160px;">
+                        <h4><i class="{{ value.icon }}"></i>&nbsp;{{ value.name }}</h4>
+                        <p>{{ value.description }}</p>
+                    </li>
+                </ol>
             </div>
-        </div>
-        <div class="form-group m0">
-            <label class="col-sm-3 control-label">Dimensions</label>
-            <div class="col-sm-9">
-                <p class="form-control-static">
-                    <select name="dimensions" data-ng-model="placement.dimensions" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
-                        <option value=""></option>
-                    </select>
-                </p>
-            </div>
-        </div>
-        <div class="form-group m0">
-            <label class="col-sm-3 control-label">Dimensions</label>
-            <div class="col-sm-9">
-                <p class="form-control-static">
-                    <select name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
-                        <option value=""></option>
-                    </select>
-                </p>
-            </div>
-        </div>
-    </div>
+        </tab>
+    </tabset>
+    <br/>
     <div class="row text-center">
         <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
     </div>

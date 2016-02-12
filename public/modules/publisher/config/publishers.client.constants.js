@@ -18,7 +18,7 @@ angular.module('publisher')
             icon: 'fa fa-exchange'
         },
         'hostedCreative': {
-            name: 'Custom Creative',
+            name: 'Custom Ad',
             description: 'An uploaded image or HTML5 ad that fits this placement\'s dimensions.',
             icon: 'fa fa-picture-o'
         },
