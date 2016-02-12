@@ -14,12 +14,12 @@ angular.module('publisher')
     .constant('DEFAULT_TYPES',{
         passback: {
             name: 'Passback Tag',
-            description: 'A snippet of HTML code.',
+            description: 'A snippet of HTML code to be called. Common examples: DFP Passback Tags, affiliate links, etc.',
             icon: 'fa fa-exchange'
         },
         'hostedCreative': {
             name: 'Custom Ad',
-            description: 'An uploaded image or HTML5 ad that fits this placement\'s dimensions.',
+            description: 'An uploaded image that fits this placement\'s dimensions.',
             icon: 'fa fa-picture-o'
         },
         'hide': {

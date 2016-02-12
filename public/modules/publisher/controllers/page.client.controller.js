@@ -95,7 +95,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
 
         $scope.editPlacement = function(placement){
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth600',
+                className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-placement-form.html',
                 controller: 'editPlacementController',
                 data: {publisher: $scope.publisher, placement: placement }
