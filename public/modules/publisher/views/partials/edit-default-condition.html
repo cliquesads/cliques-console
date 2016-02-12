@@ -47,8 +47,9 @@
                 </tabset>
             </div>
             <div ng-switch-when="passback">
-                <label for="passbackTag">Passback Tag</label>
-                <textarea ng-model="placement.passbackTag" id="passbackTag" name="passbackTag" class="form-control"></textarea>
+                <h4>Enter Passback Tag</h4>
+                <p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>
+                <textarea ng-model="placement.passbackTag" id="passbackTag" rows=5 name="passbackTag" placeholder="<div>I am a passback tag!</div>" class="form-control code-input"></textarea>
                 <span ng-show="validateInput('passbackTag', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
             </div>
             <div ng-switch-when="hide">

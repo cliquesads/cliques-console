@@ -103,4 +103,3 @@ angular.module('publisher').controller('DefaultConditionController', ['$scope','
         };
     }
 ]);
-
