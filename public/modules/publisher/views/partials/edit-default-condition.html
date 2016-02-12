@@ -1,0 +1,66 @@
+<p class="text-md">{{ placement.name }}</p>
+<div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
+<form id="placementForm" name="placementForm">
+    <div class="box-form m0">
+        <ol class="row">
+            <li ng-repeat="(key, value) in DEFAULT_TYPES" ng-class="{'active': placement.defaultType === key }" ng-click="placement.defaultType = key" class="col-sm-4 align-middle p-sm" style="min-height: 120px;">
+                <h4><i class="{{ value.icon }}"></i>&nbsp;{{ value.name }}</h4>
+                <p class="m0 p0">{{ value.description }}</p>
+            </li>
+        </ol>
+    </div>
+    <fieldset>
+        <div ng-switch on="placement.defaultType">
+            <div ng-switch-when="hostedCreative">
+                <tabset>
+                    <tab heading="Current Ads">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Name</th>
+                                    <th>Click URL</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="creative in placement.hostedCreatives">
+                                    <td><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
+                                    <td>
+                                        <input type="text" name="creative.name" data-ng-model="creative.name" required="required" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="url" data-parsley-type="url" name="creative.click_url" data-ng-model="creative.click_url" required="required" class="form-control" />
+                                    </td>
+                                    <td><button type="button" ng-click="removeCreative(creative)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </tab>
+                    <tab heading="Upload New Creatives">
+                        <div class="row" id="creativeUploader">
+                            <creative-uploader uploader="uploader" supported-dimensions="supportedDimensions" onuploadall="validateAndUpload(validateQueue())" width="12"></creative-uploader>
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+            <div ng-switch-when="passback">
+                <label for="passbackTag">Passback Tag</label>
+                <textarea ng-model="placement.passbackTag" id="passbackTag" name="passbackTag" class="form-control" html-input></textarea>
+                <span ng-show="validateInput('passbackTag', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+            </div>
+            <div ng-switch-when="hide">
+                <div class="bs-callout bs-callout-primary">
+                    <h4>Heads Up</h4>
+                    <p>This option works best when you export <stong>Javascript</stong> tags, which fully collapse.</p>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <br/>
+    <div class="row text-center">
+        <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
+    </div>
+</form>

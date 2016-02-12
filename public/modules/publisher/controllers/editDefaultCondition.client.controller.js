@@ -1,7 +1,7 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('editPlacementController', ['$scope','Authentication','AdvertiserUtils',
+angular.module('publisher').controller('DefaultConditionController', ['$scope','Authentication','AdvertiserUtils',
     'CREATIVE_SIZES','OPENRTB','DEFAULT_TYPES','FileUploader',
     function($scope, Authentication, AdvertiserUtils, CREATIVE_SIZES, OPENRTB, DEFAULT_TYPES, FileUploader) {
         $scope.authentication = Authentication;

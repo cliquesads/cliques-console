@@ -93,11 +93,20 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 
-        $scope.editPlacement = function(placement){
+        $scope.editPlacementBasics = function(placement){
+            ngDialog.open({
+                className: 'ngdialog-theme-default',
+                template: 'modules/publisher/views/partials/edit-placement-basics.html',
+                controller: 'PlacementBasicsController',
+                data: { publisher: $scope.publisher, placement: placement }
+            });
+        };
+
+        $scope.editDefaultCondition = function(placement){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/edit-placement-form.html',
-                controller: 'editPlacementController',
+                template: 'modules/publisher/views/partials/edit-default-condition.html',
+                controller: 'DefaultConditionController',
                 data: {publisher: $scope.publisher, placement: placement }
             });
         };
