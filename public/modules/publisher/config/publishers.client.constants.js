@@ -14,14 +14,17 @@ angular.module('publisher')
     .constant('DEFAULT_TYPES',{
         passback: {
             name: 'Passback Tag',
-            description: 'A snippet of HTML code.'
+            description: 'A snippet of HTML code.',
+            icon: 'fa fa-exchange'
         },
         'hostedCreative': {
             name: 'Custom Creative',
-            description: 'An uploaded image or HTML5 ad that fits this placement\'s dimensions.'
+            description: 'An uploaded image or HTML5 ad that fits this placement\'s dimensions.',
+            icon: 'fa fa-picture-o'
         },
         'hide': {
             name: 'Hide',
-            description: 'Ad unit collapses & goes away.'
+            description: 'Ad unit collapses & goes away.',
+            icon: 'icon-ghost'
         }
     });

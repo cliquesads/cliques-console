@@ -10,15 +10,15 @@
             </div>
             <div class="list-group-item">
                 <div class="form-horizontal">
-                    <div class="form-group m0" ng-show="authentication.user.roles.indexOf('admin') > -1">
-                        <label class="control-label col-sm-3">Active</label>
+                    <div class="form-group m0">
+                        <label class="control-label col-sm-3">Status</label>
                         <div class="col-sm-8">
                             <div class="form-control-static">
-                                <label class="switch">
+                                <label class="switch" ng-show="authentication.user.roles.indexOf('admin') > -1">
                                     <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
                                     <span></span>
                                 </label>
-                                <div class="label" ng-class="page.active ? 'label-success':'label-default'">{{ page.active ? "Active":"Inactive"}}</div>
+                                <status-label model="page"></status-label>
                             </div>
                         </div>
                         <div class="col-sm-1">
@@ -60,14 +60,6 @@
                                 </p>
                             </div>
                         </div>
-                        <!--<div class="form-group m0">-->
-                            <!--<label class="control-label col-sm-3">Clique</label>-->
-                            <!--<div class="col-sm-9">-->
-                                <!--<p class="form-control-static">-->
-                                    <!--<span>{{ page.clique || "empty" }}</span>-->
-                                <!--</p>-->
-                            <!--</div>-->
-                        <!--</div>-->
                     </form>
                 </div>
             </div>
@@ -139,44 +131,45 @@
                 </span>
             </div>
             <div class="list-group-item">
-                <fieldset>
-                    <div class="table-responsive">
-                        <form id="placementForm">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Basics</th>
-                                    <th>Default Condition</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="placement in page.placements">
-                                    <td class="col-sm-1">
-                                        <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
-                                    </td>
-                                    <td class="col-sm-5">
-                                        <h4 class="list-group-item-heading">{{ placement.name }}</h4>
-                                        <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
-                                    </td>
-                                    <td class="col-sm-3">
-                                        <p class="m0">{{ DEFAULT_TYPES[placement.defaultType].name }}</p>
-                                        <small class="text-muted">{{ DEFAULT_TYPES[placement.defaultType].description }}</small>
-                                    </td>
-                                    <td class="col-sm-3">
-                                        <span>
-                                            <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
-                                            <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
-                                        </span>
-                                        <!--<button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>-->
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </form>
-                    </div>
-                </fieldset>
+                <div class="table-responsive">
+                    <form id="placementForm">
+                        <table class="table table-striped m0">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Basics</th>
+                                <th>Default Condition</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="placement in page.placements">
+                                <td class="col-sm-1">
+                                    <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
+                                </td>
+                                <td class="col-sm-5">
+                                    <h4 class="list-group-item-heading">{{ placement.name }}</h4>
+                                    <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
+                                </td>
+                                <td class="col-sm-4">
+                                    <p class="m0">
+                                        <i class="{{ DEFAULT_TYPES[placement.defaultType].icon }}"></i>&nbsp;
+                                        {{ DEFAULT_TYPES[placement.defaultType].name }}
+                                    </p>
+                                    <small class="text-muted">{{ DEFAULT_TYPES[placement.defaultType].description }}</small>
+                                </td>
+                                <td class="col-sm-2">
+                                    <span>
+                                        <button type="button" ng-click="editPlacement(placement)" class="btn btn-primary mb-sm btn-xs"><span class="fa fa-edit mr"></span>Edit Placement</button>
+                                        <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
+                                        <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

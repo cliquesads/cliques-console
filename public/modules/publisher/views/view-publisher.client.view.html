@@ -40,7 +40,7 @@ adding hook in parent template ---->
                     <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item">
                         <div class="row row-table">
                             <div class="col-sm-2">
-                                <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
+                                <status-label model="site"></status-label>
                             </div>
                             <div class="col-sm-7">
                                 <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>

@@ -3,9 +3,9 @@
 
 angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher',
     'PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','DEFAULT_TYPES',
-    'HourlyAdStat','aggregationDateRanges','Authentication','Notify',
+    'HourlyAdStat','aggregationDateRanges','Authentication','Notify','ngDialog',
 	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES,
-             DEFAULT_TYPES, HourlyAdStat, aggregationDateRanges, Authentication, Notify){
+             DEFAULT_TYPES, HourlyAdStat, aggregationDateRanges, Authentication, Notify, ngDialog){
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
         $scope.getPositionByCode = function(code){
@@ -90,6 +90,15 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 endDate: endDate
             }).then(function(response){
                 $scope.quickStats = response.data;
+            });
+        };
+
+        $scope.editPlacement = function(placement){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: 'modules/publisher/views/partials/edit-placement-form.html',
+                controller: 'editPlacementController',
+                data: {publisher: $scope.publisher, placement: placement }
             });
         };
 

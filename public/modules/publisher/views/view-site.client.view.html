@@ -28,7 +28,7 @@ adding hook in parent template ---->
                     <a data-ng-repeat="page in site.pages" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}/page/{{page._id}}" class="list-group-item">
                         <div class="row row-table">
                             <div class="col-sm-2">
-                                <div class="label" ng-class="page.active ? 'label-success':'label-default'">{{ page.active ? "Active":"Inactive"}}</div>
+                                <status-label model="page"></status-label>
                             </div>
                             <div class="col-sm-6">
                                 <h4 class="list-group-item-heading" data-ng-bind="page.name"></h4>
@@ -53,37 +53,31 @@ adding hook in parent template ---->
                     </div>
                     <!--<div collapse="siteSettings" class="panel-wrapper">-->
                     <div class="list-group-item pt0">
-                        <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1" class="p-sm m0">
-                            <small><em class="text-muted">Status</em></small>
-                            <div class="form-horizontal">
-                                <div class="form-group m0">
-                                    <label class="col-sm-3 control-label">Active</label>
-                                    <div class="col-sm-7 form-control-static">
-                                        <label class="switch">
-                                            <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
-                                            <span></span>
-                                        </label>
-                                        <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
-                                </div>
-                            </div>
-                        </fieldset>
                         <fieldset class="p-sm m0">
                             <small><em class="text-muted">Settings</em></small>
                             <form editable-form name="siteBasicsInline" onaftersave="update()">
                                 <div class="form-horizontal">
                                     <div class="form-group m0">
-                                        <label class="col-sm-3 control-label">Name</label>
-                                        <div class="col-sm-7">
-                                            <p class="form-control-static">
-                                                <span editable-text="site.name" e-name="name" e-required>{{ site.name }}</span>
-                                            </p>
+                                        <label class="col-sm-3 control-label">Status</label>
+                                        <div class="col-sm-7 form-control-static">
+                                            <label class="switch" ng-show="authentication.user.roles.indexOf('admin') > -1">
+                                                <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
+                                                <span></span>
+                                            </label>
+                                            <status-label model="site"></status-label>
                                         </div>
                                         <div class="col-sm-2">
                                             <a href="#" class="pull-right" ng-click="siteBasicsInline.$show()" ng-show="!siteBasicsInline.$visible">
                                                 <span class="fa fa-edit"></span>
                                             </a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-3 control-label">Name</label>
+                                        <div class="col-sm-9">
+                                            <p class="form-control-static">
+                                                <span editable-text="site.name" e-name="name" e-required>{{ site.name }}</span>
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="form-group m0">
