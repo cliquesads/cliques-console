@@ -117,31 +117,25 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
          */
         $scope.getPlacementTag = function(placement){
             ngDialog.open({
-                template: '\
-                    <section data-ng-init="getPlacementTag()">\
-                        <h4>Tag for {{placement.name}}</h4>\
-                        <div class="checkbox c-checkbox">\
-                            <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>\
-                        </div>\
-                        <pre>{{ tag }}</pre>\
-                    </section>',
-                plain: true,
+                template: 'modules/publisher/views/partials/placement-tags.html',
                 controller: ['$scope','PlacementTag',function($scope,PlacementTag) {
                     $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.placement = $scope.ngDialogData.placement;
                     $scope.options = {
-                        secure: false
+                        secure: false,
+                        type: 'javascript'
                     };
                     $scope.getPlacementTag = function(){
                         PlacementTag.getTag({
                             publisherId: $scope.publisher._id,
                             placementId: $scope.placement._id,
-                            secure: $scope.options.secure
+                            secure: $scope.options.secure,
+                            type: $scope.options.type
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watch(function(scope){ return scope.options.secure; }, function(){
+                    $scope.$watchGroup(['options.secure', 'options.type'], function(){
                         $scope.getPlacementTag();
                     });
                 }],

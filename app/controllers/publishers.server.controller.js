@@ -16,6 +16,8 @@ var config = require('config');
 var exchangeHostname = config.get('Exchange.http.external.hostname');
 var exchangeSecureHostname = config.get('Exchange.https.external.hostname');
 var exchangePort = config.get('Exchange.http.external.port');
+var cloaderURLSecure = config.get('Static.CLoader.https');
+var cloaderURLNonSecure = config.get('Static.CLoader.http');
 
 var mailer = new mail.Mailer();
 
@@ -258,10 +260,14 @@ module.exports = function(db) {
 
         placement: {
             getTag: function (req, res) {
+                var secure = JSON.parse(req.query.secure);
+                var cloaderURL = secure ? cloaderURLSecure : cloaderURLNonSecure;
                 var tag = new tags.PubTag(exchangeHostname,{
                     secure_hostname: exchangeSecureHostname,
                     port: exchangePort,
-                    secure: JSON.parse(req.query.secure)
+                    secure: secure,
+                    cloaderURL: cloaderURL,
+                    tag_type: req.query.type
                 });
                 publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', function(err, placement){
                     if (err){

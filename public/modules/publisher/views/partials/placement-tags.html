@@ -1,0 +1,23 @@
+<section data-ng-init="getPlacementTag()">
+    <h4 class="col-sm-12">Tag for {{placement.name}}</h4>
+    <form name="tagOptions">
+        <div class="row">
+            <div class="checkbox c-checkbox col-sm-4">
+                <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>
+            </div>
+            <div class="col-sm-4">
+                <div class="radio c-radio">
+                    <label>
+                        <input type="radio" name="js" ng-model="options.type" value="javascript" />
+                        <span class="fa fa-circle"></span>JavaScript</label>
+                </div>
+                <div class="radio c-radio">
+                    <label>
+                        <input type="radio" name="iframe" ng-model="options.type" value="iframe" />
+                        <span class="fa fa-circle"></span>iFrame</label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <pre>{{ tag }}</pre>
+</section>
