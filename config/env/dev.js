@@ -6,7 +6,7 @@ module.exports = {
 	},
     assets: {
         lib: {
-            css: [ 'public/dist/vendor.css' ],
+            css: [ 'public/dist/vendor.min.css' ],
             js: [ 'public/dist/vendor.js' ]
         },
         css: [
