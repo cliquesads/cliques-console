@@ -120,6 +120,14 @@ module.exports = function(grunt) {
 				src: watchFiles.clientCSS
 			}
 		},
+        copy: {
+            default: {
+                files: [
+                    // includes files within path
+                    {expand: true, src: 'public/lib/datatables/media/images/*', dest: 'public/images/', flatten: true, filter: 'isFile'}
+                ]
+            }
+        },
         concat: {
             options: {
                 // define a string to put between each file in the concatenated output
@@ -248,7 +256,8 @@ module.exports = function(grunt) {
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
         grunt.config.set('vendorSassFiles', config.vendor.sass);
 		grunt.config.set('vendorCSSFiles', config.vendor.css);
-	});
+        grunt.config.set('vendorImageFiles', config.vendor.image);
+    });
 
 	// Default task(s).
     // Only really should be run locally, hence the local-test env
@@ -267,10 +276,10 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build-dev',         ['env:dev','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
+	grunt.registerTask('build-dev', ['env:dev','copy','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
 
     // Build task(s).
-    grunt.registerTask('build-production', ['env:production','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
+    grunt.registerTask('build-production', ['env:production','copy','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

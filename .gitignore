@@ -26,6 +26,7 @@ bower_components/
 config/sslcerts/*.pem
 access.log
 public/dist/
+public/images/
 
 # General
 # =======

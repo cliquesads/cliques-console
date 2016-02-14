@@ -5,6 +5,7 @@ var cliquesConfig = require('config');
 var vendorCss = require('./vendorFiles/vendorCss');
 var vendorJs = require('./vendorFiles/vendorJs');
 var vendorSass = require('./vendorFiles/vendorSass');
+var vendorImages = require('./vendorFiles/vendorImages');
 
 module.exports = {
 	app: {
@@ -41,7 +42,8 @@ module.exports = {
     vendor: {
         js: vendorJs,
         sass: vendorSass,
-        css: vendorCss
+        css: vendorCss,
+        image: vendorImages
     },
     mongodb: {
         user: cliquesConfig.get('Console.mongodb.exchange.user'),
