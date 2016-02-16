@@ -93,21 +93,69 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 
+        var placementSaveCallback = function(newPublisher){
+            $scope.publisher = newPublisher;
+            setPage();
+        };
+
         $scope.editPlacementBasics = function(placement){
             ngDialog.open({
                 className: 'ngdialog-theme-default',
-                template: 'modules/publisher/views/partials/edit-placement-basics.html',
-                controller: 'PlacementBasicsController',
-                data: { publisher: $scope.publisher, placement: placement }
+                template: '<placement-basics publisher="publisher" page="page" placement="placement" on-save-success="onSaveSuccess(publisher)"></placement-basics>',
+                plain: true,
+                controller: ['$scope',function($scope){
+                    $scope.publisher = $scope.ngDialogData.publisher;
+                    $scope.page = $scope.ngDialogData.page;
+                    $scope.placement = $scope.ngDialogData.placement;
+                    $scope.onSaveSuccess = function(publisher) {
+                        $scope.closeThisDialog('Success');
+                        placementSaveCallback(publisher);
+
+                    };
+                }],
+                data: { publisher: $scope.publisher, placement: placement, page: $scope.page }
+            });
+        };
+
+        $scope.newPlacement = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default',
+                template: '<placement-basics publisher="publisher" page="page" on-save-success="onSaveSuccess(publisher)"></placement-basics>',
+                plain: true,
+                controller: ['$scope',function($scope){
+                    $scope.publisher = $scope.ngDialogData.publisher;
+                    $scope.page = $scope.ngDialogData.page;
+                    $scope.onSaveSuccess = function(publisher){
+                        $scope.closeThisDialog('Success');
+                        placementSaveCallback(publisher);
+                    };
+                }],
+                data: { publisher: $scope.publisher, page: $scope.page }
             });
         };
 
         $scope.editDefaultCondition = function(placement){
+            var initDefaultType = placement.defaultType;
+            var initPassbackTag = placement.passbackTag;
+            var initHostedCreatives = placement.hostedCreatives;
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-default-condition.html',
                 controller: 'DefaultConditionController',
-                data: {publisher: $scope.publisher, placement: placement }
+                data: {publisher: $scope.publisher, placement: placement },
+                preCloseCallback: function(value){
+                    if (value != 'Success'){
+                        var placement_ind = _.findIndex($scope.page.placements, function(pl){
+                            return pl._id === placement._id;
+                        });
+                        $scope.$apply(function(){
+                            $scope.page.placements[placement_ind].defaultType = initDefaultType;
+                            $scope.page.placements[placement_ind].passbackTag = initPassbackTag;
+                            $scope.page.placements[placement_ind].hostedCreatives = initHostedCreatives;
+                        });
+                        return true;
+                    }
+                }
             });
         };
 

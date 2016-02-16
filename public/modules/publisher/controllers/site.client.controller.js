@@ -24,10 +24,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
             //this way, all Publisher resource methods will work
             $scope.site = $scope.publisher.sites[i];
         }
-        //$scope.findPublishers = function() {
-        //    // on query return, get site spend data to augment $scope.publishers
-        //    $scope.publishers = Publisher.query();
-        //};
+
 		$scope.findOne = function() {
 			Publisher.get({publisherId: $stateParams.publisherId})
                 .$promise
@@ -66,7 +63,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                     page.active = false;
                     page.placements.forEach(function(placement){
                         placement.active = false;
-                    })
+                    });
                 });
                 this.publisher.$update(function(response){
                     Notify.alert('Your site was successfully deactivated.',{});

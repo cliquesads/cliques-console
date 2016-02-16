@@ -1,5 +1,5 @@
-<p class="text-md">{{ placement.name }}</p>
-<div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
+<h4 class="text-md">{{ placement.name || "New Placement" }}</h4>
+<div ng-show="saveerror" class="alert alert-danger">{{ saveerror }}</div>
 <form id="placementForm" name="placementForm">
     <div class="form-horizontal">
         <div class="form-group m0" ng-show="authentication.user.roles.indexOf('admin') > -1">
