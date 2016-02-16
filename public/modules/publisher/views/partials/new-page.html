@@ -1,4 +1,5 @@
 <h4>{{ page.name || 'New Page' }}</h4>
+<p>Create a new Page and any Placements that belong to it.  You can set advanced options and export placement tags afterwards.</p>
 <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
 <!--Only show activate controls for admins right now-->
 <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
@@ -48,5 +49,5 @@
     <placement-form page="page" publisher="publisher"></placement-form>
 </fieldset>
 <div class="text-center">
-    <button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>
+    <button type="button" ng-click="updateAndClose()" class="btn btn-primary btn-large">Save</button>
 </div>
