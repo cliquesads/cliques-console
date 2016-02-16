@@ -35,7 +35,10 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
 
         // Populate tree data for tree visualization
         $scope.cliques = [];
-        getCliqueTree($scope);
+        // Get whole tree of active Cliques on load to render in ABN tree
+        getCliqueTree({active: true},function(err, cliques){
+            $scope.cliques = cliques;
+        });
         $scope.set_clique = function(branch) {
             $scope.site.clique = branch.label;
         };
