@@ -97,7 +97,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-page.html',
-                controller: 'editPageController',
+                controller: 'PageController',
                 data: {publisher: $scope.publisher, site: $scope.site, page: page}
             });
         };
@@ -109,8 +109,8 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
             $scope.site.pages.push(newPage);
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/edit-page.html',
-                controller: 'editPageController',
+                template: 'modules/publisher/views/partials/new-page.html',
+                controller: 'newPageController',
                 data: {publisher: $scope.publisher, site: $scope.site, page: newPage},
                 preCloseCallback: function(value){
                     if (value != 'Success'){
