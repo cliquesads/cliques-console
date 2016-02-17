@@ -12,7 +12,8 @@ angular.module('advertiser').directive('creativeUploader', [
                 onuploadall: '&',
                 wizardstep: '@',
                 width: '@',
-                uploader: '='
+                uploader: '=',
+                supportedDimensions: '='
             },
             templateUrl: 'modules/advertiser/views/partials/creative-uploader.html',
             link: function(scope, element, attrs){
@@ -46,7 +47,7 @@ angular.module('advertiser').directive('creativeUploader', [
                     }
                 };
 
-                scope.SUPPORTED_DIMENSIONS = CREATIVE_SIZES.supported_dimensions;
+                scope.SUPPORTED_DIMENSIONS = scope.supportedDimensions || CREATIVE_SIZES.supported_dimensions;
 
                 scope.uploader.onAfterAddingFile = function(fileItem) {
                     // check added image dimensions, and remove item from queue if

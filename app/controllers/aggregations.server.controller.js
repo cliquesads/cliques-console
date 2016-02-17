@@ -3,12 +3,13 @@
 /**
  * Module dependencies.
  */
-var models = require('cliques_node_utils').mongodb.models,
+var models = require('@cliques/cliques-node-utils').mongodb.models,
     mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash'),
     async = require('async'),
     moment = require('moment-timezone');
+
 
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
@@ -497,6 +498,12 @@ module.exports = function(db) {
             },
             getManyClique: function (req, res) {
                 return hourlyAdStatAPI.getManyClique(req, res);
+            },
+            getLatestHour: function(callback){
+                aggregationModels.HourlyAdStat.findOne().sort('-hour').exec(function(err, result){
+                    if (err) return callback(err);
+                    return callback(null, result.hour);
+                });
             }
         }
     };

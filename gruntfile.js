@@ -94,13 +94,14 @@ module.exports = function(grunt) {
 				options: {
 					paths: ['public/less'],
 					cleancss: true,
+                    ieCompat:true,
 					compress: true
 				},
 				files: {
 					'public/dist/application.min.css': 'public/less/application.less'
 				}
 			},
-			development: {
+			dev: {
 				options: {
 					sourceMap: true,
 					ieCompat:true,
@@ -119,6 +120,15 @@ module.exports = function(grunt) {
 				src: watchFiles.clientCSS
 			}
 		},
+        copy: {
+            default: {
+                files: [
+                    // includes files within path
+                    // TODO: Can't get vendorImageFiles config var to read properly here, FIX THIS
+                    {expand: true, src: 'public/lib/datatables/media/images/*', dest: 'public/images/', flatten: true, filter: 'isFile'}
+                ]
+            }
+        },
         concat: {
             options: {
                 // define a string to put between each file in the concatenated output
@@ -132,15 +142,15 @@ module.exports = function(grunt) {
             }
         },
 		uglify: {
-			production: {
-				options: {
-					mangle: false
-				},
-				files: {
-					'public/dist/application.min.js': 'public/dist/application.js',
+            default:{
+                options: {
+                    mangle: false
+                },
+                files: {
+                    'public/dist/application.min.js': 'public/dist/application.js',
                     'public/dist/vendor.min.js': 'public/dist/vendor.js'
-				}
-			}
+                }
+            }
 		},
         sass: {
             options: {
@@ -157,16 +167,16 @@ module.exports = function(grunt) {
                 }
             }
         },
-		/* Not needed for LESS
+
 		cssmin: {
 			combine: {
 				files: {
-					'public/dist/application.min.css': '<%= applicationCSSFiles %>'
+					'public/dist/vendor.min.css': '<%= vendorCSSFiles %>'
 				}
 			}
-		},*/
+		},
 		nodemon: {
-			dev: {
+			default: {
 				script: 'server.js',
 				options: {
 					nodeArgs: ['--debug'],
@@ -189,14 +199,15 @@ module.exports = function(grunt) {
 			}
 		},
 		ngAnnotate: {
-			production: {
-				files: {
-					'public/dist/application.js': watchFiles.clientJS
-				}
-			}
+            default:{
+                files: {
+                    'public/dist/application.js': watchFiles.clientJS
+                }
+            }
 		},
 		concurrent: {
 			default: ['nodemon', 'watch'],
+            dev: ['nodemon', 'watch'],
 			debug: ['nodemon', 'watch', 'node-inspector'],
 			options: {
 				logConcurrentOutput: true,
@@ -204,16 +215,19 @@ module.exports = function(grunt) {
 			}
 		},
 		env: {
-            // Only added development environment to add dev env step to build task as a hack
-            development: {
-                NODE_ENV: 'development'
+            // Only added dev environment to add dev env step to build task as a hack
+            dev: {
+                NODE_ENV: 'dev'
             },
-			test: {
-				NODE_ENV: 'test'
+			"local-test": {
+				NODE_ENV: 'local-test'
 			},
 			secure: {
 				NODE_ENV: 'secure'
-			}
+            },
+            production: {
+                NODE_ENV: 'production'
+            }
 		},
 		mochaTest: {
 			src: watchFiles.mochaTests,
@@ -242,11 +256,16 @@ module.exports = function(grunt) {
 
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
         grunt.config.set('vendorSassFiles', config.vendor.sass);
-		grunt.config.set('applicationCSSFiles', config.assets.css);
-	});
+		grunt.config.set('vendorCSSFiles', config.vendor.css);
+        grunt.config.set('vendorImageFiles', config.vendor.image);
+    });
 
 	// Default task(s).
-	grunt.registerTask('default', ['lint', 'concurrent:default']);
+    // Only really should be run locally, hence the local-test env
+	grunt.registerTask('default', ['env:local-test','lint', 'concurrent:default']);
+
+    // Dev task(s).
+    grunt.registerTask('default-dev', ['env:dev','lint', 'concurrent:dev']);
 
 	// Debug task.
 	grunt.registerTask('debug', ['lint', 'concurrent:debug']);
@@ -258,7 +277,10 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build', ['loadConfig', 'ngAnnotate','concat','uglify', /*'cssmin'*/ 'less','sass']);
+	grunt.registerTask('build-dev', ['env:dev','copy','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
+
+    // Build task(s).
+    grunt.registerTask('build-production', ['env:production','copy','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

@@ -23,14 +23,14 @@ angular.module('core').service('DatatableUtils',[function(){
          * BY FIGURING OUT A NATIVE ANGULAR WAY TO MAKE THIS WORK.
          */
         restyleButtonsHack: function(){
-            // first remove li elements wrapping buttons
-            $('ul.dt-buttons > li > a').unwrap();
+            //// first remove li elements wrapping buttons
+            //$('ul.dt-buttons > li > a').unwrap();
 
             // Now remove surrounding UL
-            $('ul.dt-buttons > a').unwrap();
+            $('div.dt-buttons > a').unwrap();
 
             // Wrap all buttons in group in btn-group div
-            $('div.dataTables_wrapper > a').wrapAll("<div class='btn btn-group pull-right'></div>");
+            $('div.dataTables_wrapper > a').wrapAll("<div class='btn btn-group pull-right pr0'></div>");
 
             // Re-class buttons to look good
             var btnClass = 'btn btn-labeled btn-primary';

@@ -11,6 +11,7 @@ config/env/local.js
 # ==========================
 .nodemonignore
 .sass-cache/
+.nvm/
 npm-debug.log
 node_modules/
 public/lib/
@@ -25,6 +26,7 @@ bower_components/
 config/sslcerts/*.pem
 access.log
 public/dist/
+public/images/
 
 # General
 # =======

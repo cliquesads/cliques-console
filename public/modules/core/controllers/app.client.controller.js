@@ -10,7 +10,10 @@ angular.module('core').controller('AppController',
 
     // This provides Authentication context.
     $scope.authentication = Authentication;
+
+    // Server-side variables passed to server-rendered index template
     $scope.consoleVersion = consoleVersion;
+    $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');
 
     if (user){
         // TODO: FIX THIS

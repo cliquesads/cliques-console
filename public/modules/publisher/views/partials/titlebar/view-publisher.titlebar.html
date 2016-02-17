@@ -1,6 +1,15 @@
-<section data-ng-init="findOne()">
-    <div class="pull-right">
-        <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>
+<div ng-switch on="$state.$current.self.name">
+    <div ng-switch-default>
+        <!-- View hook for child views -->
+        <section data-ui-view="titleBar"></section>
     </div>
-    {{publisher.name}}&nbsp;&nbsp;&nbsp;<a data-ng-click="publisherBasics();" class="small"><i class="fa fa-edit"></i></a>
-</section>
+    <div ng-switch-when="app.publisher.viewPublisher">
+        <section data-ng-init="findOne()">
+            <div class="pull-right">
+                <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>
+            </div>
+            <a ng-click="selectPublisher(true)" tooltip="Change Selected Publisher" tooltip-placement="bottom">{{publisher.name}}</a>&nbsp;
+            <a data-ng-click="publisherBasics();" class=""><i class="fa fa-cog" tooltip="Edit Publisher Settings" tooltip-placement="bottom-right"></i></a>
+        </section>
+    </div>
+</div>
