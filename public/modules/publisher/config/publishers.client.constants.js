@@ -10,4 +10,36 @@ angular.module('publisher')
         domain_name: "The base domain name associated with your site.",
         blacklist: "Let us know if there are any advertisers who are not allowed to purchase impressions on your site due to direct-sale or content restrictions.  Note: You must use the advertiser's domain name in order to ensure they are uniquely identified.",
         page_url: "The URL for this particular page.  If the URL is dynamic you can just use placeholders, e.g. http://example.com/[DATE]/[POST_NAME]"
+    })
+    .constant('TAG_TYPES',{
+        iframe: {
+            displayName: 'iFrame',
+            description: 'Our iFrame tags load ads asynchronously and require marginally less bandwidth than JavaScript tags. ' +
+                'However, they are not supported by a small percentage of internet browsers.'
+        },
+        javascript: {
+            displayName : 'JavaScript',
+            description: 'Our JavaScript tags load ads asynchronously and are supported by virtually all browsers, but ' +
+                'require about 2KB of additional bandwidth per page-load.'
+        }
+    })
+    .constant('DEFAULT_TYPES',{
+        passback: {
+            name: 'Passback Tag',
+            description: 'A snippet of HTML code to be called. Common examples: DFP Passback Tags, affiliate links, etc.',
+            icon: 'fa fa-exchange',
+            tagTypes: ['javascript','iframe']
+        },
+        'hostedCreative': {
+            name: 'Custom Creative',
+            description: 'An uploaded image that fits this placement\'s dimensions.',
+            icon: 'fa fa-picture-o',
+            tagTypes: ['javascript','iframe']
+        },
+        'hide': {
+            name: 'Hide',
+            description: 'Ad unit collapses & goes away.',
+            icon: 'icon-ghost',
+            tagTypes: ['javascript']
+        }
     });

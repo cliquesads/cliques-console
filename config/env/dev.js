@@ -1,8 +1,8 @@
-/* jshint node: true */ 'use strict';
+/* jshint node: true */ /* jshint node: true */ 'use strict';
 
 module.exports = {
 	app: {
-		title: 'Cliques Console - Dev'
+		title: 'Cliques Console - Development'
 	},
     assets: {
         lib: {

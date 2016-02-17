@@ -70,4 +70,21 @@ angular.module('core').run(['Menus',
             'https://adsrvs.cliquesads.com/**'
         ]);
     }
-);
+)
+.run(function(DTDefaultOptions){
+        DTDefaultOptions.setBootstrapOptions({
+            TableTools: {
+                classes: {
+                    container: 'btn-group',
+                    buttons: {
+                        normal: 'btn btn-danger'
+                    }
+                }
+            },
+            ColVis: {
+                classes: {
+                    masterButton: 'btn btn-primary'
+                }
+            }
+        });
+});

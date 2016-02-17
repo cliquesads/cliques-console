@@ -1,0 +1,53 @@
+<h4 class="text-md">{{ placement.name || "New Placement" }}</h4>
+<div ng-show="saveerror" class="alert alert-danger">{{ saveerror }}</div>
+<form id="placementForm" name="placementForm">
+    <div class="form-horizontal">
+        <div class="form-group m0" ng-show="authentication.user.roles.indexOf('admin') > -1">
+            <label class="control-label col-sm-3">Active</label>
+            <div class="col-sm-8">
+                <div class="form-control-static">
+                    <label class="switch">
+                        <input type="checkbox" checked="checked" ng-model="placement.active" ng-click="placement.active != placement.active"/>
+                        <span></span>
+                    </label>
+                    <status-label model="placement"></status-label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group m0">
+            <label class="col-sm-3 control-label">Name *</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">
+                    <input type="text" data-ng-model="placement.name" name="name" placeholder="ex. Right Sidebar 300x250" required="required" class="form-control"/>
+                    <span ng-show="validateInput('name', 'required')" class="text-danger">This field is required</span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group m0">
+            <label class="col-sm-3 control-label">Dimensions *</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">
+                    <select name="dimensions" data-ng-model="placement.dimensions" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                        <option value=""></option>
+                    </select>
+                    <span ng-show="validateInput('dimensions', 'required')" class="text-danger">This field is required</span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group m0">
+            <label class="col-sm-3 control-label">Position *</label>
+            <div class="col-sm-9">
+                <p class="form-control-static">
+                    <select name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                        <option value=""></option>
+                    </select>
+                    <span ng-show="validateInput('position', 'required')" class="text-danger">This field is required</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row text-center">
+        <button type="button" class="btn btn-primary" ng-click="save()">Save</button>
+    </div>
+</form>

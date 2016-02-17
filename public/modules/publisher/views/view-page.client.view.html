@@ -1,0 +1,181 @@
+<section data-ng-init="findOne()">
+    <div class="col-md-12 alert alert-danger" ng-show="error">{{ error }}</div>
+    <!--Only show activate controls for admins right now-->
+    <div class="col-sm-4">
+        <div class="list-group">
+            <div class="list-group-item">
+                <span class="panel-title">
+                    <i class="fa fa-cog"></i>&nbsp;Page Settings
+                </span>
+            </div>
+            <div class="list-group-item">
+                <div class="form-horizontal">
+                    <div class="form-group m0">
+                        <label class="control-label col-sm-3">Status</label>
+                        <div class="col-sm-8">
+                            <div class="form-control-static">
+                                <label class="switch" ng-show="authentication.user.roles.indexOf('admin') > -1">
+                                    <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
+                                    <span></span>
+                                </label>
+                                <status-label model="page"></status-label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible">
+                                <span class="fa fa-edit"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <form editable-form name="pageForm" id="pageForm" onaftersave="update()">
+                        <div class="form-group m0">
+                            <label class="control-label col-sm-3">Name</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">
+                                    <span editable-text="page.name" e-name="name" id="name" required="required">{{ page.name }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group m0">
+                            <label class="control-label col-sm-3">URL</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">
+                                    <span editable-text="page.url" e-name="url">{{ page.url }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group m0">
+                            <label class="control-label col-sm-3">Description</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static">
+                                <span editable-text="page.description" e-name="description">
+                                    <hm-read-more
+                                            hm-text="{{ page.description }}"
+                                            hm-limit="20"
+                                            hm-more-text="read more"
+                                            hm-less-text="read less"
+                                            hm-dots-class="dots"
+                                            hm-link-class="links">
+                                    </hm-read-more></span>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="list-group-item" ng-show="pageForm.$visible">
+                <div class="text-center">
+                    <!-- buttons to submit / cancel form -->
+                    <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="list-group" data-ng-init="getQuickStats(dateRangeSelection)">
+            <div class="list-group-item">
+                <div class="panel-title">
+                    <i class="fa fa-line-chart"></i>&nbsp;Page Stats
+                </div>
+            </div>
+            <div class="list-group-item">
+                <div class="row row-table">
+                    <small>
+                        {{ dateRanges[dateRangeSelection].label }}
+                    </small>
+                    <span class="pull-right">
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('7d')">7d</button>
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('30d')">30d</button>
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('90d')">90d</button>
+                    </span>
+                </div>
+                <div class="row row-table text-center">
+                    <div class="col-sm-6">
+                        <div class="h3">{{ quickStats[0].spend | currency:"$":"0" }}</div>
+                        <small class="text-muted">Revenue</small>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="h3">{{ (quickStats[0].spend / quickStats[0].imps) * 1000 | currency:"$":"2" }}</div>
+                        <small class="text-muted">Avg. RPM</small>
+                    </div>
+                </div>
+                <div class="row row-table text-center">
+                    <div class="col-sm-4">
+                        <div class="h4">{{ quickStats[0].imps | number: 0 }}</div>
+                        <small class="text-muted">Impressions</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="h4">{{ quickStats[0].clicks / quickStats[0].imps | percentage:2 }}</div>
+                        <small class="text-muted">CTR</small>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="h4">{{ quickStats[0].clicks | number: 0 }}</div>
+                        <small class="text-muted">Clicks</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="list-group">
+            <div class="list-group-item">
+                <i class="fa fa-tags"></i>&nbsp;
+                <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPlacement()">
+                    <span class="btn-label"><i class="fa fa-plus"></i></span>New Placement
+                </button>
+                <span class="panel-title">
+                    Placement Manager
+                </span>
+            </div>
+            <div class="list-group-item">
+                <div class="table-responsive">
+                    <form id="placementForm">
+                        <table class="table table-striped m0">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Basics</th>
+                                <th>Default Condition</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="placement in page.placements">
+                                <td class="col-sm-1">
+                                    <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
+                                </td>
+                                <td class="col-sm-4 edit-inline hover-visible" ng-click="editPlacementBasics(placement)">
+                                    <a href="#" class="hover-hidden pull-right">
+                                        <span class="fa fa-edit"></span>
+                                    </a>
+                                    <h4 class="list-group-item-heading">{{ placement.name }}</h4>
+                                    <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
+                                </td>
+                                <td class="col-sm-5 edit-inline hover-visible" ng-click="editDefaultCondition(placement)">
+                                    <a href="#" class="hover-hidden pull-right">
+                                        <span class="fa fa-edit"></span>
+                                    </a>
+                                    <p class="m0">
+                                        <i class="{{ DEFAULT_TYPES[placement.defaultType].icon }}"></i>&nbsp;
+                                        {{ DEFAULT_TYPES[placement.defaultType].name }}
+                                    </p>
+                                    <small class="text-muted">{{ DEFAULT_TYPES[placement.defaultType].description }}</small>
+                                </td>
+                                <td class="col-sm-2">
+                                    <span>
+                                        <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
+                                        <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

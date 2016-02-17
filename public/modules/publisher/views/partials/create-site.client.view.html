@@ -165,7 +165,7 @@
         <!-- START Wizard Step inputs -->
         <div id="step5" ng-show="wizard.active(5)">
             <legend>Review your new publisher</legend>
-            <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
+            <div ng-show="creation_error" class="alert alert-danger">{{ creation_error }}</div>
             <fieldset>
                 <div class="col-sm-12"><em>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></em></div>
                 <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ site.name }}</div>

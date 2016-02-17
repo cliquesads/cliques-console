@@ -20,7 +20,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                                     id: cr._id,
                                     title: adv.name,
                                     description: description,
-                                    src: cr.url,
+                                    src: cr.secureUrl,
                                     link: link
                                 });
                             });

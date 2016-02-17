@@ -120,6 +120,15 @@ module.exports = function(grunt) {
 				src: watchFiles.clientCSS
 			}
 		},
+        copy: {
+            default: {
+                files: [
+                    // includes files within path
+                    // TODO: Can't get vendorImageFiles config var to read properly here, FIX THIS
+                    {expand: true, src: 'public/lib/datatables/media/images/*', dest: 'public/images/', flatten: true, filter: 'isFile'}
+                ]
+            }
+        },
         concat: {
             options: {
                 // define a string to put between each file in the concatenated output
@@ -167,22 +176,14 @@ module.exports = function(grunt) {
 			}
 		},
 		nodemon: {
-			dev: {
+			default: {
 				script: 'server.js',
 				options: {
 					nodeArgs: ['--debug'],
 					ext: 'js,html',
 					watch: watchFiles.serverViews.concat(watchFiles.serverJS)
 				}
-			},
-            "local-test": {
-                script: 'server.js',
-                options: {
-                    nodeArgs: ['--debug'],
-                    ext: 'js,html',
-                    watch: watchFiles.serverViews.concat(watchFiles.serverJS)
-                }
-            }
+			}
 		},
 		'node-inspector': {
 			custom: {
@@ -205,8 +206,8 @@ module.exports = function(grunt) {
             }
 		},
 		concurrent: {
-			"local-test": ['nodemon:local-test', 'watch'],
-            dev: ['nodemon:local-test', 'watch'],
+			default: ['nodemon', 'watch'],
+            dev: ['nodemon', 'watch'],
 			debug: ['nodemon', 'watch', 'node-inspector'],
 			options: {
 				logConcurrentOutput: true,
@@ -248,14 +249,6 @@ module.exports = function(grunt) {
 	// Making grunt default to force in order not to break the project.
 	grunt.option('force', true);
 
-    //grunt.task.registerTask('parseEnv', 'Determines which NODE_ENV to use given command-line options', function(){
-    //    var env = grunt.option('env') || 'local-test';
-    //    // this seems super redundant but it's the only reliable way to pass NODE_ENV to all sub-tasks (i.e. through grunt-env)
-    //    // env sub-tasks delimited by :
-    //    var taskname = 'env:' + env;
-    //    grunt.task.run(taskname);
-    //});
-
 	// A Task for loading the configuration object
 	grunt.task.registerTask('loadConfig', 'Task that loads the config into a grunt option.', function() {
 		var init = require('./config/init')();
@@ -264,11 +257,12 @@ module.exports = function(grunt) {
 		grunt.config.set('vendorJavaScriptFiles', config.vendor.js);
         grunt.config.set('vendorSassFiles', config.vendor.sass);
 		grunt.config.set('vendorCSSFiles', config.vendor.css);
-	});
+        grunt.config.set('vendorImageFiles', config.vendor.image);
+    });
 
 	// Default task(s).
     // Only really should be run locally, hence the local-test env
-	grunt.registerTask('default', ['env:local-test','lint', 'concurrent:local-test']);
+	grunt.registerTask('default', ['env:local-test','lint', 'concurrent:default']);
 
     // Dev task(s).
     grunt.registerTask('default-dev', ['env:dev','lint', 'concurrent:dev']);
@@ -283,10 +277,10 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['jshint', 'csslint']);
 
 	// Build task(s).
-	grunt.registerTask('build-dev', ['env:dev','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
+	grunt.registerTask('build-dev', ['env:dev','copy','loadConfig', 'ngAnnotate','concat','uglify','less:dev','sass','cssmin']);
 
     // Build task(s).
-    grunt.registerTask('build-production', ['env:production','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
+    grunt.registerTask('build-production', ['env:production','copy','loadConfig', 'ngAnnotate','concat','uglify','less:production','sass','cssmin']);
 
 	// Test task.
 	grunt.registerTask('test', ['env:test', 'mochaTest', 'karma:unit']);

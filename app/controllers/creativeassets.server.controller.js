@@ -1,5 +1,5 @@
 /* jshint node: true */ 'use strict';
-var auth = require('cliques_node_utils').google.auth,
+var auth = require('@cliques/cliques-node-utils').google.auth,
     gcloud = require('gcloud'),
     errorHandler = require('./errors.server.controller');
 var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;

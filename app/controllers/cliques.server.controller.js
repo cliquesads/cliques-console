@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var models = require('cliques_node_utils').mongodb.models,
+var models = require('@cliques/cliques-node-utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
 
