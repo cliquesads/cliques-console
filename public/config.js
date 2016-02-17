@@ -36,7 +36,8 @@ var ApplicationConfiguration = (function() {
         'rzModule',
         'ngCountryStateSelect',
         'trTrustpass',
-        'hm.readmore'
+        'hm.readmore',
+        'ngclipboard'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

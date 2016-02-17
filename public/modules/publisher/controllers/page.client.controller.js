@@ -179,6 +179,10 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         type: defaultTagType
                     };
 
+                    $scope.copySuccess = function(e){
+                        Notify.alert('Your ad tag has been copied to your clipboard.',{});
+                    };
+
                     $scope.getPlacementTag = function(){
                         PlacementTag.getTag({
                             publisherId: $scope.publisher._id,

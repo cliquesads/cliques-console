@@ -60,5 +60,7 @@ module.exports = [
     'public/lib/angular-trustpass/dist/tr-trustpass.min.js',
     'public/lib/intl-tel-input/lib/libphonenumber/build/utils.js',
     'public/lib/intl-tel-input/build/js/intlTelInput.min.js',
-    'public/lib/angular-read-more/dist/readmore.min.js'
+    'public/lib/angular-read-more/dist/readmore.min.js',
+    'public/lib/clipboard/dist/clipboard.min.js',
+    'public/lib/ngclipboard/dist/ngclipboard.min.js'
 ];

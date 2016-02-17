@@ -1,15 +1,31 @@
 <section data-ng-init="getPlacementTag()">
-    <h4 class="col-sm-12">Tag for {{placement.name}}</h4>
+    <h4>Tag for {{placement.name}}</h4>
     <form name="tagOptions">
-        <div class="row">
-            <div class="checkbox c-checkbox col-sm-4">
-                <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>
-            </div>
-            <div class="col-sm-4">
-                <tag-type-input default-type="{{ placement.defaultType }}" tag-type="javascript" model="options.type"></tag-type-input>
-                <tag-type-input default-type="{{ placement.defaultType }}" tag-type="iframe" model="options.type"></tag-type-input>
-            </div>
-        </div>
+        <table class="col-sm-12">
+            <thead>
+                <th>Secure</th>
+                <th>Tag Type</th>
+            </thead>
+            <tbody>
+                <tr class="align-top">
+                    <td class="col-sm-4">
+                        <div class="checkbox c-checkbox">
+                            <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>
+                        </div>
+                    </td>
+                    <td class="col-sm-8">
+                        <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="javascript" model="options.type"></tag-type-input>
+                        <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="iframe" model="options.type"></tag-type-input>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </form>
-    <pre>{{ tag }}</pre>
+    <small class="text-muted">Paste this ad tag directly into your Page or 3rd-party ad-server</small>
+    <pre id="adTag">{{ tag }}</pre>
+    <div class="row mr0">
+        <button class="btn btn-primary btn-xs pull-right" ngclipboard data-clipboard-target="#adTag" ngclipboard-success="copySuccess(e)">
+            <i class="fa fa-clipboard"></i>&nbsp;Copy to Clipboard
+        </button>
+    </div>
 </section>

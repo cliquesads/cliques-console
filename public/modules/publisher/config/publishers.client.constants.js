@@ -13,10 +13,14 @@ angular.module('publisher')
     })
     .constant('TAG_TYPES',{
         iframe: {
-            displayName: 'iFrame'
+            displayName: 'iFrame',
+            description: 'Our iFrame tags load ads asynchronously and require marginally less bandwidth than JavaScript tags. ' +
+                'However, they are not supported by a small percentage of internet browsers.'
         },
         javascript: {
-            displayName : 'JavaScript'
+            displayName : 'JavaScript',
+            description: 'Our JavaScript tags load ads asynchronously and are supported by virtually all browsers, but ' +
+                'require about 2KB of additional bandwidth per page-load.'
         }
     })
     .constant('DEFAULT_TYPES',{
