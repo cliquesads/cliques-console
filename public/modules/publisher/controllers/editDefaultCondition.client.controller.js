@@ -27,7 +27,7 @@ angular.module('publisher').controller('DefaultConditionController', ['$scope','
         $scope.crossValidatedefaultCondition = function(){
             switch ($scope.placement.defaultType){
                 case "passback":
-                    if ($scope.placementForm.passbackTag.$invalid || $scope.placementForm.passbackTag.$isEmpty()){
+                    if ($scope.placementForm.passbackTag.$invalid || !$scope.placementForm.passbackTag.$modelValue){
                         return "You must provide a valid Passback Tag";
                     }
                     break;
