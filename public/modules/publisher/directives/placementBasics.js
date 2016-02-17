@@ -24,11 +24,6 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                 scope.OPENRTB = OPENRTB;
                 scope.submitted = false;
 
-                if (!scope.placement){
-                    scope.placement = {};
-                    scope.page.placements.push(scope.placement);
-                }
-
                 scope.$watch(function (scope) {
                     return scope.placement;
                 }, function (newPlacement, oldPlacement) {
@@ -53,8 +48,10 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                         scope.publisher.$update(function(publisher) {
                             scope.onSaveSuccess(publisher);
                         }, function (errorResponse) {
-                            scope.saveerror = errorResponse.message;
                             scope.onSaveError(errorResponse);
+                            scope.$apply(function(){
+                                scope.saveerror = errorResponse.message;
+                            });
                         });
                     } else {
                         return false;
