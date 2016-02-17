@@ -118,19 +118,33 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
         };
 
         $scope.newPlacement = function(){
+            var newPlacement = {};
+            $scope.page.placements.push(newPlacement);
             ngDialog.open({
                 className: 'ngdialog-theme-default',
-                template: '<placement-basics publisher="publisher" page="page" on-save-success="onSaveSuccess(publisher)"></placement-basics>',
+                template: '<placement-basics publisher="publisher" page="page" placement="placement" on-save-success="onSaveSuccess(publisher)"></placement-basics>',
                 plain: true,
                 controller: ['$scope',function($scope){
                     $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.page = $scope.ngDialogData.page;
+                    $scope.placement = $scope.ngDialogData.placement;
                     $scope.onSaveSuccess = function(publisher){
                         $scope.closeThisDialog('Success');
                         placementSaveCallback(publisher);
                     };
                 }],
-                data: { publisher: $scope.publisher, page: $scope.page }
+                data: { publisher: $scope.publisher, page: $scope.page, placement: newPlacement },
+                preCloseCallback: function(value){
+                    if (value != 'Success'){
+                        var placement_ind = _.findIndex($scope.page.placements, function(pl){
+                            return pl === newPlacement;
+                        });
+                        $scope.$apply(function(){
+                            $scope.page.placements.splice(placement_ind, 1);
+                        });
+                        return true;
+                    }
+                }
             });
         };
 
