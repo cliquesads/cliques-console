@@ -169,10 +169,16 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 controller: ['$scope','PlacementTag',function($scope,PlacementTag) {
                     $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.placement = $scope.ngDialogData.placement;
+
+                    // set default tagtype based on what tag types are supported by this placement's defaultType
+                    var defaultTagType = DEFAULT_TYPES[$scope.placement.defaultType].tagTypes[0];
+
+                    // Default tag options
                     $scope.options = {
                         secure: false,
-                        type: 'javascript'
+                        type: defaultTagType
                     };
+
                     $scope.getPlacementTag = function(){
                         PlacementTag.getTag({
                             publisherId: $scope.publisher._id,
