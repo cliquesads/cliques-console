@@ -13,7 +13,6 @@ angular.module('core').controller('AppController',
 
     // Server-side variables passed to server-rendered index template
     $scope.consoleVersion = consoleVersion;
-    $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');
 
     if (user){
         // TODO: FIX THIS
@@ -35,6 +34,8 @@ angular.module('core').controller('AppController',
             $email: user.email,
             roles: user.roles
         });
+        // Set latestHour of reporting data for footer
+        $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');
     }
 
     // Loading bar transition
