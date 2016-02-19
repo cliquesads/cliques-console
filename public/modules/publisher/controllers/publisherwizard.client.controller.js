@@ -35,9 +35,11 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // to the template properly to have to convert to string
         $scope.domain_regex = String(REGEXES.domain);
 
-        // Populate tree data for tree visualization
         $scope.cliques = [];
-        getCliqueTree($scope);
+        // Get whole tree of active Cliques on load to render in ABN tree
+        getCliqueTree({active: true},function(err, cliques){
+            $scope.cliques = cliques;
+        });
         $scope.set_clique = function(branch) {
             $scope.site.clique = branch.label;
         };
