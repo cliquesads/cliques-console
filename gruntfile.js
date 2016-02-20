@@ -125,7 +125,8 @@ module.exports = function(grunt) {
                 files: [
                     // includes files within path
                     // TODO: Can't get vendorImageFiles config var to read properly here, FIX THIS
-                    {expand: true, src: 'public/lib/datatables/media/images/*', dest: 'public/images/', flatten: true, filter: 'isFile'}
+                    {expand: true, src: 'public/lib/datatables/media/images/*', dest: 'public/images/', flatten: true, filter: 'isFile'},
+					{expand: true, src: 'public/lib/intl-tel-input/build/img/*', dest: 'public/img/', flatten: true, filter: 'isFile'}
                 ]
             }
         },

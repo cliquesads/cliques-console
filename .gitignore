@@ -27,6 +27,7 @@ config/sslcerts/*.pem
 access.log
 public/dist/
 public/images/
+public/img/
 
 # General
 # =======
