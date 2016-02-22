@@ -240,8 +240,8 @@
                                 <div ng-switch-when="publisher">
                                     <p><strong>Revenue Share Summary</strong></p>
                                     <ul>
-                                        <li>Cliques charges a revenue-share equal to <strong>{{ advertiserFees.percentage | percentage:1 }}</strong> of your gross advertising revenue.</li>
-                                        <li>Cliques will pay you your gross advertising revenue (minus {{ advertiserFees.percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</li>
+                                        <li>Cliques charges a revenue-share equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of your gross advertising revenue.</li>
+                                        <li>Cliques will pay you your gross advertising revenue (minus {{ fees[credentials.role].percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</li>
                                     </ul>
                                     <div class="bs-callout bs-callout-primary">
                                         <h4>Don't worry</h4>
