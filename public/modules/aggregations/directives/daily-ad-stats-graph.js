@@ -66,14 +66,13 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                 // Pretty sure it happened with release v0.5.0.
                 //
                 // Basically just destroy and re-render the graph after digest cycle has occurred.
-                // This is deplorable and I'm terribly sorry.  Please fix this when you have time.
+                // TODO: This is deplorable and I'm terribly sorry.  Please fix this when you have time.
                 $timeout(function(){
                     plotObj.destroy();
                     $.plot(plotScope.plotArea, plotScope.dataset, plotScope.options);
                 });
             };
 
-            //// register listener
             scope.$watchCollection('timeSeries',function(newTimeSeries, oldTimeSeries) {
                 if (newTimeSeries){
                     scope.dataSet = [{

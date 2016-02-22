@@ -49,9 +49,15 @@ angular.module('core').directive('flot', ['$http', '$timeout', function($http, $
 
     function onDatasetChanged(dataset) {
       if (plot) {
-        plot.setData(dataset);
-        plot.setupGrid();
-        return plot.draw();
+        // Try to suppress some errors caused by re-draw hack
+        // TODO: If hack gets fixed, you can remove this try/catch block
+        try {
+          plot.setData(dataset);
+          plot.setupGrid();
+          return plot.draw();
+        } catch (e){
+          console.warn(e);
+        }
       } else {
         plot = init();
         onSerieToggled(scope.series);
