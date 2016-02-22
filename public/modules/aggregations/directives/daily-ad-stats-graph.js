@@ -1,4 +1,4 @@
-angular.module('aggregations').directive('dailyAdStatsGraph', ['MongoTimeSeries',function(){
+angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',function($timeout){
     'use strict';
     return {
         restrict: 'E',
@@ -7,7 +7,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['MongoTimeSeries'
             timeSeries: '=',
             height: '@'
         },
-        template: '<flot dataset="dataSet" options="graphOptions" height="{{ height }}"></flot>',
+        template: '<flot dataset="dataSet" options="graphOptions" callback="callback" height="{{ height }}"></flot>',
         link: function(scope, element, attribute){
             scope.graphOptions = {
                 grid: {
@@ -57,36 +57,52 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['MongoTimeSeries'
                 ],
                 shadowSize: 0
             };
-            function onTimeSeriesChanged(){
-                scope.dataSet = [{
-                    label: "Impressions",
-                    bars: {
-                        show: true,
-                        align: "center",
-                        fill: true,
-                        barWidth: 24 * 60 * 60 * 600,
-                        lineWidth: 0.4
-                    },
-                    color: "#768294",
-                    yaxis: 1,
-                    data: scope.timeSeries ? scope.timeSeries.imps : null
-                },{
-                    label: "CTR",
-                    lines: {
-                        show: true,
-                        fill: 0.01
-                    },
-                    points: {
-                        show: scope.showPoints,
-                        radius: 4
-                    },
-                    color: "#5ab1ef",
-                    yaxis: 2,
-                    data: scope.timeSeries ? scope.timeSeries.CTR : null
-                }];
-            }
-            // register listener
-            scope.$watchCollection('timeSeries',onTimeSeriesChanged);
+
+            scope.callback = function(plotObj, plotScope){
+                // Complete and utter hack.
+                // At some point, graph started rendering improperly inside of tabs
+                // and I got too impatient to find the root cause of it. It would cause
+                // the axes to disappear and the whole grid to render improperly.
+                // Pretty sure it happened with release v0.5.0.
+                //
+                // Basically just destroy and re-render the graph after digest cycle has occurred.
+                // TODO: This is deplorable and I'm terribly sorry.  Please fix this when you have time.
+                $timeout(function(){
+                    plotObj.destroy();
+                    $.plot(plotScope.plotArea, plotScope.dataset, plotScope.options);
+                });
+            };
+
+            scope.$watchCollection('timeSeries',function(newTimeSeries, oldTimeSeries) {
+                if (newTimeSeries){
+                    scope.dataSet = [{
+                        label: "Impressions",
+                        bars: {
+                            show: true,
+                            align: "center",
+                            fill: true,
+                            barWidth: 24 * 60 * 60 * 600,
+                            lineWidth: 0.4
+                        },
+                        color: "#768294",
+                        yaxis: 1,
+                        data: scope.timeSeries ? scope.timeSeries.imps : null
+                    },{
+                        label: "CTR",
+                        lines: {
+                            show: true,
+                            fill: 0.01
+                        },
+                        points: {
+                            show: scope.showPoints,
+                            radius: 4
+                        },
+                        color: "#5ab1ef",
+                        yaxis: 2,
+                        data: scope.timeSeries ? scope.timeSeries.CTR : null
+                    }];
+                }
+            });
         }
     };
 }]);
