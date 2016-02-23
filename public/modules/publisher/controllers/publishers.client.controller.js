@@ -62,7 +62,7 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
 			$scope.publisher = Publisher.get({
 				publisherId: $stateParams.publisherId
 			}, function(){
-                HourlyAdStat.advQuery({publisherId: $stateParams.publisherId},{
+                HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
                     groupBy: 'site'
                 }).then(function(response){
                     response.data.forEach(function(site_data){
