@@ -138,6 +138,43 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // ######### GRAPH VARS & FUNCTIONS ######## //
         // ######################################### //
 
+        // build datatables options object
+        $scope.dtOptions_site = DTOptionsBuilder.newOptions();
+        $scope.dtOptions_site.withOption('paging', false);
+        $scope.dtOptions_site.withOption('searching', false);
+        $scope.dtOptions_site.withOption('scrollX', true);
+        $scope.dtOptions_site.withOption('order', [[2,'desc']]);
+        $scope.dtOptions_site.withBootstrap();
+        // Not entirely sure if this is necessary
+        $scope.dtColumnDefs_site = [
+            DTColumnDefBuilder.newColumnDef(0),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4),
+            DTColumnDefBuilder.newColumnDef(5),
+            DTColumnDefBuilder.newColumnDef(6)
+        ];
+
+        // build datatables options object
+        $scope.dtOptions = DTOptionsBuilder.newOptions();
+        $scope.dtOptions.withOption('paging', false);
+        $scope.dtOptions.withOption('searching', false);
+        $scope.dtOptions.withOption('scrollX', true);
+        $scope.dtOptions.withOption('order', [[3,'desc']]);
+        $scope.dtOptions.withBootstrap();
+
+        // Not entirely sure if this is necessary
+        $scope.dtColumnDefs = [
+            DTColumnDefBuilder.newColumnDef(0),
+            DTColumnDefBuilder.newColumnDef(1),
+            DTColumnDefBuilder.newColumnDef(2),
+            DTColumnDefBuilder.newColumnDef(3),
+            DTColumnDefBuilder.newColumnDef(4),
+            DTColumnDefBuilder.newColumnDef(5)
+        ];
+
+
         // See service in aggregations module for details on aggregationDateRanges object
         $scope.dateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
@@ -182,21 +219,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     startDate: startDate,
                     endDate: endDate
                 }).then(function(response){
-                    // build datatables options object
-                    $scope.dtOptions = DTOptionsBuilder.newOptions();
-                    $scope.dtOptions.withOption('paging', false);
-                    $scope.dtOptions.withOption('searching', false);
-                    $scope.dtOptions.withOption('scrollX', true);
-                    $scope.dtOptions.withOption('order', [[3,'desc']]);
-                    // Not entirely sure if this is necessary
-                    $scope.dtColumnDefs = [
-                        DTColumnDefBuilder.newColumnDef(0),
-                        DTColumnDefBuilder.newColumnDef(1),
-                        DTColumnDefBuilder.newColumnDef(2),
-                        DTColumnDefBuilder.newColumnDef(3),
-                        DTColumnDefBuilder.newColumnDef(4),
-                        DTColumnDefBuilder.newColumnDef(5)
-                    ];
                     $scope.creativeData = response.data;
                 }, function(err){
                     console.log(err);
@@ -215,22 +237,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     startDate: startDate,
                     endDate: endDate
                 }).then(function(response){
-                    // build datatables options object
-                    $scope.dtOptions_site = DTOptionsBuilder.newOptions();
-                    $scope.dtOptions_site.withOption('paging', false);
-                    $scope.dtOptions_site.withOption('searching', false);
-                    $scope.dtOptions_site.withOption('scrollX', true);
-                    $scope.dtOptions_site.withOption('order', [[2,'desc']]);
-                    // Not entirely sure if this is necessary
-                    $scope.dtColumnDefs_site = [
-                        DTColumnDefBuilder.newColumnDef(0),
-                        DTColumnDefBuilder.newColumnDef(1),
-                        DTColumnDefBuilder.newColumnDef(2),
-                        DTColumnDefBuilder.newColumnDef(3),
-                        DTColumnDefBuilder.newColumnDef(4),
-                        DTColumnDefBuilder.newColumnDef(5),
-                        DTColumnDefBuilder.newColumnDef(6)
-                    ];
                     $scope.siteData = response.data;
                 }, function(err){
                     console.log(err);
