@@ -2,32 +2,33 @@
     <div class="col-md-12 alert alert-danger" ng-show="error">{{ error }}</div>
     <!--Only show activate controls for admins right now-->
     <div class="col-sm-4">
-        <div class="list-group">
-            <div class="list-group-item">
-                <span class="panel-title">
-                    <i class="fa fa-cog"></i>&nbsp;Page Settings
-                </span>
-            </div>
-            <div class="list-group-item">
-                <div class="form-horizontal">
-                    <div class="form-group m0">
-                        <label class="control-label col-sm-3">Status</label>
-                        <div class="col-sm-8">
-                            <div class="form-control-static">
-                                <label class="switch" ng-show="authentication.user.roles.indexOf('admin') > -1">
-                                    <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
-                                    <span></span>
-                                </label>
-                                <status-label model="page"></status-label>
+        <form editable-form name="pageForm" onaftersave="update()">
+            <div class="list-group">
+                <div class="list-group-item">
+                    <span class="panel-title">
+                        <i class="fa fa-cog"></i>&nbsp;Page Settings
+                    </span>
+                </div>
+                <div class="list-group-item">
+                    <div class="form-horizontal">
+                        <div class="form-group m0">
+                            <label class="control-label col-sm-3">Status</label>
+                            <div class="col-sm-8">
+                                <div class="form-control-static">
+                                    <label class="switch" ng-show="authentication.user.roles.indexOf('admin') > -1">
+                                        <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
+                                        <span></span>
+                                    </label>
+                                    <status-label model="page"></status-label>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible">
+                                    <span class="fa fa-edit"></span>
+                                </a>
                             </div>
                         </div>
-                        <div class="col-sm-1">
-                            <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible">
-                                <span class="fa fa-edit"></span>
-                            </a>
-                        </div>
-                    </div>
-                    <form editable-form name="pageForm" id="pageForm" onaftersave="update()">
+
                         <div class="form-group m0">
                             <label class="control-label col-sm-3">Name</label>
                             <div class="col-sm-9">
@@ -60,21 +61,22 @@
                                 </p>
                             </div>
                         </div>
-                    </form>
+
+                    </div>
+                </div>
+                <div class="list-group-item" ng-show="pageForm.$visible">
+                    <div class="text-center">
+                        <!-- buttons to submit / cancel form -->
+                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
+                            Save
+                        </button>
+                        <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="list-group-item" ng-show="pageForm.$visible">
-                <div class="text-center">
-                    <!-- buttons to submit / cancel form -->
-                    <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
-                        Save
-                    </button>
-                    <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
+        </form>
         <div class="list-group" data-ng-init="getQuickStats(dateRangeSelection)">
             <div class="list-group-item">
                 <div class="panel-title">

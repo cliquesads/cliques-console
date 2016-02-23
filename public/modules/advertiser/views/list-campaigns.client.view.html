@@ -1,11 +1,11 @@
 
 <div class="page-header">
-    <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="advertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="height: 100%">
+    <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="selectedAdvertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="height: 100%">
         <option value=""></option>
     </select>
 </div>
 <div class="list-group">
-    <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
+    <a data-ng-repeat="campaign in selectedAdvertiser.campaigns" data-ng-href="#!/advertiser/{{selectedAdvertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
         <div class="row row-table">
             <div class="col-sm-1">
                 <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
@@ -42,9 +42,9 @@
                 <p class="list-group-item-text">CTR</p>
             </div>
         </div>
-        <!--<p class="list-group-item-text"> Active Campaigns: {{ advertiser.campaigns.length }}</p>-->
+        <!--<p class="list-group-item-text"> Active Campaigns: {{ selectedAdvertiser.campaigns.length }}</p>-->
     </a>
 </div>
-<div class="well well-lg text-center pv-lg" data-ng-if="advertiser.campaigns.length == 0 || !advertiser">
+<div class="well well-lg text-center pv-lg" data-ng-if="selectedAdvertiser.campaigns.length == 0 || !selectedAdvertiser">
     <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No campaigns to show.</em>
 </div>
