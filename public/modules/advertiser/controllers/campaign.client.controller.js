@@ -70,27 +70,28 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             });
         };
 
-        //// Listener to update quickstats when advertiser var changes
-        //$scope.$watch(function(scope){ return scope.advertiser; }, function(newAdv, oldAdv){
-        //    if (newAdv){
-        //        HourlyAdStat.advQuery({advertiserId: newAdv._id},{
-        //            groupBy: 'campaign'
-        //        }).then(function(response){
-        //            response.data.forEach(function(campaign_data){
-        //                var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
-        //                    return campaign._id === campaign_data._id.campaign;
-        //                });
-        //                // augment campaign w/ campaign quickstats
-        //                $scope.advertiser.campaigns[i].percent_spent = (campaign_data.spend/ $scope.advertiser.campaigns[i].budget).toFixed(4);
-        //                $scope.advertiser.campaigns[i].imps = campaign_data.imps;
-        //                $scope.advertiser.campaigns[i].clicks = campaign_data.clicks;
-        //                $scope.advertiser.campaigns[i].ctr = (campaign_data.clicks / campaign_data.imps).toFixed(4);
-        //                $scope.advertiser.campaigns[i].spend = campaign_data.spend;
-        //                $scope.advertiser.campaigns[i].ecpm = ((campaign_data.spend / campaign_data.imps) * 1000).toFixed(4);
-        //            });
-        //        });
-        //    }
-        //});
+        // TODO: This is only being used in listCampaigns view, deprecate this eventually or move to
+        // TODO: separate controller.
+        $scope.$watch(function(scope){ return scope.selectedAdvertiser; }, function(newAdv, oldAdv){
+            if (newAdv){
+                HourlyAdStat.advQuery({advertiserId: newAdv._id},{
+                    groupBy: 'campaign'
+                }).then(function(response){
+                    response.data.forEach(function(campaign_data){
+                        var i = _.findIndex($scope.selectedAdvertiser.campaigns, function(campaign){
+                            return campaign._id === campaign_data._id.campaign;
+                        });
+                        // augment campaign w/ campaign quickstats
+                        $scope.selectedAdvertiser.campaigns[i].percent_spent = (campaign_data.spend/ $scope.selectedAdvertiser.campaigns[i].budget).toFixed(4);
+                        $scope.selectedAdvertiser.campaigns[i].imps = campaign_data.imps;
+                        $scope.selectedAdvertiser.campaigns[i].clicks = campaign_data.clicks;
+                        $scope.selectedAdvertiser.campaigns[i].ctr = (campaign_data.clicks / campaign_data.imps).toFixed(4);
+                        $scope.selectedAdvertiser.campaigns[i].spend = campaign_data.spend;
+                        $scope.selectedAdvertiser.campaigns[i].ecpm = ((campaign_data.spend / campaign_data.imps) * 1000).toFixed(4);
+                    });
+                });
+            }
+        });
 
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
