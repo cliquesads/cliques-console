@@ -123,8 +123,9 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
                 endDate: endDate
             }).then(function(response){
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                    {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend']});
+                    {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'defaults','clicks','spend']});
                 $scope.impressions = _.sumBy($scope.timeSeries.imps, function(item){ return item[1];});
+                $scope.defaults = _.sumBy($scope.timeSeries.defaults, function(item){ return item[1];});
                 $scope.clicks = _.sumBy($scope.timeSeries.clicks, function(item){ return item[1];});
                 $scope.spend = _.sumBy($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.CTR = $scope.clicks / $scope.impressions;
