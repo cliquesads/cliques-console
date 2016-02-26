@@ -158,10 +158,10 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 },{
                     dateGroupBy: timeUnit,
                     startDate: startDate,
-                    endDate: endDate
+                    endDate: endDate,
                 }).then(function(response){
                     $scope.siteTimeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                        {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend', 'view_convs', 'click_convs']});
+                        {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'defaults','clicks','spend', 'view_convs', 'click_convs']});
                     $scope.impressions = _.sumBy($scope.siteTimeSeries.imps, function(item){ return item[1];});
                     $scope.clicks = _.sumBy($scope.siteTimeSeries.clicks, function(item){ return item[1];});
                     $scope.spend = _.sumBy($scope.siteTimeSeries.spend, function(item){ return item[1];});
@@ -180,6 +180,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 },{
                     groupBy: 'page,placement',
                     populate: 'page,placement',
+                    advertiser: '{ne}null',
                     startDate: startDate,
                     endDate: endDate
                 }).then(function(response){
@@ -198,6 +199,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 },{
                     groupBy: 'advertiser',
                     populate: 'advertiser',
+                    advertiser: '{ne}null',
                     startDate: startDate,
                     endDate: endDate
                 }).then(function(response){

@@ -86,8 +86,24 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                         },
                         color: "#768294",
                         yaxis: 1,
-                        data: scope.timeSeries ? scope.timeSeries.imps : null
-                    },{
+                        data: scope.timeSeries ? scope.timeSeries.imps : null,
+                        stack: true
+                    },
+                    {
+                        label: "Defaults",
+                        bars: {
+                            show: true,
+                            align: "center",
+                            fill: true,
+                            barWidth: 24 * 60 * 60 * 600,
+                            lineWidth: 0.4
+                        },
+                        color: "#9BE3BF",
+                        yaxis: 1,
+                        data: scope.timeSeries ? scope.timeSeries.defaults : null,
+                        stack: true
+                    },
+                    {
                         label: "CTR",
                         lines: {
                             show: true,
