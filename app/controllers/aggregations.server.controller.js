@@ -60,6 +60,9 @@ var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, date
  * Returns either parsed value, or if a recognized operator is used, object
  * with Mongo-compatible operator (i.e. prefixed with '$') as key.
  *
+ * Also parses special values:
+ *      - 'null' --> null
+ *
  * @param val
  * @returns {*}
  * @private
@@ -72,6 +75,9 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     // Should go without saying that you SHOULDN'T USE COMMAS IN QUERY PARAMS
     if (val.indexOf(',') > -1){
         val = val.split(',');
+    } else if (val === 'null') {
+        //TODO: this won't catch 'null' in an array, but I don't really think you need to
+        val = null;
     }
     if (operator){
         operator = operator[1];
@@ -368,6 +374,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                         _id: group,
                         bids: {$sum: "$bids"},
                         imps: {$sum: "$imps"},
+                        defaults: {$sum: "$defaults"},
                         spend: {$sum: "$spend"},
                         clicks: {$sum: "$clicks"},
                         view_convs: {$sum: "$view_convs"},
