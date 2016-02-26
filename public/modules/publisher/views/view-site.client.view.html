@@ -197,8 +197,8 @@ adding hook in parent template ---->
                                         <div class="h3">{{ CTR | percentage:2 }}</div>
                                     </div>
                                     <div class="col-sm-2 col-xs-6 text-center">
-                                        <p>Clicks</p>
-                                        <div class="h3">{{ clicks | number: 0 }}</div>
+                                        <p>Fill Rate</p>
+                                        <div class="h3">{{ impressions / (impressions + defaults) | percentage:0 }}</div>
                                     </div>
                                     <div class="col-sm-3 col-xs-6 text-center">
                                         <p>Revenue</p>
