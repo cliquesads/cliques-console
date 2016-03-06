@@ -13,7 +13,6 @@ angular.module('core').controller('AppController',
 
     // Server-side variables passed to server-rendered index template
     $scope.consoleVersion = consoleVersion;
-    $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');
 
     if (user){
         // TODO: FIX THIS
