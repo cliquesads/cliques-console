@@ -1,9 +1,6 @@
 /**
  * Created by bliang on 1/11/16.
  */
-/**
- * Created by bliang on 8/15/15.
- */
 angular.module('users').directive('termsPanel', ['TermsAndConditions','$compile',function(TermsAndConditions, $compile){
     'use strict';
     return {
