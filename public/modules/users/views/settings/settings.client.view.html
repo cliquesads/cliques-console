@@ -1,0 +1,47 @@
+<div class="unwrap">
+    <section ui-view="cover"></section>
+    <div class="text-center bg-gray-dark">
+        <div class="row row-table">
+            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.profile')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.profile'}">
+                <h4 class="m0">My Profile</h4>
+            </div>
+            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.password')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.password'}">
+                <h4 class="m0">Change Password</h4>
+            </div>
+            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.organization')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.organization'}">
+                <h4 class="m0">Organization</h4>
+            </div>
+            <div class="col-xs-3 p-lg mb-xl" ng-click="$state.transitionTo('app.settings.billing')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.billing'}">
+                <h4 class="m0">Billing</h4>
+            </div>
+        </div>
+    </div>
+    <div class="p-lg">
+        <div class="row">
+            <!-- Main Content Panel - SubViews in Profile State -->
+            <div class="col-lg-9">
+                <section ui-view="main"></section>
+            </div>
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="text-center">
+                            <h3 class="mt0">Ted Berry</h3>
+                            <p>Lead director</p>
+                        </div>
+                        <hr/>
+                        <ul class="list-unstyled ph-xl">
+                            <li>
+                                <em class="fa fa-home fa-fw mr-lg"></em>Somewhere, Neverland</li>
+                            <li>
+                                <em class="fa fa-briefcase fa-fw mr-lg"></em><a href="#">Themicon.co</a>
+                            </li>
+                            <li>
+                                <em class="fa fa-graduation-cap fa-fw mr-lg"></em>Master Designer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

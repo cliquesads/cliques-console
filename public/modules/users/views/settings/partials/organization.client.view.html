@@ -1,0 +1,72 @@
+<div class="p-lg">
+    <form name="orgForm" data-ng-submit="updateOrganization(orgForm.$valid)" class="signin form-horizontal" autocomplete="off">
+        <div class="row pt">
+            <div class="form-group">
+                <label for="company">Company Name *</label>
+                <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="form-group">
+                <label>Website *</label>
+                <div class="input-group">
+                    <span class="input-group-addon">http://</span>
+                    <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="organization.website" id="website" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                </div>
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="form-group">
+                <label for="address">Address *</label>
+                <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln.">
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="form-group">
+                <label for="address2">Address 2</label>
+                <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc.">
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="form-group">
+                <label for="country">Country *</label>
+                <div id="country" required="required" class="form-control" data-ng-model="organization.country" country-select></div>
+            </div>
+        </div>
+        <div class="row pt">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <input type="text" id="city" name="city" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="state">State/Province/Region *</label>
+                    <div id="state" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="zip">Zip/Postal Code *</label>
+                    <input type="text" id="zip" name="zip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753">
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="text-center form-group mt">
+        <button type="submit" class="btn btn-large btn-primary">Save Organization</button>
+    </div>
+    <div data-ng-show="success" class="text-center text-success">
+        <strong>Organization Saved Successfully</strong>
+    </div>
+    <div data-ng-show="error" class="text-center text-danger">
+        <strong data-ng-bind="error"></strong>
+    </div>
+</div>

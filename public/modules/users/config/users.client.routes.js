@@ -48,9 +48,66 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 			url: '/settings/password',
 			templateUrl: 'modules/users/views/settings/change-password.client.view.html'
 		}).
-		state('app.profile', {
-			url: '/settings/profile',
-			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
+		state('app.settings', {
+			url: '/settings',
+			templateUrl: 'modules/users/views/settings/settings.client.view.html',
+			controller: 'SettingsController'
+		}).
+		state('app.settings.profile', {
+			url: '/profile',
+			title: 'Profile',
+			views: {
+				cover: {
+					templateUrl: 'modules/users/views/settings/partials/cover.client.view.html',
+					controller: 'SettingsCoverController'
+				},
+				main: {
+					templateUrl: 'modules/users/views/settings/partials/profile.client.view.html',
+					controller: 'ProfileController'
+				}
+			}
+		}).
+		state('app.settings.organization', {
+			url: '/organization',
+			title: 'Organization',
+			views: {
+				cover: {
+					templateUrl: 'modules/users/views/settings/partials/cover.client.view.html',
+					controller: 'SettingsCoverController'
+				},
+				main: {
+					templateUrl: 'modules/users/views/settings/partials/organization.client.view.html',
+					controller: 'OrganizationController'
+				}
+			}
+		}).
+		state('app.settings.billing', {
+			url: '/billing',
+			title: 'Billing',
+			views: {
+				cover: {
+					templateUrl: 'modules/users/views/settings/partials/cover.client.view.html',
+					controller: 'SettingsCoverController'
+				},
+				main: {
+					templateUrl: 'modules/users/views/settings/partials/billing.client.view.html',
+					controller: 'BillingController'
+				}
+			}
+		}).
+		state('app.settings.password', {
+			url: '/password',
+			title: 'Password',
+			views: {
+				cover: {
+					templateUrl: 'modules/users/views/settings/partials/cover.client.view.html',
+					controller: 'SettingsCoverController'
+				},
+				main: {
+					templateUrl: 'modules/users/views/settings/partials/change-password.client.view.html',
+					controller: 'ChangePasswordController'
+				}
+			}
 		}).
         state('app.terms-and-conditions',{
             url: '/terms-and-conditions',
