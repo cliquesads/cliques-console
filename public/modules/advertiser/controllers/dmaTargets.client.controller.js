@@ -10,6 +10,11 @@ angular.module('advertiser').controller('dmaTargetsController', ['$scope','DMA',
     //this way, all Advertiser resource methods will work
     $scope.campaign = $scope.advertiser.campaigns[i];
     $scope.dmas = DMA.query(function(){
+        // add weight of 1 to each target so no null weights can be set
+        $scope.dmas.forEach(function(dma){
+            dma.weight = 1;
+        });
+
         // TODO: THIS IS FUCKING HORRIBLE FIX THIS
         // Have to replace dma_targets w/ options from dmas list in order to properly populate directive
         var lambda = function(dmaObj){ return dmaObj._id === target.target;};
@@ -21,6 +26,7 @@ angular.module('advertiser').controller('dmaTargetsController', ['$scope','DMA',
             $scope.campaign.dma_targets[j].target = $scope.campaign.dma_targets[j]._id;
         }
     });
+
     $scope.updateAndClose = function(){
         this.advertiser.campaigns[i] = AdvertiserUtils.convertAllTargetArrays(this.campaign);
         this.advertiser.$update(function() {
