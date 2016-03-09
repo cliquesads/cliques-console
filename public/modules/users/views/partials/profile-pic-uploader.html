@@ -3,25 +3,21 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>
-                        <div class="box-placeholder-logo-preview">
-                            <div ng-show="model.logo_url && model.logo_url != default_logo_url" ng-click="removeLogo()" class="logo-preview-delete-button">
-                                <span class="fa fa-close fa-border bg-danger-light"></span>
-                            </div>
-                            <div class="logo-preview-container">
-                                <img ng-hide="logo_loading" ng-src="{{ model.logo_url || default_logo_url }}" class="client-logo-md"/>
-                                <div ng-show="logo_loading">
-                                    <div class="ball-clip-rotate">
-                                        <div></div>
-                                    </div>
-                                </div>
+                    <td class="box-placeholder-avatar-preview">
+                        <div ng-show="model.avatarUrl && model.avatarUrl!= default_logo_url" ng-click="removeLogo()" class="logo-preview-delete-button">
+                            <span class="fa fa-close fa-border bg-danger-light"></span>
+                        </div>
+                        <img ng-hide="logo_loading" ng-src="{{ model.avatarUrl || default_logo_url }}" class="client-logo-lg"/>
+                        <div ng-show="logo_loading">
+                            <div class="ball-clip-rotate">
+                                <div></div>
                             </div>
                         </div>
                     </td>
                     <td>
                         <small class="text-muted">PNG or JPG file, {{ max_size_kb }} KB Max, {{ max_width }}px x {{ max_height }}px max dimensions</small>
                         <div class="form-group">
-                            <input filestyle="" type="file" data-button-text="Choose a Logo File" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
+                            <input filestyle="" type="file" data-button-text="Choose a Profile Image" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
                             <br/>
                             <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
                         </div>

@@ -1,4 +1,4 @@
-angular.module('core').directive('logoUploader', [
+angular.module('core').directive('avatarUploader', [
     'FileUploader',
     'LOGO',
     function(FileUploader,LOGO){
@@ -16,9 +16,9 @@ angular.module('core').directive('logoUploader', [
                 //TODO: in the directive and have it passed to the template properly.  Fix as this
                 //TODO: is really, really annoying, would love to not have to instantiate in the controller
 
-                scope.max_size_kb = LOGO.max_size_kb;
-                scope.max_width = LOGO.max_width;
-                scope.max_height = LOGO.max_height;
+                scope.max_size_kb = 200;
+                scope.max_width = 600;
+                scope.max_height = 600;
                 scope.default_logo_url = LOGO.default_secure_url;
 
                 //##### FILTERS ######
@@ -65,7 +65,7 @@ angular.module('core').directive('logoUploader', [
                                 // Now check to make sure dimensions are supported, calling callback
                                 // if they're not.
                                 if (!(self.width <= scope.max_width && self.height <= scope.max_height)){
-                                    scope.upload_error = 'Logo must be no more than ' + scope.max_width + 'px wide or ' + scope.max_height + ' pixels tall';
+                                    scope.upload_error = 'Profile must be no more than ' + scope.max_width + 'px wide or ' + scope.max_height + ' px tall';
                                     fileItem.remove();
                                 }
                             });
@@ -87,15 +87,12 @@ angular.module('core').directive('logoUploader', [
 
                 scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
                     // Add Google Cloud URL to fileitem when it successfully uploads
-                    if (!scope.model.logo){
-                        scope.model.logo = {};
-                    }
-                    scope.model.logo_url = response.url;
+                    scope.model.avatarUrl = response.url;
                     scope.logo_loading = false;
                 };
 
                 scope.removeLogo = function(){
-                    scope.model.logo_url = scope.default_logo_url;
+                    scope.model.avatarUrl = scope.default_logo_url;
                     if (scope.onremove){
                         scope.onremove();
                     }
