@@ -97,7 +97,10 @@ var UserSchema = new Schema({
     organization: {
         type: Schema.ObjectId,
         ref: 'Organization'
-    }
+    },
+	avatarUrl: {
+		type: String
+	}
 });
 
 /**
