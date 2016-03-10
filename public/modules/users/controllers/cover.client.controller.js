@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('users').controller('SettingsCoverController', ['$scope', '$http', '$location', 'Users',
-    'Authentication','FileUploader','ngDialog','LOGO',
-    function($scope, $http, $location, Users, Authentication, FileUploader, ngDialog, LOGO) {
+    'Authentication','FileUploader','ngDialog','userIdenticon',
+    function($scope, $http, $location, Users, Authentication, FileUploader, ngDialog, userIdenticon) {
         $scope.user = Authentication.user;
-        $scope.defaultUrl = LOGO.default_secure_url;
+        $scope.userIdenticon = userIdenticon;
 
         $scope.updateUser = function(){
             var user = new Users($scope.user);
@@ -29,11 +29,11 @@ angular.module('users').controller('SettingsCoverController', ['$scope', '$http'
         };
 
         $scope.size = $scope.size || 'lg';
-        $scope.default_url = LOGO.default_secure_url;
         $scope.openUploader = function(){
             ngDialog.open({
                 template: '<h4>Upload a profile picture</h4><avatar-uploader model="model" uploader="uploader" onremove="onremove()"></avatar-uploader>',
                 plain: true,
+                className: 'ngdialog-theme-default dialogwidth650',
                 data: { user: $scope.user, uploader: $scope.uploader, onremove: $scope.updateUser },
                 controller: ['$scope', function ($scope) {
                     $scope.model = $scope.ngDialogData.user;
@@ -45,7 +45,10 @@ angular.module('users').controller('SettingsCoverController', ['$scope', '$http'
                     };
 
                     $scope.uploader = $scope.ngDialogData.uploader;
-                    $scope.onremove = $scope.ngDialogData.onremove;
+                    $scope.onremove = function(){
+                        $scope.ngDialogData.onremove();
+                        $scope.closeThisDialog('Success');
+                    };
                 }]
             });
         };

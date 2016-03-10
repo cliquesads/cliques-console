@@ -36,4 +36,15 @@ angular.module('users').factory('Users', ['$resource',
             };
         }
     ]
-);
+)
+.factory('userIdenticon',['Authentication',
+    /**
+     * Generates unique "Identicon" using username as a hash
+     */
+    function(Authentication){
+        // create a base64 encoded PNG
+        var identicon = new Identicon(Authentication.user.username, 100).toString();
+        // Include image prefix for rendering in template, could make this optional
+        return 'data:image/png;base64,' + identicon;
+    }
+]);

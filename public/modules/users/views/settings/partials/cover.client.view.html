@@ -1,6 +1,8 @@
 <div style="background-image: url(https://storage.googleapis.com/cliquesads-images/photo-1440688807730-73e4e2169fb8_sm.jpg)" class="bg-cover">
     <div class="p-lg text-center text-white">
-        <img src="{{ user.avatarUrl ||  defaultUrl }}" alt="Image" class="img-thumbnail avatar" ng-click="openUploader()"/>
+        <div>
+            <img src="{{ user.avatarUrl ||  userIdenticon }}" alt="Image" class="img-thumbnail avatar" ng-click="openUploader()" tooltip="Click to Change" tooltip-placement="right"/>
+        </div>
         <h3 class="m0">{{ user.displayName }}</h3>
         <p>{{ user.organization.name }}</p>
     </div>

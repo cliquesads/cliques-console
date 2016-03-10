@@ -1,7 +1,7 @@
 angular.module('core').directive('avatarUploader', [
     'FileUploader',
-    'LOGO',
-    function(FileUploader,LOGO){
+    'userIdenticon',
+    function(FileUploader,userIdenticon){
         'use strict';
         return {
             restrict: 'E',
@@ -19,7 +19,7 @@ angular.module('core').directive('avatarUploader', [
                 scope.max_size_kb = 200;
                 scope.max_width = 600;
                 scope.max_height = 600;
-                scope.default_logo_url = LOGO.default_secure_url;
+                scope.userIdenticon = userIdenticon;
 
                 //##### FILTERS ######
                 scope.uploader.filters.push({
@@ -92,7 +92,7 @@ angular.module('core').directive('avatarUploader', [
                 };
 
                 scope.removeLogo = function(){
-                    scope.model.avatarUrl = scope.default_logo_url;
+                    scope.model.avatarUrl = null;
                     if (scope.onremove){
                         scope.onremove();
                     }
