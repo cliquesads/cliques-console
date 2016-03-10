@@ -43,7 +43,11 @@ angular.module('users').factory('Users', ['$resource',
      */
     function(Authentication){
         // create a base64 encoded PNG
-        var identicon = new Identicon(Authentication.user.username, 100).toString();
+        var options = {
+            background: [30,165,98,1],
+            size: 100
+        };
+        var identicon = new Identicon(Authentication.user._id, options).toString();
         // Include image prefix for rendering in template, could make this optional
         return 'data:image/png;base64,' + identicon;
     }

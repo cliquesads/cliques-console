@@ -46,7 +46,7 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 		}).
 		state('app.password', {
 			url: '/settings/password',
-			templateUrl: 'modules/users/views/settings/change-password.client.view.html'
+			templateUrl: 'modules/users/views/settings/partials/change-password.client.view.html'
 		}).
 		state('app.settings', {
 			url: '/settings',
