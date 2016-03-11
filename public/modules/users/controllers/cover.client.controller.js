@@ -52,6 +52,5 @@ angular.module('users').controller('SettingsCoverController', ['$scope', '$http'
                 }]
             });
         };
-
     }
 ]);
