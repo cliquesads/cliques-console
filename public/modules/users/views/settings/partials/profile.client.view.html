@@ -2,14 +2,14 @@
     <form name="userForm" id="userForm" data-ng-submit="updateUserProfile()" class="signin form-horizontal" autocomplete="off">
         <fieldset>
             <div class="row">
-                <div class="col-sm-8 mb-sm">
+                <div class="col-sm-6 mb-sm">
                     <div class="form-group has-feedback mr-xl">
                         <label for="username">Username</label>
                         <input type="text" id="username" required="required" name="username" ng-minlength="5" class="form-control" data-ng-model="user.username" placeholder="Username">
                         <span class="fa fa-user form-control-feedback text-muted"></span>
                     </div>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <span ng-show="userForm.username.$dirty && userForm.username.$modelValue != initUsername">
                         <div ng-show="user.username.length < 5" class="form-message form-message-danger" style=""><i class="fa fa-exclamation-circle"></i> 5 characters min.</div>
                         <div ng-show="user.username && userNameTaken" class="form-message form-message-danger" style=""><i class="fa fa-exclamation-circle"></i> This username is taken.</div>

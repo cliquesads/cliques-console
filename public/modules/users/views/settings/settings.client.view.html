@@ -2,17 +2,17 @@
     <section ui-view="cover"></section>
     <div class="text-center bg-gray-dark">
         <div class="row row-table">
-            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.profile')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.profile'}">
-                <h4 class="m0">My Profile</h4>
+            <div class="col-xs-3 br p-lg mb-xl hover-gray" ng-click="$state.transitionTo('app.settings.profile')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.profile'}">
+                <h4 class="m0"><i class="fa fa-user"></i> My Profile</h4>
             </div>
-            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.password')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.password'}">
-                <h4 class="m0">Change Password</h4>
+            <div class="col-xs-3 br p-lg mb-xl hover-gray" ng-click="$state.transitionTo('app.settings.password')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.password'}">
+                <h4 class="m0"><i class="fa fa-key"></i> Change Password</h4>
             </div>
-            <div class="col-xs-3 br p-lg mb-xl" ng-click="$state.transitionTo('app.settings.organization')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.organization'}">
-                <h4 class="m0">Organization</h4>
+            <div class="col-xs-3 br p-lg mb-xl hover-gray" ng-click="$state.transitionTo('app.settings.organization')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.organization'}">
+                <h4 class="m0"><i class="fa fa-building-o"></i> Organization</h4>
             </div>
-            <div class="col-xs-3 p-lg mb-xl" ng-click="$state.transitionTo('app.settings.billing')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.billing'}">
-                <h4 class="m0">Billing</h4>
+            <div class="col-xs-3 p-lg mb-xl hover-gray" ng-click="$state.transitionTo('app.settings.billing')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.billing'}">
+                <h4 class="m0"><i class="fa fa-credit-card"></i> Billing</h4>
             </div>
         </div>
     </div>
