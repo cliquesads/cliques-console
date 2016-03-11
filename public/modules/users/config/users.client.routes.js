@@ -44,10 +44,6 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 			url: '/password/reset/:token',
 			templateUrl: 'modules/users/views/password/reset-password.client.view.html'
 		}).
-		state('app.password', {
-			url: '/settings/password',
-			templateUrl: 'modules/users/views/settings/partials/change-password.client.view.html'
-		}).
 		state('app.settings', {
 			url: '/settings',
 			templateUrl: 'modules/users/views/settings/settings.client.view.html',
