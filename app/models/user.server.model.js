@@ -51,6 +51,7 @@ var UserSchema = new Schema({
 	username: {
 		type: String,
 		unique: 'This username is already in use',
+		index: true,
 		required: 'Please fill in a username',
 		trim: true
 	},
