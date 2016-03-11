@@ -31,21 +31,27 @@ angular.module('users').controller('SettingsCoverController', ['$scope', '$http'
         $scope.size = $scope.size || 'lg';
         $scope.openUploader = function(){
             ngDialog.open({
-                template: '<h4>Upload a profile picture</h4><avatar-uploader model="model" uploader="uploader" onremove="onremove()"></avatar-uploader>',
+                template: '<h4>Upload a profile picture</h4><avatar-uploader model="model" uploader="uploader" ' +
+                    'on-remove="onRemove()" on-upload-success="onUploadSuccess()"></avatar-uploader>',
                 plain: true,
                 className: 'ngdialog-theme-default dialogwidth650',
-                data: { user: $scope.user, uploader: $scope.uploader, onremove: $scope.updateUser },
+                data: {
+                    user: $scope.user,
+                    uploader: $scope.uploader,
+                    onRemove: $scope.updateUser,
+                    onUploadSuccess: $scope.updateUser
+                },
                 controller: ['$scope', function ($scope) {
                     $scope.model = $scope.ngDialogData.user;
 
                     // wrap onCompleteAll in function that closes dialog as well
-                    $scope.ngDialogData.uploader.onCompleteAll = function(){
-                        $scope.ngDialogData.uploader._onCompleteAll();
+                    $scope.onUploadSuccess = function(){
+                        $scope.ngDialogData.onUploadSuccess();
                         $scope.closeThisDialog('Success');
                     };
 
                     $scope.uploader = $scope.ngDialogData.uploader;
-                    $scope.onremove = function(){
+                    $scope.onRemove = function(){
                         $scope.ngDialogData.onremove();
                         $scope.closeThisDialog('Success');
                     };

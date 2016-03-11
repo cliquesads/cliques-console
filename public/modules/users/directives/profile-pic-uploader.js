@@ -8,7 +8,8 @@ angular.module('core').directive('avatarUploader', [
             scope: {
                 model: '=',
                 uploader: '=',
-                onremove: '&'
+                onRemove: '&',
+                onUploadSuccess: '&'
             },
             templateUrl: 'modules/users/views/partials/profile-pic-uploader.html',
             link: function(scope, element, attrs){
@@ -89,6 +90,9 @@ angular.module('core').directive('avatarUploader', [
                     // Add Google Cloud URL to fileitem when it successfully uploads
                     scope.model.avatarUrl = response.url;
                     scope.logo_loading = false;
+                    if (status === 200 || status === 304){
+                        scope.onUploadSuccess();
+                    }
                 };
 
                 scope.removeLogo = function(){
