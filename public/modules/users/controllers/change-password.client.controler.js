@@ -10,14 +10,15 @@ angular.module('users').controller('ChangePasswordController', ['$scope', '$http
         // Change user password
         $scope.changeUserPassword = function() {
             $scope.success = $scope.error = null;
-
-            $http.post('/users/password', $scope.passwordDetails).success(function(response) {
-                // If successful show success message and clear form
-                Notify.alert('Password Changed Successfully', {status: 'success'});
-                $scope.passwordDetails = null;
-            }).error(function(response) {
-                Notify.alert(response.message, {status: 'danger'});
-            });
+            if ($scope.passwordForm.$valid){
+                $http.post('/users/password', $scope.passwordDetails).success(function(response) {
+                    // If successful show success message and clear form
+                    Notify.alert('Password Changed Successfully', {status: 'success'});
+                    $scope.passwordDetails = null;
+                }).error(function(response) {
+                    Notify.alert(response.message, {status: 'danger'});
+                });
+            }
         };
     }
 ]);
