@@ -1,9 +1,11 @@
 <div class="p-lg">
-    <form name="orgForm" id="orgForm" data-ng-submit="updateOrganization(orgForm.$valid)" class="signin form-horizontal" autocomplete="off">
+    <form name="orgForm" id="orgForm" data-ng-submit="updateOrganization()" class="signin form-horizontal" autocomplete="off">
         <div class="row pt">
-            <div class="form-group pr">
-                <label for="company">Company Name *</label>
-                <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" placeholder="Company Name, Inc.">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="company">Company Name *</label>
+                    <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" placeholder="Company Name, Inc.">
+                </div>
             </div>
         </div>
         <div class="row">
@@ -24,15 +26,19 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <label for="address">Address *</label>
-                <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address"  placeholder="123 Green Acres Ln.">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="address">Address *</label>
+                    <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address"  placeholder="123 Green Acres Ln.">
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <label for="address2">Address 2</label>
-                <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2"  placeholder="Apartment, suite, unit, building, floor, etc.">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label for="address2">Address 2</label>
+                    <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2"  placeholder="Apartment, suite, unit, building, floor, etc.">
+                </div>
             </div>
         </div>
         <div class="row">
@@ -55,14 +61,16 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group">
-                    <label for="country">Country *</label>
-                    <div id="country" required="required" class="form-control" data-ng-model="organization.country" country-select></div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <div id="country" required="required" class="form-control" data-ng-model="organization.country" country-select></div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="text-center form-group mt">
+            <button type="submit" class="btn btn-large btn-primary">Save Organization</button>
+        </div>
     </form>
-    <div class="text-center form-group mt">
-        <button type="submit" class="btn btn-large btn-primary">Save Organization</button>
-    </div>
 </div>

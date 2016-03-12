@@ -1,14 +1,26 @@
 <div class="p-lg">
-    <!--<stripe-cc-form></stripe-cc-form>-->
-    <form action="" method="POST">
-        <script
-                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key="pk_test_ZuDCtX2NUeu3l4BZuibbu1mg"
-                data-amount="2000"
-                data-name="Demo Site"
-                data-description="2 widgets ($20.00)"
-                data-image="/128x128.png"
-                data-locale="auto">
-        </script>
+    <form stripe-form="handleStripe" name="stripeCreditCardForm">
+        <div class="col-sm-8">
+            <label for="number">Card number</label>
+            <input type="text" name="number" id="number" class="form-control" ng-model="number" payments-validate="card"
+                   payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type'/>
+        </div>
+        <div class="col-sm-4">
+            <label for="expiry">Expiry</label>
+            <input type="text" name="expiry" id="expiry" class="form-control" ng-model="expiry"
+                   payments-validate="expiry" payments-format="expiry" />
+        </div>
+        <div class="col-sm-8">
+            <label for="name">Name on card </label>
+            <input type="text" id="name" name="name" class="form-control">
+        </div>
+        <div class="col-sm-4">
+            <label for="cvc">CVC</label>
+            <input type="text" class="form-control" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
+                   payments-format="cvc" payments-type-model="type"/>
+        </div>
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary btn-large">Submit</button>
+        </div>
     </form>
 </div>

@@ -38,7 +38,8 @@ var ApplicationConfiguration = (function() {
         'trTrustpass',
         'hm.readmore',
         'ngclipboard',
-        'ui.identicon'
+        'ui.identicon',
+        'angularPayments'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
