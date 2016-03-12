@@ -1,6 +1,7 @@
 var errorHandler = require('./errors.server.controller'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
+    _ = require('lodash'),
     Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode');
 
