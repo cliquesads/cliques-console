@@ -62,19 +62,6 @@ exports.isUsernameTaken = function(req, res){
     });
 };
 
-
-
-/**
- * Create a new organization
- */
-exports.createOrganization = function(req, res){
-    var organization = new Organization(req.body);
-    organization.save(function(err, org){
-        if (err) return handleError(res, err);
-        return res.json(org);
-    });
-};
-
 /**
  * Signup
  */

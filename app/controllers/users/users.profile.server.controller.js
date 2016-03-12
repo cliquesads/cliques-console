@@ -8,6 +8,7 @@ var _ = require('lodash'),
 	mongoose = require('mongoose'),
 	passport = require('passport'),
 	User = mongoose.model('User'),
+	Organization = mongoose.model('Organization'),
 	auth = require('@cliques/cliques-node-utils').google.auth,
 	gcloud = require('gcloud');
 

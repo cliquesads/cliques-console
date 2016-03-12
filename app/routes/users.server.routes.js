@@ -35,9 +35,6 @@ module.exports = function(app) {
     app.route('/terms-and-conditions/current/:type').get(users.getCurrentTerms);
     app.route('/terms-and-conditions/by-id/:termsId').get(users.read);
 
-    // Organization Routes
-    app.route('/organization').post(users.createOrganization);
-
 	//// Setting the facebook oauth routes
 	//app.route('/auth/facebook').get(passport.authenticate('facebook', {
 	//	scope: ['email']
