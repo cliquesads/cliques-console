@@ -1,3 +1,6 @@
+<div class="text-center text-md">
+    <span class="text-muted">Account Type: <b ng-repeat="role in user.roles">{{ role | capitalize }}</b></span>
+</div>
 <div class="p-lg">
     <form name="userForm" id="userForm" data-ng-submit="updateUserProfile()" class="signin form-horizontal" autocomplete="off">
         <fieldset>
