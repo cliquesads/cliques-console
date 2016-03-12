@@ -3,7 +3,7 @@
  */
 
 //Articles service used for communicating with the articles REST endpoints
-angular.module('user').factory('Organizations', ['$resource',
+angular.module('users').factory('Organizations', ['$resource',
     function($resource) {
         return $resource('organization/:organizationId', { organizationId: '@_id'},
             {

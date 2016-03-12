@@ -1,6 +1,8 @@
-angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', 'Users', 'Authentication',
-    function($scope, $http, $location, Users, Authentication) {
+angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', 'Users',
+    'Authentication','Organizations','Notify',
+    function($scope, $http, $location, Users, Authentication, Organizations, Notify) {
         $scope.user = Authentication.user;
+        $scope.organization = new Organizations(Authentication.user.organization);
 
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field
@@ -20,5 +22,16 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
             .addValidator('intlphone', function (value, requirement) {
                 return $("#phone").intlTelInput("isValidNumber");
             }, 32);
+
+        $scope.updateOrganization = function(){
+            if ($scope.orgForm.$valid){
+                $scope.organization.$update(function(response){
+                    $scope.organization = response;
+                    Notify.alert('Organization Saved Successfully', {status: 'success'});
+                }, function(response){
+                    Notify.alert(response.data.message, {status: 'danger'});
+                });
+            }
+        }
     }
 ]);
