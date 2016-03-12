@@ -76,7 +76,8 @@
     "angular-read-more": "1.0.3",
     "ngclipboard": "~1.1.0",
     "angular-identicon": "~0.1.18",
-    "pnglib": "~1.0"
+    "pnglib": "*",
+    "angular-payments": "*"
   },
   "resolutions": {
     "angular": "1.3.16",

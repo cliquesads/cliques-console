@@ -65,5 +65,6 @@ module.exports = [
     'public/lib/ngclipboard/dist/ngclipboard.min.js',
     'public/lib/pnglib/pnglib.js',
     'public/lib/identicon/identicon.js',
-    'public/lib/angular-identicon/dist/angular-identicon.min.js'
+    'public/lib/angular-identicon/dist/angular-identicon.min.js',
+    'public/lib/angular-payments/lib/angular-payments.min.js'
 ];
