@@ -1,26 +1,67 @@
-<div class="p-lg">
-    <form stripe-form="handleStripe" name="stripeCreditCardForm">
-        <div class="col-sm-8">
-            <label for="number">Card number</label>
-            <input type="text" name="number" id="number" class="form-control" ng-model="number" payments-validate="card"
-                   payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type'/>
+<div class="p-lg col-sm-8">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <strong>Credit Card Information</strong>
+                <span class="pull-right">
+                    <a href="https://stripe.com/about"><i class="fa fa-2x fa-cc-stripe"></i></a>
+                </span>
+            </div>
         </div>
-        <div class="col-sm-4">
-            <label for="expiry">Expiry</label>
-            <input type="text" name="expiry" id="expiry" class="form-control" ng-model="expiry"
-                   payments-validate="expiry" payments-format="expiry" />
+        <div class="panel-body">
+            <p>
+                Enter your credit card information to allow Cliques to automatically bill you for any media and services
+                you have purchased.
+            </p>
+            <p>
+                <i class="visa"></i>
+                <i class="amex"></i>
+                <i class="mastercard"></i>
+                <i class="discover"></i>
+            </p>
+            <form stripe-form="handleStripe" name="stripeCreditCardForm">
+                <div class="row">
+                    <div class="col-sm-8 pr-lg">
+                        <label for="number">Card number</label>
+                        <input type="text" name="number" id="number" class="form-control input-lg" ng-model="number" payments-validate="card"
+                               payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type' placeholder="1234 5678 9012 3456"/>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="expiry">Expiration Date</label>
+                        <input type="text" name="expiry" id="expiry" class="form-control input-lg" ng-model="expiry"
+                               payments-validate="expiry" payments-format="expiry" placeholder="01 / 20"/>
+                    </div>
+                </div>
+                <div class="row pt">
+                    <div class="col-sm-8 pr-lg">
+                        <label for="name">Name on card </label>
+                        <input type="text" id="name" name="name" class="form-control input-lg" placeholder="Ernest Shackelton">
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="cvc">CVC</label>
+                        <input type="text" class="form-control input-lg" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
+                               payments-format="cvc" payments-type-model="type" placeholder="123"/>
+                    </div>
+                </div>
+                <div class="row pt text-center">
+                    <small class="text-muted">
+                        You will receive a statement containing your balance due for the previous month on the 1st of
+                        the next month. If no disputes are received by the 15th your card will be charged.
+                    </small>
+                </div>
+                <div class="row p-lg">
+                    <div class="col-sm-12 text-center">
+                        <button type="submit" class="btn btn-primary btn-large">Save</button>
+                    </div>
+                </div>
+            </form>
+            <div class="panel-footer">
+                <small class="text-muted">
+                    <i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to
+                    <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information
+                    on its own servers.
+                </small>
+            </div>
         </div>
-        <div class="col-sm-8">
-            <label for="name">Name on card </label>
-            <input type="text" id="name" name="name" class="form-control">
-        </div>
-        <div class="col-sm-4">
-            <label for="cvc">CVC</label>
-            <input type="text" class="form-control" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
-                   payments-format="cvc" payments-type-model="type"/>
-        </div>
-        <div class="col-sm-12">
-            <button type="submit" class="btn btn-primary btn-large">Submit</button>
-        </div>
-    </form>
+    </div>
 </div>
