@@ -2,23 +2,22 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
-                <strong>Credit Card Information</strong>
-                <span class="pull-right">
-                    <a href="https://stripe.com/about"><i class="fa fa-2x fa-cc-stripe"></i></a>
-                </span>
+                <div class="card-logo amex"></div>
+                <div class="card-logo visa"></div>
+                <div class="card-logo mastercard"></div>
+                <div class="card-logo discover"></div>
+                <div class="pull-right">
+                    <!--Inline style on span just to vertically center text-->
+                    <span style="display: inline-block; vertical-align: 8px" class="text-muted">
+                        Powered by 
+                    </span>
+                    <a href="https://stripe.com/about">
+                        <i class="fa fa-2x fa-cc-stripe"></i>
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="panel-body">
-            <p>
-                Enter your credit card information to allow Cliques to automatically bill you for any media and services
-                you have purchased.
-            </p>
-            <p>
-                <i class="visa"></i>
-                <i class="amex"></i>
-                <i class="mastercard"></i>
-                <i class="discover"></i>
-            </p>
+        <div class="panel-body pt0">
             <form stripe-form="handleStripe" name="stripeCreditCardForm">
                 <div class="row">
                     <div class="col-sm-8 pr-lg">
@@ -45,8 +44,8 @@
                 </div>
                 <div class="row pt text-center">
                     <small class="text-muted">
-                        You will receive a statement containing your balance due for the previous month on the 1st of
-                        the next month. If no disputes are received by the 15th your card will be charged.
+                        Billing occurs monthly. You'll receive a statement with your balance due for the previous month on the <strong>1st of
+                        the next month</strong>. Your card will be charged on the <strong>15th.</strong>
                     </small>
                 </div>
                 <div class="row p-lg">
