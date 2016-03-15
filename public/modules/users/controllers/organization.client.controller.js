@@ -34,6 +34,16 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
                     Notify.alert(response.data.message, {status: 'danger'});
                 });
             }
+        };
+
+        $scope.inviteUser = function(){
+            $http.post('/organization/' + $scope.organization._id + '/sendinvite', {})
+                .success(function(response){
+                    Notify.alert('User invite sent', {status: 'success'});
+                })
+                .error(function(response){
+                    Notify.alert(response.message, {status: 'danger'});
+                });
         }
     }
 ]);

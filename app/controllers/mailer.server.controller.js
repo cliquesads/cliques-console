@@ -44,14 +44,18 @@ var Mailer = exports.Mailer = function(options){
  * @param {Object} [mailOptions.data] data passed to template to compile
  * @param {String} [mailOptions.fromAlias] Can't set 'from' header w/ Gmail, but this at least changes the display to "[fromAlias] <support@cliquesads.com>"
  * @param {String} [mailOptions.replyTo] replyTo field
+ * @param {Function} callback
  */
-Mailer.prototype.sendMail = function(mailOptions){
+Mailer.prototype.sendMail = function(mailOptions, callback){
     var self = this;
     var compiledTemplate = swig.compileFile(self.templatePath + '/' + mailOptions.templateName);
     _.extend(mailOptions.data, self.defaults);
     mailOptions.html = compiledTemplate(mailOptions.data);
     mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
     self.smtpTransport.sendMail(mailOptions, function(err, success){
+        if (callback){
+            callback(err, success);
+        }
         if (err) {
             console.error("Error sending email: " + err);
             console.error("Used the following mailOptions: " + mailOptions);
@@ -67,8 +71,9 @@ Mailer.prototype.sendMail = function(mailOptions){
  * @param {String} templateName name of template file stored in self.templatePath
  * @param {Object} data data passed to template to compile
  * @param {String} orgName name of Organization instance
+ * @param {Function} callback
  */
-Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, orgName){
+Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, orgName, callback){
     var self = this;
     Organization
         .findOne({name: orgName})
@@ -86,7 +91,7 @@ Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, 
                 templateName: templateName,
                 data: data,
                 to: to
-            });
+            }, callback);
         });
 };
 
@@ -96,14 +101,15 @@ Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, 
  * @param templateName
  * @param {Object} data
  * @param {User} user instance of user model
+ * @param {Function} callback
  */
-Mailer.prototype.sendMailToUser = function(subject, templateName, data, user){
+Mailer.prototype.sendMailToUser = function(subject, templateName, data, user, callback){
     this.sendMail({
         subject: subject,
         templateName: templateName,
         data: data,
         to: user.email
-    });
+    }, callback);
 };
 
 /**
@@ -114,8 +120,9 @@ Mailer.prototype.sendMailToUser = function(subject, templateName, data, user){
  * @param {Object} data
  * @param {User} fromUser instance of user model
  * @param {string} to
+ * @param {Function} callback
  */
-Mailer.prototype.sendMailFromUser = function(subject, templateName, data, fromUser, to){
+Mailer.prototype.sendMailFromUser = function(subject, templateName, data, fromUser, to, callback){
     this.sendMail({
         subject: subject,
         templateName: templateName,
@@ -123,5 +130,5 @@ Mailer.prototype.sendMailFromUser = function(subject, templateName, data, fromUs
         replyTo: fromUser.email,
         alias: fromUser.displayName,
         to: to
-    });
+    }, callback);
 };

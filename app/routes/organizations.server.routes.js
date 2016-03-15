@@ -13,5 +13,7 @@ module.exports = function(app) {
 		.patch(users.requiresLogin, organizations.hasAuthorization, organizations.update)
 		.delete(users.requiresLogin, organizations.hasAuthorization, organizations.remove);
 
+	app.route('/organization/:organizationId/sendinvite').post(organizations.sendUserInvite);
+
 	app.param('organizationId', organizations.organizationByID);
 };

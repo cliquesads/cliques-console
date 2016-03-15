@@ -3,7 +3,10 @@ var errorHandler = require('./errors.server.controller'),
     User = mongoose.model('User'),
     _ = require('lodash'),
     Organization = mongoose.model('Organization'),
-    AccessCode = mongoose.model('AccessCode');
+    AccessCode = mongoose.model('AccessCode'),
+    mail = require('./mailer.server.controller');
+
+var mailer = new mail.Mailer();
 
 module.exports = {
 
@@ -90,5 +93,22 @@ module.exports = {
             });
         }
         next();
+    },
+
+    sendUserInvite: function(req, res){
+        mailer.sendMailFromUser('Join An Organization in Cliques', 'test.html',
+            {},
+            req.user,
+            'bliang@cliquesads.com',
+            function(err, success){
+                if (err){
+                    res.status(500).send({
+                        message: err
+                    });
+                } else {
+                    res.status(200).send();
+                }
+            }
+        );
     }
 };
