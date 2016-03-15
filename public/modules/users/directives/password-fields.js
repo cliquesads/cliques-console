@@ -7,10 +7,13 @@ angular.module('core').directive('passwordFields', ['$timeout',
                 passwordModel: '=',
                 verifyPasswordModel: '=',
                 passwordLabel: '@',
-                wizardstep: '@'
+                wizardstep: '@',
+                layout: '@'
             },
             templateUrl: 'modules/users/views/partials/password-fields.html',
             link: function(scope, element, attrs){
+                // Layout can either be 'horizontal' or 'vertical'
+                scope.layout = scope.layout || 'horizontal';
                 /**
                  * Terrible jQuery hack to move password helpers to where I want them to go
                  */
