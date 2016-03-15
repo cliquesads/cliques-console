@@ -2,7 +2,9 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
     'Authentication','Organizations','Notify',
     function($scope, $http, $location, Users, Authentication, Organizations, Notify) {
         $scope.user = Authentication.user;
-        $scope.organization = new Organizations(Authentication.user.organization);
+        $scope.organization = Organizations.get({
+            organizationId: Authentication.user.organization._id
+        });
 
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field

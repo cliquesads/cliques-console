@@ -18,7 +18,7 @@ module.exports = {
      * Organization middleware
      */
     organizationByID: function (req, res, next, id) {
-        Organization.findById(id).exec(function (err, organization) {
+        Organization.findById(id).populate('users').exec(function (err, organization) {
             if (err) return next(err);
             if (!organization) return next(new Error('Failed to load organization ' + id));
             req.organization = organization;
@@ -83,7 +83,8 @@ module.exports = {
      * @returns {*}
      */
     hasAuthorization: function (req, res, next) {
-        if (req.organization.users.indexOf(req.user._id) === -1){
+        var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
+        if (!user){
             return res.status(403).send({
                 message: 'User is not authorized to access this organization'
             });
