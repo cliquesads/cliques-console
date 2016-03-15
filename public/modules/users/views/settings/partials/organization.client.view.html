@@ -1,8 +1,8 @@
-<div class="col-xs-offset-2 col-xs-5 col-md-offset-1 col-md-6">
+<div class="col-sm-6">
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="text-center">
-                <h4 class="mt0">Organization Information</h4>
+                <h4 class="mt0"><i class="fa fa-building"></i> Organization Information</h4>
             </div>
             <hr/>
             <form name="orgForm" id="orgForm" data-ng-submit="updateOrganization()" class="signin form-horizontal" autocomplete="off">
@@ -82,17 +82,29 @@
         </div>
     </div>
 </div>
-<div class="col-xs-4">
+<div class="col-sm-6 pl-xl">
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="text-center">
-                <h4 class="mt0">Team</h4>
+                <h4 class="mt0"><i class="fa fa-users"></i> Team</h4>
             </div>
             <hr/>
-            <ul class="list-unstyled ph-xl">
-                <li ng-repeat="user in organization.users">
-                <em class="fa fa-home fa-fw mr-lg"></em>{{ user.displayName }}</li>
-            </ul>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Email</th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="u in organization.users" ng-class="{'text-bold': u._id === organization.primaryContact}">
+                            <td>{{ u.firstName }}</td>
+                            <td>{{ u.lastName }}</td>
+                            <td>{{ u.email }} <span class="text-sm" ng-show="u._id === organization.primaryContact">(owner)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
