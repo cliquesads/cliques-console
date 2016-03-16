@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
     Organization = mongoose.model('Organization'),
     config = require('../../config/config'),
     nodemailer = require('nodemailer'),
-    swig = require('swig'),
+    EmailTemplates = require('swig-email-templates'),
     _ = require('lodash');
 
 /**
@@ -23,6 +23,12 @@ var Mailer = exports.Mailer = function(options){
     this.fromAddress    = options.fromAddress || 'support@cliquesads.com';
     this.templatePath   = options.templatePath || config.templatePath;
 
+    // init email templates compiler, which uses Swig to compile templates
+    // and Juice to take care of inlining all CSS to be compatible with email clients
+    this.templateRenderer = new EmailTemplates({
+        root: this.templatePath
+    });
+
     //// Default to mailer options stored in environment config
     this.mailerOptions  = options.mailerOptions || config.mailer.options;
     this.smtpTransport  = nodemailer.createTransport(this.mailerOptions);
@@ -37,6 +43,9 @@ var Mailer = exports.Mailer = function(options){
  *
  * 'to' value is passed directly to mailOptions 'to', so must be string or array of strings.
  *
+ * NOTE: will extend mailOptions.data with Mailer.defaults, and set a template variable 'subject'
+ * to mailOptions.subject
+ *
  * @param {Object} mailOptions
  * @param {String} mailOptions.subject email subject
  * @param {String} mailOptions.templateName name of template file stored in self.templatePath
@@ -48,18 +57,30 @@ var Mailer = exports.Mailer = function(options){
  */
 Mailer.prototype.sendMail = function(mailOptions, callback){
     var self = this;
-    var compiledTemplate = swig.compileFile(self.templatePath + '/' + mailOptions.templateName);
+    //var compiledTemplate = swig.compileFile(self.templatePath + '/' + mailOptions.templateName);
+    // extend data with defaults
     _.extend(mailOptions.data, self.defaults);
-    mailOptions.html = compiledTemplate(mailOptions.data);
+    // extend data with 'subject'
+    // NOTE: this will overwrite data.subject if it's passed in,
+    // NOTE: probably not a good idea to set it anyway
+    _.extend(mailOptions.data, { subject: mailOptions.subject});
     mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
-    self.smtpTransport.sendMail(mailOptions, function(err, success){
-        if (callback){
-            callback(err, success);
+    self.templateRenderer.render(mailOptions.templateName, mailOptions.data, function(err, html, text){
+        if (err){
+            if (callback) callback(err);
+            return console.error("Error rendering email template: " + err);
         }
-        if (err) {
-            console.error("Error sending email: " + err);
-            console.error("Used the following mailOptions: " + mailOptions);
-        }
+        mailOptions.html = html;
+        mailOptions.text = text;
+        self.smtpTransport.sendMail(mailOptions, function(err, success){
+            if (callback){
+                callback(err, success);
+            }
+            if (err) {
+                console.error("Error sending email: " + err);
+                console.error("Used the following mailOptions: " + mailOptions);
+            }
+        });
     });
 };
 

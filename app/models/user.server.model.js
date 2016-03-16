@@ -199,6 +199,14 @@ var feeSchema = new Schema({
     fixedFeeInterval: { type: String, required: false }
 });
 
+var accessTokenSchema = new Schema({
+	_id: { type: Schema.ObjectId, required: true },
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: true },
+	email: { type: String, required: true },
+	expired: { type: Boolean, required: true, default: false }
+});
+
 /**
  * Organization is a collection of users
  *
@@ -220,6 +228,7 @@ var organizationSchema = new Schema({
     // can agree to multiple terms & conditions
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
+	accessTokens: [accessTokenSchema],
     fees: [feeSchema],
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
