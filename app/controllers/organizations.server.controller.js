@@ -129,8 +129,8 @@ module.exports = {
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                var subject = util.format("%s Has Invited You To Join %s on Cliques",
-                    req.user.displayName, organization.name);
+                var subject = util.format("%s Has Invited You To Join Cliques",
+                    req.user.firstName);
                 var inviteUrl = buildInviteURL(organization._id, token);
                 mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
                     { user: req.user, inviteUrl: inviteUrl, organization: organization },
