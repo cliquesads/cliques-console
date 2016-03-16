@@ -37,8 +37,11 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
         };
 
         $scope.inviteUser = function(){
-            $http.post('/organization/' + $scope.organization._id + '/sendinvite', {})
-                .success(function(response){
+            $http.post('/organization/' + $scope.organization._id + '/sendinvite', {
+                firstName: "Ben",
+                lastName: "Liang",
+                email: "Ben.liang443@gmail.com"
+            }).success(function(response){
                     Notify.alert('User invite sent', {status: 'success'});
                 })
                 .error(function(response){

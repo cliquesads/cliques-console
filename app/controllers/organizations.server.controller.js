@@ -8,7 +8,7 @@ var errorHandler = require('./errors.server.controller'),
     util = require('util'),
     config = require('config');
 
-var mailer = new mail.Mailer();
+var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
 var buildInviteURL = function(organizationId, accessTokenId){
     var protocol = 'https';
