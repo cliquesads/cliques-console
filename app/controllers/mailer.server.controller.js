@@ -149,7 +149,7 @@ Mailer.prototype.sendMailFromUser = function(subject, templateName, data, fromUs
         templateName: templateName,
         data: data,
         replyTo: fromUser.email,
-        alias: fromUser.displayName,
+        fromAlias: fromUser.displayName,
         to: to
     }, callback);
 };
