@@ -6,7 +6,8 @@ var errorHandler = require('./errors.server.controller'),
     AccessCode = mongoose.model('AccessCode'),
     mail = require('./mailer.server.controller'),
     util = require('util'),
-    config = require('config');
+    config = require('config'),
+    async = require('async');
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
@@ -112,13 +113,18 @@ module.exports = {
 
         // manually create token and store in ObjectId so you don't have to look
         // it up later after saving Organization when generating link
-        var token = mongoose.Types.ObjectId();
-        organization.accessTokens.push({
-            _id: token,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email
+        var tokens = [];
+        req.body.forEach(function(newUser){
+            var token = mongoose.Types.ObjectId();
+            tokens.push(token);
+            organization.accessTokens.push({
+                _id: token,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email
+            });
         });
+
 
         // TODO: Debatable whether this needs to be a serial process.
         // TODO: Could just save the org and independently send the email, but probably
@@ -131,21 +137,30 @@ module.exports = {
             } else {
                 var subject = util.format("%s Has Invited You To Join Cliques",
                     req.user.firstName);
-                var inviteUrl = buildInviteURL(organization._id, token);
-                mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
-                    { user: req.user, inviteUrl: inviteUrl, organization: organization },
-                    req.user,
-                    req.body.email,
-                    function(err, success){
-                        if (err){
-                            res.status(500).send({
-                                message: err
-                            });
-                        } else {
-                            res.status(200).send();
-                        }
+                var asyncFuncs = [];
+                for (var i=0; i < req.body.length; i++){
+                    var token = tokens[i];
+                    var newUser = req.body[i];
+                    asyncFuncs.push(function(callback){
+                        var inviteUrl = buildInviteURL(organization._id, token);
+                        mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
+                            { user: req.user, inviteUrl: inviteUrl, organization: organization },
+                            req.user,
+                            newUser.email,
+                            callback
+                        );
+                    });
+                }
+                async.parallel(asyncFuncs, function(err, results){
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        return res.status(200).send();
                     }
-                );
+                })
+
             }
         });
     }

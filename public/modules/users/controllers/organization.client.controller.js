@@ -1,6 +1,6 @@
 angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', 'Users',
-    'Authentication','Organizations','Notify',
-    function($scope, $http, $location, Users, Authentication, Organizations, Notify) {
+    'Authentication','Organizations','Notify','ngDialog',
+    function($scope, $http, $location, Users, Authentication, Organizations, Notify, ngDialog) {
         $scope.user = Authentication.user;
         $scope.organization = Organizations.get({
             organizationId: Authentication.user.organization._id
@@ -37,16 +37,36 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
         };
 
         $scope.inviteUser = function(){
-            $http.post('/organization/' + $scope.organization._id + '/sendinvite', {
-                firstName: "Ben",
-                lastName: "Liang",
-                email: "Ben.liang443@gmail.com"
-            }).success(function(response){
-                    Notify.alert('User invite sent', {status: 'success'});
-                })
-                .error(function(response){
-                    Notify.alert(response.message, {status: 'danger'});
-                });
+            ngDialog.open({
+                template: 'modules/users/views/partials/invite-users-dialog.html',
+                className: 'ngdialog-theme-default dialogwidth650',
+                data: {
+                    organization: $scope.organization
+                },
+                controller: ['$scope','$http', function($scope, $http) {
+                    $scope.organization = $scope.ngDialogData.organization;
+
+                    $scope.invites = [{
+                        firstName: null,
+                        lastName: null,
+                        email: null
+                    }];
+
+                    $scope.submit = function(){
+                        if ($scope.inviteForm.$valid){
+                            $http.post('/organization/' + $scope.organization._id + '/sendinvite', $scope.invites)
+                            .success(function(response){
+                                Notify.alert('User invites sent', {status: 'success'});
+                                $scope.closeThisDialog('success')
+                            })
+                            .error(function(response){
+                                Notify.alert(response.message, {status: 'danger'});
+                            });
+                        }
+                    };
+
+                }]
+            });
         }
     }
 ]);
