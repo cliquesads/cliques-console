@@ -94,7 +94,11 @@
                     <thead>
                         <th>First</th>
                         <th>Last</th>
-                        <th>Email</th>
+                        <th>Email
+                            <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="inviteUser()">
+                                <span class="btn-label"><i class="fa fa-plus"></i></span>Invite Users
+                            </button>
+                        </th>
                     </thead>
                     <tbody>
                         <tr ng-repeat="u in organization.users" ng-class="{'text-bold': u._id === organization.primaryContact}">
@@ -104,9 +108,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <button type="button" class="btn btn-labeled btn-primary btn-sm pull-right" ng-click="inviteUser()">
-                    <span class="btn-label"><i class="fa fa-plus"></i></span>Invite Users
-                </button>
             </div>
         </div>
     </div>
