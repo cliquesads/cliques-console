@@ -125,7 +125,6 @@ module.exports = {
             });
         });
 
-
         // TODO: Debatable whether this needs to be a serial process.
         // TODO: Could just save the org and independently send the email, but probably
         // TODO: worth it to keep it serial just to catch any errors saving the Organization
@@ -141,15 +140,18 @@ module.exports = {
                 for (var i=0; i < req.body.length; i++){
                     var token = tokens[i];
                     var newUser = req.body[i];
-                    asyncFuncs.push(function(callback){
-                        var inviteUrl = buildInviteURL(organization._id, token);
-                        mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
-                            { user: req.user, inviteUrl: inviteUrl, organization: organization },
-                            req.user,
-                            newUser.email,
-                            callback
-                        );
-                    });
+                    var func = (function(thisToken, thisUser){
+                        return function(callback){
+                            var inviteUrl = buildInviteURL(organization._id, thisToken);
+                            mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
+                                { user: req.user, inviteUrl: inviteUrl, organization: organization },
+                                req.user,
+                                thisUser.email,
+                                callback
+                            );
+                        }
+                    })(token, newUser);
+                    asyncFuncs.push(func);
                 }
                 async.parallel(asyncFuncs, function(err, results){
                     if (err){
@@ -159,8 +161,7 @@ module.exports = {
                     } else {
                         return res.status(200).send();
                     }
-                })
-
+                });
             }
         });
     }

@@ -53,15 +53,20 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
                     }];
 
                     $scope.submit = function(){
+                        $scope.loading = true;
                         if ($scope.inviteForm.$valid){
                             $http.post('/organization/' + $scope.organization._id + '/sendinvite', $scope.invites)
                             .success(function(response){
                                 Notify.alert('User invites sent', {status: 'success'});
+                                $scope.loading = false;
                                 $scope.closeThisDialog('success')
                             })
                             .error(function(response){
+                                $scope.loading = false;
                                 Notify.alert(response.message, {status: 'danger'});
                             });
+                        } else {
+                            $scope.loading = false;
                         }
                     };
 
