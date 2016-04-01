@@ -9,7 +9,7 @@ module.exports = function(app) {
     app.route('/organization').post(organizations.create);
 
 	app.route('/organization/:organizationId')
-		.get(users.requiresLogin, organizations.hasAuthorization, organizations.read)
+		.get(organizations.read)
 		.patch(users.requiresLogin, organizations.hasAuthorization, organizations.update)
 		.delete(users.requiresLogin, organizations.hasAuthorization, organizations.remove);
 

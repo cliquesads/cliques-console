@@ -1,13 +1,14 @@
 'use strict';
 
-angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location', '$window','Authentication','Timezones','TermsAndConditions','REGEXES',
-    function($scope, $timeout, $http, $location, $window, Authentication, Timezones, TermsAndConditions, REGEXES) {
+angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
+    '$window','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
+    function($scope, $timeout, $http, $location, $state, $stateParams, $window, Authentication, Organizations, Timezones,
+             TermsAndConditions, REGEXES) {
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home
         if ($scope.authentication.user) $location.path('/');
-
         // TODO: get this from model enum
         $scope.timezoneChoices = Timezones;
         $scope.credentials = {
@@ -27,6 +28,41 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 description:'Monetize a website with Cliques ad placements'
             }
         };
+
+        /**
+         * Handle intra-organization invite
+         */
+        if ($state.current.name === 'loggedout.organizationInvite'){
+            $scope.organizationInvite = true;
+            if ($stateParams.organizationId && $stateParams.accessTokenId){
+                $scope.organization = Organizations.get({
+                    organizationId: $stateParams.organizationId
+                },function(){
+                    // validate accessToken
+                    if ($scope.organization.accessTokens){
+                        $scope.accessToken = _.find($scope.organization.accessTokens, function(token){
+                            return token._id === $stateParams.organizationId;
+                        });
+                        if ($scope.accessToken){
+                            if ($scope.accessToken.expired){
+                                $scope.stateError = "This invite has already been used."
+                            } else {
+                                $scope.credentials.firstName = $scope.accessToken.firstName;
+                                $scope.credentials.lastName = $scope.accessToken.lastName;
+                                $scope.credentials.email = $scope.accessToken.email;
+                                $scope.credentials.roles = $scope.accessToken.roles;
+                            }
+                        }
+                    }
+                }, function(errorResponse){
+                    // redirect to login page if error on org lookup
+                    $scope.stateError = errorResponse.message;
+                });
+            } else {
+                // redirect to login page if no accessToken & organizationID provided
+                // $location.path('/signin');
+            }
+        }
 
         /**
          * Initialize fees retrieved from accesscode used
@@ -49,15 +85,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 }
             }
         };
-        $scope.getAllFeesFromAccessCode();
 
-        /**
-         * Now get promos & group by role type
-         * @type {AccessCodeSchema.promos|*|promos}
-         */
-        var promos = $scope.authentication.accesscode.promos;
-        $scope.promos = _.groupBy(promos, function(p){ return p.type; });
-
+        // set vars for new user signup from access code
+        if (!$scope.organizationInvite){
+            $scope.getAllFeesFromAccessCode();
+            var promos = $scope.authentication.accesscode.promos;
+            $scope.promos = _.groupBy(promos, function(p){ return p.type; });
+        }
 
         // Control for acceptance of terms
         $scope.acceptedTerms = false;

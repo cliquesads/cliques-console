@@ -1,5 +1,8 @@
-<section class="row">
-	<h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
+<div ng-show="stateError" class="alert alert-danger">
+    <strong data-ng-bind="stateError"></strong>
+</div>
+<section ng-hide="stateError" class="row">
+    <h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
     <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 panel panel-default">
         <div class="panel-body">
             <form name="userform" id="userform" data-ng-submit="signup()" form-wizard="" validate-steps="true" validate-form="" steps="4" autocomplete="off">
@@ -23,19 +26,21 @@
 
                     <!-- START User Inputs -->
                     <div id="step1" ng-show="wizard.active(1)">
-                        <legend>Account Type</legend>
-                        <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
-                        <div class="box-form">
-                            <ol class="row" style="margin-left: -15px; margin-right: -15px">
-                                <li ng-class="{'active':credentials.role === 'advertiser'}" ng-click="credentials.role = 'advertiser'" class="col-sm-6">
-                                    <h4>{{ roleChoices.advertiser.name }}</h4>
-                                    <p>{{ roleChoices.advertiser.description }}</p>
-                                </li>
-                                <li ng-class="{'active':credentials.role === 'publisher'}" ng-click="credentials.role = 'publisher'" class="col-sm-6">
-                                    <h4>{{ roleChoices.publisher.name }}</h4>
-                                    <p>{{ roleChoices.publisher.description }}</p>
-                                </li>
-                            </ol>
+                        <div ng-show="!organizationInvite">
+                            <legend>Account Type</legend>
+                            <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
+                            <div class="box-form">
+                                <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                                    <li ng-class="{'active':credentials.role === 'advertiser'}" ng-click="credentials.role = 'advertiser'" class="col-sm-6">
+                                        <h4>{{ roleChoices.advertiser.name }}</h4>
+                                        <p>{{ roleChoices.advertiser.description }}</p>
+                                    </li>
+                                    <li ng-class="{'active':credentials.role === 'publisher'}" ng-click="credentials.role = 'publisher'" class="col-sm-6">
+                                        <h4>{{ roleChoices.publisher.name }}</h4>
+                                        <p>{{ roleChoices.publisher.description }}</p>
+                                    </li>
+                                </ol>
+                            </div>
                         </div>
                         <fieldset>
                             <legend>Basic Info</legend>
@@ -86,7 +91,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="company">Company Name *</label>
-                                        <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc.">
+                                        <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" data-parsley-group="step2"  placeholder="Company Name, Inc." ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +101,7 @@
                                         <label>Website *</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">http://</span>
-                                            <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="organization.website" id="website" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required">
+                                            <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="organization.website" id="website" data-parsley-group="step2" class="form-control" placeholder="example.com" required="required" ng-disabled="organizationInvite">
                                         </div>
                                     </div>
                                 </div>
@@ -105,7 +110,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="phone">Phone Number *</label>
-                                        <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
+                                        <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2" ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                             </div>
@@ -113,7 +118,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="address">Address *</label>
-                                        <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln.">
+                                        <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address" data-parsley-group="step2" placeholder="123 Green Acres Ln." ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                             </div>
@@ -121,7 +126,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="address2">Address 2</label>
-                                        <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc.">
+                                        <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2" data-parsley-group="step2" placeholder="Apartment, suite, unit, building, floor, etc." ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +134,7 @@
                                 <div class="col-md-8">
                                     <div class="form-group">
                                         <label for="country">Country *</label>
-                                        <div id="country" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select></div>
+                                        <div id="country" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.country" country-select ng-disabled="organizationInvite"></div>
                                     </div>
                                 </div>
                             </div>
@@ -137,19 +142,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="city">City *</label>
-                                        <input type="text" id="city" name="city" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown">
+                                        <input type="text" id="city" name="city" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.city" placeholder="Funkytown" ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="state">State/Province/Region *</label>
-                                        <div id="state" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select></div>
+                                        <div id="state" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.state" country="{{ organization.country}}" state-select ng-disabled="organizationInvite"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="zip">Zip/Postal Code *</label>
-                                        <input type="text" id="zip" name="zip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753">
+                                        <input type="text" id="zip" name="zip" required="required" class="form-control" data-parsley-group="step2" data-ng-model="organization.zip" placeholder="86753" ng-disabled="organizationInvite">
                                     </div>
                                 </div>
                             </div>
@@ -276,5 +281,5 @@
                 </div>
             </form>
         </div>
-	</div>
+    </div>
 </section>

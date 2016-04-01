@@ -119,6 +119,7 @@ module.exports = {
             tokens.push(token);
             organization.accessTokens.push({
                 _id: token,
+                roles: req.user.roles,
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 email: newUser.email

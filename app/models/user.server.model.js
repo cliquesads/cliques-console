@@ -200,7 +200,14 @@ var feeSchema = new Schema({
 });
 
 var accessTokenSchema = new Schema({
-	_id: { type: Schema.ObjectId, required: true },
+	_id: {type: Schema.ObjectId, required: true},
+	roles: {
+		type: [{
+			type: String,
+			enum: ['advertiser','publisher','admin','networkAdmin']
+		}],
+		default: ['advertiser']
+	},
 	firstName: { type: String, required: true },
 	lastName: { type: String, required: true },
 	email: { type: String, required: true },

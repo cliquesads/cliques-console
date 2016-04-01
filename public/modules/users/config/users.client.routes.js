@@ -24,6 +24,11 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
             templateUrl: 'modules/users/views/authentication/signup.client.view.html',
             controller: 'SignUpController'
         }).
+		state('loggedout.organizationInvite', {
+			url: '/invite/organization/:organizationId/:accessTokenId',
+			templateUrl: 'modules/users/views/authentication/signup.client.view.html',
+			controller: 'SignUpController'
+		}).
         state('loggedout.beta-access', {
             url: '/beta-access',
             templateUrl: 'modules/users/views/authentication/requestaccess.client.view.html'
