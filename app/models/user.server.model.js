@@ -106,20 +106,32 @@ var UserSchema = new Schema({
 
 /**
  * Hook a pre save method to hash the password
+ *
+ * NOTE: Removed pre-save hook in favor of explicitly hashing passwords
+ * on save when applicable, as this will destroy old passwords if called accidentally.
  */
-UserSchema.pre('save', function(next) {
-	if (this.password && this.password.length > 6) {
-		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-		this.password = this.hashPassword(this.password);
-	}
+// UserSchema.pre('save', function(next) {
+// 	if (this.password && this.password.length > 6) {
+// 		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+// 		this.password = this._hashPassword(this.password);
+// 	}
+// 	next();
+// });
 
-	next();
-});
+/**
+ * Hook to EXPLICITLY call pre-save when handling user creation or password updates
+ */
+UserSchema.methods.hashPassword = function(){
+	if (this.password && this.password.length > 6){
+		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+		this.password = this._hashPassword(this.password);
+	}
+};
 
 /**
  * Create instance method for hashing a password
  */
-UserSchema.methods.hashPassword = function(password) {
+UserSchema.methods._hashPassword = function(password){
 	if (this.salt && password) {
 		return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
 	} else {
@@ -131,7 +143,7 @@ UserSchema.methods.hashPassword = function(password) {
  * Create instance method for authenticating user
  */
 UserSchema.methods.authenticate = function(password) {
-	return this.password === this.hashPassword(password);
+	return this.password === this._hashPassword(password);
 };
 
 /**

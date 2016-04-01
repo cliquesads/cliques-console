@@ -75,7 +75,9 @@ exports.signup = function(req, res) {
     // Add missing user fields
     user.provider = 'local';
     user.displayName = user.firstName + ' ' + user.lastName;
-    // Then save the user
+    // Explicitly hash user's password prior to saving
+	user.hashPassword();
+	// Then save the user
     user.save(function(err, user) {
         if (err) return handleError(res, err);
         // Remove sensitive data before login
@@ -201,6 +203,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 						});
 
 						// And save the user
+						// TODO: need to hashPassword here??
 						user.save(function(err) {
 							return done(err, user);
 						});
@@ -224,6 +227,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 			user.markModified('additionalProvidersData');
 
 			// And save the user
+			// TODO: need to hashPassword here??
 			user.save(function(err) {
 				return done(err, user, '/#!/settings/accounts');
 			});
