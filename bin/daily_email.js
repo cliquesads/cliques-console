@@ -68,7 +68,7 @@ request.post(auth, function(error){
         mailer.sendMail({
             subject: 'Cliques Daily Report - Gear Patrol',
             templateName: 'gearpatrol-email.server.view.html',
-            to: 'ben.liang443@gmail.com',
+            to: 'elayton@gearpatrol.com',
             data: {placementData: placementData, totals: totals, startDate: startDate}
         }, function(err, sent){
             if (err) return console.error(err);
