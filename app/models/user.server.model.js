@@ -21,6 +21,8 @@ var validateLocalStrategyPassword = function(password) {
 	return (this.provider !== 'local' || (password && password.length > 6));
 };
 
+var USER_ROLES = ['admin','readWrite','readOnly'];
+
 /**
  * User Schema
  */
@@ -72,9 +74,9 @@ var UserSchema = new Schema({
 	roles: {
 		type: [{
 			type: String,
-			enum: ['advertiser','publisher','admin','networkAdmin']
+			enum: USER_ROLES
 		}],
-		default: ['advertiser']
+		default: ['admin']
 	},
     tz: { type: String, default: 'America/New_York',enum: ['America/Los_Angeles','America/Denver','America/Chicago','America/New_York']},
 	updated: {
@@ -169,7 +171,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 
 	_this.findOne({
 		username: possibleUsername
-	}, function(err, user) {
+	}, function(err, user) { 
 		if (!err) {
 			if (!user) {
 				callback(possibleUsername);
@@ -216,9 +218,9 @@ var accessTokenSchema = new Schema({
 	roles: {
 		type: [{
 			type: String,
-			enum: ['advertiser','publisher','admin','networkAdmin']
+			enum: USER_ROLES
 		}],
-		default: ['advertiser']
+		default: ['admin']
 	},
 	firstName: { type: String, required: true },
 	lastName: { type: String, required: true },
@@ -234,7 +236,7 @@ var accessTokenSchema = new Schema({
 var organizationSchema = new Schema({
     tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
-    primaryContact: { type: Schema.ObjectId, ref: 'User'},
+    owner: { type: Schema.ObjectId, ref: 'User'},
     website: { type: String, required: true },
     address: { type: String, required: true },
     address2: { type: String, required: false },
@@ -249,6 +251,13 @@ var organizationSchema = new Schema({
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
     fees: [feeSchema],
+	organization_types: {
+		type: [{
+			type: String,
+			enum: ['advertiser','publisher','networkAdmin']
+		}],
+		default: ['advertiser']
+	},
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);
