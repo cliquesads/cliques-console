@@ -1,0 +1,33 @@
+{% extends 'base-external-email.server.view.html' %}
+
+{% block content %}
+<span class="h4" style="text-align: center">Custom GearPatrol.com Daily Report</span>
+<p style="text-align: center">Statistics for {{ startDate|date('F jS\, Y') }} (US/Eastern Time)</p>
+<table>
+    <thead>
+        <th>Placement</th>
+        <th>Impressions</th>
+        <th>Defaults</th>
+        <th>Revenue</th>
+        <th>Fill Rate</th>
+    </thead>
+    <tbody>
+        {% for row in placementData %}
+        <tr>
+            <td>{{ row._id.placement.name }}</td>
+            <td>{{ row.imps }}</td>
+            <td>{{ row.defaults }}</td>
+            <td>{{ row.spend }}</td>
+            <td>{{ row.fillRate }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>{{ totals.imps }}</strong></td>
+            <td><strong>{{ totals.defaults }}</strong></td>
+            <td><strong>{{ totals.spend }}</strong></td>
+            <td><strong>{{ totals.fillRate }}</strong></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
