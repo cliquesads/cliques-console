@@ -1,8 +1,6 @@
 /* jshint node: true */
 'use strict';
 var mongoose = require('mongoose'),
-    User = mongoose.model('User'),
-    Organization = mongoose.model('Organization'),
     config = require('../../config/config'),
     nodemailer = require('nodemailer'),
     swig = require('swig'),
@@ -70,6 +68,7 @@ Mailer.prototype.sendMail = function(mailOptions){
  */
 Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, orgName){
     var self = this;
+    var Organization = mongoose.model('Organization');
     Organization
         .findOne({name: orgName})
         .populate('users')
