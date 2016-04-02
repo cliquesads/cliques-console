@@ -45,7 +45,7 @@ var opts = {
 };
 
 function fillRate(row){
-    return (row.imps / (row.imps + row.defaults)).toFixed(4) * 100 + '%';
+    return (row.imps / (row.imps + row.defaults)).toFixed(3) * 100 + '%';
 }
 
 request.post(auth, function(error){
