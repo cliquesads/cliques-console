@@ -39,27 +39,31 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
      * (advertiser, publisher or networkAdmin)
      */
     var migrateOrgs = function(outerCallback){
-        users.Organization.find({}).exec(function (err, orgs) {
+        users.Organization.find({}).populate('primary_contact').populate('users').exec(function (err, orgs) {
+            // orgs.forEach(function(org) {
             async.each(orgs, function(org, callback){
                 // rename primary contact property, and add
                 // owner as first user if primary contact is not set
-                if (org.primary_contact) {
-                    org.owner = org.primary_contact;
-                    delete org.primary_contact;
+                var roles;
+                if (org.primaryContact) {
+                    roles = org.primaryContact.roles;
+                    org.owner = org.primaryContact;
+                    org.primaryContact = undefined;
                 } else {
+                    roles = org.users[0].roles;
                     org.owner = org.users[0];
                 }
                 // now set organization type
-                users.User.find({_id: org.owner }, function(err, owner){
-                    if (err) return callback(err);
-                    org.organization_types = [owner.roles[0]];
-                    org.save(function (err, obj) {
-                        if (err) return console.error(err);
-                        console.log(obj.name + " saved with owner: " + obj.owner +
-                            " and types: " + obj.types);
-                        return callback();
-                    });
+                // users.User.find({_id: org.owner}, function (err, owner) {
+                // if (err) return callback(err);
+                org.organization_types = [roles[0]];
+                org.save(function (err, obj) {
+                    if (err) return console.error(err);
+                    console.log(obj.name + " saved with owner: " + obj.owner +
+                        " and types: " + obj.organization_types);
+                    return callback();
                 });
+                // });
             }, function(err){
                 if (err){
                     console.log(err);
@@ -82,13 +86,13 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
                 // make admin if owner of organization, otherwise
                 // just make readWrite
                 var org = user.organization;
-                if (user._id === org.owner){
+                if (user._id.toString() === org.owner.toString()){
                     user.role = 'admin';
                 } else {
                     user.role = 'readWrite';
                 }
                 // now delete old 'roles' property
-                delete user.roles;
+                user.roles = undefined;
                 user.save(function(err, obj){
                     if (err) return console.error(err);
                     console.log(obj.displayName + " saved with role: " + obj.role);
@@ -109,4 +113,5 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
         if (err) console.log(err);
         console.log('Migration complete!');
     });
+    // migrateOrgs(null);
 });
