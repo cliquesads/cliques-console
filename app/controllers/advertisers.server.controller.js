@@ -325,6 +325,131 @@ module.exports = function(db) {
                 }
             },
             /**
+             * Methods to activate/deactivate creatives
+             */
+            creativeGroup: {
+                /**
+                 * Activates creative and checks to see if parent creativeGroup needs to be activated
+                 * as well.  If so, publishers updateBidder message.
+                 */
+                creative: {
+                    _getTreeEntitiesFromRequest: function(req){
+                        // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
+                        var advertiser = req.advertiser,
+                            campaignId = req.param('campaignId'),
+                            creativeGroupId = req.param('creativeGroupId'),
+                            creativeId = req.param('creativeId');
+                        // repetitive, I know.  Sorry.
+                        var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
+                            return c._id == campaignId;
+                        })];
+                        var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
+                            return c._id == creativeGroupId;
+                        })];
+                        var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
+                            return c._id == creativeId;
+                        })];
+                        return {
+                            advertiser: advertiser,
+                            campaign: campaign,
+                            creativegroup: creativeGroup,
+                            creative: creative
+                        }
+                    },
+                    activate: function (req, res) {
+                        var treeEntities = this._getTreeEntitiesFromRequest(req);
+                        var advertiser = treeEntities.advertiser,
+                            campaign = treeEntities.campaign,
+                            creativegroup = treeEntities.creativegroup,
+                            creative = treeEntities.creative;
+
+                        // handle creative not found
+                        if (!creative){
+                            return res.status(404).send({
+                                message: "Cannot find creative ID " + creative._id + " in advertiser ID "
+                                + advertiser._id
+                            });
+                        }
+                        // handle when creative is already active
+                        if (creative.active) {
+                            return res.status(400).send({
+                                message: "Creative is already active, cannot activate!"
+                            });
+                        } else {
+                            var updateBidder = false;
+                            creative.active = true;
+                            // if parent creativeGroup is inactive, it needs to be reactivated as well,
+                            // and bidder needs to be updated.
+                            if (!creativegroup.active) {
+                                creativegroup.active = true;
+                                updateBidder = true;
+                            }
+                            advertiser.save(function (err) {
+                                if (err) {
+                                    return res.status(400).send({
+                                        message: errorHandler.getAndLogErrorMessage(err)
+                                    });
+                                } else {
+                                    // Now publish message to update bidding agent w/ new config,
+                                    // picking up previously-inactive creative group
+                                    if (updateBidder){
+                                        service.publishers.updateBidder(campaign._id);
+                                    }
+                                    return res.status(200).send();
+                                }
+                            });
+                        }
+                    },
+                    deactivate: function (req, res) {
+                        var treeEntities = this._getTreeEntitiesFromRequest(req);
+                        var advertiser = treeEntities.advertiser,
+                            campaign = treeEntities.campaign,
+                            creativegroup = treeEntities.creativegroup,
+                            creative = treeEntities.creative;
+
+                        // handle creative not found
+                        if (!creative){
+                            return res.status(404).send({
+                                message: "Cannot find creative ID " + creative._id + " in advertiser ID "
+                                + advertiser._id
+                            });
+                        }
+                        // handle when creative is already active
+                        if (creative.active) {
+                            return res.status(400).send({
+                                message: "Creative is already inactive, cannot deactivate!"
+                            });
+                        } else {
+                            var updateBidder = false;
+                            creative.active = false;
+                            // if all other creatives in creativegroup are inactive, deactivate
+                            // creativegroup as well, and update bidder
+                            var allInactive = creativegroup.creatives.every(function(elem, index, arr){
+                                return !elem.active;
+                            });
+                            if (allInactive){
+                                creativegroup.active = false;
+                                updateBidder = true;
+                            }
+                            advertiser.save(function (err) {
+                                if (err) {
+                                    return res.status(400).send({
+                                        message: errorHandler.getAndLogErrorMessage(err)
+                                    });
+                                } else {
+                                    // Now publish message to update bidding agent w/ new config,
+                                    // picking up previously-inactive creative group
+                                    if (updateBidder){
+                                        service.publishers.updateBidder(campaign._id);
+                                    }
+                                    return res.status(200).send();
+                                }
+                            });
+                        }
+                    }
+                }
+            },
+            /**
              * Methods to handle campaign drafts saved to sessions
              *
              * Simple scheme
