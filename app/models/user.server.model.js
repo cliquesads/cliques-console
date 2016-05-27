@@ -71,11 +71,18 @@ var UserSchema = new Schema({
 	},
 	providerData: {},
 	additionalProvidersData: {},
+	//TODO: TEMPORARY, REMOVE WHEN MIGRATED TO USE ROLE
 	roles: {
 		type: [{
 			type: String,
 			enum: USER_ROLES
 		}],
+		default: ['admin']
+	},
+	//NEW, ATOMIC ROLE
+	role: {
+		type: String,
+		enum: USER_ROLES,
 		default: ['admin']
 	},
     tz: { type: String, default: 'America/New_York',enum: ['America/Los_Angeles','America/Denver','America/Chicago','America/New_York']},
@@ -237,7 +244,7 @@ var organizationSchema = new Schema({
     tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
     owner: { type: Schema.ObjectId, ref: 'User'},
-    website: { type: String, required: true },
+    website: { type: String, required: false },
     address: { type: String, required: true },
     address2: { type: String, required: false },
     city: { type: String, required: true },

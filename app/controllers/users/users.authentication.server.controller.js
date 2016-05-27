@@ -86,7 +86,7 @@ exports.signup = function(req, res) {
         // need to re-save organization with reference to user
         Organization.findById(user.organization, function (err, org) {
             if (isPrimaryContact) {
-                org.primary_contact = user.id;
+                org.owner = user.id;
             }
             // Add user to organization users
             org.users.push(user.id);
