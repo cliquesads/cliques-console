@@ -1,0 +1,42 @@
+{% extends 'base-external-email.server.view.html' %}
+
+{% block content %}
+<span class="h4" style="text-align: center">Custom OutdoorProject.com Daily Report</span>
+<p style="text-align: center">Statistics for the Last 7 Days (as of {{ asOfDate|date('F jS\, Y') }}, US/Pacific Time)</p>
+<table>
+    <thead>
+        <th>Date</th>
+        <th>Placement</th>
+        <th>Revenue</th>
+        <th>Impressions</th>
+        <th>Clicks</th>
+        <th>Fill Rate</th>
+        <th>CTR</th>
+        <th>CPM</th>
+    </thead>
+    <tbody>
+        {% for row in placementData %}
+        <tr>
+            <td>{{ row._id.date.month }}/{{ row._id.date.day }}/{{ row._id.date.year }}</td>
+            <td>{{ row._id.placement.name }}</td>
+            <td>{{ row.spend }}</td>
+            <td>{{ row.imps }}</td>
+            <td>{{ row.clicks }}</td>
+            <td>{{ row.fillRate }}</td>
+            <td>{{ row.CTR }}</td>
+            <td>{{ row.CPM }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td><strong>Total</strong></td>
+            <td><strong>{{ totals.spend }}</strong></td>
+            <td><strong>{{ totals.imps }}</strong></td>
+            <td><strong>{{ totals.clicks }}</strong></td>
+            <td><strong>{{ totals.fillRate }}</strong></td>
+            <td><strong>{{ totals.CTR }}</strong></td>
+            <td><strong>{{ totals.CPM }}</strong></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
