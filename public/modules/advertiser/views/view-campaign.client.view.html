@@ -238,10 +238,11 @@ adding hook in parent template ---->
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <tbody>
-                                                    <tr ng-repeat="creative in creativegroup.creatives">
-                                                        <td class="col-sm-3" ng-click="creativePreview(creative)"><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
-                                                        <td class="col-sm-6"><b>{{ creative.name }}</b></td>
-                                                        <td class="col-sm-3">{{ creativegroup.w }}x{{ creativegroup.h }}</td>
+                                                    <tr ng-repeat="creative in creativegroup.creatives" ng-click="creativePreview(creative)">
+                                                        <td class="col-sm-1"><span class="label" ng-class="creative.active ? 'label-success':'label-default'">{{ creative.active ? "Active":"Inactive"}}</span></td>
+                                                        <td class="col-sm-3"><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
+                                                        <td class="col-sm-6"><span ng-class="creative.active ? 'text-bold':'text-thin'">{{ creative.name }}</span></td>
+                                                        <td class="col-sm-2">{{ creativegroup.w }}x{{ creativegroup.h }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
