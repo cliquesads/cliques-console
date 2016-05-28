@@ -21,6 +21,12 @@ module.exports = function(app){
     app.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
         .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.deactivate);
 
+    app.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate')
+        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.activate);
+
+    app.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/deactivate')
+        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.deactivate);
+
     app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
         .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
 
