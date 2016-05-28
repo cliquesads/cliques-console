@@ -48,6 +48,30 @@ var _getDraftById = function(req, callback){
     }
 };
 
+var _getTreeEntitiesFromRequest = function(req){
+    // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
+    var advertiser = req.advertiser,
+        campaignId = req.param('campaignId'),
+        creativeGroupId = req.param('creativeGroupId'),
+        creativeId = req.param('creativeId');
+    // repetitive, I know.  Sorry.
+    var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
+        return c._id == campaignId;
+    })];
+    var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
+        return c._id == creativeGroupId;
+    })];
+    var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
+        return c._id == creativeId;
+    })];
+    return {
+        advertiser: advertiser,
+        campaign: campaign,
+        creativegroup: creativeGroup,
+        creative: creative
+    }
+};
+
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
 
@@ -333,31 +357,8 @@ module.exports = function(db) {
                  * as well.  If so, publishers updateBidder message.
                  */
                 creative: {
-                    _getTreeEntitiesFromRequest: function(req){
-                        // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
-                        var advertiser = req.advertiser,
-                            campaignId = req.param('campaignId'),
-                            creativeGroupId = req.param('creativeGroupId'),
-                            creativeId = req.param('creativeId');
-                        // repetitive, I know.  Sorry.
-                        var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
-                            return c._id == campaignId;
-                        })];
-                        var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
-                            return c._id == creativeGroupId;
-                        })];
-                        var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
-                            return c._id == creativeId;
-                        })];
-                        return {
-                            advertiser: advertiser,
-                            campaign: campaign,
-                            creativegroup: creativeGroup,
-                            creative: creative
-                        }
-                    },
                     activate: function (req, res) {
-                        var treeEntities = this._getTreeEntitiesFromRequest(req);
+                        var treeEntities = _getTreeEntitiesFromRequest(req);
                         var advertiser = treeEntities.advertiser,
                             campaign = treeEntities.campaign,
                             creativegroup = treeEntities.creativegroup,
@@ -401,7 +402,7 @@ module.exports = function(db) {
                         }
                     },
                     deactivate: function (req, res) {
-                        var treeEntities = this._getTreeEntitiesFromRequest(req);
+                        var treeEntities = _getTreeEntitiesFromRequest(req);
                         var advertiser = treeEntities.advertiser,
                             campaign = treeEntities.campaign,
                             creativegroup = treeEntities.creativegroup,
@@ -415,7 +416,7 @@ module.exports = function(db) {
                             });
                         }
                         // handle when creative is already active
-                        if (creative.active) {
+                        if (!creative.active) {
                             return res.status(400).send({
                                 message: "Creative is already inactive, cannot deactivate!"
                             });
