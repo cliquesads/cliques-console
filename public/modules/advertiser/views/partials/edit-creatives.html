@@ -35,8 +35,8 @@
                     <td><img ng-src="{{ creative.url }}" class="smallthumbnail"/></td>
                     <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a></p></td>
                     <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
-                    <td>
-                        <p class="form-control-static">
+                    <td style="max-width: 300px;">
+                        <p class="form-control-static" style="overflow-wrap: break-word;">
                             <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required>{{ creative.click_url }}</a>
                             <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
                         </p>

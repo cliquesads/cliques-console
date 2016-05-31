@@ -1,18 +1,21 @@
-<div class="col-sm-12 text-muted">
-<!--</div>-->
-    <strong>&copy; {{app.year}} <a class="text-muted" href="http://cliquesads.com">Cliques Labs Inc.</a></strong>
-    <small class="mr-lg ml-sm">v{{ consoleVersion }}</small>
-    &nbsp;&nbsp;
-    <a class="text-muted m-lg" href="/#!/terms-and-conditions">Terms & Conditions</a>
-    <!--</div>-->
-    <!--<div class="col-sm-1">-->
-    <a class="text-muted m-lg" href="/#!/privacy-policy">Privacy</a>
-    <!--</div>-->
-    <!--<div class="col-sm-2">-->
-    <a class="text-muted m-lg" href="http://support.cliquesads.com">Support</a>
-    <!--</ul>-->
-    &nbsp;&nbsp;
-    <strong class="ml-lg">Data Last Updated:</strong>
-    <i class="fa fa-clock-o"> {{ latestHour }}</i>
+<div class="col-sm-2">
+    <strong>&copy; {{app.year}} Cliques Labs Inc.</strong>
+    <p><small class="text-muted">Release v{{ consoleVersion }}</em></small></p>
 </div>
-
+<div class="col-sm-2">
+    <strong>Legal</strong>
+    <ul class="media-box-list">
+        <li class=""><a class="text-muted" href="/#!/terms-and-conditions">Terms & Conditions</a></li>
+        <li class=""><a class="text-muted" href="/#!/privacy-policy">Privacy</a></li>
+    </ul>
+</div>
+<div class="col-sm-2">
+    <strong>Resources</strong>
+    <ul class="media-box-list">
+        <li class=""><a class="text-muted" href="http://support.cliquesads.com">Support <i class="fa fa-external-link"></i></a></li>
+    </ul>
+</div>
+<div class="col-sm-3">
+    <strong>Reporting Data Last Updated:</strong>
+    <p class="text-muted"><i class="fa fa-clock-o"></i> {{ latestHour }}</p>
+</div>
