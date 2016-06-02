@@ -16,11 +16,11 @@ angular.module('core').controller('AppController',
 
     if (user){
         // TODO: FIX THIS
-        if (user.roles.indexOf('admin') > -1){
-            $scope.role = 'admin';
-        } else if (user.roles.indexOf('advertiser') > -1){
+        if (user.organization.organization_types.indexOf('networkAdmin') > -1){
+            $scope.role = 'networkAdmin';
+        } else if (user.organization.organization_types.indexOf('advertiser') > -1){
             $scope.role = 'advertiser';
-        } else if (user.roles.indexOf('publisher') > -1){
+        } else if (user.organization.organization_types.indexOf('publisher') > -1){
             $scope.role = 'publisher';
         }
         // Now set MixPanel user properties
@@ -32,7 +32,7 @@ angular.module('core').controller('AppController',
             $name: user.displayName,
             $created: user.created,
             $email: user.email,
-            roles: user.roles
+            role: user.role
         });
         // Set latestHour of reporting data for footer
         $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');

@@ -35,7 +35,7 @@ adding hook in parent template ---->
                         <tab heading="Basics">
                             <div class="panel-body">
                                 <!--Only show activate controls for admins right now-->
-                                <fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
+                                <fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
                                     <small><em class="text-muted">Status</em></small>
                                     <div class="form-horizontal">
                                         <div class="form-group m0">

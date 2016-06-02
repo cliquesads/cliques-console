@@ -7,7 +7,7 @@ angular.module('clique').controller('CliqueController', ['$scope', '$stateParams
 	function($scope, $stateParams, $location, $http,Authentication,Advertiser,
              Clique, getCliqueTree, getSitesInClique,getSitesInCliqueBranch, ngDialog) {
 		$scope.authentication = Authentication;
-        $scope.networkAdmin = $scope.authentication.user.roles.indexOf('networkAdmin') > 0;
+        $scope.networkAdmin = $scope.authentication.user.organization.organization_types.indexOf('networkAdmin') > 0;
 
         // This is our API control variable
         var tree;

@@ -6,7 +6,7 @@
             </div>
             <hr/>
             <div class="text-center text-md">
-                <span class="text-muted">Account Type: <b ng-repeat="role in user.roles">{{ role | capitalize }}, </b></span>
+                <span class="text-muted">Account Type: <b>{{ user.role | capitalize }}</b></span>
             </div>
             <form name="userForm" id="userForm" data-ng-submit="updateUserProfile()" class="signin form-horizontal" autocomplete="off">
                 <div class="row ml0 mr0">
