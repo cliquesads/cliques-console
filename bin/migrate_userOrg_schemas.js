@@ -110,8 +110,11 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
 
     // Run as series
     async.series([migrateOrgs, migrateUsers], function(err, results){
-        if (err) console.log(err);
+        if (err) {
+            console.log(err);
+            process.exit(1);
+        }
         console.log('Migration complete!');
+        process.exit(0)
     });
-    // migrateOrgs(null);
 });
