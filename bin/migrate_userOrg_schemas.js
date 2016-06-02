@@ -57,6 +57,10 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
                 // users.User.find({_id: org.owner}, function (err, owner) {
                 // if (err) return callback(err);
                 org.organization_types = [roles[0]];
+                // plug for one case where this won't work, which is Cliques
+                if (org._id == '5696bbdd74a4344240aede43'){
+                    org.organization_types = ['networkAdmin']
+                }
                 org.save(function (err, obj) {
                     if (err) return console.error(err);
                     console.log(obj.name + " saved with owner: " + obj.owner +
