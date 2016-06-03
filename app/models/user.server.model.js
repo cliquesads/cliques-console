@@ -222,12 +222,10 @@ var feeSchema = new Schema({
 
 var accessTokenSchema = new Schema({
 	_id: {type: Schema.ObjectId, required: true},
-	roles: {
-		type: [{
-			type: String,
-			enum: USER_ROLES
-		}],
-		default: ['admin']
+	role: {
+		type: String,
+		enum: USER_ROLES,
+		default: 'readWrite'
 	},
 	firstName: { type: String, required: true },
 	lastName: { type: String, required: true },

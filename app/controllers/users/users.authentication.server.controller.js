@@ -68,7 +68,7 @@ exports.isUsernameTaken = function(req, res){
 exports.signup = function(req, res) {
     // flag to tell whether or not user should be made
     // primary contact for organization
-    var isPrimaryContact = req.body.isPrimaryContact;
+    var isOwner= req.body.isOwner;
     var user = new User(req.body);
     var message = null;
 
@@ -85,11 +85,23 @@ exports.signup = function(req, res) {
         user.salt = undefined;
         // need to re-save organization with reference to user
         Organization.findById(user.organization, function (err, org) {
-            if (isPrimaryContact) {
+            if (isOwner) {
                 org.owner = user.id;
             }
             // Add user to organization users
             org.users.push(user.id);
+
+			// Set access token to expired, if present
+			if (req.body.accessToken){
+				var accessToken = _.find(org.accessTokens, function(token){
+					return token._id.toString() === req.body.accessToken._id;
+				});
+				if (accessToken){
+					accessToken.expired = true;
+				}
+				//TODO: should handle if accessToken isn't found for some reason, but this is prob an edge case
+			}
+
             org.save(function (err, org) {
                 if (err) return handleError(res, err);
                 // Email support team notifying of account creation

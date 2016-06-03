@@ -1,5 +1,5 @@
-<div ng-show="stateError" class="alert alert-danger">
-    <strong data-ng-bind="stateError"></strong>
+<div ng-show="stateError" class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 alert alert-danger text-center">
+    <h3 data-ng-bind="stateError"></h3>
 </div>
 <section ng-hide="stateError" class="row">
     <h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
@@ -31,13 +31,13 @@
                             <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
                             <div class="box-form">
                                 <ol class="row" style="margin-left: -15px; margin-right: -15px">
-                                    <li ng-class="{'active':credentials.role === 'advertiser'}" ng-click="credentials.role = 'advertiser'" class="col-sm-6">
-                                        <h4>{{ roleChoices.advertiser.name }}</h4>
-                                        <p>{{ roleChoices.advertiser.description }}</p>
+                                    <li ng-class="{'active':organization.type === 'advertiser'}" ng-click="organization.type = 'advertiser'" class="col-sm-6">
+                                        <h4>{{ organization_types.advertiser.name }}</h4>
+                                        <p>{{ organization_types.advertiser.description }}</p>
                                     </li>
-                                    <li ng-class="{'active':credentials.role === 'publisher'}" ng-click="credentials.role = 'publisher'" class="col-sm-6">
-                                        <h4>{{ roleChoices.publisher.name }}</h4>
-                                        <p>{{ roleChoices.publisher.description }}</p>
+                                    <li ng-class="{'active':organization.type === 'publisher'}" ng-click="organization.type = 'publisher'" class="col-sm-6">
+                                        <h4>{{ organization_types.publisher.name }}</h4>
+                                        <p>{{ organization_types.publisher.description }}</p>
                                     </li>
                                 </ol>
                             </div>
@@ -226,21 +226,21 @@
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
                     <div id="step4" ng-show="wizard.active(4)">
-                        <div ng-show="promos[credentials.role].length > 0" class="alert alert-success">
+                        <div ng-show="promos[organization.type].length > 0" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>
-                                <li ng-repeat="promo in promos[credentials.role]" class="text-md">{{ promo.description }}</li>
+                                <li ng-repeat="promo in promos[organization.type]" class="text-md">{{ promo.description }}</li>
                             </ul>
                         </div>
                         <fieldset>
                             <legend>Terms & Conditions</legend>
                             <p class="legend-help-text text-muted">Before completing your registration, you must accept the Cliques Terms & Conditions below.</p>
                             <div ng-hide="organizationInvite">
-                                <div ng-switch on="credentials.role">
+                                <div ng-switch on="organization.type">
                                     <div ng-switch-when="advertiser">
                                         <p><strong>Service Fees Summary</strong></p>
                                         <ul>
-                                            <li>The Cliques Fees (as defined in the Terms and Conditions) are equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of the Client Bid (as defined in the Terms and Conditions).</li>
+                                            <li>The Cliques Fees (as defined in the Terms and Conditions) are equal to <strong>{{ fees[organization.type].percentage | percentage:1 }}</strong> of the Client Bid (as defined in the Terms and Conditions).</li>
                                             <li>Cliques will send you an invoice for the Total Media Cost (as defined in the Terms and Conditions) at the end of each month.  The total due for each month is payable within <strong>fifteen (15)</strong> days of the invoice date.</li>
                                             <li>Please see the complete payment terms set forth in the Terms and Conditions below.</li>
                                         </ul>
@@ -252,8 +252,8 @@
                                     <div ng-switch-when="publisher">
                                         <p><strong>Revenue Share Summary</strong></p>
                                         <ul>
-                                            <li>Cliques charges a revenue-share equal to <strong>{{ fees[credentials.role].percentage | percentage:1 }}</strong> of your gross advertising revenue.</li>
-                                            <li>Cliques will pay you your gross advertising revenue (minus {{ fees[credentials.role].percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</li>
+                                            <li>Cliques charges a revenue-share equal to <strong>{{ fees[organization.type].percentage | percentage:1 }}</strong> of your gross advertising revenue.</li>
+                                            <li>Cliques will pay you your gross advertising revenue (minus {{ fees[organization.type].percentage | percentage:1 }} revenue share) no later than <strong>30 days</strong> after the end of each calendar month.</li>
                                         </ul>
                                         <div class="bs-callout bs-callout-primary">
                                             <h4>Don't worry</h4>
