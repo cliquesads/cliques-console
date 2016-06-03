@@ -431,8 +431,8 @@ HourlyAdStatAPI.prototype.getMany = function(req, res){
 HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
     var self = this;
     var filter_query = {};
-    if (req.user.roles.indexOf('admin') === -1){
-        filter_query.user = req.user.id;
+    if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+        filter_query.organization = req.user.organization.id;
     }
     self.advertiserModels.Advertiser.find(filter_query, function(err, advertisers){
         var ids = [];
@@ -456,8 +456,8 @@ HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
     var self = this;
     var filter_query = {};
     // allow Advertisers & Admins to access publisher data
-    if (req.user.roles.indexOf('publisher') > -1){
-        filter_query.user = req.user.id;
+    if (req.user.organization.organization_types.indexOf('publisher') > -1){
+        filter_query.organization = req.user.organization.id;
     }
     self.publisherModels.Publisher.find(filter_query, function(err, publishers){
         var ids = [];

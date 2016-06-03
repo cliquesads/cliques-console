@@ -250,11 +250,11 @@ module.exports = function(db) {
         },
 
         /**
-         * Article authorization middleware
+         * Advertiser authorization middleware
          */
         hasAuthorization: function (req, res, next) {
-            if (req.user.roles.indexOf('admin') === -1){
-                if (req.advertiser.user.filter(function(u){return u.id == req.user.id;}).length === 0){
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+                if (req.advertiser.organization != req.user.organization.id){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });

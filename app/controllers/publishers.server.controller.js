@@ -38,8 +38,8 @@ module.exports = function(db) {
         getMany: function (req, res) {
             // limit scope of query to just those publishers to which
             // user is permitted to see
-            if (req.user.roles.indexOf('admin') === -1){
-                req.query.user = req.user.id;
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+                req.query.organization = req.user.organization.id;
             }
             publisherModels.Publisher.find(req.query, function (err, publishers) {
                 if (err) {
@@ -169,8 +169,8 @@ module.exports = function(db) {
          * Article authorization middleware
          */
         hasAuthorization: function (req, res, next) {
-            if (req.user.roles.indexOf('admin') === -1){
-                if (req.publisher.user.filter(function(u){return u.id == req.user.id;}).length === 0){
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+                if (req.publisher.organization != req.user.organization.id){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
