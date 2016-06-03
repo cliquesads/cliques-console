@@ -1,23 +1,25 @@
 'use strict';
 
-angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location', '$window','Authentication','Timezones','TermsAndConditions','REGEXES',
-    function($scope, $timeout, $http, $location, $window, Authentication, Timezones, TermsAndConditions, REGEXES) {
+angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
+    '$window','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
+    function($scope, $timeout, $http, $location, $state, $stateParams, $window, Authentication, Organizations, Timezones,
+             TermsAndConditions, REGEXES) {
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home
         if ($scope.authentication.user) $location.path('/');
-
         // TODO: get this from model enum
         $scope.timezoneChoices = Timezones;
         $scope.credentials = {
             tz: 'America/New_York',
-            role: 'advertiser'
+            role: 'admin'
         };
         $scope.organization = {
+            type: 'advertiser',
             country: 'USA'
         };
-        $scope.roleChoices = {
+        $scope.organization_types = {
             advertiser: {
                 name: 'Advertiser',
                 description:'Run advertising campaigns on Cliques'
@@ -27,6 +29,49 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 description:'Monetize a website with Cliques ad placements'
             }
         };
+
+        /**
+         * Handle intra-organization invite
+         */
+        if ($state.current.name === 'loggedout.organizationInvite'){
+            $scope.organizationInvite = true;
+            if ($stateParams.organizationId && $stateParams.accessTokenId){
+                $scope.organization = Organizations.get({
+                    organizationId: $stateParams.organizationId
+                },function(){
+                    // validate accessToken
+                    if ($scope.organization.accessTokens){
+                        $scope.credentials.accessToken = _.find($scope.organization.accessTokens, function(token){
+                            return token._id === $stateParams.accessTokenId;
+                        });
+                        if ($scope.credentials.accessToken){
+                            if ($scope.credentials.accessToken.expired){
+                                $scope.stateError = "This invite has expired"
+                            } else {
+                                // Set appropriate terms and conditions
+                                TermsAndConditions.getCurrent($scope.organization.organization_types[0])
+                                    .then(function(response){
+                                        $scope.template = response.data.html;
+                                        $scope.termsAndConditions = response.data
+                                    });
+                                $scope.credentials.firstName = $scope.credentials.accessToken.firstName;
+                                $scope.credentials.lastName = $scope.credentials.accessToken.lastName;
+                                $scope.credentials.email = $scope.credentials.accessToken.email;
+                                $scope.credentials.role = $scope.credentials.accessToken.role;
+                            }
+                        } else {
+                            $scope.stateError = "This invite is invalid.";
+                        }
+                    }
+                }, function(errorResponse){
+                    // redirect to login page if error on org lookup
+                    $scope.stateError = errorResponse.message;
+                });
+            } else {
+                // redirect to login page if no accessToken & organizationID provided
+                $location.path('/signin');
+            }
+        }
 
         /**
          * Initialize fees retrieved from accesscode used
@@ -49,15 +94,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 }
             }
         };
-        $scope.getAllFeesFromAccessCode();
 
-        /**
-         * Now get promos & group by role type
-         * @type {AccessCodeSchema.promos|*|promos}
-         */
-        var promos = $scope.authentication.accesscode.promos;
-        $scope.promos = _.groupBy(promos, function(p){ return p.type; });
-
+        // set vars for new user signup from access code
+        if (!$scope.organizationInvite){
+            $scope.getAllFeesFromAccessCode();
+            var promos = $scope.authentication.accesscode.promos;
+            $scope.promos = _.groupBy(promos, function(p){ return p.type; });
+        }
 
         // Control for acceptance of terms
         $scope.acceptedTerms = false;
@@ -102,7 +145,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         /**
          * Watcher to switch Terms & Conditions depending on role selected (advertiser or publisher)
          */
-        $scope.$watch(function(scope){ return scope.credentials.role }, function(newRole, oldRole){
+        $scope.$watch(function(scope){ return scope.organization.type }, function(newRole, oldRole){
             if (newRole){
                 TermsAndConditions.getCurrent(newRole)
                     .then(function(response){
@@ -120,48 +163,69 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             }
         });
 
-        $scope.loading = false;
-		$scope.signup = function() {
-            $scope.loading = true;
-            // Subfunction to just sign up user.
-            // Gets wrapped in organization creation logic, called
-            // as callback once we have org ID
-            function _signUpUser(organizationId){
-                // Add access code ref to user before submitting for tracking purposes
-                $scope.credentials.accesscode = $scope.authentication.accesscode._id;
-                $scope.credentials.roles = [$scope.credentials.role];
-                $scope.credentials.organization = organizationId;
-                // Post the request
-                $http.post('/auth/signup', $scope.credentials).success(function(response){
-                    // If successful we assign the response to the global user model
-                    $scope.authentication.user = response;
-                    $scope.authentication.accesscode = null;
-                    // And redirect to the index page
-                    $scope.loading = false;
-                    $window.location.href = '/';
-                }).error(function(response) {
-                    $scope.loading = false;
-                    $scope.error = response.message;
-                });
-            }
+        /**
+         * Subfunction to create organization if necessary
+         * @returns {HttpPromise}
+         */
+        $scope.createOrganization = function(){
+            // have to create a new organization first, then sign up user
+            $scope.organization.fees = [$scope.fees[$scope.organization.type]];
+            $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
+            $scope.organization.phone = $('#phone').intlTelInput('getNumber');
+            $scope.organization.organization_types = [$scope.organization.type];
 
+            // if we're creating a new organization, make this user the primary contact
+            $scope.credentials.isOwner = true;
+
+            // return the promise
+            return $http.post('/organization', $scope.organization)
+        };
+
+        /**
+         * Subfunction to just sign up user.
+         * Gets wrapped in organization creation logic, called
+         * as callback once we have org ID
+         */
+        $scope.signUpUser = function(organizationId){
+            // Add access code ref to user before submitting for tracking purposes
+            if (!$scope.organizationInvite) {
+                $scope.credentials.accesscode = $scope.authentication.accesscode._id;
+            }
+            $scope.credentials.organization = organizationId;
+            // Post the request
+            $http.post('/auth/signup', $scope.credentials).success(function(response){
+                // If successful we assign the response to the global user model
+                $scope.authentication.user = response;
+                $scope.authentication.accesscode = null;
+                // And redirect to the index page
+                $scope.loading = false;
+                $window.location.href = '/';
+            }).error(function(response) {
+                $scope.loading = false;
+                $scope.error = response.message;
+            });
+        };
+
+        $scope.loading = false;
+
+        /**
+         * Main signup function, bound to form
+         *
+         * If organization exists, just signs up user.  Otherwise, first
+         * creates the organization, then signs user up and logs in.
+         */
+        $scope.signup = function() {
+            $scope.loading = true;
             // If organization is new, first need to create it before creating user.
             // Otherwise, just pass its ID to signup function
             if ($scope.organization._id){
-                $scope.credentials.isPrimaryContact = false;
-                _signUpUser($scope.organization._id)
+                // if org exists already, don't make user the owner
+                $scope.credentials.isOwner = false;
+                $scope.signUpUser($scope.organization._id);
             } else {
-                // have to create a new organization first, then sign up user
-                $scope.organization.fees = [$scope.fees[$scope.credentials.role]];
-                $scope.organization.termsAndConditions = [$scope.termsAndConditions.id];
-                $scope.organization.phone = $('#phone').intlTelInput('getNumber');
-
-                // if we're creating a new organization, make this user the primary contact
-                $scope.credentials.isPrimaryContact = true;
-
-                $http.post('/organization', $scope.organization).success(function(response){
+                $scope.createOrganization().success(function(response){
                     $scope.organization = response;
-                    _signUpUser($scope.organization._id);
+                    $scope.signUpUser($scope.organization._id);
                 }).error(function(response){
                     $scope.loading = false;
                     $scope.error = response.message;

@@ -37,7 +37,9 @@ var ApplicationConfiguration = (function() {
         'ngCountryStateSelect',
         'trTrustpass',
         'hm.readmore',
-        'ngclipboard'
+        'ngclipboard',
+        'ui.identicon',
+        'angularPayments'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

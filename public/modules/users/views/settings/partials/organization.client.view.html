@@ -1,0 +1,114 @@
+<div class="col-sm-6">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="text-center">
+                <h4 class="mt0"><i class="fa fa-building"></i> Organization Information</h4>
+            </div>
+            <hr/>
+            <form name="orgForm" id="orgForm" data-ng-submit="updateOrganization()" class="signin form-horizontal" autocomplete="off">
+                <div class="row ml0 mr0">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="company">Company Name *</label>
+                            <input type="text" required="required" id="company" name="company" class="form-control" data-ng-model="organization.name" placeholder="Company Name, Inc.">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mr0 ml0">
+                    <div class="col-sm-6">
+                        <div class="form-group pr">
+                            <label>Website *</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">http://</span>
+                                <input name="website" type="text" data-parsley-pattern="{{ domain_regex }}" data-parsley-error-message="This must be a valid website." data-ng-model="organization.website" id="website"  class="form-control" placeholder="example.com" required="required">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 mr0 ml0">
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" >
+                        </div>
+                    </div>
+                </div>
+                <div class="row mr0 ml0">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="address">Address *</label>
+                            <input type="text" required="required" id="address" name="address" class="form-control" data-ng-model="organization.address"  placeholder="123 Green Acres Ln.">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mr0 ml0">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="address2">Address 2</label>
+                            <input type="text" id="address2" name="address2" class="form-control" data-ng-model="organization.address2"  placeholder="Apartment, suite, unit, building, floor, etc.">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mr0 ml0">
+                    <div class="col-md-4">
+                        <div class="form-group pr">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" required="required" class="form-control"  data-ng-model="organization.city" placeholder="Funkytown">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group pr">
+                            <label for="state">State/Province/Region *</label>
+                            <div id="state" required="required" class="form-control" data-ng-model="organization.state" country="{{ organization.country }}" state-select></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="zip">Zip/Postal Code *</label>
+                            <input type="text" id="zip" name="zip" required="required" class="form-control" data-ng-model="organization.zip" placeholder="86753">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mr0 ml0">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="country">Country *</label>
+                            <div id="country" required="required" class="form-control" data-ng-model="organization.country" country-select></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center form-group mt">
+                    <button type="submit" class="btn btn-large btn-primary">Save Organization</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="col-sm-6 pl-xl">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="text-center">
+                <h4 class="mt0"><i class="fa fa-users"></i> Team</h4>
+            </div>
+            <hr/>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Email
+                            <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="inviteUser()">
+                                <span class="btn-label"><i class="fa fa-plus"></i></span>Invite Users
+                            </button>
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="u in organization.users" ng-class="{'text-bold': u._id === organization.primaryContact}">
+                            <td>{{ u.firstName }}</td>
+                            <td>{{ u.lastName }}</td>
+                            <td>{{ u.email }} <span class="text-sm" ng-show="u._id === organization.primaryContact">(owner)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

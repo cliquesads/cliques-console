@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 var passport = require('passport');
+var multer = require('multer');
+var upload = multer({ dest: 'public/uploads/'});
 
 module.exports = function(app) {
 	// User Routes
@@ -12,6 +14,7 @@ module.exports = function(app) {
 	// Setting up the users profile api
 	app.route('/users/me').get(users.me);
 	app.route('/users').put(users.update);
+	app.route('/users/avatar').post(users.requiresLogin, upload.single('file'), users.createAvatar);
 	app.route('/users/accounts').delete(users.removeOAuthProvider);
 
 	// Setting up the users password api
@@ -31,9 +34,6 @@ module.exports = function(app) {
     // Terms & Conditions Routes
     app.route('/terms-and-conditions/current/:type').get(users.getCurrentTerms);
     app.route('/terms-and-conditions/by-id/:termsId').get(users.read);
-
-    // Organization Routes
-    app.route('/organization').post(users.createOrganization);
 
 	//// Setting the facebook oauth routes
 	//app.route('/auth/facebook').get(passport.authenticate('facebook', {

@@ -1,5 +1,6 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
+var organizations = require('../controllers/organizations.server.controller');
 
 module.exports = function(app){
     var publishers = require('../controllers/publishers.server.controller')(app.db);
@@ -10,9 +11,9 @@ module.exports = function(app){
         .post(users.requiresLogin, publishers.create);
 
     app.route('/sitesinclique/:cliqueId')
-        .get(users.requiresLogin, users.hasAuthorization(['admin','advertiser']), publishers.site.getSitesInClique);
+        .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInClique);
     app.route('/sitesincliquebranch/:cliqueId')
-        .get(users.requiresLogin, users.hasAuthorization(['admin','advertiser']), publishers.site.getSitesInCliqueBranch);
+        .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInCliqueBranch);
 
     app.route('/publisher/:publisherId')
         .get(users.requiresLogin, publishers.hasAuthorization, publishers.read)

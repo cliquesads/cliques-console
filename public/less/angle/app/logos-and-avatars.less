@@ -17,6 +17,14 @@
   max-width: 90px;
 }
 
+.box-placeholder-avatar-preview {
+  margin-bottom: 0px;
+  padding: 0px;
+  color: #444;
+  max-height: 175px;
+  max-width: 175px;
+}
+
 .logo-preview-container {
   margin-bottom: 5px;
   margin-left: 10px;
@@ -24,9 +32,9 @@
 }
 
 .logo-preview-delete-button {
-  position: relative;
-  top: 0;
-  left: 0;
+  position: absolute;
+  top: 63px;
+  left: 21px;
 }
 
 .client-logo-md {
@@ -44,4 +52,19 @@
 .client-logo-lg {
   max-height: 100px;
   max-width: 100px;
+}
+
+.avatar {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+  border-radius: 50%; // make a circle
+  padding: 0px;
+  margin-bottom: 5px;
+
+  &:hover,
+  &:focus {
+    border-color: @brand-green-light;
+    border-width: 2px;
+  }
 }

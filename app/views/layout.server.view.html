@@ -43,13 +43,19 @@
     {% endif %}
     <!-- end Mixpanel -->
 
+	<!-- Stripe.js Library -->
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+	<script>
+		Stripe.setPublishableKey('pk_test_ZuDCtX2NUeu3l4BZuibbu1mg');
+	</script>
+
 	<!-- Fav Icon -->
 	<link href="/modules/core/img/brand/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon">
 
 	<!--Application CSS Files-->
 	{% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
 	<!--Theme-->
-  <link rel="stylesheet" ng-href="{% raw %}{{app.layout.theme}}{% endraw %}" data-ng-if="app.layout.theme">
+	<link rel="stylesheet" ng-href="{% raw %}{{app.layout.theme}}{% endraw %}" data-ng-if="app.layout.theme">
 
 	<!-- HTML5 Shim -->
 	<!--[if lt IE 9]>
