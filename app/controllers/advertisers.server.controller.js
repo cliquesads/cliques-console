@@ -88,8 +88,9 @@ module.exports = function(db) {
         getMany: function (req, res) {
             // limit scope of query to just those advertisers to which
             // user is permitted to see
-            if (req.user.roles.indexOf('admin') === -1){
-                req.query.user = req.user.id;
+            // Right now this is all advertisers in org
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+                req.query.organization = req.user.organization.id;
             }
             advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
                 if (err) {
@@ -107,6 +108,7 @@ module.exports = function(db) {
         create: function (req, res) {
             var advertiser = new advertiserModels.Advertiser(req.body);
             advertiser.user = [req.user];
+            advertiser.organization = req.user.organization;
 
             advertiser.save(function (err) {
                 if (err) {
