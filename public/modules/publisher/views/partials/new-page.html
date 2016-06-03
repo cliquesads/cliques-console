@@ -2,7 +2,7 @@
 <p>Create a new Page and any Placements that belong to it.  You can set advanced options and export placement tags afterwards.</p>
 <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
 <!--Only show activate controls for admins right now-->
-<fieldset ng-show="authentication.user.roles.indexOf('admin') > -1">
+<fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
     <div class="form-horizontal">
         <div class="form-group m0">
             <label class="col-sm-1 control-label">Active</label>

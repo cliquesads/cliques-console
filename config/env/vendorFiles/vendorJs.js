@@ -62,5 +62,9 @@ module.exports = [
     'public/lib/intl-tel-input/build/js/intlTelInput.min.js',
     'public/lib/angular-read-more/dist/readmore.min.js',
     'public/lib/clipboard/dist/clipboard.min.js',
-    'public/lib/ngclipboard/dist/ngclipboard.min.js'
+    'public/lib/ngclipboard/dist/ngclipboard.min.js',
+    'public/lib/pnglib/pnglib.js',
+    'public/lib/identicon/identicon.js',
+    'public/lib/angular-identicon/dist/angular-identicon.min.js',
+    'public/lib/angular-payments/lib/angular-payments.min.js'
 ];

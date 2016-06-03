@@ -62,33 +62,22 @@ exports.isUsernameTaken = function(req, res){
     });
 };
 
-
-
-/**
- * Create a new organization
- */
-exports.createOrganization = function(req, res){
-    var organization = new Organization(req.body);
-    organization.save(function(err, org){
-        if (err) return handleError(res, err);
-        return res.json(org);
-    });
-};
-
 /**
  * Signup
  */
 exports.signup = function(req, res) {
     // flag to tell whether or not user should be made
     // primary contact for organization
-    var isPrimaryContact = req.body.isPrimaryContact;
+    var isOwner= req.body.isOwner;
     var user = new User(req.body);
     var message = null;
 
     // Add missing user fields
     user.provider = 'local';
     user.displayName = user.firstName + ' ' + user.lastName;
-    // Then save the user
+    // Explicitly hash user's password prior to saving
+	user.hashPassword();
+	// Then save the user
     user.save(function(err, user) {
         if (err) return handleError(res, err);
         // Remove sensitive data before login
@@ -96,11 +85,23 @@ exports.signup = function(req, res) {
         user.salt = undefined;
         // need to re-save organization with reference to user
         Organization.findById(user.organization, function (err, org) {
-            if (isPrimaryContact) {
-                org.primary_contact = user.id;
+            if (isOwner) {
+                org.owner = user.id;
             }
             // Add user to organization users
             org.users.push(user.id);
+
+			// Set access token to expired, if present
+			if (req.body.accessToken){
+				var accessToken = _.find(org.accessTokens, function(token){
+					return token._id.toString() === req.body.accessToken._id;
+				});
+				if (accessToken){
+					accessToken.expired = true;
+				}
+				//TODO: should handle if accessToken isn't found for some reason, but this is prob an edge case
+			}
+
             org.save(function (err, org) {
                 if (err) return handleError(res, err);
                 // Email support team notifying of account creation
@@ -214,6 +215,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 						});
 
 						// And save the user
+						// TODO: need to hashPassword here??
 						user.save(function(err) {
 							return done(err, user);
 						});
@@ -237,6 +239,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 			user.markModified('additionalProvidersData');
 
 			// And save the user
+			// TODO: need to hashPassword here??
 			user.save(function(err) {
 				return done(err, user, '/#!/settings/accounts');
 			});

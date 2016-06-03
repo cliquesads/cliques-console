@@ -126,7 +126,8 @@ exports.reset = function(req, res, next) {
 						user.password = passwordDetails.newPassword;
 						user.resetPasswordToken = undefined;
 						user.resetPasswordExpires = undefined;
-
+						// Explicitly hash user's password prior to saving
+						user.hashPassword();
 						user.save(function(err) {
 							if (err) {
 								return res.status(400).send({
@@ -198,7 +199,8 @@ exports.changePassword = function(req, res) {
 					if (user.authenticate(passwordDetails.currentPassword)) {
 						if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
 							user.password = passwordDetails.newPassword;
-
+							// Explicitly hash user's password prior to saving
+							user.hashPassword();
 							user.save(function(err) {
 								if (err) {
 									return res.status(400).send({

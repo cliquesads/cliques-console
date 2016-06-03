@@ -21,6 +21,8 @@ var validateLocalStrategyPassword = function(password) {
 	return (this.provider !== 'local' || (password && password.length > 6));
 };
 
+var USER_ROLES = ['admin','readWrite','readOnly'];
+
 /**
  * User Schema
  */
@@ -51,6 +53,7 @@ var UserSchema = new Schema({
 	username: {
 		type: String,
 		unique: 'This username is already in use',
+		index: true,
 		required: 'Please fill in a username',
 		trim: true
 	},
@@ -68,12 +71,19 @@ var UserSchema = new Schema({
 	},
 	providerData: {},
 	additionalProvidersData: {},
+	//TODO: TEMPORARY, REMOVE WHEN MIGRATED TO USE ROLE
 	roles: {
 		type: [{
 			type: String,
-			enum: ['advertiser','publisher','admin','networkAdmin']
+			enum: USER_ROLES
 		}],
-		default: ['advertiser']
+		default: ['admin']
+	},
+	//NEW, ATOMIC ROLE
+	role: {
+		type: String,
+		enum: USER_ROLES,
+		default: ['admin']
 	},
     tz: { type: String, default: 'America/New_York',enum: ['America/Los_Angeles','America/Denver','America/Chicago','America/New_York']},
 	updated: {
@@ -97,25 +107,40 @@ var UserSchema = new Schema({
     organization: {
         type: Schema.ObjectId,
         ref: 'Organization'
-    }
+    },
+	avatarUrl: {
+		type: String
+	}
 });
 
 /**
  * Hook a pre save method to hash the password
+ *
+ * NOTE: Removed pre-save hook in favor of explicitly hashing passwords
+ * on save when applicable, as this will destroy old passwords if called accidentally.
  */
-UserSchema.pre('save', function(next) {
-	if (this.password && this.password.length > 6) {
-		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-		this.password = this.hashPassword(this.password);
-	}
+// UserSchema.pre('save', function(next) {
+// 	if (this.password && this.password.length > 6) {
+// 		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+// 		this.password = this._hashPassword(this.password);
+// 	}
+// 	next();
+// });
 
-	next();
-});
+/**
+ * Hook to EXPLICITLY call pre-save when handling user creation or password updates
+ */
+UserSchema.methods.hashPassword = function(){
+	if (this.password && this.password.length > 6){
+		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+		this.password = this._hashPassword(this.password);
+	}
+};
 
 /**
  * Create instance method for hashing a password
  */
-UserSchema.methods.hashPassword = function(password) {
+UserSchema.methods._hashPassword = function(password){
 	if (this.salt && password) {
 		return crypto.pbkdf2Sync(password, this.salt, 10000, 64).toString('base64');
 	} else {
@@ -127,7 +152,7 @@ UserSchema.methods.hashPassword = function(password) {
  * Create instance method for authenticating user
  */
 UserSchema.methods.authenticate = function(password) {
-	return this.password === this.hashPassword(password);
+	return this.password === this._hashPassword(password);
 };
 
 /**
@@ -153,7 +178,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 
 	_this.findOne({
 		username: possibleUsername
-	}, function(err, user) {
+	}, function(err, user) { 
 		if (!err) {
 			if (!user) {
 				callback(possibleUsername);
@@ -195,6 +220,19 @@ var feeSchema = new Schema({
     fixedFeeInterval: { type: String, required: false }
 });
 
+var accessTokenSchema = new Schema({
+	_id: {type: Schema.ObjectId, required: true},
+	role: {
+		type: String,
+		enum: USER_ROLES,
+		default: 'readWrite'
+	},
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: true },
+	email: { type: String, required: true },
+	expired: { type: Boolean, required: true, default: false }
+});
+
 /**
  * Organization is a collection of users
  *
@@ -203,8 +241,8 @@ var feeSchema = new Schema({
 var organizationSchema = new Schema({
     tstamp: {type: Date, default: Date.now},
     name: { type: String, required: true },
-    primaryContact: { type: Schema.ObjectId, ref: 'User'},
-    website: { type: String, required: true },
+    owner: { type: Schema.ObjectId, ref: 'User'},
+    website: { type: String, required: false },
     address: { type: String, required: true },
     address2: { type: String, required: false },
     city: { type: String, required: true },
@@ -216,7 +254,15 @@ var organizationSchema = new Schema({
     // can agree to multiple terms & conditions
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
+	accessTokens: [accessTokenSchema],
     fees: [feeSchema],
+	organization_types: {
+		type: [{
+			type: String,
+			enum: ['advertiser','publisher','networkAdmin']
+		}],
+		default: ['advertiser']
+	},
     users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);
