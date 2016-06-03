@@ -108,6 +108,25 @@ module.exports = {
         next();
     },
 
+    /**
+     * Returns middleware function to check whether user's organization
+     * has correct types necessary to access endpdoint.  Same idea as users.hasAuthorization
+     *
+     * @param orgTypes
+     * @returns {Function}
+     */
+    organizationHasAuthorization: function(orgTypes){
+        return function(req, res, next) {
+            if (_.intersection(req.user.organization.organization_types, orgTypes).length) {
+                return next();
+            } else {
+                return res.status(403).send({
+                    message: 'Organization is not authorized'
+                });
+            }
+        };
+    },
+
     sendUserInvite: function(req, res){
         var organization = req.organization;
 

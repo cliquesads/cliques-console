@@ -1,5 +1,6 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
+var organizations = require('../controllers/organizations.server.controller');
 
 module.exports = function(app){
     var aggregations = require('../controllers/aggregations.server.controller')(app.db);
@@ -20,7 +21,7 @@ module.exports = function(app){
 
     /* ---- GENERAL ROUTES ---- */
     app.route('/hourlyadstat')
-        .get(users.requiresLogin, users.hasAuthorization(['admin']), aggregations.hourlyAdStat.getMany);
+        .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin']), aggregations.hourlyAdStat.getMany);
 
     // TODO: Technically this isn't totally safe, someone could theoretically pass
     // TODO: in entity ID's for entities which did not belong to them.  However I think
