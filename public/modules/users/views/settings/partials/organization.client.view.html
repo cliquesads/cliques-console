@@ -87,6 +87,7 @@
         <div class="panel-body">
             <div class="text-center">
                 <h4 class="mt0"><i class="fa fa-users"></i> Team</h4>
+                <a href="#" ng-click="inviteUser()"><i class="fa fa-envelope"></i> Invite New Users</a>
             </div>
             <hr/>
             <div class="table-responsive">
@@ -94,11 +95,7 @@
                     <thead>
                         <th>First</th>
                         <th>Last</th>
-                        <th>Email
-                            <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="inviteUser()">
-                                <span class="btn-label"><i class="fa fa-plus"></i></span>Invite Users
-                            </button>
-                        </th>
+                        <th>Email</th>
                     </thead>
                     <tbody>
                         <tr ng-repeat="u in organization.users" ng-class="{'text-bold': u._id === organization.primaryContact}">
