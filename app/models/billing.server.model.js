@@ -74,14 +74,20 @@ var PaymentSchema = new Schema({
     click_convs: { type: Number, min: 0, required: true, default: 0 },
 
     // Flexible adjustments scheme for now, but could make more robust
+    // NOTE: Need to consider signing when adding adjustment--all publisher
+    // payments are recorded as negative totals, all advertiser payments
+    // are positive.
     adjustments: [{
         description: { type: String, required: true },
         amount: { type: Number, required: true }
     }],
+
     private_notes: { type: String },
     public_notes: { type: String },
     billingMethod: { type: String, enum: BILLING_METHODS, required: true },
     status: { type: String, enum: ["Pending", "Paid", "Overdue"] },
+
+    // Fee schema to be copied from organization on creation
     fee: { type: FeeSchema, required: true },
     totalAmount: { type: Number, required: true },
     invoiceUrl: { type: String }
@@ -92,6 +98,7 @@ var PaymentSchema = new Schema({
 PaymentSchema.plugin(autoIncrement.plugin, 'Payments');
 
 var Payments = exports.Payments = mongoose.model('Payments', PaymentSchema);
+
 
 /**
  * Handles contract type logic to calculate media spend component of invoice
@@ -123,7 +130,29 @@ PaymentSchema.methods._calculateUnsignedMediaSpend = function(){
     return mediaSpend;
 };
 
-
+/**
+ * Calculates payment totalAmount, incorporating all contractType,
+ * fee and adjustment logic
+ *
+ * @returns {*}
+ */
 PaymentSchema.methods.calculateTotalAmount = function(){
+    var mediaSpend = this._calculateUnsignedMediaSpend(),
+        fee = this.fee.percentage * mediaSpend,
+        totalAmount;
 
+    // Figure out signing and add fees
+    if (this.paymentType === 'advertiser'){
+        totalAmount = mediaSpend + fee;
+    } else if (this.paymentType === 'publisher'){
+        totalAmount = - mediaSpend + fee;
+    }
+
+    // now add adjustments
+    if (this.adjustments){
+        this.adjustments.forEach(function(adjustment){
+            totalAmount += adjustment.amount;
+        });
+    }
+    return totalAmount;
 };
