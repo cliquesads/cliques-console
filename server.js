@@ -12,6 +12,7 @@ var init = require('./config/init')(),
     util = require('util'),
     cliques_mongo = require('@cliques/cliques-node-utils').mongodb,
     mongoose = require('mongoose'),
+    autoIncrement = require('mongoose-auto-increment'),
 	chalk = require('chalk');
 
 /**
@@ -36,6 +37,9 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
     }
     console.log(logstring);
 });
+
+// Initialize auto-increment
+autoIncrement.initialize(db);
 
 // Create default connection as well for built-in UI-only models
 // TODO: Fix this to use connection object so you don't have to rely on default connection
