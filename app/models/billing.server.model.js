@@ -50,6 +50,15 @@ var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
     CPAC: { type: Number }
 });
 
+// Flexible adjustments scheme for now, but could make more robust
+// NOTE: Need to consider signing when adding adjustment--all publisher
+// payments are recorded as negative totals, all advertiser payments
+// are positive.
+var AdjustmentSchema = new Schema({
+    description: { type: String, required: true },
+    amount: { type: Number, required: true }
+});
+
 /**
  * Schema to persist all incoming & outgoing payment data, w/ ref to organization.
  *
@@ -73,22 +82,14 @@ var PaymentSchema = new Schema({
     view_convs: { type: Number, min: 0, required: true, default: 0 },
     click_convs: { type: Number, min: 0, required: true, default: 0 },
 
-    // Flexible adjustments scheme for now, but could make more robust
-    // NOTE: Need to consider signing when adding adjustment--all publisher
-    // payments are recorded as negative totals, all advertiser payments
-    // are positive.
-    adjustments: [{
-        description: { type: String, required: true },
-        amount: { type: Number, required: true }
-    }],
-
+    adjustments: [AdjustmentSchema],
     private_notes: { type: String },
     public_notes: { type: String },
     billingMethod: { type: String, enum: BILLING_METHODS, required: true },
     status: { type: String, enum: ["Pending", "Paid", "Overdue"] },
 
     // Fee schema to be copied from organization on creation
-    fee: { type: FeeSchema, required: true },
+    fee: FeeSchema,
     totalAmount: { type: Number, required: true },
     invoiceUrl: { type: String }
 });
