@@ -5,7 +5,8 @@
  */
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	billing = require('./billing.server.model');
 
 /**
  * A Validation function for local strategy properties
@@ -209,16 +210,6 @@ var termsAndConditionsSchema = new Schema({
 });
 exports.TermsAndConditions = mongoose.model('TermsAndConditions', termsAndConditionsSchema);
 
-/**
- * Separate schema to handle fee logic
- */
-var feeSchema = new Schema({
-    type: { type: String, enum: ['advertiser', 'publisher'] },
-    percentage: { type: Number, required: true, default: 0.10 },
-    // Futureproofing, in case we ever charge fixed fees for something
-    fixedFee: { type: Number, required: false },
-    fixedFeeInterval: { type: String, required: false }
-});
 
 var accessTokenSchema = new Schema({
 	_id: {type: Schema.ObjectId, required: true},
@@ -255,7 +246,8 @@ var organizationSchema = new Schema({
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
-    fees: [feeSchema],
+	// TODO: Add validation to ensure only one active fee structure per org type
+    fees: [billing.FeeSchema],
 	organization_types: {
 		type: [{
 			type: String,
@@ -263,20 +255,14 @@ var organizationSchema = new Schema({
 		}],
 		default: ['advertiser']
 	},
-    users: [{ type: Schema.ObjectId, ref: 'User'}]
+    users: [{ type: Schema.ObjectId, ref: 'User'}],
+	// Billing stuff
+	billingPreference: { type: String, required: true, enum: billing.BILLING_METHODS },
+	accountBalance: { type: Number, required: true, default: 0 }
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);
 
 
-/**
- * Separate schema to handle promo
- */
-var promoSchema = new Schema({
-    type: { type: String, enum: ['advertiser', 'publisher'] },
-    description: { type: String, required: true },
-    promoAmount: { type: Number, required: false },
-    promoInterval: { type: String, required: false }
-});
 /**
  * Access codes for private beta to allow users to sign up
  * @type {Schema}
@@ -295,8 +281,8 @@ var AccessCodeSchema = new Schema({
         default: Date.now
     },
     active: { type: Boolean, default: true, required: true },
-    fees: [feeSchema],
-    promos: [promoSchema]
+    fees: [billing.FeeSchema],
+    promos: [billing.PromoSchema]
 });
 
 /**
