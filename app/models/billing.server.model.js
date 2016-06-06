@@ -11,6 +11,7 @@ var mongoose = require('mongoose'),
  * Constants
  */
 var BILLING_METHODS = exports.BILLING_METHODS = ["Stripe", "Check","PayPal"];
+var CONTRACT_TYPES = ["cpm_variable", "cpa_fixed", "cpm_fixed", "cpc_fixed"];
 
 /**
  * Separate schema to handle fee logic
@@ -34,6 +35,22 @@ var PromoSchema = exports.PromoSchema = new Schema({
 });
 
 /**
+ * Abstraction of specific billing terms for special advertisers.
+ */
+var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
+    tstamp: { type: Date, default: Date.now },
+    // ALL BILLING PERIODS IN UTC ONLY
+    start_date: { type: Date, required: true },
+    end_date: { type: Date, required: true },
+    organization: { type: Schema.ObjectId, required: true },
+    contractType: { type: String, enum: CONTRACT_TYPES, required: true },
+    CPM: { type: Number },
+    CPC: { type: Number },
+    CPAV: { type: Number },
+    CPAC: { type: Number }
+});
+
+/**
  * Schema to persist all incoming & outgoing payment data, w/ ref to organization.
  *
  * One document = one payment in or out.
@@ -44,8 +61,10 @@ var PaymentSchema = new Schema({
     start_date: { type: Date, required: true },
     end_date: { type: Date, required: true },
     organization: { type: Schema.ObjectId, required: true },
+    // Optionally link to special insertion order
+    insertionOrder: { type: Schema.ObjectId },
     paymentType: { type: String, enum: ["advertiser","publisher"], required: true},
-    contractType: { type: String, enum: ["CPM", "CPC", "CPA", "Fixed CPM"] },
+    contractType: { type: String, enum: CONTRACT_TYPES },
 
     // Include all relevant billing stats for invoice calculation
     imps: { type: Number, min: 0, required: true, default: 0 },
@@ -74,6 +93,37 @@ PaymentSchema.plugin(autoIncrement.plugin, 'Payments');
 
 var Payments = exports.Payments = mongoose.model('Payments', PaymentSchema);
 
+/**
+ * Handles contract type logic to calculate media spend component of invoice
+ *
+ * Result should be considered an absolute value, other methods will
+ * sign as appropriate depending on context.
+ *
+ * NOTE: WILL ERROR IF INSERTIONORDER IS NOT POPULATED
+ * @private
+ */
+PaymentSchema.methods._calculateUnsignedMediaSpend = function(){
+    var mediaSpend;
+    switch (this.contractType) {
+        // standard variable CPM exchange buy
+        case "cpm_variable":
+            mediaSpend = this.spend;
+            break;
+        case "cpa_fixed":
+            mediaSpend = (this.insertionOrder.CPAC * this.click_convs)
+                + (this.insertionOrder.CPAV * this.view_convs);
+            break;
+        case "cpc_fixed":
+            mediaSpend = this.insertionOrder.CPC * this.clicks;
+            break;
+        case "cpm_fixed":
+            mediaSpend = this.insertionOrder.CPM * this.imps / 1000;
+            break;
+    }
+    return mediaSpend;
+};
+
+
 PaymentSchema.methods.calculateTotalAmount = function(){
-    
+
 };
