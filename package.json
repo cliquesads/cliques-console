@@ -1,7 +1,7 @@
 {
   "name": "cliques-console",
   "description": "Cliques UI -- MEAN.js + Bootstrap Angular",
-  "version": "0.5.20",
+  "version": "0.5.21",
   "author": "Cliques Labs Inc.",
   "engines": {
     "node": "5.5.x",
