@@ -3,8 +3,8 @@ var users = require('../controllers/users.server.controller');
 var multer = require('multer');
 var upload = multer({ dest: 'public/uploads/'});
 
-module.exports = function(app){
+module.exports = function(app, router){
     var logos = require('../controllers/logos.server.controller')(app.db);
-    app.route('/logos')
+    router.route('/logos')
         .post(users.requiresLogin, upload.single('file'), logos.create);
 };

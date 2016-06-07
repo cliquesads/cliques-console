@@ -126,9 +126,11 @@ module.exports = function(db) {
     // TODO: FIX THIS HACK. set DB connection as object property on app to pass through to routers
     app.db = db;
 
+	// initialize router to be used by routes
+	var router = express.Router();
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
-		require(path.resolve(routePath))(app);
+		require(path.resolve(routePath))(app, router);
 	});
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.

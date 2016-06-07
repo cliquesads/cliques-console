@@ -2,26 +2,26 @@
 var users = require('../controllers/users.server.controller');
 var organizations = require('../controllers/organizations.server.controller');
 
-module.exports = function(app){
+module.exports = function(app, router){
     var publishers = require('../controllers/publishers.server.controller')(app.db);
 
     /* ---- Publisher API Routes ---- */
-    app.route('/publisher')
+    router.route('/publisher')
         .get(users.requiresLogin, publishers.getMany)
         .post(users.requiresLogin, publishers.create);
 
-    app.route('/sitesinclique/:cliqueId')
+    router.route('/sitesinclique/:cliqueId')
         .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInClique);
-    app.route('/sitesincliquebranch/:cliqueId')
+    router.route('/sitesincliquebranch/:cliqueId')
         .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInCliqueBranch);
 
-    app.route('/publisher/:publisherId')
+    router.route('/publisher/:publisherId')
         .get(users.requiresLogin, publishers.hasAuthorization, publishers.read)
         .patch(users.requiresLogin, publishers.hasAuthorization, publishers.update)
         .delete(users.requiresLogin, publishers.hasAuthorization, publishers.remove);
 
-    app.route('/publisher/:publisherId/placement/:placementId')
+    router.route('/publisher/:publisherId/placement/:placementId')
         .get(users.requiresLogin, publishers.hasAuthorization, publishers.placement.getTag);
 
-    app.param('publisherId', publishers.publisherByID);
+    router.param('publisherId', publishers.publisherByID);
 };

@@ -4,16 +4,16 @@
 var organizations = require('../../app/controllers/organizations.server.controller');
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app) {
+module.exports = function(app, router) {
     // Organization Routes
-    app.route('/organization').post(organizations.create);
+    router.route('/organization').post(organizations.create);
 
-	app.route('/organization/:organizationId')
+	router.route('/organization/:organizationId')
 		.get(organizations.read)
 		.patch(users.requiresLogin, organizations.hasAuthorization, organizations.update)
 		.delete(users.requiresLogin, organizations.hasAuthorization, organizations.remove);
 
-	app.route('/organization/:organizationId/sendinvite').post(organizations.sendUserInvite);
+	router.route('/organization/:organizationId/sendinvite').post(organizations.sendUserInvite);
 
-	app.param('organizationId', organizations.organizationByID);
+	router.param('organizationId', organizations.organizationByID);
 };
