@@ -1,27 +1,30 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 var organizations = require('../controllers/organizations.server.controller');
+var passport = require('passport');
 
-module.exports = function(app, router){
+module.exports = function(app, routers){
     var publishers = require('../controllers/publishers.server.controller')(app.db);
+
+    var router = routers.apiRouter;
 
     /* ---- Publisher API Routes ---- */
     router.route('/publisher')
-        .get(users.requiresLogin, publishers.getMany)
-        .post(users.requiresLogin, publishers.create);
+        .get(publishers.getMany)
+        .post(publishers.create);
 
     router.route('/sitesinclique/:cliqueId')
-        .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInClique);
+        .get(organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInClique);
     router.route('/sitesincliquebranch/:cliqueId')
-        .get(users.requiresLogin, organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInCliqueBranch);
+        .get(organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInCliqueBranch);
 
     router.route('/publisher/:publisherId')
-        .get(users.requiresLogin, publishers.hasAuthorization, publishers.read)
-        .patch(users.requiresLogin, publishers.hasAuthorization, publishers.update)
-        .delete(users.requiresLogin, publishers.hasAuthorization, publishers.remove);
+        .get(publishers.hasAuthorization, publishers.read)
+        .patch(publishers.hasAuthorization, publishers.update)
+        .delete(publishers.hasAuthorization, publishers.remove);
 
     router.route('/publisher/:publisherId/placement/:placementId')
-        .get(users.requiresLogin, publishers.hasAuthorization, publishers.placement.getTag);
+        .get(publishers.hasAuthorization, publishers.placement.getTag);
 
     router.param('publisherId', publishers.publisherByID);
 };

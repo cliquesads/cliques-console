@@ -7,34 +7,37 @@ var passport = require('passport');
 var multer = require('multer');
 var upload = multer({ dest: 'public/uploads/'});
 
-module.exports = function(app, router) {
+module.exports = function(app, routers) {
 	// User Routes
 	var users = require('../../app/controllers/users.server.controller');
 
 	// Setting up the users profile api
-	router.route('/users/me').get(users.me);
-	router.route('/users').put(users.update);
-	router.route('/users/avatar').post(users.requiresLogin, upload.single('file'), users.createAvatar);
-	router.route('/users/accounts').delete(users.removeOAuthProvider);
+	routers.apiRouter.route('/users/me').get(users.me);
+	routers.apiRouter.route('/users').put(users.update);
+
+	routers.apiRouter.route('/users/avatar').post(upload.single('file'), users.createAvatar);
+	routers.apiRouter.route('/users/accounts').delete(users.removeOAuthProvider);
+	routers.apiRouter.route('/users/password').post(users.changePassword);
 
 	// Setting up the users password api
-	router.route('/users/password').post(users.changePassword);
-	router.route('/auth/forgot').post(users.forgot);
-	router.route('/auth/reset/:token').get(users.validateResetToken);
-	router.route('/auth/reset/:token').post(users.reset);
+	routers.noAuthRouter.route('/auth/forgot').post(users.forgot);
+	routers.noAuthRouter.route('/auth/reset/:token').get(users.validateResetToken);
+	routers.noAuthRouter.route('/auth/reset/:token').post(users.reset);
 
 	// Setting up the users authentication api
-	router.route('/auth/signup').post(users.signup);
-	router.route('/auth/signin').post(users.signin);
-	router.route('/auth/signout').get(users.signout);
-    router.route('/auth/is-username-taken/:username').get(users.isUsernameTaken);
+	routers.noAuthRouter.route('/auth/signup').post(users.signup);
+	routers.noAuthRouter.route('/auth/signin').post(users.signin);
+	// this doesn't really need to be in noAuth router but it really doesn't matter
+	routers.noAuthRouter.route('/auth/signout').get(users.signout);
+	routers.noAuthRouter.route('/auth/is-username-taken/:username').get(users.isUsernameTaken);
 
-    router.route('/auth/access-signup').post(users.authorizeAccessCode);
+	routers.noAuthRouter.route('/auth/access-signup').post(users.authorizeAccessCode);
 
     // Terms & Conditions Routes
-    router.route('/terms-and-conditions/current/:type').get(users.getCurrentTerms);
-    router.route('/terms-and-conditions/by-id/:termsId').get(users.read);
+	routers.noAuthRouter.route('/terms-and-conditions/current/:type').get(users.getCurrentTerms);
+	routers.noAuthRouter.route('/terms-and-conditions/by-id/:termsId').get(users.read);
 
 	// Finish by binding the user middleware
-	router.param('userId', users.userByID);
+	routers.noAuthRouter.param('userId', users.userByID);
+	routers.apiRouter.param('userId', users.userByID);
 };

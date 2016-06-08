@@ -5,7 +5,8 @@
  */
 var _ = require('lodash'),
 	mongoose = require('mongoose'),
-	User = mongoose.model('User');
+	User = mongoose.model('User'),
+	auth = require('basic-auth');
 
 /**
  * User middleware
@@ -21,16 +22,35 @@ exports.userByID = function(req, res, next, id) {
 	    });
 };
 
+
+exports.basicAuth = function(req, res, next){
+	var credentials = auth(req);
+	console.log(credentials);
+	User.findOne({ username: credentials.name }).populate('organization').exec(function(err, user) {
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			return next('Unknown user or invalid password');
+		}
+		if (!user.authenticate(credentials.pass)) {
+			return next('Unknown user or invalid password');
+		}
+		req.user = user;
+		req.basicAuthValidated = true;
+		return next();
+	});
+};
+
 /**
  * Require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
-	if (!req.isAuthenticated()) {
+	if (!req.isAuthenticated() && !req.basicAuthValidated) {
 		return res.status(401).send({
 			message: 'User is not logged in'
 		});
 	}
-
 	next();
 };
 
