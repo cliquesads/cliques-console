@@ -33,8 +33,8 @@ module.exports = function(db) {
 		require(path.resolve(modelPath));
 	});
 
-	// have to require routers after models are registered, since routers requires 'users' models
-	var routers = require('./routers');
+	// Have to require users after models are loaded
+	var users = require('../app/controllers/users.server.controller');
 
 	// Setting application local variables
 	app.locals.title = config.app.title;
@@ -129,10 +129,31 @@ module.exports = function(db) {
     // TODO: FIX THIS HACK. set DB connection as object property on app to pass through to routers
     app.db = db;
 
-	// initialize router to be used by routes
-	app.use('/console', routers.localAuthRouter);
-	app.use('/api/', routers.basicAuthRouter);
-	app.use('/', routers.noAuthRouter);
+	//##### ROUTERS #####
+
+	// Router for unprotected endpoints.
+	var noAuthRouter = exports.noAuthRouter = express.Router();
+
+	// router for all protected API methods requiring authentication
+	var apiRouter = exports.basicAuthRouter = express.Router();
+	apiRouter.use(passport.authenticate('basic', { session: false }));
+
+	// 'console' endpoint requires login via POST, authenticates using local strategy
+	app.use('/console', apiRouter);
+	app.use('/console', users.requiresLogin);
+
+	// 'api' endpoint is for developer API, authenticates w/ basic auth strategy
+	app.use('/api', apiRouter);
+	app.use('/api', passport.authenticate('basic', { session: false }));
+
+	// noAuth router is for unprotected endpoints like organization creation, password reset, etc.
+	app.use('/', noAuthRouter);
+
+	// wrap in object to pass to routing files
+	var routers = {
+		apiRouter: apiRouter,
+		noAuthRouter: noAuthRouter
+	};
 
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {

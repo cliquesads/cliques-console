@@ -1,4 +1,7 @@
 /**
+ * NOTE: Not in use currently (6/7/16).  Could never get bothAuthRouter class to work.
+ * But leaving in codebase in case it's needed in the future
+ *
  * Configure various Express Router instances that are passed to routing files
  * for use.  Separate routers for API, console API & unauthenticated endpoints
  * allows for consolidation of authentication middleware methods.
@@ -36,6 +39,8 @@ var noAuthRouter = exports.noAuthRouter = express.Router();
  */
 var BothAuthRouters = function(){};
 
+//TODO: This doesn't seem to register routes properly, keep getting 404's for routes that
+//TODO: should exist.  Ignoring this for now, see express.js for routers.
 // List of all router methods. 'methods' lib is same as used by Express itself
 var routerMethods = ['all','param','use','route'].concat(methods);
 routerMethods.forEach(function(method){
