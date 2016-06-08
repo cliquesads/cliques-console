@@ -5,7 +5,7 @@ angular.module('advertiser').factory('CreativeActivator',['$http',
         function($http){
             var activator = {};
             function basePath(params){
-                return '/advertiser/' + params.advertiserId
+                return '/console/advertiser/' + params.advertiserId
                     + '/campaign/' + params.campaignId
                     + '/creativegroup/' + params.creativeGroupId
                     + '/creative/' + params.creativeId;
