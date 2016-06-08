@@ -18,7 +18,7 @@ angular.module('users').controller('SettingsCoverController', ['$scope', '$http'
         };
 
         var uploader = $scope.uploader = new FileUploader({
-            url: '/users/avatar'
+            url: 'console/users/avatar'
         });
 
         // Hook for update method after upload complete

@@ -3,7 +3,7 @@
 //Articles service used for communicating with the articles REST endpoints
 angular.module('publisher').factory('Publisher', ['$resource',
 	function($resource) {
-		return $resource('publisher/:publisherId', { publisherId: '@_id'},
+		return $resource('console/publisher/:publisherId', { publisherId: '@_id'},
             {
 			    update: { method: 'PATCH'},
                 create: { method: 'POST'}
@@ -17,7 +17,7 @@ angular.module('publisher').factory('Publisher', ['$resource',
      * additional params used by placement targeting directive (logo_url, objectType)
      */
     return function(clique_id){
-        return $http.get('/sitesinclique/' + clique_id,{})
+        return $http.get('/console/sitesinclique/' + clique_id,{})
     }
 }])
 .factory('getSitesInCliqueBranch', ['$http', function($http){
@@ -26,7 +26,7 @@ angular.module('publisher').factory('Publisher', ['$resource',
      * additional params used by placement targeting directive (logo_url, objectType)
      */
     return function(clique_id){
-        return $http.get('/sitesincliquebranch/' + clique_id,{})
+        return $http.get('/console/sitesincliquebranch/' + clique_id,{})
     }
 }])
 .factory('flattenSiteCliques',[function(){
