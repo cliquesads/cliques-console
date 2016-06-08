@@ -33,6 +33,9 @@ module.exports = function(db) {
 		require(path.resolve(modelPath));
 	});
 
+	// have to require routers after models are registered, since routers requires 'users' models
+	var routers = require('./routers');
+
 	// Setting application local variables
 	app.locals.title = config.app.title;
 	app.locals.description = config.app.description;
@@ -127,10 +130,13 @@ module.exports = function(db) {
     app.db = db;
 
 	// initialize router to be used by routes
-	var router = express.Router();
+	app.use('/console', routers.localAuthRouter);
+	app.use('/api/', routers.basicAuthRouter);
+	app.use('/', routers.noAuthRouter);
+
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
-		require(path.resolve(routePath))(app, router);
+		require(path.resolve(routePath))(app, routers);
 	});
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
