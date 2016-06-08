@@ -24,8 +24,6 @@ module.exports = function() {
 					return done(null, false, {
 						message: 'Unknown user or invalid password'
 					});
-				} else {
-					console.log('Authenticated!!!!!!')
 				}
 
 				return done(null, user);
