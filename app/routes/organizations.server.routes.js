@@ -4,16 +4,20 @@
 var organizations = require('../../app/controllers/organizations.server.controller');
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app) {
+module.exports = function(db, routers) {
+
     // Organization Routes
-    app.route('/organization').post(organizations.create);
+    routers.noAuthRouter.route('/organization').post(organizations.create);
 
-	app.route('/organization/:organizationId')
-		.get(organizations.read)
-		.patch(users.requiresLogin, organizations.hasAuthorization, organizations.update)
-		.delete(users.requiresLogin, organizations.hasAuthorization, organizations.remove);
+	var router = routers.apiRouter;
 
-	app.route('/organization/:organizationId/sendinvite').post(organizations.sendUserInvite);
+	router.route('/organization/:organizationId')
+		.get(organizations.hasAuthorization, organizations.read)
+		.patch(organizations.hasAuthorization, organizations.update)
+		.delete(organizations.hasAuthorization, organizations.remove);
 
-	app.param('organizationId', organizations.organizationByID);
+	router.route('/organization/:organizationId/sendinvite')
+		.post(organizations.hasAuthorization, organizations.sendUserInvite);
+
+	router.param('organizationId', organizations.organizationByID);
 };

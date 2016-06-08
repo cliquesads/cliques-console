@@ -52,7 +52,7 @@ function format_cliques_collection_for_tree(query_result){
 //Articles service used for communicating with the articles REST endpoints
 angular.module('clique').factory('Clique', ['$resource',
 	function($resource) {
-		return $resource('clique/:cliqueId', { cliqueId: '@_id'},
+		return $resource('console/clique/:cliqueId', { cliqueId: '@_id'},
             {
 			    update: { method: 'PATCH'},
                 create: { method: 'POST'},

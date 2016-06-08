@@ -178,7 +178,7 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
 }])
 .factory('CampaignDraft', ['$resource',
     function($resource) {
-        return $resource('campaign-draft/:draftId', { draftId: '@draftId' },
+        return $resource('/console/campaign-draft/:draftId', { draftId: '@draftId' },
             {
                 update: { method: 'PATCH'},
                 create: { method: 'POST'}

@@ -7,7 +7,7 @@
  */
 angular.module('aggregations').factory('HourlyAdStat', ['$http',
 	function($http) {
-        var base_path    = '/hourlyadstat';
+        var base_path    = '/console/hourlyadstat';
         var adv_path     = base_path + '/adv';
         var pub_path     = base_path + '/pub';
         var advSummary_path = base_path + '/advSummary';

@@ -1,48 +1,49 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app){
-    var advertisers = require('../controllers/advertisers.server.controller')(app.db);
+module.exports = function(db, routers){
+    var advertisers = require('../controllers/advertisers.server.controller')(db);
 
+    var router = routers.apiRouter;
     /* ---- Advertiser API Routes ---- */
-    app.route('/advertiser')
-        .get(users.requiresLogin, advertisers.getMany)
-        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.updateOrCreate)
-        .post(users.requiresLogin, advertisers.create);
+    router.route('/advertiser')
+        .get(advertisers.getMany)
+        .put(advertisers.hasAuthorization, advertisers.updateOrCreate)
+        .post(advertisers.create);
 
-    app.route('/advertiser/:advertiserId')
-        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.read)
-        .patch(users.requiresLogin, advertisers.hasAuthorization, advertisers.update)
-        .delete(users.requiresLogin, advertisers.hasAuthorization, advertisers.remove);
+    router.route('/advertiser/:advertiserId')
+        .get(advertisers.hasAuthorization, advertisers.read)
+        .patch(advertisers.hasAuthorization, advertisers.update)
+        .delete(advertisers.hasAuthorization, advertisers.remove);
 
-    app.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
-        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.activate);
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
+        .put(advertisers.hasAuthorization, advertisers.campaign.activate);
 
-    app.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
-        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.deactivate);
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
+        .put(advertisers.hasAuthorization, advertisers.campaign.deactivate);
 
-    app.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate')
-        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.activate);
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate')
+        .put(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.activate);
 
-    app.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/deactivate')
-        .put(users.requiresLogin, advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.deactivate);
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/deactivate')
+        .put(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.deactivate);
 
-    app.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
-        .get(users.requiresLogin, advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
+    router.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
+        .get(advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
 
     // Campaign Draft Endpoints
-    app.route('/campaign-draft')
-        .get(users.requiresLogin, advertisers.campaign.draft.getAllInSession)
-        .post(users.requiresLogin, advertisers.campaign.draft.create);
+    router.route('/campaign-draft')
+        .get(advertisers.campaign.draft.getAllInSession)
+        .post(advertisers.campaign.draft.create);
 
-    app.route('/campaign-draft/:draftId')
-        .get(users.requiresLogin, advertisers.campaign.draft.read)
-        .patch(users.requiresLogin, advertisers.campaign.draft.update)
-        .delete(users.requiresLogin, advertisers.campaign.draft.remove);
+    router.route('/campaign-draft/:draftId')
+        .get(advertisers.campaign.draft.read)
+        .patch(advertisers.campaign.draft.update)
+        .delete(advertisers.campaign.draft.remove);
 
     // route to get by advertiserId
-    app.route('/advertiser/:advertiserId/campaign/draft')
-        .get(users.requiresLogin, advertisers.campaign.draft.getForAdvertiser);
+    router.route('/advertiser/:advertiserId/campaign/draft')
+        .get(advertisers.campaign.draft.getForAdvertiser);
 
-    app.param('advertiserId', advertisers.advertiserByID);
+    router.param('advertiserId', advertisers.advertiserByID);
 };
