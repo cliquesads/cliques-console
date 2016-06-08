@@ -34,12 +34,16 @@ var noAuthRouter = exports.noAuthRouter = express.Router();
  *    basicAuthRouter.route('/advertiser');
  *    localAuthRouter.route('/advertiser');
  */
-var bothAuthRouters = exports.bothAuthRouters = {};
+var BothAuthRouters = function(){};
+
 // List of all router methods. 'methods' lib is same as used by Express itself
 var routerMethods = ['all','param','use','route'].concat(methods);
 routerMethods.forEach(function(method){
-    bothAuthRouters[method] = function(args){
-        basicAuthRouter.apply(this, arguments);
-        localAuthRouter.apply(this, arguments);
+    BothAuthRouters.prototype[method] = function(args){
+        basicAuthRouter[method].apply(basicAuthRouter, arguments);
+        localAuthRouter[method].apply(localAuthRouter, arguments);
+        return this;
     }
 });
+
+var bothAuthRouters = exports.bothAuthRouters = new BothAuthRouters();
