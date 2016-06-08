@@ -3,9 +3,8 @@ var users = require('../controllers/users.server.controller');
 var organizations = require('../controllers/organizations.server.controller');
 var passport = require('passport');
 
-module.exports = function(app, routers){
-    var publishers = require('../controllers/publishers.server.controller')(app.db);
-
+module.exports = function(db, routers){
+    var publishers = require('../controllers/publishers.server.controller')(db);
     var router = routers.apiRouter;
 
     /* ---- Publisher API Routes ---- */

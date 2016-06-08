@@ -7,7 +7,7 @@ var passport = require('passport');
 var multer = require('multer');
 var upload = multer({ dest: 'public/uploads/'});
 
-module.exports = function(app, routers) {
+module.exports = function(db, routers) {
 	// User Routes
 	var users = require('../../app/controllers/users.server.controller');
 

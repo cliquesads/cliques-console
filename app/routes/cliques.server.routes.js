@@ -1,8 +1,8 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app, routers){
-    var cliques = require('../controllers/cliques.server.controller')(app.db);
+module.exports = function(db, routers){
+    var cliques = require('../controllers/cliques.server.controller')(db);
     var router = routers.apiRouter;
 
     /* ---- Advertiser API Routes ---- */

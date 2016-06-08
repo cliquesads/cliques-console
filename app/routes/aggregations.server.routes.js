@@ -2,11 +2,11 @@
 var users = require('../controllers/users.server.controller');
 var organizations = require('../controllers/organizations.server.controller');
 
-module.exports = function(app, routers){
-    var aggregations = require('../controllers/aggregations.server.controller')(app.db);
-    var advertisers = require('../controllers/advertisers.server.controller')(app.db);
-    var publishers = require('../controllers/publishers.server.controller')(app.db);
-    var cliques = require('../controllers/cliques.server.controller')(app.db);
+module.exports = function(db, routers){
+    var aggregations = require('../controllers/aggregations.server.controller')(db);
+    var advertisers = require('../controllers/advertisers.server.controller')(db);
+    var publishers = require('../controllers/publishers.server.controller')(db);
+    var cliques = require('../controllers/cliques.server.controller')(db);
 
     var router = routers.apiRouter;
     

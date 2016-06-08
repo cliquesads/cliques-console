@@ -4,7 +4,7 @@
 var organizations = require('../../app/controllers/organizations.server.controller');
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app, routers) {
+module.exports = function(db, routers) {
 
     // Organization Routes
     routers.noAuthRouter.route('/organization').post(organizations.create);
