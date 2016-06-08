@@ -15,7 +15,7 @@ angular.module('core').directive('logoWidget', [
             template: '<img class="client-logo-{{ size }}" ng-src="{{ model.logo_secure_url || default_url }}" ng-click="openUploader()"/>',
             link: function(scope, element, attrs){
                 var uploader = scope.uploader = new FileUploader({
-                    url: '/logos'
+                    url: 'console/logos'
                 });
                 scope.size = scope.size || 'md';
                 scope.default_url = LOGO.default_secure_url;

@@ -28,7 +28,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         //######### FILE UPLOADER #########//
         //#################################//
         $scope.logo_uploader = new FileUploader({
-            url: 'logos'
+            url: 'console/logos'
         });
 
         $scope.advertiser = null;

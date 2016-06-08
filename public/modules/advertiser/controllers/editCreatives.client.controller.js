@@ -44,7 +44,7 @@ angular.module('advertiser').controller('editCreativesController', [
         //#################################//
 
         var uploader = $scope.uploader = new FileUploader({
-            url: 'creativeassets'
+            url: 'console/creativeassets'
         });
         $scope.uploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
