@@ -44,6 +44,10 @@ module.exports = function(db) {
 	app.locals.jsFiles = config.getJavaScriptAssets();
 	app.locals.cssFiles = config.getCSSAssets();
 
+	// ##########################################
+	// ########## EXPRESS MIDDLEWARE ############
+	// ##########################################
+
 	// Passing the request url to environment locals
 	app.use(function(req, res, next) {
 		res.locals.url = req.protocol + '://' + req.headers.host + req.url;
@@ -126,26 +130,24 @@ module.exports = function(db) {
 	// Setting the app router and static folder
 	app.use(express.static(path.resolve('./public')));
 
-    // TODO: FIX THIS HACK. set DB connection as object property on app to pass through to routers
-    app.db = db;
-
-	//##### ROUTERS #####
+	// ######################################
+	// ############## ROUTERS ###############
+	// ######################################
 
 	// Router for unprotected endpoints.
 	var noAuthRouter = exports.noAuthRouter = express.Router();
 
 	// router for all protected API methods requiring authentication
 	var apiRouter = exports.basicAuthRouter = express.Router();
-	apiRouter.use(passport.authenticate('basic', { session: false }));
+
+	// register authentication methods for two API roots
+	app.use('/console', users.requiresLogin);
+	app.use('/api', passport.authenticate('basic', { session: false }));
 
 	// 'console' endpoint requires login via POST, authenticates using local strategy
 	app.use('/console', apiRouter);
-	app.use('/console', users.requiresLogin);
-
 	// 'api' endpoint is for developer API, authenticates w/ basic auth strategy
 	app.use('/api', apiRouter);
-	app.use('/api', passport.authenticate('basic', { session: false }));
-
 	// noAuth router is for unprotected endpoints like organization creation, password reset, etc.
 	app.use('/', noAuthRouter);
 
@@ -157,8 +159,12 @@ module.exports = function(db) {
 
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
-		require(path.resolve(routePath))(app, routers);
+		require(path.resolve(routePath))(db, routers);
 	});
+
+	// ######################################
+	// ########### ERROR HANDLERS ###########
+	// ######################################
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
 	app.use(function(err, req, res, next) {

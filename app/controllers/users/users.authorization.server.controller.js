@@ -46,7 +46,7 @@ exports.basicAuth = function(req, res, next){
  * Require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
-	if (!req.isAuthenticated() && !req.basicAuthValidated) {
+	if (!req.isAuthenticated()) {
 		return res.status(401).send({
 			message: 'User is not logged in'
 		});
