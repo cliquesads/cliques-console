@@ -9,6 +9,7 @@ module.exports = function(db, routers) {
     // Organization Routes
     routers.noAuthRouter.route('/organization').post(organizations.create);
 	routers.noAuthRouter.route('/organization/:organizationId').get(organizations.read);
+	routers.noAuthRouter.param('organizationId', organizations.organizationByID);
 
 	var router = routers.apiRouter;
 
