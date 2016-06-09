@@ -11,7 +11,7 @@ angular.module('users').controller('ChangePasswordController', ['$scope', '$http
         $scope.changeUserPassword = function() {
             $scope.success = $scope.error = null;
             if ($scope.passwordForm.$valid){
-                $http.post('/users/password', $scope.passwordDetails).success(function(response) {
+                $http.post('/console/users/password', $scope.passwordDetails).success(function(response) {
                     // If successful show success message and clear form
                     Notify.alert('Password Changed Successfully', {status: 'success'});
                     $scope.passwordDetails = null;
