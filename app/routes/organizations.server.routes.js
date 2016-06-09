@@ -8,11 +8,11 @@ module.exports = function(db, routers) {
 
     // Organization Routes
     routers.noAuthRouter.route('/organization').post(organizations.create);
+	routers.noAuthRouter.route('/organization/:organizationId').get(organizations.read);
 
 	var router = routers.apiRouter;
 
 	router.route('/organization/:organizationId')
-		.get(organizations.hasAuthorization, organizations.read)
 		.patch(organizations.hasAuthorization, organizations.update)
 		.delete(organizations.hasAuthorization, organizations.remove);
 
