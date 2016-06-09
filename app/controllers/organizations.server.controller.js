@@ -100,12 +100,15 @@ module.exports = {
      */
     hasAuthorization: function (req, res, next) {
         var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
-        if (!user){
-            return res.status(403).send({
-                message: 'User is not authorized to access this organization'
-            });
+        if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+            if (!user) {
+                return res.status(403).send({
+                    message: 'User is not authorized to access this organization'
+                });
+            }
         }
         next();
+
     },
 
     /**

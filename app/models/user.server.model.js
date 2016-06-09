@@ -213,6 +213,7 @@ exports.TermsAndConditions = mongoose.model('TermsAndConditions', termsAndCondit
 
 var accessTokenSchema = new Schema({
 	_id: {type: Schema.ObjectId, required: true},
+	tstamp: {type: Date, default: Date.now},
 	role: {
 		type: String,
 		enum: USER_ROLES,

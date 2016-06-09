@@ -48,7 +48,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         $scope.my_tree = tree = {};
 
         $scope.uploader = new FileUploader({
-            url: 'logos'
+            url: 'console/logos'
         });
 
         // Set mins & maxes

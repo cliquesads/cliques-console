@@ -1,15 +1,16 @@
 /* jshint node: true */ 'use strict';
 var users = require('../controllers/users.server.controller');
 
-module.exports = function(app){
-    var geo = require('../controllers/geo.server.controller.js')(app.db);
+module.exports = function(db, routers){
+    var geo = require('../controllers/geo.server.controller.js')(db);
+    var router = routers.apiRouter;
 
     /* ---- Advertiser API Routes ---- */
-    app.route('/dma')
-        .get(users.requiresLogin, geo.getManyDmas);
+    router.route('/dma')
+        .get(geo.getManyDmas);
 
-    app.route('/dma/:dmaId')
-        .get(users.requiresLogin, geo.readDma);
+    router.route('/dma/:dmaId')
+        .get(geo.readDma);
 
-    app.param('dmaId', geo.dmaByID);
+    router.param('dmaId', geo.dmaByID);
 };

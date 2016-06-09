@@ -58,6 +58,7 @@ module.exports = function(db) {
         create: function (req, res) {
             var publisher = new publisherModels.Publisher(req.body);
             publisher.user = [req.user];
+            publisher.organization = req.user.organization;
             publisher.save(function (err) {
                 if (err) {
                     console.log(err);

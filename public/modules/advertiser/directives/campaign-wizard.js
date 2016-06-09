@@ -117,7 +117,7 @@ angular.module('advertiser').directive('campaignWizard', [
                 //#################################//
 
                 var uploader = scope.uploader = new FileUploader({
-                    url: 'creativeassets'
+                    url: 'console/creativeassets'
                 });
                 scope.uploader.onCompleteAll = function(){
                     scope.uploads_completed = true;

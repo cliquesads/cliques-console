@@ -33,6 +33,9 @@ module.exports = function(db) {
 		require(path.resolve(modelPath));
 	});
 
+	// Have to require users after models are loaded
+	var users = require('../app/controllers/users.server.controller');
+
 	// Setting application local variables
 	app.locals.title = config.app.title;
 	app.locals.description = config.app.description;
@@ -40,6 +43,10 @@ module.exports = function(db) {
 	app.locals.facebookAppId = config.facebook.clientID;
 	app.locals.jsFiles = config.getJavaScriptAssets();
 	app.locals.cssFiles = config.getCSSAssets();
+
+	// ##########################################
+	// ########## EXPRESS MIDDLEWARE ############
+	// ##########################################
 
 	// Passing the request url to environment locals
 	app.use(function(req, res, next) {
@@ -123,13 +130,42 @@ module.exports = function(db) {
 	// Setting the app router and static folder
 	app.use(express.static(path.resolve('./public')));
 
-    // TODO: FIX THIS HACK. set DB connection as object property on app to pass through to routers
-    app.db = db;
+
+	// ######################################
+	// ############## ROUTERS ###############
+	// ######################################
+
+	// Router for unprotected endpoints.
+	var noAuthRouter = exports.noAuthRouter = express.Router();
+
+	// router for all protected API methods requiring authentication
+	var apiRouter = exports.basicAuthRouter = express.Router();
+
+	// register authentication methods for two API roots
+	app.use('/console', users.requiresLogin);
+	app.use('/api', passport.authenticate('basic', { session: false }));
+
+	// 'console' endpoint requires login via POST, authenticates using local strategy
+	app.use('/console', apiRouter);
+	// 'api' endpoint is for developer API, authenticates w/ basic auth strategy
+	app.use('/api', apiRouter);
+	// noAuth router is for unprotected endpoints like organization creation, password reset, etc.
+	app.use('/', noAuthRouter);
+
+	// wrap in object to pass to routing files
+	var routers = {
+		apiRouter: apiRouter,
+		noAuthRouter: noAuthRouter
+	};
 
 	// Globbing routing files
 	config.getGlobbedFiles('./app/routes/**/*.js').forEach(function(routePath) {
-		require(path.resolve(routePath))(app);
+		require(path.resolve(routePath))(db, routers);
 	});
+
+	// ######################################
+	// ########### ERROR HANDLERS ###########
+	// ######################################
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
 	app.use(function(err, req, res, next) {
