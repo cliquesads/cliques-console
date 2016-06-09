@@ -42,7 +42,7 @@
     "method-override": "~2.3.0",
     "methods": "^1.1.2",
     "moment-timezone": "^0.4.0",
-    "mongoose": "~3.8.8",
+    "mongoose": "^4.4.20",
     "mongoose-auto-increment": "^5.0.1",
     "morgan": "~1.4.1",
     "multer": "^1.0.1",
