@@ -50,6 +50,8 @@ var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
     CPAC: { type: Number }
 });
 
+var InsertionOrders = exports.InsertionOrders = mongoose.model('InsertionOrders', InsertionOrderSchema);
+
 // Flexible adjustments scheme for now, but could make more robust
 // NOTE: Need to consider signing when adding adjustment--all publisher
 // payments are recorded as negative totals, all advertiser payments
@@ -69,9 +71,9 @@ var PaymentSchema = new Schema({
     // ALL BILLING PERIODS IN UTC ONLY
     start_date: { type: Date, required: true },
     end_date: { type: Date, required: true },
-    organization: { type: Schema.ObjectId, required: true },
+    organization: { type: Schema.ObjectId, ref: 'Organization', required: true },
     // Optionally link to special insertion order
-    insertionOrder: { type: Schema.ObjectId },
+    insertionOrder: { type: Schema.ObjectId, ref: 'InsertionOrder'},
     paymentType: { type: String, enum: ["advertiser","publisher"], required: true},
     contractType: { type: String, enum: CONTRACT_TYPES },
 
