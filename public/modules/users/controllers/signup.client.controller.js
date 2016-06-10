@@ -9,6 +9,28 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
 
         // If user is signed in then redirect back home
         if ($scope.authentication.user) $location.path('/');
+
+        /**
+         * Have to manually add jQuery int-tel-input to orgPhone field
+         */
+        $timeout(function() {
+            $('#phone').intlTelInput({
+                utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
+                autoFormat: true
+            });
+            // jQuery hack to force input to fill whole column
+            $('div.intl-tel-input').addClass('col-md-12 p0');
+        });
+
+        /**
+         * Add custom validator for orgPhone field that just checks number validity
+         * of intlTelInput
+         */
+        window.ParsleyValidator
+            .addValidator('intlphone', function (value, requirement) {
+                return $("#phone").intlTelInput("isValidNumber");
+            }, 32);
+
         // TODO: get this from model enum
         $scope.timezoneChoices = Timezones;
         $scope.credentials = {
@@ -104,25 +126,6 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
 
         // Control for acceptance of terms
         $scope.acceptedTerms = false;
-
-        /**
-         * Have to manually add jQuery int-tel-input to orgPhone field
-         */
-        $('#phone').intlTelInput({
-            utilsScript: 'lib/intl-tel-input/lib/libphonenumber/build/utils.js',
-            autoFormat: true
-        });
-        // jQuery hack to force input to fill whole column
-        $('div.intl-tel-input').addClass('col-md-12 p0');
-
-        /**
-         * Add custom validator for orgPhone field that just checks number validity
-         * of intlTelInput
-         */
-        window.ParsleyValidator
-            .addValidator('intlphone', function (value, requirement) {
-                return $("#phone").intlTelInput("isValidNumber");
-            }, 32);
 
         /**
          * Terrible jQuery hack to move password helpers to where I want them to go
