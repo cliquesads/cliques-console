@@ -65,8 +65,8 @@ var getBillingQuery = function(startDate, endDate, group){
 
 var getAggregatesData = new Promise(function(resolve, reject){
     // run billing in UTC
-    var startDate = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month');
-    var endDate = moment().tz('UTC').startOf('day').startOf('month');
+    var startDate = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month').toDate();
+    var endDate = moment().tz('UTC').startOf('day').startOf('month').toDate();
 
     var advQuery = getBillingQuery(startDate, endDate, { advertiser: '$advertiser' });
     var pubQuery = getBillingQuery(startDate, endDate, { publisher: '$publisher' });
@@ -102,8 +102,7 @@ getAggregatesData.then(
     function(results){
         var advResults = results[0];
         var pubResults = results[1];
-        console.log(advResults);
-        console.log(pubResults);
+        
     },
     function(err){
         console.error(err);
