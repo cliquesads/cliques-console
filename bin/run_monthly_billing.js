@@ -5,6 +5,7 @@ var init = require('../config/init')(),
     cliques_mongo = require('@cliques/cliques-node-utils').mongodb,
     models = cliques_mongo.models,
     _ = require('lodash'),
+    mongoose = require('mongoose'),
     async = require('async'),
     chalk = require('chalk'),
     Promise = require('promise'),
@@ -39,7 +40,7 @@ var aggregationModels = new models.AggregationModels(db);
 var advertiserModels = new models.AdvertiserModels(db);
 var publisherModels = new models.PublisherModels(db);
 var billing = require('../app/models/billing.server.model');
-var user = require('../app/models/billing.server.model');
+var user = require('../app/models/user.server.model');
 
 var getBillingQuery = function(startDate, endDate, group){
     return aggregationModels.HourlyAdStat
@@ -63,6 +64,10 @@ var getBillingQuery = function(startDate, endDate, group){
         ]);
 };
 
+
+/**
+ * Step 1
+ */
 var getAggregatesData = new Promise(function(resolve, reject){
     // run billing in UTC
     var startDate = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month').toDate();
@@ -77,8 +82,14 @@ var getAggregatesData = new Promise(function(resolve, reject){
                 if (err){
                     return callback(err);
                 } else {
-                    advertiserModels.Advertiser.populate(results, { path: '_id.advertiser' },
-                        function(err, populated){ return callback(null, populated); });
+                    advertiserModels.Advertiser.populate(
+                        results,
+                        { path: '_id.advertiser', populate: 'organization' },
+                        function(err, populated){
+                            if (err) return callback(err);
+                            return callback(err, populated);
+                        }
+                    );
                 }
             });
         },
@@ -87,8 +98,14 @@ var getAggregatesData = new Promise(function(resolve, reject){
                 if (err){
                     return callback(err);
                 } else {
-                    publisherModels.Publisher.populate(results, { path: '_id.publisher' },
-                        function(err, populated){ return callback(null, populated); });
+                    publisherModels.Publisher.populate(
+                        results,
+                        { path: '_id.publisher' },
+                        function(err, populated){
+                            if (err) return callback(err);
+                            return callback(err, populated);
+                        }
+                    )
                 }
             });
         }
@@ -98,13 +115,68 @@ var getAggregatesData = new Promise(function(resolve, reject){
     });
 });
 
-getAggregatesData.then(
-    function(results){
-        var advResults = results[0];
-        var pubResults = results[1];
-        
-    },
-    function(err){
-        console.error(err);
+
+/**
+ * Step 2
+ *
+ * Doesn't actually populate, just gets organization data for each row efficiently and
+ * stores in top-level row object
+ *
+ * @param results
+ */
+function populateOrganizations(results) {
+    return new Promise(function(resolve, reject){
+        // inner function does actual query for one resultset
+        function _inner(results, model, callback){
+            var orgs = [];
+            results.forEach(function(row){
+                if (row._id[model]){
+                    orgs.push(row._id[model].organization);
+                }
+            });
+            user.Organization.find({ _id: { $in: orgs}}, function(err, organizations){
+                if (err) return callback(err);
+                organizations.forEach(function(org) {
+                    var row = _.find(results, function(r){
+                        if (r._id[model]){
+                            return r._id[model].organization.toString() === org._id.toString();
+                        }
+                    });
+                    if (row){
+                        row.organization = org;
+                    }
+                });
+                return callback(null, results);
+            });
+        }
+
+        // call in parallel for both advertiser & publisher data
+        async.parallel([
+            function(callback){ return _inner(results[0], 'advertiser', callback)},
+            function(callback){ return _inner(results[1], 'publisher', callback)}
+        ], function(err, populated){
+            if (err) return reject(err);
+            return resolve(populated);
+        });
+    });
+}
+
+
+mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring) {
+    if (err) {
+        console.error(chalk.red('Could not connect default connection to MongoDB!'));
+        console.log(chalk.red(err));
     }
-);
+    console.log('Connected to exchange connection as default mongo DB connection');
+
+    // Kick off the promise chain
+    getAggregatesData
+        .then(
+            function (results) { return populateOrganizations(results); },
+            function (err) { console.error(err); }
+        )
+        .then(
+            function(populated){ console.log(populated); },
+            function(err){ console.error(err); }
+        );
+});
