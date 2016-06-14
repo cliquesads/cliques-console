@@ -192,7 +192,6 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
     var initialPublisherResults = _.groupBy(orgPopulatedQueryResults[1], 'organization._id');
     var advertiserResults = {};
 
-
     // inner promise for InsertionOrders query
     var getInsertionOrders = new Promise(function(resolve, reject) {
         // find insertion orders with dates in this time period
@@ -205,7 +204,35 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
         });
     });
 
-    var getInsertionOrderData = function(insertionOrders){
+    var _partitionDateRanges = function(insertionOrders){
+        // Do date range manipulation to get distinct query results for dates within IOs & dates
+        // outside IO.
+        var insertionOrderDateRanges = [];
+        // initialize finalRanges with base payment range
+        var nonIoRanges = [moment.range(START_DATE, END_DATE)];
+        insertionOrders.forEach(function(insertionOrder){
+            var ioRange = moment.range(insertionOrder.start_date, insertionOrder.end_date);
+            nonIoRanges.forEach(function(range,ind,arr){
+                if (range.overlaps(ioRange)){
+                    // get intersect, this will be the insertionOrder range
+                    var intersect = range.intersect(ioRange);
+                    // HACK: add insertionOrder as own property to range
+                    // so it can be identified later
+                    intersect.insertionOrder = insertionOrder;
+                    insertionOrderDateRanges.push(intersect);
+                    // range (or ranges, if intersect is a subset of payment range)
+                    // for which payment will reflect default terms
+                    arr[ind] = range.subtract(intersect);
+                }
+            });
+            // flatten finalRanges so that new complement range partitions can be checked
+            // against other IO's
+            _.flatten(nonIoRanges);
+        });
+        return nonIoRanges.concat(insertionOrderDateRanges);
+    };
+
+    var getInsertionOrderData = function(allInsertionOrders){
         return new Promise(function(resolve, reject){
             // NOTE: Assumes only advertiser results need this IO partitioning.
             // Don't have a use case for publishers needing this currently, nor do I
@@ -213,21 +240,12 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
             // ALSO assumes that there's only one insertionorder per organization/dateRange.
             // This is validated in pre-save method on InsertionOrder schema
             async.forEachOf(initialAdvertiserResults, function(results, org, callback){
-                var insertionOrder = _.find(insertionOrders, function(io){
+                var insertionOrders = _.find(allInsertionOrders, function(io){
                     return io.organization.toString() === org.toString()
                 });
-                if (insertionOrder && insertionOrder.length > 0){
-                    // see note above about insertionOrder uniqueness per org/dateRange
-                    insertionOrder = insertionOrder[0];
-                    // Do date range manipulation to get distinct query results for dates within IO & dates
-                    // outside IO.
-                    var insertionOrderRange = moment.range(insertionOrder.start_date, insertionOrder.end_date);
-                    var paymentRange = moment.range(START_DATE, END_DATE);
-                    // range for which payment will reflect IO terms
-                    var intersect = paymentRange.intersect(insertionOrderRange);
-                    // range (or ranges, if intersect is a subset of payment range)
-                    // for which payment will reflect default terms
-                    var complement = paymentRange.subtract(paymentRange);
+                if (insertionOrders && insertionOrders.length > 0){
+                    // get partitioned and IO-flagged date ranges for query
+                    var ranges = _partitionDateRanges(insertionOrders);
                     // get results & advertisers to re-query
                     var thisOrgResults = advertiserResults[org];
                     var advertisers = thisOrgResults.map(function(result){ return result._id.advertiser; });
@@ -235,34 +253,29 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                     var advertisersMatch = { advertiser: { $in: advertisers }};
                     var advertisersGroup = { advertiser: '$advertiser' };
                     // create query for insertionOrder timeperiod
-                    var insertionOrderQueryFunc = function(callback){
-                        var query = getBillingQuery(intersect.start, intersect.end,
-                            advertisersMatch, advertisersGroup);
-                        query.exec(function(err, results){
-                            if (err) return callback(err);
-                            return callback(null,results);
-                        });
-                    };
-                    // may be multiple ranges in complement if IO range is subset of payments range
-                    if (complement.length > 0){
-                        var complementQueryFuncs = complement.map(function(range){
-                            return function(callback){
-                                var query = getBillingQuery(range.start, range.end,
-                                    advertisersMatch, advertisersGroup);
-                                query.exec(function(err, results){
-                                    if (err) return callback(err);
-                                    return callback(null,results);
-                                });
-                            }
-                        });
-                    }
-                    // put insertionOrderQuery first
-                    complementQueryFuncs.unshift(insertionOrderQueryFunc);
+
+                    var queryFuncs = ranges.map(function(range){
+                        return function(callback){
+                            var query = getBillingQuery(range.start, range.end,
+                                advertisersMatch, advertisersGroup);
+                            query.exec(function(err, results){
+                                if (err) return callback(err);
+                                // check if this is an insertionOrder range or not, if so add IO
+                                // to all results in this range
+                                if (range.insertionOrder){
+                                    results.forEach(function(elem, index, arr){
+                                       arr[index].insertionOrder = range.insertionOrder;
+                                    });
+                                }
+                                return callback(null,results);
+                            });
+                        };
+                    });
+
                     // finally, execute queries in parallel
-                    async.parallel(complementQueryFuncs,function(err, allResults){
+                    async.parallel(queryFuncs,function(err, allResults){
                         if (err) return callback(err);
                         // add insertionOrder to first results
-                        allResults[0].forEach(function(row){ row.insertionOrder = insertionOrder; });
                         advertiserResults[org] = _.flatten(allResults);
                         return callback();
                     });
@@ -326,7 +339,7 @@ var createPayments = function(populatedResults){
                 }
 
                 // ########## BEGIN INSERTION ORDER LOGIC ##########
-
+                
                 // ########## BEGIN CONTRACT TYPE LOGIC ###########
 
 
