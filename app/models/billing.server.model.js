@@ -50,7 +50,26 @@ var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
     CPAC: { type: Number }
 });
 
-var InsertionOrders = exports.InsertionOrders = mongoose.model('InsertionOrders', InsertionOrderSchema);
+/**
+ * Only allows one IO per org per timeframe, otherwise things get confusing.
+ *
+ * Checks if there are any other IO's w/ overlapping dates for same organization,
+ * rejects save if there are.
+ */
+InsertionOrderSchema.pre('save', function(next){
+    InsertionOrder.find({
+        organization: this.organization,
+        end_date: { $gte: this.start_date },
+        start_date: { $lte: this.end_date }
+    }).exec(function(err, results){
+        if (err) return next(err);
+        if (results && results.length > 0){
+            return next("Error: InsertionOrder for this organization exists w/ overlapping dates.");
+        }
+    });
+});
+
+var InsertionOrder = exports.InsertionOrder = mongoose.model('InsertionOrder', InsertionOrderSchema);
 
 // Flexible adjustments scheme for now, but could make more robust
 // NOTE: Need to consider signing when adding adjustment--all publisher
@@ -58,6 +77,16 @@ var InsertionOrders = exports.InsertionOrders = mongoose.model('InsertionOrders'
 // are positive.
 var AdjustmentSchema = new Schema({
     description: { type: String, required: true },
+    amount: { type: Number, required: true }
+});
+
+
+// Flexible lineitem schema as well.  Not sure what other meta-data I'll
+// need for these yet other than description and amount.
+var LineItemSchema = new Schema({
+    description: { type: String, required: true },
+    units: { type: Number, required: true },
+    rate: { type: Number, required: true },
     amount: { type: Number, required: true }
 });
 
@@ -73,9 +102,9 @@ var PaymentSchema = new Schema({
     end_date: { type: Date, required: true },
     organization: { type: Schema.ObjectId, ref: 'Organization', required: true },
     // Optionally link to special insertion order
-    insertionOrder: { type: Schema.ObjectId, ref: 'InsertionOrder'},
+    insertionOrder: [{ type: Schema.ObjectId, ref: 'InsertionOrder'}],
     paymentType: { type: String, enum: ["advertiser","publisher"], required: true},
-    contractType: { type: String, enum: CONTRACT_TYPES },
+    contractType: { type: String, enum: CONTRACT_TYPES, require: true },
 
     // Include all relevant billing stats for invoice calculation
     imps: { type: Number, min: 0, required: true, default: 0 },
@@ -92,15 +121,17 @@ var PaymentSchema = new Schema({
 
     // Fee schema to be copied from organization on creation
     fee: FeeSchema,
+    // Lineitems to represent items being charged on invoice
+    lineItems: [LineItemSchema],
     totalAmount: { type: Number, required: true },
     invoiceUrl: { type: String }
 });
 
 // Use auto-increment to generate human-readable indices, which will be used
 // as invoice/statement numbers
-PaymentSchema.plugin(autoIncrement.plugin, 'Payments');
+PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
 
-var Payments = exports.Payments = mongoose.model('Payments', PaymentSchema);
+var Payments = exports.Payment = mongoose.model('Payment', PaymentSchema);
 
 
 /**
