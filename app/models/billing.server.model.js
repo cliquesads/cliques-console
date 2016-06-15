@@ -42,6 +42,8 @@ var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
     name: { type: String, required: true },
     // ALL BILLING PERIODS IN UTC ONLY
     start_date: { type: Date, required: true },
+    // NOTE: For billing purposes, end_date is INCLUSIVE, so for full day
+    // should be 23:59:59 UTC on last day of period
     end_date: { type: Date, required: true },
     notes: { type: String, required: false },
     organization: { type: Schema.ObjectId, required: true },
