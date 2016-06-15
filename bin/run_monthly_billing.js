@@ -192,18 +192,6 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
     var initialPublisherResults = _.groupBy(orgPopulatedQueryResults[1], 'organization._id');
     var advertiserResults = {};
 
-    // inner promise for InsertionOrders query
-    var getInsertionOrders = new Promise(function(resolve, reject) {
-        // find insertion orders with dates in this time period
-        billing.InsertionOrder.find({
-            end_date: {$gte: START_DATE},
-            start_date: {$lte: END_DATE}
-        }).exec(function (err, insertionOrders) {
-            if (err) return reject(err);
-            resolve(insertionOrders);
-        });
-    });
-
     var _partitionDateRanges = function(insertionOrders){
         // Do date range manipulation to get distinct query results for dates within IOs & dates
         // outside IO.
@@ -232,8 +220,13 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
         return nonIoRanges.concat(insertionOrderDateRanges);
     };
 
-    var getInsertionOrderData = function(allInsertionOrders){
-        return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
+        // find insertion orders with dates in this time period
+        billing.InsertionOrder.find({
+            end_date: {$gte: START_DATE},
+            start_date: {$lte: END_DATE}
+        }).exec(function (err, allInsertionOrders) {
+            if (err) return reject(err);
             // NOTE: Assumes only advertiser results need this IO partitioning.
             // Don't have a use case for publishers needing this currently, nor do I
             // see one in the immediate future.
@@ -264,7 +257,7 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                                 // to all results in this range
                                 if (range.insertionOrder){
                                     results.forEach(function(elem, index, arr){
-                                       arr[index].insertionOrder = range.insertionOrder;
+                                        arr[index].insertionOrder = range.insertionOrder;
                                     });
                                 }
                                 return callback(null,results);
@@ -286,20 +279,9 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                 }
             }, function(err){
                 if (err) return reject(err);
-                return resolve(advertiserResults);
+                return resolve([advertiserResults, initialPublisherResults]);
             });
         });
-    };
-
-    // wrapper promise that executes both insertionOrder & insertionOrderData steps
-    return new Promise(function(resolve, reject) {
-        getInsertionOrders
-            .then(getInsertionOrderData, function (err) {
-                return reject(err);
-            })
-            .then(function(advertiserResults){
-                return resolve([advertiserResults, initialPublisherResults]);
-            }, function(err){ return reject(err); });
     });
 };
 
@@ -339,7 +321,7 @@ var createPayments = function(populatedResults){
                 }
 
                 // ########## BEGIN INSERTION ORDER LOGIC ##########
-                
+
                 // ########## BEGIN CONTRACT TYPE LOGIC ###########
 
 
@@ -379,7 +361,7 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
             function (err) { console.error(err); }
         )
         .then(
-            function(populated){ groupByOrgAndInsertionOrder(populated); },
+            function(populated){ return groupByOrgAndInsertionOrder(populated); },
             function(err){ console.error(err); }
         )
         .then(
