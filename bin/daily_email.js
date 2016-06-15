@@ -18,26 +18,18 @@ function getUrl(path, params){
         url = url + '?' + querystring.stringify(params);
     }
     return url;
-
 }
-
-var auth = {
-    url: getUrl("/auth/signin"),
-    body: {
-        username: process.argv[2],
-        password: process.argv[3]
-    },
-    json: true,
-    jar: true // to enable sessions
-};
-
 
 var gearPatrolArgs = function(){
     var startDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
     var endDate = moment().tz('America/New_York').startOf('day').toISOString();
     // Now construct actual request API request options
     return {
-        url: getUrl("/hourlyadstat", {
+        auth: {
+            user: process.argv[2],
+            pass: process.argv[3]
+        },
+        url: getUrl("/api/hourlyadstat", {
             dateGroupBy: "day",
             startDate: startDate,
             endDate: endDate,
@@ -45,7 +37,7 @@ var gearPatrolArgs = function(){
             groupBy: "publisher,placement",
             populate: "publisher,placement"
         }),
-        jar: true // to enable sessions
+        jar: false // to enable sessions
     };
 };
 
@@ -53,7 +45,11 @@ var outdoorProjectOpts = function(){
     var startDate = moment().tz('America/Los_Angeles').startOf('day').subtract(8, 'days').toISOString();
     var endDate = moment().tz('America/Los_Angeles').startOf('day').toISOString();
     return {
-        url: getUrl("/hourlyadstat", {
+        auth: {
+            user: process.argv[2],
+            pass: process.argv[3]
+        },
+        url: getUrl("/api/hourlyadstat", {
             dateGroupBy: "day",
             startDate: startDate,
             endDate: endDate,
@@ -61,7 +57,7 @@ var outdoorProjectOpts = function(){
             groupBy: "publisher,placement",
             populate: "publisher,placement"
         }),
-        jar: true // to enable sessions
+        jar: false // to enable sessions
     }
 };
 
@@ -95,57 +91,54 @@ function generateReport(queryOpts, emailSubject, toEmail, emailTemplate, headers
     // create csv write stream
     var csv = csvWriter({headers: headers});
     // send request
-    request.post(auth, function(error){
-        if (error) return console.error(error);
-        request.get(queryOpts, function(err, response, body){
-            if (err) return callback(err);
-            var rows = JSON.parse(body);
+    request.get(queryOpts, function(err, response, body){
+        if (err) return callback(err);
+        var rows = JSON.parse(body);
 
-            // sort rows by date
-            rows = rows.sort(sortByDate);
+        // sort rows by date
+        rows = rows.sort(sortByDate);
 
-            // calculate totals, store in separate object
-            var totals = {
-                imps: _.sumBy(rows, function(r){ return r.imps; }),
-                defaults: _.sumBy(rows, function(r){ return r.defaults; }),
-                spend: _.sumBy(rows, function(r){ return r.spend; }),
-                clicks: _.sumBy(rows, function(r){ return r.clicks; })
-            };
-            totals = formatRow(totals);
+        // calculate totals, store in separate object
+        var totals = {
+            imps: _.sumBy(rows, function(r){ return r.imps; }),
+            defaults: _.sumBy(rows, function(r){ return r.defaults; }),
+            spend: _.sumBy(rows, function(r){ return r.spend; }),
+            clicks: _.sumBy(rows, function(r){ return r.clicks; })
+        };
+        totals = formatRow(totals);
 
-            // Now calculate derived fields and format (template engine
-            // doesn't handle formatting filters)
-            rows.forEach(function(row){
-                row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-                row.placement = row._id.placement.name;
-                formatRow(row);
-                // write to csv as well, only picking headers passed in
-                csv.write(_.pick(row, headers));
-            });
+        // Now calculate derived fields and format (template engine
+        // doesn't handle formatting filters)
+        rows.forEach(function(row){
+            row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            row.placement = row._id.placement.name;
+            formatRow(row);
+            // write to csv as well, only picking headers passed in
+            csv.write(_.pick(row, headers));
+        });
 
-            // end csv stream
-            csv.end();
-            var csvName = asOfDate + '_report.csv';
+        // end csv stream
+        csv.end();
+        var csvName = asOfDate + '_report.csv';
 
-            // now send mail
-            mailer.sendMail({
-                subject: emailSubject,
-                templateName: emailTemplate,
-                to: toEmail,
-                attachments: [
-                    {
-                        filename: csvName,
-                        content: csv
-                    }
-                ],
-                data: {placementData: rows, totals: totals, asOfDate: asOfDate}
-            }, function(err, sent){
-                if (err) {
-                    console.error(err);
-                    return callback(err);
+        // now send mail
+        mailer.sendMail({
+            subject: emailSubject,
+            templateName: emailTemplate,
+            to: toEmail,
+            attachments: [
+                {
+                    filename: csvName,
+                    content: csv
                 }
-                return callback();
-            });
+            ],
+            data: {placementData: rows, totals: totals, asOfDate: asOfDate}
+        }, function(err, sent){
+            if (err) {
+                console.error(err);
+                return callback(err);
+            }
+            return callback();
         });
     });
 }
