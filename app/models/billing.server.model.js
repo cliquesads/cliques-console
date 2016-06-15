@@ -39,9 +39,11 @@ var PromoSchema = exports.PromoSchema = new Schema({
  */
 var InsertionOrderSchema = exports.InsertionOrderSchema = new Schema({
     tstamp: { type: Date, default: Date.now },
+    name: { type: String, required: true },
     // ALL BILLING PERIODS IN UTC ONLY
     start_date: { type: Date, required: true },
     end_date: { type: Date, required: true },
+    notes: { type: String, required: false },
     organization: { type: Schema.ObjectId, required: true },
     contractType: { type: String, enum: CONTRACT_TYPES, required: true },
     CPM: { type: Number },
@@ -62,9 +64,13 @@ InsertionOrderSchema.pre('save', function(next){
         end_date: { $gte: this.start_date },
         start_date: { $lte: this.end_date }
     }).exec(function(err, results){
-        if (err) return next(err);
+        if (err) {
+            err = new Error(err);
+            return next(err);
+        }
         if (results && results.length > 0){
-            return next("Error: InsertionOrder for this organization exists w/ overlapping dates.");
+            var er = new Error("Error: InsertionOrder for this organization exists w/ overlapping dates.");
+            return next(er);
         } else {
             return next();
         }
