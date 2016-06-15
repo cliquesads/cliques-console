@@ -308,14 +308,14 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                     var ranges = partitionDateRange(insertionOrders);
                     // get results & advertisers to re-query
                     var thisOrgResults = initialAdvertiserResults[org];
-                    var advertisers = thisOrgResults.map(function(result){ return result._id.advertiser._id; });
+                    var advertisers = thisOrgResults.map(function(result){ return result._id.advertiser._id.toString(); });
                     // get match query arg
                     var advertisersMatch = { advertiser: { $in: advertisers }};
                     var advertisersGroup = { advertiser: '$advertiser' };
                     // create query for insertionOrder timeperiod
                     var queryFuncs = ranges.map(function(range){
                         return function(callback){
-                            var query = getBillingQuery(range.start, range.end, advertisersGroup, advertisersMatch);
+                            var query = getBillingQuery(range.start.toDate(), range.end.toDate(), advertisersGroup, advertisersMatch);
                             query.exec(function(err, results){
                                 if (err) return callback(err);
                                 // check if this is an insertionOrder range or not, if so add IO
