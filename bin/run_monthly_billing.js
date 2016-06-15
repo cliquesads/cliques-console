@@ -367,80 +367,20 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                 }
             )
     });
-
-
-    // return new Promise(function(resolve, reject) {
-    //     // find insertion orders with dates in this time period
-    //     billing.InsertionOrder.find({
-    //         end_date: {$gte: START_DATE},
-    //         start_date: {$lte: END_DATE}
-    //     }).exec(function (err, allInsertionOrders) {
-    //         if (err) return reject(err);
-    //         // NOTE: Assumes only advertiser results need this IO partitioning.
-    //         // Don't have a use case for publishers needing this currently, nor do I
-    //         // see one in the immediate future.
-    //         // ALSO assumes that there's only one insertionorder per organization/dateRange.
-    //         // This is validated in pre-save method on InsertionOrder schema
-    //         async.forEachOf(initialAdvertiserResults, function(results, org, callback){
-    //             var insertionOrders = allInsertionOrders.filter(function(io){
-    //                 return io.organization.toString() === org.toString();
-    //             });
-    //             if (insertionOrders && insertionOrders.length > 0){
-    //                 // get partitioned and IO-flagged date ranges for query
-    //                 var ranges = partitionDateRange(insertionOrders);
-    //                 // get results & advertisers to re-query
-    //                 var thisOrgResults = initialAdvertiserResults[org];
-    //                 var advertisers = thisOrgResults.map(function(result){ return result._id.advertiser; });
-    //                 // get match query arg
-    //                 var advertisersMatch = { advertiser: { $in: advertisers }};
-    //                 var advertisersGroup = { advertiser: '$advertiser' };
-    //                 // create query for insertionOrder timeperiod
-    //
-    //                 var queryFuncs = ranges.map(function(range){
-    //                     return function(callback){
-    //                         var query = getBillingQuery(range.start, range.end,
-    //                             advertisersMatch, advertisersGroup);
-    //                         query.exec(function(err, results){
-    //                             if (err) return callback(err);
-    //                             // check if this is an insertionOrder range or not, if so add IO
-    //                             // to all results in this range
-    //                             if (range.insertionOrder){
-    //                                 results.forEach(function(elem, index, arr){
-    //                                     arr[index].insertionOrder = range.insertionOrder;
-    //                                 });
-    //                             }
-    //                             return callback(null,results);
-    //                         });
-    //                     };
-    //                 });
-    //
-    //                 // finally, execute queries in parallel
-    //                 async.parallel(queryFuncs,function(err, allResults){
-    //                     if (err) return callback(err);
-    //                     // add insertionOrder to first results
-    //                     advertiserResults[org] = _.flatten(allResults);
-    //                     return callback();
-    //                 });
-    //             } else {
-    //                 // if no insertionOrder is found, just pass straight through to final results
-    //                 advertiserResults[org] = results;
-    //                 return callback();
-    //             }
-    //         }, function(err){
-    //             if (err) return reject(err);
-    //             return resolve([advertiserResults, initialPublisherResults]);
-    //         });
-    //     });
-    // });
 };
 
+/**
+ * Step 4.
+ *
+ * Create payments objects.
+ *
+ * @param populatedResults
+ */
 var createPayments = function(populatedResults){
     function _inner(results, model, callback){
         results.forEach(function(row){
             if (row._id[model]){
-
                 // ######## CREATE NEW PAYMENT ###########
-
                 var payment = new billing.Payment({
                     start_date: START_DATE,
                     end_date: END_DATE,
@@ -471,6 +411,7 @@ var createPayments = function(populatedResults){
 
                 // ########## BEGIN INSERTION ORDER LOGIC ##########
 
+
                 // ########## BEGIN CONTRACT TYPE LOGIC ###########
 
 
@@ -479,7 +420,6 @@ var createPayments = function(populatedResults){
             }
 
         });
-
     }
 
     return new Promise(function(resolve, reject){
