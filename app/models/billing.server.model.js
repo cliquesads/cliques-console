@@ -65,6 +65,8 @@ InsertionOrderSchema.pre('save', function(next){
         if (err) return next(err);
         if (results && results.length > 0){
             return next("Error: InsertionOrder for this organization exists w/ overlapping dates.");
+        } else {
+            return next();
         }
     });
 });
