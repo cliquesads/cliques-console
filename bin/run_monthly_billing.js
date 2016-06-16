@@ -374,12 +374,13 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
  *
  * Create payments objects.
  *
- * @param populatedResults
+ * @param orgGroupedResults
  */
-var createPayments = function(populatedResults){
+var createPayments = function(orgGroupedResults){
     function _inner(results, model, callback){
-        results.forEach(function(row){
-            if (row._id[model]){
+        for (var org in results){
+            if (results.hasOwnProperty(org) && org){
+                var row
                 // ######## CREATE NEW PAYMENT ###########
                 var payment = new billing.Payment({
                     start_date: START_DATE,
@@ -418,6 +419,10 @@ var createPayments = function(populatedResults){
                 // ########## CALCULATE TOTALS ############
 
             }
+        }
+
+        results.forEach(function(row){
+
 
         });
     }

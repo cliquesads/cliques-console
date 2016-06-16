@@ -5,6 +5,7 @@
 
 var mongoose = require('mongoose'),
     autoIncrement = require('mongoose-auto-increment'),
+    _ = require('lodash'),
     Schema = mongoose.Schema;
 
 /**
@@ -90,15 +91,70 @@ var AdjustmentSchema = new Schema({
     amount: { type: Number, required: true }
 });
 
-
-// Flexible lineitem schema as well.  Not sure what other meta-data I'll
-// need for these yet other than description and amount.
+/**
+ * LineItem represents actual line on the invoice, i.e. specific billable item.
+ */
 var LineItemSchema = new Schema({
     description: { type: String, required: true },
-    units: { type: Number, required: true },
+    type: { type: String, required: true, enum: ["Fee","Rev-share","Ad-spend","Revenue"]},
+    // rate will mean different things depending on LI type and contract type, but
+    // should be thought of as the rate used to arrive at the amount for this lineitem
+    // (CPM, fee %, etc.)
     rate: { type: Number, required: true },
-    amount: { type: Number, required: true }
+
+    // this will be 'spend' from HourlyAdStats if cpm_variable, otherwise schema
+    // method will handle
+    amount: { type: Number, required: true },
+
+    // Fields below are specific to "Ad-Spend" and "Revenue" types
+    // TODO: seems redundant to have contractType here and on IO, but might be useful for
+    // TODO: record keeping purposes
+    contractType: { type: String, enum: CONTRACT_TYPES, default: 'cpm_variable' },
+    start_date: { type: Date },
+    end_date: { type: Date },
+    // Optionally link to special insertion order
+    insertionOrder: { type: Schema.ObjectId, ref: 'InsertionOrder' },
+
+    // Include all relevant billing stats for invoice calculation
+    imps: { type: Number, min: 0 },
+    clicks: { type: Number, min: 0 },
+    view_convs: { type: Number, min: 0 },
+    click_convs: { type: Number, min: 0 },
+    spend: { type: Number, min: 0 }
 });
+
+/**
+ * Handles contract type logic to calculate media spend component of invoice
+ *
+ * Result should be considered an absolute value, other methods will
+ * sign as appropriate depending on context.
+ */
+LineItemSchema.methods.calculateUnsignedMediaSpend = function(insertionOrder){
+    var mediaSpend;
+    switch (this.contractType){
+        // standard variable CPM exchange buy
+        case "cpm_variable":
+            mediaSpend = this.spend;
+            break;
+        case "cpa_fixed":
+            if (insertionOrder){
+                mediaSpend = (insertionOrder.CPAC * this.click_convs)
+                    + (insertionOrder.CPAV * this.view_convs);
+            }
+            break;
+        case "cpc_fixed":
+            if (insertionOrder){
+                mediaSpend = insertionOrder.CPC * this.clicks;
+            }
+            break;
+        case "cpm_fixed":
+            if (insertionOrder){
+                mediaSpend = insertionOrder.CPM * this.imps / 1000;
+            }
+            break;
+    }
+    return mediaSpend;
+};
 
 /**
  * Schema to persist all incoming & outgoing payment data, w/ ref to organization.
@@ -111,17 +167,7 @@ var PaymentSchema = new Schema({
     start_date: { type: Date, required: true },
     end_date: { type: Date, required: true },
     organization: { type: Schema.ObjectId, ref: 'Organization', required: true },
-    // Optionally link to special insertion order
-    insertionOrder: [{ type: Schema.ObjectId, ref: 'InsertionOrder'}],
-    paymentType: { type: String, enum: ["advertiser","publisher"], required: true},
-    contractType: { type: String, enum: CONTRACT_TYPES, require: true },
-
-    // Include all relevant billing stats for invoice calculation
-    imps: { type: Number, min: 0, required: true, default: 0 },
-    spend: { type: Number, min: 0, required: true, default: 0 },
-    clicks: { type: Number, min: 0, required: true, default: 0 },
-    view_convs: { type: Number, min: 0, required: true, default: 0 },
-    click_convs: { type: Number, min: 0, required: true, default: 0 },
+    paymentType: { type: String, enum: ["advertiser","publisher"], required: true },
 
     adjustments: [AdjustmentSchema],
     private_notes: { type: String },
@@ -133,7 +179,6 @@ var PaymentSchema = new Schema({
     fee: FeeSchema,
     // Lineitems to represent items being charged on invoice
     lineItems: [LineItemSchema],
-    totalAmount: { type: Number, required: true },
     invoiceUrl: { type: String }
 });
 
@@ -141,62 +186,18 @@ var PaymentSchema = new Schema({
 // as invoice/statement numbers
 PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
 
-var Payments = exports.Payment = mongoose.model('Payment', PaymentSchema);
-
-
-/**
- * Handles contract type logic to calculate media spend component of invoice
- *
- * Result should be considered an absolute value, other methods will
- * sign as appropriate depending on context.
- *
- * NOTE: WILL ERROR IF INSERTIONORDER IS NOT POPULATED
- * @private
- */
-PaymentSchema.methods._calculateUnsignedMediaSpend = function(){
-    var mediaSpend;
-    switch (this.contractType) {
-        // standard variable CPM exchange buy
-        case "cpm_variable":
-            mediaSpend = this.spend;
-            break;
-        case "cpa_fixed":
-            mediaSpend = (this.insertionOrder.CPAC * this.click_convs)
-                + (this.insertionOrder.CPAV * this.view_convs);
-            break;
-        case "cpc_fixed":
-            mediaSpend = this.insertionOrder.CPC * this.clicks;
-            break;
-        case "cpm_fixed":
-            mediaSpend = this.insertionOrder.CPM * this.imps / 1000;
-            break;
-    }
-    return mediaSpend;
-};
+var Payment = exports.Payment = mongoose.model('Payment', PaymentSchema);
 
 /**
- * Calculates payment totalAmount, incorporating all contractType,
- * fee and adjustment logic
+ * Calculates payment totalAmount, sums all lineitems and adjustments
  *
  * @returns {*}
  */
-PaymentSchema.methods.calculateTotalAmount = function(){
-    var mediaSpend = this._calculateUnsignedMediaSpend(),
-        fee = this.fee.percentage * mediaSpend,
-        totalAmount;
-
-    // Figure out signing and add fees
-    if (this.paymentType === 'advertiser'){
-        totalAmount = mediaSpend + fee;
-    } else if (this.paymentType === 'publisher'){
-        totalAmount = - mediaSpend + fee;
-    }
-
+PaymentSchema.virtual('totalAmount').get(function(){
+    var totalAmount = _.sumBy(this.lineItems, "amount");
     // now add adjustments
     if (this.adjustments){
-        this.adjustments.forEach(function(adjustment){
-            totalAmount += adjustment.amount;
-        });
+        totalAmount += _.sumBy(this.adjustments, "amount");
     }
     return totalAmount;
-};
+});
