@@ -216,6 +216,10 @@ var getAggregatesData = new Promise(function(resolve, reject){
  * Doesn't actually populate, just gets organization data for each row efficiently and
  * stores in top-level row object
  *
+ * This is unnecessary if you can figure out a way to do a two-level-deep populate for
+ * Organization, since HourlyAdStats row only stores Advertiser or Publisher ref.  But
+ * I got sick of trying to figure that out, and this was easy enough to do.
+ *
  * @param results
  */
 var populateOrganizations = function(results) {
@@ -273,6 +277,9 @@ var populateOrganizations = function(results) {
 var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
     var initialAdvertiserResults = _.groupBy(orgPopulatedQueryResults[0], 'organization._id');
     var initialPublisherResults = _.groupBy(orgPopulatedQueryResults[1], 'organization._id');
+    // get rid of aggregates without organizations.  These are defaults/bids w/ no imps
+    delete initialAdvertiserResults["undefined"];
+    delete initialPublisherResults["undefined"];
     var advertiserResults = {};
 
     // sub-promise to get InsertionOrders
@@ -304,6 +311,9 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                     return io.organization.toString() === org.toString();
                 });
                 if (insertionOrders && insertionOrders.length > 0){
+                    // since results will be replaced, get Organization document
+                    // populated before on existing results to tag onto new results
+                    var organization = results[0].organization;
                     // get partitioned and IO-flagged date ranges for query
                     var ranges = partitionDateRange(insertionOrders);
                     // get results & advertisers to re-query
@@ -318,14 +328,23 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                             var query = getBillingQuery(range.start.toDate(), range.end.toDate(), advertisersGroup, advertisersMatch);
                             query.exec(function(err, results){
                                 if (err) return callback(err);
-                                // check if this is an insertionOrder range or not, if so add IO
-                                // to all results in this range
-                                if (range.insertionOrder){
-                                    results.forEach(function(elem, index, arr){
-                                        arr[index].insertionOrder = range.insertionOrder;
-                                    });
-                                }
-                                return callback(null,results);
+                                // re-populate Advertiser model
+                                advertiserModels.Advertiser.populate(
+                                    results,
+                                    { path: '_id.advertiser' },
+                                    function(err, populated){
+                                        if (err) return callback(err);
+                                        populated.forEach(function(elem, index, arr){
+                                            // check if this is an insertionOrder range or not, if so add IO
+                                            // to all results in this range
+                                            if (range.insertionOrder){
+                                                arr[index].insertionOrder = range.insertionOrder;
+                                            }
+                                            arr[index].organization = organization;
+                                        });
+                                        return callback(null,populated);
+                                    }
+                                );
                             });
                         };
                     });
@@ -415,19 +434,19 @@ var createPayments = function(orgGroupedResults){
                 // ########## BEGIN LINEITEM CALCS ##########
                 // There will be a separate lineitem for each (insertionOrder,model) combo
                 results.forEach(function (row) {
-                    var lineItem = new billing.LineItemSchema({
+                    var lineItem = {
                         imps: row.imps,
                         clicks: row.clicks,
                         view_convs: row.view_convs,
                         click_convs: row.click_convs,
                         spend: row.spend,
-                        lineItemType: isAdvertiser ? "Ad-spend" : "Revenue",
-                        insertionOrder: row.insertionOrder, // will be undefined if no insertionOrder present
-                        contractType: row.insertionOrder ? row.insertionOrder.contractType : "cpm-variable"
-                    });
+                        lineItemType: isAdvertiser ? "AdSpend" : "Revenue",
+                        insertionOrder: row.insertionOrder || null, // will be undefined if no insertionOrder present
+                        contractType: row.insertionOrder ? row.insertionOrder.contractType : "cpm_variable"
+                    };
                     // calculate lineitem amount & rate
-                    lineItem.getSpendRelatedAmountAndRate(insertionOrder);
-                    lineItem.generateDescription(model);
+                    lineItem = billing.Payment.lineItem_getSpendRelatedAmountAndRate(lineItem, row.insertionOrder);
+                    lineItem = billing.Payment.lineItem_generateDescription(lineItem, row._id[model]);
                     payment.lineItems.push(lineItem);
                 });
 
@@ -442,20 +461,23 @@ var createPayments = function(orgGroupedResults){
         }
     };
 
-    function _createPayments(results, model, callback){
-        // generate createPayment function w/ model type
-        var createSinglePayment = _createSinglePayment(model);
-        async.forEachOf(results, createSinglePayment, function(err){
-            if (err) return callback(err);
-            return callback();
-        });
-    }
-
     return new Promise(function(resolve, reject){
         // call in parallel for both advertiser & publisher data
         async.parallel([
-            function(callback){ return _createPayments(results[0], 'advertiser', callback)},
-            function(callback){ return _createPayments(results[1], 'publisher', callback)}
+            function(callback){
+                var createSinglePayment = _createSinglePayment('advertiser');
+                async.forEachOf(orgGroupedResults[0], createSinglePayment, function(err){
+                    if (err) return callback(err);
+                    callback();
+                });
+            },
+            function(callback){
+                var createSinglePayment = _createSinglePayment('publisher');
+                async.forEachOf(orgGroupedResults[1], createSinglePayment, function(err){
+                    if (err) return callback(err);
+                    callback();
+                });
+            }
         ], function(err){
             if (err) return reject(err);
             return resolve();
@@ -463,7 +485,9 @@ var createPayments = function(orgGroupedResults){
     });
 };
 
-
+// ###############################
+// ########### RUN ETL ###########
+// ###############################
 mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring) {
     if (err) {
         console.error(chalk.red('Could not connect default connection to MongoDB!'));
@@ -482,7 +506,11 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
             function(err){ console.error(err); }
         )
         .then(
-            function(populated){ createPayments(populated); },
+            function(orgGroupedResults){ return createPayments(orgGroupedResults); },
             function(err){ console.error(err);}
-        );
+        )
+        .then(
+            function(){ console.log('Done!'); return process.exit(0); },
+            function(err){ console.error(chalk.red(err)); process.exit(1); }
+        )
 });
