@@ -94,9 +94,9 @@ var AdjustmentSchema = new Schema({
 /**
  * LineItem represents actual line on the invoice, i.e. specific billable item.
  */
-var LineItemSchema = new Schema({
+var LineItemSchema = exports.LineItemSchema = new Schema({
     description: { type: String, required: true },
-    type: { type: String, required: true, enum: ["Fee","Rev-share","Ad-spend","Revenue"]},
+    lineItemType: { type: String, required: true, enum: ["Fee","RevShare","AdSpend","Revenue"]},
     // rate will mean different things depending on LI type and contract type, but
     // should be thought of as the rate used to arrive at the amount for this lineitem
     // (CPM, fee %, etc.)
@@ -110,8 +110,6 @@ var LineItemSchema = new Schema({
     // TODO: seems redundant to have contractType here and on IO, but might be useful for
     // TODO: record keeping purposes
     contractType: { type: String, enum: CONTRACT_TYPES, default: 'cpm_variable' },
-    start_date: { type: Date },
-    end_date: { type: Date },
     // Optionally link to special insertion order
     insertionOrder: { type: Schema.ObjectId, ref: 'InsertionOrder' },
 
@@ -124,36 +122,85 @@ var LineItemSchema = new Schema({
 });
 
 /**
- * Handles contract type logic to calculate media spend component of invoice
+ * Handles contract type logic to calculate media spend amount of invoice, sets `this.amount`
  *
- * Result should be considered an absolute value, other methods will
- * sign as appropriate depending on context.
+ * Also sets `this.rate`, since this is a byproduct of the media spend calculation
+ *
+ * NOTE: this.type must be set.  If this.type is not "Ad-spend" or "Revenue", this
+ * will not set amount or rate.
+ *
  */
-LineItemSchema.methods.calculateUnsignedMediaSpend = function(insertionOrder){
-    var mediaSpend;
-    switch (this.contractType){
-        // standard variable CPM exchange buy
-        case "cpm_variable":
-            mediaSpend = this.spend;
+LineItemSchema.methods.getSpendRelatedAmountAndRate = function(insertionOrder){
+    if (this.lineItemType === "AdSpend" || this.lineItemType === "Revenue"){
+        var sign = this.lineItemType === "AdSpend" ? 1: -1;
+        switch (this.contractType){
+            // standard variable CPM exchange buy
+            case "cpm_variable":
+                this.amount = sign & this.spend;
+                this.rate = this.spend / this.imps * 1000;
+                break;
+            case "cpa_fixed":
+                if (insertionOrder){
+                    this.amount = sign * ((insertionOrder.CPAC * this.click_convs)
+                        + (insertionOrder.CPAV * this.view_convs));
+                    // just take average of two, it doesn't really matter
+                    this.rate = (insertionOrder.CPAC + insertionOrder.CPAV)/ 2;
+                }
+                break;
+            case "cpc_fixed":
+                if (insertionOrder){
+                    this.amount = sign * insertionOrder.CPC * this.clicks;
+                    this.rate = insertionOrder.CPC;
+                }
+                break;
+            case "cpm_fixed":
+                if (insertionOrder){
+                    this.amount = sign * insertionOrder.CPM * this.imps / 1000;
+                    this.rate = insertionOrder.CPM;
+                }
+                break;
+        }
+        return { amount: this.amount, rate: this.rate };
+    }
+};
+
+function formatPercentage(number, decimals){
+    decimals = decimals || 1;
+    return (number * 100).toFixed(decimals);
+}
+
+/**
+ * Centralize logic to auto-generate lineitem description
+ */
+LineItemSchema.methods.generateDescription = function(relevantModel){
+    switch (this.lineItemType){
+        case "Fee":
+            this.description = "Cliques Fees - " + formatPercentage(this.rate, 1) + " of AdSpend";
             break;
-        case "cpa_fixed":
-            if (insertionOrder){
-                mediaSpend = (insertionOrder.CPAC * this.click_convs)
-                    + (insertionOrder.CPAV * this.view_convs);
+        case "RevShare":
+            this.description = "Cliques Revenue Share - " + formatPercentage(this.rate, 1) + " of Gross Revenue";
+            break;
+        case "AdSpend":
+            switch (this.contractType){
+                case "cpm_variable":
+                    this.description = "Variable CPM Advertiser Impressions: " + relevantModel.name;
+                    break;
+                case "cpc_fixed":
+                    this.description = "CPC Media Spend: " + relevantModel.name;
+                    break;
+                case "cpm_fixed":
+                    this.description = "Fixed CPM Advertiser Impressions: " + relevantModel.name;
+                    break;
+                case "cpa_fixed":
+                    this.description = "CPA Media Spend: " + relevantModel.name;
+                    break;
             }
             break;
-        case "cpc_fixed":
-            if (insertionOrder){
-                mediaSpend = insertionOrder.CPC * this.clicks;
-            }
-            break;
-        case "cpm_fixed":
-            if (insertionOrder){
-                mediaSpend = insertionOrder.CPM * this.imps / 1000;
-            }
+        case "Revenue":
+            this.description = "CPM Impressions - Cliques Exchange: " + relevantModel.name;
             break;
     }
-    return mediaSpend;
+    return this.description;
 };
 
 /**

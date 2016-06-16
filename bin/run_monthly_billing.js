@@ -369,6 +369,7 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
     });
 };
 
+
 /**
  * Step 4.
  *
@@ -377,65 +378,87 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
  * @param orgGroupedResults
  */
 var createPayments = function(orgGroupedResults){
-    function _inner(results, model, callback){
-        for (var org in results){
-            if (results.hasOwnProperty(org) && org){
-                var row
+    /**
+     * Creates a single payment object, using org-grouped HourlyAdStats query results
+     *
+     * wrapper function just captures model in closure (i.e. 'advertiser' or 'publisher')
+     */
+    var _createSinglePayment = function(model){
+        var isAdvertiser = (model === "advertiser");
+        return function(results, org, callback) {
+            if (org) {
+                var organization = results[0].organization;
                 // ######## CREATE NEW PAYMENT ###########
                 var payment = new billing.Payment({
                     start_date: START_DATE,
                     end_date: END_DATE,
-                    organization: row.organization._id,
+                    organization: organization._id,
                     paymentType: model,
-                    imps: row.imps,
-                    spend: row.spend,
-                    clicks: row.clicks,
-                    view_convs: row.view_convs,
-                    click_convs: row.click_convs,
-                    billingMethod: row.organization.billingPreference,
-                    status: "Pending"
+                    billingMethod: organization.billingPreference,
+                    status: "Pending",
+                    lineItems: []
                 });
 
                 // ######### BEGIN FEE LOGIC #############
-
-                var fees = row.organization.fees.filter(function(fee){
+                var fees = organization.fees.filter(function (fee) {
                     return fee.type === model;
                 });
                 // TODO: Need to add validation to Organization to prevent multiple
                 // TODO: fees of same type
-                if (fees.length > 1){
+                if (fees.length > 1) {
                     return callback("ERROR: Multiple fees of type: " + model + " found for" +
-                        " organization " + row.organization.name);
+                        " organization " + organization.name);
                 } else {
                     payment.fee = fees[0];
                 }
 
-                // ########## BEGIN INSERTION ORDER LOGIC ##########
+                // ########## BEGIN LINEITEM CALCS ##########
+                // There will be a separate lineitem for each (insertionOrder,model) combo
+                results.forEach(function (row) {
+                    var lineItem = new billing.LineItemSchema({
+                        imps: row.imps,
+                        clicks: row.clicks,
+                        view_convs: row.view_convs,
+                        click_convs: row.click_convs,
+                        spend: row.spend,
+                        lineItemType: isAdvertiser ? "Ad-spend" : "Revenue",
+                        insertionOrder: row.insertionOrder, // will be undefined if no insertionOrder present
+                        contractType: row.insertionOrder ? row.insertionOrder.contractType : "cpm-variable"
+                    });
+                    // calculate lineitem amount & rate
+                    lineItem.getSpendRelatedAmountAndRate(insertionOrder);
+                    lineItem.generateDescription(model);
+                    payment.lineItems.push(lineItem);
+                });
 
-
-                // ########## BEGIN CONTRACT TYPE LOGIC ###########
-
-
-                // ########## CALCULATE TOTALS ############
-
+                // ########## SAVE NEW PAYMENT ################
+                payment.save(function (err, payment) {
+                    if (err) return callback(err);
+                    return callback();
+                });
+            } else {
+                return callback();
             }
         }
+    };
 
-        results.forEach(function(row){
-
-
+    function _createPayments(results, model, callback){
+        // generate createPayment function w/ model type
+        var createSinglePayment = _createSinglePayment(model);
+        async.forEachOf(results, createSinglePayment, function(err){
+            if (err) return callback(err);
+            return callback();
         });
     }
 
     return new Promise(function(resolve, reject){
-
         // call in parallel for both advertiser & publisher data
         async.parallel([
-            function(callback){ return _inner(results[0], 'advertiser', callback)},
-            function(callback){ return _inner(results[1], 'publisher', callback)}
-        ], function(err, populated){
+            function(callback){ return _createPayments(results[0], 'advertiser', callback)},
+            function(callback){ return _createPayments(results[1], 'publisher', callback)}
+        ], function(err){
             if (err) return reject(err);
-            return resolve(populated);
+            return resolve();
         });
     });
 };
