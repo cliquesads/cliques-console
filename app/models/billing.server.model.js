@@ -229,6 +229,52 @@ PaymentSchema.statics.lineItem_generateDescription = function(lineItem, relevant
     return lineItem;
 };
 
+/**
+ * Calculates advertiser fees / publisher rev-share based on cpm_variable lineitems
+ *
+ * NOTE: Only calculates fee/rev-share for cpm_variable for now because this is the
+ * default contract_type.  Any insertion orders on top of this are assumed to have fees
+ * "layered in".
+ */
+PaymentSchema.methods.calculateFeeOrRevShareLineItem = function(){
+    var self = this;
+    var isAdvertiser = (this.paymentType === 'advertiser');
+    var total = 0;
+    self.lineItems.forEach(function(lineItem){
+        if (lineItem.lineItemType === 'AdSpend' || lineItem.lineItemType === 'Revenue'){
+            if (lineItem.contractType === 'cpm_variable'){
+                total += lineItem.amount;
+            }
+        }
+    });
+    // Only keep going if cpm_variable AdSpend or Revenue has been accrued
+    // reason for this is that I can't think of a scenario now in which
+    // we'd have an insertion order, but then charge a fee on adjustments.
+    if (total){
+        self.adjustments.forEach(function(adjustment){
+            total += adjustment.amount;
+        });
+    }
+    // Now add a "fee" or "rev-share" lineitem to payment
+    // TODO: ignore "fixed_fee" in fee schema for now, don't have a use for it yet
+    var feeLineItem = {
+        amount: total * self.fee.rate,
+        rate: self.fee.rate
+    };
+    if (isAdvertiser){
+        feeLineItem.lineItemType = "Fee";
+    } else {
+        feeLineItem.lineItemType = "RevShare";
+    }
+    // delegate description to static method
+    feeLineItem.description = Payment.lineItem_generateDescription(feeLineItem);
+
+    // debatable whether this is necessary, should probably be up to the caller to
+    // figure out what to do with the lineitem.
+    self.lineItems.push(feeLineItem);
+    return feeLineItem;
+};
+
 // Use auto-increment to generate human-readable indices, which will be used
 // as invoice/statement numbers
 PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
