@@ -192,7 +192,7 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
 
 function formatPercentage(number, decimals){
     decimals = decimals || 1;
-    return (number * 100).toFixed(decimals);
+    return (number * 100).toFixed(decimals) + "%";
 }
 
 /**
@@ -258,8 +258,8 @@ PaymentSchema.methods.calculateFeeOrRevShareLineItem = function(){
     // Now add a "fee" or "rev-share" lineitem to payment
     // TODO: ignore "fixed_fee" in fee schema for now, don't have a use for it yet
     var feeLineItem = {
-        amount: total * self.fee.rate,
-        rate: self.fee.rate
+        amount: total * self.fee.percentage,
+        rate: self.fee.percentage
     };
     if (isAdvertiser){
         feeLineItem.lineItemType = "Fee";
@@ -267,19 +267,13 @@ PaymentSchema.methods.calculateFeeOrRevShareLineItem = function(){
         feeLineItem.lineItemType = "RevShare";
     }
     // delegate description to static method
-    feeLineItem.description = Payment.lineItem_generateDescription(feeLineItem);
+    feeLineItem = Payment.lineItem_generateDescription(feeLineItem);
 
     // debatable whether this is necessary, should probably be up to the caller to
     // figure out what to do with the lineitem.
     self.lineItems.push(feeLineItem);
     return feeLineItem;
 };
-
-// Use auto-increment to generate human-readable indices, which will be used
-// as invoice/statement numbers
-PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
-
-var Payment = exports.Payment = mongoose.model('Payment', PaymentSchema);
 
 /**
  * Calculates payment totalAmount, sums all lineitems and adjustments
@@ -294,3 +288,9 @@ PaymentSchema.virtual('totalAmount').get(function(){
     }
     return totalAmount;
 });
+
+// Use auto-increment to generate human-readable indices, which will be used
+// as invoice/statement numbers
+PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
+
+var Payment = exports.Payment = mongoose.model('Payment', PaymentSchema);

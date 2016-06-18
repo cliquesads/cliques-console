@@ -457,12 +457,21 @@ var createPayments = function(orgGroupedResults){
                 });
 
                 // ########## CREATE FEE LINEITEMS ########### //
-                // NOTE: Fees only calculated 
+                payment.calculateFeeOrRevShareLineItem();
 
-                // ########## SAVE NEW PAYMENT ################
+                // ########## SAVE NEW PAYMENT & UPDATE ACCOUNT BALANCE ###### //
                 payment.save(function (err, payment) {
                     if (err) return callback(err);
-                    return callback();
+                    // finally, update account balance with totalAmount from this payment
+                    if (organization.accountBalance){
+                        organization.accountBalance += payment.totalAmount;
+                    } else {
+                        organization.accountBalance = payment.totalAmount;
+                    }
+                    organization.save(function(err, org){
+                        if (err) return callback(err);
+                        return callback();
+                    });
                 });
             } else {
                 return callback();
@@ -521,7 +530,7 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
         .then(
             function(){
                 console.log('Done!');
-                var d = moment(START_DATE);
+                var d = moment(START_DATE).tz("UTC");
                 if (process.env.NODE_ENV === 'production') {
                     mailer.sendMail({
                         subject: 'Monthly Billing ETL Complete - ' + d.format("MMMM YYYY"),
