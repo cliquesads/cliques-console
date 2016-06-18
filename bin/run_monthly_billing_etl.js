@@ -10,6 +10,7 @@ var init = require('../config/init')(),
     chalk = require('chalk'),
     Promise = require('promise'),
     util = require('util'),
+    mail = require('../app/controllers/mailer.server.controller'),
     autoIncrement = require('mongoose-auto-increment'),
     moment = require('moment-timezone');
 
@@ -36,6 +37,8 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
 });
 
 autoIncrement.initialize(db);
+
+var mailer = new mail.Mailer();
 
 // Initialize all models needed
 var aggregationModels = new models.AggregationModels(db);
@@ -318,14 +321,17 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
                     var ranges = partitionDateRange(insertionOrders);
                     // get results & advertisers to re-query
                     var thisOrgResults = initialAdvertiserResults[org];
-                    var advertisers = thisOrgResults.map(function(result){ return result._id.advertiser._id.toString(); });
+                    var advertisers = thisOrgResults.map(function(result){
+                        return result._id.advertiser._id.toString();
+                    });
                     // get match query arg
                     var advertisersMatch = { advertiser: { $in: advertisers }};
                     var advertisersGroup = { advertiser: '$advertiser' };
                     // create query for insertionOrder timeperiod
                     var queryFuncs = ranges.map(function(range){
                         return function(callback){
-                            var query = getBillingQuery(range.start.toDate(), range.end.toDate(), advertisersGroup, advertisersMatch);
+                            var query = getBillingQuery(range.start.toDate(), range.end.toDate(),
+                                advertisersGroup, advertisersMatch);
                             query.exec(function(err, results){
                                 if (err) return callback(err);
                                 // re-populate Advertiser model
@@ -450,6 +456,9 @@ var createPayments = function(orgGroupedResults){
                     payment.lineItems.push(lineItem);
                 });
 
+                // ########## CREATE FEE LINEITEMS ########### //
+                // NOTE: Fees only calculated 
+
                 // ########## SAVE NEW PAYMENT ################
                 payment.save(function (err, payment) {
                     if (err) return callback(err);
@@ -510,7 +519,25 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
             function(err){ console.error(err);}
         )
         .then(
-            function(){ console.log('Done!'); return process.exit(0); },
-            function(err){ console.error(chalk.red(err)); process.exit(1); }
+            function(){
+                console.log('Done!');
+                var d = moment(START_DATE);
+                if (process.env.NODE_ENV === 'production') {
+                    mailer.sendMail({
+                        subject: 'Monthly Billing ETL Complete - ' + d.format("MMMM YYYY"),
+                        templateName: 'billing-complete-email.server.view.html',
+                        data: {month: d.format("MMMM YYYY")},
+                        to: 'bliang@cliquesads.com'
+                    }, function(err, success){
+                        if (err) return console.error(chalk.red(err));
+                        return process.exit(0);
+                    });
+                } else {
+                    return process.exit(0);
+                }
+            },
+            function(err){
+                console.error(chalk.red(err)); process.exit(1);
+            }
         )
 });
