@@ -259,6 +259,7 @@ var organizationSchema = new Schema({
     users: [{ type: Schema.ObjectId, ref: 'User'}],
 	// Billing stuff
 	billingPreference: { type: String, required: true, enum: billing.BILLING_METHODS },
+	stripeCustomerId: { type: String },
 	accountBalance: { type: Number, required: true, default: 0 }
 });
 exports.Organization = mongoose.model('Organization', organizationSchema);

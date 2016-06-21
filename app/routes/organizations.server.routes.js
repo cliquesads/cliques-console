@@ -17,6 +17,10 @@ module.exports = function(db, routers) {
 		.patch(organizations.hasAuthorization, organizations.update)
 		.delete(organizations.hasAuthorization, organizations.remove);
 
+	router.route('/organization/:organizationId/stripetoken')
+	// TODO: this isn't really RESTful, requires queryparam to be passed through
+		.post(organizations.hasAuthorization, organizations.saveStripeToken);
+
 	router.route('/organization/:organizationId/sendinvite')
 		.post(organizations.hasAuthorization, organizations.sendUserInvite);
 

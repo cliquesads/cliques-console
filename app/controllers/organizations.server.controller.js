@@ -10,6 +10,7 @@ var errorHandler = require('./errors.server.controller'),
     async = require('async');
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
+var stripe = require('stripe')(config.get("Stripe.secret_key"));
 
 var buildInviteURL = function(organizationId, accessTokenId){
     var protocol = 'https';
@@ -34,7 +35,7 @@ module.exports = {
      * Organization middleware
      */
     organizationByID: function (req, res, next, id) {
-        Organization.findById(id).populate('users').exec(function (err, organization){
+        Organization.findById(id).populate('users').populate('owner').exec(function (err, organization){
             if (err) return next(err);
             if (!organization) return next(new Error('Failed to load organization ' + id));
             req.organization = organization;
@@ -185,6 +186,41 @@ module.exports = {
                     }
                 });
             }
+        });
+    },
+    
+    saveStripeToken: function(req, res){
+        // Get the credit card details submitted by the form
+        var stripeToken = req.query.stripeToken;
+        var organization = req.organization;
+
+        if (!stripeToken){
+            return res.status(404).send({
+                message: "You must provide a stripeToken to save using stripeToken query param"
+            })
+        }
+
+        stripe.customers.create({
+            source: stripeToken,
+            description: organization.name,
+            email: organization.owner.email,
+            metadata: {
+                organization_id: organization._id.toString(),
+                organization_type: organization.organization_types.join(',')
+            },
+            account_balance: organization.account_balance
+        }).then(function(customer) {
+            organization.stripeCustomerId = customer.id;
+            organization.save(function(err, org){
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                }
+                res.status(200).json(org).send();
+            });
+        }, function(error){
+            return res.status(402).send(error);
         });
     }
 };
