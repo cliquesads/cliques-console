@@ -15,6 +15,11 @@ var init = require('./config/init')(),
     autoIncrement = require('mongoose-auto-increment'),
 	chalk = require('chalk');
 
+var swig = require('swig');
+// add swig filters
+require('swig-filters')(swig);
+
+
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
