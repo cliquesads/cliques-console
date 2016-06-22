@@ -188,7 +188,19 @@ module.exports = {
             }
         });
     },
-    
+
+    /**
+     * Saves Stripe token as a payment "source" to this Organization's Stripe Customer object.
+     *
+     * If Organization doesn't yet have a CustomerID, will create new Customer, then save the token.
+     *
+     * If Organization DOES have CustomerID, saves new token to existing Customer.
+     *
+     * In either case, if successful, responds w/ Organization object
+     * @param req
+     * @param res
+     * @returns {*}
+     */
     saveStripeToken: function(req, res){
         // Get the credit card details submitted by the form
         var stripeToken = req.query.stripeToken;
@@ -200,27 +212,47 @@ module.exports = {
             })
         }
 
-        stripe.customers.create({
-            source: stripeToken,
-            description: organization.name,
-            email: organization.owner.email,
-            metadata: {
-                organization_id: organization._id.toString(),
-                organization_type: organization.organization_types.join(',')
-            },
-            account_balance: organization.account_balance
-        }).then(function(customer) {
-            organization.stripeCustomerId = customer.id;
-            organization.save(function(err, org){
-                if (err){
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                }
-                res.status(200).json(org).send();
-            });
-        }, function(error){
+        var stripeErrorHandler = function(error){
+            console.log(error);
             return res.status(402).send(error);
-        });
+        };
+
+        // create new Stripe Customer object if there isn't already one tied
+        // to this organization
+        if (_.isNil(organization.stripeCustomerId)){
+            stripe.customers.create({
+                source: stripeToken,
+                description: organization.name,
+                email: organization.owner.email,
+                metadata: {
+                    organization_id: organization._id.toString(),
+                    organization_type: organization.organization_types.join(',')
+                },
+                account_balance: organization.account_balance
+            }).then(function(customer) {
+                organization.stripeCustomerId = customer.id;
+                organization.save(function(err, org){
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    res.status(200).json(org).send();
+                });
+            }, stripeErrorHandler);
+        } else {
+            // just update existing Customer with new source
+            stripe.customers.createSource(organization.stripeCustomerId, {
+                source: stripeToken
+            }).then(function(card) {
+                // now make new source the default_source for this customer
+                return stripe.customers.update(organization.stripeCustomerId, {
+                    default_source: card.id
+                });
+            }).then(function(customer){
+                // TODO: Should probably respond w/ card object instead?
+                res.status(200).json(organization).send();
+            }, stripeErrorHandler);
+        }
     }
 };
