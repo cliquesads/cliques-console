@@ -420,7 +420,7 @@ var createPayments = function(orgGroupedResults){
                     organization: organization._id,
                     paymentType: model,
                     billingMethod: organization.billingPreference,
-                    status: "Pending",
+                    status: "Needs Approval",
                     lineItems: []
                 });
 
