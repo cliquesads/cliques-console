@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
     autoIncrement = require('mongoose-auto-increment'),
     _ = require('lodash'),
+    mongooseApiQuery = require('mongoose-api-query'),
     Schema = mongoose.Schema;
 
 /**
@@ -79,6 +80,8 @@ InsertionOrderSchema.pre('save', function(next){
         }
     });
 });
+
+InsertionOrderSchema.plugin(mongooseApiQuery, {});
 
 var InsertionOrder = exports.InsertionOrder = mongoose.model('InsertionOrder', InsertionOrderSchema);
 
@@ -289,6 +292,7 @@ PaymentSchema.virtual('totalAmount').get(function(){
     return totalAmount;
 });
 
+PaymentSchema.plugin(mongooseApiQuery, {});
 // Use auto-increment to generate human-readable indices, which will be used
 // as invoice/statement numbers
 PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
