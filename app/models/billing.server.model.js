@@ -7,7 +7,8 @@ var mongoose = require('mongoose'),
     autoIncrement = require('mongoose-auto-increment'),
     _ = require('lodash'),
     mongooseApiQuery = require('mongoose-api-query'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    moment = require('moment-timezone');
 
 /**
  * Constants
@@ -290,6 +291,21 @@ PaymentSchema.virtual('totalAmount').get(function(){
         totalAmount += _.sumBy(this.adjustments, "amount");
     }
     return totalAmount;
+});
+
+/**
+ * Centralize logic for days payable/receivable for different types of payments
+ */
+PaymentSchema.virtual('dueDate').get(function(){
+    var PAYABLE_DAYS;
+    switch (this.paymentType){
+        case "advertiser":
+            PAYABLE_DAYS = 15;
+            break;
+        case "publisher":
+            PAYABLE_DAYS = 30;
+    }
+    return moment(this.tstamp).tz("UTC").add(PAYABLE_DAYS, "day").toDate();
 });
 
 PaymentSchema.plugin(mongooseApiQuery, {});

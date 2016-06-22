@@ -47,7 +47,10 @@ module.exports = {
          * Organization payment
          */
         paymentByID: function (req, res, next, id) {
-            Payment.findById(id).populate('organization').exec(function (err, payment){
+            Payment.findById(id).populate({
+                path: 'organization',
+                populate: { path: 'owner'}
+            }).exec(function (err, payment){
                 if (err) return next(err);
                 if (!payment) return next(new Error('Failed to load payment ' + id));
                 req.payment = payment;
@@ -72,6 +75,13 @@ module.exports = {
                 } else {
                     res.status(200).json(payment).send();
                 }
+            });
+        },
+
+        getInvoicePreview: function(req, res){
+            var payment = req.payment;
+            res.render('templates/billing/advertiser_invoice', {
+               payment: payment
             });
         },
 

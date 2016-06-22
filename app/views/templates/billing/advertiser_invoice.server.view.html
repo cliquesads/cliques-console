@@ -97,9 +97,9 @@
                         </td>
 
                         <td>
-                            Invoice #: {{ paymentId }}<br>
-                            Created: {{ createdDate }}<br>
-                            Due: {{ dueDate }}
+                            Invoice #: {{ payment._id }}<br>
+                            Created: {{ payment.tstamp|date('F jS\, Y') }}<br>
+                            Due: {{ payment.dueDate|date('F jS\, Y')  }}
                         </td>
                     </tr>
                 </table>
@@ -117,14 +117,13 @@
                         </td>
 
                         <td>
-                            {{ orgName }}<br>
-                            {{ orgAddress }}<br>
-                            {% if orgAddress2 %}{{ orgAddress2 }}<br>{% endif %}
-                            {{ orgCity }}, {{ orgState }} {{ orgZip }}<br>
-                            {{ orgCountry }}<br>
+                            {{ payment.organization.name }}<br>
+                            {{ payment.organization.address }}<br>
+                            {% if payment.organization.address2 %}{{ payment.organization.address2 }}<br>{% endif %}
+                            {{ payment.organization.city }}, {{ payment.organization.state }} {{ payment.organization.zip }} {{ payment.organization.country }}<br>
                             <br>
-                            {{ orgEmail }}<br>
-                            {{ orgPhone }}<br>
+                            {{ payment.organization.owner.email }}<br>
+                            {{ payment.organization.phone }}<br>
                         </td>
                     </tr>
                 </table>

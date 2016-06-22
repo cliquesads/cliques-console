@@ -15,5 +15,8 @@ module.exports = function(db, routers) {
 		.get(billing.payments.hasAuthorization, billing.payments.read)
 		.patch(organizations.organizationHasAuthorization(["networkAdmin"]), organizations.update);
 
+	router.route('/payment/:paymentId/invoicePreview')
+		.get(billing.payments.hasAuthorization, billing.payments.getInvoicePreview);
+
 	router.param('paymentId', billing.payments.paymentByID);
 };
