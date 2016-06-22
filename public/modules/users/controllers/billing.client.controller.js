@@ -8,7 +8,6 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 Notify.alert('Stripe encountered the following error: ' + response.error, {status: 'danger'});
             } else {
                 // got stripe token, now charge it or smt
-                $scope.organization.stripeToken =
                 $scope.organization.$saveStripeToken({ stripeToken: response.id })
                     .then(function(response){
                         $scope.organization = response;
