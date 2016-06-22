@@ -152,49 +152,44 @@
 
         <tr class="heading">
             <td>
-                Item
+                Type
             </td>
-
             <td>
-                Price
+                Description
+            </td>
+            <td>
+                Rate
+            </td>
+            <td>
+                Amount
             </td>
         </tr>
-
+        {% for li in payment.lineItems %}
         <tr class="item">
             <td>
-                Website design
+                {{ li.lineItemType }}
             </td>
-
             <td>
-                $300.00
+                {{ li.description }}
+            </td>
+            <td>
+                {% if li.lineItemType == 'Fee' || li.lineItemType == 'RevShare' %}
+                    {{ li.rate|percent(2)}}
+                {% else %}
+                    {{ li.rate|round(2)|currency('$')}}
+                {% endif %}
+            </td>
+            <td>
+                {{ li.amount|round(2)|currency('$') }}
             </td>
         </tr>
-
-        <tr class="item">
-            <td>
-                Hosting (3 months)
-            </td>
-
-            <td>
-                $75.00
-            </td>
-        </tr>
-
-        <tr class="item last">
-            <td>
-                Domain name (1 year)
-            </td>
-
-            <td>
-                $10.00
-            </td>
-        </tr>
-
+        {% endfor %}
         <tr class="total">
             <td></td>
-
+            <td></td>
+            <td></td>
             <td>
-                Total: $385.00
+                Total: {{ payment.totalAmount|round(2)|currency('$')}}
             </td>
         </tr>
     </table>
