@@ -15,6 +15,7 @@ var init = require('./config/init')(),
     autoIncrement = require('mongoose-auto-increment'),
 	chalk = require('chalk');
 
+// configure template engine
 var swig = require('swig');
 // add swig filters
 require('swig-filters')(swig);

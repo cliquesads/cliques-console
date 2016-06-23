@@ -28,7 +28,11 @@
             vertical-align:top;
         }
 
-        .invoice-box table tr td:nth-child(2){
+        .invoice-box table tr.metadata td:nth-child(2){
+            text-align:right;
+        }
+
+        .invoice-box table tr td:nth-child(4){
             text-align:right;
         }
 
@@ -52,6 +56,16 @@
             font-weight:bold;
         }
 
+        .invoice-box table tr.subdivider td{
+            background:#F5F5F5;
+            /*border-bottom:1px solid #ddd;*/
+            font-style: italic;
+        }
+
+        .invoice-box table tr.beginning-balance td{
+            padding-bottom: 20px;
+        }
+
         .invoice-box table tr.details td{
             padding-bottom:20px;
         }
@@ -64,8 +78,27 @@
             border-bottom:none;
         }
 
-        .invoice-box table tr.total td:nth-child(2){
+        .invoice-box table tr.subtotal td:nth-child(3){
             border-top:2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.subtotal td:nth-child(4){
+            border-top:2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.total td{
+            padding-bottom: 40px;
+        }
+
+        .invoice-box table tr.total td:nth-child(3){
+            border-top:3px solid #eee;
+            font-weight:bold;
+        }
+
+        .invoice-box table tr.total td:nth-child(4){
+            border-top:3px solid #eee;
             font-weight:bold;
         }
 
@@ -82,20 +115,25 @@
                 text-align:center;
             }
         }
+
+        .footer {
+            text-align: center;
+            font-size: 15px;
+            font-style: italic;
+        }
     </style>
 </head>
 
 <body>
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
-        <tr class="top">
-            <td colspan="2">
+        <tr class="top metadata">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td class="title">
                             <img src="https://storage.googleapis.com/cliquesads-logos/full-logo-green-Q-600.png" style="width:100%; max-width:300px;">
                         </td>
-
                         <td>
                             Invoice #: {{ payment._id }}<br>
                             Created: {{ payment.tstamp|date('F jS\, Y') }}<br>
@@ -106,16 +144,18 @@
             </td>
         </tr>
 
-        <tr class="information">
-            <td colspan="2">
+        <tr class="information metadata">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td>
                             Cliques Labs Inc.<br>
                             172 Green St., Unit 9<br>
-                            Boston, MA 02130
+                            Boston, MA 02130 <br>
+                            <br>
+                            <em>Questions?<br>
+                            <a href="mailto:support@cliquesads.com">support@cliquesads.com</a></em>
                         </td>
-
                         <td>
                             {{ payment.organization.name }}<br>
                             {{ payment.organization.address }}<br>
@@ -129,39 +169,21 @@
                 </table>
             </td>
         </tr>
-
         <tr class="heading">
-            <td>
-                Payment Method
-            </td>
-
-            <td>
-                Check #
-            </td>
+            <td>Type</td>
+            <td>Description</td>
+            <td>Rate</td>
+            <td>Amount</td>
         </tr>
-
-        <tr class="details">
-            <td>
-                Check
-            </td>
-
-            <td>
-                1000
-            </td>
+        <tr class="beginning-balance">
+            <td></td>
+            <td>Beginning Account Balance</td>
+            <td></td>
+            <td>{{ (payment.organization.accountBalance - payment.totalAmount) | round(2) | currency('$')}}</td>
         </tr>
-
-        <tr class="heading">
-            <td>
-                Type
-            </td>
-            <td>
-                Description
-            </td>
-            <td>
-                Rate
-            </td>
-            <td>
-                Amount
+        <tr class="subdivider">
+            <td colspan="4">
+                <em>Billing Period of {{ payment.start_date|date('F jS\, Y')}} - {{ payment.end_date|date('F jS\, Y') }}</em>
             </td>
         </tr>
         {% for li in payment.lineItems %}
@@ -184,15 +206,102 @@
             </td>
         </tr>
         {% endfor %}
+        {% for adj in payment.adjustments %}
+        <tr class="item">
+            <td>
+                Adjustment
+            </td>
+            <td>
+                {{ adj.description }}
+            </td>
+            <td></td>
+            <td>
+                {{ adj.amount|round(2)|currency('$') }}
+            </td>
+        </tr>
+        {% endfor %}
+        <tr class="subtotal">
+            <td></td>
+            <td></td>
+            <td>Subtotal</td>
+            <td>
+                {{ payment.totalAmount|round(2)|currency('$')}}
+            </td>
+        </tr>
         <tr class="total">
             <td></td>
             <td></td>
-            <td></td>
+            <td>Total</td>
             <td>
-                Total: {{ payment.totalAmount|round(2)|currency('$')}}
+                {{ payment.organization.accountBalance|round(2)|currency('$')}}
             </td>
         </tr>
+
+        <tr class="heading">
+            <td>Payment Method</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% if payment.billingMethod == "Stripe" %}
+            {% set cardLogos = {
+                "Visa": "visa.svg",
+                "American Express": "amex.svg",
+                "MasterCard": "mastercard.svg",
+                "Discover": "discover.svg",
+                "JCB": "jcb.svg",
+                "Diners Club": "diners.svg"
+        } %}
+            <tr class="details">
+                <td>
+                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/stripe2.svg" height="40px" width="40px">
+                    <span style="vertical-align: sub">&nbsp;{{ payment.billingMethod }}</span>
+                </td>
+                {% if stripeSource.object == "card" %}
+                    <td></td>
+                    <td>
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/{{ cardLogos[stripeSource.brand] }}" height="40px" width="40px">
+                        <span style="vertical-align: sub">&nbsp;{{ stripeSource.brand }}</span>
+                    </td>
+                    <td>xxxx-xxxx-xxxx-{{ stripeSource.last4 }}</td>
+                {% elseif stripeSource.object == "bank_account" %}
+                    <td></td>
+                    <td>
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/bank-2.svg" height="40px" width="40px">
+                        <span style="vertical-align: sub">&nbsp;{{ stripeSource.bank_name }}</span>
+                    </td>
+                    <td>xxxxxxxxxxx{{ stripeSource.last4 }}</td>
+                {% endif %}
+            </tr>
+            <tr class="instructions">
+                <td colspan="4">
+                    <!--FILL IN-->
+                </td>
+            </tr>
+        {% elseif payment.billingMethod == "Check" %}
+            <tr class="details">
+                <td>{{ payment.billingMethod }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="instructions">
+                <td colspan="4">
+                    <!--FILL IN-->
+                </td>
+            </tr>
+        {% else %}
+            <tr class="details">
+                <td>{{ payment.billingMethod }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endif %}
     </table>
+    <p class="footer">
+        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a>
+    </p>
 </div>
 </body>
 </html>
