@@ -175,6 +175,8 @@
             <td>Rate</td>
             <td>Amount</td>
         </tr>
+        <!--Get sign based on type of payment being made.  Negative if publisher because publisher payments are recorded as negative in Payments collection.-->
+        {% set sign = (payment.paymentType == "advertiser") ? 1 : -1 %}
         <tr class="beginning-balance">
             <td></td>
             <td>Beginning Account Balance</td>
@@ -243,7 +245,7 @@
             <td></td>
             <td></td>
         </tr>
-        {% if payment.billingMethod == "Stripe" %}
+        {% if payment.organization.billingPreference == "Stripe" %}
             {% set cardLogos = {
                 "Visa": "visa.svg",
                 "American Express": "amex.svg",
@@ -254,20 +256,20 @@
         } %}
             <tr class="details">
                 <td>
-                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/stripe2.svg" height="40px" width="40px">
-                    <span style="vertical-align: sub">&nbsp;{{ payment.billingMethod }}</span>
+                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/stripe2.svg" height="40px" width="40px">
+                    <span style="vertical-align: sub">&nbsp;{{ payment.organization.billingPreference }}</span>
                 </td>
                 {% if stripeSource.object == "card" %}
                     <td></td>
                     <td>
-                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/{{ cardLogos[stripeSource.brand] }}" height="40px" width="40px">
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/{{ cardLogos[stripeSource.brand] }}" height="40px" width="40px">
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.brand }}</span>
                     </td>
                     <td>xxxx-xxxx-xxxx-{{ stripeSource.last4 }}</td>
                 {% elseif stripeSource.object == "bank_account" %}
                     <td></td>
                     <td>
-                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-logos/bank-2.svg" height="40px" width="40px">
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/bank-2.svg" height="40px" width="40px">
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.bank_name }}</span>
                     </td>
                     <td>xxxxxxxxxxx{{ stripeSource.last4 }}</td>
@@ -275,12 +277,15 @@
             </tr>
             <tr class="instructions">
                 <td colspan="4">
-                    <!--FILL IN-->
+                    Instructions: Your total balance above will be charged
                 </td>
             </tr>
-        {% elseif payment.billingMethod == "Check" %}
+        {% elseif payment.organization.billingPreference == "Check" %}
             <tr class="details">
-                <td>{{ payment.billingMethod }}</td>
+                <td>
+                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/icon-check-100.svg" height="40px" width="40px">
+                    {{ payment.organization.billingPreference }}
+                </td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -292,7 +297,7 @@
             </tr>
         {% else %}
             <tr class="details">
-                <td>{{ payment.billingMethod }}</td>
+                <td>{{ payment.organization.billingPreference }}</td>
                 <td></td>
                 <td></td>
                 <td></td>
