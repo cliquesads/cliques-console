@@ -78,26 +78,22 @@ module.exports = {
             });
         },
 
+        /**
+         * Wrapper for Payment.renderHtmlInvoice
+         * 
+         * @param req
+         * @param res
+         */
         getInvoicePreview: function(req, res){
             var payment = req.payment;
-            if (!_.isNil(req.payment.organization.stripeCustomerId)){
-                stripe.customer.retrieve(req.payment.organization.stripeCustomerId)
-                    .then(function(customer){
-                        // populate template with default payment source object
-                        var defaultSourceId = customer.default_source;
-                        var source = _.find(customer.sources.data, function(source){ return source.id === defaultSourceId; });
-                        res.render('templates/billing/invoice', {
-                            payment: payment,
-                            stripeSource: source
-                        });
-                    }, function(err){
-                        res.status(400).send(err)
+            payment.renderHtmlInvoice(function(err, invoice){
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
                     });
-            } else {
-                res.render('templates/billing/invoice', {
-                    payment: payment
-                });
-            }
+                }
+                return res.status(200).send(invoice);
+            })
         },
 
         /**

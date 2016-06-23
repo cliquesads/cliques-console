@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
     _ = require('lodash'),
     mongooseApiQuery = require('mongoose-api-query'),
     Schema = mongoose.Schema,
+    swig = require('swig'),
     moment = require('moment-timezone');
 
 /**
@@ -276,6 +277,36 @@ PaymentSchema.methods.calculateFeeOrRevShareLineItem = function(){
     // figure out what to do with the lineitem.
     self.lineItems.push(feeLineItem);
     return feeLineItem;
+};
+
+/**
+ * Renders HTML invoice template from payment data.  Invoices reflect exactly one payment,
+ * most of the presentation logic is written into the template.
+ *
+ * NOTE: Assumes that this.organization, this.organization.owner and
+ * this.organization.termsAndConditions are all populated.
+ * @param callback
+ * @returns {*}
+ */
+PaymentSchema.methods.renderHtmlInvoice = function(callback){
+    var self = this;
+    var template = swig.compileFile('app/views/templates/billing/invoice.server.view.html');
+    if (!_.isNil(this.organization.stripeCustomerId)){
+        stripe.customer.retrieve(self.organization.stripeCustomerId)
+            .then(function(customer){
+                // populate template with default payment source object
+                var defaultSourceId = customer.default_source;
+                var source = _.find(customer.sources.data, function(source){ return source.id === defaultSourceId; });
+                return callback(null, template({
+                    payment: self,
+                    stripeSource: source
+                }));
+            }, function(err){
+                return callback(err)
+            });
+    } else {
+        return callback(null, template({ payment: self }))
+    }
 };
 
 /**
