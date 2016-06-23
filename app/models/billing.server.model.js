@@ -141,7 +141,6 @@ var PaymentSchema = new Schema({
     adjustments: [AdjustmentSchema],
     private_notes: { type: String },
     public_notes: { type: String },
-    billingMethod: { type: String, enum: BILLING_METHODS, required: true },
     status: { type: String, enum: ["Needs Approval", "Pending", "Paid", "Overdue"] },
 
     // Fee schema to be copied from organization on creation
