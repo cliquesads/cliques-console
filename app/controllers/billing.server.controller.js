@@ -49,7 +49,7 @@ module.exports = {
         paymentByID: function (req, res, next, id) {
             Payment.findById(id).populate({
                 path: 'organization',
-                populate: { path: 'owner'}
+                populate: { path: 'owner termsAndConditions'}
             }).exec(function (err, payment){
                 if (err) return next(err);
                 if (!payment) return next(new Error('Failed to load payment ' + id));
@@ -86,7 +86,7 @@ module.exports = {
                         // populate template with default payment source object
                         var defaultSourceId = customer.default_source;
                         var source = _.find(customer.sources.data, function(source){ return source.id === defaultSourceId; });
-                        res.render('templates/billing/advertiser_invoice', {
+                        res.render('templates/billing/invoice', {
                             payment: payment,
                             stripeSource: source
                         });
@@ -94,7 +94,7 @@ module.exports = {
                         res.status(400).send(err)
                     });
             } else {
-                res.render('templates/billing/advertiser_invoice', {
+                res.render('templates/billing/invoice', {
                     payment: payment
                 });
             }

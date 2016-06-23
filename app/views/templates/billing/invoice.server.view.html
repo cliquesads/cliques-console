@@ -118,7 +118,13 @@
 
         .footer {
             text-align: center;
-            font-size: 15px;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .disputes {
+            text-align: center;
+            font-size: 14px;
             font-style: italic;
         }
     </style>
@@ -153,8 +159,8 @@
                             172 Green St., Unit 9<br>
                             Boston, MA 02130 <br>
                             <br>
-                            <em>Questions?<br>
-                            <a href="mailto:support@cliquesads.com">support@cliquesads.com</a></em>
+                            EIN: 47-3040022<br>
+                            <a href="mailto:support@cliquesads.com">support@cliquesads.com</a>
                         </td>
                         <td>
                             {{ payment.organization.name }}<br>
@@ -175,8 +181,15 @@
             <td>Rate</td>
             <td>Amount</td>
         </tr>
+
         <!--Get sign based on type of payment being made.  Negative if publisher because publisher payments are recorded as negative in Payments collection.-->
-        {% set sign = (payment.paymentType == "advertiser") ? 1 : -1 %}
+        <!--TODO: This is actually redundant right now, as the "currency" filter being applied just takes abs value of input value, but keeping this for clarity-->
+        {% if payment.paymentType == 'publisher' %}
+            {% set sign = -1 %}
+        {% else %}
+            {% set sign = 1 %}
+        {% endif %}
+
         <tr class="beginning-balance">
             <td></td>
             <td>Beginning Account Balance</td>
@@ -204,7 +217,7 @@
                 {% endif %}
             </td>
             <td>
-                {{ li.amount|round(2)|currency('$') }}
+                {{ (sign * li.amount) |round(2)|currency('$') }}
             </td>
         </tr>
         {% endfor %}
@@ -218,7 +231,7 @@
             </td>
             <td></td>
             <td>
-                {{ adj.amount|round(2)|currency('$') }}
+                {{ (sign * adj.amount) |round(2)|currency('$') }}
             </td>
         </tr>
         {% endfor %}
@@ -227,7 +240,7 @@
             <td></td>
             <td>Subtotal</td>
             <td>
-                {{ payment.totalAmount|round(2)|currency('$')}}
+                {{ (sign * payment.totalAmount)|round(2)|currency('$')}}
             </td>
         </tr>
         <tr class="total">
@@ -235,7 +248,7 @@
             <td></td>
             <td>Total</td>
             <td>
-                {{ payment.organization.accountBalance|round(2)|currency('$')}}
+                {{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}
             </td>
         </tr>
 
@@ -277,7 +290,17 @@
             </tr>
             <tr class="instructions">
                 <td colspan="4">
-                    Instructions: Your total balance above will be charged
+                    {% if payment.paymentType == "advertiser" %}
+                        <p>
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to either your card or bank account listed above. If you agree with the charges as they are stated, <b>no further action is required</b>.
+                        </p>
+                    {% elseif payment.paymentType == "publisher" %}
+                        <p>
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically deposit your total balance of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to the bank account listed above.  If you agree with the accrued amounts as they are stated, <b>no further action is required</b>.
+                        </p>
+                    {% endif %}
                 </td>
             </tr>
         {% elseif payment.organization.billingPreference == "Check" %}
@@ -292,7 +315,25 @@
             </tr>
             <tr class="instructions">
                 <td colspan="4">
-                    <!--FILL IN-->
+                    {% if payment.paymentType == "advertiser" %}
+                    <p>
+                        <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                        no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                    </p>
+                    <p><em>
+                        If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
+                        of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
+                        by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
+                        following the payment due date, Cliques shall have the right to suspend Client’s access to the
+                        Cliques Platform without notice to Client; such access not to be reinstated until Client pays
+                        all such overdue amounts.
+                    </em></p>
+                    {% elseif payment.paymentType == "publisher" %}
+                    <p>
+                        <b>Instructions:</b> A check from Cliques Labs Inc. for the amount of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                        will be mailed your address as listed above no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                    </p>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -303,9 +344,15 @@
                 <td></td>
             </tr>
         {% endif %}
+        <tr class="disputes">
+            <td colspan="4">
+                To dispute any of charges listed above, please <a href="mailto:support@cliquesads.com?Subject=Invoice%20No%20{{ payment._id }}">contact us</a> no later than {{ payment.dueDate|date('F jS\, Y')  }}.
+            </td>
+        </tr>
     </table>
     <p class="footer">
-        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a>
+        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a><br>
+        <a href="{{ payment.organization.termsAndConditions[0].url }}">Terms & Conditions</a>
     </p>
 </div>
 </body>
