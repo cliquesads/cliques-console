@@ -4,7 +4,7 @@
 angular.module('users').factory('Payment', ['$resource',
 	function($resource) {
 		return $resource('console/payment/:paymentId', { paymentId: '@_id'}, {
-            update: { method: 'PATCH'},
+            update: { method: 'PATCH' },
             updateOrCreate: { method: 'PUT'}
 		});
 	}
