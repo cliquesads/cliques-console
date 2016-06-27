@@ -149,6 +149,9 @@ var PaymentSchema = new Schema({
     // Lineitems to represent items being charged on invoice
     lineItems: [LineItemSchema],
     invoiceUrl: { type: String }
+}, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
 });
 
 /**
