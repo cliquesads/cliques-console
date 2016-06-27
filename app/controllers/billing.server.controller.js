@@ -31,6 +31,9 @@ module.exports = {
             // Right now this is all advertisers in org
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
                 req.query.organization = req.user.organization.id;
+                // filter pre-approval invoices before responding if user is not in
+                // networkAdmin org
+                req.query.status = { $ne: "Needs Approval"}
             }
             Payment.find(req.query, function (err, payments) {
                 if (err) {
@@ -80,7 +83,7 @@ module.exports = {
 
         /**
          * Wrapper for Payment.renderHtmlInvoice
-         * 
+         *
          * @param req
          * @param res
          */
