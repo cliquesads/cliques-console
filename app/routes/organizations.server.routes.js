@@ -19,7 +19,11 @@ module.exports = function(db, routers) {
 
 	router.route('/organization/:organizationId/stripetoken')
 	// TODO: this isn't really RESTful, requires queryparam to be passed through
-		.post(organizations.hasAuthorization, organizations.saveStripeToken);
+		.post(organizations.hasAuthorization, organizations.stripeCustomer.saveToken);
+
+	router.route('/organization/:organizationId/stripecustomer')
+	// TODO: this isn't really RESTful, requires queryparam to be passed through
+		.get(organizations.hasAuthorization, organizations.stripeCustomer.getCustomer);
 
 	router.route('/organization/:organizationId/sendinvite')
 		.post(organizations.hasAuthorization, organizations.sendUserInvite);

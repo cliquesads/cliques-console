@@ -189,70 +189,90 @@ module.exports = {
         });
     },
 
-    /**
-     * Saves Stripe token as a payment "source" to this Organization's Stripe Customer object.
-     *
-     * If Organization doesn't yet have a CustomerID, will create new Customer, then save the token.
-     *
-     * If Organization DOES have CustomerID, saves new token to existing Customer.
-     *
-     * In either case, if successful, responds w/ Organization object
-     * @param req
-     * @param res
-     * @returns {*}
-     */
-    saveStripeToken: function(req, res){
-        // Get the credit card details submitted by the form
-        var stripeToken = req.query.stripeToken;
-        var organization = req.organization;
+    stripeCustomer: {
+        /**
+         * Saves Stripe token as a payment "source" to this Organization's Stripe Customer object.
+         *
+         * If Organization doesn't yet have a CustomerID, will create new Customer, then save the token.
+         *
+         * If Organization DOES have CustomerID, saves new token to existing Customer.
+         *
+         * In either case, if successful, responds w/ Organization object
+         * @param req
+         * @param res
+         * @returns {*}
+         */
+        saveToken: function(req, res){
+            // Get the credit card details submitted by the form
+            var stripeToken = req.query.stripeToken;
+            var organization = req.organization;
 
-        if (!stripeToken){
-            return res.status(404).send({
-                message: "You must provide a stripeToken to save using stripeToken query param"
-            })
-        }
+            if (!stripeToken){
+                return res.status(404).send({
+                    message: "You must provide a stripeToken to save using stripeToken query param"
+                })
+            }
 
-        var stripeErrorHandler = function(error){
-            console.log(error);
-            return res.status(402).send(error);
-        };
+            var stripeErrorHandler = function(error){
+                console.log(error);
+                return res.status(402).send(error);
+            };
 
-        // create new Stripe Customer object if there isn't already one tied
-        // to this organization
-        if (_.isNil(organization.stripeCustomerId)){
-            stripe.customers.create({
-                source: stripeToken,
-                description: organization.name,
-                email: organization.owner.email,
-                metadata: {
-                    organization_id: organization._id.toString(),
-                    organization_type: organization.organization_types.join(',')
-                },
-                account_balance: organization.account_balance
-            }).then(function(customer) {
-                organization.stripeCustomerId = customer.id;
-                organization.save(function(err, org){
-                    if (err){
-                        return res.status(400).send({
-                            message: errorHandler.getAndLogErrorMessage(err)
-                        });
-                    }
-                    res.status(200).json(org).send();
+            // create new Stripe Customer object if there isn't already one tied
+            // to this organization
+            if (_.isNil(organization.stripeCustomerId)){
+                stripe.customers.create({
+                    source: stripeToken,
+                    description: organization.name,
+                    email: organization.owner.email,
+                    metadata: {
+                        organization_id: organization._id.toString(),
+                        organization_type: organization.organization_types.join(',')
+                    },
+                    account_balance: organization.account_balance
+                }).then(function(customer) {
+                    organization.stripeCustomerId = customer.id;
+                    organization.save(function(err, org){
+                        if (err){
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        }
+                        res.status(200).json(org).send();
+                    });
+                }, stripeErrorHandler);
+            } else {
+                // just update existing Customer with new source
+                stripe.customers.createSource(organization.stripeCustomerId, {
+                    source: stripeToken
+                }).then(function(card) {
+                    // now make new source the default_source for this customer
+                    return stripe.customers.update(organization.stripeCustomerId, {
+                        default_source: card.id
+                    });
+                }).then(function(customer){
+                    // TODO: Should probably respond w/ card object instead?
+                    res.status(200).json(organization).send();
+                }, stripeErrorHandler);
+            }
+        },
+
+        /**
+         * Gets Organization's Stripe customer data (like saved cards, etc.)
+         */
+        getCustomer: function(req, res){
+            var organization = req.organization;
+            if (_.isNil(organization.stripeCustomerId)){
+                return res.status(404).send({
+                    message: "Organization does not have an associated Stripe Customer ID"
                 });
-            }, stripeErrorHandler);
-        } else {
-            // just update existing Customer with new source
-            stripe.customers.createSource(organization.stripeCustomerId, {
-                source: stripeToken
-            }).then(function(card) {
-                // now make new source the default_source for this customer
-                return stripe.customers.update(organization.stripeCustomerId, {
-                    default_source: card.id
-                });
-            }).then(function(customer){
-                // TODO: Should probably respond w/ card object instead?
-                res.status(200).json(organization).send();
-            }, stripeErrorHandler);
+            }
+            stripe.customers.retrieve(organization.stripeCustomerId, function(err, customer){
+                if (err) return res.status(400).send(err);
+                res.status(200).json(customer);
+            });
         }
     }
+
+
 };

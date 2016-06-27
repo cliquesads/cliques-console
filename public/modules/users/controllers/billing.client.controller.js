@@ -4,6 +4,16 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.user = Authentication.user;
         $scope.organization = new Organizations(Authentication.user.organization);
         $scope.payments = Payment.query();
+        $scope.editStripe = false;
+
+        $scope.organization.$getStripeCustomer().then(function(customer){
+            $scope.stripeCustomer = customer;
+            $scope.defaultCard = customer.sources.data.filter(function(source){
+                return source.id === customer.default_source
+            })[0];
+        }, function(response){
+            console.error(response.data.message);
+        });
 
         $scope.handleStripe = function(status, response){
             if(response.error) {

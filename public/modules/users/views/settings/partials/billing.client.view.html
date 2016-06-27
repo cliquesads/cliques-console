@@ -42,11 +42,48 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
-                <div class="card-logo amex"></div>
-                <div class="card-logo visa"></div>
-                <div class="card-logo mastercard"></div>
-                <div class="card-logo discover"></div>
-                <div class="pull-right">
+                <span class="h4">Billing Preference</span>
+            </div>
+        </div>
+        <div class="panel-body pt0">
+            <div class="box-form">
+                <ol>
+                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'">
+                        <div class="radio c-radio">
+                            <label>
+                                <input type="radio" ng-model="organization.billingPreference" value="Check">
+                                <span class="fa fa-circle"></span>
+                            </label>
+                            <h4>Check</h4>
+                            <p>Mail a check for each billing cycle.</p>
+                        </div>
+                    </li>
+                </ol>
+                <ol>
+                    <li ng-class="{'active':organization.billingPreference === 'Stripe'}" ng-click="organization.billingPreference = 'Stripe'">
+                        <div class="radio c-radio">
+                            <label>
+                                <input type="radio" ng-model="organization.billingPreference" value="Stripe">
+                                <span class="fa fa-circle"></span>
+                            </label>
+                            <h4>
+                                <i class="fa fa-lg fa-cc-stripe"></i> Credit Card
+                            </h4>
+                        </div>
+                        <p>
+                            <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo><em>  ************{{ defaultCard.last4 }}  Exp: {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}</em>
+                            <span ng-show="!stripeCustomer">No cards are saved.  To add a card, click the button to the right.</span>
+                            <span class="pull-right"><button type="button" class="btn btn-default btn-sm" ng-click="editStripe = !editStripe">Add a Card</button></span>
+                        </p>
+                    </li>
+                </ol>
+            </div>
+            <div ng-show="editStripe" class="well well-sm m-lg">
+                <div class="row">
+                    <div class="card-logo amex"></div>
+                    <div class="card-logo visa"></div>
+                    <div class="card-logo mastercard"></div>
+                    <div class="card-logo discover"></div>
                     <!--Inline style on span just to vertically center text-->
                     <span style="display: inline-block; vertical-align: 8px" class="text-muted">
                         Powered by
@@ -55,51 +92,49 @@
                         <i class="fa fa-2x fa-cc-stripe"></i>
                     </a>
                 </div>
-            </div>
-        </div>
-        <div class="panel-body pt0">
-            <form stripe-form="handleStripe" name="stripeCreditCardForm">
-                <div class="row">
-                    <div class="col-sm-8 pr-lg">
-                        <label for="number">Card number</label>
-                        <input type="text" name="number" id="number" class="form-control input-lg" ng-model="number" payments-validate="card"
-                               payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type' placeholder="1234 5678 9012 3456"/>
+                <form stripe-form="handleStripe" name="stripeCreditCardForm">
+                    <div class="row">
+                        <div class="col-sm-8 pr-lg">
+                            <label for="number">Card number</label>
+                            <input type="text" name="number" id="number" class="form-control input-lg" ng-model="number" payments-validate="card"
+                                   payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type' placeholder="1234 5678 9012 3456"/>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="expiry">Expiration Date</label>
+                            <input type="text" name="expiry" id="expiry" class="form-control input-lg" ng-model="expiry"
+                                   payments-validate="expiry" payments-format="expiry" placeholder="01 / 20"/>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <label for="expiry">Expiration Date</label>
-                        <input type="text" name="expiry" id="expiry" class="form-control input-lg" ng-model="expiry"
-                               payments-validate="expiry" payments-format="expiry" placeholder="01 / 20"/>
+                    <div class="row pt">
+                        <div class="col-sm-8 pr-lg">
+                            <label for="name">Name on card </label>
+                            <input type="text" id="name" name="name" class="form-control input-lg" placeholder="Ernest Shackelton">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="cvc">CVC</label>
+                            <input type="text" class="form-control input-lg" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
+                                   payments-format="cvc" payments-type-model="type" placeholder="123"/>
+                        </div>
                     </div>
-                </div>
-                <div class="row pt">
-                    <div class="col-sm-8 pr-lg">
-                        <label for="name">Name on card </label>
-                        <input type="text" id="name" name="name" class="form-control input-lg" placeholder="Ernest Shackelton">
+                    <div class="row pt text-center">
+                        <small class="text-muted">
+                            Billing occurs monthly. You'll receive a statement with your balance due for the previous month on the <strong>1st of
+                            the next month</strong>. Your card will be charged on the <strong>15th.</strong>
+                        </small>
                     </div>
-                    <div class="col-sm-4">
-                        <label for="cvc">CVC</label>
-                        <input type="text" class="form-control input-lg" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
-                               payments-format="cvc" payments-type-model="type" placeholder="123"/>
+                    <div class="row p-lg">
+                        <div class="col-sm-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-large">Save</button>
+                        </div>
                     </div>
-                </div>
-                <div class="row pt text-center">
+                </form>
+                <div class="panel-footer">
                     <small class="text-muted">
-                        Billing occurs monthly. You'll receive a statement with your balance due for the previous month on the <strong>1st of
-                        the next month</strong>. Your card will be charged on the <strong>15th.</strong>
+                        <i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to
+                        <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information
+                        on its own servers.
                     </small>
                 </div>
-                <div class="row p-lg">
-                    <div class="col-sm-12 text-center">
-                        <button type="submit" class="btn btn-primary btn-large">Save</button>
-                    </div>
-                </div>
-            </form>
-            <div class="panel-footer">
-                <small class="text-muted">
-                    <i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to
-                    <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information
-                    on its own servers.
-                </small>
             </div>
         </div>
     </div>
