@@ -1,18 +1,18 @@
-<div class="col-xs-12 col-md-8">
+<div class="col-xs-12 col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
-                <h4>Current Balance: {{ organization.accountBalance | currency : "$" : 2 }}</h4>
+                <span class="h4"><strong>Payment History</strong></span>
+                <span class="pull-right">Current Balance: {{ organization.accountBalance | currency : "$" : 2 }}</span>
             </div>
         </div>
         <div class="panel-body pt0">
-            <div class="alert alert-success text-center pv-lg" data-ng-if="payments.$resolved && !advertiser.length">
-                <p>No statements are available yet for your account.</p>
-
-                <p>Statements are generated monthly on the 1st of each month, and reflect the previous
-                    calendar month's billable impressions</p>
+            <div class="alert alert-info text-center pv-lg" data-ng-if="payments.$resolved && !payments.length">
+                <p class="text-md"><strong>No statements are available yet for your account.</strong></p>
+                <p>Statements are generated 1st of each month, and reflect the previous
+                    calendar month's billable impressions & terms.</p>
             </div>
-            <div class="table-responsive" data-ng-if="payments.$resolved && advertiser.length">
+            <div class="table-responsive" data-ng-if="payments.$resolved && payments.length">
                 <table class="table table-striped">
                     <thead>
                         <th>Statement Date</th>
@@ -25,7 +25,11 @@
                         <td>{{ p.tstamp | date : "longDate" : "UTC" }}</td>
                         <td>{{ p.start_date | date: "shortDate" : "UTC"}} to {{ p.end_date | date: "shortDate" : "UTC"}}</td>
                         <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
-                        <td>{{ p.status }} </td>
+                        <td>
+                            <div class="label" ng-class="{'label-warning': p.status == 'Pending', 'label-danger': p.status == 'Overdue', 'label-success': p.status == 'Paid' }">
+                                {{ p.status }}
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -34,7 +38,7 @@
     </div>
 </div>
 
-<div class="col-xs-10 col-md-4">
+<div class="col-xs-12 col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
