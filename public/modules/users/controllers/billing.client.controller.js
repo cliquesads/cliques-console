@@ -30,6 +30,32 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         };
         getStripeCustomer();
 
+        $scope.updateOrganization = function(){
+            $scope.organization.$update(function(response){
+                $scope.organization = response;
+                Notify.alert('Billing Preference Saved', {status: 'success'});
+                $scope.allowSave = false;
+            }, function(response){
+                Notify.alert(response.data.message, {status: 'danger'});
+            });
+        };
+
+        $scope.reset = function(){
+            $scope.organization = Organizations.get({
+                organizationId: Authentication.user.organization._id
+            });
+            $scope.allowSave = false;
+        };
+
+        $scope.allowSave = false;
+        $scope.$watch('organization.billingPreference', function(newValue, oldValue){
+            if (oldValue && oldValue != newValue){
+                if (newValue == 'Check'){
+                    $scope.allowSave = true;
+                }
+            }
+        });
+
         $scope.addToken = function(status, response){
             $scope.loading = true;
             if(response.error) {

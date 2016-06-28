@@ -164,6 +164,12 @@
                     </small>
                 </div>
             </div>
+            <div class="row p-lg" ng-show="allowSave">
+                <div class="col-sm-12 text-center">
+                    <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()">Save</button>
+                    <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
