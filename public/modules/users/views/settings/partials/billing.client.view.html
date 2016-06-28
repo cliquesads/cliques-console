@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="panel-body pt0">
-            <div class="alert alert-info text-center pv-lg" data-ng-if="payments.$resolved && !payments.length">
+            <div class="box-placeholder text-center pv-lg" data-ng-if="payments.$resolved && !payments.length">
                 <p class="text-md"><strong>No statements are available yet for your account.</strong></p>
                 <p>Statements are generated 1st of each month, and reflect the previous
                     calendar month's billable impressions & terms.</p>
@@ -48,18 +48,18 @@
         <div class="panel-body pt0">
             <div class="box-form">
                 <ol>
-                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'">
+                    <!--BEGIN Check Option-->
+                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; editStripe = false">
                         <div class="radio c-radio">
                             <label>
                                 <input type="radio" ng-model="organization.billingPreference" value="Check">
                                 <span class="fa fa-circle"></span>
                             </label>
-                            <h4>Check</h4>
+                            <h4><i class="fa fa-envelope"></i>  Check</h4>
                             <p>Mail a check for each billing cycle.</p>
                         </div>
                     </li>
-                </ol>
-                <ol>
+                    <!--BEGIN CreditCard Option-->
                     <li ng-class="{'active':organization.billingPreference === 'Stripe'}" ng-click="organization.billingPreference = 'Stripe'">
                         <div class="radio c-radio">
                             <label>
@@ -67,32 +67,45 @@
                                 <span class="fa fa-circle"></span>
                             </label>
                             <h4>
-                                <i class="fa fa-lg fa-cc-stripe"></i> Credit Card
+                                <i class="fa fa-lg fa-credit-card"></i> Credit Card
                             </h4>
                         </div>
                         <p>
-                            <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo><em>  ************{{ defaultCard.last4 }}  Exp: {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}</em>
-                            <span ng-show="!stripeCustomer">No cards are saved.  To add a card, click the button to the right.</span>
-                            <span class="pull-right"><button type="button" class="btn btn-default btn-sm" ng-click="editStripe = !editStripe">Add a Card</button></span>
+                            <span ng-show="defaultCard">
+                                <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo><em>  ************{{ defaultCard.last4 }}  Exp. {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}</em>
+                                <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="editStripe = !editStripe">
+                                    <span class="btn-label">
+                                        <i class="fa fa-pencil"></i>
+                                    </span>
+                                    Change Card
+                                </button>
+                            </span>
+                            <span ng-show="!defaultCard && organization.billingPreference == 'Stripe'">
+                                <em>No cards saved.</em>
+                                <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="editStripe = !editStripe">
+                                    <span class="btn-label">
+                                        <i class="fa fa-plus"></i>
+                                    </span>
+                                    <span ng-hide="defaultCard">Add a Card</span>
+                                </button>
+                            </span>
                         </p>
                     </li>
                 </ol>
             </div>
-            <div ng-show="editStripe" class="well well-sm m-lg">
+            <!--BEGIN Stripe Credit Card Form-->
+            <div ng-show="editStripe" class="well well-sm m-lg p-lg">
                 <div class="row">
-                    <div class="card-logo amex"></div>
-                    <div class="card-logo visa"></div>
-                    <div class="card-logo mastercard"></div>
-                    <div class="card-logo discover"></div>
-                    <!--Inline style on span just to vertically center text-->
-                    <span style="display: inline-block; vertical-align: 8px" class="text-muted">
+                    <span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">
                         Powered by
                     </span>
-                    <a href="https://stripe.com/about">
-                        <i class="fa fa-2x fa-cc-stripe"></i>
-                    </a>
+                    <i class="fa fa-2x fa-cc-stripe"></i>
+                    <div class="card-logo amex pull-right"></div>
+                    <div class="card-logo visa pull-right"></div>
+                    <div class="card-logo mastercard pull-right"></div>
+                    <div class="card-logo discover pull-right"></div>
                 </div>
-                <form stripe-form="handleStripe" name="stripeCreditCardForm">
+                <form stripe-form="addToken" name="stripeCreditCardForm">
                     <div class="row">
                         <div class="col-sm-8 pr-lg">
                             <label for="number">Card number</label>
@@ -125,6 +138,13 @@
                     <div class="row p-lg">
                         <div class="col-sm-12 text-center">
                             <button type="submit" class="btn btn-primary btn-large">Save</button>
+                            <div ng-show="loading">
+                                <div class="ball-pulse">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>
