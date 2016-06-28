@@ -43,8 +43,12 @@ angular.module('core').controller('AppController',
     var thBar;
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         // evalulate requireLogin data param here for toState
+        var path = '/signin';
         if (toState.data.requireLogin && !$scope.authentication.user){
-            $location.path('/signin');
+            if (toState.name != 'app.home' && toState.name != 'loggedout.signin'){
+                path += '?redir=' + encodeURIComponent($location.url());
+            }
+            $location.url(path);
         }
         // TODO: This is all a horrible hack to temporarily put in place an access code scheme
         // Redirect users to signin page if not logged in

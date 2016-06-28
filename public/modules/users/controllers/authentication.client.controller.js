@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$analytics','$location', '$window','$compile','Authentication','Timezones',
+angular.module('users').controller('AuthenticationController', ['$scope', '$http','$analytics','$location', '$window','$compile','Authentication','Timezones',
 	function($scope, $http, $analytics, $location, $window, $compile, Authentication, Timezones) {
 		$scope.authentication = Authentication;
 
@@ -30,13 +30,16 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
         };
 
 		$scope.signin = function() {
+            // check if redirect URL was provided.  If so, go to that URL upon signing in.
+            var queryParams = $location.search();
+            // If it wasn't, just go to app.home
+            var redirect = queryParams.redir ? '#!' + decodeURIComponent(queryParams.redir) : '/';
 			$http.post('/auth/signin', $scope.credentials).success(function(response) {
 				// If successful we assign the response to the global user model
 				$scope.authentication.user = response;
-
 				// And redirect to the index page
 				//$location.url('/home');
-                $window.location.href = '/';
+                $window.location.href = redirect;
 			}).error(function(response) {
 				$scope.error = response.message;
 			});
