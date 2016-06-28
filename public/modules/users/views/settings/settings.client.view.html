@@ -12,7 +12,7 @@
             </div>
             <div class="col-xs-3 p-lg mb-xl hover-gray" ng-click="$state.transitionTo('app.settings.billing')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.billing'}">
                 <h4 class="m0"><i class="fa fa-credit-card"></i> Billing</h4>
-                <small>View Billing History & Change Payment Preference</small>
+                <small>Billing History & Preferences (Admin Only)</small>
             </div>
             <div class="col-xs-3 br p mb hover-gray" ng-click="$state.transitionTo('app.settings.password')" ng-class="{'bg-gray': $state.$current.name === 'app.settings.password'}">
                 <h4 class="m0"><i class="fa fa-lock"></i> Security</h4>
@@ -23,7 +23,25 @@
     <div class="p-lg">
         <div class="row">
             <!-- Main Content Panel - SubViews in Profile State -->
-            <section ui-view="main"></section>
+            <div ng-switch on="user.role">
+                <div ng-switch-when="admin">
+                    <section ui-view="main"></section>
+                </div>
+                <div ng-switch-default>
+                    <div ng-switch on="$state.$current.data.adminOnly">
+                        <div ng-switch-when="true">
+                            <div class="col-md-12 text-center">
+                                <h4><i class="fa fa-2x fa-times-circle"></i>  Sorry, only admins have access to this page.</h4>.
+                                <p>Please contact your Organization's administrator, <a href="mailto:{{ organization.owner.email}}">{{ organization.owner.displayName }}</a></p>
+                            </div>
+                        </div>
+                        <div ng-switch-default>
+                            <section ui-view="main"></section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!--<div class="col-lg-3">-->
                 <!--<div class="panel panel-default">-->
                     <!--<div class="panel-body">-->

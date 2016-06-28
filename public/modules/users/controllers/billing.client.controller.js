@@ -33,6 +33,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.addToken = function(status, response){
             $scope.loading = true;
             if(response.error) {
+                $scope.loading = false;
                 Notify.alert('Stripe encountered the following error: ' + response.error, {status: 'danger'});
             } else {
                 // first update org to save billing preference
