@@ -99,7 +99,7 @@
                                         <i ng-hide="showStripeForm" class="fa fa-plus"></i>
                                         <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
-                                    <span ng-hide="defaultSource && showStripeForm">
+                                    <span ng-hide="defaultSource || showStripeForm">
                                         Add
                                         <span ng-show="orgType ==='advertiser'">a Card</span>
                                         <span ng-show="orgType ==='publisher'">an Account</span>

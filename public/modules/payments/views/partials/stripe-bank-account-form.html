@@ -28,12 +28,15 @@
     <div class="row pt">
         <div class="col-sm-6 pr-lg">
             <label for="account-number">Account Number</label>
-            <input type="number" id="account-number" name="account-number" ng-model="account.account_number"
-                   required="required" class="form-control" placeholder="123456789123">
+            <input type="text" id="account-number" name="account-number" ng-model="account.account_number"
+                   required="required" class="form-control" placeholder="123456789123" country="{{ account.country }}" accountnumber>
+            <span ng-show="validateInput('account-number', 'accountnumber')" class="text-danger">This bank account number is invalid.</span>
         </div>
         <div class="col-sm-6">
             <label for="routing-number">Routing Number</label>
-            <input type="number" class="form-control" name="routing-number" id="routing-number" ng-model="account.routing_number"/>
+            <input type="text" class="form-control" name="routing-number" id="routing-number" placeholder="111000025"
+                   ng-model="account.routing_number" country="{{ account.country }}" routingnumber/>
+            <span ng-show="validateInput('routing-number', 'routingnumber')" class="text-danger">This routing number is invalid.</span>
         </div>
     </div>
     <div class="row pt text-center">
