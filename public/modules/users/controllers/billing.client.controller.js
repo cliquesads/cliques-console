@@ -1,6 +1,6 @@
 angular.module('users').controller('BillingController', ['$scope', '$http', '$location', 'Users', 'Authentication','Notify',
-    'Organizations', 'Payment',
-    function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment) {
+    'Organizations', 'Payment','ngDialog',
+    function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.user = Authentication.user;
         var organization = $scope.organization = new Organizations(Authentication.user.organization);
 
@@ -41,6 +41,23 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         // whether or not to show save button bar
         $scope.allowSave = false;
 
+        // Only show save & cancel buttons when billingPreference has changed & is not Stripe,
+        // which has its own Save function.
+        $scope.$watch('organization.billingPreference', function(newValue, oldValue){
+            if (newValue != $scope.initialBillingPreference){
+                if (newValue === "Stripe"){
+                    if ($scope.defaultCard){
+                        $scope.allowSave = true;
+                    }
+                } else {
+                    $scope.allowSave = true;
+                }
+            } else {
+                $scope.allowSave = false;
+            }
+        });
+
+        // called on "cancel" -- resets state of Organization
         $scope.reset = function(){
             $scope.organization = Organizations.get({
                 organizationId: Authentication.user.organization._id
@@ -50,21 +67,36 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
 
         // Update billing preference for organization.  Called on master "save"
         $scope.updateOrganization = function(){
-            $scope.organization.$update(function(response){
+            if ($scope.organization.billingPreference === 'Check'){
+                var dialog = ngDialog.openConfirm({
+                    template: '\
+                        <p>Setting your billing preference to <strong>Check</strong> means that you will be \
+                        responsible for mailing a check payable to Cliques Labs Inc. <strong>no later than 15 \
+                        days</strong> after your account statement is due. </p>\
+                        <p><strong>Late fees will apply for payments received after the payment deadline.</strong></p>\
+                        <p class="text-center">\
+                            <button class="btn btn-lg btn-danger" ng-click="confirm()">I get it. I want to change anyway.</button>\
+                            <button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+                        </p>',
+                    plain: true
+                });
+                // Wrap $update promise in dialog promise, which has to be resolved
+                // first by clicking "Confirm"
+                var updatePromise = dialog.then(function(val){
+                    return $scope.organization.$update();
+                });
+            } else {
+                updatePromise = $scope.organization.$update();
+            }
+            updatePromise.then(function(response){
                 $scope.organization = response;
                 Notify.alert('Billing Preference Saved', {status: 'success'});
                 $scope.allowSave = false;
+                $scope.initialBillingPreference = _.clone($scope.organization.billingPreference);
             }, function(response){
                 Notify.alert(response.data.message, {status: 'danger'});
             });
         };
-        // Only show save & cancel buttons when billingPreference has changed & is not Stripe,
-        // which has its own Save function.
-        $scope.$watch('organization.billingPreference', function(newValue, oldValue){
-            $scope.allowSave = (newValue != $scope.initialBillingPreference
-                && newValue != "Stripe");
-        });
-
 
         /**
          * Handler for Stripe new card form.

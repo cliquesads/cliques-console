@@ -70,23 +70,36 @@
                                 <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
                             </h4>
                         </div>
+                        <p>Your card gets billed automatically 15 days after each monthly statement posts.</p>
                         <p>
                             <span ng-show="defaultCard">
-                                <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo><em>  ************{{ defaultCard.last4 }}  Exp. {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}</em>
-                                <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="editStripe = !editStripe">
+                                <strong>Primary Card:</strong>
+                                <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo>
+                                &nbsp;
+                                ************{{ defaultCard.last4 }}, Exp. {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}
+                                &nbsp;&nbsp;
+                                <button type="button" ng-show="organization.billingPreference === 'Stripe'"
+                                        class="btn btn-labeled btn-default btn-sm"
+                                        ng-click="editStripe = !editStripe; allowSave = !allowSave;">
                                     <span class="btn-label">
-                                        <i class="fa fa-pencil"></i>
+                                        <i ng-hide="editStripe" class="fa fa-pencil"></i>
+                                        <i ng-show="editStripe" class="fa fa-minus-square"></i>
                                     </span>
-                                    Change Card
+                                    <span ng-hide="editStripe">Change Card</span>
+                                    <span ng-show="editStripe">Hide Form</span>
                                 </button>
                             </span>
                             <span ng-show="!defaultCard && organization.billingPreference == 'Stripe'">
                                 <em>No cards saved.</em>
-                                <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="editStripe = !editStripe">
+                                &nbsp;&nbsp;
+                                <button type="button" class="btn btn-labeled btn-default btn-sm"
+                                        ng-click="editStripe = !editStripe; allowSave = !allowSave;">
                                     <span class="btn-label">
-                                        <i class="fa fa-plus"></i>
+                                        <i ng-hide="editStripe" class="fa fa-plus"></i>
+                                        <i ng-show="editStripe" class="fa fa-minus-square"></i>
                                     </span>
                                     <span ng-hide="defaultCard">Add a Card</span>
+                                    <span ng-show="editStripe">Hide Form</span>
                                 </button>
                             </span>
                         </p>
