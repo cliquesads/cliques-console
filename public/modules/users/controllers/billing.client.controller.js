@@ -4,6 +4,10 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.user = Authentication.user;
         var organization = $scope.organization = new Organizations(Authentication.user.organization);
 
+        // For simplicity's sake, just assume Organization has only one type, and take first type in list as that type
+        // TODO: make this handle multiple org types, but might require broader rewrite of the template & controller
+        $scope.orgType = organization.organization_types[0];
+
         // get all payments to populate billing history
         $scope.payments = Payment.query();
 
@@ -127,6 +131,20 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     Notify.alert(response.data.message, {status: 'danger'});
                 });
             }
+        };
+
+        /**
+         * Open FAQ's
+         */
+        $scope.openFaqs = function(){
+            var templates = {
+                advertiser: "modules/users/views/settings/partials/advertiser-billing-faqs.html",
+                publisher: "modules/users/views/settings/partials/publisher-billing-faqs.html"
+            };
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: templates[$scope.orgType]
+            });
         }
     }
 ]);
