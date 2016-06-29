@@ -50,17 +50,6 @@
         <div class="panel-body pt0">
             <div class="box-form">
                 <ol>
-                    <!--BEGIN Check Option-->
-                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
-                        <div class="radio c-radio">
-                            <label>
-                                <input type="radio" ng-model="organization.billingPreference" value="Check">
-                                <span class="fa fa-circle"></span>
-                            </label>
-                            <h4><i class="fa fa-envelope"></i>  Check</h4>
-                            <p>Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
-                        </div>
-                    </li>
                     <!--BEGIN CreditCard Option-->
                     <li ng-class="{'active':organization.billingPreference === 'Stripe'}" ng-click="organization.billingPreference = 'Stripe'">
                         <div class="radio c-radio">
@@ -106,11 +95,22 @@
                             </span>
                         </p>
                     </li>
+                    <!--BEGIN Stripe Credit Card Form-->
+                    <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
+                        <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
+                    </li>
+                    <!--BEGIN Check Option-->
+                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
+                        <div class="radio c-radio">
+                            <label>
+                                <input type="radio" ng-model="organization.billingPreference" value="Check">
+                                <span class="fa fa-circle"></span>
+                            </label>
+                            <h4><i class="fa fa-envelope"></i>  Check</h4>
+                            <p>Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
+                        </div>
+                    </li>
                 </ol>
-            </div>
-            <!--BEGIN Stripe Credit Card Form-->
-            <div ng-show="showStripeForm" class="well well-sm m-lg p-lg">
-                <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
             </div>
             <div class="row p-lg" ng-show="allowSave && !overrideSave">
                 <div class="col-sm-12 text-center">
@@ -118,11 +118,13 @@
                     <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>
                 </div>
             </div>
-            <div ng-show="loading">
-                <div class="ball-pulse">
-                    <div></div>
-                    <div></div>
-                    <div></div>
+            <div class="col-sm-12 text-center">
+                <div ng-show="loading">
+                    <div class="ball-pulse">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                 </div>
             </div>
         </div>
