@@ -73,6 +73,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
 
         // Update billing preference for organization.  Called on master "save"
         $scope.updateOrganization = function(){
+            $scope.loading = true;
             if ($scope.organization.billingPreference === 'Check'){
                 var dialog = ngDialog.openConfirm({
                     template: '\
@@ -98,9 +99,11 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 $scope.organization = response;
                 Notify.alert('Billing Preference Saved', {status: 'success'});
                 $scope.allowSave = false;
+                $scope.loading = false;
                 $scope.initialBillingPreference = _.clone($scope.organization.billingPreference);
             }, function(response){
                 Notify.alert(response.data.message, {status: 'danger'});
+                $scope.loading = false;
             });
         };
 
