@@ -57,9 +57,11 @@
                                 <input type="radio" ng-model="organization.billingPreference" value="Stripe">
                                 <span class="fa fa-circle"></span>
                             </label>
-                            <h4>
-                                <i ng-show="orgType ==='advertiser'" class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
-                                <i ng-show="orgType ==='publisher'" class="fa fa-lg fa-credit-card"></i> Bank Deposit (preferred)
+                            <h4 ng-show="orgType ==='advertiser'">
+                                <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
+                            </h4>
+                            <h4 ng-show="orgType ==='publisher'">
+                                <i class="fa fa-lg fa-university"></i> Bank Deposit (preferred)
                             </h4>
                         </div>
                         <p ng-show="orgType ==='advertiser'">Your card gets billed automatically 15 days after each monthly statement posts.</p>
@@ -97,7 +99,7 @@
                                         <i ng-hide="showStripeForm" class="fa fa-plus"></i>
                                         <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
-                                    <span ng-hide="defaultSource">
+                                    <span ng-hide="defaultSource && showStripeForm">
                                         Add
                                         <span ng-show="orgType ==='advertiser'">a Card</span>
                                         <span ng-show="orgType ==='publisher'">an Account</span>
@@ -107,9 +109,16 @@
                             </span>
                         </p>
                     </li>
-                    <!--BEGIN Stripe Credit Card Form-->
+                    <!--BEGIN Stripe Forms-->
                     <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
-                        <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
+                        <span ng-switch on="orgType">
+                            <span ng-switch-when="advertiser">
+                                <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
+                            </span>
+                            <span ng-switch-when="publisher">
+                                <stripe-bank-account-form on-save="addToken(status, response)"></stripe-bank-account-form>
+                            </span>
+                        </span>
                     </li>
                     <!--BEGIN Check Option-->
                     <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
