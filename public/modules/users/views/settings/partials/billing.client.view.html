@@ -58,38 +58,50 @@
                                 <span class="fa fa-circle"></span>
                             </label>
                             <h4>
-                                <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
+                                <i ng-show="orgType ==='advertiser'" class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
+                                <i ng-show="orgType ==='publisher'" class="fa fa-lg fa-credit-card"></i> Bank Deposit (preferred)
                             </h4>
                         </div>
-                        <p>Your card gets billed automatically 15 days after each monthly statement posts.</p>
+                        <p ng-show="orgType ==='advertiser'">Your card gets billed automatically 15 days after each monthly statement posts.</p>
+                        <p ng-show="orgType ==='publisher'">Your balance will be transferred directly to your bank
+                            account 30 days after each monthly statement posts.</p>
                         <p>
-                            <span ng-show="defaultCard">
-                                <strong>Primary Card:</strong>
-                                <card-brand-logo brand="defaultCard.brand" size-cls="fa-lg"></card-brand-logo>
+                            <span ng-show="defaultSource">
+                                <strong ng-show="orgType ==='advertiser'">Primary Card:</strong>
+                                <strong ng-show="orgType ==='publisher'">Primary Account:</strong>
+                                <card-brand-logo ng-show="orgType ==='advertiser'" brand="defaultSource.brand" size-cls="fa-lg"></card-brand-logo>
+                                <span ng-show="orgType ==='publisher'">{{ defaultSource.bank_name }}</span>
                                 &nbsp;
-                                ************{{ defaultCard.last4 }}, Exp. {{ defaultCard.exp_month }}/{{ defaultCard.exp_year }}
+                                <span ng-show="orgType ==='advertiser'">************{{ defaultSource.last4 }}, Exp. {{ defaultSource.exp_month }}/{{ defaultSource.exp_year }}</span>
+                                <span ng-show="orgType ==='publisher'">*******{{ defaultSource.last4 }}</span>
                                 &nbsp;&nbsp;
-                                <button type="button" ng-show="organization.billingPreference === 'Stripe'"
-                                        class="btn btn-labeled btn-default btn-sm"
-                                        ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
                                     <span class="btn-label">
                                         <i ng-hide="showStripeForm" class="fa fa-pencil"></i>
                                         <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
-                                    <span ng-hide="showStripeForm">Change Card</span>
+                                    <span ng-hide="showStripeForm">
+                                        Change
+                                        <span ng-show="orgType ==='advertiser'">Card</span>
+                                        <span ng-show="orgType ==='publisher'">Account</span>
+                                    </span>
                                     <span ng-show="showStripeForm">Hide Form</span>
                                 </button>
                             </span>
-                            <span ng-show="!defaultCard && organization.billingPreference == 'Stripe'">
-                                <em>No cards saved.</em>
+                            <span ng-show="!defaultSource && organization.billingPreference == 'Stripe'">
+                                <em ng-show="orgType ==='advertiser'">No cards saved.</em>
+                                <em ng-show="orgType ==='publisher'">No accounts saved.</em>
                                 &nbsp;&nbsp;
-                                <button type="button" class="btn btn-labeled btn-default btn-sm"
-                                        ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
                                     <span class="btn-label">
                                         <i ng-hide="showStripeForm" class="fa fa-plus"></i>
                                         <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
-                                    <span ng-hide="defaultCard">Add a Card</span>
+                                    <span ng-hide="defaultSource">
+                                        Add
+                                        <span ng-show="orgType ==='advertiser'">a Card</span>
+                                        <span ng-show="orgType ==='publisher'">an Account</span>
+                                    </span>
                                     <span ng-show="showStripeForm">Hide Form</span>
                                 </button>
                             </span>
@@ -107,7 +119,8 @@
                                 <span class="fa fa-circle"></span>
                             </label>
                             <h4><i class="fa fa-envelope"></i>  Check</h4>
-                            <p>Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
+                            <p ng-show="orgType ==='advertiser'">Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
+                            <p ng-show="orgType ==='publisher'">Receive a check for each billing cycle.  All checks will be mailed <strong>30 days</strong> after your statement posts.</p>
                         </div>
                     </li>
                 </ol>

@@ -26,7 +26,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 var org = new Organizations($scope.organization);
                 org.$getStripeCustomer().then(function(customer){
                     $scope.stripeCustomer = customer;
-                    $scope.defaultCard = customer.sources.data.filter(function(source){
+                    $scope.defaultSource = customer.sources.data.filter(function(source){
                         return source.id === customer.default_source
                     })[0];
                 }, function(response){
@@ -52,7 +52,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.$watch('organization.billingPreference', function(newValue, oldValue){
             if (newValue != $scope.initialBillingPreference){
                 if (newValue === "Stripe"){
-                    if ($scope.defaultCard){
+                    if ($scope.defaultSource){
                         $scope.allowSave = true;
                     }
                 } else {
