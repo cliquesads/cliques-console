@@ -110,7 +110,7 @@
             </div>
             <!--BEGIN Stripe Credit Card Form-->
             <div ng-show="showStripeForm" class="well well-sm m-lg p-lg">
-                <stripe-credit-card-form on-save="addToken"></stripe-credit-card-form>
+                <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
                 <!--<div class="row">-->
                     <!--<span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">-->
                         <!--Powered by-->
