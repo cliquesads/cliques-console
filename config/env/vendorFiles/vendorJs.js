@@ -66,5 +66,6 @@ module.exports = [
     'public/lib/pnglib/pnglib.js',
     'public/lib/identicon/identicon.js',
     'public/lib/angular-identicon/dist/angular-identicon.min.js',
-    'public/lib/angular-payments/lib/angular-payments.min.js'
+    'public/lib/angular-payments/lib/angular-payments.min.js',
+    'public/lib/angular-country-picker/country-picker.min.js'
 ];
