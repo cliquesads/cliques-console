@@ -1,4 +1,4 @@
-angular.module('users').directive('cardBrandLogo', [function(){
+angular.module('payments').directive('cardBrandLogo', [function(){
     'use strict';
     return {
         restrict: 'E',

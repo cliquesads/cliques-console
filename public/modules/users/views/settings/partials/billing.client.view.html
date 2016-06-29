@@ -1,3 +1,4 @@
+<!--BEGIN Billing History Panel-->
 <div class="col-xs-12 col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -22,7 +23,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="p in payments">
-                        <td>{{ p.tstamp | date : "longDate" : "UTC" }}</td>
+                        <td><a href="{{ p.invoiceUrl }}" target="_blank">{{ p.tstamp | date : "longDate" : "UTC" }}</a></td>
                         <td>{{ p.start_date | date: "shortDate" : "UTC"}} to {{ p.end_date | date: "shortDate" : "UTC"}}</td>
                         <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
                         <td>
@@ -37,7 +38,7 @@
         </div>
     </div>
 </div>
-
+<!--BEGIN Billing Preference Panel-->
 <div class="col-xs-12 col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -109,74 +110,71 @@
             </div>
             <!--BEGIN Stripe Credit Card Form-->
             <div ng-show="showStripeForm" class="well well-sm m-lg p-lg">
-                <div class="row">
-                    <span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">
-                        Powered by
-                    </span>
-                    <i class="fa fa-2x fa-cc-stripe"></i>
-                    <div class="card-logo amex pull-right"></div>
-                    <div class="card-logo visa pull-right"></div>
-                    <div class="card-logo mastercard pull-right"></div>
-                    <div class="card-logo discover pull-right"></div>
-                </div>
-                <form stripe-form="addToken" name="stripeCreditCardForm">
-                    <div class="row">
-                        <div class="col-sm-8 pr-lg">
-                            <label for="number">Card number</label>
-                            <input type="text" name="number" id="number" class="form-control input-lg" ng-model="number" payments-validate="card"
-                                   payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type' placeholder="1234 5678 9012 3456"/>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="expiry">Expiration Date</label>
-                            <input type="text" name="expiry" id="expiry" class="form-control input-lg" ng-model="expiry"
-                                   payments-validate="expiry" payments-format="expiry" placeholder="01 / 20"/>
-                        </div>
-                    </div>
-                    <div class="row pt">
-                        <div class="col-sm-8 pr-lg">
-                            <label for="name">Name on card </label>
-                            <input type="text" id="name" name="name" class="form-control input-lg" placeholder="Ernest Shackelton">
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="cvc">CVC</label>
-                            <input type="text" class="form-control input-lg" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"
-                                   payments-format="cvc" payments-type-model="type" placeholder="123"/>
-                        </div>
-                    </div>
-                    <div class="row pt text-center">
-                        <div class="checkbox c-checkbox">
-                            <label>
-                                <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click" analytics-event="AuthorizeCard" required="required">
-                                <span class="fa fa-check"></span>
-                                I authorize Cliques Labs Inc. to charge the card above each month for any Total
-                                Media Cost & Cliques Fees (as defined in the <a href="#!/terms-and-conditions">Terms & Conditions</a>) due.
-                            </label>
-                        </div>
-                        <!--<small class="text-muted">-->
-                            <!--Billing occurs monthly. You'll receive a statement with your balance due for the previous month on the <strong>1st of-->
-                            <!--the next month</strong>. Your card will be charged on the <strong>15th.</strong>-->
-                        <!--</small>-->
-                    </div>
-                    <div class="row p-lg">
-                        <div class="col-sm-12 text-center">
-                            <button type="submit" class="btn btn-primary btn-large">Save</button>
-                            <div ng-show="loading">
-                                <div class="ball-pulse">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <div class="panel-footer text-center">
-                    <small class="text-muted">
-                        <i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to
-                        <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information
-                        on its own servers.
-                    </small>
-                </div>
+                <stripe-credit-card-form on-save="addToken"></stripe-credit-card-form>
+                <!--<div class="row">-->
+                    <!--<span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">-->
+                        <!--Powered by-->
+                    <!--</span>-->
+                    <!--<i class="fa fa-2x fa-cc-stripe"></i>-->
+                    <!--<div class="card-logo amex pull-right"></div>-->
+                    <!--<div class="card-logo visa pull-right"></div>-->
+                    <!--<div class="card-logo mastercard pull-right"></div>-->
+                    <!--<div class="card-logo discover pull-right"></div>-->
+                <!--</div>-->
+                <!--<form stripe-form="addToken" name="stripeCreditCardForm">-->
+                    <!--<div class="row">-->
+                        <!--<div class="col-sm-8 pr-lg">-->
+                            <!--<label for="number">Card number</label>-->
+                            <!--<input type="text" name="number" id="number" class="form-control input-lg" ng-model="number" payments-validate="card"-->
+                                   <!--payments-format="card" payments-type-model="type" ng-class='stripeCreditCardForm.number.$card.type' placeholder="1234 5678 9012 3456"/>-->
+                        <!--</div>-->
+                        <!--<div class="col-sm-4">-->
+                            <!--<label for="expiry">Expiration Date</label>-->
+                            <!--<input type="text" name="expiry" id="expiry" class="form-control input-lg" ng-model="expiry"-->
+                                   <!--payments-validate="expiry" payments-format="expiry" placeholder="01 / 20"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row pt">-->
+                        <!--<div class="col-sm-8 pr-lg">-->
+                            <!--<label for="name">Name on card </label>-->
+                            <!--<input type="text" id="name" name="name" class="form-control input-lg" placeholder="Ernest Shackelton">-->
+                        <!--</div>-->
+                        <!--<div class="col-sm-4">-->
+                            <!--<label for="cvc">CVC</label>-->
+                            <!--<input type="text" class="form-control input-lg" name="cvc" id="cvc" ng-model="cvc" payments-validate="cvc"-->
+                                   <!--payments-format="cvc" payments-type-model="type" placeholder="123"/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row pt text-center">-->
+                        <!--<div class="checkbox c-checkbox">-->
+                            <!--<label>-->
+                                <!--<input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click" analytics-event="AuthorizeCard" required="required">-->
+                                <!--<span class="fa fa-check"></span>-->
+                                <!--I authorize Cliques Labs Inc. to charge the card above each month for any Total-->
+                                <!--Media Cost & Cliques Fees (as defined in the <a href="#!/terms-and-conditions">Terms & Conditions</a>) due.-->
+                            <!--</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="row p-lg">-->
+                        <!--<div class="col-sm-12 text-center">-->
+                            <!--<button type="submit" class="btn btn-primary btn-large">Save</button>-->
+                            <!--<div ng-show="loading">-->
+                                <!--<div class="ball-pulse">-->
+                                    <!--<div></div>-->
+                                    <!--<div></div>-->
+                                    <!--<div></div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</form>-->
+                <!--<div class="panel-footer text-center">-->
+                    <!--<small class="text-muted">-->
+                        <!--<i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to-->
+                        <!--<a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information-->
+                        <!--on its own servers.-->
+                    <!--</small>-->
+                <!--</div>-->
             </div>
             <div class="row p-lg" ng-show="allowSave && !overrideSave">
                 <div class="col-sm-12 text-center">
