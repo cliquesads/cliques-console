@@ -50,7 +50,7 @@
             <div class="box-form">
                 <ol>
                     <!--BEGIN Check Option-->
-                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; editStripe = false">
+                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
                         <div class="radio c-radio">
                             <label>
                                 <input type="radio" ng-model="organization.billingPreference" value="Check">
@@ -81,26 +81,26 @@
                                 &nbsp;&nbsp;
                                 <button type="button" ng-show="organization.billingPreference === 'Stripe'"
                                         class="btn btn-labeled btn-default btn-sm"
-                                        ng-click="editStripe = !editStripe; allowSave = !allowSave;">
+                                        ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
                                     <span class="btn-label">
-                                        <i ng-hide="editStripe" class="fa fa-pencil"></i>
-                                        <i ng-show="editStripe" class="fa fa-minus-square"></i>
+                                        <i ng-hide="showStripeForm" class="fa fa-pencil"></i>
+                                        <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
-                                    <span ng-hide="editStripe">Change Card</span>
-                                    <span ng-show="editStripe">Hide Form</span>
+                                    <span ng-hide="showStripeForm">Change Card</span>
+                                    <span ng-show="showStripeForm">Hide Form</span>
                                 </button>
                             </span>
                             <span ng-show="!defaultCard && organization.billingPreference == 'Stripe'">
                                 <em>No cards saved.</em>
                                 &nbsp;&nbsp;
                                 <button type="button" class="btn btn-labeled btn-default btn-sm"
-                                        ng-click="editStripe = !editStripe; allowSave = !allowSave;">
+                                        ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
                                     <span class="btn-label">
-                                        <i ng-hide="editStripe" class="fa fa-plus"></i>
-                                        <i ng-show="editStripe" class="fa fa-minus-square"></i>
+                                        <i ng-hide="showStripeForm" class="fa fa-plus"></i>
+                                        <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
                                     </span>
                                     <span ng-hide="defaultCard">Add a Card</span>
-                                    <span ng-show="editStripe">Hide Form</span>
+                                    <span ng-show="showStripeForm">Hide Form</span>
                                 </button>
                             </span>
                         </p>
@@ -108,7 +108,7 @@
                 </ol>
             </div>
             <!--BEGIN Stripe Credit Card Form-->
-            <div ng-show="editStripe" class="well well-sm m-lg p-lg">
+            <div ng-show="showStripeForm" class="well well-sm m-lg p-lg">
                 <div class="row">
                     <span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">
                         Powered by
@@ -178,7 +178,7 @@
                     </small>
                 </div>
             </div>
-            <div class="row p-lg" ng-show="allowSave">
+            <div class="row p-lg" ng-show="allowSave && !overrideSave">
                 <div class="col-sm-12 text-center">
                     <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()">Save</button>
                     <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>

@@ -12,7 +12,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.payments = Payment.query();
 
         // control variable for CC add form toggling
-        $scope.editStripe = false;
+        $scope.showStripeForm = false;
+
         // Stripe form "loading" glyph control var
         $scope.loading = false;
 
@@ -44,7 +45,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.initialBillingPreference = organization.billingPreference;
         // whether or not to show save button bar
         $scope.allowSave = false;
-
+        // control variable to allow save to be overridden if stripeForm is toggled open
+        $scope.overrideSave = false;
         // Only show save & cancel buttons when billingPreference has changed & is not Stripe,
         // which has its own Save function.
         $scope.$watch('organization.billingPreference', function(newValue, oldValue){
@@ -125,7 +127,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     // update default card setting
                     getStripeCustomer();
                     // close form
-                    $scope.editStripe = false;
+                    $scope.showStripeForm = false;
                 }, function(response){
                     $scope.loading = false;
                     Notify.alert(response.data.message, {status: 'danger'});
