@@ -239,8 +239,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          */
         $scope.openFaqs = function(){
             var templates = {
-                advertiser: "modules/users/views/settings/partials/advertiser-billing-faqs.html",
-                publisher: "modules/users/views/settings/partials/publisher-billing-faqs.html"
+                advertiser: "modules/payments/views/partials/advertiser-billing-faqs.html",
+                publisher: "modules/payments/views/partials/publisher-billing-faqs.html"
             };
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
