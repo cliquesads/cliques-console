@@ -296,7 +296,7 @@ module.exports = {
                 }, stripeErrorHandler);
             } else {
                 // just update existing Customer with new source
-                stripe.accounts.update(organization.stripeCustomerId, {
+                stripe.accounts.update(organization.stripeAccountId, {
                     external_account: stripeToken
                 }).then(function(account){
                     // TODO: Should probably respond w/ card object instead?
