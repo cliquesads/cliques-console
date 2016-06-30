@@ -134,8 +134,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          *
          * `accountType` param is only for bank account form
          */
-        $scope.addToken = function(status, response, accountType){
-
+        $scope.addToken = function(status, response, verificationData){
             $scope.loading = true;
             if(response.error) {
                 $scope.loading = false;
@@ -147,7 +146,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                         // if orgType is Publisher, need to save token to stripe Account object
                         return $scope.organization.$saveStripeTokenToAccount({
                             stripeToken: response.id,
-                            accountType: accountType
+                            accountType: verificationData.accountType,
+                            dob: verificationData.dob
                         });
                     } else {
                         // if orgType is advertiser or networkAdmin, need to save token to

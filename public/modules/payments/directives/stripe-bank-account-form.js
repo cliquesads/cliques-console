@@ -37,7 +37,7 @@ angular.module('payments').directive('accountnumber', function(){
         }
     }
 })
-.directive('stripeBankAccountForm', function(){
+.directive('stripeBankAccountForm', ['REGEXES', function(REGEXES){
     'use strict';
     return {
         restrict: 'E',
@@ -55,14 +55,24 @@ angular.module('payments').directive('accountnumber', function(){
                 account_holder_type: 'company'
             };
 
+            // get string form of regex, as actual regex literals don't pass through
+            // to template properly I have no idea why
+            // scope.dateRegex = REGEXES.datePattern;
+            // TODO: Could never get this to pass to template properly.  Giving up for now, pasting
+            // TODO: directly in the template
+
             scope.submitted = false;
             scope.validateInput = function(name, type) {
                 var input = scope.stripeBankAccountForm[name];
                 return (input.$dirty || scope.submitted) && input.$error[type];
             };
 
+            scope.dob = null;
             scope.wrapper = function(status, response){
-                scope.onSave({ status: status, response: response, accountType: scope.account_holder_type });
+                scope.onSave({ status: status, response: response, verificationData: {
+                    accountType: scope.account.account_holder_type,
+                    dob: scope.dob
+                }});
             };
 
             scope.submit = function(){
@@ -71,4 +81,4 @@ angular.module('payments').directive('accountnumber', function(){
             };
         }
     };
-});
+}]);

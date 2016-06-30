@@ -116,7 +116,7 @@
                                 <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
                             </span>
                             <span ng-switch-when="publisher">
-                                <stripe-bank-account-form on-save="addToken(status, response, accountType)"></stripe-bank-account-form>
+                                <stripe-bank-account-form on-save="addToken(status, response, verificationData)"></stripe-bank-account-form>
                             </span>
                         </span>
                     </li>
