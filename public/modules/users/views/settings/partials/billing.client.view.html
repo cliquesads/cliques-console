@@ -113,10 +113,10 @@
                     <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
                         <span ng-switch on="orgType">
                             <span ng-switch-when="advertiser">
-                                <stripe-credit-card-form on-save="addToken(status, response)"></stripe-credit-card-form>
+                                <stripe-credit-card-form on-save="addTokenToCustomer(status, response)"></stripe-credit-card-form>
                             </span>
                             <span ng-switch-when="publisher">
-                                <stripe-bank-account-form on-save="addToken(status, response, verificationData)"></stripe-bank-account-form>
+                                <stripe-bank-account-form on-save="addTokenToAccount(status, response, verificationData)"></stripe-bank-account-form>
                             </span>
                         </span>
                     </li>

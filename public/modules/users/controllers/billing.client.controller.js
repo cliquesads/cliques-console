@@ -126,15 +126,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          * Handler for Stripe new card form.
          * Gets called by angular-payments directive after it calls Stripe to get token, so
          * response.id = token.
-         *
-         * Handles both Customer & Account token saving, will toggle based on $scope.orgType
-         *
-         * Current logic is to save to 'Account' if orgType === 'publisher', and save to
-         * 'Customer' if orgType === 'advertiser' or 'networkAdmin' or anything else
-         *
-         * `accountType` param is only for bank account form
          */
-        $scope.addToken = function(status, response, verificationData){
+        $scope.addTokenToCustomer = function(status, response){
             $scope.loading = true;
             if(response.error) {
                 $scope.loading = false;
@@ -142,30 +135,45 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             } else {
                 // first update org to save billing preference
                 $scope.organization.$update().then(function(org){
-                    if ($scope.orgType === 'publisher'){
-                        // if orgType is Publisher, need to save token to stripe Account object
-                        return $scope.organization.$saveStripeTokenToAccount({
-                            stripeToken: response.id,
-                            accountType: verificationData.accountType,
-                            dob: verificationData.dob
-                        });
-                    } else {
-                        // if orgType is advertiser or networkAdmin, need to save token to
-                        // Customer object, so call Customer endpoint
-                        return $scope.organization.$saveStripeTokenToCustomer({ stripeToken: response.id });
-                    }
+                    return $scope.organization.$saveStripeTokenToCustomer({ stripeToken: response.id });
                 }).then(function(response){
                     // now handle post-save steps
                     $scope.organization = response;
                     $scope.loading = false;
+                    var notifyText = 'Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.';
+                    Notify.alert(notifyText, {status: 'success'});
+                    // update default card setting
+                    getStripeCustomerOrAccount();
+                    // close form
+                    $scope.showStripeForm = false;
+                }, function(response){
+                    $scope.loading = false;
+                    Notify.alert(response.data.message, {status: 'danger'});
+                });
+            }
+        };
 
-                    if ($scope.orgType === 'publisher'){
-                        var notifyText = 'Your bank account has been saved! Your monthly balance will be deposited to ' +
-                            'this account automatically.';
-                    } else {
-                        notifyText = 'Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.';
-                    }
-
+        /**
+         * Handler for Stripe new bank account form..
+         * Gets called by angular-payments directive after it calls Stripe to get token, so
+         * response.id = token.
+         */
+        $scope.addTokenToAccount = function(status, response, verificationData){
+            if(response.error) {
+                Notify.alert('Stripe encountered the following error: ' + response.error.message, {status: 'danger'});
+            } else {
+                // first update org to save billing preference
+                $scope.organization.$update().then(function(org){
+                    return $scope.organization.$saveStripeTokenToAccount({
+                        stripeToken: response.id,
+                        accountType: verificationData.accountType,
+                        dob: verificationData.dob
+                    });
+                }).then(function(response){
+                    // now handle post-save steps
+                    $scope.organization = response;
+                    var notifyText = 'Your bank account has been saved! Your monthly balance will be deposited to ' +
+                        'this account automatically.';
                     Notify.alert(notifyText, {status: 'success'});
                     // update default card setting
                     getStripeCustomerOrAccount();
