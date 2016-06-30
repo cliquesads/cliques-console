@@ -10,8 +10,10 @@ angular.module('users').factory('Organizations', ['$resource',
                 update: { method: 'PATCH'},
                 get: { url: '/organization/:organizationId' },
                 create: { method: 'POST', url: '/organization'},
-                saveStripeToken: { method: 'POST', url: 'console/organization/:organizationId/stripetoken' },
-                getStripeCustomer: { method: 'GET', url: 'console/organization/:organizationId/stripecustomer' }
+                saveStripeTokenToCustomer: { method: 'POST', url: 'console/organization/:organizationId/stripe-customer/save-token' },
+                getStripeCustomer: { method: 'GET', url: 'console/organization/:organizationId/stripe-customer' },
+                saveStripeTokenToAccount: { method: 'POST', url: 'console/organization/:organizationId/stripe-account/save-token' },
+                getStripeAccount: { method: 'GET', url: 'console/organization/:organizationId/stripe-account' }
             }   
         );
     }

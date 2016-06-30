@@ -62,7 +62,7 @@ angular.module('payments').directive('accountnumber', function(){
             };
 
             scope.wrapper = function(status, response){
-                scope.onSave({ status: status, response: response });
+                scope.onSave({ status: status, response: response, accountType: scope.account_holder_type });
             };
 
             scope.submit = function(){

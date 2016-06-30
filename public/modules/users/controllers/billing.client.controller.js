@@ -20,22 +20,36 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         /**
          * Load stripe Customer object associated w/ Organization, if applicable
          */
-        $scope.stripeCustomer = null;
-        var getStripeCustomer = function(){
-            if ($scope.organization.stripeCustomerId){
-                var org = new Organizations($scope.organization);
-                org.$getStripeCustomer().then(function(customer){
-                    $scope.stripeCustomer = customer;
-                    $scope.defaultSource = customer.sources.data.filter(function(source){
-                        return source.id === customer.default_source
-                    })[0];
-                }, function(response){
-                    console.error(response.data.message);
-                });
+        var getStripeCustomerOrAccount = function(){
+            // temporary organization copy to use to call stripe API endpoints so $scope.organization isn't overwritten
+            var org = new Organizations($scope.organization);
+            // get Customer for advertisers AND networkAdmins
+            if ($scope.orgType === 'advertiser' || $scope.orgType === 'networkAdmin'){
+                if ($scope.organization.stripeCustomerId){
+                    org.$getStripeCustomer().then(function(customer){
+                        $scope.defaultSource = customer.sources.data.filter(function(source){
+                            return source.id === customer.default_source
+                        })[0];
+                    }, function(response){
+                        console.error(response.data.message);
+                    });
+                }
+            // get Account for publishers
+            } else if ($scope.orgType === 'publisher'){
+                if ($scope.organization.stripeAccountId){
+                    org.$getStripeAccount().then(function(account){
+                        // TODO: HACK: Just take first account from external_accounts list
+                        // TODO: assumes first account is always default, which assumes server will
+                        // TODO: always respect this rule of thumb. Right now it does.
+                        $scope.defaultSource = account.external_accounts.data[0];
+                    }, function(response){
+                        console.error(response.data.message);
+                    });
+                }
             }
         };
         // get stripe customer on load
-        getStripeCustomer();
+        getStripeCustomerOrAccount();
 
 
         /**
@@ -74,7 +88,8 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         // Update billing preference for organization.  Called on master "save"
         $scope.updateOrganization = function(){
             $scope.loading = true;
-            if ($scope.organization.billingPreference === 'Check'){
+            // show confirm dialog for Advertisers admonishing them if they switch to "Check" as a preference.
+            if ($scope.organization.billingPreference === 'Check' && $scope.orgType === 'advertiser'){
                 var dialog = ngDialog.openConfirm({
                     template: '\
                         <p>Setting your billing preference to <strong>Check</strong> means that you will be \
@@ -111,8 +126,16 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          * Handler for Stripe new card form.
          * Gets called by angular-payments directive after it calls Stripe to get token, so
          * response.id = token.
+         *
+         * Handles both Customer & Account token saving, will toggle based on $scope.orgType
+         *
+         * Current logic is to save to 'Account' if orgType === 'publisher', and save to
+         * 'Customer' if orgType === 'advertiser' or 'networkAdmin' or anything else
+         *
+         * `accountType` param is only for bank account form
          */
-        $scope.addToken = function(status, response){
+        $scope.addToken = function(status, response, accountType){
+
             $scope.loading = true;
             if(response.error) {
                 $scope.loading = false;
@@ -120,15 +143,24 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             } else {
                 // first update org to save billing preference
                 $scope.organization.$update().then(function(org){
-                    // got stripe token, now charge it or smt
-                    return $scope.organization.$saveStripeToken({ stripeToken: response.id });
+                    if ($scope.orgType === 'publisher'){
+                        // if orgType is Publisher, need to save token to stripe Account object
+                        return $scope.organization.$saveStripeTokenToAccount({
+                            stripeToken: response.id,
+                            accountType: accountType
+                        });
+                    } else {
+                        // if orgType is advertiser or networkAdmin, need to save token to
+                        // Customer object, so call Customer endpoint
+                        return $scope.organization.$saveStripeTokenToCustomer({ stripeToken: response.id });
+                    }
                 }).then(function(response){
                     // now handle post-save steps
                     $scope.organization = response;
                     $scope.loading = false;
                     Notify.alert('Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.', {status: 'success'});
                     // update default card setting
-                    getStripeCustomer();
+                    getStripeCustomerOrAccount();
                     // close form
                     $scope.showStripeForm = false;
                 }, function(response){
