@@ -244,7 +244,9 @@ module.exports = {
 
             var stripeErrorHandler = function(error){
                 console.error(error);
-                return res.status(402).send(error);
+                return res.status(402).send({
+                    message: error.toString()
+                });
             };
 
             // create new Stripe Account object if there isn't already one tied
@@ -283,7 +285,6 @@ module.exports = {
                         ip: req.ip
                     }
                 }).then(function(account) {
-
                     organization.stripeAccountId = account.id;
                     organization.save(function(err, org){
                         if (err){
@@ -344,7 +345,9 @@ module.exports = {
 
             var stripeErrorHandler = function(error){
                 console.log(error);
-                return res.status(402).send(error);
+                return res.status(402).send({
+                    message: error.toString()
+                });
             };
 
             // create new Stripe Customer object if there isn't already one tied
@@ -402,6 +405,4 @@ module.exports = {
             });
         }
     }
-
-
 };

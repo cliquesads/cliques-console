@@ -157,10 +157,43 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          * Handler for Stripe new bank account form..
          * Gets called by angular-payments directive after it calls Stripe to get token, so
          * response.id = token.
+         *
+         * This is a little more involved, since account verification may be involved.
          */
-        $scope.addTokenToAccount = function(status, response, verificationData){
+        $scope.addTokenToAccount = function(status, response, loadingDialog, verificationData){
+
+            // error dialog function
+            var openErrorDialog = function(errorMessage){
+                return ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '<br>\
+                        <div class="alert alert-danger">\
+                            <p class="text-md"><strong><i class="fa fa-lg fa-exclamation-circle"></i> Stripe encountered the following error:</strong></p>\
+                            <p>' + errorMessage + '</p>\
+                            <p> We\'re sorry about this.  Please contact us at <a href="mailto:support@cliquesads.com">\
+                            support@cliquesads.com</a> and include a reference to the error above.</p>\
+                        </div>',
+                    plain: true
+                });
+            };
+
+            // Success dialog function
+            var openSuccessDialog = function(){
+                return ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '<br>\
+                        <div class="alert alert-success text-md">\
+                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"><strong>Success!</strong></p>\
+                            <p> Your bank account has been saved. Your monthly balance will be deposited to this account automatically.</p>\
+                            <p><strong>PLEASE NOTE:</strong> We may need reach out to confirm additional account details with you for security purposes.</p>\
+                        </div>',
+                    plain: true
+                });
+            };
+
             if(response.error) {
-                Notify.alert('Stripe encountered the following error: ' + response.error.message, {status: 'danger'});
+                loadingDialog.close(1);
+                openErrorDialog(response.error.message);
             } else {
                 // first update org to save billing preference
                 $scope.organization.$update().then(function(org){
@@ -171,17 +204,16 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     });
                 }).then(function(response){
                     // now handle post-save steps
+                    loadingDialog.close(0);
+                    openSuccessDialog();
                     $scope.organization = response;
-                    var notifyText = 'Your bank account has been saved! Your monthly balance will be deposited to ' +
-                        'this account automatically.';
-                    Notify.alert(notifyText, {status: 'success'});
                     // update default card setting
                     getStripeCustomerOrAccount();
                     // close form
                     $scope.showStripeForm = false;
                 }, function(response){
-                    $scope.loading = false;
-                    Notify.alert(response.data.message, {status: 'danger'});
+                    loadingDialog.close(1);
+                    openErrorDialog(response.data.message);
                 });
             }
         };

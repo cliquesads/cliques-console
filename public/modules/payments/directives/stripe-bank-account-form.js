@@ -37,7 +37,7 @@ angular.module('payments').directive('accountnumber', function(){
         }
     }
 })
-.directive('stripeBankAccountForm', ['REGEXES', function(REGEXES){
+.directive('stripeBankAccountForm', ['REGEXES','ngDialog',function(REGEXES, ngDialog){
     'use strict';
     return {
         restrict: 'E',
@@ -69,15 +69,36 @@ angular.module('payments').directive('accountnumber', function(){
 
             scope.dob = null;
             scope.wrapper = function(status, response){
-                scope.onSave({ status: status, response: response, verificationData: {
-                    accountType: scope.account.account_holder_type,
-                    dob: scope.dob
-                }});
+
             };
 
             scope.submit = function(){
                 scope.submitted = true;
-                Stripe.bankAccount.createToken(scope.account, scope.wrapper);
+                var loadingDialog = ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '\
+                    <h4>One second</h4>\
+                    <div class="row text-center">\
+                        <div class="ball-pulse">\
+                            <div></div>\
+                            <div></div>\
+                            <div></div>\
+                        </div>\
+                    </div>\
+                    <p class="text-md">Please hang tight while we send your account information to <i class="fa fa-lg fa-cc-stripe"></i> Stripe',
+                    plain: true
+                });
+                Stripe.bankAccount.createToken(scope.account, function(status, response){
+                    scope.onSave({
+                        status: status,
+                        response: response,
+                        loadingDialog: loadingDialog,
+                        verificationData: {
+                            accountType: scope.account.account_holder_type,
+                            dob: scope.dob
+                        }
+                    });
+                });
             };
         }
     };
