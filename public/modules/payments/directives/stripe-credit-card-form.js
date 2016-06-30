@@ -1,7 +1,7 @@
 /**
  * Created by bliang on 1/11/16.
  */
-angular.module('users').directive('stripeCreditCardForm', function(){
+angular.module('users').directive('stripeCreditCardForm', ['ngDialog', function(ngDialog){
     'use strict';
     return {
         restrict: 'E',
@@ -28,4 +28,4 @@ angular.module('users').directive('stripeCreditCardForm', function(){
             };
         }
     };
-});
+}]);
