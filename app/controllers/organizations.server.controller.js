@@ -236,7 +236,7 @@ module.exports = {
             }
 
             var stripeErrorHandler = function(error){
-                console.log(error);
+                console.error(error);
                 return res.status(402).send(error);
             };
 
@@ -255,8 +255,8 @@ module.exports = {
                         address: {
                             city: organization.city,
                             country: countryCode,
-                            line_1: organization.address,
-                            line_2: organization.address2,
+                            line1: organization.address,
+                            line2: organization.address2,
                             state: organization.state,
                             postal_code: organization.zip
                         },
@@ -268,7 +268,7 @@ module.exports = {
                     product_description: "Digital Advertising Impressions",
                     tos_acceptance: {
                         date: Math.floor(Date.now() / 1000),
-                        ip: req.connection.remoteAddress
+                        ip: req.ip
                     }
                 }).then(function(account) {
                     organization.stripeAccountId = account.id;
