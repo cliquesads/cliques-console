@@ -158,7 +158,15 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     // now handle post-save steps
                     $scope.organization = response;
                     $scope.loading = false;
-                    Notify.alert('Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.', {status: 'success'});
+
+                    if ($scope.orgType === 'publisher'){
+                        var notifyText = 'Your bank account has been saved! Your monthly balance will be deposited to ' +
+                            'this account automatically.';
+                    } else {
+                        notifyText = 'Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.';
+                    }
+
+                    Notify.alert(notifyText, {status: 'success'});
                     // update default card setting
                     getStripeCustomerOrAccount();
                     // close form

@@ -223,11 +223,18 @@ module.exports = {
 
     stripeAccount: {
         saveToken: function(req, res){
+            var organization = req.organization;
             // Get the credit card details submitted by the form
             var stripeToken = req.query.stripeToken;
             // pass in account type collected in stripe form
             var accountType = req.query.accountType;
-            var organization = req.organization;
+
+            // assumes dob in 'MM/DD/YYYY' form
+            if (req.query.dob){
+                var dob = req.query.dob.split("/");
+            } else {
+                dob = [null, null, null]
+            }
 
             if (!stripeToken){
                 return res.status(404).send({
@@ -263,7 +270,12 @@ module.exports = {
                         business_name: organization.name, // this isn't necessarily legal name, but whatever
                         first_name: organization.owner.firstName,
                         last_name: organization.owner.lastName,
-                        type: accountType
+                        type: accountType,
+                        dob: {
+                            month: parseInt(dob[0]),
+                            day: parseInt(dob[1]),
+                            year: parseInt(dob[2])
+                        }
                     },
                     product_description: "Digital Advertising Impressions",
                     tos_acceptance: {
@@ -271,6 +283,7 @@ module.exports = {
                         ip: req.ip
                     }
                 }).then(function(account) {
+
                     organization.stripeAccountId = account.id;
                     organization.save(function(err, org){
                         if (err){
