@@ -61,7 +61,7 @@
                                 <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
                             </h4>
                             <h4 ng-show="orgType ==='publisher'">
-                                <i class="fa fa-lg fa-university"></i> Bank Deposit (preferred)
+                                <i class="fa fa-lg fa-university"></i> Bank Deposit
                             </h4>
                         </div>
                         <p ng-show="orgType ==='advertiser'">Your card gets billed automatically 15 days after each monthly statement posts.</p>
@@ -113,7 +113,7 @@
                     <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
                         <span ng-switch on="orgType">
                             <span ng-switch-when="advertiser">
-                                <stripe-credit-card-form on-save="addTokenToCustomer(status, response)"></stripe-credit-card-form>
+                                <stripe-credit-card-form on-save="addTokenToCustomer(status, response, loadingDialog)"></stripe-credit-card-form>
                             </span>
                             <span ng-switch-when="publisher">
                                 <stripe-bank-account-form on-save="addTokenToAccount(status, response, loadingDialog, verificationData)"></stripe-bank-account-form>

@@ -123,32 +123,63 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         };
 
         /**
+         * Opens error dialog after trying to submit account / card info to
+         * stripe & save to account or customer
+         * @param errorMessage
+         * @returns {*}
+         */
+        var openErrorDialog = function(errorMessage){
+            return ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: '<br>\
+                        <div class="alert alert-danger">\
+                            <p class="text-md"><strong><i class="fa fa-lg fa-exclamation-circle"></i> Stripe encountered the following error:</strong></p>\
+                            <p>' + errorMessage + '</p>\
+                            <p> We\'re sorry about this.  Please contact us at <a href="mailto:support@cliquesads.com">\
+                            support@cliquesads.com</a> and include a reference to the error above.</p>\
+                        </div>',
+                plain: true
+            });
+        };
+
+        /**
          * Handler for Stripe new card form.
          * Gets called by angular-payments directive after it calls Stripe to get token, so
          * response.id = token.
          */
-        $scope.addTokenToCustomer = function(status, response){
-            $scope.loading = true;
+        $scope.addTokenToCustomer = function(status, response, loadingDialog){
+            // Customer-specific success dialog function
+            var openSuccessDialog = function(){
+                return ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '<br>\
+                        <div class="alert alert-success text-md">\
+                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
+                            <p> Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically. </p>\
+                        </div>',
+                    plain: true
+                });
+            };
+
             if(response.error) {
-                $scope.loading = false;
-                Notify.alert('Stripe encountered the following error: ' + response.error.message, {status: 'danger'});
+                loadingDialog.close(1);
+                openErrorDialog(response.error.message);
             } else {
                 // first update org to save billing preference
                 $scope.organization.$update().then(function(org){
                     return $scope.organization.$saveStripeTokenToCustomer({ stripeToken: response.id });
                 }).then(function(response){
                     // now handle post-save steps
+                    loadingDialog.close(0);
+                    openSuccessDialog();
                     $scope.organization = response;
-                    $scope.loading = false;
-                    var notifyText = 'Your credit card has been saved, thanks! When you run a campaign, this card will be billed automatically.';
-                    Notify.alert(notifyText, {status: 'success'});
                     // update default card setting
                     getStripeCustomerOrAccount();
                     // close form
                     $scope.showStripeForm = false;
                 }, function(response){
-                    $scope.loading = false;
-                    Notify.alert(response.data.message, {status: 'danger'});
+                    loadingDialog.close(1);
+                    openErrorDialog(response.data.message);
                 });
             }
         };
@@ -162,28 +193,13 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
          */
         $scope.addTokenToAccount = function(status, response, loadingDialog, verificationData){
 
-            // error dialog function
-            var openErrorDialog = function(errorMessage){
-                return ngDialog.open({
-                    className: 'ngdialog-theme-default dialogwidth600',
-                    template: '<br>\
-                        <div class="alert alert-danger">\
-                            <p class="text-md"><strong><i class="fa fa-lg fa-exclamation-circle"></i> Stripe encountered the following error:</strong></p>\
-                            <p>' + errorMessage + '</p>\
-                            <p> We\'re sorry about this.  Please contact us at <a href="mailto:support@cliquesads.com">\
-                            support@cliquesads.com</a> and include a reference to the error above.</p>\
-                        </div>',
-                    plain: true
-                });
-            };
-
-            // Success dialog function
+            // Account-specific success dialog function
             var openSuccessDialog = function(){
                 return ngDialog.open({
                     className: 'ngdialog-theme-default dialogwidth600',
                     template: '<br>\
                         <div class="alert alert-success text-md">\
-                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"><strong>Success!</strong></p>\
+                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
                             <p> Your bank account has been saved. Your monthly balance will be deposited to this account automatically.</p>\
                             <p><strong>PLEASE NOTE:</strong> We may need reach out to confirm additional account details with you for security purposes.</p>\
                         </div>',

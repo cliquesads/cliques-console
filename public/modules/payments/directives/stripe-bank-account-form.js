@@ -77,15 +77,14 @@ angular.module('payments').directive('accountnumber', function(){
                 var loadingDialog = ngDialog.open({
                     className: 'ngdialog-theme-default dialogwidth600',
                     template: '\
-                    <h4>One second</h4>\
+                    <h4>Securely sending your account information to <i class="fa fa-lg fa-cc-stripe"></i> ...</h4>\
                     <div class="row text-center">\
                         <div class="ball-pulse">\
                             <div></div>\
                             <div></div>\
                             <div></div>\
                         </div>\
-                    </div>\
-                    <p class="text-md">Please hang tight while we send your account information to <i class="fa fa-lg fa-cc-stripe"></i> Stripe',
+                    </div>',
                     plain: true
                 });
                 Stripe.bankAccount.createToken(scope.account, function(status, response){
