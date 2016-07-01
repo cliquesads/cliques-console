@@ -13,7 +13,7 @@ module.exports = function(db, routers) {
 
 	router.route('/payment/:paymentId')
 		.get(billing.payments.hasAuthorization, billing.payments.read)
-		.patch(organizations.organizationHasAuthorization(["networkAdmin"]), organizations.update);
+		.patch(organizations.organizationHasAuthorization(["networkAdmin"]), billing.payments.update);
 
 	router.route('/payment/:paymentId/invoicePreview')
 		.get(billing.payments.hasAuthorization, billing.payments.getInvoicePreview);

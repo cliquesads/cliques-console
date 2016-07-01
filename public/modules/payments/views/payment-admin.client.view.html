@@ -14,11 +14,11 @@
                 <p class="text-md"><strong>{{ orgType | uppercase }}</strong></p>
                 <table class="table table-striped" >
                     <thead>
-                    <th ng-hide="invoicePreviewUrl">#</th>
-                    <th>Status</th>
-                    <th>Organization</th>
-                    <th>Amount</th>
-                    <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
+                        <th ng-hide="invoicePreviewUrl">#</th>
+                        <th>Status</th>
+                        <th>Organization</th>
+                        <th>Amount</th>
+                        <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
                     </thead>
                     <tbody>
                     <tr ng-repeat="p in payments">
@@ -51,6 +51,13 @@
                                 <i class="fa fa-lg fa-check-square"></i>
                             </button>
                         </td>
+                    </tr>
+                    <tr>
+                        <td ng-hide="invoicePreviewUrl"></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ getTotalAmounts(payments) | currency: "$" : 2 }}</strong></td>
+                        <td ng-hide="invoicePreviewUrl"></td>
                     </tr>
                     </tbody>
                 </table>

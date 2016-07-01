@@ -8,6 +8,10 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
         $scope.isPreview = false;
         $scope.invoicePreviewUrl = null;
 
+        $scope.getTotalAmounts = function(payments){
+            return _.sumBy(payments, 'totalAmount');
+        };
+
         $scope.showPreview = function(payment){
             $scope.isPreview = true;
             $scope.previewPayment = payment;
@@ -45,7 +49,29 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
          * @param payment
          */
         $scope.openAdjustmentsDialog = function(payment){
-
+            ngDialog.open({
+                template: 'modules/payments/views/partials/adjustments-dialog.html',
+                className: 'ngdialog-theme-default dialogwidth650',
+                data: {
+                    payment: payment
+                },
+                controller: ['$scope','$http', function($scope, $http) {
+                    $scope.payment = $scope.ngDialogData.payment;
+                    if ($scope.payment.adjustments.length === 0){
+                        $scope.payment.adjustments.push({});
+                    }
+                    $scope.submit = function(){
+                        $scope.loading = true;
+                        $scope.payment.$update().then(function(payment){
+                            $scope.loading = false;
+                            $scope.closeThisDialog('success');
+                        }, function(response){
+                            $scope.loading = false;
+                            $scope.error = response.data.message;
+                        });
+                    };
+                }]
+            });
         };
     }
 ]);
