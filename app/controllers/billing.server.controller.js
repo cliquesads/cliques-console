@@ -15,8 +15,10 @@ var errorHandler = require('./errors.server.controller'),
     pdf = require('html-pdf');
     async = require('async');
 
-var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
+var mailer = new mail.Mailer({ fromAddress : "billing@cliquesads.com" });
 var stripe = require('stripe')(config.get("Stripe.secret_key"));
+// email list to send billing emails to in testing
+var TEST_EMAILS = ['bliang@cliquesads.com'];
 
 module.exports = {
     payments: {
@@ -116,6 +118,11 @@ module.exports = {
             })
         },
 
+        /**
+         * Generates PDF & HTML invoices and sends to appropriate users.
+         * @param req
+         * @param res
+         */
         generateAndSendInvoice: function(req, res){
             var payment = req.payment;
 
@@ -135,6 +142,56 @@ module.exports = {
                 );
             };
 
+            var pdfInvoiceName = _getInvoiceFileName('pdf'),
+                pdfInvoicePath = _getInvoicePath('pdf'),
+                htmlInvoiceName = _getInvoiceFileName('html'),
+                htmlInvoicePath = _getInvoicePath('html');
+
+            // Sub-function to encapsulate email logic
+            var _sendStatementEmails = function(callback){
+                var subject = util.format("Your Cliques Billing Statement for %s is Ready",
+                    moment(payment.start_date).tz('UTC').format('MMMM YYYY'));
+                // Add "ACTION REQUIRED" prefix if advertiser & they need to send a check
+                if (payment.organization.billingPreference === 'Check'
+                    && payment.organization.effectiveOrgType === 'advertiser'){
+                    subject = 'ACTION REQUIRED: ' + subject;
+                }
+                var asyncFuncs = [];
+                var billingEmails = [];
+                // build email list, taking into account environment. Only send to users if it's in prod.
+                if (process.env.NODE_ENV === 'production') {
+                    if (!_.isNil(payment.organization.billingEmails)) {
+                        if (payment.organization.billingEmails.length > 0) {
+                            billingEmails = payment.organization.billingEmails;
+                        }
+                    }
+                    if (payment.organization.sendStatementToOwner) {
+                        billingEmails.push(payment.organization.owner.email)
+                    }
+                } else {
+                    billingEmails = TEST_EMAILS;
+                }
+                billingEmails.forEach(function(address){
+                    var func = function(callback) {
+                        mailer.sendMail({
+                            subject: subject,
+                            templateName: 'billing-statement-email.server.view.html',
+                            to: address,
+                            attachments: [
+                                {
+                                    filename: htmlInvoiceName,
+                                    path: htmlInvoicePath + htmlInvoiceName
+                                }
+                            ],
+                            data: { payment: payment }
+                        }, callback);
+                    };
+                    asyncFuncs.push(func);
+                });
+                async.parallel(asyncFuncs, callback);
+            };
+
+            // Now kick it all off
             payment.renderHtmlInvoice(function(err, invoice){
                 if (err){
                     return res.status(400).send({
@@ -144,28 +201,29 @@ module.exports = {
                 async.parallel([
                     // write HTML file
                     function(callback){
-                        var path = _getInvoicePath('html');
-                        var fileName = _getInvoiceFileName('html');
-                        mkdirp(path, function(err){
+                        mkdirp(htmlInvoicePath, function(err){
                             if (err) return callback(err);
-                            fs.writeFile(path + fileName, invoice, callback)
+                            fs.writeFile(htmlInvoicePath+ htmlInvoiceName, invoice, callback)
                         });
                     },
                     // write PDF file
                     function(callback){
-                        var path = _getInvoicePath('pdf');
-                        var fileName = _getInvoiceFileName('pdf');
-                        mkdirp(path, function(err){
+                        mkdirp(pdfInvoicePath, function(err){
                             if (err) return callback(err);
                             var pdfOpts = { format: 'Letter' };
-                            pdf.create(invoice, pdfOpts).toFile(path + fileName,callback);
+                            pdf.create(invoice, pdfOpts).toFile(pdfInvoicePath + pdfInvoiceName,callback);
                         });
                     }
                 ], function(err, results){
                     if (err) return res.status(400).send({
                         message: err
                     });
-                    res.status(200).send();
+                    _sendStatementEmails(function(err, successes){
+                        if (err) return res.status(400).send({
+                           message: err
+                        });
+                        res.status(200).send();
+                    });
                 });
             });
         },

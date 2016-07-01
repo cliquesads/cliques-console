@@ -259,6 +259,8 @@ var organizationSchema = new Schema({
     users: [{ type: Schema.ObjectId, ref: 'User'}],
 	// Billing stuff
 	billingPreference: { type: String, required: true, enum: billing.BILLING_METHODS },
+	billingEmails: [{ type: String}],
+	sendStatementToOwner: { type: Boolean, required: true, default: true },
 	stripeCustomerId: { type: String }, // for Advertisers
 	stripeAccountId: { type: String }, // for Publishers
 	accountBalance: { type: Number, required: true, default: 0 }
