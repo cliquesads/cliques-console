@@ -262,7 +262,20 @@ var organizationSchema = new Schema({
 	stripeCustomerId: { type: String }, // for Advertisers
 	stripeAccountId: { type: String }, // for Publishers
 	accountBalance: { type: Number, required: true, default: 0 }
+},{
+	toObject: { virtuals: true },
+	toJSON: { virtuals: true }
 });
+
+
+/**
+ * Just a shim.  Have organiztion_types as an array currently, but need
+ * easy access to single type for some purposes.
+ */
+organizationSchema.virtual('effectiveOrgType').get(function(){
+	return this.organization_types[0];
+});
+
 exports.Organization = mongoose.model('Organization', organizationSchema);
 
 
