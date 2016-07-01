@@ -8,7 +8,11 @@ var errorHandler = require('./errors.server.controller'),
     InsertionOrder = mongoose.model('InsertionOrder'),
     mail = require('./mailer.server.controller'),
     util = require('util'),
+    moment = require('moment-timezone'),
     config = require('config'),
+    fs = require('fs'),
+    mkdirp = require('mkdirp');
+    pdf = require('html-pdf');
     async = require('async');
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
@@ -110,6 +114,60 @@ module.exports = {
                 }
                 return res.status(200).send(invoice);
             })
+        },
+
+        generateAndSendInvoice: function(req, res){
+            var payment = req.payment;
+
+            // helper functions
+            var _getInvoicePath = function(extension){
+                var orgType = payment.organization.effectiveOrgType;
+                return util.format('public/uploads/billing/%s/%s/', orgType, extension);
+            };
+            var _getInvoiceFileName = function(extension){
+                var orgType = payment.organization.effectiveOrgType;
+                return util.format(
+                    'Cliques-%s-statement_%d_%s.%s',
+                    orgType,
+                    payment._id,
+                    moment(payment.start_date).tz('UTC').format('MMMM-YYYY'),
+                    extension
+                );
+            };
+
+            payment.renderHtmlInvoice(function(err, invoice){
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                }
+                async.parallel([
+                    // write HTML file
+                    function(callback){
+                        var path = _getInvoicePath('html');
+                        var fileName = _getInvoiceFileName('html');
+                        mkdirp(path, function(err){
+                            if (err) return callback(err);
+                            fs.writeFile(path + fileName, invoice, callback)
+                        });
+                    },
+                    // write PDF file
+                    function(callback){
+                        var path = _getInvoicePath('pdf');
+                        var fileName = _getInvoiceFileName('pdf');
+                        mkdirp(path, function(err){
+                            if (err) return callback(err);
+                            var pdfOpts = { format: 'Letter' };
+                            pdf.create(invoice, pdfOpts).toFile(path + fileName,callback);
+                        });
+                    }
+                ], function(err, results){
+                    if (err) return res.status(400).send({
+                        message: err
+                    });
+                    res.status(200).send();
+                });
+            });
         },
 
         /**

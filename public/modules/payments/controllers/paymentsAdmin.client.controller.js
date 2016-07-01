@@ -32,7 +32,11 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
          * @param payment
          */
         $scope.approveAndSend = function(payment){
+            $http.post('/console/payment/' + payment._id + '/generateAndSendInvoice').success(function(response){
 
+            }).error(function(err){
+
+            })
         };
 
         // fetch status types constant from server for convenience
