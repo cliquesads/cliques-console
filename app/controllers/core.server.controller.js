@@ -1,5 +1,6 @@
 /* jshint node: true */ 'use strict';
-
+var config = require('config');
+var stripePublishableKey = config.get('Stripe.publishable_key');
 
 
 /**
@@ -14,7 +15,8 @@ module.exports = function(db){
                     user: req.user || null,
                     request: req,
                     latestHour: result.toUTCString(),
-                    consoleVersion: res._headers['console-version']
+                    consoleVersion: res._headers['console-version'],
+                    stripePublishableKey: stripePublishableKey
                 });
             });
         }

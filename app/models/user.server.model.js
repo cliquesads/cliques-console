@@ -5,7 +5,8 @@
  */
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	billing = require('./billing.server.model');
 
 /**
  * A Validation function for local strategy properties
@@ -209,16 +210,6 @@ var termsAndConditionsSchema = new Schema({
 });
 exports.TermsAndConditions = mongoose.model('TermsAndConditions', termsAndConditionsSchema);
 
-/**
- * Separate schema to handle fee logic
- */
-var feeSchema = new Schema({
-    type: { type: String, enum: ['advertiser', 'publisher'] },
-    percentage: { type: Number, required: true, default: 0.10 },
-    // Futureproofing, in case we ever charge fixed fees for something
-    fixedFee: { type: Number, required: false },
-    fixedFeeInterval: { type: String, required: false }
-});
 
 var accessTokenSchema = new Schema({
 	_id: {type: Schema.ObjectId, required: true},
@@ -256,7 +247,8 @@ var organizationSchema = new Schema({
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
-    fees: [feeSchema],
+	// TODO: Add validation to ensure only one active fee structure per org type
+    fees: [billing.FeeSchema],
 	organization_types: {
 		type: [{
 			type: String,
@@ -264,20 +256,31 @@ var organizationSchema = new Schema({
 		}],
 		default: ['advertiser']
 	},
-    users: [{ type: Schema.ObjectId, ref: 'User'}]
+    users: [{ type: Schema.ObjectId, ref: 'User'}],
+	// Billing stuff
+	billingPreference: { type: String, required: true, enum: billing.BILLING_METHODS },
+	billingEmails: [{ type: String}],
+	sendStatementToOwner: { type: Boolean, required: true, default: true },
+	stripeCustomerId: { type: String }, // for Advertisers
+	stripeAccountId: { type: String }, // for Publishers
+	accountBalance: { type: Number, required: true, default: 0 }
+},{
+	toObject: { virtuals: true },
+	toJSON: { virtuals: true }
 });
-exports.Organization = mongoose.model('Organization', organizationSchema);
 
 
 /**
- * Separate schema to handle promo
+ * Just a shim.  Have organiztion_types as an array currently, but need
+ * easy access to single type for some purposes.
  */
-var promoSchema = new Schema({
-    type: { type: String, enum: ['advertiser', 'publisher'] },
-    description: { type: String, required: true },
-    promoAmount: { type: Number, required: false },
-    promoInterval: { type: String, required: false }
+organizationSchema.virtual('effectiveOrgType').get(function(){
+	return this.organization_types[0];
 });
+
+exports.Organization = mongoose.model('Organization', organizationSchema);
+
+
 /**
  * Access codes for private beta to allow users to sign up
  * @type {Schema}
@@ -296,8 +299,8 @@ var AccessCodeSchema = new Schema({
         default: Date.now
     },
     active: { type: Boolean, default: true, required: true },
-    fees: [feeSchema],
-    promos: [promoSchema]
+    fees: [billing.FeeSchema],
+    promos: [billing.PromoSchema]
 });
 
 /**

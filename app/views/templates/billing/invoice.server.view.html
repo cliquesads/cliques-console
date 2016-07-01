@@ -1,0 +1,373 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cliques Billing</title>
+
+    <style>
+        .invoice-box{
+            max-width:800px;
+            margin:auto;
+            padding:30px;
+            border:1px solid #eee;
+            box-shadow:0 0 10px rgba(0, 0, 0, .15);
+            font-size:14px;
+            line-height:24px;
+            font-family:'Avenir', sans-serif;
+            color:#555;
+        }
+
+        .invoice-box table{
+            width:100%;
+            line-height:inherit;
+            text-align:left;
+        }
+
+        .invoice-box table td{
+            padding:5px;
+            vertical-align:top;
+        }
+
+        .invoice-box table tr.metadata td:nth-child(2){
+            text-align:right;
+        }
+
+        .invoice-box table tr td:nth-child(4){
+            text-align:right;
+        }
+
+        .invoice-box table tr.top table td.title{
+            font-size:45px;
+            line-height:45px;
+            color:#333;
+        }
+
+        .invoice-box table tr.information table td{
+            padding-bottom:20px;
+        }
+
+        .invoice-box table tr.heading td{
+            background:#eee;
+            border-bottom:1px solid #ddd;
+            font-weight:bold;
+        }
+
+        .invoice-box table tr.subdivider td{
+            background:#F5F5F5;
+            /*border-bottom:1px solid #ddd;*/
+            font-style: italic;
+        }
+
+        .invoice-box table tr.beginning-balance td{
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.details td{
+            padding-bottom:0;
+        }
+
+        .invoice-box table tr.item td{
+            border-bottom:1px solid #eee;
+        }
+
+        .invoice-box table tr.item.last td{
+            border-bottom:none;
+        }
+
+        .invoice-box table tr.subtotal td:nth-child(3){
+            border-top:2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.subtotal td:nth-child(4){
+            border-top:2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .invoice-box table tr.total td{
+            padding-bottom: 10px;
+        }
+
+        .invoice-box table tr.total td:nth-child(3){
+            border-top:3px solid #eee;
+            font-weight:bold;
+        }
+
+        .invoice-box table tr.total td:nth-child(4){
+            border-top:3px solid #eee;
+            font-weight:bold;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .invoice-box table tr.top table td{
+                width:100%;
+                display:block;
+                text-align:center;
+            }
+
+            .invoice-box table tr.information table td{
+                width:100%;
+                display:block;
+                text-align:center;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .disputes {
+            text-align: center;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        /* for printing & PDFing, 8.5 x 11 */
+        @media print {
+            .invoice-box {
+                margin: 0;
+                height: 100%;
+                max-width: 600px;
+                font-size: 10px;
+            }
+            .footer {
+                font-size: 8px;
+            }
+            .disputes {
+                font-size: 9px;
+            }
+            div { page-break-inside: avoid; }
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+        <tr class="top metadata">
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td class="title">
+                            <img src="https://storage.googleapis.com/cliquesads-logos/full-logo-green-Q-600.png" style="width:100%; max-width:200px;">
+                        </td>
+                        <td>
+                            Invoice #: {{ payment._id }}<br>
+                            Created: {{ payment.tstamp|date('F jS\, Y') }}<br>
+                            Due: {{ payment.dueDate|date('F jS\, Y')  }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr class="information metadata">
+            <td colspan="4">
+                <table>
+                    <tr>
+                        <td>
+                            Cliques Labs Inc.<br>
+                            172 Green St., Unit 9<br>
+                            Boston, MA 02130 <br>
+                            <br>
+                            EIN: 47-3040022<br>
+                            <a href="mailto:support@cliquesads.com">support@cliquesads.com</a>
+                        </td>
+                        <td>
+                            {{ payment.organization.name }}<br>
+                            {{ payment.organization.address }}<br>
+                            {% if payment.organization.address2 %}{{ payment.organization.address2 }}<br>{% endif %}
+                            {{ payment.organization.city }}, {{ payment.organization.state }} {{ payment.organization.zip }} {{ payment.organization.country }}<br>
+                            <br>
+                            {{ payment.organization.owner.email }}<br>
+                            {{ payment.organization.phone }}<br>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr class="heading">
+            <td>Type</td>
+            <td>Description</td>
+            <td>Rate</td>
+            <td>Amount</td>
+        </tr>
+
+        <!--Get sign based on type of payment being made.  Negative if publisher because publisher payments are recorded as negative in Payments collection.-->
+        <!--TODO: This is actually redundant right now, as the "currency" filter being applied just takes abs value of input value, but keeping this for clarity-->
+        {% if payment.paymentType == 'publisher' %}
+            {% set sign = -1 %}
+        {% else %}
+            {% set sign = 1 %}
+        {% endif %}
+
+        <tr class="beginning-balance">
+            <td></td>
+            <td>Beginning Account Balance</td>
+            <td></td>
+            <td>{{ (payment.organization.accountBalance - payment.totalAmount) | round(2) | currency('$')}}</td>
+        </tr>
+        <tr class="subdivider">
+            <td colspan="4">
+                <em>Billing Period of {{ payment.start_date|date('F jS\, Y')}} - {{ payment.end_date|date('F jS\, Y') }}</em>
+            </td>
+        </tr>
+        {% for li in payment.lineItems %}
+        <tr class="item">
+            <td>
+                {{ li.lineItemType }}
+            </td>
+            <td>
+                {{ li.description }}
+            </td>
+            <td>
+                {% if li.lineItemType == 'Fee' || li.lineItemType == 'RevShare' %}
+                    {{ li.rate|percent(2)}}
+                {% else %}
+                    {{ li.rate|round(2)|currency('$')}}
+                {% endif %}
+            </td>
+            <td>
+                {{ (sign * li.amount) |round(2)|currency('$') }}
+            </td>
+        </tr>
+        {% endfor %}
+        {% for adj in payment.adjustments %}
+        <tr class="item">
+            <td>
+                Adjustment
+            </td>
+            <td>
+                {{ adj.description }}
+            </td>
+            <td></td>
+            <td>
+                {{ (sign * adj.amount) |round(2)|currency('$') }}
+            </td>
+        </tr>
+        {% endfor %}
+        <tr class="subtotal">
+            <td></td>
+            <td></td>
+            <td>Subtotal</td>
+            <td>
+                {{ (sign * payment.totalAmount)|round(2)|currency('$')}}
+            </td>
+        </tr>
+        <tr class="total">
+            <td></td>
+            <td></td>
+            <td>Total</td>
+            <td>
+                {{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}
+            </td>
+        </tr>
+
+        <tr class="heading">
+            <td>Payment Method</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% if payment.organization.billingPreference == "Stripe" %}
+            {% set cardLogos = {
+                "Visa": "visa.svg",
+                "American Express": "amex.svg",
+                "MasterCard": "mastercard.svg",
+                "Discover": "discover.svg",
+                "JCB": "jcb.svg",
+                "Diners Club": "diners.svg"
+        } %}
+            <tr class="details">
+                <td>
+                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/stripe2.svg" height="40px" width="40px">
+                    <span style="vertical-align: sub">&nbsp;{{ payment.organization.billingPreference }}</span>
+                </td>
+                {% if stripeSource.object == "card" %}
+                    <td></td>
+                    <td>
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/{{ cardLogos[stripeSource.brand] }}" height="40px" width="40px">
+                        <span style="vertical-align: sub">&nbsp;{{ stripeSource.brand }}</span>
+                    </td>
+                    <td>xxxx-xxxx-xxxx-{{ stripeSource.last4 }}</td>
+                {% elseif stripeSource.object == "bank_account" %}
+                    <td></td>
+                    <td>
+                        <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/bank-2.svg" height="40px" width="40px">
+                        <span style="vertical-align: sub">&nbsp;{{ stripeSource.bank_name }}</span>
+                    </td>
+                    <td>xxxxxxxxxxx{{ stripeSource.last4 }}</td>
+                {% endif %}
+            </tr>
+            <tr class="instructions">
+                <td colspan="4">
+                    {% if payment.paymentType == "advertiser" %}
+                        <div>
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to either your card or bank account listed above. If you agree with the charges as they are stated, <b>no further action is required</b>.
+                        </div>
+                    {% elseif payment.paymentType == "publisher" %}
+                        <div>
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically deposit your total balance of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to the bank account listed above.  If you agree with the accrued amounts as they are stated, <b>no further action is required</b>.
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+        {% elseif payment.organization.billingPreference == "Check" %}
+            <tr class="details">
+                <td>
+                    <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/icon-check-100.svg" height="40px" width="40px">
+                    {{ payment.organization.billingPreference }}
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="instructions">
+                <td colspan="4">
+                    {% if payment.paymentType == "advertiser" %}
+                    <div>
+                        <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                        no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                    </div>
+                    <div><em>
+                        If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
+                        of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
+                        by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
+                        following the payment due date, Cliques shall have the right to suspend Client’s access to the
+                        Cliques Platform without notice to Client; such access not to be reinstated until Client pays
+                        all such overdue amounts.
+                    </em></div>
+                    {% elseif payment.paymentType == "publisher" %}
+                    <div>
+                        <b>Instructions:</b> A check from Cliques Labs Inc. for the amount of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                        will be mailed your address as listed above no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr class="details">
+                <td>{{ payment.organization.billingPreference }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endif %}
+        <tr class="disputes">
+            <td colspan="4">
+                To dispute any of charges listed above, please <a href="mailto:billing@cliquesads.com?Subject=Invoice%20No%20{{ payment._id }}">contact us</a> no later than {{ payment.dueDate|date('F jS\, Y')  }}.
+            </td>
+        </tr>
+    </table>
+    <p class="footer">
+        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a><br>
+        <a href="{{ payment.organization.termsAndConditions[0].url }}">Terms & Conditions</a>
+    </p>
+</div>
+</body>
+</html>

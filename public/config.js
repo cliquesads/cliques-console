@@ -39,7 +39,9 @@ var ApplicationConfiguration = (function() {
         'hm.readmore',
         'ngclipboard',
         'ui.identicon',
-        'angularPayments'
+        'angularPayments',
+        'puigcerber.countryPicker',
+        'angular.filter'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

@@ -20,5 +20,24 @@ module.exports = function(db, routers) {
 	router.route('/organization/:organizationId/sendinvite')
 		.post(organizations.hasAuthorization, organizations.sendUserInvite);
 
+	// Stripe Customer routes
+	router.route('/organization/:organizationId/stripe-customer')
+		.get(organizations.hasAuthorization, organizations.stripeCustomer.getCustomer);
+
+	router.route('/organization/:organizationId/stripe-customer/save-token')
+		// TODO: this isn't really RESTful, requires queryparam to be passed through
+		.post(organizations.hasAuthorization, organizations.stripeCustomer.saveToken);
+
+	// Stripe Account (i.e. Publisher) routes
+	router.route('/organization/:organizationId/stripe-account')
+		.get(organizations.hasAuthorization, organizations.stripeAccount.getAccount);
+
+	router.route('/organization/:organizationId/stripe-account/save-token')
+	// TODO: this isn't really RESTful, requires queryparam to be passed through
+		.post(organizations.hasAuthorization, organizations.stripeAccount.saveToken);
+
+
 	router.param('organizationId', organizations.organizationByID);
+
+
 };

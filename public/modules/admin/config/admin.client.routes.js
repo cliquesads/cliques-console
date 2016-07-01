@@ -22,6 +22,19 @@ angular.module('advertiser').config(['$stateProvider',
                     template: 'Cliques Network Report'
                 }
             }
-		});
+		}).
+        state('app.admin.paymentAdmin', {
+            url: '/admin/payment-admin',
+            title: 'Payment Admin',
+            views: {
+                'main': {
+                    templateUrl: 'modules/payments/views/payment-admin.client.view.html',
+                    controller: 'PaymentAdminController'
+                },
+                'titleBar': {
+                    template: 'Payment Admin'
+                }
+            }
+        });
 	}
 ]);

@@ -1,0 +1,60 @@
+{% extends 'base-external-email.server.view.html' %}
+
+{% block content %}
+<span class="h4" style="text-align: center">{{ user.displayName }} Your Monthly Billing Statement is Ready </span>
+<p style="text-align: center;">
+    Thank you for your business!  Please find your monthly billing statement attached.  Additionally, we have
+    copied any applicable instructions below.
+</p>
+{% if payment.organization.billingPreference == "Stripe" %}
+    <p style="text-align: center;">
+        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/stripe2.jpg" height="40px" width="40px" alt="Stripe">
+        {{ payment.organization.billingPreference }}
+    </p>
+    <p style="text-align: center;">
+        {% if payment.paymentType == "advertiser" %}
+            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+            to either your card or bank account listed above. If you agree with the charges as they are stated, <b>no further action is required</b>.
+        {% elseif payment.paymentType == "publisher" %}
+            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically deposit your total balance of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+            to the bank account listed above.  If you agree with the accrued amounts as they are stated, <b>no further action is required</b>.
+        {% endif %}
+    </p>
+{% elseif payment.organization.billingPreference == "Check" %}
+    <p style="text-align: center;">
+        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/icon-check-100.jpg" height="40px" width="40px" alt="Check">
+        {{ payment.organization.billingPreference }}
+    </p>
+    {% if payment.paymentType == "advertiser" %}
+        <p style="text-align: center;">
+            <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+            no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+        </p>
+        <p style="text-align: center;"><em>
+            If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
+            of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
+            by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
+            following the payment due date, Cliques shall have the right to suspend Client’s access to the
+            Cliques Platform without notice to Client; such access not to be reinstated until Client pays
+            all such overdue amounts.
+        </em></p>
+    {% elseif payment.paymentType == "publisher" %}
+    <p style="text-align: center;">
+        <b>Instructions:</b> A check from Cliques Labs Inc. for the amount of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+        will be mailed your address as listed above no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+    </p>
+    {% endif %}
+{% else %}
+    <p style="text-align: center;">
+        Your billing method is set to: {{ payment.organization.billingPreference }}
+    </p>
+{% endif %}
+<p style="text-align: center;">
+    To manage your billing preferences, please visit your <a class="btn" href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a><br>
+</p>
+<br>
+<p style="font-size: 12px; text-align: center;">
+    <em>If you feel that have received this message in error, please report this message to
+        <a href="mailto:billing@cliquesads.com">billing@cliquesads.com</a></em>.
+</p>
+{% endblock %}
