@@ -60,6 +60,11 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     if ($scope.payment.adjustments.length === 0){
                         $scope.payment.adjustments.push({});
                     }
+
+                    $scope.remove = function(adjustment){
+                        _.remove($scope.payment.adjustments, adjustment);
+                    };
+                    
                     $scope.submit = function(){
                         $scope.loading = true;
                         $scope.payment.$update().then(function(payment){
