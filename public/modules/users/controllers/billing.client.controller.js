@@ -253,6 +253,22 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: templates[$scope.organization.effectiveOrgType]
             });
-        }
+        };
+
+        /**
+         * Handlers for saving minor billing settings
+         * @type {boolean}
+         */
+        $scope.settingsLoading = false;
+        $scope.saveSettings = function(){
+            $scope.settingsLoading = true;
+            $scope.organization.$update().then(function(response){
+                $scope.settingsLoading = false;
+                Notify.alert('Your settings have been updated.  Thanks!', {status: 'success'});
+            }, function(err){
+                $scope.settingsLoading = false;
+                Notify.alert(err.data.message, {status: 'danger'});
+            });
+        };
     }
 ]);

@@ -161,7 +161,7 @@
             <!--BEGIN Settings Tab-->
             <tab heading="Delivery Settings">
                 <div class="panel-body p0">
-                    <form name="deliverySettingsForm">
+                    <form name="deliverySettingsForm" ng-submit="saveSettings()">
                         <fieldset>
                             <div class="checkbox c-checkbox">
                                 <label>
@@ -175,10 +175,26 @@
                             <div class="col-sm-12">
                                 <label>Also Email Invoices To:</label>
                                 <div class="text-sm text-muted">Type and press Enter</div>
-                                <email-address-tags-input model="organization.billingEmails"></email-address-tags-input>
+                                <email-address-tags-input ng-model="organization.billingEmails"></email-address-tags-input>
+                                <!--<input type="text" tagsinput="tagsinput" data-width="100%" ng-model="organization.billingEmails" placeholder="fred@gmail.com" class="form-control"/><span ng-show="invalidEmail" class="text-danger" style="">Not a valid email</span>'-->
                             </div>
                         </fieldset>
+                        <div class="row p-lg" ng-show="deliverySettingsForm.$dirty">
+                            <div class="col-sm-12 text-center">
+                                <button type="submit" class="btn btn-primary btn-large">Save</button>
+                            </div>
+                        </div>
                     </form>
+
+                    <div class="col-sm-12 text-center">
+                        <div ng-show="settingsLoading">
+                            <div class="ball-pulse">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </tab>
         </tabset>

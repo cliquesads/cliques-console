@@ -3,10 +3,10 @@ angular.module('core').directive('emailAddressTagsInput', ['REGEXES',function(RE
     return {
         restrict: 'E',
         scope: {
-            model: '=',
+            ngModel: '=',
             wizardstep: '@'
         },
-        template: '<input type="text" tagsinput="tagsinput" data-width="100%" ng-value="ngValue" ng-model="model" placeholder="fred@gmail.com" class="form-control" data-parsley-group="{{ wizardstep }}"/><span ng-show="invalidEmail" class="text-danger" style="">Not a valid email</span>',
+        template: '<input type="text" tagsinput="tagsinput" data-width="100%" ng-value="ngValue" ng-model="ngModel" placeholder="fred@gmail.com" class="form-control"/><span ng-show="invalidEmail" class="text-danger" style="">Not a valid email</span>',
         link: function(scope, element, attrs){
             element.on('beforeItemAdd', function(event){
                 scope.invalidEmail = false;
@@ -18,7 +18,13 @@ angular.module('core').directive('emailAddressTagsInput', ['REGEXES',function(RE
                     });
                 }
             });
-            scope.ngValue = scope.model ? scope.model.join(','): '';
+            
+            //TODO: This is broken, does not bind to model value properly!
+            scope.$watch('ngModel',function(newVal){
+                scope.ngModel = newVal;
+                scope.ngValue = scope.model ? scope.model.join(','): '';
+            });
+
         }
     };
 }]);
