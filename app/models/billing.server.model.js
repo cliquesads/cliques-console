@@ -308,6 +308,18 @@ PaymentSchema.methods.renderHtmlInvoice = function(callback){
             }, function(err){
                 return callback(err)
             });
+    } else if (!_.isNil(this.organization.stripeAccountId)){
+        stripe.accounts.retrieve(self.organization.stripeAccountId)
+            .then(function(account){
+                //TODO: assume first source is default, which it is currently being treated as
+                var source = account.external_sources.data[0];
+                return callback(null, template({
+                    payment: self,
+                    stripeSource: source
+                }));
+            }, function(err){
+                return callback(err)
+            });
     } else {
         return callback(null, template({ payment: self }))
     }
