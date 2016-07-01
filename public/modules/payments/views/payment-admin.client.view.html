@@ -1,3 +1,47 @@
-<div class="col-md-10">
-
+<div class="col-sm-6">
+    <div class="box-placeholder text-center pv-lg" data-ng-if="payments.$resolved && !payments.length">
+        <p class="text-md"><strong>No payments are available yet.</strong></p>
+        <p>Payments are generated 1st of each month, and reflect the previous
+            calendar month's billable impressions & terms.</p>
+    </div>
+    <div class="panel panel-default" ng-repeat="group in payments | groupBy: 'start_date' | toArray:true | orderBy:'-$key'">
+        <div class="panel-body table-responsive">
+            <div class="text-center">
+                <h4 class="mt0">{{ group.$key | date : "MMMM yyyy" : "UTC" }}</h4>
+            </div>
+            <hr class="m0"/>
+            <table class="table table-striped">
+                <thead>
+                    <th>#</th>
+                    <th>Last Modified</th>
+                    <th>Organization</th>
+                    <th>Owner</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="p in group">
+                        <td>{{ p._id }}</td>
+                        <td>{{ p.tstamp | date : "longDate" : "UTC" }}</td>
+                        <td>{{ p.organization.name }}</td>
+                        <td><a href="mailto:{{ p.organization.owner.email }}"><i class="fa fa-envelope"></i> {{ p.organization.owner.displayName }}</a></td>
+                        <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
+                        <td>
+                            <div class="label" ng-class="{'label-warning': p.status == 'Needs Approval',
+                                'label-primary': p.status === 'Pending',
+                                'label-danger': p.status == 'Overdue',
+                                'label-success': p.status == 'Paid' }">
+                                {{ p.status }}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-sm-6">
+    <div style="min-height: 400px;" class="box-placeholder text-center" ng-hide="!invoicePreview">
+        <h4>Select a Payment to view an invoice or invoice preview</h4>
+    </div>
 </div>

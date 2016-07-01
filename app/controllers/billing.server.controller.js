@@ -35,7 +35,10 @@ module.exports = {
                 // networkAdmin org
                 req.query.status = { $ne: "Needs Approval"}
             }
-            Payment.find(req.query, function (err, payments) {
+            Payment.find(req.query).populate({
+                path: 'organization',
+                populate: { path: 'owner'}
+            }).exec(function (err, payments) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
