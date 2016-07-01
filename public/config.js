@@ -40,7 +40,8 @@ var ApplicationConfiguration = (function() {
         'ngclipboard',
         'ui.identicon',
         'angularPayments',
-        'puigcerber.countryPicker'
+        'puigcerber.countryPicker',
+        'angular.filter'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

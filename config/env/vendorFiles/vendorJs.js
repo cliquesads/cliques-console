@@ -68,5 +68,6 @@ module.exports = [
     'public/lib/angular-identicon/dist/angular-identicon.min.js',
     'public/lib/angular-payments/lib/angular-payments.min.js',
     'public/lib/angular-country-picker/country-picker.min.js',
-    'public/lib/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js'
+    'public/lib/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js',
+    'public/lib/angular-filter/dist/angular-filter.min.js'
 ];
