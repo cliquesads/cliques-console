@@ -8,7 +8,7 @@
 </p>
 {% if payment.organization.billingPreference == "Stripe" %}
     <p style="text-align: center;">
-        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/stripe2.svg" height="40px" width="40px" alt="Stripe">
+        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/stripe2.jpg" height="40px" width="40px" alt="Stripe">
         {{ payment.organization.billingPreference }}
     </p>
     <p style="text-align: center;">
@@ -22,7 +22,7 @@
     </p>
 {% elseif payment.organization.billingPreference == "Check" %}
     <p style="text-align: center;">
-        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/icon-check-100.svg" height="40px" width="40px" alt="Check">
+        Your billing method is set to: <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/icon-check-100.jpg" height="40px" width="40px" alt="Check">
         {{ payment.organization.billingPreference }}
     </p>
     {% if payment.paymentType == "advertiser" %}
@@ -55,6 +55,6 @@
 <br>
 <p style="font-size: 12px; text-align: center;">
     <em>If you feel that have received this message in error, please report this message to
-        <a href="mailto:support@cliquesads.com">support@cliquesads.com</a></em>.
+        <a href="mailto:billing@cliquesads.com">billing@cliquesads.com</a></em>.
 </p>
 {% endblock %}

@@ -36,10 +36,6 @@
             text-align:right;
         }
 
-        .invoice-box table tr.top table td{
-            padding-bottom:20px;
-        }
-
         .invoice-box table tr.top table td.title{
             font-size:45px;
             line-height:45px;
@@ -127,6 +123,24 @@
             font-size: 14px;
             font-style: italic;
         }
+
+        /* for printing & PDFing, 8.5 x 11 */
+        @media print {
+            .invoice-box {
+                margin: 0;
+                height: 100%;
+                max-width: 600px;
+                font-size: 10px;
+            }
+            .footer {
+                font-size: 8px;
+            }
+            .disputes {
+                font-size: 9px;
+            }
+            div { page-break-inside: avoid; }
+        }
+
     </style>
 </head>
 
@@ -138,7 +152,7 @@
                 <table>
                     <tr>
                         <td class="title">
-                            <img src="https://storage.googleapis.com/cliquesads-logos/full-logo-green-Q-600.png" style="width:100%; max-width:300px;">
+                            <img src="https://storage.googleapis.com/cliquesads-logos/full-logo-green-Q-600.png" style="width:100%; max-width:200px;">
                         </td>
                         <td>
                             Invoice #: {{ payment._id }}<br>

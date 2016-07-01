@@ -15,7 +15,16 @@ var errorHandler = require('./errors.server.controller'),
     pdf = require('html-pdf');
     async = require('async');
 
-var mailer = new mail.Mailer({ fromAddress : "billing@cliquesads.com" });
+var mailer = new mail.Mailer({
+    fromAddress : "billing@cliquesads.com",
+    mailerOptions: {
+        service: config.get('Email.Billing.service'),
+        auth: {
+            user: config.get('Email.Billing.username'),
+            pass: config.get('Email.Billing.password')
+        }
+    }
+});
 var stripe = require('stripe')(config.get("Stripe.secret_key"));
 // email list to send billing emails to in testing
 var TEST_EMAILS = ['bliang@cliquesads.com'];
@@ -177,10 +186,11 @@ module.exports = {
                             subject: subject,
                             templateName: 'billing-statement-email.server.view.html',
                             to: address,
+                            fromAlias: "Cliques Billing",
                             attachments: [
                                 {
-                                    filename: htmlInvoiceName,
-                                    path: htmlInvoicePath + htmlInvoiceName
+                                    filename: pdfInvoiceName,
+                                    path: pdfInvoicePath + pdfInvoiceName
                                 }
                             ],
                             data: { payment: payment }
@@ -210,7 +220,13 @@ module.exports = {
                     function(callback){
                         mkdirp(pdfInvoicePath, function(err){
                             if (err) return callback(err);
-                            var pdfOpts = { format: 'Letter' };
+                            var pdfOpts = {
+                                format: 'Letter',
+                                border:  {
+                                    top: "10px",
+                                    bottom: "10px"
+                                }
+                            };
                             pdf.create(invoice, pdfOpts).toFile(pdfInvoicePath + pdfInvoiceName,callback);
                         });
                     }
