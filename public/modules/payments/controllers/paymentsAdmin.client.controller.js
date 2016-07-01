@@ -36,35 +36,44 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
             var pendingDialog = ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth600',
                 template: '<br>\
-                        <div class="ball-grid-pulse"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>\
-                        <div class="text-center"><h4>Approving & Sending Invoices, please hold...</h4>',
+                        <div class="row">\
+                            <div class="ball-grid-pulse"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>\
+                            <h4> Approving & Sending Invoices, please hold...</h4>\
+                        </div>',
                 plain: true
             });
-            payment.$update().then(function(payment){
-                var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
-                return $http.post(postUrl);
-            }).then(function(response){
-                pendingDialog.close(0);
-                ngDialog.open({
-                    className: 'ngdialog-theme-default dialogwidth600',
-                    template: '<br>\
-                         <div class="alert alert-success text-md">\
-                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
-                            <p> Status has been updated & invoices were generated and sent. </p>\
-                        </div>',
-                    plain: true
-                });
-            }).error(function(err){
-                pendingDialog.close(1);
+
+            var openErrorDialog = function(error){
                 ngDialog.open({
                     className: 'ngdialog-theme-default dialogwidth600',
                     template: '<br>\
                          <div class="alert alert-danger text-md">\
                             <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong>An error occurred.</strong></p>\
-                            <p>' + err.data.message + '</p>\
+                            <p>' + error.data.message + '</p>\
                         </div>',
                     plain: true
                 });
+            };
+            payment.$update().then(function(payment){
+                var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
+                return $http.post(postUrl).success(function(response){
+                    pendingDialog.close(0);
+                    ngDialog.open({
+                        className: 'ngdialog-theme-default dialogwidth600',
+                        template: '<br>\
+                     <div class="alert alert-success text-md">\
+                        <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
+                        <p> Status has been updated & invoices were generated and sent. </p>\
+                    </div>',
+                        plain: true
+                    });
+                }).error(function(response){
+                    pendingDialog.close(1);
+                    openErrorDialog(response)
+                });
+            }, function(err){
+                pendingDialog.close(1);
+                openErrorDialog(err);
             });
         };
 
