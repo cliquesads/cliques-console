@@ -2,11 +2,9 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
     'Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.user = Authentication.user;
-        var organization = $scope.organization = new Organizations(Authentication.user.organization);
-
-        // For simplicity's sake, just assume Organization has only one type, and take first type in list as that type
-        // TODO: make this handle multiple org types, but might require broader rewrite of the template & controller
-        $scope.orgType = organization.organization_types[0];
+        var organization = $scope.organization = Organizations.get({
+            organizationId: Authentication.user.organization._id
+        });
 
         // get all payments to populate billing history
         $scope.payments = Payment.query();
@@ -17,6 +15,15 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         // Stripe form "loading" glyph control var
         $scope.loading = false;
 
+        $scope.showInvoice = function(payment){
+            var invoiceUrl = '/console/payment/' + payment._id + '/viewInvoice';
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: '<iframe src="' + invoiceUrl + '" class="invoice" frameborder="0">',
+                plain: true
+            });
+        };
+
         /**
          * Load stripe Customer object associated w/ Organization, if applicable
          */
@@ -24,7 +31,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             // temporary organization copy to use to call stripe API endpoints so $scope.organization isn't overwritten
             var org = new Organizations($scope.organization);
             // get Customer for advertisers AND networkAdmins
-            if ($scope.orgType === 'advertiser' || $scope.orgType === 'networkAdmin'){
+            if ($scope.organization.effectiveOrgType === 'advertiser' || $scope.organization.effectiveOrgType === 'networkAdmin'){
                 if ($scope.organization.stripeCustomerId){
                     org.$getStripeCustomer().then(function(customer){
                         $scope.defaultSource = customer.sources.data.filter(function(source){
@@ -35,7 +42,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     });
                 }
             // get Account for publishers
-            } else if ($scope.orgType === 'publisher'){
+            } else if ($scope.organization.effectiveOrgType === 'publisher'){
                 if ($scope.organization.stripeAccountId){
                     org.$getStripeAccount().then(function(account){
                         // TODO: HACK: Just take first account from external_accounts list
@@ -89,7 +96,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.updateOrganization = function(){
             $scope.loading = true;
             // show confirm dialog for Advertisers admonishing them if they switch to "Check" as a preference.
-            if ($scope.organization.billingPreference === 'Check' && $scope.orgType === 'advertiser'){
+            if ($scope.organization.billingPreference === 'Check' && $scope.organization.effectiveOrgType === 'advertiser'){
                 var dialog = ngDialog.openConfirm({
                     template: '\
                         <p>Setting your billing preference to <strong>Check</strong> means that you will be \
@@ -244,7 +251,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             };
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
-                template: templates[$scope.orgType]
+                template: templates[$scope.organization.effectiveOrgType]
             });
         }
     }

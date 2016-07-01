@@ -23,7 +23,12 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="p in payments">
-                        <td><a href="{{ p.invoiceUrl }}" target="_blank">{{ p.tstamp | date : "longDate" : "UTC" }}</a></td>
+                        <td>
+                            <a href="#" ng-if="p.status != 'Needs Approval'" ng-click="showInvoice(p)" target="_blank">
+                                {{ p.tstamp | date : "longDate" : "UTC" }}
+                            </a>
+                            <span ng-if="p.status === 'Needs Approval'">{{ p.tstamp | date : "longDate" : "UTC" }}</span>
+                        </td>
                         <td>{{ p.start_date | date: "shortDate" : "UTC"}} to {{ p.end_date | date: "shortDate" : "UTC"}}</td>
                         <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
                         <td>
@@ -43,112 +48,139 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
-                <span class="h4">Billing Preference</span>
+                <span class="h4"><strong>Preferences</strong></span>
                 <span class="pull-right"><a href="#" ng-click="openFaqs()"><i class="fa fa-question-circle"></i> Billing FAQs</a></span>
             </div>
         </div>
-        <div class="panel-body pt0">
-            <div class="box-form">
-                <ol>
-                    <!--BEGIN CreditCard Option-->
-                    <li ng-class="{'active':organization.billingPreference === 'Stripe'}" ng-click="organization.billingPreference = 'Stripe'">
-                        <div class="radio c-radio">
-                            <label>
-                                <input type="radio" ng-model="organization.billingPreference" value="Stripe">
-                                <span class="fa fa-circle"></span>
-                            </label>
-                            <h4 ng-show="orgType ==='advertiser'">
-                                <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
-                            </h4>
-                            <h4 ng-show="orgType ==='publisher'">
-                                <i class="fa fa-lg fa-university"></i> Bank Deposit
-                            </h4>
+        <tabset>
+            <tab heading="Billing Method">
+                <div class="panel-body p0">
+                    <div class="box-form">
+                        <ol>
+                            <!--BEGIN CreditCard Option-->
+                            <li ng-class="{'active':organization.billingPreference === 'Stripe'}" ng-click="organization.billingPreference = 'Stripe'">
+                                <div class="radio c-radio">
+                                    <label>
+                                        <input type="radio" ng-model="organization.billingPreference" value="Stripe">
+                                        <span class="fa fa-circle"></span>
+                                    </label>
+                                    <h4 ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">
+                                        <i class="fa fa-lg fa-credit-card"></i> Credit/Debit Card (preferred)
+                                    </h4>
+                                    <h4 ng-show="organization.effectiveOrgType ==='publisher'">
+                                        <i class="fa fa-lg fa-university"></i> Bank Deposit
+                                    </h4>
+                                </div>
+                                <p ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">Your card gets billed automatically 15 days after each monthly statement posts.</p>
+                                <p ng-show="organization.effectiveOrgType ==='publisher'">Your balance will be transferred directly to your bank
+                                    account 30 days after each monthly statement posts.</p>
+                                <p>
+                                    <span ng-show="defaultSource">
+                                        <strong ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">Primary Card:</strong>
+                                        <strong ng-show="organization.effectiveOrgType ==='publisher'">Primary Account:</strong>
+                                        <card-brand-logo ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'" brand="defaultSource.brand" size-cls="fa-lg"></card-brand-logo>
+                                        <span ng-show="organization.effectiveOrgType ==='publisher'">{{ defaultSource.bank_name }}</span>
+                                        &nbsp;
+                                        <span ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">************{{ defaultSource.last4 }}, Exp. {{ defaultSource.exp_month }}/{{ defaultSource.exp_year }}</span>
+                                        <span ng-show="organization.effectiveOrgType ==='publisher'">*******{{ defaultSource.last4 }}</span>
+                                        &nbsp;&nbsp;
+                                        <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                            <span class="btn-label">
+                                                <i ng-hide="showStripeForm" class="fa fa-pencil"></i>
+                                                <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
+                                            </span>
+                                            <span ng-hide="showStripeForm">
+                                                Change
+                                                <span ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">Card</span>
+                                                <span ng-show="organization.effectiveOrgType ==='publisher'">Account</span>
+                                            </span>
+                                            <span ng-show="showStripeForm">Hide Form</span>
+                                        </button>
+                                    </span>
+                                    <span ng-show="!defaultSource && organization.billingPreference == 'Stripe'">
+                                        <em ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">No cards saved.</em>
+                                        <em ng-show="organization.effectiveOrgType ==='publisher'">No accounts saved.</em>
+                                        &nbsp;&nbsp;
+                                        <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                            <span class="btn-label">
+                                                <i ng-hide="showStripeForm" class="fa fa-plus"></i>
+                                                <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
+                                            </span>
+                                            <span ng-hide="defaultSource || showStripeForm">
+                                                Add
+                                                <span ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">a Card</span>
+                                                <span ng-show="organization.effectiveOrgType ==='publisher'">an Account</span>
+                                            </span>
+                                            <span ng-show="showStripeForm">Hide Form</span>
+                                        </button>
+                                    </span>
+                                </p>
+                            </li>
+                            <!--BEGIN Stripe Forms-->
+                            <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
+                                <span ng-switch on="organization.effectiveOrgType">
+                                    <span ng-switch-default>
+                                        <stripe-credit-card-form on-save="addTokenToCustomer(status, response, loadingDialog)"></stripe-credit-card-form>
+                                    </span>
+                                    <span ng-switch-when="publisher">
+                                        <stripe-bank-account-form on-save="addTokenToAccount(status, response, loadingDialog, verificationData)"></stripe-bank-account-form>
+                                    </span>
+                                </span>
+                            </li>
+                            <!--BEGIN Check Option-->
+                            <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
+                                <div class="radio c-radio">
+                                    <label>
+                                        <input type="radio" ng-model="organization.billingPreference" value="Check">
+                                        <span class="fa fa-circle"></span>
+                                    </label>
+                                    <h4><i class="fa fa-envelope"></i>  Check</h4>
+                                    <p ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
+                                    <p ng-show="organization.effectiveOrgType ==='publisher'">Receive a check for each billing cycle.  All checks will be mailed <strong>30 days</strong> after your statement posts.</p>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="row p-lg" ng-show="allowSave && !overrideSave">
+                        <div class="col-sm-12 text-center">
+                            <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()">Save</button>
+                            <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>
                         </div>
-                        <p ng-show="orgType ==='advertiser'">Your card gets billed automatically 15 days after each monthly statement posts.</p>
-                        <p ng-show="orgType ==='publisher'">Your balance will be transferred directly to your bank
-                            account 30 days after each monthly statement posts.</p>
-                        <p>
-                            <span ng-show="defaultSource">
-                                <strong ng-show="orgType ==='advertiser'">Primary Card:</strong>
-                                <strong ng-show="orgType ==='publisher'">Primary Account:</strong>
-                                <card-brand-logo ng-show="orgType ==='advertiser'" brand="defaultSource.brand" size-cls="fa-lg"></card-brand-logo>
-                                <span ng-show="orgType ==='publisher'">{{ defaultSource.bank_name }}</span>
-                                &nbsp;
-                                <span ng-show="orgType ==='advertiser'">************{{ defaultSource.last4 }}, Exp. {{ defaultSource.exp_month }}/{{ defaultSource.exp_year }}</span>
-                                <span ng-show="orgType ==='publisher'">*******{{ defaultSource.last4 }}</span>
-                                &nbsp;&nbsp;
-                                <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
-                                    <span class="btn-label">
-                                        <i ng-hide="showStripeForm" class="fa fa-pencil"></i>
-                                        <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
-                                    </span>
-                                    <span ng-hide="showStripeForm">
-                                        Change
-                                        <span ng-show="orgType ==='advertiser'">Card</span>
-                                        <span ng-show="orgType ==='publisher'">Account</span>
-                                    </span>
-                                    <span ng-show="showStripeForm">Hide Form</span>
-                                </button>
-                            </span>
-                            <span ng-show="!defaultSource && organization.billingPreference == 'Stripe'">
-                                <em ng-show="orgType ==='advertiser'">No cards saved.</em>
-                                <em ng-show="orgType ==='publisher'">No accounts saved.</em>
-                                &nbsp;&nbsp;
-                                <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
-                                    <span class="btn-label">
-                                        <i ng-hide="showStripeForm" class="fa fa-plus"></i>
-                                        <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
-                                    </span>
-                                    <span ng-hide="defaultSource || showStripeForm">
-                                        Add
-                                        <span ng-show="orgType ==='advertiser'">a Card</span>
-                                        <span ng-show="orgType ==='publisher'">an Account</span>
-                                    </span>
-                                    <span ng-show="showStripeForm">Hide Form</span>
-                                </button>
-                            </span>
-                        </p>
-                    </li>
-                    <!--BEGIN Stripe Forms-->
-                    <li ng-show="showStripeForm" class="well well-sm m-lg p-lg">
-                        <span ng-switch on="orgType">
-                            <span ng-switch-when="advertiser">
-                                <stripe-credit-card-form on-save="addTokenToCustomer(status, response, loadingDialog)"></stripe-credit-card-form>
-                            </span>
-                            <span ng-switch-when="publisher">
-                                <stripe-bank-account-form on-save="addTokenToAccount(status, response, loadingDialog, verificationData)"></stripe-bank-account-form>
-                            </span>
-                        </span>
-                    </li>
-                    <!--BEGIN Check Option-->
-                    <li ng-class="{'active':organization.billingPreference === 'Check'}" ng-click="organization.billingPreference = 'Check'; showStripeForm = false">
-                        <div class="radio c-radio">
-                            <label>
-                                <input type="radio" ng-model="organization.billingPreference" value="Check">
-                                <span class="fa fa-circle"></span>
-                            </label>
-                            <h4><i class="fa fa-envelope"></i>  Check</h4>
-                            <p ng-show="orgType ==='advertiser'">Mail a check for each billing cycle.  All checks must be received <strong>15 days</strong> after your statement posts in order to maintain service. Late fees apply.</p>
-                            <p ng-show="orgType ==='publisher'">Receive a check for each billing cycle.  All checks will be mailed <strong>30 days</strong> after your statement posts.</p>
+                    </div>
+                    <div class="col-sm-12 text-center">
+                        <div ng-show="loading">
+                            <div class="ball-pulse">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
                         </div>
-                    </li>
-                </ol>
-            </div>
-            <div class="row p-lg" ng-show="allowSave && !overrideSave">
-                <div class="col-sm-12 text-center">
-                    <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()">Save</button>
-                    <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>
-                </div>
-            </div>
-            <div class="col-sm-12 text-center">
-                <div ng-show="loading">
-                    <div class="ball-pulse">
-                        <div></div>
-                        <div></div>
-                        <div></div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </tab>
+            <!--BEGIN Settings Tab-->
+            <tab heading="Delivery Settings">
+                <div class="panel-body p0">
+                    <form name="deliverySettingsForm">
+                        <fieldset>
+                            <div class="checkbox c-checkbox">
+                                <label>
+                                    <input name="sendStatementToOwner" type="checkbox" ng-model="organization.sendStatementToOwner" required="required">
+                                    <span class="fa fa-check"></span>
+                                    Email Invoices to the organization owner, <strong>{{ organization.owner.displayName }}</strong>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="col-sm-12">
+                                <label>Also Email Invoices To:</label>
+                                <div class="text-sm text-muted">Type and press Enter</div>
+                                <email-address-tags-input model="organization.billingEmails"></email-address-tags-input>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </tab>
+        </tabset>
     </div>
 </div>
