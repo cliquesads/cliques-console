@@ -73,7 +73,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                 preCloseCallback: function(value){
                     // clear changes if not saved successfully
                     if (value != 'success'){
-                        $scope.apply(function(){
+                        $scope.$apply(function(){
                             payment.status = initialStatus;
                         });
                     }
