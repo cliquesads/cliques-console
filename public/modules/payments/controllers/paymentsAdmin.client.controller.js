@@ -48,6 +48,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
          * @param payment
          */
         $scope.openStatusDialog = function(payment){
+            var initialStatus = _.clone(payment.status);
             ngDialog.open({
                 template: 'modules/payments/views/partials/status-change-dialog.html',
                 className: 'ngdialog-theme-default dialogwidth650',
@@ -68,7 +69,15 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                             $scope.error = response.data.message;
                         });
                     };
-                }]
+                }],
+                preCloseCallback: function(value){
+                    // clear changes if not saved successfully
+                    if (value != 'success'){
+                        $scope.apply(function(){
+                            payment.status = initialStatus;
+                        });
+                    }
+                }
             });
         };
 
@@ -77,6 +86,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
          * @param payment
          */
         $scope.openAdjustmentsDialog = function(payment){
+            var initialAdjustments = _.clone(payment.adjustments);
             ngDialog.open({
                 template: 'modules/payments/views/partials/adjustments-dialog.html',
                 className: 'ngdialog-theme-default dialogwidth650',
@@ -103,7 +113,15 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                             $scope.error = response.data.message;
                         });
                     };
-                }]
+                }],
+                preCloseCallback: function(value){
+                    // clear changes if not saved successfully
+                    if (value != 'success'){
+                        $scope.$apply(function(){
+                            payment.adjustments = initialAdjustments;
+                        });
+                    }
+                }
             });
         };
     }
