@@ -43,6 +43,7 @@
     "lodash": "^4.7.0",
     "method-override": "~2.3.0",
     "methods": "^1.1.2",
+    "mkdirp": "^0.5.1",
     "moment-range": "^2.2.0",
     "moment-timezone": "^0.4.0",
     "mongoose": "^4.4.20",
