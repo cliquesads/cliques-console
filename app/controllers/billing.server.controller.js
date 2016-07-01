@@ -1,4 +1,5 @@
 var errorHandler = require('./errors.server.controller'),
+    paymentStatuses = require('../models/billing.server.model').PAYMENT_STATUSES,
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
     _ = require('lodash'),
@@ -20,6 +21,15 @@ module.exports = {
          */
         read: function (req, res) {
             res.json(req.payment);
+        },
+
+        /**
+         * Gets constant for all available types of payment statuses
+         * @param req
+         * @param res
+         */
+        getStatuses: function(req, res){
+            res.json(paymentStatuses);
         },
 
         /**

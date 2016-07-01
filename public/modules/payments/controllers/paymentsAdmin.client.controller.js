@@ -35,13 +35,41 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
 
         };
 
+        // fetch status types constant from server for convenience
+        $http.get('/console/payment-statuses/').success(function(response){
+            $scope.statuses = response;
+        }).error(function(response){
+            console.error(response.data.message);
+        });
+
         /**
          * Opens up dialog which allows you to change the status of an invoice without
          * "approving and sending"
          * @param payment
          */
         $scope.openStatusDialog = function(payment){
-
+            ngDialog.open({
+                template: 'modules/payments/views/partials/status-change-dialog.html',
+                className: 'ngdialog-theme-default dialogwidth650',
+                data: {
+                    payment: payment,
+                    statuses: $scope.statuses
+                },
+                controller: ['$scope','$http', function($scope, $http) {
+                    $scope.payment = $scope.ngDialogData.payment;
+                    $scope.statuses = $scope.ngDialogData.statuses;
+                    $scope.submit = function(){
+                        $scope.loading = true;
+                        $scope.payment.$update().then(function(payment){
+                            $scope.loading = false;
+                            $scope.closeThisDialog('success');
+                        }, function(response){
+                            $scope.loading = false;
+                            $scope.error = response.data.message;
+                        });
+                    };
+                }]
+            });
         };
 
         /**
@@ -64,7 +92,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     $scope.remove = function(adjustment){
                         _.remove($scope.payment.adjustments, adjustment);
                     };
-                    
+
                     $scope.submit = function(){
                         $scope.loading = true;
                         $scope.payment.$update().then(function(payment){

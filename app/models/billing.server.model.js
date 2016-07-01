@@ -16,6 +16,7 @@ var mongoose = require('mongoose'),
  */
 var BILLING_METHODS = exports.BILLING_METHODS = ["Stripe", "Check","PayPal"];
 var CONTRACT_TYPES = ["cpm_variable", "cpa_fixed", "cpm_fixed", "cpc_fixed"];
+var PAYMENT_STATUSES = exports.PAYMENT_STATUSES = ["Needs Approval", "Pending", "Paid", "Overdue"];
 
 /**
  * Separate schema to handle fee logic
@@ -142,7 +143,7 @@ var PaymentSchema = new Schema({
     adjustments: [AdjustmentSchema],
     private_notes: { type: String },
     public_notes: { type: String },
-    status: { type: String, enum: ["Needs Approval", "Pending", "Paid", "Overdue"] },
+    status: { type: String, enum: PAYMENT_STATUSES },
 
     // Fee schema to be copied from organization on creation
     fee: FeeSchema,

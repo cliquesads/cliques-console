@@ -1,0 +1,21 @@
+<h4>Change Status {{ payment._id }}</h4>
+<p>By changing the payment's status here, no alerts or invoices will be generated.</p>
+<div ng-show="error" class="col-sm-12 alert alert-danger">{{ error }}</div>
+<form name="adjustmentsForm" id="adjustments" data-ng-submit="submit()" autocomplete="off">
+    <div class="row">
+        <label for="status">Status</label>
+        <select name="status" id="status" required="required" ng-model="payment.status" ng-options="stat as stat for stat in statuses" class="form-control"></select>
+    </div>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary">Save</button>
+        </div>
+        <div ng-show="loading">
+            <div class="ball-pulse">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -8,6 +8,8 @@ var users = require('../controllers/users.server.controller');
 module.exports = function(db, routers) {
 	var router = routers.apiRouter;
 
+	router.route('/payment-statuses').get(billing.payments.getStatuses);
+
 	router.route('/payment')
 		.get(billing.payments.getMany);
 
