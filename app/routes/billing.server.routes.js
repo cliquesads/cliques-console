@@ -23,5 +23,8 @@ module.exports = function(db, routers) {
 	router.route('/payment/:paymentId/generateAndSendInvoice')
 		.post(organizations.organizationHasAuthorization(["networkAdmin"]), billing.payments.generateAndSendInvoice);
 
+	router.route('/payment/:paymentId/viewInvoice')
+		.get(billing.payments.hasAuthorization, billing.payments.viewInvoice);
+
 	router.param('paymentId', billing.payments.paymentByID);
 };

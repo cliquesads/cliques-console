@@ -8,6 +8,7 @@ var errorHandler = require('./errors.server.controller'),
     InsertionOrder = mongoose.model('InsertionOrder'),
     mail = require('./mailer.server.controller'),
     util = require('util'),
+    path = require('path'),
     moment = require('moment-timezone'),
     config = require('config'),
     fs = require('fs'),
@@ -127,6 +128,21 @@ module.exports = {
             })
         },
 
+        viewInvoice: function(req, res){
+            var payment = req.payment;
+            if (payment.invoicePath){
+                res.sendFile(payment.invoicePath, {
+                    root: path.resolve(__dirname, '../..')
+                }, function(err){
+                    if (err) return console.error(err);
+                });
+            } else {
+                res.status(404).send({
+                    message: "An invoice has not been generated for this payment."
+                });
+            }
+        },
+
         /**
          * Generates PDF & HTML invoices and sends to appropriate users.
          * @param req
@@ -213,7 +229,11 @@ module.exports = {
                     function(callback){
                         mkdirp(htmlInvoicePath, function(err){
                             if (err) return callback(err);
-                            fs.writeFile(htmlInvoicePath+ htmlInvoiceName, invoice, callback)
+                            fs.writeFile(htmlInvoicePath+ htmlInvoiceName, invoice, function(err){
+                                // update payment to link to invoiceURL
+                                payment.invoicePath = htmlInvoicePath + htmlInvoiceName;
+                                payment.save(callback);
+                            });
                         });
                     },
                     // write PDF file
@@ -238,7 +258,8 @@ module.exports = {
                         if (err) return res.status(400).send({
                            message: err
                         });
-                        res.status(200).send();
+                        // send updated payment w/ invoice URL
+                        res.status(200).send(results[0][0]);
                     });
                 });
             });

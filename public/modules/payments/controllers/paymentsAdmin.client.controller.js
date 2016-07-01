@@ -15,11 +15,13 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
         $scope.showPreview = function(payment){
             $scope.isPreview = true;
             $scope.previewPayment = payment;
-            if ($scope.previewPayment.status === 'Needs Approval'){
-                $scope.invoicePreviewUrl = '/console/payment/' + payment._id + '/invoicePreview'
-            } else {
-                $scope.invoicePreviewUrl = payment.invoiceUrl;
-            }
+            $scope.invoicePreviewUrl = '/console/payment/' + payment._id + '/invoicePreview';
+        };
+
+        $scope.showStatement = function(payment){
+            $scope.isPreview = false;
+            $scope.previewPayment = payment;
+            $scope.invoicePreviewUrl = '/console/payment/' + payment._id + '/viewInvoice';
         };
 
         $scope.closePreview = function(){
@@ -38,7 +40,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                 template: '<br>\
                         <div class="row">\
                             <div class="ball-grid-pulse"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>\
-                            <h4> Approving & Sending Invoices, please hold...</h4>\
+                            <h4>&nbsp; Approving & Sending Invoices, please hold...</h4>\
                         </div>',
                 plain: true
             });
@@ -54,10 +56,12 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     plain: true
                 });
             };
-            payment.$update().then(function(payment){
+            payment.$update().then(function(updated){
                 var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
                 return $http.post(postUrl).success(function(response){
                     pendingDialog.close(0);
+                    // set invoicePath on resource
+                    payment.invoicePath = response.invoicePath;
                     ngDialog.open({
                         className: 'ngdialog-theme-default dialogwidth600',
                         template: '<br>\

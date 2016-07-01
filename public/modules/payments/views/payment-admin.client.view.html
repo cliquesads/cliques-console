@@ -41,6 +41,9 @@
                             <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
                                 <i class="fa fa-lg fa-eye"></i>
                             </button>
+                            <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement">
+                                <i class="fa fa-lg fa-file-pdf-o"></i>
+                            </button>
                             <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
                                 <i class="fa fa-lg fa-pencil"></i>
                             </button>
@@ -69,7 +72,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="panel-title">
-                {{ isPreview ? 'PREVIEW: ': ''}} {{ previewPayment.start_date | date : "MMMM yyyy" : "UTC" }} Statement for {{ previewPayment.organization.name }}
+                <strong>{{ isPreview ? 'PREVIEW: ': ''}}</strong> {{ previewPayment.start_date | date : "MMMM yyyy" : "UTC" }} Statement for {{ previewPayment.organization.name }}
                 <span class="pull-right">
                     <button type="button" ng-show="previewPayment.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(previewPayment)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
                         <i class="fa fa-lg fa-pencil"></i>

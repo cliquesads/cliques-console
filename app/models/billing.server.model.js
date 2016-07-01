@@ -149,7 +149,7 @@ var PaymentSchema = new Schema({
     fee: FeeSchema,
     // Lineitems to represent items being charged on invoice
     lineItems: [LineItemSchema],
-    invoiceUrl: { type: String }
+    invoicePath: { type: String }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
