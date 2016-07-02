@@ -11,8 +11,8 @@ var init = require('../config/init')(),
     util = require('util'),
     mongoose = require('mongoose'),
     async = require('async'),
-    chalk = require('chalk'),
-    users = require('../app/models/user.server.model.js');
+    chalk = require('chalk');
+    // users = require('../app/models/user.server.model.js');
 
 // Build the connection string
 var exchangeMongoURI = util.format('mongodb://%s:%s/%s',
