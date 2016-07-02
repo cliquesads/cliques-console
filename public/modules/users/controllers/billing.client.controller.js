@@ -2,8 +2,43 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
     'Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.user = Authentication.user;
+
+        /**
+         * Load stripe Customer object associated w/ Organization, if applicable
+         */
+        var getStripeCustomerOrAccount = function(){
+            // temporary organization copy to use to call stripe API endpoints so $scope.organization isn't overwritten
+            var org = new Organizations($scope.organization);
+            // get Customer for advertisers AND networkAdmins
+            if ($scope.organization.effectiveOrgType === 'advertiser' || $scope.organization.effectiveOrgType === 'networkAdmin'){
+                if ($scope.organization.stripeCustomerId){
+                    org.$getStripeCustomer().then(function(customer){
+                        $scope.defaultSource = customer.sources.data.filter(function(source){
+                            return source.id === customer.default_source
+                        })[0];
+                    }, function(response){
+                        console.error(response.data.message);
+                    });
+                }
+                // get Account for publishers
+            } else if ($scope.organization.effectiveOrgType === 'publisher'){
+                if ($scope.organization.stripeAccountId){
+                    org.$getStripeAccount().then(function(account){
+                        // TODO: HACK: Just take first account from external_accounts list
+                        // TODO: assumes first account is always default, which assumes server will
+                        // TODO: always respect this rule of thumb. Right now it does.
+                        $scope.defaultSource = account.external_accounts.data[0];
+                    }, function(response){
+                        console.error(response.data.message);
+                    });
+                }
+            }
+        };
+
         var organization = $scope.organization = Organizations.get({
             organizationId: Authentication.user.organization._id
+        }, function(response){
+            getStripeCustomerOrAccount();
         });
 
         // get all payments to populate billing history
@@ -23,41 +58,6 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 plain: true
             });
         };
-
-        /**
-         * Load stripe Customer object associated w/ Organization, if applicable
-         */
-        var getStripeCustomerOrAccount = function(){
-            // temporary organization copy to use to call stripe API endpoints so $scope.organization isn't overwritten
-            var org = new Organizations($scope.organization);
-            // get Customer for advertisers AND networkAdmins
-            if ($scope.organization.effectiveOrgType === 'advertiser' || $scope.organization.effectiveOrgType === 'networkAdmin'){
-                if ($scope.organization.stripeCustomerId){
-                    org.$getStripeCustomer().then(function(customer){
-                        $scope.defaultSource = customer.sources.data.filter(function(source){
-                            return source.id === customer.default_source
-                        })[0];
-                    }, function(response){
-                        console.error(response.data.message);
-                    });
-                }
-            // get Account for publishers
-            } else if ($scope.organization.effectiveOrgType === 'publisher'){
-                if ($scope.organization.stripeAccountId){
-                    org.$getStripeAccount().then(function(account){
-                        // TODO: HACK: Just take first account from external_accounts list
-                        // TODO: assumes first account is always default, which assumes server will
-                        // TODO: always respect this rule of thumb. Right now it does.
-                        $scope.defaultSource = account.external_accounts.data[0];
-                    }, function(response){
-                        console.error(response.data.message);
-                    });
-                }
-            }
-        };
-        // get stripe customer on load
-        getStripeCustomerOrAccount();
-
 
         /**
          * Controls for master Save & Cancel buttons
