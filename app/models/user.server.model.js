@@ -112,6 +112,9 @@ var UserSchema = new Schema({
 	avatarUrl: {
 		type: String
 	}
+},{
+	toObject: { virtuals: true },
+	toJSON: { virtuals: true }
 });
 
 /**
@@ -127,6 +130,13 @@ var UserSchema = new Schema({
 // 	}
 // 	next();
 // });
+
+// Virtual field to retrieve secure URL
+UserSchema.virtual('secureAvatarUrl').get(function(){
+	if (this.avatarUrl){
+		return this.avatarUrl.replace('http://', 'https://');
+	}
+});
 
 /**
  * Hook to EXPLICITLY call pre-save when handling user creation or password updates
