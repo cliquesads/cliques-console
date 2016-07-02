@@ -45,7 +45,7 @@ var aggregationModels = new models.AggregationModels(db);
 var advertiserModels = new models.AdvertiserModels(db);
 var publisherModels = new models.PublisherModels(db);
 var billing = require('../app/models/billing.server.model');
-var user = require('../app/models/user.server.model');
+var Organization = mongoose.model('Organization');
 
 // Get start & dates for which to run billing process: LAST MONTH, UTC.
 var START_DATE = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month').toDate();
@@ -234,7 +234,7 @@ var populateOrganizations = function(results) {
                 orgs.push(row._id[model].organization);
             }
         });
-        user.Organization.find({ _id: { $in: orgs}}, function(err, organizations){
+        Organization.find({ _id: { $in: orgs}}, function(err, organizations){
             if (err) return callback(err);
             organizations.forEach(function(org) {
                 var row = _.find(results, function(r){
