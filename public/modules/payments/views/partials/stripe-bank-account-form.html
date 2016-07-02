@@ -1,0 +1,78 @@
+<div class="row">
+    <span style="display: inline-block; vertical-align: 6px" class="text-muted text-md">
+        Powered by
+    </span>
+    <i class="fa fa-2x fa-cc-stripe"></i>
+</div>
+<form name="stripeBankAccountForm" ng-submit="submit()">
+    <div class="row pt">
+        <div class="col-sm-6">
+            <label for="name">Account Holder Name</label>
+            <a href="#" tooltip="This should be the name of the business or individual that owns the account.">
+                <em class="fa fa-question-circle"></em>
+            </a>
+            <input type="text" id="name" name="name" required="required" class="form-control" ng-model="account.account_holder_name"
+                   placeholder="Ernest Shackelton">
+        </div>
+        <div class="col-sm-6">
+            <label for="routing-number">Your Date of Birth</label>
+            <a href="#" tooltip="This is required for security purposes. It is used by Stripe to verify that the account you're providing is not fraudulent. We DO NOT store this on our servers.">
+                <em class="fa fa-question-circle"></em>
+            </a>
+            <input id="dob" name="dob" required="required" type="text" masked="" data-inputmask="'mask': '99/99/9999'" placeholder="01/01/1990"
+                   ng-pattern="/^(?:(0[1-9]|1[012])[/.](0[1-9]|[12][0-9]|3[01])[/.](19|20)[0-9]{2})$/" class="form-control" ng-model="dob">
+            <span ng-show="validateInput('dob', 'pattern')" class="text-danger">Must be a valid date.</span>
+        </div>
+    </div>
+    <div class="row pt">
+        <div class="col-sm-6">
+            <label for="account-holder-type">Account Holder Type</label>
+            <select name="account-holder-type" id="account-holder-type" required="required" ng-model="account.account_holder_type" class="form-control">
+                <option value="company">Company</option>
+                <option value="individual">Individual</option>
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label for="country">Country of Account</label>
+            <select name="country" id="country" class="form-control" required="required" ng-model="account.country" pvp-country-picker></select>
+        </div>
+    </div>
+    <div class="row pt">
+        <div class="col-sm-6 pr-lg">
+            <label for="account-number">Account Number</label>
+            <input type="text" id="account-number" name="account-number" ng-model="account.account_number"
+                   required="required" class="form-control" placeholder="123456789123" country="{{ account.country }}" accountnumber>
+            <span ng-show="validateInput('account-number', 'accountnumber')" class="text-danger">This bank account number is invalid.</span>
+        </div>
+        <div class="col-sm-6">
+            <label for="routing-number">Routing Number</label>
+            <input type="text" class="form-control" name="routing-number" id="routing-number" placeholder="111000025"
+                   ng-model="account.routing_number" country="{{ account.country }}" routingnumber/>
+            <span ng-show="validateInput('routing-number', 'routingnumber')" class="text-danger">This routing number is invalid.</span>
+        </div>
+    </div>
+    <div class="row pt text-center">
+        <div class="checkbox c-checkbox">
+            <label>
+                <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click"
+                       analytics-event="AuthorizeBankAccount" required="required">
+                <span class="fa fa-check"></span>
+                I authorize Cliques Labs Inc. to deposit my Net Advertising Sales Revenue (as defined in your
+                <a href="#!/terms-and-conditions">Terms & Conditions</a>) to this account, and I agree to the
+                <a href="https://stripe.com/us/connect/account-terms">Stripe Connected Account Agreement</a>.
+            </label>
+        </div>
+    </div>
+    <div class="row p-lg">
+        <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-primary btn-large">Save</button>
+        </div>
+    </div>
+</form>
+<div class="panel-footer text-center">
+    <small class="text-muted">
+        <i class="fa fa-lock"></i> Your bank account information will be <strong>securely</strong> transmitted to
+        <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your bank account information
+        on its own servers.
+    </small>
+</div>

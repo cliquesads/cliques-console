@@ -1,0 +1,42 @@
+<h4>Add Adjustments to Payment {{ payment._id }}</h4>
+<div ng-show="error" class="col-sm-12 alert alert-danger">{{ error }}</div>
+<form name="adjustmentsForm" id="adjustments" data-ng-submit="submit()" autocomplete="off">
+    <div class="row ml0 mr0">
+        <div class="col-sm-7"><strong>Description</strong></div>
+        <div class="col-sm-3"><strong>Amount</strong></div>
+        <div class="col-sm-1"><strong></strong></div>
+    </div>
+    <div class="row ml0 mr0 pt" ng-repeat="adjustment in payment.adjustments">
+        <div class="col-sm-7">
+            <input type="text" id="description" required="required" name="description" class="form-control" data-ng-model="adjustment.description" placeholder="Bad Impression Make-Good">
+        </div>
+        <div class="col-sm-3">
+            <div class="input-group">
+                <span class="input-group-addon align-top">$</span>
+                <input type="number" id="amount" required="required" name="amount" class="form-control" data-ng-model="adjustment.amount" placeholder="123.45">
+            </div>
+        </div>
+        <div class="col-sm-1">
+            <button type="button" ng-click="remove(adjustment)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button>
+        </div>
+    </div>
+    <div class="row ml0 mr0 pt-lg">
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-labeled btn-default btn-xs pull-left" ng-click="payment.adjustments.push({})">
+                <span class="btn-label"><i class="fa fa-plus"></i></span>Add Another Adjustment
+            </button>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary">Save</button>
+        </div>
+        <div ng-show="loading">
+            <div class="ball-pulse">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</form>

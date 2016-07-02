@@ -94,6 +94,9 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
 					templateUrl: 'modules/users/views/settings/partials/billing.client.view.html',
 					controller: 'BillingController'
 				}
+			},
+			data: {
+				adminOnly: true
 			}
 		}).
 		state('app.settings.password', {

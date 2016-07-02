@@ -1,0 +1,96 @@
+<div ng-class="previewPayment ? 'col-sm-4': 'col-sm-offset-1 col-sm-10'">
+    <div class="box-placeholder text-center pv-lg" data-ng-if="payments.$resolved && !payments.length">
+        <p class="text-md"><strong>No payments are available yet.</strong></p>
+        <p>Payments are generated 1st of each month, and reflect the previous
+            calendar month's billable impressions & terms.</p>
+    </div>
+    <div class="panel panel-default" ng-repeat="group in payments | groupBy: 'start_date' | toArray:true | orderBy:'-$key'">
+        <div class="panel-body table-responsive">
+            <div class="text-center">
+                <h4 class="mt0">{{ group.$key | date : "MMMM yyyy" : "UTC" }}</h4>
+            </div>
+            <hr class="mt0 mb-sm"/>
+            <div ng-repeat="(orgType, payments) in group | groupBy: 'organization.effectiveOrgType'">
+                <p class="text-md"><strong>{{ orgType | uppercase }}</strong></p>
+                <table class="table table-striped" >
+                    <thead>
+                        <th ng-hide="invoicePreviewUrl">#</th>
+                        <th>Status</th>
+                        <th>Organization</th>
+                        <th>Amount</th>
+                        <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="p in payments">
+                        <td ng-hide="invoicePreviewUrl">{{ p._id }}</td>
+                        <td>
+                            <div class="label" ng-class="{'label-warning': p.status == 'Needs Approval',
+                            'label-primary': p.status === 'Pending',
+                            'label-danger': p.status == 'Overdue',
+                            'label-success': p.status == 'Paid' }">
+                                {{ p.status }}
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>">
+                                {{ p.organization.name }}
+                            </a>
+                        </td>
+                        <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
+                        <td ng-hide="invoicePreviewUrl">
+                            <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
+                                <i class="fa fa-lg fa-eye"></i>
+                            </button>
+                            <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement">
+                                <i class="fa fa-lg fa-file-pdf-o"></i>
+                            </button>
+                            <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
+                                <i class="fa fa-lg fa-pencil"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs"  ng-click="openStatusDialog(p)"  tooltip="Change Status">
+                                <i class="fa fa-lg fa-exchange"></i>
+                            </button>
+                            <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send">
+                                <i class="fa fa-lg fa-check-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-hide="invoicePreviewUrl"></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td><strong>{{ getTotalAmounts(payments) | currency: "$" : 2 }}</strong></td>
+                        <td ng-hide="invoicePreviewUrl"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-show="previewPayment" class="col-sm-8">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <strong>{{ isPreview ? 'PREVIEW: ': ''}}</strong> {{ previewPayment.start_date | date : "MMMM yyyy" : "UTC" }} Statement for {{ previewPayment.organization.name }}
+                <span class="pull-right">
+                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(previewPayment)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
+                        <i class="fa fa-lg fa-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-default btn-xs" ng-click="openStatusDialog(previewPayment)" tooltip="Change Status">
+                        <i class="fa fa-lg fa-exchange"></i>
+                    </button>
+                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'"  ng-click="approveAndSend(previewPayment)" class="btn btn-success btn-xs" tooltip="Approve & Send">
+                        <i class="fa fa-lg fa-check-square"></i>
+                    </button>
+                    <button type="button" ng-click="closePreview()" class="btn btn-danger btn-xs" tooltip="Close Preview">
+                        <i class="fa fa-lg fa-times"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="panel-body text-center">
+            <iframe class="invoice" frameborder="0" src="{{ invoicePreviewUrl }}"></iframe>
+        </div>
+    </div>
+</div>
