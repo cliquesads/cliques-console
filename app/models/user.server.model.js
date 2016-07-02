@@ -192,7 +192,7 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	});
 };
 
-exports.User = mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
 
 /**
  * Small schema to store some important metadata about
