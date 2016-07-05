@@ -92,20 +92,33 @@ module.exports = {
 
         /**
          * Update payment model
+         *
+         * ALSO updates Organization.accountBalance as well, depending on whether status of invoice has changed.
+         *
          * @param req
          * @param res
          */
         update: function(req, res) {
             var payment = req.payment;
+            var organization = payment.organization;
+            var initialStatus = _.clone(payment.status);
             payment = _.extend(payment, req.body);
             payment.tstamp = Date.now();
-            payment.save(function (err, payment) {
+            payment.save(function (err, p) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    res.status(200).json(payment).send();
+                    // Now update organization account balance
+                    payment.updateOrgAccountBalance(initialStatus, organization, function(err, updatedOrg){
+                        if (err){
+                            return res.status(400).send({
+                                message: errorHandler.getAndLogErrorMessage(err)
+                            });
+                        }
+                        res.status(200).json(p).send();
+                    });
                 }
             });
         },

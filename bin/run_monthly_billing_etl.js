@@ -463,12 +463,7 @@ var createPayments = function(orgGroupedResults){
                 payment.save(function (err, payment) {
                     if (err) return callback(err);
                     // finally, update account balance with totalAmount from this payment
-                    // if (organization.accountBalance){
-                    //     organization.accountBalance += payment.totalAmount;
-                    // } else {
-                    //     organization.accountBalance = payment.totalAmount;
-                    // }
-                    organization.save(function(err, org){
+                    payment.updateOrgAccountBalance(null, organization, function(err, org){
                         if (err) return callback(err);
                         return callback();
                     });

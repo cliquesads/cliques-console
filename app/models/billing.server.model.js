@@ -237,6 +237,43 @@ PaymentSchema.statics.lineItem_generateDescription = function(lineItem, relevant
     return lineItem;
 };
 
+
+/**
+ * Centralize logic tying status updating to organization.accountBalance updating.
+ *
+ * Right now, just adds to account balance if status is "Needs Approval", subtracts if status
+ * is "Paid".
+ *
+ * Wraps organization.save, so callback gets (err, org)
+ */
+PaymentSchema.methods.updateOrgAccountBalance = function(fromStatus, organization, callback){
+    if (fromStatus === this.status){
+        return callback(null, null)
+    }
+    var updated = false;
+    switch (this.status){
+        case 'Needs Approval':
+            if (organization.accountBalance){
+                organization.accountBalance += this.totalAmount;
+            } else {
+                organization.accountBalance = this.totalAmount;
+            }
+            updated = true;
+            break;
+        case 'Paid':
+            organization.accountBalance -= this.totalAmount;
+            updated = true;
+            break;
+    }
+
+    // If balance has been updated, need to save organization, otherwise just callback
+    if (updated){
+        return organization.save(callback);
+    } else {
+        return callback(null, organization);
+    }
+};
+
 /**
  * Calculates advertiser fees / publisher rev-share based on cpm_variable lineitems
  *
