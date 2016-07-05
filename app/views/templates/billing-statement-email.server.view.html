@@ -1,6 +1,15 @@
 {% extends 'base-external-email.server.view.html' %}
 
 {% block content %}
+
+<!--Get sign based on type of payment being made.  Negative if publisher because publisher payments are recorded as negative in Payments collection.-->
+<!--TODO: This is actually redundant right now, as the "currency" filter being applied just takes abs value of input value, but keeping this for clarity-->
+{% if payment.paymentType == 'publisher' %}
+    {% set sign = -1 %}
+{% else %}
+    {% set sign = 1 %}
+{% endif %}
+
 <span class="h4" style="text-align: center">{{ user.displayName }} Your Monthly Billing Statement is Ready </span>
 <p style="text-align: center;">
     Thank you for your business!  Please find your monthly billing statement attached.  Additionally, we have

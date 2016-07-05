@@ -29,55 +29,71 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
             $scope.invoicePreviewUrl = null;
         };
 
-        /**
-         * Calls approve & send endpoint
-         * @param payment
-         */
+
         $scope.approveAndSend = function(payment){
-            payment.status = "Pending";
-            var pendingDialog = ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth600',
-                template: '<br>\
+            var dialog = ngDialog.openConfirm({
+                template: '\
+                        <br>\
+                        <p>Email invoice to Organization as well?</p>\
+                        <p class="text-center">\
+                            <button class="btn btn-lg btn-success" ng-click="confirm(true)">Yes</button>\
+                            <button class="btn btn-lg btn-primary" ng-click="confirm(false)">No, just generate the invoice.</button>\
+                            <button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+                        </p>',
+                plain: true
+            });
+            // Wrap $update promise in dialog promise, which has to be resolved
+            // first by clicking "Confirm"
+            dialog.then(function(sendToOrg){
+                payment.status = "Pending";
+                var pendingDialog = ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '<br>\
                         <div class="row">\
                             <div class="ball-grid-pulse"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>\
                             <h4>&nbsp; Approving & Sending Invoices, please hold...</h4>\
                         </div>',
-                plain: true
-            });
+                    plain: true
+                });
 
-            var openErrorDialog = function(error){
-                ngDialog.open({
-                    className: 'ngdialog-theme-default dialogwidth600',
-                    template: '<br>\
+                var openErrorDialog = function(error){
+                    ngDialog.open({
+                        className: 'ngdialog-theme-default dialogwidth600',
+                        template: '<br>\
                          <div class="alert alert-danger text-md">\
                             <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong>An error occurred.</strong></p>\
                             <p>' + error.data.message + '</p>\
                         </div>',
-                    plain: true
-                });
-            };
-            payment.$update().then(function(updated){
-                var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
-                return $http.post(postUrl).success(function(response){
-                    pendingDialog.close(0);
-                    // set invoicePath on resource
-                    payment.invoicePath = response.invoicePath;
-                    ngDialog.open({
-                        className: 'ngdialog-theme-default dialogwidth600',
-                        template: '<br>\
-                     <div class="alert alert-success text-md">\
-                        <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
-                        <p> Status has been updated & invoices were generated and sent. </p>\
-                    </div>',
                         plain: true
                     });
-                }).error(function(response){
+                };
+                payment.$update().then(function(updated){
+                    var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
+                    // add query param email=true if sendToOrg is true
+                    if (sendToOrg){
+                        postUrl += '?email=true'
+                    }
+                    return $http.post(postUrl).success(function(response){
+                        pendingDialog.close(0);
+                        // set invoicePath on resource
+                        payment.invoicePath = response.invoicePath;
+                        ngDialog.open({
+                            className: 'ngdialog-theme-default dialogwidth600',
+                            template: '<br>\
+                                 <div class="alert alert-success text-md">\
+                                    <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong> Success!</strong></p>\
+                                    <p> Status has been updated & invoices were generated and sent. </p>\
+                                </div>',
+                            plain: true
+                        });
+                    }).error(function(response){
+                        pendingDialog.close(1);
+                        openErrorDialog(response)
+                    });
+                }, function(err){
                     pendingDialog.close(1);
-                    openErrorDialog(response)
+                    openErrorDialog(err);
                 });
-            }, function(err){
-                pendingDialog.close(1);
-                openErrorDialog(err);
             });
         };
 

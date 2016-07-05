@@ -163,6 +163,8 @@ module.exports = {
          */
         generateAndSendInvoice: function(req, res){
             var payment = req.payment;
+            // whether or not to send email
+            var email = req.query.email;
 
             // helper functions
             var _getInvoicePath = function(extension){
@@ -267,13 +269,17 @@ module.exports = {
                     if (err) return res.status(400).send({
                         message: err
                     });
-                    _sendStatementEmails(function(err, successes){
-                        if (err) return res.status(400).send({
-                           message: err
+                    if (email){
+                        _sendStatementEmails(function(err, successes){
+                            if (err) return res.status(400).send({
+                                message: err
+                            });
+                            // send updated payment w/ invoice URL
+                            res.status(200).send(results[0][0]);
                         });
-                        // send updated payment w/ invoice URL
+                    } else {
                         res.status(200).send(results[0][0]);
-                    });
+                    }
                 });
             });
         },
