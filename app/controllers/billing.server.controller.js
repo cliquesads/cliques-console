@@ -261,13 +261,16 @@ module.exports = {
                         });
                     }
                 ], function(err, results){
-                    if (err) return res.status(400).send({
-                        message: err
-                    });
+                    if (err) {
+                        console.error(err);
+                        return res.status(400).send({
+                            message: err.toString()
+                        });
+                    }
                     if (email){
                         _sendStatementEmails(function(err, successes){
                             if (err) return res.status(400).send({
-                                message: err
+                                message: err.toString()
                             });
                             // send updated payment w/ invoice URL
                             res.status(200).send(results[0][0]);
