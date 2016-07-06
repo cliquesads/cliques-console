@@ -176,7 +176,8 @@ PaymentSchema.methods.addToOrganization = function(callback){
         // add payment to organization.payments
         if (!_.isNil(org.payments) && org.payments.length >= 0) {
             // make sure payment hasn't already been added
-            if (org.payments.indexOf(self._id) === -1){
+            var existingPayment = _.find(org.payments, function(p){ return p._id === self._id }); 
+            if (!existingPayment){
                 org.payments.push(self._id);
             }
         } else {
