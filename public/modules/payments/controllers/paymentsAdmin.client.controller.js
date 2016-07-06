@@ -86,6 +86,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                                 </div>',
                             plain: true
                         });
+                        $scope.closePreview();
                     }).error(function(response){
                         pendingDialog.close(1);
                         openErrorDialog(response)

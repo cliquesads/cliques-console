@@ -304,17 +304,18 @@ organizationSchema.virtual('accountBalance')
 		//TODO: self.populated doesn't work properly when document has been populated via nested population
 		// if (self.populated('payments')){
 		// only get payments that aren't paid
-		var filtered =  self.payments.filter(function(p){
-			return p.status === 'Pending' || p.status === 'Overdue';
-		});
-		total += _.sumBy(filtered, 'totalAmount');
+		if (self.payments){
+			var filtered =  self.payments.filter(function(p){
+				return p.status === 'Pending' || p.status === 'Overdue';
+			});
+			total += _.sumBy(filtered, 'totalAmount');
+		}
 
 		// add promos as well
 		if (self.promos){
 			total += _.sumBy(self.promos, 'promoAmount');
 		}
 		return total;
-
 	})
 	// setter to allow for temporary manipulation of balance for display purposes
 	.set(function(tmpBalance){

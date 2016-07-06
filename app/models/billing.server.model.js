@@ -112,6 +112,8 @@ var LineItemSchema = exports.LineItemSchema = new Schema({
     // method will handle
     amount: { type: Number, required: true },
 
+    units: { type: Number, required: true, default: 0 },
+
     // Fields below are specific to "Ad-Spend" and "Revenue" types
     // TODO: seems redundant to have contractType here and on IO, but might be useful for
     // TODO: record keeping purposes
@@ -225,9 +227,11 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
             case "cpm_variable":
                 lineItem.amount = sign * lineItem.spend;
                 if (lineItem.imps){
+                    lineItem.units = lineItem.imps;
                     lineItem.rate = lineItem.spend / lineItem.imps * 1000;
                 } else {
                     lineItem.rate = 0;
+                    lineItem.units = 0;
                 }
                 break;
             case "cpa_fixed":
@@ -236,17 +240,20 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
                         + (insertionOrder.CPAV * lineItem.view_convs));
                     // just take average of two, it doesn't really matter
                     lineItem.rate = (insertionOrder.CPAC + insertionOrder.CPAV)/ 2;
+                    lineItem.units = (insertionOrder.CPAC + insertionOrder.CPAV);
                 }
                 break;
             case "cpc_fixed":
                 if (insertionOrder){
                     lineItem.amount = sign * insertionOrder.CPC * lineItem.clicks;
+                    lineItem.units = lineItem.clicks;
                     lineItem.rate = insertionOrder.CPC;
                 }
                 break;
             case "cpm_fixed":
                 if (insertionOrder){
                     lineItem.amount = sign * insertionOrder.CPM * lineItem.imps / 1000;
+                    lineItem.units = lineItem.imps;
                     lineItem.rate = insertionOrder.CPM;
                 }
                 break;
@@ -398,6 +405,15 @@ PaymentSchema.virtual('totalAmount').get(function(){
         totalAmount += _.sumBy(this.adjustments, "amount");
     }
     return totalAmount;
+});
+
+/**
+ * Just sums `units` field for all lineitems
+ *
+ * @returns {*}
+ */
+PaymentSchema.virtual('totalUnits').get(function(){
+    return _.sumBy(this.lineItems, "units");
 });
 
 /**
