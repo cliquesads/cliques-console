@@ -177,6 +177,11 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             $scope.organization.phone = $('#phone').intlTelInput('getNumber');
             $scope.organization.organization_types = [$scope.organization.type];
 
+            if (!$scope.organizationInvite) {
+                $scope.organization.accesscode = $scope.authentication.accesscode._id;
+                $scope.organization.promos = $scope.promos[$scope.organization.type];
+            }
+
             // if we're creating a new organization, make this user the primary contact
             $scope.credentials.isOwner = true;
 
