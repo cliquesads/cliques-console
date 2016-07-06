@@ -18,6 +18,9 @@ fi
 sudo apt-get update
 sudo apt-get install gcc make build-essential
 
+# this is a system dependency for Phantom.js
+sudo apt-get install libfontconfig1
+
 # make sure cliques-config repo is cloned & pull any new commits
 if [ ! -d $HOME"/repositories/cliques-config" ]; then
     git clone git@github.com:cliquesads/cliques-config.git ../cliques-config
