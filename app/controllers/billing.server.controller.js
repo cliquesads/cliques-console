@@ -100,8 +100,6 @@ module.exports = {
          */
         update: function(req, res) {
             var payment = req.payment;
-            var organization = payment.organization;
-            var initialStatus = _.clone(payment.status);
             payment = _.extend(payment, req.body);
             payment.tstamp = Date.now();
             payment.save(function (err, p) {
@@ -110,15 +108,7 @@ module.exports = {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    // Now update organization account balance
-                    payment.updateOrgAccountBalance(initialStatus, organization, function(err, updatedOrg){
-                        if (err){
-                            return res.status(400).send({
-                                message: errorHandler.getAndLogErrorMessage(err)
-                            });
-                        }
-                        res.status(200).json(p).send();
-                    });
+                    res.status(200).json(p).send();
                 }
             });
         },
