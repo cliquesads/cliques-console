@@ -286,24 +286,30 @@ var organizationSchema = new Schema({
 /**
  * accountBalance virtual property sums all outstanding invoices and promos
  *
- * TODO: Don't like the fact that I'm creating a virtual that requires another
- * TODO: Mongo query, but making it anything but a virtual would require too
- * TODO: much refactoring for now.
+ * NOTE: Requires `payments` field to be populated on self.
  *
  * !!!!!! NOTE ON SIGNS: !!!!!!
  * Due to how signs on Payments (see docstring for Payments Model) are handled:
  * - A POSITIVE balance means that money is OWED to Cliques
  * - A NEGATIVE balance means that the ORGANIZATION is OWED money from Cliques.
  */
-// organizationSchema.virtual('accountBalance').get(function(){
-// 	Payment
-// 		.find({
-// 			organization: this._id,
-// 			status: { $ne: 'Paid'}})
-// 		.exec(function(err, payments){
-//
-// 		});
-// });
+organizationSchema.virtual('accountBalance').get(function(){
+	var self = this;
+	var total = 0;
+	if (self.populated('payments')){
+		// only get payments that aren't paid
+		var filtered =  self.payments.filter(function(p){
+			return p.status != 'Paid';
+		});
+		total += _.sumBy(filtered, 'totalAmount');
+
+		// add promos as well
+		if (self.promos){
+			total += _.sumBy(self.promos, 'promoAmount');
+		}
+		return total;
+	}
+});
 
 /**
  * Just a shim.  Have organiztion_types as an array currently, but need

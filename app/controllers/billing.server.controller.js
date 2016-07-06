@@ -63,7 +63,7 @@ module.exports = {
             }
             Payment.find(req.query).populate({
                 path: 'organization',
-                populate: { path: 'owner'}
+                populate: { path: 'owner payments'}
             }).exec(function (err, payments) {
                 if (err) {
                     return res.status(400).send({
@@ -81,7 +81,7 @@ module.exports = {
         paymentByID: function (req, res, next, id) {
             Payment.findById(id).populate({
                 path: 'organization',
-                populate: { path: 'owner termsAndConditions'}
+                populate: { path: 'owner termsAndConditions payments'}
             }).exec(function (err, payment){
                 if (err) return next(err);
                 if (!payment) return next(new Error('Failed to load payment ' + id));
