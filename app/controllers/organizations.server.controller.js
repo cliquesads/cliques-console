@@ -67,7 +67,7 @@ module.exports = {
      * Organization middleware
      */
     organizationByID: function (req, res, next, id) {
-        Organization.findById(id).populate('users').populate('owner').exec(function (err, organization){
+        Organization.findById(id).populate('users owner payments').exec(function (err, organization){
             if (err) return next(err);
             if (!organization) return next(new Error('Failed to load organization ' + id));
             req.organization = organization;

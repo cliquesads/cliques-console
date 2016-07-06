@@ -17,6 +17,7 @@
                         <th ng-hide="invoicePreviewUrl">#</th>
                         <th>Status</th>
                         <th>Organization</th>
+                        <th ng-hide="invoicePreviewUrl">Units</th>
                         <th>Amount</th>
                         <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
                     </thead>
@@ -36,6 +37,7 @@
                                 {{ p.organization.name }}
                             </a>
                         </td>
+                        <td ng-hide="invoicePreviewUrl">{{ p.totalUnits | number:"0" }}</td>
                         <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
                         <td ng-hide="invoicePreviewUrl">
                             <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
@@ -58,7 +60,8 @@
                     <tr>
                         <td ng-hide="invoicePreviewUrl"></td>
                         <td></td>
-                        <td><strong>Total</strong></td>
+                        <td></td>
+                        <td ng-hide="invoicePreviewUrl"><strong>Total</strong></td>
                         <td><strong>{{ getTotalAmounts(payments) | currency: "$" : 2 }}</strong></td>
                         <td ng-hide="invoicePreviewUrl"></td>
                     </tr>

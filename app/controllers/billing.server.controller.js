@@ -63,7 +63,7 @@ module.exports = {
             }
             Payment.find(req.query).populate({
                 path: 'organization',
-                populate: { path: 'owner'}
+                populate: { path: 'owner payments'}
             }).exec(function (err, payments) {
                 if (err) {
                     return res.status(400).send({
@@ -81,7 +81,7 @@ module.exports = {
         paymentByID: function (req, res, next, id) {
             Payment.findById(id).populate({
                 path: 'organization',
-                populate: { path: 'owner termsAndConditions'}
+                populate: { path: 'owner termsAndConditions payments'}
             }).exec(function (err, payment){
                 if (err) return next(err);
                 if (!payment) return next(new Error('Failed to load payment ' + id));
@@ -100,8 +100,6 @@ module.exports = {
          */
         update: function(req, res) {
             var payment = req.payment;
-            var organization = payment.organization;
-            var initialStatus = _.clone(payment.status);
             payment = _.extend(payment, req.body);
             payment.tstamp = Date.now();
             payment.save(function (err, p) {
@@ -110,15 +108,7 @@ module.exports = {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    // Now update organization account balance
-                    payment.updateOrgAccountBalance(initialStatus, organization, function(err, updatedOrg){
-                        if (err){
-                            return res.status(400).send({
-                                message: errorHandler.getAndLogErrorMessage(err)
-                            });
-                        }
-                        res.status(200).json(p).send();
-                    });
+                    res.status(200).json(p).send();
                 }
             });
         },
@@ -131,6 +121,11 @@ module.exports = {
          */
         getInvoicePreview: function(req, res){
             var payment = req.payment;
+            // add payment amount to accountBalance if status == "Needs Approval" so
+            // outstanding balance renders properly in preview mode.
+            if (payment.status === 'Needs Approval'){
+                payment.organization.accountBalance += payment.totalAmount;
+            }
             payment.renderHtmlInvoice(function(err, invoice){
                 if (err){
                     return res.status(400).send({
