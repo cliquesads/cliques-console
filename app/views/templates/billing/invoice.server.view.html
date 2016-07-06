@@ -279,8 +279,7 @@
         </tr>
 
         <tr class="heading">
-            <td>Payment Method</td>
-            <td></td>
+            <td colspan="2">Payment Method</td>
             <td></td>
             <td></td>
             <td></td>
@@ -300,21 +299,18 @@
                     <span style="vertical-align: sub">&nbsp;{{ payment.organization.billingPreference }}</span>
                 </td>
                 {% if stripeSource.object == "card" %}
-                    <td></td>
-                    <td>
+                    <td colspan="4">
                         <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/{{ cardLogos[stripeSource.brand] }}" height="40px" width="40px">
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.brand }}</span>
+                        &nbsp;&nbsp;
+                        xxxx-xxxx-xxxx-{{ stripeSource.last4 }}
                     </td>
-                    <td>xxxx-xxxx-xxxx-{{ stripeSource.last4 }}</td>
-                    <td></td>
                 {% elseif stripeSource.object == "bank_account" %}
-                    <td></td>
-                    <td>
+                    <td colspan="4">
                         <img style="vertical-align: middle" src="https://storage.googleapis.com/cliquesads-billing/invoice-images/bank-2.svg" height="40px" width="40px">
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.bank_name }}</span>
+                        &nbsp;&nbsp; xxxxxxxxxxx{{ stripeSource.last4 }}
                     </td>
-                    <td>xxxxxxxxxxx{{ stripeSource.last4 }}</td>
-                    <td></td>
                 {% endif %}
             </tr>
             <tr class="instructions">
