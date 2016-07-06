@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto'),
+	_ = require('lodash'),
 	billing = require('./billing.server.model');
 
 /**
@@ -298,7 +299,7 @@ organizationSchema.virtual('accountBalance').get(function(){
 	if (self.populated('payments')){
 		// only get payments that aren't paid
 		var filtered =  self.payments.filter(function(p){
-			return p.status != 'Paid';
+			return p.status === 'Pending' || p.status === 'Overdue';
 		});
 		total += _.sumBy(filtered, 'totalAmount');
 
