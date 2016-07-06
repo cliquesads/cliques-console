@@ -6,8 +6,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto'),
-	billing = require('./billing.server.model'),
-	Payment = mongoose.model('Payment');
+	billing = require('./billing.server.model');
 
 /**
  * A Validation function for local strategy properties
@@ -259,7 +258,7 @@ var organizationSchema = new Schema({
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
 	promos: [billing.PromoSchema],
-	payments: [{ type: Number, ref: 'Payment '}],
+	payments: [{ type: Number, ref: 'Payment'}],
 	// TODO: Add validation to ensure only one active fee structure per org type
     fees: [billing.FeeSchema],
 	organization_types: {
