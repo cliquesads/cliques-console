@@ -32,7 +32,7 @@
             text-align:right;
         }
 
-        .invoice-box table tr td:nth-child(4){
+        .invoice-box table tr td:nth-child(5){
             text-align:right;
         }
 
@@ -74,12 +74,12 @@
             border-bottom:none;
         }
 
-        .invoice-box table tr.subtotal td:nth-child(3){
+        .invoice-box table tr.subtotal td:nth-child(4){
             border-top:2px solid #eee;
             padding-bottom: 20px;
         }
 
-        .invoice-box table tr.subtotal td:nth-child(4){
+        .invoice-box table tr.subtotal td:nth-child(5){
             border-top:2px solid #eee;
             padding-bottom: 20px;
         }
@@ -88,12 +88,12 @@
             padding-bottom: 10px;
         }
 
-        .invoice-box table tr.total td:nth-child(3){
+        .invoice-box table tr.total td:nth-child(4){
             border-top:3px solid #eee;
             font-weight:bold;
         }
 
-        .invoice-box table tr.total td:nth-child(4){
+        .invoice-box table tr.total td:nth-child(5){
             border-top:3px solid #eee;
             font-weight:bold;
         }
@@ -148,7 +148,7 @@
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
         <tr class="top metadata">
-            <td colspan="4">
+            <td colspan="5">
                 <table>
                     <tr>
                         <td class="title">
@@ -165,7 +165,7 @@
         </tr>
 
         <tr class="information metadata">
-            <td colspan="4">
+            <td colspan="5">
                 <table>
                     <tr>
                         <td>
@@ -193,6 +193,7 @@
             <td>Type</td>
             <td>Description</td>
             <td>Rate</td>
+            <td>Units</td>
             <td>Amount</td>
         </tr>
 
@@ -208,10 +209,11 @@
             <td></td>
             <td>Beginning Account Balance</td>
             <td></td>
+            <td></td>
             <td>{{ (payment.organization.accountBalance - payment.totalAmount) | round(2) | currency('$')}}</td>
         </tr>
         <tr class="subdivider">
-            <td colspan="4">
+            <td colspan="5">
                 <em>Billing Period of {{ payment.start_date|date('F jS\, Y')}} - {{ payment.end_date|date('F jS\, Y') }}</em>
             </td>
         </tr>
@@ -231,6 +233,13 @@
                 {% endif %}
             </td>
             <td>
+                {% if li.units %}
+                    {{ li.units | number(0) }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
                 {{ (sign * li.amount) |round(2)|currency('$') }}
             </td>
         </tr>
@@ -244,12 +253,14 @@
                 {{ adj.description }}
             </td>
             <td></td>
+            <td></td>
             <td>
                 {{ (sign * adj.amount) |round(2)|currency('$') }}
             </td>
         </tr>
         {% endfor %}
         <tr class="subtotal">
+            <td></td>
             <td></td>
             <td></td>
             <td>Subtotal</td>
@@ -260,6 +271,7 @@
         <tr class="total">
             <td></td>
             <td></td>
+            <td></td>
             <td>Total</td>
             <td>
                 {{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}
@@ -268,6 +280,7 @@
 
         <tr class="heading">
             <td>Payment Method</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -293,6 +306,7 @@
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.brand }}</span>
                     </td>
                     <td>xxxx-xxxx-xxxx-{{ stripeSource.last4 }}</td>
+                    <td></td>
                 {% elseif stripeSource.object == "bank_account" %}
                     <td></td>
                     <td>
@@ -300,10 +314,11 @@
                         <span style="vertical-align: sub">&nbsp;{{ stripeSource.bank_name }}</span>
                     </td>
                     <td>xxxxxxxxxxx{{ stripeSource.last4 }}</td>
+                    <td></td>
                 {% endif %}
             </tr>
             <tr class="instructions">
-                <td colspan="4">
+                <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
                         <div>
                             <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
@@ -326,14 +341,16 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
             <tr class="instructions">
-                <td colspan="4">
+                <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
                     <div>
                         <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
                         no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
                     </div>
+                    <hr>
                     <div><em>
                         If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
                         of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
@@ -356,10 +373,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
         {% endif %}
         <tr class="disputes">
-            <td colspan="4">
+            <td colspan="5">
                 To dispute any of charges listed above, please <a href="mailto:billing@cliquesads.com?Subject=Invoice%20No%20{{ payment._id }}">contact us</a> no later than {{ payment.dueDate|date('F jS\, Y')  }}.
             </td>
         </tr>

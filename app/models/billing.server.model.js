@@ -86,7 +86,7 @@ InsertionOrderSchema.pre('save', function(next){
 
 InsertionOrderSchema.plugin(mongooseApiQuery, {});
 
-var InsertionOrder = exports.InsertionOrder = mongoose.model('InsertionOrder', InsertionOrderSchema);
+var InsertionOrder = mongoose.model('InsertionOrder', InsertionOrderSchema);
 
 // Flexible adjustments scheme for now, but could make more robust
 // NOTE: Need to consider signing when adding adjustment--all publisher
@@ -112,6 +112,8 @@ var LineItemSchema = exports.LineItemSchema = new Schema({
     // method will handle
     amount: { type: Number, required: true },
 
+    units: { type: Number, required: true, default: 0 },
+
     // Fields below are specific to "Ad-Spend" and "Revenue" types
     // TODO: seems redundant to have contractType here and on IO, but might be useful for
     // TODO: record keeping purposes
@@ -131,6 +133,10 @@ var LineItemSchema = exports.LineItemSchema = new Schema({
  * Schema to persist all incoming & outgoing payment data, w/ ref to organization.
  *
  * One document = one payment in or out.
+ *
+ * !!!!!! NOTE ON SIGNS !!!!!!!:
+ * - RECEIVABLE payments (i.e. advertiser payments) are recorded with a POSITIVE sign.
+ * - PAYABLE payments (i.e. publisher payments) are recorded as NEGATIVE.
  */
 var PaymentSchema = new Schema({
     tstamp: { type: Date, default: Date.now },
@@ -155,6 +161,55 @@ var PaymentSchema = new Schema({
     toJSON: { virtuals: true }
 });
 
+
+/**
+ * Handler to add payment to corresponding Organization.payments
+ *
+ * Hooked into post-init signal, but made an instance method for convenience
+ *
+ * @param callback
+ */
+PaymentSchema.methods.addToOrganization = function(callback){
+    var self = this;
+
+    var _doTheActualThing = function(err, payment){
+        if (err) return callback(err);
+        var org = payment.organization;
+        // add payment to organization.payments
+        if (!_.isNil(org.payments) && org.payments.length >= 0) {
+            // make sure payment hasn't already been added
+            var existingPayment = _.find(org.payments, function(p){ return p._id === self._id }); 
+            if (!existingPayment){
+                org.payments.push(self._id);
+            }
+        } else {
+            org.payments = [self._id];
+        }
+        org.save(callback);
+    };
+
+    // check if org is populated first to save a trip to the DB
+    if (self.populated('organization')){
+        _doTheActualThing(null, self);
+    } else {
+        self.populate('organization', function(err, payment){
+            _doTheActualThing(err, payment);
+        });
+    }
+};
+
+/**
+ * Post-init hook saves reciprocal Organization ref to Payment as well
+ *
+ * wrapper for PaymentSchema.addToOrganization
+ */
+// PaymentSchema.post('init', function(doc){
+//     doc.addToOrganization(function(err, payment){
+//         // TODO: not entirely sure what behavior should be here
+//         if (err) return console.error(err);
+//     });
+// });
+
 /**
  * Handles contract type logic to calculate media spend amount of invoice, sets `this.amount`
  *
@@ -171,7 +226,13 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
             // standard variable CPM exchange buy
             case "cpm_variable":
                 lineItem.amount = sign * lineItem.spend;
-                lineItem.rate = lineItem.spend / lineItem.imps * 1000;
+                if (lineItem.imps){
+                    lineItem.units = lineItem.imps;
+                    lineItem.rate = lineItem.spend / lineItem.imps * 1000;
+                } else {
+                    lineItem.rate = 0;
+                    lineItem.units = 0;
+                }
                 break;
             case "cpa_fixed":
                 if (insertionOrder){
@@ -179,17 +240,20 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
                         + (insertionOrder.CPAV * lineItem.view_convs));
                     // just take average of two, it doesn't really matter
                     lineItem.rate = (insertionOrder.CPAC + insertionOrder.CPAV)/ 2;
+                    lineItem.units = (insertionOrder.CPAC + insertionOrder.CPAV);
                 }
                 break;
             case "cpc_fixed":
                 if (insertionOrder){
                     lineItem.amount = sign * insertionOrder.CPC * lineItem.clicks;
+                    lineItem.units = lineItem.clicks;
                     lineItem.rate = insertionOrder.CPC;
                 }
                 break;
             case "cpm_fixed":
                 if (insertionOrder){
                     lineItem.amount = sign * insertionOrder.CPM * lineItem.imps / 1000;
+                    lineItem.units = lineItem.imps;
                     lineItem.rate = insertionOrder.CPM;
                 }
                 break;
@@ -237,42 +301,7 @@ PaymentSchema.statics.lineItem_generateDescription = function(lineItem, relevant
     return lineItem;
 };
 
-
 /**
- * Centralize logic tying status updating to organization.accountBalance updating.
- *
- * Right now, just adds to account balance if status is "Needs Approval", subtracts if status
- * is "Paid".
- *
- * Wraps organization.save, so callback gets (err, org)
- */
-PaymentSchema.methods.updateOrgAccountBalance = function(fromStatus, organization, callback){
-    if (fromStatus === this.status){
-        return callback(null, null)
-    }
-    var updated = false;
-    switch (this.status){
-        case 'Needs Approval':
-            if (organization.accountBalance){
-                organization.accountBalance += this.totalAmount;
-            } else {
-                organization.accountBalance = this.totalAmount;
-            }
-            updated = true;
-            break;
-        case 'Paid':
-            organization.accountBalance -= this.totalAmount;
-            updated = true;
-            break;
-    }
-
-    // If balance has been updated, need to save organization, otherwise just callback
-    if (updated){
-        return organization.save(callback);
-    } else {
-        return callback(null, organization);
-    }
-};
 
 /**
  * Calculates advertiser fees / publisher rev-share based on cpm_variable lineitems
@@ -283,41 +312,43 @@ PaymentSchema.methods.updateOrgAccountBalance = function(fromStatus, organizatio
  */
 PaymentSchema.methods.calculateFeeOrRevShareLineItem = function(){
     var self = this;
-    var isAdvertiser = (this.paymentType === 'advertiser');
-    var total = 0;
-    self.lineItems.forEach(function(lineItem){
-        if (lineItem.lineItemType === 'AdSpend' || lineItem.lineItemType === 'Revenue'){
-            if (lineItem.contractType === 'cpm_variable'){
-                total += lineItem.amount;
+    if (self.fee){
+        var isAdvertiser = (this.paymentType === 'advertiser');
+        var total = 0;
+        self.lineItems.forEach(function(lineItem){
+            if (lineItem.lineItemType === 'AdSpend' || lineItem.lineItemType === 'Revenue'){
+                if (lineItem.contractType === 'cpm_variable'){
+                    total += lineItem.amount;
+                }
             }
-        }
-    });
-    // Only keep going if cpm_variable AdSpend or Revenue has been accrued
-    // reason for this is that I can't think of a scenario now in which
-    // we'd have an insertion order, but then charge a fee on adjustments.
-    if (total){
-        self.adjustments.forEach(function(adjustment){
-            total += adjustment.amount;
         });
-    }
-    // Now add a "fee" or "rev-share" lineitem to payment
-    // TODO: ignore "fixed_fee" in fee schema for now, don't have a use for it yet
-    var feeLineItem = {
-        amount: total * self.fee.percentage,
-        rate: self.fee.percentage
-    };
-    if (isAdvertiser){
-        feeLineItem.lineItemType = "Fee";
-    } else {
-        feeLineItem.lineItemType = "RevShare";
-    }
-    // delegate description to static method
-    feeLineItem = Payment.lineItem_generateDescription(feeLineItem);
+        // Only keep going if cpm_variable AdSpend or Revenue has been accrued
+        // reason for this is that I can't think of a scenario now in which
+        // we'd have an insertion order, but then charge a fee on adjustments.
+        if (total){
+            self.adjustments.forEach(function(adjustment){
+                total += adjustment.amount;
+            });
+        }
+        // Now add a "fee" or "rev-share" lineitem to payment
+        // TODO: ignore "fixed_fee" in fee schema for now, don't have a use for it yet
+        var feeLineItem = {
+            amount: total * self.fee.percentage,
+            rate: self.fee.percentage
+        };
+        if (isAdvertiser){
+            feeLineItem.lineItemType = "Fee";
+        } else {
+            feeLineItem.lineItemType = "RevShare";
+        }
+        // delegate description to static method
+        feeLineItem = Payment.lineItem_generateDescription(feeLineItem);
 
-    // debatable whether this is necessary, should probably be up to the caller to
-    // figure out what to do with the lineitem.
-    self.lineItems.push(feeLineItem);
-    return feeLineItem;
+        // debatable whether this is necessary, should probably be up to the caller to
+        // figure out what to do with the lineitem.
+        self.lineItems.push(feeLineItem);
+        return feeLineItem;
+    }
 };
 
 /**
@@ -377,6 +408,15 @@ PaymentSchema.virtual('totalAmount').get(function(){
 });
 
 /**
+ * Just sums `units` field for all lineitems
+ *
+ * @returns {*}
+ */
+PaymentSchema.virtual('totalUnits').get(function(){
+    return _.sumBy(this.lineItems, "units");
+});
+
+/**
  * Centralize logic for days payable/receivable for different types of payments
  */
 PaymentSchema.virtual('dueDate').get(function(){
@@ -396,4 +436,4 @@ PaymentSchema.plugin(mongooseApiQuery, {});
 // as invoice/statement numbers
 PaymentSchema.plugin(autoIncrement.plugin, 'Payment');
 
-var Payment = exports.Payment = mongoose.model('Payment', PaymentSchema);
+var Payment = mongoose.model('Payment', PaymentSchema);

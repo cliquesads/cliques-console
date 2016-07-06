@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto'),
+	_ = require('lodash'),
 	billing = require('./billing.server.model');
 
 /**
@@ -257,6 +258,8 @@ var organizationSchema = new Schema({
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
+	promos: [billing.PromoSchema],
+	payments: [{ type: Number, ref: 'Payment'}],
 	// TODO: Add validation to ensure only one active fee structure per org type
     fees: [billing.FeeSchema],
 	organization_types: {
@@ -272,12 +275,53 @@ var organizationSchema = new Schema({
 	billingEmails: [{ type: String}],
 	sendStatementToOwner: { type: Boolean, required: true, default: true },
 	stripeCustomerId: { type: String }, // for Advertisers
-	stripeAccountId: { type: String }, // for Publishers
-	accountBalance: { type: Number, required: true, default: 0 }
+	stripeAccountId: { type: String } // for Publishers
+	// accountBalance: { type: Number, required: true, default: 0 }
 },{
 	toObject: { virtuals: true },
 	toJSON: { virtuals: true }
 });
+
+
+/**
+ * accountBalance virtual property sums all outstanding invoices and promos
+ *
+ * NOTE: Requires `payments` field to be populated on self.
+ *
+ * !!!!!! NOTE ON SIGNS: !!!!!!
+ * Due to how signs on Payments (see docstring for Payments Model) are handled:
+ * - A POSITIVE balance means that money is OWED to Cliques
+ * - A NEGATIVE balance means that the ORGANIZATION is OWED money from Cliques.
+ */
+organizationSchema.virtual('accountBalance')
+	.get(function(){
+		var self = this;
+		// check if value has been set temporarily, just return it if so
+		if (self._tmpBalance) return self._tmpBalance;
+
+		// Otherwise, go through the summation
+		var total = 0;
+		//TODO: self.populated doesn't work properly when document has been populated via nested population
+		// if (self.populated('payments')){
+		// only get payments that aren't paid
+		if (self.payments){
+			var filtered =  self.payments.filter(function(p){
+				return p.status === 'Pending' || p.status === 'Overdue';
+			});
+			total += _.sumBy(filtered, 'totalAmount');
+		}
+
+		// add promos as well
+		if (self.promos){
+			total += _.sumBy(self.promos, 'promoAmount');
+		}
+		return total;
+	})
+	// setter to allow for temporary manipulation of balance for display purposes
+	.set(function(tmpBalance){
+		this._tmpBalance = tmpBalance;
+	});
+
 
 
 /**
@@ -287,8 +331,7 @@ var organizationSchema = new Schema({
 organizationSchema.virtual('effectiveOrgType').get(function(){
 	return this.organization_types[0];
 });
-
-exports.Organization = mongoose.model('Organization', organizationSchema);
+var Organization = mongoose.model('Organization', organizationSchema);
 
 
 /**
