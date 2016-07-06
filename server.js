@@ -19,6 +19,7 @@ var init = require('./config/init')(),
 var swig = require('swig');
 // add swig filters
 require('swig-filters')(swig);
+require('./config/swig')(swig);
 
 
 /**
