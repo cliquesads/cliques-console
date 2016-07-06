@@ -6,7 +6,8 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto'),
-	billing = require('./billing.server.model');
+	billing = require('./billing.server.model'),
+	Payment = mongoose.model('Payment');
 
 /**
  * A Validation function for local strategy properties
@@ -257,6 +258,8 @@ var organizationSchema = new Schema({
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },
 	accessTokens: [accessTokenSchema],
+	promos: [billing.PromoSchema],
+	payments: [{ type: Number, ref: 'Payment '}],
 	// TODO: Add validation to ensure only one active fee structure per org type
     fees: [billing.FeeSchema],
 	organization_types: {
@@ -272,13 +275,35 @@ var organizationSchema = new Schema({
 	billingEmails: [{ type: String}],
 	sendStatementToOwner: { type: Boolean, required: true, default: true },
 	stripeCustomerId: { type: String }, // for Advertisers
-	stripeAccountId: { type: String }, // for Publishers
-	accountBalance: { type: Number, required: true, default: 0 }
+	stripeAccountId: { type: String } // for Publishers
+	// accountBalance: { type: Number, required: true, default: 0 }
 },{
 	toObject: { virtuals: true },
 	toJSON: { virtuals: true }
 });
 
+
+/**
+ * accountBalance virtual property sums all outstanding invoices and promos
+ *
+ * TODO: Don't like the fact that I'm creating a virtual that requires another
+ * TODO: Mongo query, but making it anything but a virtual would require too
+ * TODO: much refactoring for now.
+ *
+ * !!!!!! NOTE ON SIGNS: !!!!!!
+ * Due to how signs on Payments (see docstring for Payments Model) are handled:
+ * - A POSITIVE balance means that money is OWED to Cliques
+ * - A NEGATIVE balance means that the ORGANIZATION is OWED money from Cliques.
+ */
+// organizationSchema.virtual('accountBalance').get(function(){
+// 	Payment
+// 		.find({
+// 			organization: this._id,
+// 			status: { $ne: 'Paid'}})
+// 		.exec(function(err, payments){
+//
+// 		});
+// });
 
 /**
  * Just a shim.  Have organiztion_types as an array currently, but need
@@ -287,8 +312,7 @@ var organizationSchema = new Schema({
 organizationSchema.virtual('effectiveOrgType').get(function(){
 	return this.organization_types[0];
 });
-
-exports.Organization = mongoose.model('Organization', organizationSchema);
+var Organization = mongoose.model('Organization', organizationSchema);
 
 
 /**

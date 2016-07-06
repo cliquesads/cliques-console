@@ -44,8 +44,11 @@ var mailer = new mail.Mailer();
 var aggregationModels = new models.AggregationModels(db);
 var advertiserModels = new models.AdvertiserModels(db);
 var publisherModels = new models.PublisherModels(db);
+var user = require('../app/models/user.server.model');
 var billing = require('../app/models/billing.server.model');
 var Organization = mongoose.model('Organization');
+var Payment = mongoose.model('Payment');
+var InsertionOrder = mongoose.model('InsertionOrder');
 
 // Get start & dates for which to run billing process: LAST MONTH, UTC.
 var START_DATE = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month').toDate();
@@ -288,7 +291,7 @@ var groupByOrgAndInsertionOrder = function(orgPopulatedQueryResults){
     // sub-promise to get InsertionOrders
     var getInsertionOrders = new Promise(function(resolve, reject) {
         // find insertion orders with dates in this time period
-        billing.InsertionOrder.find({
+        InsertionOrder.find({
             end_date: {$gte: START_DATE},
             start_date: {$lte: END_DATE}
         }).exec(function (err, allInsertionOrders) {
@@ -414,7 +417,7 @@ var createPayments = function(orgGroupedResults){
             if (org) {
                 var organization = results[0].organization;
                 // ######## CREATE NEW PAYMENT ###########
-                var payment = new billing.Payment({
+                var payment = new Payment({
                     start_date: START_DATE,
                     end_date: END_DATE,
                     organization: organization._id,
@@ -425,16 +428,18 @@ var createPayments = function(orgGroupedResults){
                 });
 
                 // ######### BEGIN FEE LOGIC #############
-                var fees = organization.fees.filter(function (fee) {
-                    return fee.type === model;
-                });
-                // TODO: Need to add validation to Organization to prevent multiple
-                // TODO: fees of same type
-                if (fees.length > 1) {
-                    return callback("ERROR: Multiple fees of type: " + model + " found for" +
-                        " organization " + organization.name);
-                } else {
-                    payment.fee = fees[0];
+                if (organization.fees){
+                    var fees = organization.fees.filter(function (fee) {
+                        return fee.type === model;
+                    });
+                    // TODO: Need to add validation to Organization to prevent multiple
+                    // TODO: fees of same type
+                    if (fees.length > 1) {
+                        return callback("ERROR: Multiple fees of type: " + model + " found for" +
+                            " organization " + organization.name);
+                    } else {
+                        payment.fee = fees[0];
+                    }
                 }
 
                 // ########## BEGIN LINEITEM CALCS ##########
@@ -451,19 +456,19 @@ var createPayments = function(orgGroupedResults){
                         contractType: row.insertionOrder ? row.insertionOrder.contractType : "cpm_variable"
                     };
                     // calculate lineitem amount & rate
-                    lineItem = billing.Payment.lineItem_getSpendRelatedAmountAndRate(lineItem, row.insertionOrder);
-                    lineItem = billing.Payment.lineItem_generateDescription(lineItem, row._id[model]);
+                    lineItem = Payment.lineItem_getSpendRelatedAmountAndRate(lineItem, row.insertionOrder);
+                    lineItem = Payment.lineItem_generateDescription(lineItem, row._id[model]);
                     payment.lineItems.push(lineItem);
                 });
 
                 // ########## CREATE FEE LINEITEMS ########### //
                 payment.calculateFeeOrRevShareLineItem();
 
-                // ########## SAVE NEW PAYMENT & UPDATE ACCOUNT BALANCE ###### //
-                payment.save(function (err, payment) {
+                // ########## SAVE NEW PAYMENT & ADD TO ORGANIZATION ###### //
+                payment.save(function (err, p) {
                     if (err) return callback(err);
-                    // finally, update account balance with totalAmount from this payment
-                    payment.updateOrgAccountBalance(null, organization, function(err, org){
+                    // even though there's a post-init hook
+                    p.addToOrganization(function(err){
                         if (err) return callback(err);
                         return callback();
                     });
@@ -512,15 +517,15 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
     getAggregatesData
         .then(
             function (results) { return populateOrganizations(results); },
-            function (err) { console.error(err); }
+            function (err) { console.error(chalk.red(err.stack)); }
         )
         .then(
             function(populated){ return groupByOrgAndInsertionOrder(populated); },
-            function(err){ console.error(err); }
+            function(err){ console.error(chalk.red(err.stack)); }
         )
         .then(
             function(orgGroupedResults){ return createPayments(orgGroupedResults); },
-            function(err){ console.error(err);}
+            function(err){ console.error(chalk.red(err.stack));}
         )
         .then(
             function(){
@@ -541,7 +546,8 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
                 }
             },
             function(err){
-                console.error(chalk.red(err)); process.exit(1);
+                console.error(chalk.red(err.stack));
+                process.exit(1);
             }
         )
 });
