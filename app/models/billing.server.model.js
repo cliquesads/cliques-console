@@ -201,12 +201,12 @@ PaymentSchema.methods.addToOrganization = function(callback){
  *
  * wrapper for PaymentSchema.addToOrganization
  */
-PaymentSchema.post('init', function(doc){
-    doc.addToOrganization(function(err, payment){
-        // TODO: not entirely sure what behavior should be here
-        if (err) return console.error(err);
-    });
-});
+// PaymentSchema.post('init', function(doc){
+//     doc.addToOrganization(function(err, payment){
+//         // TODO: not entirely sure what behavior should be here
+//         if (err) return console.error(err);
+//     });
+// });
 
 /**
  * Handles contract type logic to calculate media spend amount of invoice, sets `this.amount`
