@@ -9,7 +9,10 @@ var mongoose = require('mongoose'),
     mongooseApiQuery = require('mongoose-api-query'),
     Schema = mongoose.Schema,
     swig = require('swig'),
+    config = require('config'),
     moment = require('moment-timezone');
+
+var stripe = require('stripe')(config.get("Stripe.secret_key"));
 
 /**
  * Constants
@@ -369,7 +372,7 @@ PaymentSchema.methods.renderHtmlInvoice = function(callback){
     var self = this;
     var template = swig.compileFile('app/views/templates/billing/invoice.server.view.html');
     if (!_.isNil(this.organization.stripeCustomerId)){
-        stripe.customer.retrieve(self.organization.stripeCustomerId)
+        stripe.customers.retrieve(self.organization.stripeCustomerId)
             .then(function(customer){
                 // populate template with default payment source object
                 var defaultSourceId = customer.default_source;
@@ -385,7 +388,7 @@ PaymentSchema.methods.renderHtmlInvoice = function(callback){
         stripe.accounts.retrieve(self.organization.stripeAccountId)
             .then(function(account){
                 //TODO: assume first source is default, which it is currently being treated as
-                var source = account.external_sources.data[0];
+                var source = account.external_accounts.data[0];
                 return callback(null, template({
                     payment: self,
                     stripeSource: source
