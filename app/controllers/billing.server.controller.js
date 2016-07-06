@@ -121,6 +121,11 @@ module.exports = {
          */
         getInvoicePreview: function(req, res){
             var payment = req.payment;
+            // add payment amount to accountBalance if status == "Needs Approval" so
+            // outstanding balance renders properly in preview mode.
+            if (payment.status === 'Needs Approval'){
+                payment.organization.accountBalance += payment.totalAmount;
+            }
             payment.renderHtmlInvoice(function(err, invoice){
                 if (err){
                     return res.status(400).send({

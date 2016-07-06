@@ -293,10 +293,16 @@ var organizationSchema = new Schema({
  * - A POSITIVE balance means that money is OWED to Cliques
  * - A NEGATIVE balance means that the ORGANIZATION is OWED money from Cliques.
  */
-organizationSchema.virtual('accountBalance').get(function(){
-	var self = this;
-	var total = 0;
-	if (self.populated('payments')){
+organizationSchema.virtual('accountBalance')
+	.get(function(){
+		var self = this;
+		// check if value has been set temporarily, just return it if so
+		if (self._tmpBalance) return self._tmpBalance;
+
+		// Otherwise, go through the summation
+		var total = 0;
+		//TODO: self.populated doesn't work properly when document has been populated via nested population
+		// if (self.populated('payments')){
 		// only get payments that aren't paid
 		var filtered =  self.payments.filter(function(p){
 			return p.status === 'Pending' || p.status === 'Overdue';
@@ -308,8 +314,14 @@ organizationSchema.virtual('accountBalance').get(function(){
 			total += _.sumBy(self.promos, 'promoAmount');
 		}
 		return total;
-	}
-});
+
+	})
+	// setter to allow for temporary manipulation of balance for display purposes
+	.set(function(tmpBalance){
+		this._tmpBalance = tmpBalance;
+	});
+
+
 
 /**
  * Just a shim.  Have organiztion_types as an array currently, but need

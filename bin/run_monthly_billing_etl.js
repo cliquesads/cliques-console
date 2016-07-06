@@ -50,10 +50,11 @@ var Organization = mongoose.model('Organization');
 var Payment = mongoose.model('Payment');
 var InsertionOrder = mongoose.model('InsertionOrder');
 
+var monthsAgo = 1;
 // Get start & dates for which to run billing process: LAST MONTH, UTC.
-var START_DATE = moment().tz('UTC').subtract(1, 'month').startOf('day').startOf('month').toDate();
+var START_DATE = moment().tz('UTC').subtract(monthsAgo, 'month').startOf('day').startOf('month').toDate();
 // get end of day at end of month, since query will include end date
-var END_DATE = moment().tz('UTC').subtract(1, 'month').endOf('day').endOf('month').toDate();
+var END_DATE = moment().tz('UTC').subtract(monthsAgo, 'month').endOf('day').endOf('month').toDate();
 
 // ######################################################## //
 // ############## BEGIN Helper Functions ################## //
