@@ -25,12 +25,7 @@
                     <tr ng-repeat="p in payments">
                         <td ng-hide="invoicePreviewUrl">{{ p._id }}</td>
                         <td>
-                            <div class="label" ng-class="{'label-warning': p.status == 'Needs Approval',
-                            'label-primary': p.status === 'Pending',
-                            'label-danger': p.status == 'Overdue',
-                            'label-success': p.status == 'Paid' }">
-                                {{ p.status }}
-                            </div>
+                            <payment-status-label ng-model="p" admin="true"></payment-status-label>
                         </td>
                         <td>
                             <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>">
