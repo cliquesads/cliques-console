@@ -2,6 +2,10 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
     'Authentication','Notify','Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.payments = Payment.query();
+        $scope.organization = Organizations.get({
+            organizationId: Authentication.user.organization._id
+        });
+
 
         // holds payment being previewed / edited when it's selected
         $scope.previewPayment = null;

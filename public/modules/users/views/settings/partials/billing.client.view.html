@@ -32,9 +32,7 @@
                         <td>{{ p.start_date | date: "shortDate" : "UTC"}} to {{ p.end_date | date: "shortDate" : "UTC"}}</td>
                         <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
                         <td>
-                            <div class="label" ng-class="{'label-warning': p.status == 'Pending', 'label-danger': p.status == 'Overdue', 'label-success': p.status == 'Paid' }">
-                                {{ p.status }}
-                            </div>
+                            <payment-status-label ng-model="p" admin="{{ organization.effectiveOrgType === 'networkAdmin' }}"></payment-status-label>
                         </td>
                     </tr>
                     </tbody>

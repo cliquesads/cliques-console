@@ -243,7 +243,7 @@ PaymentSchema.statics.lineItem_getSpendRelatedAmountAndRate = function(lineItem,
                         + (insertionOrder.CPAV * lineItem.view_convs));
                     // just take average of two, it doesn't really matter
                     lineItem.rate = (insertionOrder.CPAC + insertionOrder.CPAV)/ 2;
-                    lineItem.units = (insertionOrder.CPAC + insertionOrder.CPAV);
+                    lineItem.units = (lineItem.click_convs + lineItem.view_convs);
                 }
                 break;
             case "cpc_fixed":
