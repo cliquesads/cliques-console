@@ -317,13 +317,17 @@
                 <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
                         <div>
-                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                            to either your card or bank account listed above. If you agree with the charges as they are stated, <b>no further action is required</b>.
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically
+                            charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to either your card or bank account listed above. If you agree with the charges as they are
+                            stated, <b>no further action is required</b>.
                         </div>
                     {% elseif payment.paymentType == "publisher" %}
                         <div>
-                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically deposit your total balance of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                            to the bank account listed above.  If you agree with the accrued amounts as they are stated, <b>no further action is required</b>.
+                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically
+                            deposit your total balance of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            to the bank account listed above.  If you agree with the accrued amounts as they are stated,
+                            <b>no further action is required</b>.
                         </div>
                     {% endif %}
                 </td>
@@ -343,22 +347,43 @@
                 <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
                     <div>
-                        <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                        no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                        <p>
+                            <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs
+                            Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                        </p>
+                        <p>
+                            <em>Alternatively</em>, if you would like to <b>pay using a credit or debit card</b> please
+                            log on to your <a href="https://console.cliquesads.com/#!/settings/billing">billing center</a>
+                            to enter your card information. You must enter your card information no later than
+                            <b>{{ payment.dueDate|date('F jS\, Y')  }}</b> to have this statement charged to your card.
+                        </p>
                     </div>
                     <hr>
-                    <div><em>
+                    <div>
+                        <em><small>
                         If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
                         of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
                         by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
                         following the payment due date, Cliques shall have the right to suspend Client’s access to the
                         Cliques Platform without notice to Client; such access not to be reinstated until Client pays
                         all such overdue amounts.
-                    </em></div>
+                        </small>
+                        </em>
+                    </div>
                     {% elseif payment.paymentType == "publisher" %}
                     <div>
-                        <b>Instructions:</b> A check from Cliques Labs Inc. for the amount of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                        will be mailed your address as listed above no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                        <p>
+                            <b>Instructions:</b> A check from Cliques Labs Inc. for the amount of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                            will be mailed your address as listed above no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                        </p>
+                        <p>
+                            <em>Alternatively</em>, if you would like have your payment <b>deposited directly into your
+                            bank account</b>, please log on to your <a href="https://console.cliquesads.com/#!/settings/billing">
+                            billing center</a> to enter your bank information. You must enter your bank information no later than
+                            <b>{{ payment.dueDate|date('F jS\, Y')  }}</b> to have this statement's balance deposited to
+                            your account.
+                        </p>
                     </div>
                     {% endif %}
                 </td>
@@ -379,7 +404,7 @@
         </tr>
     </table>
     <p class="footer">
-        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">account settings page.</a><br>
+        To manage your billing preferences, please visit your <a href="https://console.cliquesads.com/#!/settings/billing">billing center.</a><br>
         <a href="{{ payment.organization.termsAndConditions[0].url }}">Terms & Conditions</a>
     </p>
 </div>
