@@ -81,7 +81,9 @@ module.exports = {
     create: function(req, res) {
         var organization = new Organization(req.body);
         organization.save(function (err, org) {
-            if (err) return handleError(res, err);
+            if (err) return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(err)
+            });
             return res.json(org);
         });
     },
