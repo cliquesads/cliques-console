@@ -1,20 +1,17 @@
 {
   "name": "Cliques Console",
-  "version": "0.6.32",
+  "version": "0.6.33",
   "authors": [
     "Ben Liang"
   ],
-  "description": "Bootstrap Admin Theme + Meanjs",
+  "description": "Cliques UI -- MEAN.js + Bootstrap Angular",
   "main": "index.html",
   "keywords": [
     "bootstrap",
     "angular",
-    "admin",
-    "theme",
-    "dashboard"
+    "admin"
   ],
-  "license": "http://support.wrapbootstrap.com/knowledge_base/topics/usage-licenses",
-  "homepage": "http://themicon.co",
+  "homepage": "http://cliquesads.com",
   "private": true,
   "ignore": [
     "**/.*"
