@@ -366,7 +366,10 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        var query = self.aggregationModels.HourlyAdStat
+        // toggle demo or non-demo aggregation model, depending on
+        // request query param sent in
+        var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
+        var query = model
             .aggregate([
                 { $match: match },
                 //{ $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
