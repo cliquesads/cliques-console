@@ -313,7 +313,10 @@ organizationSchema.virtual('accountBalance')
 
 		// add promos as well
 		if (self.promos){
-			total += _.sumBy(self.promos, 'promoAmount');
+			var filtered_promos = self.promos.filter(function(p){
+				return p.active;
+			});
+			total += _.sumBy(filtered_promos, 'promoAmount');
 		}
 		return total;
 	})
