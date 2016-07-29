@@ -46,7 +46,7 @@ var getSingleOrgPaymentInfo = function(org, callback){
  * @param res
  * @param callback
  */
-var chargeStripeAccount = function(res, callback){
+var chargeStripeAccountAndSave = function(res, callback){
     var billingEmails = res.org.getAllBillingEmails();
     stripe.charges.create({
         amount: res.total,
@@ -54,7 +54,14 @@ var chargeStripeAccount = function(res, callback){
         customer: res.org.stripeCustomerId,
         description: "Cliques Advertiser Payments for " + res.org.name,
         receipt_email: billingEmails[0]
-    }, callback);
+    }, function(err, charge){
+        if (err) return callback(err);
+        // if charge was successful, save org to lock-in promo statuses & balances
+        res.org.save(function(e, org){
+            if (e) return callback(e);
+            return callback(null, charge);
+        });
+    });
 };
 
 
@@ -98,7 +105,6 @@ var runAllPayments = function(){
                         }
                     });
                 }
-
             });
         });
 };
