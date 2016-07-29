@@ -192,17 +192,9 @@ module.exports = {
                     subject = 'ACTION REQUIRED: ' + subject;
                 }
                 var asyncFuncs = [];
-                var billingEmails = [];
                 // build email list, taking into account environment. Only send to users if it's in prod.
                 if (process.env.NODE_ENV === 'production') {
-                    if (!_.isNil(payment.organization.billingEmails)) {
-                        if (payment.organization.billingEmails.length > 0) {
-                            billingEmails = payment.organization.billingEmails;
-                        }
-                    }
-                    if (payment.organization.sendStatementToOwner) {
-                        billingEmails.push(payment.organization.owner.email)
-                    }
+                    var billingEmails = payment.organization.getAllBillingEmails();
                 } else {
                     billingEmails = TEST_EMAILS;
                 }

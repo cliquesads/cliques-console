@@ -391,6 +391,25 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 	return total;
 };
 
+/**
+ * Central method to handle logic around billingEmail settings, returning
+ * single array of all emails to send billing emails to
+ *
+ * @returns {Array}
+ */
+organizationSchema.methods.getAllBillingEmails = function(){
+	var billingEmails = [];
+	if (!_.isNil(this.billingEmails)) {
+		if (this.billingEmails.length > 0) {
+			billingEmails = this.billingEmails;
+		}
+	}
+	if (this.sendStatementToOwner) {
+		billingEmails.push(this.owner.email);
+	}
+	return billingEmails
+};
+
 var Organization = mongoose.model('Organization', organizationSchema);
 
 
