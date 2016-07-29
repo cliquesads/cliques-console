@@ -284,7 +284,10 @@ var organizationSchema = new Schema({
 
 
 /**
- * accountBalance virtual property sums all outstanding invoices and promos
+ * accountBalance virtual property sums all outstanding invoices and active promos
+ *
+ * DOES NOT modify or "apply" any promos on org, should just be considered a "preview"
+ * of what the account balance is after all promos are applied.
  *
  * NOTE: Requires `payments` field to be populated on self.
  *
@@ -300,18 +303,11 @@ organizationSchema.virtual('accountBalance')
 		if (self._tmpBalance) return self._tmpBalance;
 
 		// Otherwise, go through the summation
-		var total = 0;
-		//TODO: self.populated doesn't work properly when document has been populated via nested population
-		// if (self.populated('payments')){
-		// only get payments that aren't paid
-		if (self.payments){
-			var filtered =  self.payments.filter(function(p){
-				return p.status === 'Pending' || p.status === 'Overdue';
-			});
-			total += _.sumBy(filtered, 'totalAmount');
-		}
+		// first total up all outstanding (i.e. Pending or Overdue) payments
+		var total = this.getOutstandingPaymentTotals();
 
 		// add promos as well
+		// NOTE: this doesn't actually touch the promoAmount or active property
 		if (self.promos){
 			var filtered_promos = self.promos.filter(function(p){
 				return p.active;
@@ -325,8 +321,6 @@ organizationSchema.virtual('accountBalance')
 		this._tmpBalance = tmpBalance;
 	});
 
-
-
 /**
  * Just a shim.  Have organiztion_types as an array currently, but need
  * easy access to single type for some purposes.
@@ -334,6 +328,69 @@ organizationSchema.virtual('accountBalance')
 organizationSchema.virtual('effectiveOrgType').get(function(){
 	return this.organization_types[0];
 });
+
+/**
+ * Synchronous function to get total balance for an Organization
+ *
+ * Totals up all "Pending" or "Overdue" payments, and applies all active promos,
+ * updating promo totals & deactivating promos as applicable.
+ *
+ * @private
+ */
+organizationSchema.methods.getOutstandingPaymentTotals = function(){
+	var total = 0;
+	if (this.payments){
+		var filtered =  this.payments.filter(function(p){
+			return p.status === 'Pending' || p.status === 'Overdue';
+		});
+		total += _.sumBy(filtered, 'totalAmount');
+	}
+	return total;
+};
+
+/**
+ * Waterfalls down promos on organization and applies each to a given total.
+ *
+ * Deducts amount applied from promo.promoAmount, and sets promo.active to false if promo is
+ * completely used up.
+ *
+ * NOTE: Does NOT re-save org after modifying promos used, that's up to you to do.
+ *
+ * TODO: All of this promo logic assumes that Advertiser promos have negative promoAmounts,
+ * TODO: which is logical but not enforced in any way.  So if an advertiser promo is positive,
+ * TODO: the results of this waterfall will be all fucked up.
+ *
+ * @param total
+ * @returns {*}
+ */
+organizationSchema.methods.applyPromosToTotal = function(total){
+	var self = this;
+	if (self.promos){
+		var filtered_promos = self.promos.filter(function(p){
+			return p.active;
+		});
+		// waterfall down the promos, add each from total
+		// set active to false if promo is all used up
+		filtered_promos.forEach(function(promo){
+			if (total){
+				// deactivate & clear promoAmount if promo total is less
+				// than total of payments due.
+				if (Math.abs(total) >= Math.abs(promo.promoAmount)){
+					total += promo.promoAmount;
+					promo.promoAmount = 0;
+					promo.active = false;
+					// otherwise, just deduct total from promoAmount, zero out total
+					// but keep promo active for use next time.
+				} else {
+					total = 0;
+					promo.promoAmount = promo.promoAmount + total;
+				}
+			}
+		});
+	}
+	return total;
+};
+
 var Organization = mongoose.model('Organization', organizationSchema);
 
 
