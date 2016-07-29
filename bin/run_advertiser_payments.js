@@ -11,6 +11,7 @@ var _ = require('lodash'),
     Organization = mongoose.model('Organization'),
     Payment = mongoose.model('Payment'),
     config = require('config'),
+    inquirer = require('inquirer'),
     async = require('async');
 
 var stripe = require('stripe')(config.get("Stripe.secret_key"));
@@ -40,6 +41,24 @@ var getSingleOrgPaymentInfo = function(org, callback){
 };
 
 /**
+ * Charges org's Stripe account for given total.
+ *
+ * @param res
+ * @param callback
+ */
+var chargeStripeAccount = function(res, callback){
+    var billingEmails = res.org.getAllBillingEmails();
+    stripe.charges.create({
+        amount: res.total,
+        currency: "usd",
+        customer: res.org.stripeCustomerId,
+        description: "Cliques Advertiser Payments for " + res.org.name,
+        receipt_email: billingEmails[0]
+    }, callback);
+};
+
+
+/**
  * Wrapper to run payments for all orgs
  */
 var runAllPayments = function(){
@@ -51,7 +70,33 @@ var runAllPayments = function(){
                     console.error(err);
                     return process.exit(1);
                 } else {
-                    
+                    // filter out null results first, i.e. orgs without any payments to process
+                    results = results.filter(function(res){ return !_.isNull(res)});
+
+                    // now prep a unicode table preview of all org payment info for user prompt
+                    var results_str = results.map(function(res){
+                        return res.org.name + '\t$' + res.total.toFixed(2);
+                    });
+                    results_str = results_str.join('\n');
+
+                    // now prompt user with preview and make them confirm to actually process payments
+                    var confirm = inquirer.prompt([{
+                        type: 'confirm',
+                        name: 'confirm',
+                        message: 'The following payments will be processed: \n' + results_str,
+                        default: false
+                    }]).then(function(answers){
+                        if (answers['confirm']){
+                            async.mapSeries(results, chargeStripeAccount, function(err, results){
+                                if (err) {
+                                    console.error(err);
+                                    return process.exit(1);
+                                }
+                                console.info(results);
+                                return process.exit(0);
+                            });
+                        }
+                    });
                 }
 
             });
