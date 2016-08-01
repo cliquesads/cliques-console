@@ -110,6 +110,12 @@ require('./_main')(function(GLOBALS){
                         // filter out null results first, i.e. orgs without any payments to process
                         results = results.filter(function(res){ return !_.isNull(res)});
 
+                        // exit if no payments are found
+                        if (results.length === 0){
+                            console.info('No payments to process, exiting...');
+                            return process.exit(0);
+                        }
+
                         // now prep a unicode table preview of all org payment info for user prompt
                         var results_str = results.map(function(res){
                             return res.org.name + '\t$' + res.total.toFixed(2);
