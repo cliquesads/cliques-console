@@ -8,6 +8,8 @@
 
 var _ = require('lodash'),
     inquirer = require('inquirer'),
+    Promise = require('promise'),
+    util = require('util'),
     async = require('async');
 
 require('./_main')(function(GLOBALS){
@@ -30,13 +32,15 @@ require('./_main')(function(GLOBALS){
      */
     var getSingleOrgPaymentInfo = function(org, callback){
         if (org.billingPreference === 'Stripe' && org.accountBalance > 0){
+            var payments = org.getOutstandingPayments();
             var total = org.getOutstandingPaymentTotals();
             // this will deduct any promos from total, but also handle post-application tasks like
             // deducting amount used and deactivating as necessary
             total = org.applyPromosToTotal(total);
             return callback(null, {
                 total: total,
-                org: org
+                org: org,
+                payments: payments
             });
         } else {
             return callback(null, null);
@@ -51,19 +55,42 @@ require('./_main')(function(GLOBALS){
      */
     var chargeStripeAccountAndSave = function(res, callback){
         var billingEmails = res.org.getAllBillingEmails();
-        stripe.charges.create({
-            amount: res.total,
-            currency: "usd",
-            customer: res.org.stripeCustomerId,
-            description: "Cliques Advertiser Payments for " + res.org.name,
-            receipt_email: billingEmails[0]
-        }, function(err, charge){
-            if (err) return callback(err);
-            // if charge was successful, save org to lock-in promo statuses & balances
-            res.org.save(function(e, org){
-                if (e) return callback(e);
-                return callback(null, charge);
+
+        if (process.env.NODE_ENV === 'production'){
+            var promise = stripe.charges.create({
+                amount: Math.round(res.total*100), // all charges performed in lower currency unit, i.e. cents
+                currency: "usd",
+                customer: res.org.stripeCustomerId,
+                description: "Cliques Advertiser Payments for " + res.org.name,
+                receipt_email: billingEmails[0]
             });
+        } else {
+            // empty promise for testing
+            promise = new Promise(function(resolve){ return resolve({ id: '!!fake charge!!'}); });
+        }
+
+        // After promise is done, perform org & payment saving tasks
+        promise.then(function(charge){
+            console.info('The following charge was processed for ' + res.org.name + ': ' + charge.id);
+            // if charge was successful, update payment statuses and save
+            async.each(res.payments, function(payment, cb){
+                payment.status = 'Paid';
+                payment.save(cb);
+            }, function(err){
+                if (err) console.error(err);
+                // save org to lock-in promo statuses & balances
+                res.org.save(function(e, org){
+                    if (e) return callback(e);
+                    return callback(null, charge);
+                });
+            });
+        }, function(err){
+            // Don't actually callback with error here because I want to process all charges,
+            // and calling back w/ error would cause series to stop.
+            var msg = util.format("ERROR while processing charge for %s: %s (requestId %s, statusCode %s)",
+                res.org.name, err.message, err.requestId, err.statusCode);
+            console.error(msg);
+            callback();
         });
     };
 
@@ -89,6 +116,11 @@ require('./_main')(function(GLOBALS){
                         });
                         results_str = results_str.join('\n');
 
+                        if (process.env.NODE_ENV != 'production'){
+                            results_str += '\n (not really, you\'re not running with env=production so no ' +
+                                'charges will be processed)';
+                        }
+
                         // now prompt user with preview and make them confirm to actually process payments
                         var confirm = inquirer.prompt([{
                             type: 'confirm',
@@ -102,15 +134,17 @@ require('./_main')(function(GLOBALS){
                                         console.error(err);
                                         return process.exit(1);
                                     }
-                                    console.info(results);
+                                    console.info('Success! All orgs and payments updated.');
                                     return process.exit(0);
                                 });
+                            } else {
+                                console.info('kthxbai!');
+                                process.exit(0);
                             }
                         });
                     }
                 });
             });
     };
-
     runAllPayments();
 });
