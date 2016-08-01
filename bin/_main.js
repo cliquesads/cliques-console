@@ -23,7 +23,26 @@
  * GLOBALS.db is an open mongoose DB connection
  * GLOBALS.autoIncrement = require('mongoose-auto-increment').initialize(db);
  */
+var ArgumentParser = require('argparse').ArgumentParser;
 
+// handle environment args
+var parser = new ArgumentParser({
+    version: '0.0.1',
+    addHelp:true,
+    description: 'Run a script'
+});
+parser.addArgument(
+    ['-e', '--env'],
+    {
+        help: 'Config environment to set NODE_ENV to, e.g. \'dev\', \'production\', \'local-test\''
+    }
+);
+var args = parser.parseArgs();
+if (args['env']){
+    // set NODE_ENV with arg -e or --env
+    // don't need to handle fallback if env is invalid, this is done in config/init.js
+    process.env.NODE_ENV = args['env'];
+}
 
 var init = require('../config/init')(),
     config = require('../config/config'),
@@ -48,6 +67,8 @@ var exchangeMongoOptions = {
     pass: config.mongodb.pwd,
     auth: {authenticationDatabase: config.mongodb.db}
 };
+
+// Now create mongoose connection object
 var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOptions, function(err, logstring){
     if (err) {
         console.error(chalk.red('Could not connect to MongoDB!'));
@@ -56,16 +77,17 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
     console.log(logstring);
 });
 
+// initialize autoIncrement module for models that use autoIncrementing Numbers for _id's instead of ObjectIds
 autoIncrement.initialize(db);
 
 module.exports = function(func){
+    // wrap in mongoose.connect, which is pretty redundant considering you've already created the 'db' connection
     mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring) {
         if (err) {
             console.error(chalk.red('Could not connect default connection to MongoDB!'));
             console.log(chalk.red(err));
         }
         console.log('Connected to exchange connection as default mongo DB connection');
-
         // construct GLOBALS object containing some handy variables from closure to pass to
         // runtime function
         var GLOBALS = {
