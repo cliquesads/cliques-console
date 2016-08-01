@@ -4,11 +4,13 @@
  * Module dependencies.
  */
 var glob = require('glob'),
-	chalk = require('chalk');
+	chalk = require('chalk'),
+	path = require('path');
 
 // TODO: This is only here b/c project uses 'config' directory, which is the default dir for
 // TODO: node config module
-process.env.NODE_CONFIG_DIR = './cliques-config';
+
+process.env.NODE_CONFIG_DIR = path.resolve(__dirname + '/../cliques-config');
 
 /**
  * Module init function.
