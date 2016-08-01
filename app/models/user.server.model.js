@@ -330,20 +330,24 @@ organizationSchema.virtual('effectiveOrgType').get(function(){
 });
 
 /**
- * Synchronous function to get total balance for an Organization
+ * Synchronous function to get all outstanding payments for an Organization
  *
  * Totals up all "Pending" or "Overdue" payments, and applies all active promos,
  * updating promo totals & deactivating promos as applicable.
- *
- * @private
  */
-organizationSchema.methods.getOutstandingPaymentTotals = function(){
-	var total = 0;
+organizationSchema.methods.getOutstandingPayments = function(){
 	if (this.payments){
-		var filtered =  this.payments.filter(function(p){
+		return this.payments.filter(function(p){
 			return p.status === 'Pending' || p.status === 'Overdue';
 		});
-		total += _.sumBy(filtered, 'totalAmount');
+	}
+};
+
+organizationSchema.methods.getOutstandingPaymentTotals = function(){
+	var total = 0;
+	var payments = this.getOutstandingPayments();
+	if (payments){
+		total += _.sumBy(payments, 'totalAmount');
 	}
 	return total;
 };
