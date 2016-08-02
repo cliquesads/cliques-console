@@ -360,8 +360,8 @@ organizationSchema.methods.getOutstandingPaymentTotals = function(){
  *
  * NOTE: Does NOT re-save org after modifying promos used, that's up to you to do.
  *
- * TODO: All of this promo logic assumes that Advertiser promos have negative promoAmounts,
- * TODO: which is logical but not enforced in any way.  So if an advertiser promo is positive,
+ * TODO: All of this promo logic assumes that Advertiser/Publisher promos have negative/positive promoAmounts,
+ * TODO: which is logical but not enforced in any way.  So if an advertiser/publisher promo is positive/negative,
  * TODO: the results of this waterfall will be all fucked up.
  *
  * @param total
