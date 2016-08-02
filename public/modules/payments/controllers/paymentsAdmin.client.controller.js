@@ -33,6 +33,17 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
             $scope.invoicePreviewUrl = null;
         };
 
+        var openErrorDialog = function(error){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: '<br>\
+                         <div class="alert alert-danger text-md">\
+                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong>An error occurred.</strong></p>\
+                            <p>' + error.data.message + '</p>\
+                        </div>',
+                plain: true
+            });
+        };
 
         $scope.approveAndSend = function(payment){
             var dialog = ngDialog.openConfirm({
@@ -60,17 +71,6 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     plain: true
                 });
 
-                var openErrorDialog = function(error){
-                    ngDialog.open({
-                        className: 'ngdialog-theme-default dialogwidth600',
-                        template: '<br>\
-                         <div class="alert alert-danger text-md">\
-                            <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong>An error occurred.</strong></p>\
-                            <p>' + error.data.message + '</p>\
-                        </div>',
-                        plain: true
-                    });
-                };
                 payment.$update().then(function(updated){
                     var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
                     // add query param email=true if sendToOrg is true
@@ -102,8 +102,48 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
             });
         };
 
+        $scope.setPaid = function(payment){
+            var dialog = ngDialog.openConfirm({
+                template: '\
+                        <br>\
+                        <p>Are you sure you want to mark this payment as Paid? This is irreversible!</p>\
+                        <p class="text-center">\
+                            <button class="btn btn-lg btn-success" ng-click="confirm(true)">Yes</button>\
+                            <button class="btn btn-lg btn-primary" ng-click="closeThisDialog()">No</button>\
+                        </p>',
+                plain: true
+            });
+
+            dialog.then(function(confirm){
+                if (confirm){
+                    var pendingDialog = ngDialog.open({
+                        className: 'ngdialog-theme-default dialogwidth600',
+                        template: '<br>\
+                        <div class="row">\
+                            <div class="ball-grid-pulse"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>\
+                            <h4>&nbsp; Setting payment to Paid, please hold...</h4>\
+                        </div>',
+                        plain: true
+                    });
+
+                    var patchUrl = '/console/payment/' + payment._id + '/setPaid';
+                    // TODO: can't set payment as response so just changing status to paid client-side instead
+                    payment.status = "Paid";
+                    return $http.patch(patchUrl).success(function(response){
+                        pendingDialog.close(0)
+                    }).error(function(response){
+                        openErrorDialog(response)
+                    });
+                }
+            });
+        };
+
         // fetch status types constant from server for convenience
         $http.get('/console/payment-statuses/').success(function(response){
+            // remove 'Paid' status, make user have to use the "Set Paid" workflow to
+            // set status to Paid since there are some extra server hooks that need to be performed.
+            var i = _.findIndex(response, function(s){ return s === 'Paid' });
+            response.splice(i, 1);
             $scope.statuses = response;
         }).error(function(response){
             console.error(response.data.message);

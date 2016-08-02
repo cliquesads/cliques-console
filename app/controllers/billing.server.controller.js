@@ -136,6 +136,7 @@ module.exports = {
                         message: errorHandler.getAndLogErrorMessage(err)
                     })
                 }
+                payment.status = "Paid";
                 payment.save(function(err, payment){
                     if (err) {
                         return res.status(400).send({
