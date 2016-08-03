@@ -3,8 +3,6 @@
  */
 
 //TODO: Add promo.active flags to all existing documents
-//TODO: Also add endpoint to billing controller that switches payment to 'Paid', since all applicable promos will need
-//TODO: be toggled to 'paid' when invoice is paid manually
 
 var _ = require('lodash'),
     inquirer = require('inquirer'),
