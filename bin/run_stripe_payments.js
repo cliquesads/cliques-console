@@ -93,62 +93,62 @@ require('./_main')(function(GLOBALS){
     };
 
     /**
-     * Wrapper to run payments for all orgs
+     * Now do the thing
      */
-    var runAllPayments = function(){
-        Organization
-            .find({ payments: {$ne: null }})
-            .populate('payments')
-            .exec(function(err, orgs){
-                async.mapSeries(orgs, getSingleOrgPaymentInfo, function(err, results){
-                    if (err) {
-                        console.error(err);
-                        return process.exit(1);
-                    } else {
-                        // filter out null results first, i.e. orgs without any payments to process
-                        results = results.filter(function(res){ return !_.isNull(res)});
+    Organization.find({ payments: {$ne: null }}).populate('payments').exec(function(err, orgs){
+        // get payment info (mainly total to charge and effected payments & promos) for all orgs
+        async.mapSeries(orgs, getSingleOrgPaymentInfo, function(err, results){
+            if (err) {
+                console.error(err);
+                return process.exit(1);
+            } else {
+                // filter out null results first, i.e. orgs without any payments to process
+                results = results.filter(function(res){ return !_.isNull(res)});
 
-                        // exit if no payments are found
-                        if (results.length === 0){
-                            console.info('No payments to process, exiting...');
-                            return process.exit(0);
-                        }
+                // exit if no payments are found
+                if (results.length === 0){
+                    console.info('No payments to process, exiting...');
+                    return process.exit(0);
+                }
 
-                        // now prep a unicode table preview of all org payment info for user prompt
-                        var results_str = results.map(function(res){
-                            return res.org.name + '\t$' + res.total.toFixed(2);
-                        });
-                        results_str = results_str.join('\n');
+                // now prep a unicode table preview of all org payment info for user prompt
+                var results_str = results.map(function(res){
+                    return res.org.name + '\t$' + res.total.toFixed(2);
+                });
+                results_str = results_str.join('\n');
 
-                        if (process.env.NODE_ENV != 'production'){
-                            results_str += '\n (not really, you\'re not running with env=production so no ' +
-                                'charges will be processed)';
-                        }
+                if (process.env.NODE_ENV != 'production'){
+                    results_str += '\n (not really, you\'re not running with env=production so no ' +
+                        'charges will be processed)';
+                }
 
-                        // now prompt user with preview and make them confirm to actually process payments
-                        var confirm = inquirer.prompt([{
-                            type: 'confirm',
-                            name: 'confirm',
-                            message: 'The following payments will be processed: \n' + results_str,
-                            default: false
-                        }]).then(function(answers){
-                            if (answers['confirm']){
-                                async.mapSeries(results, chargeStripeAccountAndSave, function(err, results){
-                                    if (err) {
-                                        console.error(err);
-                                        return process.exit(1);
-                                    }
-                                    console.info('Success! All orgs and payments updated.');
-                                    return process.exit(0);
-                                });
-                            } else {
-                                console.info('kthxbai!');
-                                process.exit(0);
+                // now prompt user with preview and make them confirm to actually process payments
+                var confirm = inquirer.prompt([{
+                    type: 'confirm',
+                    name: 'confirm',
+                    message: 'The following payments will be processed: \n' + results_str,
+                    default: false
+                }]).then(function(answers){
+                    if (answers['confirm']){
+                        async.mapSeries(results, chargeStripeAccountAndSave, function(err, results){
+                            if (err) {
+                                console.error(err);
+                                return process.exit(1);
                             }
+                            console.info('Success! All orgs and payments updated.');
+                            return process.exit(0);
                         });
+                    } else {
+                        console.info('kthxbai!');
+                        process.exit(0);
                     }
                 });
-            });
-    };
-    runAllPayments();
-});
+            }
+        });
+    });
+}, [[
+    ['-t', '--type'],
+    {
+        help: 'Type of org to run payments for, either \'advertiser\' or \'publisher\''
+    }
+]]);
