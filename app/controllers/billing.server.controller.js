@@ -114,6 +114,41 @@ module.exports = {
         },
 
         /**
+         * Special method to handle setting status to "Paid", since promos on
+         * organization will also need to be modified depending on how much was used.
+         *
+         * @param req
+         * @param res
+         */
+        setPaid: function(req, res){
+            var payment = req.payment;
+            var org = req.payment.organization;
+            if (payment.status === 'Needs Approval'){
+                res.status(403).send({
+                    message: 'Payment must be approved before it can be marked Paid'
+                });
+            }
+            // handle promo cleanup & deactivation
+            org.applyPromosToTotal(payment.totalAmount);
+            org.save(function(err, org){
+                if (err){
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    })
+                }
+                payment.status = "Paid";
+                payment.save(function(err, payment){
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    res.status(200).json(payment).send();
+                });
+            });
+        },
+
+        /**
          * Wrapper for Payment.renderHtmlInvoice
          *
          * @param req
@@ -133,7 +168,7 @@ module.exports = {
                     });
                 }
                 return res.status(200).send(invoice);
-            })
+            });
         },
 
         viewInvoice: function(req, res){
@@ -192,17 +227,9 @@ module.exports = {
                     subject = 'ACTION REQUIRED: ' + subject;
                 }
                 var asyncFuncs = [];
-                var billingEmails = [];
                 // build email list, taking into account environment. Only send to users if it's in prod.
                 if (process.env.NODE_ENV === 'production') {
-                    if (!_.isNil(payment.organization.billingEmails)) {
-                        if (payment.organization.billingEmails.length > 0) {
-                            billingEmails = payment.organization.billingEmails;
-                        }
-                    }
-                    if (payment.organization.sendStatementToOwner) {
-                        billingEmails.push(payment.organization.owner.email)
-                    }
+                    var billingEmails = payment.organization.getAllBillingEmails();
                 } else {
                     billingEmails = TEST_EMAILS;
                 }

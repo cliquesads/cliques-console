@@ -39,6 +39,7 @@ var PromoSchema = exports.PromoSchema = new Schema({
     type: { type: String, enum: ['advertiser', 'publisher'] },
     description: { type: String, required: true },
     promoAmount: { type: Number, required: false },
+    active: { type: Boolean, required: true, default: true },
     promoInterval: { type: String, required: false }
 });
 

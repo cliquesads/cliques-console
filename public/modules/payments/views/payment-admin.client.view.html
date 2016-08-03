@@ -50,6 +50,9 @@
                             <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send">
                                 <i class="fa fa-lg fa-check-square"></i>
                             </button>
+                            <button type="button" ng-show="p.status != 'Needs Approval' && p.status != 'Paid'"  ng-click="setPaid(p)" class="btn btn-success btn-xs" tooltip="Set to Paid">
+                                <i class="fa fa-lg fa-check-square"></i>
+                            </button>
                         </td>
                     </tr>
                     <tr>

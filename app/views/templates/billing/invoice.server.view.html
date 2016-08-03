@@ -316,12 +316,19 @@
             <tr class="instructions">
                 <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
-                        <div>
-                            <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically
-                            charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                            to either your card or bank account listed above. If you agree with the charges as they are
-                            stated, <b>no further action is required</b>.
-                        </div>
+                        {% if payment.organization.accountBalance <= 0 %}
+                            <div>
+                                <b>Instructions:</b> You have not accrued any ad-spend yet, so you don't need to do anything.
+                                Please continue enjoying your free ad-spend credit!
+                            </div>
+                        {% else %}
+                            <div>
+                                <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically
+                                charge your total balance due of <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                                to either your card or bank account listed above. If you agree with the charges as they are
+                                stated, <b>no further action is required</b>.
+                            </div>
+                        {% endif %}
                     {% elseif payment.paymentType == "publisher" %}
                         <div>
                             <b>Instructions:</b> On {{ payment.dueDate|date('F jS\, Y')  }}, Stripe will automatically
@@ -346,31 +353,38 @@
             <tr class="instructions">
                 <td colspan="5">
                     {% if payment.paymentType == "advertiser" %}
-                    <div>
-                        <p>
-                            <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs
-                            Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
-                            no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
-                        </p>
-                        <p>
-                            <em>Alternatively</em>, if you would like to <b>pay using a credit or debit card</b> please
-                            log on to your <a href="https://console.cliquesads.com/#!/settings/billing">billing center</a>
-                            to enter your card information. You must enter your card information no later than
-                            <b>{{ payment.dueDate|date('F jS\, Y')  }}</b> to have this statement charged to your card.
-                        </p>
-                    </div>
-                    <hr>
-                    <div>
-                        <em><small>
-                        If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
-                        of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
-                        by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
-                        following the payment due date, Cliques shall have the right to suspend Client’s access to the
-                        Cliques Platform without notice to Client; such access not to be reinstated until Client pays
-                        all such overdue amounts.
-                        </small>
-                        </em>
-                    </div>
+                        {% if payment.organization.accountBalance <= 0 %}
+                        <div>
+                            <b>Instructions:</b> You have not accrued any ad-spend yet, so you don't need to do anything.
+                            Please continue enjoying your free ad-spend credit!
+                        </div>
+                        {% else %}
+                        <div>
+                            <p>
+                                <b>Instructions:</b> You must mail a check to the address listed above made out to Cliques Labs
+                                Inc. for <b>{{ (sign * payment.organization.accountBalance)|round(2)|currency('$')}}</b>
+                                no later than <b>{{ payment.dueDate|date('F jS\, Y')  }}</b>.
+                            </p>
+                            <p>
+                                <em>Alternatively</em>, if you would like to <b>pay using a credit or debit card</b> please
+                                log on to your <a href="https://console.cliquesads.com/#!/settings/billing">billing center</a>
+                                to enter your card information. You must enter your card information no later than
+                                <b>{{ payment.dueDate|date('F jS\, Y')  }}</b> to have this statement charged to your card.
+                            </p>
+                        </div>
+                        <hr>
+                        <div>
+                            <em><small>
+                            If any payment is not made after it becomes due and payable, a late fee shall accrue at the rate
+                            of the lesser of one and one half percent (1.5%) per month or the highest legal rate permitted
+                            by law. In addition, if Client fails to pay fees invoiced by Cliques within thirty (30) days
+                            following the payment due date, Cliques shall have the right to suspend Client’s access to the
+                            Cliques Platform without notice to Client; such access not to be reinstated until Client pays
+                            all such overdue amounts.
+                            </small>
+                            </em>
+                        </div>
+                        {% endif %}
                     {% elseif payment.paymentType == "publisher" %}
                     <div>
                         <p>
