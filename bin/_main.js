@@ -5,7 +5,7 @@
  * In your script, do:
  *
  * ```
- * require('./_main)(null, function(GLOBALS){
+ * require('./_main)(function(GLOBALS){
  *
  *     // Now you can do stuff involving database connection in here
  *

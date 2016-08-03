@@ -12,7 +12,9 @@ var _ = require('lodash'),
 
 require('./_main')(function(GLOBALS){
     var config = GLOBALS.cliques_config,
-        mongoose = GLOBALS.mongoose;
+        mongoose = GLOBALS.mongoose,
+        // pick up custom command line arg (expect either "publisher" or "advertiser"
+        paymentsType = GLOBALS.args.type;
 
     var users = require('../app/models/user.server.model.js'),
         Organization = mongoose.model('Organization'),
@@ -21,28 +23,39 @@ require('./_main')(function(GLOBALS){
     var stripe = require('stripe')(config.get("Stripe.secret_key"));
 
     /**
-     * Inner function that calculates total payment amount due and processes it with Stripe for orgs w/ positive
-     * balance and billingPreference set to "Stripe"
+     * Inner function that calculates total payment amount due and processes it with Stripe for orgs w/ outstanding
+     * balance (positive if advertiser, negative if publisher) and billingPreference set to "Stripe"
      *
      * @param org
      * @param callback
      * @private
      */
     var getSingleOrgPaymentInfo = function(org, callback){
-        if (org.billingPreference === 'Stripe' && org.accountBalance > 0){
-            var payments = org.getOutstandingPayments();
-            var total = org.getOutstandingPaymentTotals();
-            // this will deduct any promos from total, but also handle post-application tasks like
-            // deducting amount used and deactivating as necessary
-            total = org.applyPromosToTotal(total);
-            return callback(null, {
-                total: total,
-                org: org,
-                payments: payments
-            });
-        } else {
-            return callback(null, null);
+        // first check if orgType matches this paymentsType, and if org billing preference is in fact Stripe
+        if (org.effectiveOrgType === paymentsType && org.billingPreference === 'Stripe'){
+
+            // now that that's clear, check that account balance is nonzero.
+            // For advertisers, this means balance > 0; for publishers, this means < 0.
+            // I know I know, why can't we just check if balance is === 0?? Cause if org has some promos
+            // that haven't been completely used up, org balance will be less than zero, and it doesn't
+            // make sense to pay out negative balance to advertisers.  For publishers, if account has
+            // promos, the balance will be negative, and we do actually want to pay that out.
+
+            if ((org.effectiveOrgType == 'advertiser' && org.accountBalance > 0)
+                || (org.effectiveOrgType == 'publisher' && org.accountBalance < 0)){
+                var payments = org.getOutstandingPayments();
+                var total = org.getOutstandingPaymentTotals();
+                // this will deduct any promos from total, but also handle post-application tasks like
+                // deducting amount used and deactivating as necessary
+                total = org.applyPromosToTotal(total);
+                return callback(null, {
+                    total: total,
+                    org: org,
+                    payments: payments
+                });
+            }
         }
+        return callback(null, null);
     };
 
     /**
@@ -51,17 +64,37 @@ require('./_main')(function(GLOBALS){
      * @param res
      * @param callback
      */
-    var chargeStripeAccountAndSave = function(res, callback){
+    var makeStripePaymentAndSave = function(res, callback){
         var billingEmails = res.org.getAllBillingEmails();
 
-        if (process.env.NODE_ENV === 'production'){
-            var promise = stripe.charges.create({
+        var _createChargePromise = function(){
+            return stripe.charges.create({
                 amount: Math.round(res.total*100), // all charges performed in lower currency unit, i.e. cents
                 currency: "usd",
                 customer: res.org.stripeCustomerId,
-                description: "Cliques Advertiser Payments for " + res.org.name,
+                description: "Cliques Advertiser Payment for " + res.org.name,
                 receipt_email: billingEmails[0]
             });
+        };
+
+        var _createTransferPromise = function(){
+            return stripe.transfers.create({
+                amount: -1 * Math.round(res.total*100),
+                currency: "usd",
+                destination: res.org.stripeAccountId,
+                description: "Cliques Publisher Payment for " + res.org.name
+            });
+        };
+
+        if (process.env.NODE_ENV === 'production'){
+            switch (paymentsType){
+                case "advertiser":
+                    var promise = _createChargePromise();
+                    break;
+                case "publisher":
+                    promise = _createTransferPromise();
+                    break;
+            }
         } else {
             // empty promise for testing
             promise = new Promise(function(resolve){ return resolve({ id: '!!fake charge!!'}); });
@@ -116,7 +149,7 @@ require('./_main')(function(GLOBALS){
                     return res.org.name + '\t$' + res.total.toFixed(2);
                 });
                 results_str = results_str.join('\n');
-
+                // only really processing payments in production, so let the user know
                 if (process.env.NODE_ENV != 'production'){
                     results_str += '\n (not really, you\'re not running with env=production so no ' +
                         'charges will be processed)';
@@ -130,7 +163,7 @@ require('./_main')(function(GLOBALS){
                     default: false
                 }]).then(function(answers){
                     if (answers['confirm']){
-                        async.mapSeries(results, chargeStripeAccountAndSave, function(err, results){
+                        async.mapSeries(results, makeStripePaymentAndSave, function(err, results){
                             if (err) {
                                 console.error(err);
                                 return process.exit(1);

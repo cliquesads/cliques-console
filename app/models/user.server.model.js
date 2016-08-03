@@ -373,22 +373,34 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 		var filtered_promos = self.promos.filter(function(p){
 			return p.active;
 		});
-		// waterfall down the promos, add each from total
-		// set active to false if promo is all used up
 		filtered_promos.forEach(function(promo){
-			if (total){
-				// deactivate & clear promoAmount if promo total is less
-				// than total of payments due.
-				if (Math.abs(total) >= Math.abs(promo.promoAmount)){
-					total += promo.promoAmount;
-					promo.promoAmount = 0;
-					promo.active = false;
-					// otherwise, just deduct total from promoAmount, zero out total
-					// but keep promo active for use next time.
-				} else {
-					total = 0;
-					promo.promoAmount = promo.promoAmount + total;
-				}
+			// handle advertiser & publisher promos differently, since you can technically use "part" of a promo
+			// when you're an advertiser, but not as a publisher
+			switch (self.effectiveOrgType) {
+				case 'advertiser':
+					// waterfall down the promos, add each from total
+					// set active to false if promo is all used up
+					if (total) {
+						// deactivate & clear promoAmount if promo total is less
+						// than total of payments due.
+						if (Math.abs(total) >= Math.abs(promo.promoAmount)) {
+							total += promo.promoAmount;
+							promo.promoAmount = 0;
+							promo.active = false;
+							// otherwise, just deduct total from promoAmount, zero out total
+							// but keep promo active for use next time.
+						} else {
+							total = 0;
+							promo.promoAmount = promo.promoAmount + total;
+						}
+					}
+					break;
+				case 'publisher':
+					filtered_promos.forEach(function(promo){
+						total += promo.promoAmount;
+						promo.active = false;
+					});
+					break;
 			}
 		});
 	}
