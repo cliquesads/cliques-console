@@ -275,8 +275,11 @@ var organizationSchema = new Schema({
 	billingEmails: [{ type: String}],
 	sendStatementToOwner: { type: Boolean, required: true, default: true },
 	stripeCustomerId: { type: String }, // for Advertisers
-	stripeAccountId: { type: String } // for Publishers
-	// accountBalance: { type: Number, required: true, default: 0 }
+	stripeAccountId: { type: String }, // for Publishers
+
+	// Quickbooks entity IDs
+	qboVendorId: { type: String }, // for Publishers
+	qboCustomerId: { type: String } // for Advertisers
 },{
 	toObject: { virtuals: true },
 	toJSON: { virtuals: true }
