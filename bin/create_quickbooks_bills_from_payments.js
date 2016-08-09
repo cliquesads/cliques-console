@@ -94,7 +94,9 @@ require('./_main')(function(GLOBALS){
             }
             bill["Line"] = lines;
 
-            // handles steps following creation of bill: save org & save payments
+            /**
+             * Handles steps following creation of bill: save org & save payments
+             */
             function _qboCallback(err, bill){
                 if (err) return console.error(err);
                 console.info('The following bill was created for  ' + org.name + ': ' + bill.Id);
@@ -133,6 +135,11 @@ require('./_main')(function(GLOBALS){
         }
     };
 
+
+    /**
+     * Run the script, starting w/ query against Organizations to find all publishers w/ outstanding payments
+     * who've specified payment type of "Check"
+     */
     Organization.find({
         payments: {$ne: null },
         billingPreference: "Check",
