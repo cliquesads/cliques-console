@@ -333,6 +333,39 @@ organizationSchema.virtual('effectiveOrgType').get(function(){
 });
 
 /**
+ * Convenience method mapping org fields to Quickbooks Vendor object
+ *
+ * Designed for QBO API v3
+ * @returns {{}}
+ */
+organizationSchema.methods.toQuickbooksVendor = function(){
+	var self = this;
+	return {
+		"BillAddr": {
+			"Line1": self.address,
+			"Line2": self.address2,
+			"City": self.city,
+			"Country": self.country,
+			"CountrySubDivisionCode": self.state,
+			"PostalCode": self.zip
+		},
+		"AcctNum": self._id,
+		"CompanyName": self.name,
+		"DisplayName": self.name,
+		"PrintOnCheckName": self.name,
+		"PrimaryEmailAddr": {
+			"Address": self.owner.email
+		},
+		"WebAddr": {
+			"URI": self.website
+		},
+		"PrimaryPhone": {
+			"FreeFormNumber": self.phone
+		}
+	}
+};
+
+/**
  * Synchronous function to get all outstanding payments for an Organization
  *
  * Totals up all "Pending" or "Overdue" payments, and applies all active promos,
