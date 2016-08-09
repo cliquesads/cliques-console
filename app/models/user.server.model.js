@@ -400,8 +400,13 @@ organizationSchema.methods.getOutstandingPaymentTotals = function(){
  * TODO: which is logical but not enforced in any way.  So if an advertiser/publisher promo is positive/negative,
  * TODO: the results of this waterfall will be all fucked up.
  *
+ * Returns object { total: <new total>, applied_promos: [<array of promos that were used>] }
+ *
+ * Promo objects in applied_promos array include `amountUsed` property which contains the precise amount
+ * of that promo that was applied to the total.
+ *
  * @param total
- * @returns {*}
+ * @returns { total: <new total after promos>, applied_promos: [<array of promo objects that were applied>] }
  */
 organizationSchema.methods.applyPromosToTotal = function(total){
 	var self = this;
@@ -409,6 +414,7 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 		var filtered_promos = self.promos.filter(function(p){
 			return p.active;
 		});
+		var applied_promos = [];
 		filtered_promos.forEach(function(promo){
 			// handle advertiser & publisher promos differently, since you can technically use "part" of a promo
 			// when you're an advertiser, but not as a publisher
@@ -423,11 +429,18 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 							total += promo.promoAmount;
 							promo.promoAmount = 0;
 							promo.active = false;
+							// now append to applied_promos array for reference
+							promo.amountUsed = promo.promoAmount; // this is a fake property, only used by caller methods
+							applied_promos.push(promo);
 							// otherwise, just deduct total from promoAmount, zero out total
 							// but keep promo active for use next time.
 						} else {
-							total = 0;
 							promo.promoAmount = promo.promoAmount + total;
+							promo.amountUsed = total;
+							// zero out total, since promo amount is greater
+							total = 0;
+							// now append to applied_promos array for reference
+							applied_promos.push(promo);
 						}
 					}
 					break;
@@ -435,12 +448,14 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 					filtered_promos.forEach(function(promo){
 						total += promo.promoAmount;
 						promo.active = false;
+						promo.amountUsed = promo.promoAmount;
+						applied_promos.push(promo);
 					});
 					break;
 			}
 		});
 	}
-	return total;
+	return { total: total, applied_promos: applied_promos };
 };
 
 /**
