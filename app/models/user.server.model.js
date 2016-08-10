@@ -333,6 +333,20 @@ organizationSchema.virtual('effectiveOrgType').get(function(){
 });
 
 /**
+ * Virtual property for fully-qualified (i.e. w/ http prefix) URI for org website, if
+ * it's not entered as a fully-qualified URI already.
+ */
+organizationSchema.virtual('URI').get(function(){
+	var protocol_substring = 'http';
+	if (this.website){
+		if (this.website.substr(0, protocol_substring.length) != protocol_substring){
+			return protocol_substring + '://' + this.website;
+		}
+	}
+	return this.website;
+});
+
+/**
  * Convenience method mapping org fields to Quickbooks Vendor object
  *
  * Designed for QBO API v3
@@ -357,7 +371,7 @@ organizationSchema.methods.toQuickbooksVendor = function(){
 			"Address": self.owner.email
 		},
 		"WebAddr": {
-			"URI": self.website
+			"URI": self.URI
 		},
 		"PrimaryPhone": {
 			"FreeFormNumber": self.phone
