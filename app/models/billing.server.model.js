@@ -210,11 +210,14 @@ var QBO_ACCOUNT_IDS = exports.QBO_ACCOUNT_IDS = {
 PaymentSchema.methods.getQboBillLines = function(){
     var lines = [];
     var self = this;
+    // need to flip the signs for all lineitems if payment is publisher payment
+    // b/c all publisher / outgoing payments recorded w/ negative signs
+    var sign = this.paymentType === 'publisher' ? -1 : 1;
     // Add lineItem lines first
     this.lineItems.forEach(function(lineItem){
         var line = {
             "Description": "Statement #" + self._id + ": " + lineItem.description,
-            "Amount": lineItem.amount,
+            "Amount": sign * lineItem.amount,
             "DetailType": "AccountBasedExpenseLineDetail",
             "AccountBasedExpenseLineDetail": {
                 "AccountRef": QBO_ACCOUNT_IDS[lineItem.lineItemType]
@@ -228,7 +231,7 @@ PaymentSchema.methods.getQboBillLines = function(){
             var adjustment_key = adjustment.amount < 0 ? "negative_adjustments" : "positive_adjustments";
             line = {
                "Description": "Statement #" + self._id + ": " + adjustment.description,
-               "Amount": adjustment.amount,
+               "Amount": sign * adjustment.amount,
                "DetailType": "AccountBasedExpenseLineDetail",
                "AccountBasedExpenseLineDetail": {
                    "AccountRef": QBO_ACCOUNT_IDS[adjustment_key]
@@ -377,8 +380,6 @@ PaymentSchema.statics.lineItem_generateDescription = function(lineItem, relevant
     }
     return lineItem;
 };
-
-/**
 
 /**
  * Calculates advertiser fees / publisher rev-share based on cpm_variable lineitems
