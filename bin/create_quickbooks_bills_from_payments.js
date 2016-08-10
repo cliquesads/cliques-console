@@ -17,6 +17,11 @@ require('./_main')(function(GLOBALS){
         Payment = mongoose.model('Payment'),
         QBO_ACCOUNT_IDS = require('../app/models/billing.server.model').QBO_ACCOUNT_IDS;
 
+
+    // ########################################### //
+    // ####### BEGIN QUICKBOOKS API AUTH ######### //
+    // ########################################### //
+
     // Get Quickbooks API user oauth token
     // TODO: Go through proper OAuth flow here to issue new token if needed
     var QUICKBOOKS_OAUTH_PATH = path.join(process.env['HOME'], 'quickbooks_oauth_access_token.json');
@@ -54,9 +59,17 @@ require('./_main')(function(GLOBALS){
         true
     );
 
+    // ######################################### //
+    // ####### END QUICKBOOKS API AUTH ######### //
+    // ######################################### //
+
+
     /**
      * Creates a QBO "Bill" from outstanding payments (either "Pending" or "Overdue") and saved Org & Payments,
      * updating where necessary (to set status to paid, set qboVendorId, etc.)
+     *
+     * TODO: This is very callback-hell-y, I know.  But I don't think node-quickbooks supports promises, so
+     * TODO: unfortunately you're stuck with this.
      *
      * @param org
      * @param callback
@@ -64,7 +77,7 @@ require('./_main')(function(GLOBALS){
     var getPaymentsAndCreateBills = function(org, callback){
 
         // subfunction to actually create bill
-        function _createBill(vendorId, callback){
+        function _createBill(vendorId, cb1){
             var bill = {
                 "VendorRef": {
                     "value": vendorId
@@ -84,7 +97,7 @@ require('./_main')(function(GLOBALS){
                 promosObj.applied_promos.forEach(function(promo){
                     lines.push({
                         "Description": promo.description,
-                        "Amount": promo.amountUsed,
+                        "Amount": -1 * promo.amountUsed, // flip the sign since promo amount will / should be negative
                         "DetailType": "AccountBasedExpenseLineDetail",
                         "AccountBasedExpenseLineDetail": {
                             "AccountRef": QBO_ACCOUNT_IDS["publisher_promo"]
@@ -98,18 +111,18 @@ require('./_main')(function(GLOBALS){
              * Handles steps following creation of bill: save org & save payments
              */
             function _qboCallback(err, bill){
-                if (err) return console.error(err);
+                if (err) return console.error(JSON.stringify(err, null, 2));
                 console.info('The following bill was created for  ' + org.name + ': ' + bill.Id);
                 // save all payments, setting each to "Paid"
-                async.each(payments, function(payment, cb){
+                async.each(payments, function(payment, cb2){
                     payment.status = 'Paid';
-                    payment.save(cb);
+                    payment.save(cb2);
                 }, function(err){
                     if (err) console.error(err);
                     // save org to lock-in promo statuses & balances
                     org.save(function(e, org){
-                        if (e) return callback(e);
-                        return callback(null, bill);
+                        if (e) return cb1(e);
+                        return cb1(null, bill);
                     });
                 });
             }
@@ -123,13 +136,36 @@ require('./_main')(function(GLOBALS){
 
         }
 
-        // Wrap in outer statement that creates vendor if one does not already exist for this org
-        if (_.isNil(org.qboVendorId)){
-            qbo.createVendor(org.toQuickbooksVendor(), function(err, vendor){
+        function _saveVendorIdAndCreateBill(vendor){
+            org.qboVendorId = vendor.Id;
+            // save org so at least VendorID gets persisted if nothing else
+            org.save(function(err, org){
                 if (err) return callback(err);
-                org.qboVendorId = vendor.Id;
                 _createBill(vendor.Id, callback);
             });
+        }
+
+        // Wrap in outer statement that creates vendor if one does not already exist for this org
+        if (_.isNil(org.qboVendorId)){
+            // check if vendor exists under this vendor's name but hasn't been saved to org yet
+            qbo.findVendors({
+                DisplayName: org.name,
+                CompanyName: org.name
+            }, function(err, response){
+                if (err) return callback(JSON.stringify(err, null, 2));
+                // if response is non-null, just take the first vendor found and warn that there might be a duplicate
+                if (response.QueryResponse.Vendor){
+                    _saveVendorIdAndCreateBill(response.QueryResponse.Vendor[0]);
+                } else {
+                    qbo.createVendor(org.toQuickbooksVendor(), function(err, vendor){
+                        if (err) {
+                            return callback(JSON.stringify(err, null, 2));
+                        }
+                        _saveVendorIdAndCreateBill(vendor);
+                    });
+                }
+            });
+
         } else {
             _createBill(org.qboVendorId, callback)
         }
