@@ -27,7 +27,7 @@
                     <!-- START User Inputs -->
                     <!-- Add analytics event trigger on load of this step since user will almost never explicitly click
                         on any button to get to step 1 -->
-                    <div id="step1" ng-show="wizard.active(1)" analytics-on="load" analytics-event="Signup_Step1">
+                    <div id="step1" ng-show="wizard.active(1)">
                         <div ng-show="!organizationInvite">
                             <legend>Account Type</legend>
                             <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>

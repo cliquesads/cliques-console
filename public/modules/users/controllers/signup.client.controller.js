@@ -8,7 +8,12 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home
-        if ($scope.authentication.user) $location.path('/');
+        if ($scope.authentication.user) {
+            $location.path('/');
+        } else {
+            // track first signup step here instead of view since it renders by default
+            $analytics.eventTrack('Signup_Step1');
+        }
 
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field
@@ -76,7 +81,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                                 TermsAndConditions.getCurrent($scope.organization.organization_types[0])
                                     .then(function(response){
                                         $scope.template = response.data.html;
-                                        $scope.termsAndConditions = response.data
+                                        $scope.termsAndConditions = response.data;
                                     });
                                 $analytics.eventTrack('Signup_OrgInviteValidated');
                                 $scope.credentials.firstName = $scope.credentials.accessToken.firstName;
