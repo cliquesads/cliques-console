@@ -1,6 +1,7 @@
 'use strict';
 angular.module('advertiser').directive('campaignWizard', [
     '$compile',
+    '$analytics',
     'Authentication',
     'Advertiser',
     'getCliqueTree',
@@ -34,6 +35,8 @@ angular.module('advertiser').directive('campaignWizard', [
                 //##################################//
                 scope.authentication = Authentication;
                 scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+
+                $analytics.eventTrack('CampaignSetup_CampaignStep1');
 
                 // Init new ClientSideCampaign, which handles all necessary duplication &
                 // pre-save prep logic
