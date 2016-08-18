@@ -47,7 +47,7 @@ require('./_main')(function(GLOBALS){
                 var total = org.getOutstandingPaymentTotals();
                 // this will deduct any promos from total, but also handle post-application tasks like
                 // deducting amount used and deactivating as necessary
-                total = org.applyPromosToTotal(total);
+                total = org.applyPromosToTotal(total).total;
                 return callback(null, {
                     total: total,
                     org: org,
