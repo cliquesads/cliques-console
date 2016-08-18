@@ -65,7 +65,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="loadCliqueStep(wizard.go, 2)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="loadCliqueStep(wizard.go, 2)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep2">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -106,7 +106,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep3">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -144,7 +144,7 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep4">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -202,7 +202,7 @@
                     </a>
                 </li>
                 <li class="next" ng-show="campaign.creatives || uploads_completed">
-                    <a href="#" ng-click="ingestCreatives(wizard.go, 5)"> Next <span>&rarr;</span></a>
+                    <a href="#" ng-click="ingestCreatives(wizard.go, 5)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep5"> Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -252,7 +252,7 @@
                     </div>
                 </li>
                 <li class="next pull-right">
-                    <button type="button" class="btn btn-primary" ng-click="submit()">Submit</button>
+                    <button type="button" class="btn btn-primary" ng-click="submit()" analytics-on="click" analytics-event="CampaignSetup_Submit">Submit</button>
                 </li>
             </ul>
         </div>

@@ -19,7 +19,7 @@
                 </div>
                 <ul class="pager">
                     <li class="next">
-                        <a href="#" ng-click="stepControl.goToSecondStep()">Next <span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToSecondStep()" analytics-on="click" analytics-event="CampaignSetup_EnterAdvertiserInfo">Next <span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>
@@ -74,7 +74,7 @@
                             </div>
                         </li>
                         <li class="next">
-                            <a href="#" ng-click="saveAdvertiser()">Save & Continue<span>&rarr;</span></a>
+                            <a href="#" ng-click="saveAdvertiser()" analytics-on="click" analytics-event="CampaignSetup_CreateAdvertiser">Save & Continue<span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
@@ -98,7 +98,7 @@
                         <a href="#" ng-click="stepControl.goToStep('advertiser-info')"><span>&larr; Previous</span></a>
                     </li>
                     <li class="next">
-                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Got it &nbsp;<span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="CampaignSetup_CampaignStep1">Got it &nbsp;<span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>
