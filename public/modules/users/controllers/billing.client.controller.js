@@ -1,4 +1,4 @@
-angular.module('users').controller('BillingController', ['$scope', '$http', '$location', 'Users', 'Authentication','Notify',
+angular.module('users').controller('BillingController', ['$scope', '$http', '$location', '$analytics', 'Users', 'Authentication','Notify',
     'Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.user = Authentication.user;
@@ -169,6 +169,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             };
 
             if(response.error) {
+                $analytics('BillingSettings_CardTokenError');
                 loadingDialog.close(1);
                 openErrorDialog(response.error.message);
             } else {
@@ -180,11 +181,14 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     loadingDialog.close(0);
                     openSuccessDialog();
                     $scope.organization = response;
+                    // send analytics event for successful card entry
+                    $analytics('BillingSettings_CardSaved');
                     // update default card setting
                     getStripeCustomerOrAccount();
                     // close form
                     $scope.showStripeForm = false;
                 }, function(response){
+                    $analytics('BillingSettings_AddCardTokenToCustomerError');
                     loadingDialog.close(1);
                     openErrorDialog(response.data.message);
                 });
@@ -215,6 +219,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
             };
 
             if(response.error) {
+                $analytics('BillingSettings_BankTokenError');
                 loadingDialog.close(1);
                 openErrorDialog(response.error.message);
             } else {
@@ -230,11 +235,14 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                     loadingDialog.close(0);
                     openSuccessDialog();
                     $scope.organization = response;
+                    // add analytics event
+                    $analytics('BillingSettings_BankInfoSaved');
                     // update default card setting
                     getStripeCustomerOrAccount();
                     // close form
                     $scope.showStripeForm = false;
                 }, function(response){
+                    $analytics('BillingSettings_AddBankTokenToAccountError');
                     loadingDialog.close(1);
                     openErrorDialog(response.data.message);
                 });

@@ -35,7 +35,7 @@
     <div class="row pt text-center">
         <div class="checkbox c-checkbox">
             <label>
-                <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click" analytics-event="AuthorizeCard" required="required">
+                <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click" analytics-event="AuthorizeCardTerms" required="required">
                 <span class="fa fa-check"></span>
                 I authorize Cliques Labs Inc. to charge the card above each month for any Total
                 Media Cost & Cliques Fees (as defined in the <a href="#!/terms-and-conditions">Terms & Conditions</a>) due.
@@ -44,7 +44,8 @@
     </div>
     <div class="row p-lg">
         <div class="col-sm-12 text-center">
-            <button type="submit" class="btn btn-primary btn-large">Save</button>
+            <button type="submit" class="btn btn-primary btn-large" analytics-on="click"
+                    analytics-event="BillingSettings_SubmitCardForToken">Save</button>
         </div>
     </div>
 </form>
