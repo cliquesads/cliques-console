@@ -5,6 +5,7 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
     '$stateParams',
     '$location',
     '$q',
+    '$analytics',
     'Authentication',
     'Publisher',
     'Advertiser',
@@ -14,7 +15,7 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
     'REGEXES',
     'CREATIVE_SIZES',
     'OPENRTB',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -33,6 +34,8 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
         // to the template properly to have to convert to string
         $scope.domain_regex = String(REGEXES.domain);
 
+        $analytics.eventTrack('SiteSetup_Step1');
+        
         // Populate tree data for tree visualization
         $scope.cliques = [];
         // Get whole tree of active Cliques on load to render in ABN tree
