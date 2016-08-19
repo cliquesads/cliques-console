@@ -55,7 +55,7 @@
         <div class="checkbox c-checkbox">
             <label>
                 <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click"
-                       analytics-event="AuthorizeBankAccount" required="required">
+                       analytics-event="BillingSettings_AuthorizeBankAccountTerms" required="required">
                 <span class="fa fa-check"></span>
                 I authorize Cliques Labs Inc. to deposit my Net Advertising Sales Revenue (as defined in your
                 <a href="#!/terms-and-conditions">Terms & Conditions</a>) to this account, and I agree to the
@@ -65,7 +65,8 @@
     </div>
     <div class="row p-lg">
         <div class="col-sm-12 text-center">
-            <button type="submit" class="btn btn-primary btn-large">Save</button>
+            <button type="submit" class="btn btn-primary btn-large" analytics-on="click"
+                    analytics-event="BillingSettings_SubmitBankAccountForToken">Save</button>
         </div>
     </div>
 </form>

@@ -1,6 +1,6 @@
-angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', 'Users',
+angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', '$analytics', 'Users',
     'Authentication','Organizations','Notify','ngDialog',
-    function($scope, $http, $location, Users, Authentication, Organizations, Notify, ngDialog) {
+    function($scope, $http, $location, $analytics, Users, Authentication, Organizations, Notify, ngDialog) {
         $scope.user = Authentication.user;
         $scope.organization = Organizations.get({
             organizationId: Authentication.user.organization._id
@@ -59,7 +59,8 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
                             .success(function(response){
                                 Notify.alert('User invites sent', {status: 'success'});
                                 $scope.loading = false;
-                                $scope.closeThisDialog('success')
+                                $scope.closeThisDialog('success');
+                                $analytics.eventTrack('OrgSettings_InviteSent', { total: $scope.invites.length });
                             })
                             .error(function(response){
                                 $scope.loading = false;

@@ -62,7 +62,7 @@
                     </fieldset>
                     <small class="text-muted">* Required</small>
                     <ul class="pager">
-                        <li class="next"><a href="#" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                        <li class="next"><a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="SiteSetup_Step1">Next <span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
@@ -147,7 +147,7 @@
                                 <span>&larr; Previous</span>
                             </a>
                         </li>
-                        <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                        <li class="next"><a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="SiteSetup_Step2">Next <span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
@@ -174,7 +174,7 @@
                                 <span>&larr; Previous</span>
                             </a>
                         </li>
-                        <li class="next"><a href="#" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                        <li class="next"><a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="SiteSetup_Step3">Next <span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
@@ -215,7 +215,7 @@
                             </a>
                         </li>
                         <li class="next">
-                            <a href="#" ng-click="wizard.go(5)"> Next <span>&rarr;</span></a>
+                            <a href="#" ng-click="wizard.go(5)" analytics-on="click" analytics-event="SiteSetup_Step4"> Next <span>&rarr;</span></a>
                         </li>
                     </ul>
                 </div>
@@ -282,7 +282,7 @@
                             </div>
                         </li>
                         <li class="next pull-right">
-                            <button type="button" class="btn btn-primary" ng-click="createPublisher()">Submit</button>
+                            <button type="button" class="btn btn-primary" ng-click="createPublisher()" analytics-on="click" analytics-event="SiteSetup_Finish">Submit</button>
                         </li>
                     </ul>
                 </div>

@@ -4,13 +4,14 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
     '$stateParams',
     '$location',
     '$q',
+    '$analytics',
     'Authentication',
     'Advertiser',
     'FileUploader',
     'REGEXES',
     'ADVERTISER_TOOLTIPS',
     'LOGO','ngDialog',
-	function($scope, $stateParams, $location, $q, Authentication, Advertiser, FileUploader, REGEXES, ADVERTISER_TOOLTIPS, LOGO, ngDialog) {
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Advertiser, FileUploader, REGEXES, ADVERTISER_TOOLTIPS, LOGO, ngDialog) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -23,6 +24,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
         // to the template properly to have to convert to string
         // this will throw a parser console error
         $scope.domain_regex = REGEXES.domainPattern;
+
+        // Start event tracking
+        $analytics.eventTrack('CampaignSetup_AdvertiserWizardStart');
 
         //#################################//
         //######### FILE UPLOADER #########//

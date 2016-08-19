@@ -10,9 +10,15 @@ var _ = require('lodash'),
 	User = mongoose.model('User'),
     Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode'),
-    mail = require('../mailer.server.controller.js');
+    mail = require('../mailer.server.controller.js'),
+	config = require('config'),
+	mailchimp = require('mailchimp-v3');
 
 var mailer = new mail.Mailer();
+
+// set API key for mailchimp client
+mailchimp.setApiKey(config.get('MailChimp.apiKey'));
+
 
 /**
  * Endpoint to gain access to signup page
@@ -60,6 +66,62 @@ exports.isUsernameTaken = function(req, res){
         if (err) return handleError(res, err);
         return res.json({ taken: taken });
     });
+};
+
+
+/**
+ * Adds user to "newsletter" and appropriate orgType email lists in MailChimp.
+ *
+ * Uses MailChimp v3 API wrapper.
+ *
+ * @param req
+ * @param user
+ * @param org
+ */
+var addUserToMailChimpList = function(req, user, org){
+	function _listMemberEndpoint(listId){
+		return 'lists/' + listId + '/members';
+	}
+	// subfunc to subscribe user to list, will simply log success or failure
+	function _subscribeToList(listId, payload){
+		// subscribe to newsletter list
+		mailchimp.post(_listMemberEndpoint(listId), payload).
+		then(function(response){
+			console.info("MAILCHIMP: Added member ID " + response.id + " (" + response.email_address + ") to list "
+				+ response.list_id);
+		}).
+		catch(function(error){
+			console.error("MAILCHIMP ERROR title " + error.title + " - type " + error.type + " - status " +
+				error.status + " - detail " + error.detail + " - instance " + error.instance);
+		});
+	}
+
+	// see http://developer.mailchimp.com/documentation/mailchimp/reference/lists/members/
+	// for field descriptions
+	var payload = {
+		status: "subscribed",
+		merge_fields: {
+			FNAME: user.fistName,
+			LNAME: user.lastName
+		},
+		email_address: user.email,
+		ip_signup: req.clientIp,
+		ip_opt: req.clientIp
+	};
+
+	// I don't give a shit what order this happens in, so not chaining these promises
+	// ALSO, chaining Bluebird promises at first glance is extremely annoying, so not
+	// even going to try
+
+	// subscribe to newsletter list
+	_subscribeToList(config.get('MailChimp.listIds.newsletter'), payload);
+
+	// now subscribe to orgType specific lists
+	if (org.effectiveOrgType === 'advertiser'){
+		_subscribeToList(config.get('MailChimp.listIds.advertiser'), payload);
+	} else if (org.effectiveOrgType === 'publisher'){
+		_subscribeToList(config.get('MailChimp.listIds.publisher'), payload);
+	}
 };
 
 /**
@@ -117,6 +179,8 @@ exports.signup = function(req, res) {
                     if (err) return handleError(res, err);
                     return res.json(user);
                 });
+				// finally, push user to MailChimp list asynchronously
+				addUserToMailChimpList(req, user, org);
             });
         });
     });

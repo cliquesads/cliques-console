@@ -17,13 +17,13 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
         $scope.requestAccess = function(){
             $scope.loading = true;
             $http.post('/auth/access-signup', {code: $scope.accesscode}).success(function(response){
-                $analytics.eventTrack('AccessCodeValidated');
+                $analytics.eventTrack('Signup_AccessCodeValidated');
                 $scope.authentication.accesscode = response.accesscode;
                 // And redirect to the signup page
                 $scope.loading = false;
                 $location.path('/signup');
             }).error(function(response){
-                $analytics.eventTrack('InvalidAccessCode');
+                $analytics.eventTrack('Signup_InvalidAccessCode');
                 $scope.loading = false;
                 $scope.error = response.message;
             });
