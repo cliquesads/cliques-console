@@ -26,6 +26,14 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
                 });
                 scope.getDescription = function(site){
                     openSiteDescriptionDialog(site);
+                };
+
+                // maps icon classes to Clique _id's
+                scope.iconClasses = {
+                    "Outdoor": "cliquesicons-outdoor",
+                    "Nordic Skiing": "cliquesicons-nordic-skiing",
+                    "Alpine Skiing": "cliquesicons-alpine-skiing",
+                    "Cycling": "cliquesicons-cycling"
                 }
             }
         }
