@@ -1,8 +1,8 @@
 /**
  * Created by bliang on 1/14/16.
  */
-angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog',
-    function(getSitesInCliqueBranch, openSiteDescriptionDialog) {
+angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog','CLIQUE_ICON_CLASSES',
+    function(getSitesInCliqueBranch, openSiteDescriptionDialog, CLIQUE_ICON_CLASSES) {
         return {
             restrict: 'E',
             scope: {
@@ -29,12 +29,7 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
                 };
 
                 // maps icon classes to Clique _id's
-                scope.iconClasses = {
-                    "Outdoor": "cliquesicons-outdoor",
-                    "Nordic Skiing": "cliquesicons-nordic-skiing",
-                    "Alpine Skiing": "cliquesicons-alpine-skiing",
-                    "Cycling": "cliquesicons-cycling"
-                }
+                scope.iconClasses = CLIQUE_ICON_CLASSES;
             }
         }
     }
