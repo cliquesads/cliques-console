@@ -12,6 +12,7 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
             templateUrl: 'modules/publisher/views/partials/sites-in-clique-branch.html',
             link: function (scope, element, attrs) {
                 scope.size = scope.size || 'md';
+
                 // get all sites in same branch as selected node
                 scope.$watch('cliqueId', function(newVal, oldVal){
                     if (newVal){
