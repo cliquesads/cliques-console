@@ -1,37 +1,23 @@
 <div>
     <h4 class="text-gray-dark">
-        <i class="icon cliquesicons-black-q-logo"></i>&nbsp;{{ primary_sites._id }}
+        <i class="icon" ng-class="iconClasses[primary_sites._id] || 'cliquesicons-cliques-avatar'"></i>&nbsp;{{ primary_sites._id }}
     </h4>
     <p class="text-muted">
         Campaigns in the <strong>{{ primary_sites._id }}</strong>
         Clique get first-bid access to these sites:
     </p>
     <div data-ng-repeat="site in primary_sites.sites" class="list-group-item" ng-click="getDescription(site)">
-        <div class="row row-table">
-            <div class="col-md-3">
-                <img ng-src="{{ site.logo_secure_url }}" ng-class="{'client-logo-sm': size === 'sm','client-logo-md': size === 'md'}"/>
-            </div>
-            <div class="col-md-9">
-                <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
-                <p class="list-group-item-text"> Active Pages: {{ site.pages.length }}</p>
-            </div>
-        </div>
+        <advertiser-facing-site-list-item site="site" size="{{ size }}"></advertiser-facing-site-list-item>
     </div>
 </div>
 <hr>
 <p ng-show="sites.length > 0" class="text-muted">However, you can also bid on the following websites. If no bids are submitted in lower-level
     Cliques, you then get the chance to bid.</p>
 <div data-ng-repeat="clique in sites">
-    <h4 class="text-gray-dark">{{ clique._id }}</h4>
+    <h4 class="text-gray-dark">
+        <i class="icon" ng-class="iconClasses[clique._id] || 'cliquesicons-cliques-avatar'"></i>&nbsp;{{ clique._id }}
+    </h4>
     <div data-ng-repeat="site in clique.sites" class="list-group-item" ng-click="getDescription(site)">
-        <div class="row row-table">
-            <div class="col-md-3">
-                <img ng-src="{{ site.logo_secure_url }}" ng-class="{'client-logo-xs': size === 'sm','client-logo-sm': size === 'md'}"/>
-            </div>
-            <div class="col-md-9">
-                <h4 class="list-group-item-heading" data-ng-bind="site.name"></h4>
-                <p class="list-group-item-text"> Active Pages: {{ site.pages.length }}</p>
-            </div>
-        </div>
+        <advertiser-facing-site-list-item site="site" size="{{ size }}"></advertiser-facing-site-list-item>
     </div>
 </div>

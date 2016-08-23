@@ -19,6 +19,7 @@ var fs = require('fs'),
 		session: session
 	}),
 	flash = require('connect-flash'),
+	requestIp = require('request-ip'),
 	config = require('./config'),
 	consolidate = require('consolidate'),
     responseTime = require('response-time'),
@@ -51,6 +52,13 @@ module.exports = function(db) {
 	// Passing the request url to environment locals
 	app.use(function(req, res, next) {
 		res.locals.url = req.protocol + '://' + req.headers.host + req.url;
+		next();
+	});
+
+	// requestIp middleware to ease IP parsing
+	// inside request-ip middleware handler
+	app.use(function(req, res, next) {
+		req.clientIp = requestIp.getClientIp(req); // on localhost > 127.0.0.1
 		next();
 	});
 

@@ -13,12 +13,12 @@ var errorHandler = require('./errors.server.controller'),
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 var stripe = require('stripe')(config.get("Stripe.secret_key"));
 
-var buildInviteURL = function(organizationId, accessTokenId){
+var buildInviteURL = function(req, organizationId, accessTokenId){
     var protocol = 'https';
     if (process.env.NODE_ENV === 'local-test'){
         protocol = 'http';
     }
-    var hostname = config.get(util.format("Console.%s.external.hostname", protocol));
+    var hostname = req.headers.host;
     var base = util.format("%s://%s", protocol, hostname);
     return util.format("%s/#!/invite/organization/%s/%s", base, organizationId, accessTokenId);
 };
@@ -192,14 +192,14 @@ module.exports = {
                 });
             } else {
                 var subject = util.format("%s Has Invited You To Join Cliques",
-                    req.user.firstName);
+                    req.user.displayName);
                 var asyncFuncs = [];
                 for (var i=0; i < req.body.length; i++){
                     var token = tokens[i];
                     var newUser = req.body[i];
                     var func = (function(thisToken, thisUser){
                         return function(callback){
-                            var inviteUrl = buildInviteURL(organization._id, thisToken);
+                            var inviteUrl = buildInviteURL(req, organization._id, thisToken);
                             mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
                                 { user: req.user, inviteUrl: inviteUrl, organization: organization },
                                 req.user,

@@ -29,10 +29,13 @@ angular.module('core')
   })
   .constant('APP_REQUIRES', {
     // jQuery based and standalone scripts
+      // also for font libraries which require a bunch of vector images,
+      // and it's too annoying to wrap them all up in /dist
     scripts: {
       'modernizr':          ['/lib/modernizr/modernizr.js'],
       'icons':              ['/lib/fontawesome/css/font-awesome.min.css',
-                             '/lib/simple-line-icons/css/simple-line-icons.css']
+                             '/lib/simple-line-icons/css/simple-line-icons.css',
+                             '/lib/cliques-icons/styles.css']
     },
     // Angular based script (use the right module name)
     modules: [

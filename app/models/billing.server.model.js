@@ -167,6 +167,82 @@ var PaymentSchema = new Schema({
 
 
 /**
+ * Commonly used QB account IDs & Names, and mappings to lineItemTypes or promo/adjustment types
+ */
+var QBO_ACCOUNT_IDS = exports.QBO_ACCOUNT_IDS = {
+    "AdSpend": {
+        value: "68",
+        name: "Advertising Impressions"
+    },
+    "RevShare": {
+        value: "75",
+        name: "Publisher Revenue Share"
+    },
+    "Revenue": {
+        value: "53",
+        name: "Sales Of Product Income"
+    },
+    "Fee": {
+        value: "85",
+        name: "Advertiser Platform Fees"
+    },
+    "publisher_promo": {
+        value: "82",
+        name: "Publisher Promotions"
+    },
+    "advertiser_promo": {
+        value: "86",
+        name: "Advertiser Promotions"
+    },
+    "negative_adjustments": {
+        value: "83",
+        name: "Negative Invoice Adjustments"
+    },
+    "positive_adjustments": {
+        value: "84",
+        name: "Positive Invoice Adjustments"
+    }
+};
+
+/**
+ * Maps payment lineItems to QuickBooks Bill "line" sub-objects
+ */
+PaymentSchema.methods.getQboBillLines = function(){
+    var lines = [];
+    var self = this;
+    // need to flip the signs for all lineitems if payment is publisher payment
+    // b/c all publisher / outgoing payments recorded w/ negative signs
+    var sign = this.paymentType === 'publisher' ? -1 : 1;
+    // Add lineItem lines first
+    this.lineItems.forEach(function(lineItem){
+        var line = {
+            "Description": "Statement #" + self._id + ": " + lineItem.description,
+            "Amount": sign * lineItem.amount,
+            "DetailType": "AccountBasedExpenseLineDetail",
+            "AccountBasedExpenseLineDetail": {
+                "AccountRef": QBO_ACCOUNT_IDS[lineItem.lineItemType]
+            }
+        };
+        lines.push(line);
+    });
+    // Now add adjustments, if any
+    if (!_.isNil(this.adjustments)){
+        this.adjustments.forEach(function(adjustment){
+            var adjustment_key = adjustment.amount < 0 ? "negative_adjustments" : "positive_adjustments";
+            line = {
+               "Description": "Statement #" + self._id + ": " + adjustment.description,
+               "Amount": sign * adjustment.amount,
+               "DetailType": "AccountBasedExpenseLineDetail",
+               "AccountBasedExpenseLineDetail": {
+                   "AccountRef": QBO_ACCOUNT_IDS[adjustment_key]
+               }
+            }
+        });
+    }
+    return lines;
+};
+
+/**
  * Handler to add payment to corresponding Organization.payments
  *
  * Hooked into post-init signal, but made an instance method for convenience
@@ -304,8 +380,6 @@ PaymentSchema.statics.lineItem_generateDescription = function(lineItem, relevant
     }
     return lineItem;
 };
-
-/**
 
 /**
  * Calculates advertiser fees / publisher rev-share based on cpm_variable lineitems

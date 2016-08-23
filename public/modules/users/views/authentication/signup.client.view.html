@@ -9,22 +9,24 @@
                 <div class="form-wizard wizard-horizontal">
                     <!-- START wizard steps indicator-->
                     <ol class="row" style="margin-left: -15px; margin-right: -15px">
-                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" analytics-on="click" analytics-event="SignUpStep1" class="col-sm-3 skinny">
+                        <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)" class="col-sm-3 skinny">
                             <h4><i class="fa fa-info"></i> Basic Info</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" analytics-on="click" analytics-event="SignUpStep2" class="col-md-3 skinny">
+                        <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)" class="col-md-3 skinny">
                             <h4><i class="fa fa-building-o"></i> Organization Info</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" analytics-on="click" analytics-event="SignUpStep3" class="col-sm-3 skinny">
+                        <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-sm-3 skinny">
                             <h4><i class="fa fa-user"></i> Create an Account</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(4)}" analytics-on="click" analytics-event="SignUpStep4" class="col-md-3 skinny">
+                        <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny">
                             <h4><i class="fa fa-file-text-o"></i> Terms & Conditions</h4>
                         </li>
                     </ol>
                     <!-- END wizard steps indicator-->
 
                     <!-- START User Inputs -->
+                    <!-- Add analytics event trigger on load of this step since user will almost never explicitly click
+                        on any button to get to step 1 -->
                     <div id="step1" ng-show="wizard.active(1)">
                         <div ng-show="!organizationInvite">
                             <legend>Account Type</legend>
@@ -78,7 +80,7 @@
                         <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="next">
-                                <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="SignUpStep2"> Next <span>&rarr;</span></a>
+                                <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="Signup_Step2"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
@@ -171,7 +173,7 @@
                                 <a href="#" ng-click="wizard.go(1)"><span>&larr; Previous</span></a>
                             </li>
                             <li class="next">
-                                <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="SignUpStep3"> Next <span>&rarr;</span></a>
+                                <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="Signup_Step3"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
@@ -220,7 +222,7 @@
                                 <a href="#" ng-click="wizard.go(2)"><span>&larr; Previous</span></a>
                             </li>
                             <li class="next">
-                                <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="SignUpStep4"> Next <span>&rarr;</span></a>
+                                <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
                             </li>
                         </ul>
                     </div>
@@ -265,11 +267,11 @@
                             <div terms-panel class="terms-text-narrow text-center" template="{{ template }}"></div>
                             <div class="text-center">
                                 <div class="checkbox c-checkbox"><label>
-                                    <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" data-parsley-group="step4" analytics-on="click" analytics-event="SignUpAcceptTerms" required="required">
+                                    <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" data-parsley-group="step4" analytics-on="click" analytics-event="Signup_AcceptTerms" required="required">
                                     <span class="fa fa-check"></span> I Accept</label></div>
                             </div>
                             <div class="text-center form-group mt">
-                                <button type="submit" class="btn btn-lg btn-primary" analytics-on="click" analytics-event="SignUpFinish" ng-show="acceptedTerms"><span class="text-md">Finish</span></button>
+                                <button type="submit" class="btn btn-lg btn-primary" analytics-on="click" analytics-event="Signup_Finish" ng-show="acceptedTerms"><span class="text-md">Finish</span></button>
                             </div>
                             <br/>
                             <div data-ng-show="error" class="alert alert-danger">

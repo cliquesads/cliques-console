@@ -5,6 +5,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     '$stateParams',
     '$location',
     '$q',
+    '$analytics',
     'Authentication',
     'Publisher',
     'Advertiser',
@@ -16,7 +17,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'CREATIVE_SIZES',
     'OPENRTB',
     'LOGO',
-	function($scope, $stateParams, $location, $q, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, LOGO) {
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -34,6 +35,9 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // something weird about storing regexes as scope vars, they don't bind
         // to the template properly to have to convert to string
         $scope.domain_regex = String(REGEXES.domain);
+
+        // start event tracking funnel here
+        $analytics.eventTrack('SiteSetup_StartPublisherWizard');
 
         $scope.cliques = [];
         // Get whole tree of active Cliques on load to render in ABN tree

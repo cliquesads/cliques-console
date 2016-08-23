@@ -32,7 +32,8 @@ angular.module('core').controller('AppController',
             $name: user.displayName,
             $created: user.created,
             $email: user.email,
-            role: user.role
+            role: user.role,
+            orgType: user.organization.effectiveOrgType
         });
         // Set latestHour of reporting data for footer
         $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');

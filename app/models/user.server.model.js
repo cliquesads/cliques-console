@@ -59,6 +59,13 @@ var UserSchema = new Schema({
 		required: 'Please fill in a username',
 		trim: true
 	},
+	// lower case username used to perform efficient case insensitive queries
+	// will be generated automatically in pre-save hook
+	username_lower: {
+		type: String,
+		index: true,
+		trim: true
+	},
 	password: {
 		type: String,
 		default: '',
@@ -118,20 +125,6 @@ var UserSchema = new Schema({
 	toJSON: { virtuals: true }
 });
 
-/**
- * Hook a pre save method to hash the password
- *
- * NOTE: Removed pre-save hook in favor of explicitly hashing passwords
- * on save when applicable, as this will destroy old passwords if called accidentally.
- */
-// UserSchema.pre('save', function(next) {
-// 	if (this.password && this.password.length > 6) {
-// 		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-// 		this.password = this._hashPassword(this.password);
-// 	}
-// 	next();
-// });
-
 // Virtual field to retrieve secure URL
 UserSchema.virtual('secureAvatarUrl').get(function(){
 	if (this.avatarUrl){
@@ -175,7 +168,7 @@ UserSchema.methods.authenticate = function(password) {
  */
 UserSchema.statics.isUsernameTaken = function(username, callback){
     var _this = this;
-    _this.findOne({ username: username}, function(err, user){
+    _this.findOne({ username_lower: username.toLowerCase() }, function(err, user){
         if (err) return callback(err, null);
         return callback(null, user ? true : false)
     });
@@ -202,6 +195,14 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 		}
 	});
 };
+
+/**
+ * Hook a pre save method to save lowercase version of username
+ */
+UserSchema.pre('save', function(next) {
+	this.username_lower = this.username.toLowerCase();
+	next();
+});
 
 var User = mongoose.model('User', UserSchema);
 
@@ -275,8 +276,11 @@ var organizationSchema = new Schema({
 	billingEmails: [{ type: String}],
 	sendStatementToOwner: { type: Boolean, required: true, default: true },
 	stripeCustomerId: { type: String }, // for Advertisers
-	stripeAccountId: { type: String } // for Publishers
-	// accountBalance: { type: Number, required: true, default: 0 }
+	stripeAccountId: { type: String }, // for Publishers
+
+	// Quickbooks entity IDs
+	qboVendorId: { type: String }, // for Publishers
+	qboCustomerId: { type: String } // for Advertisers
 },{
 	toObject: { virtuals: true },
 	toJSON: { virtuals: true }
@@ -330,6 +334,53 @@ organizationSchema.virtual('effectiveOrgType').get(function(){
 });
 
 /**
+ * Virtual property for fully-qualified (i.e. w/ http prefix) URI for org website, if
+ * it's not entered as a fully-qualified URI already.
+ */
+organizationSchema.virtual('URI').get(function(){
+	var protocol_substring = 'http';
+	if (this.website){
+		if (this.website.substr(0, protocol_substring.length) != protocol_substring){
+			return protocol_substring + '://' + this.website;
+		}
+	}
+	return this.website;
+});
+
+/**
+ * Convenience method mapping org fields to Quickbooks Vendor object
+ *
+ * Designed for QBO API v3
+ * @returns {{}}
+ */
+organizationSchema.methods.toQuickbooksVendor = function(){
+	var self = this;
+	return {
+		"BillAddr": {
+			"Line1": self.address,
+			"Line2": self.address2,
+			"City": self.city,
+			"Country": self.country,
+			"CountrySubDivisionCode": self.state,
+			"PostalCode": self.zip
+		},
+		"AcctNum": self._id,
+		"CompanyName": self.name,
+		"DisplayName": self.name,
+		"PrintOnCheckName": self.name,
+		"PrimaryEmailAddr": {
+			"Address": self.owner.email
+		},
+		"WebAddr": {
+			"URI": self.URI
+		},
+		"PrimaryPhone": {
+			"FreeFormNumber": self.phone
+		}
+	}
+};
+
+/**
  * Synchronous function to get all outstanding payments for an Organization
  *
  * Totals up all "Pending" or "Overdue" payments, and applies all active promos,
@@ -364,8 +415,13 @@ organizationSchema.methods.getOutstandingPaymentTotals = function(){
  * TODO: which is logical but not enforced in any way.  So if an advertiser/publisher promo is positive/negative,
  * TODO: the results of this waterfall will be all fucked up.
  *
+ * Returns object { total: <new total>, applied_promos: [<array of promos that were used>] }
+ *
+ * Promo objects in applied_promos array include `amountUsed` property which contains the precise amount
+ * of that promo that was applied to the total.
+ *
  * @param total
- * @returns {*}
+ * @returns { total: <new total after promos>, applied_promos: [<array of promo objects that were applied>] }
  */
 organizationSchema.methods.applyPromosToTotal = function(total){
 	var self = this;
@@ -373,6 +429,7 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 		var filtered_promos = self.promos.filter(function(p){
 			return p.active;
 		});
+		var applied_promos = [];
 		filtered_promos.forEach(function(promo){
 			// handle advertiser & publisher promos differently, since you can technically use "part" of a promo
 			// when you're an advertiser, but not as a publisher
@@ -387,11 +444,18 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 							total += promo.promoAmount;
 							promo.promoAmount = 0;
 							promo.active = false;
+							// now append to applied_promos array for reference
+							promo.amountUsed = promo.promoAmount; // this is a fake property, only used by caller methods
+							applied_promos.push(promo);
 							// otherwise, just deduct total from promoAmount, zero out total
 							// but keep promo active for use next time.
 						} else {
-							total = 0;
 							promo.promoAmount = promo.promoAmount + total;
+							promo.amountUsed = total;
+							// zero out total, since promo amount is greater
+							total = 0;
+							// now append to applied_promos array for reference
+							applied_promos.push(promo);
 						}
 					}
 					break;
@@ -399,12 +463,14 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 					filtered_promos.forEach(function(promo){
 						total += promo.promoAmount;
 						promo.active = false;
+						promo.amountUsed = promo.promoAmount;
+						applied_promos.push(promo);
 					});
 					break;
 			}
 		});
 	}
-	return total;
+	return { total: total, applied_promos: applied_promos };
 };
 
 /**

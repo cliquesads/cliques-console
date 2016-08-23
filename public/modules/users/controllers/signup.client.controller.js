@@ -1,14 +1,19 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
-    '$window','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
-    function($scope, $timeout, $http, $location, $state, $stateParams, $window, Authentication, Organizations, Timezones,
-             TermsAndConditions, REGEXES) {
+    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
+    function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations, Timezones,
+             TermsAndConditions, REGEXES){
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
         // If user is signed in then redirect back home
-        if ($scope.authentication.user) $location.path('/');
+        if ($scope.authentication.user) {
+            $location.path('/');
+        } else {
+            // track first signup step here instead of view since it renders by default
+            $analytics.eventTrack('Signup_Step1');
+        }
 
         /**
          * Have to manually add jQuery int-tel-input to orgPhone field
@@ -57,6 +62,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         if ($state.current.name === 'loggedout.organizationInvite'){
             $scope.organizationInvite = true;
+            $analytics.eventTrack('Signup_OrgInviteStart');
             if ($stateParams.organizationId && $stateParams.accessTokenId){
                 $scope.organization = Organizations.get({
                     organizationId: $stateParams.organizationId
@@ -68,20 +74,23 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                         });
                         if ($scope.credentials.accessToken){
                             if ($scope.credentials.accessToken.expired){
-                                $scope.stateError = "This invite has expired"
+                                $scope.stateError = "This invite has expired";
+                                $analytics.eventTrack('Signup_OrgInviteExpired');
                             } else {
                                 // Set appropriate terms and conditions
                                 TermsAndConditions.getCurrent($scope.organization.organization_types[0])
                                     .then(function(response){
                                         $scope.template = response.data.html;
-                                        $scope.termsAndConditions = response.data
+                                        $scope.termsAndConditions = response.data;
                                     });
+                                $analytics.eventTrack('Signup_OrgInviteValidated');
                                 $scope.credentials.firstName = $scope.credentials.accessToken.firstName;
                                 $scope.credentials.lastName = $scope.credentials.accessToken.lastName;
                                 $scope.credentials.email = $scope.credentials.accessToken.email;
                                 $scope.credentials.role = $scope.credentials.accessToken.role;
                             }
                         } else {
+                            $analytics.eventTrack('Signup_OrgInviteInvalid');
                             $scope.stateError = "This invite is invalid.";
                         }
                     }
