@@ -192,7 +192,7 @@ module.exports = {
                 });
             } else {
                 var subject = util.format("%s Has Invited You To Join Cliques",
-                    req.user.firstName);
+                    req.user.displayName);
                 var asyncFuncs = [];
                 for (var i=0; i < req.body.length; i++){
                     var token = tokens[i];
