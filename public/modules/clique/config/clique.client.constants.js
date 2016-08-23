@@ -3,5 +3,6 @@ angular.module('clique')
         "Outdoor": "cliquesicons-outdoor",
         "Nordic Skiing": "cliquesicons-nordic-skiing",
         "Alpine Skiing": "cliquesicons-alpine-skiing",
-        "Cycling": "cliquesicons-cycling"
+        "Cycling": "cliquesicons-cycling",
+        "Snowsports": "cliquesicons-snowsports"
     });
