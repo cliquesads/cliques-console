@@ -30,7 +30,7 @@ exports.forgot = function(req, res, next) {
 		function(token, done) {
 			if (req.body.username) {
 				User.findOne({
-					username: req.body.username
+					username_lower: req.body.username.toLowerCase()
 				}, '-salt -password', function(err, user) {
 					if (!user) {
 						return res.status(400).send({

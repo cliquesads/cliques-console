@@ -59,6 +59,13 @@ var UserSchema = new Schema({
 		required: 'Please fill in a username',
 		trim: true
 	},
+	// lower case username used to perform efficient case insensitive queries
+	// will be generated automatically in pre-save hook
+	username_lower: {
+		type: String,
+		index: true,
+		trim: true
+	},
 	password: {
 		type: String,
 		default: '',
@@ -118,20 +125,6 @@ var UserSchema = new Schema({
 	toJSON: { virtuals: true }
 });
 
-/**
- * Hook a pre save method to hash the password
- *
- * NOTE: Removed pre-save hook in favor of explicitly hashing passwords
- * on save when applicable, as this will destroy old passwords if called accidentally.
- */
-// UserSchema.pre('save', function(next) {
-// 	if (this.password && this.password.length > 6) {
-// 		this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-// 		this.password = this._hashPassword(this.password);
-// 	}
-// 	next();
-// });
-
 // Virtual field to retrieve secure URL
 UserSchema.virtual('secureAvatarUrl').get(function(){
 	if (this.avatarUrl){
@@ -175,7 +168,7 @@ UserSchema.methods.authenticate = function(password) {
  */
 UserSchema.statics.isUsernameTaken = function(username, callback){
     var _this = this;
-    _this.findOne({ username: username}, function(err, user){
+    _this.findOne({ username_lower: username.toLowerCase() }, function(err, user){
         if (err) return callback(err, null);
         return callback(null, user ? true : false)
     });
@@ -202,6 +195,14 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 		}
 	});
 };
+
+/**
+ * Hook a pre save method to save lowercase version of username
+ */
+UserSchema.pre('save', function(next) {
+	this.username_lower = this.username.toLowerCase();
+	next();
+});
 
 var User = mongoose.model('User', UserSchema);
 
