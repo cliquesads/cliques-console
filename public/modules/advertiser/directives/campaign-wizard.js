@@ -13,7 +13,7 @@ angular.module('advertiser').directive('campaignWizard', [
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
     'ngDialog',
-	function($compile, Authentication, Advertiser,
+	function($compile, $analytics, Authentication, Advertiser,
              getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
              BID_SETTINGS, ADVERTISER_TOOLTIPS, ngDialog) {
         return {
