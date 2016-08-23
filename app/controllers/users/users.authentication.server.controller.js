@@ -180,7 +180,9 @@ exports.signup = function(req, res) {
                     return res.json(user);
                 });
 				// finally, push user to MailChimp list asynchronously
-				addUserToMailChimpList(req, user, org);
+				if (process.env.NODE_ENV === 'production'){
+					addUserToMailChimpList(req, user, org);
+				}
             });
         });
     });

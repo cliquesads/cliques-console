@@ -11,7 +11,9 @@ module.exports = function() {
 	// Use basic auth strategy
 	passport.use(new BasicStrategy(
 		function(username, password, done) {
-			User.findOne({ username: username}).populate('organization').exec(function(err, user) {
+			// use regex to de case-sensitize username
+			User.findOne({ username_lower: username.toLowerCase() })
+				.populate('organization').exec(function(err, user) {
 				if (err) {
 					return done(err);
 				}

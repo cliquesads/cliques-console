@@ -8,6 +8,17 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
         /**
+         * Factory for filter function used in advertiser list view
+         */
+        $scope.hasActiveCampaigns = function (bool){
+            return function (advertiser, index, arr) {
+                return advertiser.campaigns.filter(function (camp) {
+                        return camp.active === bool;
+                    }).length > 0
+            };
+        };
+
+        /**
          * Overlay campaign helper modal if state includes necessary query params
          */
         $scope.newModal = function(){

@@ -25,8 +25,9 @@ exports.userByID = function(req, res, next, id) {
 
 exports.basicAuth = function(req, res, next){
 	var credentials = auth(req);
-	console.log(credentials);
-	User.findOne({ username: credentials.name }).populate('organization').exec(function(err, user) {
+	// use regex to de case-sensitize username
+	User.findOne({ username_lower: credentials.name.toLowerCase() })
+		.populate('organization').exec(function(err, user) {
 		if (err) {
 			return next(err);
 		}

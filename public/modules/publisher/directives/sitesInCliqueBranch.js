@@ -1,8 +1,8 @@
 /**
  * Created by bliang on 1/14/16.
  */
-angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog',
-    function(getSitesInCliqueBranch, openSiteDescriptionDialog) {
+angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog','CLIQUE_ICON_CLASSES',
+    function(getSitesInCliqueBranch, openSiteDescriptionDialog, CLIQUE_ICON_CLASSES) {
         return {
             restrict: 'E',
             scope: {
@@ -12,6 +12,7 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
             templateUrl: 'modules/publisher/views/partials/sites-in-clique-branch.html',
             link: function (scope, element, attrs) {
                 scope.size = scope.size || 'md';
+
                 // get all sites in same branch as selected node
                 scope.$watch('cliqueId', function(newVal, oldVal){
                     if (newVal){
@@ -26,7 +27,10 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
                 });
                 scope.getDescription = function(site){
                     openSiteDescriptionDialog(site);
-                }
+                };
+
+                // maps icon classes to Clique _id's
+                scope.iconClasses = CLIQUE_ICON_CLASSES;
             }
         }
     }

@@ -1,6 +1,6 @@
 angular.module('users').controller('BillingController', ['$scope', '$http', '$location', '$analytics', 'Users', 'Authentication','Notify',
     'Organizations', 'Payment','ngDialog',
-    function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
+    function($scope, $http, $location, $analytics, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
         $scope.user = Authentication.user;
 
         /**
