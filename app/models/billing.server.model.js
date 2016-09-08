@@ -40,7 +40,9 @@ var PromoSchema = exports.PromoSchema = new Schema({
     description: { type: String, required: true },
     promoAmount: { type: Number, required: false },
     active: { type: Boolean, required: true, default: true },
-    promoInterval: { type: String, required: false }
+    promoInterval: { type: String, required: false },
+    percentage: { type: Number, required: false },
+    minimumSpend: { type: Number, required: false }
 });
 
 /**
