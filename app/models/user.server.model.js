@@ -6,6 +6,7 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
 	crypto = require('crypto'),
+	async = require('async'),
 	_ = require('lodash'),
 	billing = require('./billing.server.model');
 
@@ -435,12 +436,13 @@ organizationSchema.methods.applyPromosToTotal = function(total){
 			// when you're an advertiser, but not as a publisher
 			switch (self.effectiveOrgType) {
 				case 'advertiser':
+					// TODO: Handle "percentage" promos here -- i.e. promos w/ % and minimum spend levels
 					// waterfall down the promos, add each from total
 					// set active to false if promo is all used up
 					if (total) {
 						// deactivate & clear promoAmount if promo total is less
 						// than total of payments due.
-						if (Math.abs(total) >= Math.abs(promo.promoAmount)) {
+						if (Math.abs(total) >= Math.abs(promo.promoAmount)){
 							total += promo.promoAmount;
 							promo.promoAmount = 0;
 							promo.active = false;
@@ -514,19 +516,23 @@ var AccessCodeSchema = new Schema({
     },
     active: { type: Boolean, default: true, required: true },
     fees: [billing.FeeSchema],
-    promos: [billing.PromoSchema]
+    promos: [billing.PromoSchema],
+	// stuff to track who "issued" the access code, and what they get when it's used
+	issuerOrgs: [{ type: Schema.ObjectId, ref: 'Organization'}],
+	issuerSignupPromo: billing.PromoSchema,
+	issuerDownstreamPromo: billing.PromoSchema
 });
 
 /**
  * Hook a pre save method to hash the password
  */
-AccessCodeSchema.pre('save', function(next) {
-    if (this.code && this.code.length > 6) {
-        this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-        this.code = this.hashCode(this.code);
-    }
-    next();
-});
+// AccessCodeSchema.pre('save', function(next) {
+//     if (this.code && this.code.length > 6) {
+//         this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
+//         this.code = this.hashCode(this.code);
+//     }
+//     next();
+// });
 AccessCodeSchema.methods.hashCode = function(code) {
     if (this.salt && code) {
         return crypto.pbkdf2Sync(code, this.salt, 10000, 64).toString('base64');
@@ -552,4 +558,61 @@ AccessCodeSchema.statics.validate = function(code, callback) {
         }
     });
 };
+
+/**
+ * Adds appropriate promos to issuer organizations and sends them an email letting them
+ * know that their access code was redeemed.
+ *
+ * @param promoType either "Signup" or "Downstream"
+ * @param callback gets (err, usersAndPromos).  usersAndPromos is array of
+ * 		{ user: <User instance>, promo: <Promo instance> } objects
+ * 		indicating which users to email messages to regarding promos issued.
+ */
+AccessCodeSchema.methods.redeemIssuerPromos = function(promoType, callback){
+	var self = this;
+	var promo;
+
+	switch (promoType){
+		case 'Signup':
+			promo = self.issuerSignupPromo;
+			break;
+		case 'Downstream':
+			promo = self.issuerDownstreamPromo;
+			break;
+	}
+
+	if (!_.isNil(this.issuerOrgs) && this.issuerOrgs.length > 0){
+		Organization.find({ _id: this.issuerOrgs }, function(err, orgs){
+			if (err) return callback(err);
+			var parallel = [];
+			// create parallel functions to add promos to org, save and email org owner
+			orgs.forEach(function(issuerOrg){
+
+				parallel.push(function(cb){
+					// inner function to find owner of org & push obj to results
+					var _inner = function(err, o){
+						if (err) return cb(err);
+						User.findById(o.owner, function(err, user){
+							if (err) return cb(err);
+							// push user & promo object to results array
+							return cb(null, { user: user, promo: promo });
+						});
+					};
+
+					// push promo to org promos to be redeemed
+					if (promo){
+						issuerOrg.promos.push(promo);
+						issuerOrg.save(function(err,issuerOrg){
+							_inner(err,issuerOrg);
+						});
+					} else {
+						_inner(err, issuerOrg);
+					}
+				});
+			});
+			async.parallel(parallel, callback);
+		});
+	}
+};
+
 exports.AccessCode = mongoose.model('AccessCode', AccessCodeSchema);
