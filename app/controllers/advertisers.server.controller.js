@@ -10,6 +10,8 @@ var node_utils = require('@cliques/cliques-node-utils'),
 	errorHandler = require('./errors.server.controller'),
     mail = require('./mailer.server.controller'),
     BidderPubSub = node_utils.google.pubsub.BidderPubSub,
+    AccessCode = mongoose.model('AccessCode'),
+    util = require('util'),
 	_ = require('lodash');
 
 
@@ -69,6 +71,37 @@ var _getTreeEntitiesFromRequest = function(req){
         campaign: campaign,
         creativegroup: creativeGroup,
         creative: creative
+    }
+};
+
+var _firstCampaignPromoHook = function(req){
+    var accesscodeId = req.user.organization.accesscode;
+    if (accesscodeId){
+        AccessCode.findById(accesscodeId, function(err, accessCode){
+            if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
+            // populate issuer orgs, if any
+            var promoType = 'Campaign';
+            accessCode.redeemIssuerPromos(promoType,function(err, results){
+                if (err) console.error(err);
+                // results is array of { user: <User>, promo: <Promo> } objects
+                results.forEach(function(userPromo){
+                    var subject = util.format('%s Has Created Their First Campaign',
+                        req.user.organization.name);
+                    if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                    mailer.sendMail({
+                        subject: subject,
+                        templateName: 'accesscode-redeemed-email.server.view.html',
+                        data: {
+                            organization: req.user.organization,
+                            promo: userPromo.promo,
+                            accessCode: accessCode,
+                            promoType: promoType },
+                        to: userPromo.user.email,
+                        fromAlias: 'Cliques'
+                    });
+                });
+            });
+        });
     }
 };
 
@@ -212,6 +245,19 @@ module.exports = function(db) {
                                     );
                                 });
                             //}
+
+                            // Finally, call first campaign promo hook if necessary
+                            // TODO: This assumes promo only issued on first campaign creation
+                            if (_.isEmpty(initCampaigns)){
+                                // also have to check if organization has any other advertisers.  Don't want to issue
+                                // promo if org has another advertiser already
+                                advertiserModels.Advertiser.find({ organization: req.user.organization._id, _id: { $ne: advertiser._id }}, function(err, res){
+                                    if (err) console.error('ERROR when getting other advertisers for org: ' + err);
+                                    if (_.isEmpty(res)){
+                                        _firstCampaignPromoHook(req);
+                                    }
+                                });
+                            }
                         }
                     });
                 }

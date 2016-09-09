@@ -84,6 +84,33 @@ module.exports = {
             if (err) return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
             });
+            // now check for access code issuer.
+            // If present, issue their promo & send them an email
+            if (org.accesscode){
+                AccessCode.findById(org.accesscode, function(err, accessCode){
+                    if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
+                    // populate issuer orgs, if any
+                    var promoType = 'Signup';
+                    accessCode.redeemIssuerPromos(promoType,function(err, results){
+                        if (err) console.error(err);
+                        // results is array of { user: <User>, promo: <Promo> } objects
+                        results.forEach(function(userPromo){
+                            var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
+                                organization.name);
+                            if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                            mailer.sendMail({
+                                subject: subject,
+                                templateName: 'accesscode-redeemed-email.server.view.html',
+                                data: { organization: org, promo: userPromo.promo, accessCode: accessCode, promoType: promoType },
+                                to: userPromo.user.email,
+                                fromAlias: 'Cliques'
+                            });
+                        });
+                    });
+                });
+            }
+            // this will likely execute & send response before accesscode promo step has completed,
+            // but this is by design, don't want to error out or wait for that step to finish.
             return res.json(org);
         });
     },

@@ -1,0 +1,44 @@
+{% extends 'base-external-email.server.view.html' %}
+
+{% block content %}
+
+{% if promo.type == 'publisher' %}
+    {% set sign = -1 %}
+{% else %}
+    {% set sign = 1 %}
+{% endif %}
+
+<span class="h4" style="text-align: center">Congrats! {{ organization.name }} Has Used Your Access Code to
+    {% if promoType == "Signup" %}
+        Sign Up for
+    {% elseif promoType === "Campaign" %}
+        Create a Campaign on
+    {% elseif promoType === "Site" %}
+        Set up a Site on
+    {% else %}
+        Do Something on
+    {% endif %}
+    Cliques
+</span>
+{% if promo %}
+<p style="text-align: center;">
+    As a token of our appreciation, we've deposited <strong>{{(sign * promo.promoAmount)|round(2)|currency('$') }}</strong> in your Cliques account.  This amount will
+    be applied to your current outstanding balance on Cliques, and will be added or deducted from your total
+    in the current billing cycle.
+</p>
+<p style="text-align: center;">
+    <a href="https://console.cliquesads.com/#!/settings/billing" class="btn">View My Account</a>
+</p>
+{% endif %}
+<p style="text-align: center;">
+    Thanks for spreading the love!
+</p>
+<p style="text-align: center">
+    <em>- The Cliques Team</em>
+</p>
+<br>
+<p style="font-size: 12px; text-align: center;">
+    <em>If you feel that have received this message in error, please report this message to
+        <a href="mailto:support@cliquesads.com">support@cliquesads.com</a></em>.
+</p>
+{% endblock %}

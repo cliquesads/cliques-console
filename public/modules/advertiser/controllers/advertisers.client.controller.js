@@ -12,9 +12,11 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
          */
         $scope.hasActiveCampaigns = function (bool){
             return function (advertiser, index, arr) {
-                return advertiser.campaigns.filter(function (camp) {
-                        return camp.active === bool;
-                    }).length > 0
+                var hasBoolCampaigns = advertiser.campaigns.filter(function(camp){return camp.active === bool;}).length > 0;
+                if (!bool){
+                    hasBoolCampaigns = hasBoolCampaigns || advertiser.campaigns.length === 0;
+                }
+                return hasBoolCampaigns;
             };
         };
 
