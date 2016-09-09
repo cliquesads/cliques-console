@@ -22,7 +22,7 @@
 </span>
 {% if promo %}
 <p style="text-align: center;">
-    As a token of our appreciation, we've deposited {{(sign * promo.promoAmount)|round(2)|currency('$') }} in your Cliques account.  This amount will
+    As a token of our appreciation, we've deposited <strong>{{(sign * promo.promoAmount)|round(2)|currency('$') }}</strong> in your Cliques account.  This amount will
     be applied to your current outstanding balance on Cliques, and will be added or deducted from your total
     in the current billing cycle.
 </p>
