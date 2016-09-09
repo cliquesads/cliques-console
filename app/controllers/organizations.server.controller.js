@@ -91,7 +91,7 @@ module.exports = {
                     if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
                     // populate issuer orgs, if any
                     var promoType = 'Signup';
-                    accessCode.redeemIssuerPromos('Signup',function(err, results){
+                    accessCode.redeemIssuerPromos(promoType,function(err, results){
                         if (err) console.error(err);
                         // results is array of { user: <User>, promo: <Promo> } objects
                         results.forEach(function(userPromo){

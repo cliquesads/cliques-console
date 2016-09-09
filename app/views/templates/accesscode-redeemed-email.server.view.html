@@ -11,8 +11,12 @@
 <span class="h4" style="text-align: center">Congrats! {{ organization.name }} Has Used Your Access Code to
     {% if promoType == "Signup" %}
         Sign Up for
-    {% else %}
+    {% elseif promoType === "Campaign" %}
         Create a Campaign on
+    {% elseif promoType === "Site" %}
+        Set up a Site on
+    {% else %}
+        Do Something on
     {% endif %}
     Cliques
 </span>

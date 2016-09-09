@@ -520,7 +520,8 @@ var AccessCodeSchema = new Schema({
 	// stuff to track who "issued" the access code, and what they get when it's used
 	issuerOrgs: [{ type: Schema.ObjectId, ref: 'Organization'}],
 	issuerSignupPromo: billing.PromoSchema,
-	issuerDownstreamPromo: billing.PromoSchema
+	issuerCampaignPromo: billing.PromoSchema,
+	issuerSitePromo: billing.PromoSchema
 });
 
 /**
@@ -563,7 +564,7 @@ AccessCodeSchema.statics.validate = function(code, callback) {
  * Adds appropriate promos to issuer organizations and sends them an email letting them
  * know that their access code was redeemed.
  *
- * @param promoType either "Signup" or "Downstream"
+ * @param promoType either "Signup", "Campaign" or "Site"
  * @param callback gets (err, usersAndPromos).  usersAndPromos is array of
  * 		{ user: <User instance>, promo: <Promo instance> } objects
  * 		indicating which users to email messages to regarding promos issued.
@@ -576,8 +577,11 @@ AccessCodeSchema.methods.redeemIssuerPromos = function(promoType, callback){
 		case 'Signup':
 			promo = self.issuerSignupPromo;
 			break;
-		case 'Downstream':
-			promo = self.issuerDownstreamPromo;
+		case 'Campaign':
+			promo = self.issuerCampaignPromo;
+			break;
+		case 'Site':
+			promo = self.issuerSitePromo;
 			break;
 	}
 
@@ -600,10 +604,15 @@ AccessCodeSchema.methods.redeemIssuerPromos = function(promoType, callback){
 					};
 
 					// push promo to org promos to be redeemed
-					if (promo){
+					if (promo && promo.active){
 						issuerOrg.promos.push(promo);
 						issuerOrg.save(function(err,issuerOrg){
-							_inner(err,issuerOrg);
+							if (err) return cb(err);
+							promo.active = false;
+							// re-save access code b/c promo to deactivate promo
+							self.save(function(e, ac){
+								_inner(e,issuerOrg);
+							});
 						});
 					} else {
 						_inner(err, issuerOrg);
