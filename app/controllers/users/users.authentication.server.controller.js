@@ -101,7 +101,7 @@ var addUserToMailChimpList = function(req, user, org){
 	var payload = {
 		status: "subscribed",
 		merge_fields: {
-			FNAME: user.fistName,
+			FNAME: user.firstName,
 			LNAME: user.lastName
 		},
 		email_address: user.email,
