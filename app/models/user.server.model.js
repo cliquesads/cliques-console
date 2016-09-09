@@ -607,12 +607,7 @@ AccessCodeSchema.methods.redeemIssuerPromos = function(promoType, callback){
 					if (promo && promo.active){
 						issuerOrg.promos.push(promo);
 						issuerOrg.save(function(err,issuerOrg){
-							if (err) return cb(err);
-							promo.active = false;
-							// re-save access code b/c promo to deactivate promo
-							self.save(function(e, ac){
-								_inner(e,issuerOrg);
-							});
+							_inner(err,issuerOrg);
 						});
 					} else {
 						_inner(err, issuerOrg);
