@@ -156,7 +156,8 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-default-condition.html',
                 controller: 'DefaultConditionController',
-                data: {publisher: $scope.publisher, placement: placement },
+                scope: $scope,
+                data: { placement: placement },
                 preCloseCallback: function(value){
                     if (value != 'Success'){
                         var placement_ind = _.findIndex($scope.page.placements, function(pl){
@@ -168,6 +169,8 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             $scope.page.placements[placement_ind].hostedCreatives = initHostedCreatives;
                         });
                         return true;
+                    } else {
+                        setPage();
                     }
                 }
             });

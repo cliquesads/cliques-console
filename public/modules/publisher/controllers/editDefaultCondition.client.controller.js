@@ -6,7 +6,7 @@ angular.module('publisher').controller('DefaultConditionController', ['$scope','
     function($scope, Authentication, AdvertiserUtils, CREATIVE_SIZES, OPENRTB, DEFAULT_TYPES, FileUploader) {
         $scope.authentication = Authentication;
         $scope.placement = $scope.ngDialogData.placement;
-        $scope.publisher = $scope.ngDialogData.publisher;
+        // $scope.publisher = $scope.ngDialogData.publisher;
         $scope.CREATIVE_SIZES = CREATIVE_SIZES;
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.OPENRTB = OPENRTB;
