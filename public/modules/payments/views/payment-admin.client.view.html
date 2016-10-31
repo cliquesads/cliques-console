@@ -6,10 +6,13 @@
     </div>
     <div class="panel panel-default">
         <div class="panel-body table-responsive">
-            <div class="bg-gray-lighter col-sm-12 text-center">
-                <div class="form-horizontal col-sm-5">
+            <div class="bg-gray-lighter col-sm-12 mb">
+                <div class="col-sm-12 text-left mb-sm">
+                    <small><em class="text-muted"><i class="fa fa-cog"></i> Report Settings</em></small>
+                </div>
+                <div class="form-horizontal col-sm-6">
                     <div class="form-group">
-                        <label for="months" class="col-sm-2 text-md">Month:</label>
+                        <label for="months" class="col-sm-2 text-md">Month</label>
                         <div class="col-sm-10">
                             <select name="months" ng-options="key as key|date:'MMMM yyyy':'UTC' for (key, val) in all_payments" id="months" ng-model="reportSettings.start_date" data-placeholder="Select a month" class="form-control chosen-select" style="height: 100%">
                                 <!--<option value=""></option>-->
@@ -17,12 +20,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-6">
                     <div class="col-sm-4 text-md"><strong>Organization Type</strong></div>
-                    <div class="btn-group col-sm-8">
-                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'advertiser'" class="btn btn-primary">Advertiser</label>
-                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'publisher'" class="btn btn-primary">Publisher</label>
-                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'all'" class="btn btn-primary">All</label>
+                    <div class="btn-group col-sm-7">
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'all'" class="btn btn-xs btn-primary">All</label>
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'advertiser'" class="btn btn-xs btn-primary">Advertiser</label>
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'publisher'" class="btn btn-xs btn-primary">Publisher</label>
                     </div>
                 </div>
             </div>
