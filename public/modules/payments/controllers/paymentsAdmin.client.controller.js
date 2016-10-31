@@ -1,7 +1,27 @@
 angular.module('payments').controller('PaymentAdminController', ['$scope', '$http', '$location', 'Users',
     'Authentication','Notify','Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
-        $scope.payments = Payment.query();
+        $scope.reportSettings = {
+            start_date: null,
+            effectiveOrgType: 'all'
+        };
+        Payment.query(function(payments){
+            $scope.all_payments = _.groupBy(payments, 'start_date');
+            $scope.reportSettings.start_date = _.max(Object.keys($scope.all_payments));
+        });
+
+        
+        $scope.orgTypeFilter = function(value, index, array){
+            return value.$key === $scope.reportSettings.effectiveOrgType || $scope.reportSettings.effectiveOrgType === 'all';
+        };
+
+        $scope.payments = null;
+        $scope.$watch('reportSettings.start_date', function(newDate, oldDate){
+            if (newDate && newDate != oldDate){
+                $scope.payments = $scope.all_payments[newDate];
+            }
+        });
+        
         $scope.organization = Organizations.get({
             organizationId: Authentication.user.organization._id
         });

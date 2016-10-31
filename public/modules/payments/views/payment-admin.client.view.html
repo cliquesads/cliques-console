@@ -4,67 +4,89 @@
         <p>Payments are generated 1st of each month, and reflect the previous
             calendar month's billable impressions & terms.</p>
     </div>
-    <div class="panel panel-default" ng-repeat="group in payments | groupBy: 'start_date' | toArray:true | orderBy:'-$key'">
+    <div class="panel panel-default">
         <div class="panel-body table-responsive">
-            <div class="text-center">
-                <h4 class="mt0">{{ group.$key | date : "MMMM yyyy" : "UTC" }}</h4>
+            <div class="bg-gray-lighter col-sm-12 text-center">
+                <div class="form-horizontal col-sm-5">
+                    <div class="form-group">
+                        <label for="months" class="col-sm-2 text-md">Month:</label>
+                        <div class="col-sm-10">
+                            <select name="months" ng-options="key as key|date:'MMMM yyyy':'UTC' for (key, val) in all_payments" id="months" ng-model="reportSettings.start_date" data-placeholder="Select a month" class="form-control chosen-select" style="height: 100%">
+                                <!--<option value=""></option>-->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="col-sm-4 text-md"><strong>Organization Type</strong></div>
+                    <div class="btn-group col-sm-8">
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'advertiser'" class="btn btn-primary">Advertiser</label>
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'publisher'" class="btn btn-primary">Publisher</label>
+                        <label ng-model="reportSettings.effectiveOrgType" btn-radio="'all'" class="btn btn-primary">All</label>
+                    </div>
+                </div>
             </div>
-            <hr class="mt0 mb-sm"/>
-            <div ng-repeat="(orgType, payments) in group | groupBy: 'organization.effectiveOrgType'">
-                <p class="text-md"><strong>{{ orgType | uppercase }}</strong></p>
-                <table class="table table-striped" >
-                    <thead>
-                        <th ng-hide="invoicePreviewUrl">#</th>
-                        <th>Status</th>
-                        <th>Organization</th>
-                        <th ng-hide="invoicePreviewUrl">Units</th>
-                        <th>Amount</th>
-                        <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="p in payments">
-                        <td ng-hide="invoicePreviewUrl">{{ p._id }}</td>
-                        <td>
-                            <payment-status-label ng-model="p" admin="true"></payment-status-label>
-                        </td>
-                        <td>
-                            <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>">
-                                {{ p.organization.name }}
-                            </a>
-                        </td>
-                        <td ng-hide="invoicePreviewUrl">{{ p.totalUnits | number:"0" }}</td>
-                        <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
-                        <td ng-hide="invoicePreviewUrl">
-                            <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
-                                <i class="fa fa-lg fa-eye"></i>
-                            </button>
-                            <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement">
-                                <i class="fa fa-lg fa-file-pdf-o"></i>
-                            </button>
-                            <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
-                                <i class="fa fa-lg fa-pencil"></i>
-                            </button>
-                            <button type="button" class="btn btn-default btn-xs"  ng-click="openStatusDialog(p)"  tooltip="Change Status">
-                                <i class="fa fa-lg fa-exchange"></i>
-                            </button>
-                            <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send">
-                                <i class="fa fa-lg fa-check-square"></i>
-                            </button>
-                            <button type="button" ng-show="p.status != 'Needs Approval' && p.status != 'Paid'"  ng-click="setPaid(p)" class="btn btn-success btn-xs" tooltip="Set to Paid">
-                                <i class="fa fa-lg fa-check-square"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td ng-hide="invoicePreviewUrl"></td>
-                        <td></td>
-                        <td></td>
-                        <td ng-hide="invoicePreviewUrl"><strong>Total</strong></td>
-                        <td><strong>{{ getTotalAmounts(payments) | currency: "$" : 2 }}</strong></td>
-                        <td ng-hide="invoicePreviewUrl"></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div ng-repeat="group in payments | groupBy: 'start_date' | toArray:true | orderBy:'-$key'">
+                <div class="text-center">
+                    <h4 class="mt0">{{ group.$key | date : "MMMM yyyy" : "UTC" }}</h4>
+                </div>
+                <hr class="mt0 mb-sm"/>
+                <div ng-repeat="payments in group | groupBy: 'organization.effectiveOrgType' | toArray: true | filter: orgTypeFilter">
+                    <p class="text-md"><strong>{{ payments.$key | uppercase }}</strong></p>
+                    <table class="table table-striped" >
+                        <thead>
+                            <th ng-hide="invoicePreviewUrl">#</th>
+                            <th>Status</th>
+                            <th>Organization</th>
+                            <th ng-hide="invoicePreviewUrl">Units</th>
+                            <th>Amount</th>
+                            <th style="min-width: 150px" ng-hide="invoicePreviewUrl">Actions</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="p in payments">
+                            <td ng-hide="invoicePreviewUrl">{{ p._id }}</td>
+                            <td>
+                                <payment-status-label ng-model="p" admin="true"></payment-status-label>
+                            </td>
+                            <td>
+                                <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>">
+                                    {{ p.organization.name }}
+                                </a>
+                            </td>
+                            <td ng-hide="invoicePreviewUrl">{{ p.totalUnits | number:"0" }}</td>
+                            <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
+                            <td ng-hide="invoicePreviewUrl">
+                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
+                                    <i class="fa fa-lg fa-eye"></i>
+                                </button>
+                                <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement">
+                                    <i class="fa fa-lg fa-file-pdf-o"></i>
+                                </button>
+                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
+                                    <i class="fa fa-lg fa-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-default btn-xs"  ng-click="openStatusDialog(p)"  tooltip="Change Status">
+                                    <i class="fa fa-lg fa-exchange"></i>
+                                </button>
+                                <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send">
+                                    <i class="fa fa-lg fa-check-square"></i>
+                                </button>
+                                <button type="button" ng-show="p.status != 'Needs Approval' && p.status != 'Paid'"  ng-click="setPaid(p)" class="btn btn-success btn-xs" tooltip="Set to Paid">
+                                    <i class="fa fa-lg fa-check-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-hide="invoicePreviewUrl"></td>
+                            <td></td>
+                            <td></td>
+                            <td ng-hide="invoicePreviewUrl"><strong>Total</strong></td>
+                            <td><strong>{{ getTotalAmounts(payments) | currency: "$" : 2 }}</strong></td>
+                            <td ng-hide="invoicePreviewUrl"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
