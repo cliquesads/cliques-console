@@ -1,141 +1,142 @@
 <!-- START Top Navbar-->
 <nav role="navigation" class="navbar topnavbar">
-   <!-- START navbar header-->
-   <div class="navbar-header">
-       <!--The ng-show here is a hack, if you can figure out a way to secure home link (i.e. have it pass through app controller) then this isn't necessary-->
-       <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
-       <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
-           <em class="fa fa-navicon"></em>
-       </a>
-       <a href="#/" ng-show="authentication.user" class="navbar-brand">
-         <div class="brand-logo">
-            <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive" />
-         </div>
-         <div class="brand-logo-collapsed">
-            <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive" />
-         </div>
-      </a>
-       <div ng-hide="authentication.user" class="navbar-brand">
-           <div class="brand-logo">
-               <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive" />
-           </div>
-           <div class="brand-logo-collapsed">
-               <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive" />
-           </div>
-       </div>
-   </div>
-   <!-- END navbar header-->
-   <!-- START Nav wrapper-->
-   <div class="nav-wrapper">
-      <!-- START Left navbar-->
-      <ul class="nav navbar-nav">
-         <li ng-show="authentication.user">
-            <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
-            <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
-               <em class="fa fa-navicon"></em>
-            </a>
-         </li>
-      </ul>
-       <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
-           <em class="fa fa-navicon"></em>
-       </a>
-      <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
-          <li class="dropdown" dropdown>
-              <a href class="dropdown-toggle" dropdown-toggle>
-                  <span class="fa fa-lg fa-question-circle"></span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li>
-                      <a href="http://support.cliquesads.com" target="_blank">Support Center</a>
-                  </li>
-              </ul>
-          </li>
-          <li class="dropdown dropdown-list" dropdown>
-              <a href class="dropdown-toggle" dropdown-toggle>
-                  <i class="fa fa-lg fa-credit-card"></i> Billing
-                  <div ng-show="payments.length" class="label label-danger">{{ payments.length }}</div>
-              </a>
-              <ul class="dropdown-menu">
-                  <li>
-                      <div class="list-group">
-                          <div class="list-group-item" ng-show="payments.length">
-                              <small>The follow statements are available:</small>
-                          </div>
-                          <a href="/#!/settings/billing" class="list-group-item" ng-repeat="p in payments">
-                              <div class="media-box">
-                                  <div class="pull-left">
-                                      <payment-status-label ng-model="p"></payment-status-label>
-                                  </div>
-                                  <div class="media-box-body clearfix">
-                                      <p class="m0">
-                                          {{ p.start_date | date: "MMMM yyyy" : "UTC"}} Statement
-                                      </p>
-                                      <p class="m0">
-                                          Total: <small>{{ p.totalAmount | currency: "$" : 2 }}</small>
-                                      </p>
-                                  </div>
-                              </div>
-                          </a>
-                          <div class="list-group-item" ng-hide="payments.length">
-                              <p>
-                                  <small><em class="text-muted">No statements currently pending.</em></small>
-                              </p>
-                          </div>
-                          <a class="list-group-item" href="/#!/settings/billing">
-                              Go to Billing Center <i class="fa fa-arrow-circle-right"></i>
-                          </a>
-                      </div>
-                  </li>
-              </ul>
-          </li>
-         <li class="dropdown" dropdown>
-            <a href class="dropdown-toggle pb-sm pt-sm" dropdown-toggle>
-               <span data-ng-bind="authentication.user.displayName"></span>
-               <b class="caret"></b>
-               <br/>
-                <small data-ng-bind="authentication.user.organization.name"></small>
-            </a>
-            <ul class="dropdown-menu">
-               <li>
-                  <a href="/#!/settings/profile"><i class="fa fa-lg fa-cog"></i> Settings</a>
-               </li>
-               <!--<li>-->
-                  <!--<a href="/#!/settings/accounts">Manage Social Accounts</a>-->
-               <!--</li>-->
-               <!--<li data-ng-show="authentication.user.provider === 'local'">-->
-                  <!--<a href="/#!/settings/password">Change Password</a>-->
-               <!--</li>-->
-               <li class="divider"></li>
-               <li>
-                  <a href="/auth/signout"><i class="fa fa-lg fa-sign-out"></i> Signout</a>
-               </li>
-            </ul>
-         </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right ml0 mr0" data-ng-hide="authentication.user">
-         <!--<li ui-route="/page/signup" ng-class="{active: $uiRoute}">-->
+    <!-- START navbar header-->
+    <div class="navbar-header">
+        <!--The ng-show here is a hack, if you can figure out a way to secure home link (i.e. have it pass through app controller) then this isn't necessary-->
+        <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
+        <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
+            <em class="fa fa-navicon"></em>
+        </a>
+        <a href="#/" ng-show="authentication.user" class="navbar-brand">
+            <div class="brand-logo">
+                <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive"/>
+            </div>
+            <div class="brand-logo-collapsed">
+                <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive"/>
+            </div>
+        </a>
+        <div ng-hide="authentication.user" class="navbar-brand">
+            <div class="brand-logo">
+                <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive"/>
+            </div>
+            <div class="brand-logo-collapsed">
+                <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive"/>
+            </div>
+        </div>
+    </div>
+    <!-- END navbar header-->
+    <!-- START Nav wrapper-->
+    <div class="nav-wrapper">
+        <!-- START Left navbar-->
+        <ul class="nav navbar-nav">
+            <li ng-show="authentication.user">
+                <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
+                <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
+                    <em class="fa fa-navicon"></em>
+                </a>
+            </li>
+        </ul>
+        <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
+            <em class="fa fa-navicon"></em>
+        </a>
+        <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+            <li class="dropdown" dropdown>
+                <a href class="dropdown-toggle" dropdown-toggle>
+                    <span class="fa fa-lg fa-question-circle"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="http://support.cliquesads.com" target="_blank">Support Center</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown dropdown-list" dropdown>
+                <a href class="dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-lg fa-credit-card"></i> Billing
+                    <div ng-show="payments.length" class="label label-danger">{{ payments.length }}</div>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <div class="list-group">
+                            <div class="list-group-item" ng-show="payments.length">
+                                <small>The follow statements are available:</small>
+                            </div>
+                            <a href="/#!/settings/billing" class="list-group-item" ng-repeat="p in payments">
+                                <div class="media-box">
+                                    <div class="pull-left">
+                                        <payment-status-label ng-model="p"></payment-status-label>
+                                    </div>
+                                    <div class="media-box-body clearfix">
+                                        <p class="m0">
+                                            {{ p.start_date | date: "MMMM yyyy" : "UTC"}} Statement
+                                        </p>
+                                        <p class="m0">
+                                            Total:
+                                            <small>{{ p.totalAmount | currency: "$" : 2 }}</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="list-group-item" ng-hide="payments.length">
+                                <p>
+                                    <small><em class="text-muted">No statements currently pending.</em></small>
+                                </p>
+                            </div>
+                            <a class="list-group-item" href="/#!/settings/billing">
+                                Go to Billing Center <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown" dropdown>
+                <a href class="dropdown-toggle pb-sm pt-sm" dropdown-toggle>
+                    <span data-ng-bind="authentication.user.displayName"></span>
+                    <b class="caret"></b>
+                    <br/>
+                    <small data-ng-bind="authentication.user.organization.name"></small>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="/#!/settings/profile"><i class="fa fa-lg fa-cog"></i> Settings</a>
+                    </li>
+                    <!--<li>-->
+                    <!--<a href="/#!/settings/accounts">Manage Social Accounts</a>-->
+                    <!--</li>-->
+                    <!--<li data-ng-show="authentication.user.provider === 'local'">-->
+                    <!--<a href="/#!/settings/password">Change Password</a>-->
+                    <!--</li>-->
+                    <li class="divider"></li>
+                    <li>
+                        <a href="/auth/signout"><i class="fa fa-lg fa-sign-out"></i> Signout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right ml0 mr0" data-ng-hide="authentication.user">
+            <!--<li ui-route="/page/signup" ng-class="{active: $uiRoute}">-->
             <!--<a href="/#!/page/signup">Sign Up</a>-->
-         <!--</li>-->
-          <li class="divider-vertical"></li>
-          <li ui-route="/beta-access" ng-class="{active: $uiRoute}">
-              <a href="/#!/beta-access">Beta Access</a>
-          </li>
-          <li class="divider-vertical"></li>
-         <li ui-route="/signin" ng-class="{active: $uiRoute}">
-            <a href="/#!/signin">Sign In</a>
-         </li>
-      </ul>
-      <!-- END Right Navbar-->
-   </div>
-   <!-- END Nav wrapper-->
-   <!-- START Search form-->
-   <!--<form role="search" action="search.html" class="navbar-form">-->
-      <!--<div class="form-group has-feedback">-->
-         <!--<input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />-->
-         <!--<div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>-->
-      <!--</div>-->
-      <!--<button type="submit" class="hidden btn btn-default">Submit</button>-->
-   <!--</form>-->
-   <!-- END Search form-->
+            <!--</li>-->
+            <li class="divider-vertical"></li>
+            <li ui-route="/beta-access" ng-class="{active: $uiRoute}">
+                <a href="/#!/beta-access">Beta Access</a>
+            </li>
+            <li class="divider-vertical"></li>
+            <li ui-route="/signin" ng-class="{active: $uiRoute}">
+                <a href="/#!/signin">Sign In</a>
+            </li>
+        </ul>
+        <!-- END Right Navbar-->
+    </div>
+    <!-- END Nav wrapper-->
+    <!-- START Search form-->
+    <!--<form role="search" action="search.html" class="navbar-form">-->
+    <!--<div class="form-group has-feedback">-->
+    <!--<input type="text" placeholder="{{ 'topbar.search.PLACEHOLDER' | translate }}" class="form-control" />-->
+    <!--<div search-dismiss="search-dismiss" class="fa fa-times form-control-feedback"></div>-->
+    <!--</div>-->
+    <!--<button type="submit" class="hidden btn btn-default">Submit</button>-->
+    <!--</form>-->
+    <!-- END Search form-->
 </nav>
 <!-- END Top Navbar-->
