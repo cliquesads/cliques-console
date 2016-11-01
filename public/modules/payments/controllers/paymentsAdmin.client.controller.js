@@ -65,13 +65,20 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
 
         var openErrorDialog = function(error){
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth600',
+                className: 'ngdialog-theme-default dialogwidth800',
                 template: '<br>\
                          <div class="alert alert-danger text-md">\
                             <p class="text-md"><i class="fa fa-lg fa-exclamation-circle"></i><strong>An error occurred.</strong></p>\
                             <p>' + error.data.message + '</p>\
                         </div>',
                 plain: true
+            });
+        };
+
+        $scope.openHelp = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600 small-padding fixed-height',
+                template: 'modules/payments/views/partials/payments-admin-help.html'
             });
         };
 

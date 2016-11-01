@@ -1,0 +1,121 @@
+<div class="modal-body">
+    <h4>General</h4>
+    <p>
+        A <strong>Payment</strong> represents a single incoming or outgoing monetary transfer to an <strong>Organization</strong>.
+        If an Organization has more than one <strong>Campaign</strong> or <strong>Site</strong> that has accrued a balance
+        owed/due during a particular time period, only one <strong>Payment</strong> will be created for this
+        <strong>Organization</strong> that captures the balance for all active entities.
+    </p>
+
+    <h4>Schedule</h4>
+    <p>
+        The <strong>Payments ETL</strong> runs on the <strong>1st of each month</strong>, calculating the previous month's payments
+        (both incoming & outgoing).  Those payments will become available in this interface as they are calculated.
+    </p>
+    <p>
+        All <strong>Advertiser</strong> payments are due on the <strong>15th of each month</strong>, unless otherwise noted.  The <strong>Stripe transfer script</strong>
+        will run on the 15th of each month to perform transfers for all <strong>Advertiser</strong> payments with <code>method</code> set to <code>Stripe</code>.
+    </p>
+    <p>
+        All <strong>Publisher</strong> payments are due on the <strong>last day of each month</strong>, unless otherwise noted.  The <strong>Stripe transfer script</strong>
+        will run on the last day of each month to perform transfers for all <strong>Publisher</strong> payments with <code>method</code> set to <code>Stripe</code>.
+    </p>
+
+    <h4>Signs</h4>
+    <p>
+        <strong>Outgoing</strong> transfers are represented as <strong>negative</strong> amounts; <strong>incoming
+        </strong>transfers are represented as <strong>positive</strong> amounts. So for an <strong>organization</strong>
+        that is a <strong>publisher</strong>, payments will typically be negative, and advertiser organizations typically
+        positive.
+    </p>
+
+    <h4>Statuses</h4>
+    <ul>
+        <li ng-init="p = { status: 'Needs Approval'}">
+            <p>
+                <payment-status-label ng-model="p" admin="true"></payment-status-label> Payment must be approved by Cliques
+                before being sent to organization.Payments with this status will not be visible by members of this Organization yet.
+            </p>
+            <p>
+                When a payment has status Needs Approval, you can still make adjustments as necessary, as no statement has been
+                generated and saved yet.  Once you <strong>approve</strong> this payment, <strong>no adjustments can be made, so be sure to
+                verify that everything looks correct before approving.*</strong>
+            </p>
+            <p>
+                <small class="text-muted">
+                    *This is kind of true. You can technically change a payment's status back to "Needs Approval",
+                    add adjustments and re-approve, but this will create duplicate invoice files on the server so <strong>PLEASE TRY
+                    REALLY HARD TO NOT DO THIS.</strong>
+                </small>
+            </p>
+        </li>
+        <li ng-init="k = { status: 'Pending'}">
+            <payment-status-label ng-model="k" admin="true"></payment-status-label> Payment is approved by Cliques, but
+            no money has been received or sent yet.
+        </li>
+        <li ng-init="f = { status: 'Paid'}">
+            <payment-status-label ng-model="f" admin="true"></payment-status-label> Nothing else to do! Payment has been
+            received or sent. For Payments with <code>method</code> set to <code>Stripe</code>, transition from <strong>Pending</strong> to
+            <strong>Paid</strong> will occur automatically.  Otherwise, payment status must be changed manually when
+            checks sent or received.
+        </li>
+        <li ng-init="e = { status: 'Overdue'}">
+            <payment-status-label ng-model="e" admin="true"></payment-status-label> Payment is past due and must be collected.
+        </li>
+    </ul>
+
+    <h4>Actions</h4>
+    <ul>
+        <li>
+            <button type="button" class="btn btn-primary btn-xs">
+                <i class="fa fa-lg fa-eye"></i>
+            </button>
+            <strong>Preview Statement: </strong> Generate a <strong>PREVIEW</strong> of what the statement for this payment would
+            look like.  As you add or remove adjustments from this statement, the preview you generate will be updated accordingly.
+        </li>
+        <li>
+            <button type="button" class="btn btn-primary btn-xs">
+                <i class="fa fa-lg fa-file-pdf-o"></i>
+            </button>
+            <strong>View Statement: </strong> View the .PDF final statement for a <strong>Pending, Paid or Overdue</strong> payment.
+        </li>
+        <li>
+            <button type="button" class="btn btn-warning btn-xs">
+                <i class="fa fa-lg fa-pencil"></i>
+            </button>
+            <strong>Add Adjustments: </strong> Open the Adjustments dialog to add or remove any adjustments as necessary.
+        </li>
+        <li>
+            <button type="button" class="btn btn-default btn-xs">
+                <i class="fa fa-lg fa-exchange"></i>
+            </button>
+            <strong>Change Status: </strong> Modify the Status of any payment.
+        </li>
+        <li>
+            <p>
+                <button type="button" class="btn btn-success btn-xs">
+                    <i class="fa fa-lg fa-check-square"></i>
+                </button>
+                <strong>Approve & Send: </strong> Used to <strong>approve</strong> payments.  If this payment has status
+                <strong>Needs Approval</strong>, this will generate a statement, save it to the server, and send an email to
+                the appropriate users within the payment's Organization (as defined by their settings, Organization owner by default).
+            </p>
+            <p>
+                <strong><em>Optional:</em></strong> You can opt to just generate statement & NOT send email in subsequent dialog.
+            </p>
+        </li>
+        <li>
+            <p>
+                <button type="button" class="btn btn-success btn-xs">
+                    <i class="fa fa-lg fa-check-square"></i>
+                </button>
+                <strong>Set to Paid: </strong> Shortcut button used to set <strong>status</strong> to "Paid" when
+                money is sent or received.
+            </p>
+            <p>
+                Primarily used for payments with <code>method</code> set to <code>Check</code>. Payments with
+                <code>method</code> set to <code>Stripe</code> will be set to "Paid" automatically when transfers occur via script.
+            </p>
+        </li>
+    </ul>
+</div>
