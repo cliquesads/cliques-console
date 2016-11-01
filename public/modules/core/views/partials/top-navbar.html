@@ -5,7 +5,7 @@
         <!--The ng-show here is a hack, if you can figure out a way to secure home link (i.e. have it pass through app controller) then this isn't necessary-->
         <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
         <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
-            <em class="fa fa-navicon"></em>
+            <em class="fa fa-2x fa-navicon"></em>
         </a>
         <a href="#/" ng-show="authentication.user" class="navbar-brand">
             <div class="brand-logo">
@@ -34,12 +34,12 @@
                 <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
                     <em class="fa fa-navicon"></em>
                 </a>
+                <a href="#" class="visible-xs settings-toggle" ng-click="settingsCollapsed = !settingsCollapsed">
+                    <em class="fa fa-2x fa-cog"></em>
+                </a>
             </li>
         </ul>
-        <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
-            <em class="fa fa-navicon"></em>
-        </a>
-        <ul class="nav navbar-nav navbar-right" data-ng-show="authentication.user">
+        <ul class="nav navbar-nav navbar-right" ng-class="settingsCollapsed ? 'hidden-xs' : ''">
             <li class="dropdown" dropdown>
                 <a href class="dropdown-toggle" dropdown-toggle>
                     <span class="fa fa-lg fa-question-circle"></span>

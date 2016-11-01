@@ -132,16 +132,16 @@
 // Mobile toggle buttons
 .sidebar-toggle {
   position: absolute !important;
-  top: 16px;
-  left: 15px;
+  top: 12px;
+  left: 10px;
   color: white !important;
   z-index: 3001;
 }
 
 .settings-toggle {
   position: absolute !important;
-  top: 16px;
-  right: 15px;
+  top: 2px;
+  right: 10px;
   color: white !important;
   z-index: 3001;
 }
@@ -314,6 +314,13 @@ s
         left: @nav-header-wd-toggled;
       }
     }
+  }
+}
+
+@media @upto-tablet {
+  .navbar-nav {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 

@@ -94,7 +94,7 @@ html, body {
     background-color: @aside-bg;
 
     .aside-inner {
-      padding-top: @navbar-hg * 2;
+      padding-top: @navbar-hg;
       height: 100%;
       width: @aside-wd;
       overflow: hidden;
@@ -256,6 +256,7 @@ html, body {
     .wrapper {
       > section,
       > footer {
+        padding-top: @navbar-hg;
         margin-left: @aside-wd;
       }
       
@@ -431,10 +432,11 @@ html, body {
       }
     }
     > section {
-      margin-top: (@navbar-hg + 2.5) * 2;
-      @media @tablet {
         margin-top: @navbar-hg;
-      }
+      //  margin-top: (@navbar-hg + 2.5) * 2;
+      //@media @tablet and @upto-tablet{
+      //  margin-top: @navbar-hg;
+      //}
     }
   }
 }
@@ -481,6 +483,6 @@ _:-ms-lang(x), .layout-fixed .wrapper > .aside > .aside-inner {
         width: @boxed-max-width;
       }
     }
-  }  
+  }
 
 } // boxed
