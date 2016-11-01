@@ -1,31 +1,41 @@
 angular.module('payments').controller('PaymentAdminController', ['$scope', '$http', '$location', 'Users',
     'Authentication','Notify','Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
+        $scope.organization = Organizations.get({
+            organizationId: Authentication.user.organization._id
+        });
+
+        // control variable for report settings
         $scope.reportSettings = {
             start_date: null,
             effectiveOrgType: 'all'
         };
+
+        // group payments by 'start_date', since all payments for a given month will have same start date
         Payment.query(function(payments){
             $scope.all_payments = _.groupBy(payments, 'start_date');
+            // get options as separate array in scope so we can sort them
+            $scope.start_dates = Object.keys($scope.all_payments).sort(function(a, b){
+                return new Date(b) - new Date(a);
+            });
+            // set default start_date to most recent
             $scope.reportSettings.start_date = _.max(Object.keys($scope.all_payments));
         });
 
-        
+        // filter passed to ng-repeat to filter paymnts by orgType
         $scope.orgTypeFilter = function(value, index, array){
             return value.$key === $scope.reportSettings.effectiveOrgType || $scope.reportSettings.effectiveOrgType === 'all';
         };
 
+        // control variable for payments in view.
         $scope.payments = null;
+
+        // watcher on start_date to update $scope.payments w/ selection from $scope.all_payments
         $scope.$watch('reportSettings.start_date', function(newDate, oldDate){
             if (newDate && newDate != oldDate){
                 $scope.payments = $scope.all_payments[newDate];
             }
         });
-        
-        $scope.organization = Organizations.get({
-            organizationId: Authentication.user.organization._id
-        });
-
 
         // holds payment being previewed / edited when it's selected
         $scope.previewPayment = null;

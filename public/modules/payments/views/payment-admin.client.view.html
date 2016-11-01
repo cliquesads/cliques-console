@@ -14,7 +14,7 @@
                     <div class="form-group">
                         <label for="months" class="col-sm-2 text-md">Month</label>
                         <div class="col-sm-10">
-                            <select name="months" ng-options="key as key|date:'MMMM yyyy':'UTC' for (key, val) in all_payments" id="months" ng-model="reportSettings.start_date" data-placeholder="Select a month" class="form-control chosen-select" style="height: 100%">
+                            <select name="months" ng-options="s as s|date:'MMMM yyyy':'UTC' for s in start_dates" id="months" ng-model="reportSettings.start_date" data-placeholder="Select a month" class="form-control chosen-select" style="height: 100%">
                                 <!--<option value=""></option>-->
                             </select>
                         </div>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="col-sm-4 text-md"><strong>Organization Type</strong></div>
-                    <div class="btn-group col-sm-7">
+                    <div class="btn-group col-sm-8">
                         <label ng-model="reportSettings.effectiveOrgType" btn-radio="'all'" class="btn btn-xs btn-primary">All</label>
                         <label ng-model="reportSettings.effectiveOrgType" btn-radio="'advertiser'" class="btn btn-xs btn-primary">Advertiser</label>
                         <label ng-model="reportSettings.effectiveOrgType" btn-radio="'publisher'" class="btn btn-xs btn-primary">Publisher</label>
