@@ -1,6 +1,9 @@
-
+<!--TODO: hack used to stretch outer section.content-wrapper to be tall enough so chosen-select doesn't get cut off when expanded-->
+<script>
+    $('.content-wrapper').css('min-height','500px');
+</script>
 <div class="page-header">
-    <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="selectedAdvertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select" style="height: 100%">
+    <select chosen="" name="advertisers" id="advertisers" ng-options="adv.name for adv in advertisers" ng-model="selectedAdvertiser" data-placeholder="Select an advertiser to see campaigns" class="form-control chosen-select">
         <option value=""></option>
     </select>
 </div>
