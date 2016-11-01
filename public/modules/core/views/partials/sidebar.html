@@ -1,7 +1,7 @@
 <!-- Inline template with sidebar items markup and ng-directives-->
 <script type="text/ng-template" id="sidebar-renderer.html">
   <span ng-if="item.heading">{{(item.translate | translate) || item.title}}</span>
-  <a href="/#!/{{item.link}}" title="{{item.title}}">
+  <a href="/#!/{{item.link}}" ng-href="/#!/{{item.link}}" title="{{item.title}}">
     <em ng-hide="inSubmenu" class="{{item.iconClass}}"></em>
     <div ng-if="item.alert" ng-class="item.label || 'label label-success'" class="pull-right">{{item.alert}}</div>
     <span>{{(item.translate | translate) || item.title}}</span>

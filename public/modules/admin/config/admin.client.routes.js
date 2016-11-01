@@ -32,7 +32,8 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'PaymentAdminController'
                 },
                 'titleBar': {
-                    template: 'Payment Admin'
+                    templateUrl: 'modules/payments/views/partials/payment-titlebar.client.view.html',
+                    controller: 'PaymentAdminController'
                 }
             }
         });
