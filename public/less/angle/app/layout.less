@@ -23,7 +23,7 @@
 @content-heading-border:                  #cfdbe2;
 @content-padding:                         20px;
 
-@footer-hg:                               60px;
+@footer-hg:                               85px;
 
 @navbar-hg:                               @navbar-height;
 
@@ -94,7 +94,7 @@ html, body {
     background-color: @aside-bg;
 
     .aside-inner {
-      padding-top: @navbar-hg * 2;
+      padding-top: @navbar-hg;
       height: 100%;
       width: @aside-wd;
       overflow: hidden;
@@ -135,7 +135,7 @@ html, body {
     bottom: 0;
     height: @footer-hg;
     border-top: 1px solid @gray-light;
-    padding: @content-padding;
+    padding: 10px @content-padding;
     z-index: @z-index-main-section - 2;
     > p {
       margin: 0;
@@ -169,9 +169,9 @@ html, body {
     font-size: @font-size-h3;
     line-height: @headings-line-height;
     color: #929292;
-    margin: -15px;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin: -22px;
+    margin-bottom: @content-padding;
+    padding: 15px 20px 15px 25px;
     font-weight: normal;
     background-color: @content-heading-bg;
     border-bottom: 1px solid @content-heading-border;
@@ -194,12 +194,6 @@ html, body {
   @media @tablet {
     padding: @content-padding;
     //overflow: auto; // required for portlets
-    > h3,
-    > .content-heading {
-      margin: -@content-padding;
-      margin-bottom: @content-padding;
-      padding: @content-padding;
-    }
     > button, > .btn {
       margin: 0;
     }
@@ -256,6 +250,7 @@ html, body {
     .wrapper {
       > section,
       > footer {
+        padding-top: @navbar-hg;
         margin-left: @aside-wd;
       }
       
@@ -431,10 +426,11 @@ html, body {
       }
     }
     > section {
-      margin-top: (@navbar-hg + 2.5) * 2;
-      @media @tablet {
         margin-top: @navbar-hg;
-      }
+      //  margin-top: (@navbar-hg + 2.5) * 2;
+      //@media @tablet and @upto-tablet{
+      //  margin-top: @navbar-hg;
+      //}
     }
   }
 }
@@ -481,6 +477,6 @@ _:-ms-lang(x), .layout-fixed .wrapper > .aside > .aside-inner {
         width: @boxed-max-width;
       }
     }
-  }  
+  }
 
 } // boxed

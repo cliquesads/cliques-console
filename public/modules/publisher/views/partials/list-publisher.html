@@ -3,15 +3,15 @@
 <div class="list-group">
     <a data-ng-repeat="pub in publishers | orderBy:'name'" ng-click="selectAndClose(pub)" class="list-group-item">
         <div class="row row-table">
-            <div class="col-md-2">
+            <div class="col-xs-3 col-sm-2 col-md-2">
                 <img ng-src="{{ pub.logo_secure_url }}" class="client-logo-md"/>
             </div>
-            <div class="col-md-6">
+            <div class="col-xs-9 col-sm-8 col-md-6">
                 <h4 class="list-group-item-heading" data-ng-bind="pub.name"></h4>
                 <p class="list-group-item-text"> Active Sites: {{ pub.sites.length }}</p>
             </div>
-            <div class="col-md-2"></div>
-            <div class="col-md-2"></div>
+            <div class="hidden-xs hidden-sm col-md-2"></div>
+            <div class="hidden-xs col-md-2"></div>
         </div>
     </a>
 </div>
