@@ -70,7 +70,7 @@
     // Reset default to allow handle via different logo size
     .navbar-brand {
       @media @upto-desktop {
-        padding: 0 0 0 50px;
+        padding: 0 0 0 30px;
       }
       @media @desktop {
         padding: 0;
@@ -129,15 +129,23 @@
   
 }
 
-@media @upto-tablet {
-  .sidebar-toggle {
-    position: absolute !important;
-    top: 16px;
-    left: 27px;
-    color: white !important;
-    z-index: 3001;
-  }
+// Mobile toggle buttons
+.sidebar-toggle {
+  position: absolute !important;
+  top: 16px;
+  left: 15px;
+  color: white !important;
+  z-index: 3001;
 }
+
+.settings-toggle {
+  position: absolute !important;
+  top: 16px;
+  right: 15px;
+  color: white !important;
+  z-index: 3001;
+}
+
 
 // contains elements below header
 .nav-wrapper {
@@ -166,7 +174,7 @@
     border-bottom: 1px solid #e1e1e1;
   }
 }
-
+s
 // Navbar Search Form
 // ------------------------------
 .topnavbar {
