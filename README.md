@@ -7,9 +7,9 @@ The Console is a single-page-app (SPA) with full client-side MVC functionality p
 
 Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.org/docs/0.3.x/) and the [Angle Bootstrap Admin template](https://wrapbootstrap.com/theme/angle-bootstrap-admin-template-WB04HF123) by [Themicon](http://themicon.co/), but all original boilerplate has been highly customized.
 
+### Contents
 * [Setup & Deployment](#setup-and-deployment)
   * [Prerequisites](#prerequisites)
-  * [Cloning The GitHub Repository](#cloning-the-github-repository)
   * [For Mac OSX](#for-macosx)
   * [For Debian](#for-debian)
 * [Environments](#environments)
@@ -22,23 +22,29 @@ Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.or
     * [exchange](#exchange)
     * [exchange-dev](#exchange_dev)
 
-## Setup and Deployment
-Use the following instructions to install system dependencies & deploy the Console  
+# Setup and Deployment
+Use the following instructions to install system dependencies & deploy the Console. 
 
-### Prerequisites
-The Console is only designed to be deployed on **UNIX-based** operating systems.It's possible to run it on Windows.
+## Prerequisites
+#### Supported Operating Systems
+The Console is only designed to be deployed on **UNIX-based** operating systems. It's possible to run it on Windows, but it's more complicated.
 
-### Cloning The GitHub Repository
-```
-$ git clone https://github.com/cliquesads/cliques-console.git cliques-console
-```
+#### Config Permissions
+Also, in order to successfully deploy the console in any environment, you **MUST** have read/pull access the [cliques-config](https://github.com/cliquesads/cliques-config) repository.  All network credentials, API keys, etc. are stored in this repository. If you don't have access to this repository, there is likely a reason for that.
 
-### For MacOSX
+#### NPM Access
+The repository depends on [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils), which is installed as a private NPM dependency under the NPM [@cliques](https://www.npmjs.com/org/cliques) organization.  You must **have an NPM account** and be added as a **member of the @cliques organization** in order to install this package, or else the setup process will fail.
 
-### For Debian
-```
-$ npm install -g bower
-```
+## For MacOSX
+### Setup
+
+
+### Deployment
+
+## For Debian
+### Setup
+
+### Deployment
 
 * Grunt - You're going to use the [Grunt Task Runner](http://gruntjs.com/) to automate your development process, in order to install it make sure you've installed Node.js and npm, then install grunt globally using npm:
 
@@ -61,13 +67,22 @@ There are three primary environments for the Console. The `NODE_ENV` environment
 
 ### `local-test`
 * Used for development purposes when running the console on your **local machine**.
-* Console will run off of the **[exchange_dev](** Mongo Database.
-* LESS files are all compiled to single CSS file, but all client-side JS files are loaded individually
-  * hey!                      
+* Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
+* LESS files are all compiled to single CSS file, but all client-side JS files are loaded individually, which allows you to easily debug  client-side JS.
+  * The downside to this is that each full page reload will be extremely slow.
+* Server runs non-secure http
   
 ### `dev`
+* Used for staging server.
+* Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
+* LESS files are all compiled to single CSS file; client-side JS will be concatted to a single `application.js` file, but not minified to still allow for some debugging.
+* Server runs securely over https
 
 ### `production`
+* Actual production console environment.
+* Console will run off of the **[exchange](#exchange)** Mongo Database.
+* LESS files are all compiled to single CSS file; client-side JS will be concatted & minified to single application.min.js.
+* Server runs securely over https
 
 
 ## Databases and Models
