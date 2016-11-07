@@ -10,12 +10,19 @@ Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.or
 ### Contents
 * [Setup & Deployment](#setup-and-deployment)
   * [Prerequisites](#prerequisites)
+    * [Supported Operating Systems](#supported-operating-systems)
+    * [Config Permissions](#cliques-config-permissions)
+    * [NPM Permissions](#npm-permissions)
   * [For Mac OSX](#for-macosx)
   * [For Debian](#for-debian)
 * [Environments](#environments)
-  * [local-test](#local-test)
-  * [dev](#dev)
-  * [production](#production)
+  * [Node.js Environment](#node.js-environment)
+    * [Configuration](#configuration)
+  * [Deployment Environment](#deployment-environment)
+    * [local-test](#local-test)
+    * [dev](#dev)
+    * [production](#production)
+  * [Activating an Environment](#activating-an-environment)
 * [Databases and Models](#databases-and-models)
   * [Cliques Mongoose Models](#cliques-mongoose-models)
   * [Databases](#databases)
@@ -29,10 +36,10 @@ Use the following instructions to install system dependencies & deploy the Conso
 #### Supported Operating Systems
 The Console is only designed to be deployed on **UNIX-based** operating systems. It's possible to run it on Windows, but it's more complicated.
 
-#### Config Permissions
+#### Cliques Config Permissions
 Also, in order to successfully deploy the console in any environment, you **MUST** have read/pull access the [cliques-config](https://github.com/cliquesads/cliques-config) repository.  All network credentials, API keys, etc. are stored in this repository. If you don't have access to this repository, there is likely a reason for that.
 
-#### NPM Access
+#### NPM Permissions
 The repository depends on [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils), which is installed as a private NPM dependency under the NPM [@cliques](https://www.npmjs.com/org/cliques) organization.  You must **have an NPM account** and be added as a **member of the @cliques organization** in order to install this package, or else the setup process will fail.
 
 ## For MacOSX
@@ -80,7 +87,7 @@ NVM installs a "local" Node.js to the `.nvm` directory, and all "global" package
 #### Configuration
 All versioning information for NVM and "global" (not actually "system" global but installed to the NVM directory) Node packages are stored in the [console_environment.cfg](https://github.com/cliquesads/cliques-config/blob/master/environments/console_environment.cfg) config file found in the [cliques-config](https://github.com/cliquesads/cliques-config). You may or may not have access to this repository depending on your team status, please refer to [Config Permissions](#config-permissions) for details.
 
-## Deployment Environments
+## Deployment Environment
 There are three primary deployment environments for the Console. The `NODE_ENV` environment variable is used to indicate which environment should be loaded:
 
 #### `local-test`
