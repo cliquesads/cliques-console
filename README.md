@@ -3,9 +3,14 @@ A [MEAN.js](http://meanjs.org) app for all Cliques advertiser, publisher & admin
 * **[console.cliquesads.com](https://console.cliquesads.com)** *(production)*
 * **[staging-console.cliquesads.com](https://staging-console.cliquesads.com)** *(dev)*
 
+### Core Packages & Frameworks
 The Console is a single-page-app (SPA) with full client-side MVC functionality provided by [Angular.js](http://angularjs.org/)(v1.x) interacting w/ a RESTful API service powered by [Node.js](http://www.nodejs.org/) & [Express.js](http://expressjs.com/). All CSS files are compiled from [LESS](http://lesscss.org/).
 
+### Templates & Scaffolding
 Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.org/docs/0.3.x/) and the [Angle Bootstrap Admin template](https://wrapbootstrap.com/theme/angle-bootstrap-admin-template-WB04HF123) by [Themicon](http://themicon.co/), but all original boilerplate has been highly customized.
+
+### Development & Build Tools
+Node.js server-side packages (public & private) are (obviously) managed by [NPM](https://www.npmjs.com/). [Bower](https://bower.io/) handles management of all client-side packages. [Grunt](http://gruntjs.com/) handles all building & linting steps, and can also be used to run the app in development.
 
 ### Contents
 * [Setup & Deployment](#setup-and-deployment)
