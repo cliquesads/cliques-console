@@ -40,7 +40,6 @@ public/img/
 *.tmp
 *.bak
 *.swp
-*.vscode
 junk
 logs/
 build/
