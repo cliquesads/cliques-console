@@ -62,38 +62,64 @@ $ grunt
 Your application should run on the 3000 port so in your browser just go to [http://localhost:3000](http://localhost:3000)    
 
 
-## Environments
-There are three primary environments for the Console. The `NODE_ENV` environment variable is used to indicate which environment should be loaded:
+# Environments
+There are really two distinct "environment" scopes that I'll address below:
 
-### `local-test`
+* **Node.js Environment** - Local, isolated Node.js interpreter that is explicitly versioned, and specific "global" Node.js packages that are installed to this environment.  This is controlled by NVM (see below).
+* **Deployment Environment** - Specific deployment environment (i.e. `local-test`,`dev`,`production`) which specifies database/API credentials and build steps.
+
+The Node.js environment is configured independently from the deployment environment.  See below for details.
+
+## Node.js Environment
+I use [Node Version Manager (NVM)](https://github.com/creationix/nvm) to manage the specific version of Node.js interpreter being used to run the Console. This gets around any potential incompatibilities between different versions of Node.js installed on local systems.  
+
+This setup works almost identically to Python's powerful [virtualenv](https://virtualenv.pypa.io/en/stable/) package, in that it creates an isolated Node.js environment that depends on explicitly-declared global package versions (see [Environment Config](#environment-config) below).
+
+NVM installs a "local" Node.js to the `.nvm` directory, and all "global" packages are installed to this directory rather than in the system node modules directory.
+
+#### Configuration
+All versioning information for NVM and "global" (not actually "system" global but installed to the NVM directory) Node packages are stored in the [console_environment.cfg](https://github.com/cliquesads/cliques-config/blob/master/environments/console_environment.cfg) config file found in the [cliques-config](https://github.com/cliquesads/cliques-config). You may or may not have access to this repository depending on your team status, please refer to [Config Permissions](#config-permissions) for details.
+
+## Deployment Environments
+There are three primary deployment environments for the Console. The `NODE_ENV` environment variable is used to indicate which environment should be loaded:
+
+#### `local-test`
 * Used for development purposes when running the console on your **local machine**.
 * Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
 * LESS files are all compiled to single CSS file, but all client-side JS files are loaded individually, which allows you to easily debug  client-side JS.
   * The downside to this is that each full page reload will be extremely slow.
 * Server runs non-secure http
   
-### `dev`
+#### `dev`
 * Used for staging server.
 * Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
 * LESS files are all compiled to single CSS file; client-side JS will be concatted to a single `application.js` file, but not minified to still allow for some debugging.
 * Server runs securely over https
 
-### `production`
+#### `production`
 * Actual production console environment.
 * Console will run off of the **[exchange](#exchange)** Mongo Database.
 * LESS files are all compiled to single CSS file; client-side JS will be concatted & minified to single application.min.js.
 * Server runs securely over https
 
+## Activating an Environment
+You can use the `activate_env.sh` shell script to "activate" the local NVM Node.js environment **AND** a specific deployment environment (all this does is just set the `NODE_ENV` environment variable).  This script is used in the deployment step for `dev` and `production`, but it is also useful on its own when you are working on the command line and need to access to the Console's specific environment.
 
-## Databases and Models
+```sh
+# use the `-e` flag to pass in a deployment environment
+# default is 'production'
+$ source activate_env.sh -e dev
+```
+
+# Databases and Models
 The main storage layer for the Console is [MongoDB](http://mongodb.org/). We use the Node.js ORM [Mongoose](http://mongoosejs.com/) to specify all model schemas. 
 
-### Cliques Mongoose Models
+## Cliques Mongoose Models
 Mongoose schemas are found in this repository under `app/models/`. 
 
 **However**, only models that are specific to the Console reside here (ex: Users, Organizations, Payments, etc.). Models that need to be accessed by multiple repositories are found in the shared [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils/tree/master/lib/mongodb/models) repo in order to centralize shared model specs.
 
-### Databases
+## Databases
 There are two MongoDB "databases" (which are like "schemas" in SQL parlance), one for production data & one for development:
 
 #### `exchange`
