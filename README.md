@@ -12,7 +12,7 @@ Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.or
 ### Development & Build Tools
 Node.js server-side packages (public & private) are (obviously) managed by [NPM](https://www.npmjs.com/). [Bower](https://bower.io/) handles management of all client-side packages. [Grunt](http://gruntjs.com/) handles all building & linting steps, and can also be used to run the app in development.
 
-### Contents
+# Table of Contents
 * [Setup & Deployment](#setup-and-deployment)
   * [Prerequisites](#prerequisites)
     * [Supported Operating Systems](#supported-operating-systems)
