@@ -20,6 +20,7 @@ app/tests/coverage/
 .bower-*/
 bower_components/
 .idea/
+cliques-config
 
 # MEAN.js app and assets
 # ======================
