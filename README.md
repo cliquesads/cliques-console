@@ -1,148 +1,178 @@
-[![MEAN.JS Logo](http://meanjs.org/img/logo-small.png)](http://meanjs.org/)
+# Cliques Console
+A [MEAN.js](http://meanjs.org) app for all Cliques advertiser, publisher & administrator management and reporting. Currently live in two environments:
+* **[console.cliquesads.com](https://console.cliquesads.com)** *(production)*
+* **[staging-console.cliquesads.com](https://staging-console.cliquesads.com)** *(staging)*
 
-[![Build Status](https://travis-ci.org/meanjs/mean.svg?branch=master)](https://travis-ci.org/meanjs/mean)
-[![Dependencies Status](https://david-dm.org/meanjs/mean.svg)](https://david-dm.org/meanjs/mean)
+### Core Packages & Frameworks
+The Console is a single-page-app (SPA) with full client-side MVC functionality provided by [Angular.js](http://angularjs.org/)(v1.x) interacting w/ a RESTful API service powered by [Node.js](http://www.nodejs.org/) & [Express.js](http://expressjs.com/). All CSS files are compiled from [LESS](http://lesscss.org/). For staging & production servers, [PM2](https://github.com/Unitech/pm2) is used to run & manage Node.js server processes.
 
-MEAN.JS is a full-stack JavaScript open-source solution, which provides a solid starting point for [MongoDB](http://www.mongodb.org/), [Node.js](http://www.nodejs.org/), [Express](http://expressjs.com/), and [AngularJS](http://angularjs.org/) based applications. The idea is to solve the common issues with connecting those frameworks, build a robust framework to support daily development needs, and help developers use better practices while working with popular JavaScript components. 
+### Templates & Scaffolding
+Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.org/docs/0.3.x/) and the [Angle Bootstrap Admin template](https://wrapbootstrap.com/theme/angle-bootstrap-admin-template-WB04HF123) by [Themicon](http://themicon.co/), but all original boilerplate has been highly customized.
 
-## Before You Begin 
-Before you begin we recommend you read about the basic building blocks that assemble a MEAN.JS application: 
-* MongoDB - Go through [MongoDB Official Website](http://mongodb.org/) and proceed to their [Official Manual](http://docs.mongodb.org/manual/), which should help you understand NoSQL and MongoDB better.
-* Express - The best way to understand express is through its [Official Website](http://expressjs.com/), which has a [Getting Started](http://expressjs.com/starter/installing.html) guide, as well as an [ExpressJS Guide](http://expressjs.com/guide/error-handling.html) guide for general express topics. You can also go through this [StackOverflow Thread](http://stackoverflow.com/questions/8144214/learning-express-for-node-js) for more resources.
-* AngularJS - Angular's [Official Website](http://angularjs.org/) is a great starting point. You can also use [Thinkster Popular Guide](http://www.thinkster.io/), and the [Egghead Videos](https://egghead.io/).
-* Node.js - Start by going through [Node.js Official Website](http://nodejs.org/) and this [StackOverflow Thread](http://stackoverflow.com/questions/2353818/how-do-i-get-started-with-node-js), which should get you going with the Node.js platform in no time.
+### Development & Build Tools
+Node.js server-side packages (public & private) are (obviously) managed by [NPM](https://www.npmjs.com/). [Bower](https://bower.io/) handles management of all client-side packages. [Grunt](http://gruntjs.com/) handles all building & linting steps, and can also be used to run the app in development.
 
+# Table of Contents
+* [Setup & Deployment](#setup-and-deployment)
+  * [Prerequisites](#prerequisites)
+    * [Supported Operating Systems](#supported-operating-systems)
+    * [Config Permissions](#cliques-config-permissions)
+    * [NPM Permissions](#npm-permissions)
+  * [For Mac OSX](#for-macosx)
+  * [For Debian](#for-debian)
+* [Environments](#environments)
+  * [Node Environment](#node-environment)
+    * [Configuration](#configuration)
+  * [Deployment Environment](#deployment-environment)
+    * [local-test](#local-test)
+    * [dev](#dev)
+    * [production](#production)
+  * [Activating an Environment](#activating-an-environment)
+* [Databases and Models](#databases-and-models)
+  * [Cliques Mongoose Models](#cliques-mongoose-models)
+  * [Databases](#databases)
+    * [exchange](#exchange)
+    * [exchange-dev](#exchange_dev)
+
+# Setup and Deployment
+Use the following instructions to install system dependencies & deploy the Console. 
 
 ## Prerequisites
-Make sure you have installed all these prerequisites on your development machine.
-* Node.js - [Download & Install Node.js](http://www.nodejs.org/download/) and the npm package manager, if you encounter any problems, you can also use this [GitHub Gist](https://gist.github.com/isaacs/579814) to install Node.js.
-* MongoDB - [Download & Install MongoDB](http://www.mongodb.org/downloads), and make sure it's running on the default port (27017).
-* Bower - You're going to use the [Bower Package Manager](http://bower.io/) to manage your front-end packages, in order to install it make sure you've installed Node.js and npm, then install bower globally using npm:
+#### Supported Operating Systems
+The Console is only designed to be deployed on **UNIX-based** operating systems. It's possible to run it on Windows, but it's more complicated.
 
+#### Cliques Config Permissions
+Also, in order to successfully deploy the console in any environment, you **MUST** have read/pull access the [cliques-config](https://github.com/cliquesads/cliques-config) repository.  All network credentials, API keys, etc. are stored in this repository. If you don't have access to this repository, there is likely a reason for that.
+
+#### NPM Permissions
+The repository depends on [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils), which is installed as a private NPM dependency under the NPM [@cliques](https://www.npmjs.com/org/cliques) organization.  You must **have an NPM account** and be added as a **member of the @cliques organization** in order to install this package, or else the setup process will fail.
+
+## For MacOSX
+
+### Setup
+Once you've cloned the repository locally, run
+```sh
+$./setup-mac.sh
 ```
-$ npm install -g bower
-```
+This will:
 
-* Grunt - You're going to use the [Grunt Task Runner](http://gruntjs.com/) to automate your development process, in order to install it make sure you've installed Node.js and npm, then install grunt globally using npm:
+1. Clone or pull the [cliques-config](https://github.com/cliquesads/cliques-config) to `../cliques-config` and add symlink `cliques-config` to repository root, if not already present.
+2. Install the local isolated [Node.js environment](#node.js-environment)
+3. Install all **NPM & Bower** package dependencies
+  * You should be asked to provide your NPM credentials in this step in order to install the [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils) package
+  
+**NOTE**: In order for `npm install` to run successfully, you will need to have `gcc` installed. On MacOSX, `gcc` comes packaged with XCode command line tools. If you run into any NPM errors (especially installing `node-gyp`) during install, make sure you've installed XCode command line tools by running
 
-```
-$ sudo npm install -g grunt-cli
-```
-
-## Downloading MEAN.JS
-There are several ways you can get the MEAN.JS boilerplate: 
-
-### Yo Generator 
-The recommended way would be to use the [Official Yo Generator](http://meanjs.org/generator.html) which will generate the latest stable copy of the MEAN.JS boilerplate and supplies multiple sub-generators to ease your daily development cycles.
-
-### Cloning The GitHub Repository
-You can also use Git to directly clone the MEAN.JS repository:
-```
-$ git clone https://github.com/meanjs/mean.git meanjs
-```
-This will clone the latest version of the MEAN.JS repository to a **meanjs** folder.
-
-### Downloading The Repository Zip File
-Another way to use the MEAN.JS boilerplate is to download a zip copy from the [master branch on GitHub](https://github.com/meanjs/mean/archive/master.zip). You can also do this using `wget` command:
-```
-$ wget https://github.com/meanjs/mean/archive/master.zip -O meanjs.zip; unzip meanjs.zip; rm meanjs.zip
-```
-Don't forget to rename **mean-master** after your project name.
-
-## Quick Install
-Once you've downloaded the boilerplate and installed all the prerequisites, you're just a few steps away from starting to develop you MEAN application.
-
-The first thing you should do is install the Node.js dependencies. The boilerplate comes pre-bundled with a package.json file that contains the list of modules you need to start your application, to learn more about the modules installed visit the NPM & Package.json section.
-
-To install Node.js dependencies you're going to use npm again, in the application folder run this in the command-line:
-
-```
-$ npm install
+```sh
+xcode-select install
 ```
 
-This command does a few things:
-* First it will install the dependencies needed for the application to run.
-* If you're running in a development environment, it will then also install development dependencies needed for testing and running your application.
-* Finally, when the install process is over, npm will initiate a bower install command to install all the front-end modules needed for the application
+The setup process only needs to be run when the Node.js environment is updated via an update to [`console_environment.cfg`](https://github.com/cliquesads/cliques-config/blob/master/environments/console_environment.cfg) or if you're cloning the repository for the first time.
 
-## Running Your Application
-After the install process is over, you'll be able to run your application using Grunt, just run grunt default task:
-
+### Deployment
+To run the server using **grunt** in [local-test](#local-test) mode, run
+```sh
+$ source activate-env.sh -e local-test # activate the Node.js environment
+$ grunt less # build CSS files from LESS source
+$ grunt # the default grunt task starts the server w/ Nodemon in `local-test` mode
 ```
-$ grunt
+Once you see the following output, your server should be running on [localhost:5000](http://localhost:5000)
+```
+MEAN.JS application started on port 5000
+Mongoose connection open to mongodb://xxx.xxx.xx.xx:27017/exchange_dev
+Connected to exchange connection as default mongo DB connection
+```
+For client-side development, running the server with grunt is useful because of the various file-watchers & live-reloading functionality. However, I'd recommend setting up a remote debugger like the one provided by [WebStorm](https://www.jetbrains.com/webstorm/) to run the server.  
+
+#### Example WebStorm debugger configuration:
+![Webstorm Debugger Config](https://storage.googleapis.com/cliquesads-docs-images/Screen%20Shot%202016-11-07%20at%209.37.24%20PM.png)
+
+## For Debian
+### Setup
+```sh
+$./setup-debian.sh
+```
+This script will perform the same steps as `setup-mac.sh`, except it will also install or update a couple of system dependencies (namely `gcc` and `libfontconfig1`, a Phantom.js dependency) using `apt-get` as well. For this step, you'll need to have `sudo` privileges on your machine.
+
+### Deployment
+The deployment process for Debian has been packaged into a single script.  Simply run:
+```sh
+$ ./deploy-console.sh -e dev # use the -e flag to pass the appropriate NODE_ENV environment variable
+```
+This script will:
+
+1. Run `source activate_env.sh -e [NODE_ENV]` to activate the Node.js environment
+2. Run `npm install` to update NPM & Bower packages
+3. Run the appropriate `grunt build` step, again depending on the environment you pass in. This will build & minify all application CSS & JS files.
+4. Start or reload the `cliques-console-[dev]` [PM2](https://github.com/Unitech/pm2) process(es). **NOTE**: pm2 processes are run with `-i 0`, which will spawn concurrent cliques-console processes on all available server cores. So if you are running a server w/ 4 CPU's, you will see 4 processes spin up.
+5. Start or reload the `https-redirect` process (see [https-redirect.js](https://github.com/cliquesads/cliques-console/blob/master/https_redirect.js)), which just listens for non-secure connections over http and redirects them to https.
+
+# Environments
+There are really two distinct "environment" scopes that I'll address below:
+
+* **Node.js Environment** - Local, isolated Node.js interpreter that is explicitly versioned, and specific "global" Node.js packages that are installed to this environment.  This is controlled by NVM (see below).
+* **Deployment Environment** - Specific deployment environment (i.e. `local-test`,`dev`,`production`) which specifies database/API credentials and build steps.
+
+The Node.js environment is configured independently from the deployment environment.  See below for details.
+
+## Node Environment
+I use [Node Version Manager (NVM)](https://github.com/creationix/nvm) to manage the specific version of Node.js interpreter being used to run the Console. This gets around any potential incompatibilities between different versions of Node.js installed on local systems.  
+
+This setup works almost identically to Python's powerful [virtualenv](https://virtualenv.pypa.io/en/stable/) package, in that it creates an isolated Node.js environment that depends on explicitly-declared global package versions (see [Environment Config](#environment-config) below).
+
+NVM installs a "local" Node.js to the `.nvm` directory, and all "global" packages are installed to this directory rather than in the system node modules directory.
+
+#### Configuration
+All versioning information for NVM and "global" (not actually "system" global but installed to the NVM directory) Node packages are stored in the [console_environment.cfg](https://github.com/cliquesads/cliques-config/blob/master/environments/console_environment.cfg) config file found in the [cliques-config](https://github.com/cliquesads/cliques-config). You may or may not have access to this repository depending on your team status, please refer to [Config Permissions](#config-permissions) for details.
+
+## Deployment Environment
+There are three primary deployment environments for the Console. The `NODE_ENV` environment variable is used to indicate which environment should be loaded:
+
+#### `local-test`
+* Used for development purposes when running the console on your **local machine**.
+* Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
+* LESS files are all compiled to single CSS file, but all client-side JS files are loaded individually, which allows you to easily debug  client-side JS.
+  * The downside to this is that each full page reload will be extremely slow.
+* Server runs non-secure http
+  
+#### `dev`
+* Used for staging server.
+* Console will run off of the **[exchange_dev](#exchange_dev)** Mongo Database.
+* LESS files are all compiled to single CSS file; client-side JS will be concatted to a single `application.js` file, but not minified to still allow for some debugging.
+* Server runs securely over https
+
+#### `production`
+* Actual production console environment.
+* Console will run off of the **[exchange](#exchange)** Mongo Database.
+* LESS files are all compiled to single CSS file; client-side JS will be concatted & minified to single application.min.js.
+* Server runs securely over https
+
+## Activating an Environment
+You can use the `activate_env.sh` shell script to "activate" the local NVM Node.js environment **AND** a specific deployment environment (all this does is just set the `NODE_ENV` environment variable).  This script is used in the deployment step for `dev` and `production`, but it is also useful on its own when you are working on the command line and need to access to the Console's specific environment.
+
+```sh
+# use the `-e` flag to pass in a deployment environment
+# default is 'production'
+$ source activate_env.sh -e dev
 ```
 
-Your application should run on the 3000 port so in your browser just go to [http://localhost:3000](http://localhost:3000)
-                            
-That's it! your application should be running by now, to proceed with your development check the other sections in this documentation. 
-If you encounter any problem try the Troubleshooting section.
+# Databases and Models
+The main storage layer for the Console is [MongoDB](http://mongodb.org/). We use the Node.js ORM [Mongoose](http://mongoosejs.com/) to specify all model schemas. 
 
-## Development and deployment With Docker
+## Cliques Mongoose Models
+Mongoose schemas are found in this repository under `app/models/`. 
 
-* Install [Docker](http://www.docker.com/)
-* Install [Fig](https://github.com/orchardup/fig)
+**However**, only models that are specific to the Console reside here (ex: Users, Organizations, Payments, etc.). Models that need to be accessed by multiple repositories are found in the shared [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils/tree/master/lib/mongodb/models) repo in order to centralize shared model specs.
 
-* Local development and testing with fig: 
-```bash
-$ fig up
-```
+## Databases
+There are two MongoDB "databases" (which are like "schemas" in SQL parlance), one for production data & one for development:
 
-* Local development and testing with just Docker:
-```bash
-$ docker build -t mean .
-$ docker run -p 27017:27017 -d --name db mongo
-$ docker run -p 3000:3000 --link db:db_1 mean
-$
-```
+#### `exchange`
+The production database. Contains both schemas specified in this repository, as well as those specified in [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils).
 
-* To enable live reload forward 35729 port and mount /app and /public as volumes:
-```bash
-$ docker run -p 3000:3000 -p 35729:35729 -v /Users/mdl/workspace/mean-stack/mean/public:/home/mean/public -v /Users/mdl/workspace/mean-stack/mean/app:/home/mean/app --link db:db_1 mean
-```
+#### `exchange_dev`
+This is the development database. All collections are copied from `exchange` every 2 hours via a [Python ETL](https://github.com/cliquesads/cliquesadmin/blob/master/bin/sync_dev_db.py).
 
-## Running in a secure environment
-To run your application in a secure manner you'll need to use OpenSSL and generate a set of self-signed certificates. Unix-based users can use the following commnad: 
-```
-$ sh generate-ssl-certs.sh
-```
-Windows users can follow instructions found [here](http://www.websense.com/support/article/kbarticle/How-to-use-OpenSSL-and-Microsoft-Certification-Authority)
-To generate the key and certificate and place them in the *config/sslcert* folder.
+Each time the collections are synced, all changes to `exchange_dev` collections are wiped clean and replaced with the the most recent data from production.
 
-## Getting Started With MEAN.JS
-You have your application running but there are a lot of stuff to understand, we recommend you'll go over the [Official Documentation](http://meanjs.org/docs.html). 
-In the docs we'll try to explain both general concepts of MEAN components and give you some guidelines to help you improve your development process. We tried covering as many aspects as possible, and will keep update it by your request, you can also help us develop the documentation better by checking out the *gh-pages* branch of this repository.
-
-## Community
-* Use to [Offical Website](http://meanjs.org) to learn about changes and the roadmap.
-* Join #meanjs on freenode.
-* Discuss it in the new [Google Group](https://groups.google.com/d/forum/meanjs)
-* Ping us on [Twitter](http://twitter.com/meanjsorg) and [Facebook](http://facebook.com/meanjs)
-
-## Live Example
-Browse the live MEAN.JS example on [http://meanjs.herokuapp.com](http://meanjs.herokuapp.com).
-
-## Credits
-Inspired by the great work of [Madhusudhan Srinivasa](https://github.com/madhums/)
-The MEAN name was coined by [Valeri Karpov](http://blog.mongodb.org/post/49262866911/the-mean-stack-mongodb-expressjs-angularjs-and)
-
-## License
-(The MIT License)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+For **aggregate** collections like `hourlyadstats`, in the interest of preserving storage space, only the last 72 hours of data will be kept.  So don't be surprised when you only see the last 3 days' worth of data in charts when running the console in dev!
