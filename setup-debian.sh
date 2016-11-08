@@ -39,6 +39,11 @@ curl https://raw.githubusercontent.com/creationix/nvm/v"$NVM_VERSION"/install.sh
 source .nvm/nvm.sh
 nvm install $NODE_VERSION
 
+# first try to log in to NPM registry if not already logged in
+if ! npm whoami; then
+    npm login
+fi
+
 #install node dependencies
 npm update
 #have to install pm2 & mocha globally into nvm dir
