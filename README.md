@@ -1,10 +1,10 @@
 # Cliques Console
 A [MEAN.js](http://meanjs.org) app for all Cliques advertiser, publisher & administrator management and reporting. Currently live in two environments:
 * **[console.cliquesads.com](https://console.cliquesads.com)** *(production)*
-* **[staging-console.cliquesads.com](https://staging-console.cliquesads.com)** *(dev)*
+* **[staging-console.cliquesads.com](https://staging-console.cliquesads.com)** *(staging)*
 
 ### Core Packages & Frameworks
-The Console is a single-page-app (SPA) with full client-side MVC functionality provided by [Angular.js](http://angularjs.org/)(v1.x) interacting w/ a RESTful API service powered by [Node.js](http://www.nodejs.org/) & [Express.js](http://expressjs.com/). All CSS files are compiled from [LESS](http://lesscss.org/).
+The Console is a single-page-app (SPA) with full client-side MVC functionality provided by [Angular.js](http://angularjs.org/)(v1.x) interacting w/ a RESTful API service powered by [Node.js](http://www.nodejs.org/) & [Express.js](http://expressjs.com/). All CSS files are compiled from [LESS](http://lesscss.org/). For staging & production servers, [PM2](https://github.com/Unitech/pm2) is used to run & manage Node.js server processes.
 
 ### Templates & Scaffolding
 Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.org/docs/0.3.x/) and the [Angle Bootstrap Admin template](https://wrapbootstrap.com/theme/angle-bootstrap-admin-template-WB04HF123) by [Themicon](http://themicon.co/), but all original boilerplate has been highly customized.
@@ -21,7 +21,7 @@ Node.js server-side packages (public & private) are (obviously) managed by [NPM]
   * [For Mac OSX](#for-macosx)
   * [For Debian](#for-debian)
 * [Environments](#environments)
-  * [Node.js Environment](#node.js-environment)
+  * [Node Environment](#node-environment)
     * [Configuration](#configuration)
   * [Deployment Environment](#deployment-environment)
     * [local-test](#local-test)
@@ -48,31 +48,64 @@ Also, in order to successfully deploy the console in any environment, you **MUST
 The repository depends on [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils), which is installed as a private NPM dependency under the NPM [@cliques](https://www.npmjs.com/org/cliques) organization.  You must **have an NPM account** and be added as a **member of the @cliques organization** in order to install this package, or else the setup process will fail.
 
 ## For MacOSX
-### Setup
 
+### Setup
+Once you've cloned the repository locally, run
+```sh
+$./setup-mac.sh
+```
+This will:
+
+1. Clone or pull the [cliques-config](https://github.com/cliquesads/cliques-config) to `../cliques-config` and add symlink `cliques-config` to repository root, if not already present.
+2. Install the local isolated [Node.js environment](#node.js-environment)
+3. Install all **NPM & Bower** package dependencies
+  * You should be asked to provide your NPM credentials in this step in order to install the [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils) package
+  
+**NOTE**: In order for `npm install` to run successfully, you will need to have `gcc` installed. On MacOSX, `gcc` comes packaged with XCode command line tools. If you run into any NPM errors (especially installing `node-gyp`) during install, make sure you've installed XCode command line tools by running
+
+```sh
+xcode-select install
+```
+
+The setup process only needs to be run when the Node.js environment is updated via an update to [`console_environment.cfg`](https://github.com/cliquesads/cliques-config/blob/master/environments/console_environment.cfg) or if you're cloning the repository for the first time.
 
 ### Deployment
+To run the server using **grunt** in [local-test](#local-test) mode, run
+```sh
+$ source activate-env.sh -e local-test # activate the Node.js environment
+$ grunt less # build CSS files from LESS source
+$ grunt # the default grunt task starts the server w/ Nodemon in `local-test` mode
+```
+Once you see the following output, your server should be running on [localhost:5000](http://localhost:5000)
+```
+MEAN.JS application started on port 5000
+Mongoose connection open to mongodb://xxx.xxx.xx.xx:27017/exchange_dev
+Connected to exchange connection as default mongo DB connection
+```
+For client-side development, running the server with grunt is useful because of the various file-watchers & live-reloading functionality. However, I'd recommend setting up a remote debugger like the one provided by [WebStorm](https://www.jetbrains.com/webstorm/) to run the server.  
+
+#### Example WebStorm debugger configuration:
+![Webstorm Debugger Config](https://storage.googleapis.com/cliquesads-docs-images/Screen%20Shot%202016-11-07%20at%209.37.24%20PM.png)
 
 ## For Debian
 ### Setup
+```sh
+$./setup-debian.sh
+```
+This script will perform the same steps as `setup-mac.sh`, except it will also install or update a couple of system dependencies (namely `gcc` and `libfontconfig1`, a Phantom.js dependency) using `apt-get` as well. For this step, you'll need to have `sudo` privileges on your machine.
 
 ### Deployment
-
-* Grunt - You're going to use the [Grunt Task Runner](http://gruntjs.com/) to automate your development process, in order to install it make sure you've installed Node.js and npm, then install grunt globally using npm:
-
+The deployment process for Debian has been packaged into a single script.  Simply run:
+```sh
+$ ./deploy-console.sh -e dev # use the -e flag to pass the appropriate NODE_ENV environment variable
 ```
-$ sudo npm install -g grunt-cli
-```
+This script will:
 
-### Running Your Application
-After the install process is over, you'll be able to run your application using Grunt, just run grunt default task:
-
-```
-$ grunt
-```
-
-Your application should run on the 3000 port so in your browser just go to [http://localhost:3000](http://localhost:3000)    
-
+1. Run `source activate_env.sh -e [NODE_ENV]` to activate the Node.js environment
+2. Run `npm install` to update NPM & Bower packages
+3. Run the appropriate `grunt build` step, again depending on the environment you pass in. This will build & minify all application CSS & JS files.
+4. Start or reload the `cliques-console-[dev]` [PM2](https://github.com/Unitech/pm2) process(es). **NOTE**: pm2 processes are run with `-i 0`, which will spawn concurrent cliques-console processes on all available server cores. So if you are running a server w/ 4 CPU's, you will see 4 processes spin up.
+5. Start or reload the `https-redirect` process (see [https-redirect.js](https://github.com/cliquesads/cliques-console/blob/master/https_redirect.js)), which just listens for non-secure connections over http and redirects them to https.
 
 # Environments
 There are really two distinct "environment" scopes that I'll address below:
@@ -82,7 +115,7 @@ There are really two distinct "environment" scopes that I'll address below:
 
 The Node.js environment is configured independently from the deployment environment.  See below for details.
 
-## Node.js Environment
+## Node Environment
 I use [Node Version Manager (NVM)](https://github.com/creationix/nvm) to manage the specific version of Node.js interpreter being used to run the Console. This gets around any potential incompatibilities between different versions of Node.js installed on local systems.  
 
 This setup works almost identically to Python's powerful [virtualenv](https://virtualenv.pypa.io/en/stable/) package, in that it creates an isolated Node.js environment that depends on explicitly-declared global package versions (see [Environment Config](#environment-config) below).
