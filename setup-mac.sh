@@ -13,15 +13,6 @@ if [ ! -z $1 ]; then
   fi
 fi
 
-#check if homebrew installed, will install if it is not already
-#which -s brew
-#if [[ $? != 0 ]] ; then
-#    # Install Homebrew
-#    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-#else
-#    brew update
-#fi
-
 # make sure cliques-config repo is cloned & pull any new commits
 if [ ! -d "../cliques-config" ]; then
     git clone git@github.com:cliquesads/cliques-config.git ../cliques-config
