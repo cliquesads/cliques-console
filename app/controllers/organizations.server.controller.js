@@ -1,3 +1,4 @@
+'use strict';
 var errorHandler = require('./errors.server.controller'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
@@ -7,7 +8,7 @@ var errorHandler = require('./errors.server.controller'),
     mail = require('./mailer.server.controller'),
     util = require('util'),
     config = require('config'),
-    countryDataLookup = require('country-data').lookup;
+    countryDataLookup = require('country-data').lookup,
     async = require('async');
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
@@ -41,7 +42,7 @@ var buildInviteURL = function(req, organizationId, accessTokenId){
 var lookupCountryCode = function(countryName){
     // I did this manually by generating all failed lookup country values, then manually looking up their ISO codes
     // The values with no codes are documented above
-    var mapping = {"Antartica":"AQ","Antigua and Barbuda":"AG","Bolivia":"BO","Bosnia and Herzegovina":"BA","British Virgin Islands":"VG","Brunei":"BN","Cape Verde":"CV","Congo, Democratic Republic of the":"CD","Congo, Republic of the":"CG","Cote d'Ivoire":"CI","Czeck Republic":"CZ","Falkland Islands (Islas Malvinas)":"FK","French Southern and Antarctic Lands":"TF","Gambia, The":"GM","Guinea-Bissau":"GW","Heard Island and McDonald Islands":"HM", "Holy See (Vatican City)":"VA","Iran":"IR","Ireland, Northern":"GB","Jan Mayen":"SJ","Korea, North":"KP","Korea, South":"KR","Macau":"MO", "Macedonia, Former Yugoslav Republic of":"MK","Man, Isle of":"IM","Micronesia, Federated States of":"FM","Pitcaim Islands":"PN", "Romainia":"RO","Russia":"RU", "Saint Helena":"SH","Saint Kitts and Nevis":"KN","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Scotland":"GB", "South Georgia and South Sandwich Islands":"GS","Svalbard":"SJ","Syria":"SY","Tanzania":"TZ","Tobago":"TT","Toga":"TG","Trinidad":"TT", "USA":"US","Venezuela":"VE","Vietnam":"VN","Virgin Islands":"VI","Wales":"GB","Wallis and Futuna":"WF"}
+    var mapping = {"Antartica":"AQ","Antigua and Barbuda":"AG","Bolivia":"BO","Bosnia and Herzegovina":"BA","British Virgin Islands":"VG","Brunei":"BN","Cape Verde":"CV","Congo, Democratic Republic of the":"CD","Congo, Republic of the":"CG","Cote d'Ivoire":"CI","Czeck Republic":"CZ","Falkland Islands (Islas Malvinas)":"FK","French Southern and Antarctic Lands":"TF","Gambia, The":"GM","Guinea-Bissau":"GW","Heard Island and McDonald Islands":"HM", "Holy See (Vatican City)":"VA","Iran":"IR","Ireland, Northern":"GB","Jan Mayen":"SJ","Korea, North":"KP","Korea, South":"KR","Macau":"MO", "Macedonia, Former Yugoslav Republic of":"MK","Man, Isle of":"IM","Micronesia, Federated States of":"FM","Pitcaim Islands":"PN", "Romainia":"RO","Russia":"RU", "Saint Helena":"SH","Saint Kitts and Nevis":"KN","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Scotland":"GB", "South Georgia and South Sandwich Islands":"GS","Svalbard":"SJ","Syria":"SY","Tanzania":"TZ","Tobago":"TT","Toga":"TG","Trinidad":"TT", "USA":"US","Venezuela":"VE","Vietnam":"VN","Virgin Islands":"VI","Wales":"GB","Wallis and Futuna":"WF"};
 
     // first try countryData
     var lookupVals = countryDataLookup.countries({ name: countryName });
@@ -221,20 +222,21 @@ module.exports = {
                 var subject = util.format("%s Has Invited You To Join Cliques",
                     req.user.displayName);
                 var asyncFuncs = [];
+                var fu = function(thisToken, thisUser){
+                    return function(callback){
+                        var inviteUrl = buildInviteURL(req, organization._id, thisToken);
+                        mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
+                            { user: req.user, inviteUrl: inviteUrl, organization: organization },
+                            req.user,
+                            thisUser.email,
+                            callback
+                        );
+                    };
+                };
                 for (var i=0; i < req.body.length; i++){
                     var token = tokens[i];
                     var newUser = req.body[i];
-                    var func = (function(thisToken, thisUser){
-                        return function(callback){
-                            var inviteUrl = buildInviteURL(req, organization._id, thisToken);
-                            mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
-                                { user: req.user, inviteUrl: inviteUrl, organization: organization },
-                                req.user,
-                                thisUser.email,
-                                callback
-                            );
-                        }
-                    })(token, newUser);
+                    var func = fu(token, newUser);
                     asyncFuncs.push(func);
                 }
                 async.parallel(asyncFuncs, function(err, results){
@@ -259,16 +261,17 @@ module.exports = {
             var accountType = req.query.accountType;
 
             // assumes dob in 'MM/DD/YYYY' form
+            var dob;
             if (req.query.dob){
-                var dob = req.query.dob.split("/");
+                dob = req.query.dob.split("/");
             } else {
-                dob = [null, null, null]
+                dob = [null, null, null];
             }
 
             if (!stripeToken){
                 return res.status(404).send({
                     message: "You must provide a stripeToken to save using stripeToken query param"
-                })
+                });
             }
 
             var stripeErrorHandler = function(error){
@@ -369,7 +372,7 @@ module.exports = {
             if (!stripeToken){
                 return res.status(404).send({
                     message: "You must provide a stripeToken to save using stripeToken query param"
-                })
+                });
             }
 
             var stripeErrorHandler = function(error){

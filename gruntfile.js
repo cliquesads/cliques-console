@@ -62,6 +62,7 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
+			// TODO: Get rid of local config here & use .jshintrc instead
 			all: {
 				src: watchFiles.clientJS.concat(watchFiles.serverJS),
 				options: {

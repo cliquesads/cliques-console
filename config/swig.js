@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Swig custom filters & config
  */

@@ -87,8 +87,7 @@ var addUserToMailChimpList = function(req, user, org){
 		// subscribe to newsletter list
 		mailchimp.post(_listMemberEndpoint(listId), payload).
 		then(function(response){
-			console.info("MAILCHIMP: Added member ID " + response.id + " (" + response.email_address + ") to list "
-				+ response.list_id);
+			console.info("MAILCHIMP: Added member ID " + response.id + " (" + response.email_address + ") to list " + response.list_id);
 		}).
 		catch(function(error){
 			console.error("MAILCHIMP ERROR title " + error.title + " - type " + error.type + " - status " +
