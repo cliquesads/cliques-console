@@ -62,11 +62,13 @@ module.exports = function(grunt) {
 			}
 		},
 		jshint: {
+			// TODO: Get rid of local config here & use .jshintrc instead
 			all: {
 				src: watchFiles.clientJS.concat(watchFiles.serverJS),
 				options: {
                     node: true,
                     strict: true, // allows use of 'use strict'; string at beginning of file
+					laxbreak: true, // true: Tolerate possibly unsafe line breakings
                     multistr: true, // allows use of \ literal to delimit newlines (new as of ES5)
                     globals: {
                         angular: false,
@@ -78,13 +80,16 @@ module.exports = function(grunt) {
                         describe: false,
                         document: true,
                         expect: false,
+						_: true,
+						jQuery: true,
                         inject: false,
                         it: false,
                         jasmine: false,
                         spyOn: false,
                         window: false,
-                        $: false,
-                        ApplicationConfiguration: false
+						moment: true,
+                        $: true,
+                        ApplicationConfiguration: true
                     }
 				}
 			}

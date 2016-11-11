@@ -88,7 +88,7 @@ angular.module('core').service('Utils', ["$window", "APP_MEDIAQUERY", function($
           return false;
         }
       },
-      langdirection: $html.attr("dir") == "rtl" ? "right" : "left",
+      langdirection: $html.attr("dir") === "rtl" ? "right" : "left",
       isTouch: function () {
         return $html.hasClass('touch');
       },

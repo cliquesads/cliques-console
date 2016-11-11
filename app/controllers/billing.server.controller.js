@@ -1,3 +1,5 @@
+'use strict';
+
 var errorHandler = require('./errors.server.controller'),
     paymentStatuses = require('../models/billing.server.model').PAYMENT_STATUSES,
     mongoose = require('mongoose'),
@@ -12,8 +14,8 @@ var errorHandler = require('./errors.server.controller'),
     moment = require('moment-timezone'),
     config = require('config'),
     fs = require('fs'),
-    mkdirp = require('mkdirp');
-    pdf = require('html-pdf');
+    mkdirp = require('mkdirp'),
+    pdf = require('html-pdf'),
     async = require('async');
 
 var mailer = new mail.Mailer({
@@ -59,7 +61,7 @@ module.exports = {
                 req.query.organization = req.user.organization.id;
                 // filter pre-approval invoices before responding if user is not in
                 // networkAdmin org
-                req.query.status = { $ne: "Needs Approval"}
+                req.query.status = { $ne: "Needs Approval"};
             }
             Payment.find(req.query).populate({
                 path: 'organization',
@@ -134,7 +136,7 @@ module.exports = {
                 if (err){
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
-                    })
+                    });
                 }
                 payment.status = "Paid";
                 payment.save(function(err, payment){
@@ -228,8 +230,9 @@ module.exports = {
                 }
                 var asyncFuncs = [];
                 // build email list, taking into account environment. Only send to users if it's in prod.
+                var billingEmails;
                 if (process.env.NODE_ENV === 'production') {
-                    var billingEmails = payment.organization.getAllBillingEmails();
+                    billingEmails = payment.organization.getAllBillingEmails();
                 } else {
                     billingEmails = TEST_EMAILS;
                 }
@@ -318,7 +321,7 @@ module.exports = {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
-                if (req.user.organization._id.toString() != req.payment.organization._id.toString()) {
+                if (req.user.organization._id.toString() !== req.payment.organization._id.toString()) {
                     return res.status(403).send({
                         message: 'User is not authorized to access this organization'
                     });

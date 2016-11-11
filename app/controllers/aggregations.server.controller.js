@@ -275,10 +275,13 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                 var modelName = field.toProperCase();
                 // First determine whether field is in Publisher or Advertiser tree.
                 // If neither, skip it.
+                var treeDocument;
+                var parentFieldName;
+                var parentModelName;
                 if (self.advertiserModels.hasOwnProperty(modelName)){
-                    var treeDocument = 'advertiserModels';
-                    var parentFieldName =  'advertiser';
-                    var parentModelName = 'Advertiser';
+                    treeDocument = 'advertiserModels';
+                    parentFieldName =  'advertiser';
+                    parentModelName = 'Advertiser';
                 } else if (self.publisherModels.hasOwnProperty(modelName)){
                     treeDocument = 'publisherModels';
                     parentFieldName =  'publisher';
@@ -302,7 +305,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                                     return callback(err);
                                 }
                             }
-                            if (populates.indexOf(parentFieldName) == -1){
+                            if (populates.indexOf(parentFieldName) === -1){
                                 // strip off advertiser object for compactness if it's not required
                                 // by the API call
                                 doc._id[parentFieldName] = doc._id[parentFieldName]._id;
@@ -342,7 +345,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
     async.series(asyncFieldFuncs, function(err, result){
         if (err) return callback(err);
         return callback(null, query_results);
-    })
+    });
 };
 
 HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){

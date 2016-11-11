@@ -1,7 +1,4 @@
-/**
- * Created by bliang on 12/21/15.
- */
-
+'use strict';
 angular.module('core').service('DatatableUtils',[function(){
     return {
         /**
@@ -54,10 +51,10 @@ angular.module('core').service('DatatableUtils',[function(){
                         break;
                 }
                 var label = '<span class="btn-label"><i class="fa ' + iconClass + '"></i></span>';
-                if (button.attr('class') != 'btn-label'){
+                if (button.attr('class') !== 'btn-label'){
                     $(val).prepend(label);
                 }
             });
         }
-    }
+    };
 }]);

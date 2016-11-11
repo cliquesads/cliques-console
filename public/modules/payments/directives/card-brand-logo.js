@@ -18,8 +18,8 @@ angular.module('payments').directive('cardBrandLogo', [function(){
                 "Unknown": "fa-credit-card-alt"
             };
             scope.$watch("brand", function(newBrand, oldBrand){
-                scope.cls = map[newBrand]
-            })
+                scope.cls = map[newBrand];
+            });
         }
     };
 }]);

@@ -30,7 +30,7 @@ angular.module('core').provider('RouteHelpers', ['APP_REQUIRES', function (appRe
         // creates promise to chain dynamically
         function andThen(_arg) {
           // also support a function that returns a promise
-          if(typeof _arg == 'function')
+          if(typeof _arg === 'function')
               return promise.then(_arg);
           else
               return promise.then(function() {

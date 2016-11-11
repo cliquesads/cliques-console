@@ -7,7 +7,6 @@
 angular.module('publisher').directive('placementBasics', ['Authentication',
     'CREATIVE_SIZES','OPENRTB',
     function(Authentication, CREATIVE_SIZES, OPENRTB) {
-        'use strict';
         return {
             restrict: 'E',
             scope: {
@@ -58,7 +57,7 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                     }
                 };
             }
-        }
+        };
     }
 ]);
 

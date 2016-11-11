@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/14/16.
- */
+'use strict';
 
 angular.module('publisher').factory('openSiteDescriptionDialog', ['ngDialog',
     function(ngDialog){

@@ -1,3 +1,5 @@
+'use strict';
+
 /**=========================================================
  * Module: notify.js
  * Create a notifications that fade out automatically.
@@ -34,12 +36,12 @@ angular.module('core').service('Notify', ["$timeout", function($timeout){
 
         notify     =  function(options){
 
-            if ($.type(options) == 'string') {
+            if ($.type(options) === 'string') {
                 options = { message: options };
             }
 
             if (arguments[1]) {
-                options = $.extend(options, $.type(arguments[1]) == 'string' ? {status:arguments[1]} : arguments[1]);
+                options = $.extend(options, $.type(arguments[1]) === 'string' ? {status:arguments[1]} : arguments[1]);
             }
 
             return (new Message(options)).show();
@@ -48,7 +50,7 @@ angular.module('core').service('Notify', ["$timeout", function($timeout){
             if(group) {
                 for(var id in messages) { if(group===messages[id].group) messages[id].close(instantly); }
             } else {
-                for(var id in messages) { messages[id].close(instantly); }
+                for(var i in messages) { messages[i].close(instantly); }
             }
         };
 
@@ -183,9 +185,9 @@ angular.module('core').service('Notify', ["$timeout", function($timeout){
     };
 
 
-    $["notify"]          = notify;
-    $["notify"].message  = Message;
-    $["notify"].closeAll = closeAll;
+    $.notify          = notify;
+    $.notify.message  = Message;
+    $.notify.closeAll = closeAll;
 
     return notify;
 

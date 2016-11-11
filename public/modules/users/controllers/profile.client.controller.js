@@ -1,10 +1,12 @@
+'use strict';
+
 angular.module('users').controller('ProfileController', ['$scope', '$http', '$location', 'Users', 'Authentication','Timezones','Notify',
     function($scope, $http, $location, Users, Authentication, Timezones, Notify) {
         $scope.user = Authentication.user;
         $scope.initUsername = Authentication.user.username;
         $scope.timezoneChoices = Timezones;
 
-        $scope.$watch(function(scope){ return scope.user.username }, function(newUsername, oldUsername){
+        $scope.$watch(function(scope){ return scope.user.username; }, function(newUsername, oldUsername){
             if (newUsername){
                 $http.get('/auth/is-username-taken/' + newUsername).success(function(response){
                     $scope.userNameTaken = response.taken;

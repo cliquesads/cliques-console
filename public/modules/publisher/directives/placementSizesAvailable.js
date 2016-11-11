@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('publisher').directive('placementSizesAvailable', [
     function() {
         return {
@@ -37,6 +39,6 @@ angular.module('publisher').directive('placementSizesAvailable', [
                     }, {});
                 };
             }
-        }
+        };
     }
 ]);

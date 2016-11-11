@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/16/16.
- */
+'use strict';
 angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',function(AdvertiserUtils){
     /**
      * Hackish function to strip existing _id fields off of
@@ -15,11 +13,11 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
      */
     function stripIds(obj){
         if (obj.hasOwnProperty('_id')){
-            delete obj._id
+            delete obj._id;
         }
         Object.keys(obj).forEach(function(key){
             if (obj.hasOwnProperty(key)){
-                if (typeof obj[key] === 'object' && obj[key] != null){
+                if (typeof obj[key] === 'object' && obj[key] !== null){
                     if (obj[key].length === undefined){
                         stripIds(obj);
                     } else {
@@ -48,7 +46,7 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
     var ClientSideCampaign = function(existingCampaign, options){
         options = options || {};
         // accept literally anything for true other than null & undefined
-        var useSuffix = options.useSuffix != undefined && options.useSuffix != null;
+        var useSuffix = options.useSuffix !== undefined && options.useSuffix !== null;
         var emptyCampaign = {
             name:           null,
             description:    null,
@@ -178,6 +176,7 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
 }])
 .factory('CampaignDraft', ['$resource',
     function($resource) {
+
         return $resource('/console/campaign-draft/:draftId', { draftId: '@draftId' },
             {
                 update: { method: 'PATCH'},

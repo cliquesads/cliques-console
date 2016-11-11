@@ -171,7 +171,7 @@ UserSchema.statics.isUsernameTaken = function(username, callback){
     var _this = this;
     _this.findOne({ username_lower: username.toLowerCase() }, function(err, user){
         if (err) return callback(err, null);
-        return callback(null, user ? true : false)
+        return callback(null, user ? true : false);
     });
 };
 
@@ -341,7 +341,7 @@ organizationSchema.virtual('effectiveOrgType').get(function(){
 organizationSchema.virtual('URI').get(function(){
 	var protocol_substring = 'http';
 	if (this.website){
-		if (this.website.substr(0, protocol_substring.length) != protocol_substring){
+		if (this.website.substr(0, protocol_substring.length) !== protocol_substring){
 			return protocol_substring + '://' + this.website;
 		}
 	}
@@ -378,7 +378,7 @@ organizationSchema.methods.toQuickbooksVendor = function(){
 		"PrimaryPhone": {
 			"FreeFormNumber": self.phone
 		}
-	}
+	};
 };
 
 /**
@@ -426,11 +426,11 @@ organizationSchema.methods.getOutstandingPaymentTotals = function(){
  */
 organizationSchema.methods.applyPromosToTotal = function(total){
 	var self = this;
+	var applied_promos = [];
 	if (self.promos){
 		var filtered_promos = self.promos.filter(function(p){
 			return p.active;
 		});
-		var applied_promos = [];
 		filtered_promos.forEach(function(promo){
 			// handle advertiser & publisher promos differently, since you can technically use "part" of a promo
 			// when you're an advertiser, but not as a publisher
@@ -491,7 +491,7 @@ organizationSchema.methods.getAllBillingEmails = function(){
 	if (this.sendStatementToOwner) {
 		billingEmails.push(this.owner.email);
 	}
-	return billingEmails
+	return billingEmails;
 };
 
 var Organization = mongoose.model('Organization', organizationSchema);

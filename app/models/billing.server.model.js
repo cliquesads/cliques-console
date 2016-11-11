@@ -216,8 +216,9 @@ PaymentSchema.methods.getQboBillLines = function(){
     // b/c all publisher / outgoing payments recorded w/ negative signs
     var sign = this.paymentType === 'publisher' ? -1 : 1;
     // Add lineItem lines first
+    var line;
     this.lineItems.forEach(function(lineItem){
-        var line = {
+        line = {
             "Description": "Statement #" + self._id + ": " + lineItem.description,
             "Amount": sign * lineItem.amount,
             "DetailType": "AccountBasedExpenseLineDetail",
@@ -238,7 +239,7 @@ PaymentSchema.methods.getQboBillLines = function(){
                "AccountBasedExpenseLineDetail": {
                    "AccountRef": QBO_ACCOUNT_IDS[adjustment_key]
                }
-            }
+            };
         });
     }
     return lines;
@@ -260,7 +261,7 @@ PaymentSchema.methods.addToOrganization = function(callback){
         // add payment to organization.payments
         if (!_.isNil(org.payments) && org.payments.length >= 0) {
             // make sure payment hasn't already been added
-            var existingPayment = _.find(org.payments, function(p){ return p._id === self._id }); 
+            var existingPayment = _.find(org.payments, function(p){ return p._id === self._id; });
             if (!existingPayment){
                 org.payments.push(self._id);
             }
@@ -459,7 +460,7 @@ PaymentSchema.methods.renderHtmlInvoice = function(callback){
                     stripeSource: source
                 }));
             }, function(err){
-                return callback(err)
+                return callback(err);
             });
     } else if (!_.isNil(this.organization.stripeAccountId)){
         stripe.accounts.retrieve(self.organization.stripeAccountId)
@@ -471,10 +472,10 @@ PaymentSchema.methods.renderHtmlInvoice = function(callback){
                     stripeSource: source
                 }));
             }, function(err){
-                return callback(err)
+                return callback(err);
             });
     } else {
-        return callback(null, template({ payment: self }))
+        return callback(null, template({ payment: self }));
     }
 };
 

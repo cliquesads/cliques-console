@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * NOTE: Not in use currently (6/7/16).  Could never get bothAuthRouter class to work.
  * But leaving in codebase in case it's needed in the future
@@ -48,7 +50,7 @@ routerMethods.forEach(function(method){
         basicAuthRouter[method].apply(basicAuthRouter, arguments);
         localAuthRouter[method].apply(localAuthRouter, arguments);
         return this;
-    }
+    };
 });
 
 var bothAuthRouters = exports.bothAuthRouters = new BothAuthRouters();

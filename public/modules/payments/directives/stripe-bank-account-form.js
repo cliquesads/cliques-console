@@ -1,3 +1,5 @@
+/* globals Stripe */
+'use strict';
 
 angular.module('payments').directive('accountnumber', function(){
     return {
@@ -14,9 +16,9 @@ angular.module('payments').directive('accountnumber', function(){
                     return true;
                 }
                 return Stripe.bankAccount.validateAccountNumber(modelValue, scope.country);
-            }
+            };
         }
-    }
+    };
 })
 .directive('routingnumber', function(){
     return {
@@ -33,12 +35,11 @@ angular.module('payments').directive('accountnumber', function(){
                     return true;
                 }
                 return Stripe.bankAccount.validateRoutingNumber(modelValue, scope.country);
-            }
+            };
         }
-    }
+    };
 })
 .directive('stripeBankAccountForm', ['REGEXES','ngDialog',function(REGEXES, ngDialog){
-    'use strict';
     return {
         restrict: 'E',
         scope: {

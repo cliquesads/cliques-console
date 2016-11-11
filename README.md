@@ -73,7 +73,6 @@ The setup process only needs to be run when the Node.js environment is updated v
 To run the server using **grunt** in [local-test](#local-test) mode, run
 ```sh
 $ source activate-env.sh -e local-test # activate the Node.js environment
-$ grunt less # build CSS files from LESS source
 $ grunt # the default grunt task starts the server w/ Nodemon in `local-test` mode
 ```
 Once you see the following output, your server should be running on [localhost:5000](http://localhost:5000)

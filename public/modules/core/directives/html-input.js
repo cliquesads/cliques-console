@@ -1,6 +1,5 @@
-/**
- * Created by bliang on 2/11/16.
- */
+'use strict';
+
 angular.module('core').directive('htmlInput', [function(){
     return {
         restrict: 'A',

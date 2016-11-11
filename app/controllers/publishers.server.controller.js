@@ -171,7 +171,7 @@ module.exports = function(db) {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
-                if (req.publisher.organization != req.user.organization.id){
+                if (req.publisher.organization !== req.user.organization.id){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
@@ -224,7 +224,7 @@ module.exports = function(db) {
                                 var pubAttrs = {};
                                 var pubObj = pub.toObject();
                                 Object.keys(pubObj).forEach(function(key){
-                                    if (pubObj.hasOwnProperty(key) && key != 'sites'){
+                                    if (pubObj.hasOwnProperty(key) && key !== 'sites'){
                                         pubAttrs[key] = pubObj[key];
                                     }
                                 });

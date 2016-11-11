@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('users').controller('BillingController', ['$scope', '$http', '$location', '$analytics', 'Users', 'Authentication','Notify',
     'Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, $analytics, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
@@ -14,7 +16,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 if ($scope.organization.stripeCustomerId){
                     org.$getStripeCustomer().then(function(customer){
                         $scope.defaultSource = customer.sources.data.filter(function(source){
-                            return source.id === customer.default_source
+                            return source.id === customer.default_source;
                         })[0];
                     }, function(response){
                         console.error(response.data.message);
@@ -71,7 +73,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         // Only show save & cancel buttons when billingPreference has changed & is not Stripe,
         // which has its own Save function.
         $scope.$watch('organization.billingPreference', function(newValue, oldValue){
-            if (newValue != $scope.initialBillingPreference){
+            if (newValue !== $scope.initialBillingPreference){
                 if (newValue === "Stripe"){
                     if ($scope.defaultSource){
                         $scope.allowSave = true;
@@ -96,6 +98,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
         $scope.updateOrganization = function(){
             $scope.loading = true;
             // show confirm dialog for Advertisers admonishing them if they switch to "Check" as a preference.
+            var updatePromise;
             if ($scope.organization.billingPreference === 'Check' && $scope.organization.effectiveOrgType === 'advertiser'){
                 var dialog = ngDialog.openConfirm({
                     template: '\
@@ -111,7 +114,7 @@ angular.module('users').controller('BillingController', ['$scope', '$http', '$lo
                 });
                 // Wrap $update promise in dialog promise, which has to be resolved
                 // first by clicking "Confirm"
-                var updatePromise = dialog.then(function(val){
+                updatePromise = dialog.then(function(val){
                     return $scope.organization.$update();
                 });
             } else {

@@ -117,6 +117,6 @@ angular.module('users').config(['$stateProvider','RouteHelpersProvider',
             url: '/terms-and-conditions',
             templateUrl: 'modules/users/views/terms-and-conditions.client.view.html',
             controller: 'TermsAndConditionsController'
-        })
+        });
 	}
 ]);

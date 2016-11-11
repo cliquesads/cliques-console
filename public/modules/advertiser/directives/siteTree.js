@@ -44,10 +44,10 @@ angular.module('advertiser').directive('siteTree', [function() {
                 if (type === 'site'){
                     this.logo_secure_url = node.logo_secure_url;
                     this.url             = 'http://' + node.domain_name;
-                    this.label           = node.name + ' (' + node.pages.length + ' Page' + (node.pages.length != 1 ? 's': '') +')';
+                    this.label           = node.name + ' (' + node.pages.length + ' Page' + (node.pages.length !== 1 ? 's': '') +')';
                     this.children        = [];
                 } else if (type === 'page'){
-                    this.label = node.name + ' (' + node.placements.length + ' Placement' + (node.placements.length != 1 ? 's': '') +')';
+                    this.label = node.name + ' (' + node.placements.length + ' Placement' + (node.placements.length !== 1 ? 's': '') +')';
                     this.url   = node.url;
                     this.children = [];
                 } else if (type === 'placement'){
@@ -82,7 +82,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                         return {
                             target: self.value,
                             weight: self.weight
-                        }
+                        };
                     }
                 }
                 // pseudo-recursive steps
@@ -110,7 +110,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                 var self = this;
                 if (targets){
                     if (self.nodeType === 'placement'){
-                        var target = targets.filter(function(t){ return t.target === self.value })[0];
+                        var target = targets.filter(function(t){ return t.target === self.value; })[0];
                         if (target){
                             self.weight = target.weight;
                             self.selected = true;
@@ -138,7 +138,7 @@ angular.module('advertiser').directive('siteTree', [function() {
                 var equal = true;
                 var weight = nodesArray[0].weight;
                 nodesArray.forEach(function(node){
-                    if (weight != node.weight){
+                    if (weight !== node.weight){
                         equal = false;
                     }
                 });
@@ -147,7 +147,7 @@ angular.module('advertiser').directive('siteTree', [function() {
 
             SiteTreeNode.prototype.getOverride = function(){
                 var override = true;
-                if (this.nodeType != 'placement'){
+                if (this.nodeType !== 'placement'){
                     override = allWeightsEqual(this.children) && this.children.length > 1;
                 }
                 return override;
@@ -193,14 +193,14 @@ angular.module('advertiser').directive('siteTree', [function() {
                     for (var i=0; i < newSiteTree.length; i++){
                         var newSite = newSiteTree[i];
                         var oldSite = oldSiteTree ? oldSiteTree[i] : {};
-                        if (newSite.weight != oldSite.weight){
+                        if (newSite.weight !== oldSite.weight){
                             //newSite.manual_override = true;
                             newSite._overrideChildWeights();
                         }
                         for (var j=0; j < newSite.children.length; j++){
                             var newPage = newSite.children[j];
                             var oldPage = oldSite.children ? oldSite.children[j] : {};
-                            if (newPage.weight != oldPage.weight){
+                            if (newPage.weight !== oldPage.weight){
                                 //newPage.manual_override = true;
                                 newPage._overrideChildWeights();
                             }
