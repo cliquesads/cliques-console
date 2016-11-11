@@ -1,6 +1,5 @@
-/**
- * Created by bliang on 1/14/16.
- */
+'use strict';
+
 angular.module('core').directive('rowSelect', [
     function() {
         return {
@@ -48,8 +47,8 @@ angular.module('core').directive('rowSelect', [
                         obj.selected = true;
                         scope.baseModel = obj;
                     }
-                }
+                };
             }
-        }
+        };
     }
 ]);

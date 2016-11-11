@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('publisher').directive('advertiserFacingSiteListItem', [
     function() {
         return {
@@ -31,6 +33,6 @@ angular.module('publisher').directive('advertiserFacingSiteListItem', [
                     }, {});
                 };
             }
-        }
+        };
     }
 ]);

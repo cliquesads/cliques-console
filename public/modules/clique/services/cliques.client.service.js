@@ -25,13 +25,14 @@ function format_cliques_collection_for_tree(query_result){
      */
     function _reformat_tree(cliques_tree, _destination_array){
         _destination_array = _destination_array || [];
-        if (cliques_tree != {}){
+        if (cliques_tree !== {}){
+            var fu = function(c){ return c._id === key; };
             for (var key in cliques_tree){
                 if (cliques_tree.hasOwnProperty(key)){
                     var obj = {
                         label: key,
                         children: [],
-                        clique: _.find(query_result, function(c){ return c._id === key; })
+                        clique: _.find(query_result, fu)
                     };
                     _reformat_tree(cliques_tree[key], obj.children);
                     _destination_array.push(obj);

@@ -1,3 +1,4 @@
+/* globals Morris */
 /**=========================================================
  * Module: morris.js
  * AngularJS Directives for Morris Charts

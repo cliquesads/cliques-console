@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('payments').controller('PaymentAdminController', ['$scope', '$http', '$location', 'Users',
     'Authentication','Notify','Organizations', 'Payment','ngDialog',
     function($scope, $http, $location, Users, Authentication,Notify, Organizations, Payment, ngDialog) {
@@ -32,7 +34,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
 
         // watcher on start_date to update $scope.payments w/ selection from $scope.all_payments
         $scope.$watch('reportSettings.start_date', function(newDate, oldDate){
-            if (newDate && newDate != oldDate){
+            if (newDate && newDate !== oldDate){
                 $scope.payments = $scope.all_payments[newDate];
             }
         });
@@ -112,7 +114,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     var postUrl = '/console/payment/' + payment._id + '/generateAndSendInvoice';
                     // add query param email=true if sendToOrg is true
                     if (sendToOrg){
-                        postUrl += '?email=true'
+                        postUrl += '?email=true';
                     }
                     return $http.post(postUrl).success(function(response){
                         pendingDialog.close(0);
@@ -130,7 +132,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                         $scope.closePreview();
                     }).error(function(response){
                         pendingDialog.close(1);
-                        openErrorDialog(response)
+                        openErrorDialog(response);
                     });
                 }, function(err){
                     pendingDialog.close(1);
@@ -167,9 +169,9 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                     // TODO: can't set payment as response so just changing status to paid client-side instead
                     payment.status = "Paid";
                     return $http.patch(patchUrl).success(function(response){
-                        pendingDialog.close(0)
+                        pendingDialog.close(0);
                     }).error(function(response){
-                        openErrorDialog(response)
+                        openErrorDialog(response);
                     });
                 }
             });
@@ -179,7 +181,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
         $http.get('/console/payment-statuses/').success(function(response){
             // remove 'Paid' status, make user have to use the "Set Paid" workflow to
             // set status to Paid since there are some extra server hooks that need to be performed.
-            var i = _.findIndex(response, function(s){ return s === 'Paid' });
+            var i = _.findIndex(response, function(s){ return s === 'Paid'; });
             response.splice(i, 1);
             $scope.statuses = response;
         }).error(function(response){
@@ -216,7 +218,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                 }],
                 preCloseCallback: function(value){
                     // clear changes if not saved successfully
-                    if (value != 'success'){
+                    if (value !== 'success'){
                         $scope.$apply(function(){
                             payment.status = initialStatus;
                         });
@@ -260,7 +262,7 @@ angular.module('payments').controller('PaymentAdminController', ['$scope', '$htt
                 }],
                 preCloseCallback: function(value){
                     // clear changes if not saved successfully
-                    if (value != 'success'){
+                    if (value !== 'success'){
                         $scope.$apply(function(){
                             payment.adjustments = initialAdjustments;
                         });

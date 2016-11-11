@@ -1,8 +1,5 @@
-/**
- * Created by bliang on 1/19/16.
- */
-
-angular.module('core').controller('NewModalController',['$scope','REVIEW_TIME',function($scope,REVIEW_TIME){
+'use strict';
+angular.module('core').controller('NewModalController',['$scope','REVIEW_TIME','ngDialog',function($scope,REVIEW_TIME,ngDialog){
     /**
      * Overlap campaign helper modal if state includes necessary query params
      */

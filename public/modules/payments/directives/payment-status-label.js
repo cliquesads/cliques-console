@@ -16,7 +16,7 @@ angular.module('payments').directive('paymentStatusLabel', [function(){
 
             if (scope.admin){
                 scope.map['Needs Approval'] = 'label-warning';
-                scope.map['Pending'] = 'label-primary'
+                scope.map.Pending = 'label-primary';
             }
         }
     };

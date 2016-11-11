@@ -54,7 +54,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                     page.active = true;
                     page.placements.forEach(function(placement){
                         placement.active = true;
-                    })
+                    });
                 });
                 this.publisher.$update(function(response){
                     Notify.alert('Your site was successfully activated. Let\'s do this thing.',{});
@@ -88,7 +88,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 controller: 'newPageController',
                 data: {publisher: $scope.publisher, site: $scope.site, page: newPage},
                 preCloseCallback: function(value){
-                    if (value != 'Success'){
+                    if (value !== 'Success'){
                         var page_ind = _.findIndex($scope.site.pages, function(page){
                             return page === newPage;
                         });

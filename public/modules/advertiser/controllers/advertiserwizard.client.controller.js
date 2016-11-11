@@ -75,7 +75,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 }
             },
             goToStepPriorToWizard : function(){
-                this.metaStep = 'advertiser-info'
+                this.metaStep = 'advertiser-info';
             }
         };
 

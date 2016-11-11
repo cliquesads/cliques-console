@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/14/16.
- */
+'use strict';
 angular.module('core').directive('rowMultiSelect', [
     function() {
         return {
@@ -55,8 +53,8 @@ angular.module('core').directive('rowMultiSelect', [
                         });
                         scope.baseModel.splice(i, 1);
                     }
-                }
+                };
             }
-        }
+        };
     }
 ]);

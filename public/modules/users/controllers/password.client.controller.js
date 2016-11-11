@@ -43,6 +43,6 @@ angular.module('users').controller('PasswordController', ['$scope', '$stateParam
 
         $scope.redirectToHome = function(){
             $window.location.href = '/';
-        }
+        };
 	}
 ]);

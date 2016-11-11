@@ -31,8 +31,9 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                     scope.submitted = true;
                     if (scope.doubleClickForm.$valid){
                         // Validate that the tag is proper DCM Javascript
+                        var js_tag;
                         try {
-                            var js_tag = new DoubleClickTag.Javascript(scope.dfa_tag);
+                            js_tag = new DoubleClickTag.Javascript(scope.dfa_tag);
                             scope.upload_error = false;
                         } catch (e){
                             scope.upload_error = 'Not a valid DFA Javascript Tag.';

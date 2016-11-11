@@ -27,7 +27,7 @@ angular.module('admin').controller('NetworkReportController', ['$scope', '$state
                         $tfoot.html(content);
                     });
                 }
-            }
+            };
         };
 
         // Bind awful jQuery hack to each table's buttons bar

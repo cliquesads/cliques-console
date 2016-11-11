@@ -196,7 +196,7 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
       // method to clear the spinner when done
       function removeSpinner (ev, id) {
         if (!id) return;
-        var newid = id.charAt(0) == '#' ? id : ('#'+id);
+        var newid = id.charAt(0) === '#' ? id : ('#'+id);
         angular
           .element(newid)
           .removeClass(whirlClass);

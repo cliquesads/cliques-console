@@ -1,3 +1,4 @@
+/* globals user */
 'use strict';
 
 angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Organizations', 'Menus',

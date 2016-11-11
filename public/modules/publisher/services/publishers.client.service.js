@@ -17,8 +17,8 @@ angular.module('publisher').factory('Publisher', ['$resource',
      * additional params used by placement targeting directive (logo_url, objectType)
      */
     return function(clique_id){
-        return $http.get('/console/sitesinclique/' + clique_id,{})
-    }
+        return $http.get('/console/sitesinclique/' + clique_id,{});
+    };
 }])
 .factory('getSitesInCliqueBranch', ['$http', function($http){
     /**
@@ -26,8 +26,8 @@ angular.module('publisher').factory('Publisher', ['$resource',
      * additional params used by placement targeting directive (logo_url, objectType)
      */
     return function(clique_id){
-        return $http.get('/console/sitesincliquebranch/' + clique_id,{})
-    }
+        return $http.get('/console/sitesincliquebranch/' + clique_id,{});
+    };
 }])
 .factory('flattenSiteCliques',[function(){
     /**

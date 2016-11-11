@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Created by bliang on 1/14/16.
  */
@@ -80,10 +81,10 @@ angular.module('core').service('DndTreeWrapper', function(){
             var n = _tree[i];
             if (n._id === id){
                 parent = n;
-                break
+                break;
             } else if (n.__children__){
                 parent = this.getNodeById(id, n.__children__);
-                if (parent) break
+                if (parent) break;
             }
         }
         return parent;
@@ -97,11 +98,13 @@ angular.module('core').service('DndTreeWrapper', function(){
     DndTreeWrapper.prototype._removeNode = function(node, parent){
         var self = this;
         if (node) {
+            var clearme = false;
+            var _parent;
             if (parent) {
-                var _parent = parent.__children__;
+                _parent = parent.__children__;
             } else {
                 _parent = self.data;
-                var clearme = true;
+                clearme = true;
             }
             //BUG FIX, tree_nodes does not clear when last element
             //is removed
