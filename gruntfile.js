@@ -263,10 +263,10 @@ module.exports = function(grunt) {
 
 	// Default task(s).
     // Only really should be run locally, hence the local-test env
-	grunt.registerTask('default', ['env:local-test','lint', 'concurrent:default']);
+	grunt.registerTask('default', ['env:local-test','less:dev','lint', 'concurrent:default']);
 
     // Dev task(s).
-    grunt.registerTask('default-dev', ['env:dev','lint', 'concurrent:dev']);
+    grunt.registerTask('default-dev', ['env:dev','less:dev','lint', 'concurrent:dev']);
 
 	// Debug task.
 	grunt.registerTask('debug', ['lint', 'concurrent:debug']);
