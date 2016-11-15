@@ -6,56 +6,55 @@ module.exports = function(db, routers){
 
     var router = routers.apiRouter;
     /* ---- Advertiser API Routes ---- */
-
     /**
      * @apiDefine AdvertiserSchema
-     * @apiSuccess {String} advertiser.id           Advertiser ID, unique identifier.
-     * @apiSuccess {String} advertiser.name         Advertiser name.
-     * @apiSuccess {String[]} advertiser.user       **DEPRECATED - Use Organization instead** Array of users who have access to this advertiser.
-     * @apiSuccess {String} advertiser.organization ObjectID of organization to which this Advertiser belongs.
-     * @apiSuccess {String} [description]           Optional description of advertiser.
-     * @apiSuccess {String} logo_url                Google Cloud Storage URL for logo image.
-     * @apiSuccess {Boolean} nonprofit              Flag for nonprofit advertisers.
-     * @apiSuccess {String} advertiser_fee          **DEPRECATED**
-     * @apiSuccess {String} website                 URL to Advertiser website
-     * @apiSuccess {String} tstamp                  UTC timestamp of object creation. Not currently updated on object modification.
-     * @apiSuccess {String} currency                ISO-4217 Currency String. Default is 'USD'.
-     * @apiSuccess {Object[]} campaigns             Array of this Advertiser's Campaigns.
-     * @apiSuccess {Object[]} actionbeacons         Array of ActionBeacons.
+     * @apiParam {String} advertiser.id                 Advertiser ID, unique identifier.
+     * @apiParam {String} advertiser.name               Advertiser name.
+     * @apiParam {String} advertiser.organization       ObjectID of organization to which this Advertiser belongs.
+     * @apiParam {String} advertiser.website            URL to Advertiser website
+     * @apiParam {String} [advertiser.description]      Description of advertiser.
+     * @apiParam {String} [advertiser.logo_url]         Google Cloud Storage URL for logo image.
+     * @apiParam {Boolean} [advertiser.nonprofit=false] Flag for nonprofit advertisers.
+     * @apiParam {String} [advertiser.advertiser_fee]   **DEPRECATED**
+     * @apiParam {String} [advertiser.tstamp=new Date()]    UTC timestamp of object creation. Not currently updated on object modification.
+     * @apiParam {String} [advertiser.currency='USD']   ISO-4217 Currency String. Default is 'USD'.
+     * @apiParam {Object[]} [advertiser.actionbeacons]  Array of ActionBeacons.
+     * @apiParam {Object[]} [advertiser.campaigns]      Array of this Advertiser's Campaigns.
      */
 
     router.route('/advertiser')
         /**
-         * @api {get} /advertiser Get all Advertisers owned by account.
-         * @apiName GetAdvertiser
+         * @api {post} /advertiser Create a New Advertiser
+         * @apiName CreateAdvertiser
+         * @apiGroup Advertiser
+         * @apiDescription Create a new Advertiser.
+         * @apiUse AdvertiserSchema
+         *
+         * @apiSuccess {Object} advertiser Newly-created Advertiser object.
+         */
+        .post(advertisers.create)
+        /**
+         * @api {get} /advertiser Get All Advertisers
+         * @apiName GetAdvertisers
          * @apiGroup Advertiser
          * @apiDescription Gets all Advertiser objects owned by user account.  If user account is under a
          * networkAdmin Organization, this will get ALL Advertisers.
          *
-         * @apiSuccess {Object[]} advertiser Array of advertisers.
-         * @apiUse AdvertiserSchema
+         * @apiSuccess {Object[]} advertisers Array of advertisers.
          */
         .get(advertisers.getMany)
         /**
-         * @api {put} /advertiser Update or Create an Advertiser.
+         * @api {put} /advertiser Update or Create an Advertiser
          * @apiName UpdateOrCreateAdvertiser
          * @apiGroup Advertiser
+         * @apiUse AdvertiserSchema
          * @apiDescription If Advertiser object in body has `id` param, will update that Advertiser with body.
          * Otherwise, will behave the same away as CreateAdvertiser.
          *
          * @apiSuccess {Object} advertiser Advertiser object that was either updated or created.
-         * @apiUse AdvertiserSchema
          */
-        .put(advertisers.hasAuthorization, advertisers.updateOrCreate)
-        /**
-         * @api {post} /advertiser Create a new Advertiser.
-         * @apiName CreateAdvertiser
-         * @apiGroup Advertiser
-         *
-         * @apiSuccess {Object} advertiser Newly-created advertiser object.
-         * @apiUse AdvertiserSchema
-         */
-        .post(advertisers.create);
+        .put(advertisers.hasAuthorization, advertisers.updateOrCreate);
+
 
     router.route('/advertiser/:advertiserId')
         .get(advertisers.hasAuthorization, advertisers.read)
