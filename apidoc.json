@@ -4,6 +4,10 @@
   "description": "Cliques Console API",
   "title": "Cliques Console API",
   "url" : "https://console.cliquesads.com/api",
+  "header": {
+    "title": "Getting Started",
+    "filename": "docs/apiDocHeader.md"
+  },
   "order": [
     "CreateAdvertiser",
     "GetAdvertisers",
