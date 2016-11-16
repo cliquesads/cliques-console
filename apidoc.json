@@ -3,5 +3,15 @@
   "version": "0.1.0",
   "description": "Cliques Console API",
   "title": "Cliques Console API",
-  "url" : "https://console.cliquesads.com/api"
+  "url" : "https://console.cliquesads.com/api",
+  "order": [
+    "CreateAdvertiser",
+    "GetAdvertisers",
+    "UpdateOrCreateAdvertiser",
+    "ReadAdvertiser",
+    "UpdateAdvertiser",
+    "RemoveAdvertiser",
+    "ActivateCampaign",
+    "DeactivateCampaign"
+  ]
 }

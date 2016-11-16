@@ -176,12 +176,18 @@ module.exports = function(db, routers){
          *          * **Creative** - Contains size & URL's for raw assets.
          *
          * See below for the full Advertiser schema.
+         *
+         * ## Hooks ##
+         *  1. If any campaigns were provided, publishes `createBidder` signal to spin up bidding agent on appropriate
+         *      server
+         *  2. Send internal email notifying admins of new advertiser
+         *
          * @apiUse AdvertiserSchema
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
          * @apiPermission advertiser
          *
-         * @apiSuccess {Object} :advertiserSchema: Newly-created Advertiser object as response `body` (see [above](#api-Advertiser) for all fields).
+         * @apiSuccess {Object} ::advertiser:: Newly-created Advertiser object as response `body` (see [above](#api-Advertiser) for all fields).
          */
         .post(advertisers.create)
         /**
@@ -190,16 +196,17 @@ module.exports = function(db, routers){
          * @apiGroup Advertiser
          * @apiDescription Gets all Advertiser objects owned by user account's `organization`.
          *  **NOTE**: If user account is under a `networkAdmin` Organization, this will get ALL Advertisers.
+         *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
          * @apiPermission advertiser
          *
-         * @apiSuccess {Object[]} :advertisers: Array of Advertisers as response `body` (see [above](#api-Advertiser)
+         * @apiSuccess {Object[]} ::advertisers:: Array of Advertisers as response `body` (see [above](#api-Advertiser)
          *  for all fields).
          */
         .get(advertisers.getMany)
         /**
-         * @api {put} /advertiser Update or Create an Advertiser
+         * @api {put} /advertiser Update or Create an Advertiser (TO BE DEPRECATED)
          * @apiName UpdateOrCreateAdvertiser
          * @apiGroup Advertiser
          * @apiDescription If Advertiser object in body has `id` param, will update that Advertiser with body.
@@ -208,44 +215,287 @@ module.exports = function(db, routers){
          * @apiPermission networkAdmin
          * @apiPermission advertiser
          *
-         * @apiSuccess {Object} :advertiser: Advertiser object that was either updated or created as response `body`
+         * @apiParam (Body (Advertiser Schema)) {Object} ::advertiser:: Advertiser object as request `body` (see [above](#api-Advertiser) for all fields).
+         *
+         * @apiSuccess {Object} ::advertiser:: Advertiser object that was either updated or created as response `body`
          *  (see [above](#api-Advertiser) for all fields)..
          */
         .put(advertisers.hasAuthorization, advertisers.updateOrCreate);
 
 
     router.route('/advertiser/:advertiserId')
+        /**
+         * @api {get} /advertiser/:advertiserId Get One Advertiser
+         * @apiName ReadAdvertiser
+         * @apiGroup Advertiser
+         * @apiDescription Finds single [Advertiser](#api-Advertiser) by ID.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         *
+         * @apiSuccess {Object} ::advertiser:: Matching Advertiser object as response `body` (see [above](#api-Advertiser)
+         * for all fields)..
+         */
         .get(advertisers.hasAuthorization, advertisers.read)
+        /**
+         * @api {patch} /advertiser/:advertiserId Update Advertiser
+         * @apiName UpdateAdvertiser
+         * @apiGroup Advertiser
+         * @apiDescription Updates an [Advertiser](#api-Advertiser) by ID. Advertiser will be updated completely
+         *  with the contents of request `body`.
+         *
+         *  ## Hooks ##
+         *  1. If any new campaigns were created, publishes `createBidder` message to spin up new biddingAgent for campaign.
+         *  2. Publishes `updateBidder` message for existing campaigns
+         *  3. Send internal email notifying admins of new campaigns that were created, if any
+         *
+         *  **NOTE** `networkAdmin` can update any Advertiser. `advertiser` can only update Advertisers owned by their Organization.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Body (Advertiser Schema)) {Object} ::advertiser:: Advertiser object as request `body` (see [above](#api-Advertiser) for all fields).
+         *
+         * @apiSuccess {Object} ::advertiser:: Updated Advertiser object as response `body` (see [above](#api-Advertiser)
+         * for all fields)..
+         */
         .patch(advertisers.hasAuthorization, advertisers.update)
+        /**
+         * @api {patch} /advertiser/:advertiserId Remove Advertiser
+         * @apiName RemoveAdvertiser
+         * @apiGroup Advertiser
+         * @apiDescription Removes an [Advertiser](#api-Advertiser) by ID.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         *
+         * @apiSuccess {Object} :advertiser: Advertiser object that was just removed as response `body`
+         *  (TODO: sort of weird to return deleted advertiser object as response)
+         */
         .delete(advertisers.hasAuthorization, advertisers.remove);
 
     router.route('/advertiser/:advertiserId/campaign/:campaignId/activate')
+        /**
+         * @api {patch} /advertiser/:advertiserId/campaign/:campaignId Activate Campaign
+         * @apiName ActivateCampaign
+         * @apiGroup Advertiser
+         * @apiDescription Sets a Campaign's `active` field to `true`, and sends a `CreateBidder` signal to the appropriate
+         *  bidder to create a bidding agent for this campaign.
+         *
+         * ## Hooks ##
+         * See above.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document being activated
+         */
         .put(advertisers.hasAuthorization, advertisers.campaign.activate);
 
     router.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
+        /**
+         * @api {patch} /advertiser/:advertiserId/campaign/:campaignId Deactivate Campaign
+         * @apiName DeactivateCampaign
+         * @apiGroup Advertiser
+         * @apiDescription Sets a Campaign's `active` field to `false`, and sends a `StopBidder` signal to the appropriate
+         *  bidder to shutdown bidding agent for this campaign.
+         *
+         * ## Hooks ##
+         * See above.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document being activated
+         */
         .put(advertisers.hasAuthorization, advertisers.campaign.deactivate);
 
     router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate')
+        /**
+         * @api {patch} /advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate Activate Creative
+         * @apiName ActivateCreative
+         * @apiGroup Advertiser
+         * @apiDescription Sets a Creative's `active` field to `true`, allowing it to be served.
+         *
+         * ## Hooks ##
+         * 1. Activates parent creativeGroup if it was previously inactive.
+         * 2. Publishes `updateBidder` message if creativeGroup was previously inactive.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeGroupId ObjectID of CreativeGroup sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeId ObjectID of Creative sub-document
+         */
         .put(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.activate);
 
     router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/deactivate')
+        /**
+         * @api {patch} /advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/deactivate Deactivate Creative
+         * @apiName DeactivateCreative
+         * @apiGroup Advertiser
+         * @apiDescription Sets a Creative's `active` field to `false`, preventing it from being served.
+         *
+         * ## Hooks ##
+         * 1. Deactivates parent creativeGroup if it contains no active creatives.
+         * 2. Publishes `updateBidder` message if creativeGroup was deactivated.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeGroupId ObjectID of CreativeGroup sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeId ObjectID of Creative sub-document
+         */
         .put(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.deactivate);
 
     router.route('/advertiser/:advertiserId/actionbeacon/:actionbeaconId')
+        /**
+         * @api {patch} /advertiser/:advertiserId/actionbeacon/:actionbeaconId Get Action Beacon Tag
+         * @apiName GetActionBeaconTag
+         * @apiGroup Advertiser
+         * @apiDescription Gets HTML tag for specific action beacon.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} actionbeaconId ObjectID of ActionBeacon
+         *
+         * @apiSuccess {String} tag HTML tag for action beacon (1x1 pixel)
+         */
         .get(advertisers.hasAuthorization, advertisers.actionbeacon.getTag);
 
     // Campaign Draft Endpoints
     router.route('/campaign-draft')
+        /**
+         * @api {get} /campaign-draft Get All Campaign Drafts
+         * @apiName GetCampaignDrafts
+         * @apiGroup Campaign Draft
+         * @apiDescription Get all Campaign drafts stored in user session.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiSuccess {Object[]} ::campaignDrafts:: Array of Campaign Drafts from user session.
+         */
         .get(advertisers.campaign.draft.getAllInSession)
+        /**
+         * @api {get} /campaign-draft Create Campaign Draft
+         * @apiName CreateCampaignDraft
+         * @apiGroup Campaign Draft
+         * @apiDescription Create a new Campaign Draft in user session.
+         *
+         * A Campaign Draft is just a partial Campaign object (see [Advertiser](#api-Advertiser) schema for
+         * Campaign fields) with a couple of additional parameters added for fetching/saving.
+         *
+         * This object is used to temporarily store partial campaign data so that the user isn't forced
+         * to populate all campaign parameters in one sitting.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Body (Campaign Draft)) {String} advertiserId You must provide an advertiserId (ObjectID for
+         *  parent advertiser) to save a new Campaign Draft.
+         * @apiParam (Body (Campaign Draft)) {String} ::campaignFields:: You can additionally provide any of the fields
+         *  permitted in the Campaign sub-schema of the [Advertiser](#api-advertiser) schema.
+         *
+         * @apiSuccess {String} advertiserId    The advertiserId you provided
+         * @apiSuccess {String} tstamp          The timestamp (UTC) for when the draft was created.
+         * @apiSuccess {String} draftId         Unique ObjectID given to this draft.
+         * @apiSuccess {String} ::campaignFields:: Any campaign fields provided.
+         */
         .post(advertisers.campaign.draft.create);
 
     router.route('/campaign-draft/:draftId')
+        /**
+         * @api {get} /campaign-draft/:draftId Get Campaign Draft
+         * @apiName GetCampaignDraft
+         * @apiGroup Campaign Draft
+         * @apiDescription Get one CampaignDraft by ID.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters) {String} draftId Draft ObjectID generated on creation.
+         *
+         * @apiSuccess {String} advertiserId    The advertiserId you provided
+         * @apiSuccess {String} tstamp          The timestamp (UTC) for when the draft was created.
+         * @apiSuccess {String} draftId         Unique ObjectID given to this draft.
+         * @apiSuccess {String} ::campaignFields:: Any campaign fields provided.
+         */
         .get(advertisers.campaign.draft.read)
+        /**
+         * @api {get} /campaign-draft/:draftId Update Campaign Draft
+         * @apiName UpdateCampaignDraft
+         * @apiGroup Campaign Draft
+         * @apiDescription Update a CampaignDraft by ID.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters) {String} draftId Draft ObjectID generated on creation.
+         *
+         * @apiSuccess {String} advertiserId    The advertiserId you provided
+         * @apiSuccess {String} tstamp          The timestamp (UTC) for when the draft was created.
+         * @apiSuccess {String} draftId         Unique ObjectID given to this draft.
+         * @apiSuccess {String} ::campaignFields:: Any campaign fields provided.
+         */
         .patch(advertisers.campaign.draft.update)
+        /**
+         * @api {get} /campaign-draft/:draftId Remove Campaign Draft
+         * @apiName RemoveCampaignDraft
+         * @apiGroup Campaign Draft
+         * @apiDescription Remove a CampaignDraft by ID.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters) {String} draftId Draft ObjectID generated on creation.
+         *
+         * @apiSuccess {String} advertiserId    The advertiserId you provided
+         * @apiSuccess {String} tstamp          The timestamp (UTC) for when the draft was created.
+         * @apiSuccess {String} draftId         Unique ObjectID given to this draft.
+         * @apiSuccess {String} ::campaignFields:: Any campaign fields provided.
+         */
         .delete(advertisers.campaign.draft.remove);
 
     // route to get by advertiserId
     router.route('/advertiser/:advertiserId/campaign/draft')
+        /**
+         * @api {get} /advertiser/:advertiserId/campaign-draft/:draftId Get Campaign Drafts for Advertiser
+         * @apiName UpdateCampaignDraft
+         * @apiGroup Advertiser
+         * @apiDescription Gets all Campaign Drafts in user session that belong to a single parent advertiser
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters) {String} advertiserId Advertiser ObjectID
+         *
+         * @apiSuccess {Object[]} ::campaignDrafts:: Array of CampaignDraft objects (see [Campaign Draft](#api-Campaign_Draft))
+         */
         .get(advertisers.campaign.draft.getForAdvertiser);
 
     router.param('advertiserId', advertisers.advertiserByID);
