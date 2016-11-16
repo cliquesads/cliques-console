@@ -16,7 +16,7 @@ Node.js server-side packages (public & private) are (obviously) managed by [NPM]
 This README only provides setup & deployment instructions as well as a high-level overview of the system's components.
 To learn more, please check out the following resources:
 
-* **[Cliques API Documentation](https://storage.googleapis.com/cliquesads-api-docs/index.html): Documentation for the
+* **[Cliques API Documentation](https://storage.googleapis.com/cliquesads-api-docs/index.html)**: Documentation for the
     Cliques Console RESTful API.
 * **[User Support Center](http://support.cliquesads.com)**: Not for developers, but does contain all end-user-facing documentation.
 
