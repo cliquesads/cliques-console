@@ -12,6 +12,14 @@ Originally based on the scaffolding provided by [MEAN.js 0.3.x](http://meanjs.or
 ### Development & Build Tools
 Node.js server-side packages (public & private) are (obviously) managed by [NPM](https://www.npmjs.com/). [Bower](https://bower.io/) handles management of all client-side packages. [Grunt](http://gruntjs.com/) handles all building & linting steps, and can also be used to run the app in development.
 
+# Other Cliques Resources
+This README only provides setup & deployment instructions as well as a high-level overview of the system's components.
+To learn more, please check out the following resources:
+
+* **[Cliques API Documentation](https://storage.googleapis.com/cliquesads-api-docs/index.html): Documentation for the
+    Cliques Console RESTful API.
+* **[User Support Center](http://support.cliquesads.com)**: Not for developers, but does contain all end-user-facing documentation.
+
 # Table of Contents
 * [Setup & Deployment](#setup-and-deployment)
   * [Prerequisites](#prerequisites)
