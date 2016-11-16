@@ -42,6 +42,7 @@ public/img/
 *.bak
 *.swp
 *.vscode
+*.node-version
 junk
 logs/
 build/
