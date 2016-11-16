@@ -8,6 +8,23 @@ var multer = require('multer');
 var upload = multer({ dest: 'public/uploads/'});
 
 module.exports = function(db, routers) {
+
+    /**
+     * @apiDefine networkAdmin ORG: Cliques network admins
+     * Members of the Cliques organization have the ability to see both Advertiser and Publisher
+     * objects, and can view all objects in each collection.
+     */
+
+    /**
+     * @apiDefine advertiser ORG: Advertiser accounts
+     * Advertisers can view & edit any objects in the Advertiser section.
+     */
+
+    /**
+     * @apiDefine publisher ORG: Publisher accounts
+     * Advertisers can view & edit any objects in the Publisher section.
+     */
+
 	// User Routes
 	var users = require('../../app/controllers/users.server.controller');
 
