@@ -118,7 +118,7 @@ module.exports = function(db, routers){
      *      `explicit === true`, then this object will be blocked. Otherwise, it's assumed to be an ancestor
      *      placeholder and will be skipped.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.blocked_inventory.children.children.children]    Child BlockSchema objects
-     * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.children.children.target **Placement** ObjectID
+     * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.children.children.children.target **Placement** ObjectID
      *      of blocked Placement object.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.blocked_inventory.children.children.children.explicit=false] Currently, if
      *      `explicit === true`, then this object will be blocked. Otherwise, it's assumed to be an ancestor

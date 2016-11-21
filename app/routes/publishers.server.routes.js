@@ -247,20 +247,20 @@ module.exports = function(db, routers){
          *                      "parent_publisher": {...Publisher Metadata...}
          *                },
          *                {
-         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
-         *                  "name": "TGR Snow",
-         *                  "description": "Ski & Snowboard related contenton Tetongravity.com",
-         *                  "domain_name": "www.tetongravity.com",
-         *                  "clique": "Snowsports",
-         *                  "bidfloor": null,
-         *                  "_id": "562e6d618a7d5cc269f36e57",
-         *                  "blacklist": [],
-         *                  "pages": [...Pages Array...]
-         *                  "tstamp": "2015-10-26T18:13:53.168Z",
-         *                  "active": true,
-         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
-         *                  "id": "562e6d618a7d5cc269f36e57",
-         *                  "parent_publisher": {...Publisher Metadata...}
+         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                      "name": "TGR Snow",
+         *                      "description": "Ski & Snowboard related contenton Tetongravity.com",
+         *                      "domain_name": "www.tetongravity.com",
+         *                      "clique": "Snowsports",
+         *                      "bidfloor": null,
+         *                      "_id": "562e6d618a7d5cc269f36e57",
+         *                      "blacklist": [],
+         *                      "pages": [...Pages Array...]
+         *                      "tstamp": "2015-10-26T18:13:53.168Z",
+         *                      "active": true,
+         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                      "id": "562e6d618a7d5cc269f36e57",
+         *                      "parent_publisher": {...Publisher Metadata...}
          *                }
          *           ]
          *      },
