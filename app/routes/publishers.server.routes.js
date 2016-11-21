@@ -118,29 +118,255 @@ module.exports = function(db, routers){
 
     router.route('/sitesinclique/:cliqueId')
         /**
-         * @api {get} /sitesinclique Get All Sites In a Clique
+         * @api {get} /sitesinclique/:cliqueId Get All Sites In a Clique
          * @apiName GetSitesInClique
          * @apiGroup SitesInClique
-         * @apiDescription Gets all Publisher objects owned by user account's `organization`.
-         *  **NOTE**: If user account is under a `networkAdmin` Organization, this will get ALL Publishers.
+         * @apiDescription Gets all Site objects (Publisher sub-docs) that belong to a given Clique.
+         *
+         * For convenience, parent Publisher fields are nested in Site object under `parent_publisher` param.
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
          * @apiPermission advertiser
          *
-         * @apiSuccess {Object[]} ::publishers:: Array of Publishers as response `body` (see [above](#api-Publisher)
+         * @apiParam (Path Parameters){String} cliqueId ObjectID of Clique
+         *
+         * @apiSuccessExample {json} Success Response:
+         *      HTTP/1.1 200 OK
+         *      [{
+         *          "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *          "name": "Wild Snow",
+         *          "description": "Deep website covers all aspects of backcountry skiing and ski touring, worldwide audience, all season coverage.",
+         *          "domain_name": "www.wildsnow.com",
+         *          "clique": "Snowsports",
+         *          "bidfloor": 4.75,
+         *          "_id": "56ccc23038791b802e292805",
+         *          "blacklist": [
+         *              "donaldtrump.com",
+         *              "clinton.com"
+         *           ],
+         *           "pages": [...Pages Array...],
+         *           "tstamp": "2016-02-23T20:33:52.724Z",
+         *           "active": true,
+         *           "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *           "id": "56ccc23038791b802e292805",
+         *           "parent_publisher": {...Publisher Metadata...}
+         *        },
+         *        {
+         *           "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *           "name": "ZRankings LLC",
+         *           "description": "Best Ski Resorts In North America - thorough data and recommendations on 220 ski resorts. Articles and content on skiing, adventure travel.",
+         *           "domain_name": "zrankings.com",
+         *           "clique": "Snowsports",
+         *           "bidfloor": 2.5,
+         *           "_id": "56ce6af7c7bc673c48038256",
+         *           "blacklist": [],
+         *           "pages": [...Pages Array...],
+         *           "tstamp": "2016-02-25T02:46:15.734Z",
+         *           "active": true,
+         *           "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *           "id": "56ce6af7c7bc673c48038256",
+         *           "parent_publisher": {...Publisher Metadata...}
+         *        },
+         *        {
+         *           "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *           "name": "TGR Snow",
+         *           "description": "Ski & Snowboard related contenton Tetongravity.com",
+         *           "domain_name": "www.tetongravity.com",
+         *           "clique": "Snowsports",
+         *           "bidfloor": null,
+         *           "_id": "562e6d618a7d5cc269f36e57",
+         *           "blacklist": [],
+         *           "pages": [...Pages Array...]
+         *           "tstamp": "2015-10-26T18:13:53.168Z",
+         *           "active": true,
+         *           "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *           "id": "562e6d618a7d5cc269f36e57",
+         *           "parent_publisher": {...Publisher Metadata...}
+         *        }]
+         *
+         * @apiSuccess {Object[]} ::sites:: Array of Sites as response `body` (see [above](#api-Publisher)
          *  for all fields).
          */
         .get(organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInClique);
     router.route('/sitesincliquebranch/:cliqueId')
+        /**
+         * @api {get} /sitesinclique/:cliqueId Get All Sites In a Clique Branch
+         * @apiName GetSitesInCliqueBranch
+         * @apiGroup SitesInClique
+         * @apiDescription Gets all Site objects (Publisher sub-docs) that belong to a given Clique & **all child Cliques.**
+         * Returns arrays of sites grouped by Clique.
+         *
+         * For convenience, parent Publisher fields are nested in Site object under `parent_publisher` param.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} cliqueId ObjectID of Clique
+         *
+         * @apiSuccessExample {json} Success Response:
+         *      HTTP/1.1 200 OK
+         *      [{
+         *           "_id": "Snowsports",
+         *           "name": "Snowsports",
+         *           "sites": [
+         *                {
+         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *                      "name": "Wild Snow",
+         *                      "description": "Deep website covers all aspects of backcountry skiing and ski touring, worldwide audience, all season coverage.",
+         *                      "domain_name": "www.wildsnow.com",
+         *                      "clique": "Snowsports",
+         *                      "bidfloor": 4.75,
+         *                      "_id": "56ccc23038791b802e292805",
+         *                      "blacklist": [
+         *                        "donaldtrump.com",
+         *                        "clinton.com"
+         *                      ],
+         *                      "pages": [...Pages Array...],
+         *                      "tstamp": "2016-02-23T20:33:52.724Z",
+         *                      "active": true,
+         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *                      "id": "56ccc23038791b802e292805",
+         *                      "parent_publisher": {...Publisher Metadata...}
+         *                }
+         *                {
+         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *                      "name": "ZRankings LLC",
+         *                      "description": "Best Ski Resorts In North America - thorough data and recommendations on 220 ski resorts. Articles and content on skiing, adventure travel.",
+         *                      "domain_name": "zrankings.com",
+         *                      "clique": "Snowsports",
+         *                      "bidfloor": 2.5,
+         *                      "_id": "56ce6af7c7bc673c48038256",
+         *                      "blacklist": [],
+         *                      "pages": [...Pages Array...],
+         *                      "tstamp": "2016-02-25T02:46:15.734Z",
+         *                      "active": true,
+         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *                      "id": "56ce6af7c7bc673c48038256",
+         *                      "parent_publisher": {...Publisher Metadata...}
+         *                },
+         *                {
+         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                  "name": "TGR Snow",
+         *                  "description": "Ski & Snowboard related contenton Tetongravity.com",
+         *                  "domain_name": "www.tetongravity.com",
+         *                  "clique": "Snowsports",
+         *                  "bidfloor": null,
+         *                  "_id": "562e6d618a7d5cc269f36e57",
+         *                  "blacklist": [],
+         *                  "pages": [...Pages Array...]
+         *                  "tstamp": "2015-10-26T18:13:53.168Z",
+         *                  "active": true,
+         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                  "id": "562e6d618a7d5cc269f36e57",
+         *                  "parent_publisher": {...Publisher Metadata...}
+         *                }
+         *           ]
+         *      },
+         *      {
+         *           "_id": "Nordic Skiing",
+         *           "name": "Nordic Skiing",
+         *           "sites": [
+         *                {
+         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
+         *                      "name": "FasterSkier",
+         *                      "description": "FasterSkier prides itself in being the premier source of English-language news and feature content related to all things nordic: cross-country skiing, biathlon and nordic combined. We are a web-based publication, bringing both the rigor of a daily newspaper and the passion of a targeted magazine to our work.",
+         *                      "domain_name": "fasterskier.com",
+         *                      "clique": "Nordic Skiing",
+         *                      "bidfloor": null,
+         *                      "_id": "565dc3218332938b33de4da7",
+         *                      "blacklist": [],
+         *                      "pages": [...Pages Array...]
+         *                      "tstamp": "2015-12-01T15:56:17.754Z",
+         *                      "active": true,
+         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
+         *                      "id": "565dc3218332938b33de4da7",
+         *                      "parent_publisher": {...Publisher Metadata...}
+         *                }
+         *           ]
+         *      }]
+         *
+         *
+         * @apiSuccess {Object[]} ::cliques_and_sites:: Array of Cliques with arrays of Sites belonging to each clique nested under `sites` as response `body` (see [above](#api-Publisher).
+         *  for all fields).
+         */
         .get(organizations.organizationHasAuthorization(['networkAdmin','advertiser']), publishers.site.getSitesInCliqueBranch);
 
     router.route('/publisher/:publisherId')
+        /**
+         * @api {get} /publisher/:publisherId Get One Publisher
+         * @apiName ReadPublisher
+         * @apiGroup Publisher
+         * @apiDescription Finds single [Publisher](#api-Publisher) by ID.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission publisher
+         *
+         * @apiParam (Path Parameters){String} publisherId ObjectID of Publisher
+         *
+         * @apiSuccess {Object} ::publisher:: Matching Publisher object as response `body` (see [above](#api-Publisher)
+         * for all fields)..
+         */
         .get(publishers.hasAuthorization, publishers.read)
+        /**
+         * @api {patch} /publisher/:publisherId Update Publisher
+         * @apiName UpdatePublisher
+         * @apiGroup Publisher
+         * @apiDescription Updates an [Publisher](#api-Publisher) by ID. Publisher will be updated completely
+         *  with the contents of request `body`.
+         *
+         *  ## Hooks ##
+         *  1. If any new sites were created, sends internal email to notify that new sites were created.
+         *  2. Else, if any new pages were created, sends internal email to notify that new pages were created.
+         *  3. Else, if any new placements were created, sends internal email to notify that new placements were created.
+         *
+         *  **NOTE** `networkAdmin` can update any Publisher. `publisher` can only update Publishers owned by their Organization.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission publisher
+         *
+         * @apiParam (Path Parameters){String} publisherId ObjectID of Publisher
+         * @apiParam (Body (Publisher Schema)) {Object} ::publisher:: Publisher object as request `body` (see [above](#api-Publisher) for all fields).
+         *
+         * @apiSuccess {Object} ::publisher:: Updated Publisher object as response `body` (see [above](#api-Publisher)
+         * for all fields)..
+         */
         .patch(publishers.hasAuthorization, publishers.update)
+        /**
+         * @api {delete} /publisher/:publisherId Remove Publisher
+         * @apiName RemovePublisher
+         * @apiGroup Publisher
+         * @apiDescription Removes a [Publisher](#api-Advertiser) by ID.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission publisher
+         *
+         * @apiParam (Path Parameters){String} publisherId ObjectID of Publisher
+         *
+         * @apiSuccess {Object} ::advertiser:: Publisher object that was just removed as response `body`
+         *  (TODO: sort of weird to return deleted advertiser object as response)
+         */
         .delete(publishers.hasAuthorization, publishers.remove);
 
     router.route('/publisher/:publisherId/placement/:placementId')
+        /**
+         * @api {patch} /publisher/:publisherId/placement/:placementId Get Placement Tag
+         * @apiName GetPlacementTag
+         * @apiGroup Publisher
+         * @apiDescription Gets tag (code) for specific placement.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission publisher
+         *
+         * @apiParam (Path Parameters){String} publisherId ObjectID of parent Publisher
+         * @apiParam (Path Parameters){String} placementId ObjectID of Placement
+         * @apiParam (Query Parameters){Boolean} secure=false flag to indicate whether secure or non-secure tag is requested
+         * @apiParam (Query Parameters){String="iframe","javascript"} type
+         *
+         * @apiSuccess {String} tag HTML of placement tag as desired `type`
+         */
         .get(publishers.hasAuthorization, publishers.placement.getTag);
 
     router.param('publisherId', publishers.publisherByID);

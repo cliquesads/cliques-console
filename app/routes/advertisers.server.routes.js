@@ -267,7 +267,7 @@ module.exports = function(db, routers){
          */
         .patch(advertisers.hasAuthorization, advertisers.update)
         /**
-         * @api {patch} /advertiser/:advertiserId Remove Advertiser
+         * @api {delete} /advertiser/:advertiserId Remove Advertiser
          * @apiName RemoveAdvertiser
          * @apiGroup Advertiser
          * @apiDescription Removes an [Advertiser](#api-Advertiser) by ID.
