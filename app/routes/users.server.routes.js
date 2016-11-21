@@ -22,7 +22,7 @@ module.exports = function(db, routers) {
 
     /**
      * @apiDefine publisher ORG: Publisher accounts
-     * Advertisers can view & edit any objects in the Publisher section.
+     * Publishers can view & edit any objects in the Publisher section.
      */
 
 	// User Routes
