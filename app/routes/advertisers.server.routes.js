@@ -8,8 +8,7 @@ module.exports = function(db, routers){
     /* ---- Advertiser API Routes ---- */
     /**
      * @apiDefine AdvertiserSchema
-     * @apiParam (Body (Advertiser Schema)) {String} [_id=NewObjectID]       Advertiser ID, MongoDB ObjectID. Will be auto-generated for
-     *  new advertisers.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [id]                 Advertiser ID. Will be auto-generated for new advertisers.
      * @apiParam (Body (Advertiser Schema)) {String} name                   Advertiser name.
      * @apiParam (Body (Advertiser Schema)) {String} organization           ObjectID of organization to which this Advertiser belongs.
      * @apiParam (Body (Advertiser Schema)) {String} website                URL to Advertiser website
@@ -25,6 +24,8 @@ module.exports = function(db, routers){
      * @apiParam (Body (Advertiser Schema)) {Object[]} [actionbeacons]      Array of **ActionBeacons**, pixels that an
      *  Advertiser can place on downstream pages to record actions taken & match these actions back to impressions or
      *  clicks.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [actionbeacons.id]   ActionBeacon ID, MongoDB ObjectID. Will be auto-generated for
+     *  new action beacons.
      * @apiParam (Body (Advertiser Schema)) {String} actionbeacons.name     Name of action beacon
      * @apiParam (Body (Advertiser Schema)) {Number} [actionbeacons.click_lookback=30]  Number of days to look back for clicks w/
      *  matching user ID for conversion-matching purposes. **NOTE:** Not currently respected by conversion-matching ETL,
@@ -38,6 +39,8 @@ module.exports = function(db, routers){
      *
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns]                      Array of this Advertiser's **Campaigns**.  The
      *  Campaign sub-document is where all pertinent targeting configuration is held.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.id]                   Campaign ID, MongoDB ObjectID. Will be auto-generated for
+     *  new campaigns
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.name                     Campaign name.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.active=false]          Campaign active flag.
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.clique                   ObjectID of [Clique](#CLIQUELINKHERE)
@@ -60,11 +63,15 @@ module.exports = function(db, routers){
      * @apiParam (Body (Advertiser Schema)) {String[]} [campaigns.blocked_cliques]      **DEPRECATED** - Use `inventory_targets` instead
      *
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.dma_targets]          DMA Targeting Objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.dma_targets.id]       DMA Target ID, MongoDB ObjectID. Will be auto-generated for
+     *  new DMA targets.
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.dma_targets.target       ObjectID of targeted DMA object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.dma_targets.weight]  Target 'weight', applied linearly
      *      to `base_bid` for impressions from this **DMA**.
      *
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.country_targets]      Country Targeting Objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.country_targets.id]   Country Target ID, MongoDB ObjectID. Will be auto-generated for
+     *  new country targets
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.country_targets.target   ObjectID of targeted Country object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.country_targets.weight]  Target 'weight', applied linearly
      *      to `base_bid` for impressions from this **Country**.
@@ -75,21 +82,25 @@ module.exports = function(db, routers){
      *      document & sub-documents. **NOTE** Blocking actually starts at the Clique level, not Publisher.  Publishers are
      *      not exposed to Advertisers. For more information, please see the [campaignSchema](https://storage.googleapis.com/cliquesads-cliques-node-utils-docs/module-mongodb_models_advertiser-campaignSchema.html)
      *      documentation.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.inventory_targets.id]           Inventory Target ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.inventory_targets.target           **[Clique](#CLIQUELINKHERE)** ObjectID of targeted
      *      Clique object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.inventory_targets.weight]   Target 'weight', applied linearly
      *      to `base_bid` for impressions from this **Clique**.  Any child weights will override this weight.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.inventory_targets.children]     Child TargetingSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.inventory_targets.children.id]  Inventory Target ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.inventory_targets.children.target  **[Site](#SITELINKHERE)** ObjectID of targeted
      *      Site object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.inventory_targets.children.weight]  Target 'weight', applied linearly
      *      to `base_bid` for impressions from this **Site**.  Any child weights will override this weight.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.inventory_targets.children.children]    Child TargetingSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.inventory_targets.children.children.id]  Inventory Target ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.inventory_targets.children.children.target  **Page** ObjectID of targeted
      *      Page object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.inventory_targets.children.children.weight]  Target 'weight', applied linearly
      *      to `base_bid` for impressions from this **Page**.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.inventory_targets.children.children.children]    Child TargetingSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.inventory_targets.children.children.children.id]  Inventory Target ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.inventory_targets.children.children.children.target  **Placement** ObjectID of targeted
      *      Placement object.
      * @apiParam (Body (Advertiser Schema)) {Number{0-10}} [campaigns.inventory_targets.children.children.children.weight]  Target 'weight', applied linearly
@@ -100,24 +111,28 @@ module.exports = function(db, routers){
      *      & sub-documents. **NOTE** Like `inventory_targets`, blocking actually starts at Clique level. For more
      *      information, please see the [campaignSchema](https://storage.googleapis.com/cliquesads-cliques-node-utils-docs/module-mongodb_models_advertiser-campaignSchema.html)
      *      documentation.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.blocked_inventory.id]            Blocked Inventory ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.target            **[Clique](#Clique)** ObjectID
      *      of blocked Clique object.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.blocked_inventory.explicit=false] Currently, if
      *      `explicit === true`, then this object will be blocked. Otherwise, it's assumed to be an ancestor
      *      placeholder and will be skipped.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.blocked_inventory.children]      Child BlockSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.blocked_inventory.children.id]   Blocked Inventory ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.children.target **Site** ObjectID
      *      of blocked Site object.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.blocked_inventory.children.explicit=false] Currently, if
      *      `explicit === true`, then this object will be blocked. Otherwise, it's assumed to be an ancestor
      *      placeholder and will be skipped.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.blocked_inventory.children.children]      Child BlockSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.blocked_inventory.children.children.id]   Blocked Inventory ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.children.children.target **Page** ObjectID
      *      of blocked Placement object.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.blocked_inventory.children.children.explicit=false] Currently, if
      *      `explicit === true`, then this object will be blocked. Otherwise, it's assumed to be an ancestor
      *      placeholder and will be skipped.
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.blocked_inventory.children.children.children]    Child BlockSchema objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.blocked_inventory.children.children.children.id]   Blocked Inventory ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.blocked_inventory.children.children.children.target **Placement** ObjectID
      *      of blocked Placement object.
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.blocked_inventory.children.children.children.explicit=false] Currently, if
@@ -126,6 +141,7 @@ module.exports = function(db, routers){
      *
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.creativegroups]       Child CreativeGroups, which hold all
      *      creative config data.
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.creativegroups.id]   CreativeGroup ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} [campaigns.creativegroups.name]    Name of this CreativeGroup.
      * @apiParam (Body (Advertiser Schema)) {String} [campaigns.creativegroups.tstamp=Date.now] UTC timestamp of object
      *      creation. Not currently updated on object modification.
@@ -136,6 +152,7 @@ module.exports = function(db, routers){
      *      in this CreativeGroup.  Used in validating child creative widths.
      *
      * @apiParam (Body (Advertiser Schema)) {Object[]} [campaigns.creativegroups.creatives]    Child Creative objects
+     * @apiParam (Body (Advertiser Schema)) {ObjectId} [campaigns.creativegroups.creatives.id]           Creative ID, will be auto-generated if new
      * @apiParam (Body (Advertiser Schema)) {String} campaigns.creativegroups.creatives.name   Name of this creative
      * @apiParam (Body (Advertiser Schema)) {Boolean} [campaigns.creativegroups.creatives.active=true] Creative active flag.
      *      Will not serve if `false`.
@@ -166,6 +183,8 @@ module.exports = function(db, routers){
          * @apiGroup Advertiser
          * @apiDescription Create a new Advertiser.  Pass a new Advertiser object in the request `body`.
          *
+         * `organization` ref field is 'Populated' with full [Organization](#api-Organization) object on response.
+         *
          * ## Advertiser Schema Overview ##
          * The `Advertiser` object is pretty complicated, so I've provided an outline of the document structure here
          * for convenience:
@@ -189,6 +208,92 @@ module.exports = function(db, routers){
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
          * @apiPermission advertiser
+         * @apiParamExample {json} Example Request Body:
+         *      {
+         *   	    "name": "Test Advertiser",
+	     *          "organization": "5696bbdd74a4344240aede43",
+	     *          "website": "www.testadvertiser.com"
+         *      }
+         *
+         * @apiSuccessExample {json} Success Response:
+         *      HTTP/1.1 200 OK
+         *      {
+         *        "__v": 0,
+         *        "name": "Test Advertiser",
+         *        "organization": {
+         *            "_id": "5696bbdd74a4344240aede43",
+         *            "accesscode": null,
+         *            "accountBalance": -50,
+         *            "owner": "559ca7fee1ba1697583b6676",
+         *            "city": "Jamaica Plain",
+         *            "zip": "02130",
+         *            "state": "Massachusetts",
+         *            "__v": 25,
+         *            "primaryContact": "559ca7fee1ba1697583b6676",
+         *            "website": "cliquesads.com",
+         *            "address2": "Unit 9",
+         *            "phone": "+19142620451",
+         *            "address": "172 Green St.",
+         *            "name": "Cliques Labs Inc.",
+         *            "country": "USA",
+         *            "stripeCustomerId": "cus_8kB26g0its90mZ",
+         *            "additionalTerms": null,
+         *            "sendStatementToOwner": true,
+         *            "billingEmails": [],
+         *            "billingPreference": "Stripe",
+         *            "users": [
+         *              "559ca7fee1ba1697583b6676",
+         *              "559d8ec735008cd2603e9f4a",
+         *              "559de1c417317a4fc40489a8",
+         *              "55b2c1c3162490d3f0caed8e",
+         *              "55b2c29f162490d3f0caed90",
+         *              "55de7d42053c30c9c9247d00",
+         *              "5679b4642c16bbe57c2da670",
+         *              "57597de897221f4c7db71417",
+         *              "5764812c15fd6838458b8deb",
+         *              "57eec470707b55921a841e6d",
+         *              "580f9a56f9090f9d1a1ece74"
+         *            ],
+         *            "organization_types": [
+         *              "networkAdmin"
+         *            ],
+         *            "fees": null,
+         *            "payments": [
+         *              908
+         *            ],
+         *            "promos": [
+         *              {
+         *                "promoAmount": -25,
+         *                "_id": "57d2d810d4095d8e5b793737",
+         *                "type": "publisher",
+         *                "description": "$25 for Advertiser Sign-Up",
+         *                "active": true
+         *              },
+         *              {
+         *                "promoAmount": -25,
+         *                "_id": "57d2d810d4095d8e5b793737",
+         *                "type": "publisher",
+         *                "description": "$25 for Advertiser Sign-Up",
+         *                "active": true
+         *              }
+         *            ],
+         *            "accessTokens": [...Access Token Objects...],
+         *            "termsAndConditions": [
+         *              "56944ad27a033be2284de0c0",
+         *              "56944aee415a7c93294a8db8"
+         *            ],
+         *            "tstamp": "2016-07-02T05:28:30.854Z",
+         *            "URI": "http://cliquesads.com",
+         *            "effectiveOrgType": "networkAdmin",
+         *            "id": "5696bbdd74a4344240aede43"
+         *        },
+         *        "website": "www.testadvertiser.com",
+         *        "_id": "58335e3687cfb72b8b3b3637",
+         *        "cliques": [],
+         *        "sites": [],
+         *        "tstamp": "2016-11-21T20:51:02.196Z",
+         *        "id": "58335e3687cfb72b8b3b3637"
+         *    }
          *
          * @apiSuccess {Object} ::advertiser:: Newly-created Advertiser object as response `body` (see [above](#api-Advertiser) for all fields).
          */

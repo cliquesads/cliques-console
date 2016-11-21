@@ -9,11 +9,11 @@ module.exports = function(db, routers){
 
     /**
      * @apiDefine PublisherSchema
-     * @apiParam (Body (Publisher Schema)) {String} [_id=NewObjectID]       Publisher ID, MongoDB ObjectID. Will be auto-generated for
+     * @apiParam (Body (Publisher Schema)) {ObjectId} [id]                  Publisher ID, MongoDB ObjectID. Will be auto-generated for
      *  new publishers.
      * @apiParam (Body (Publisher Schema)) {String} name                    Publisher name.
      * @apiParam (Body (Publisher Schema)) {String} [user]                  **DEPRECATED** - Use `organization` instead.
-     * @apiParam (Body (Publisher Schema)) {String} organization            ObjectID of organization to which this Publisher belongs.
+     * @apiParam (Body (Publisher Schema)) {ObjectId} organization            ObjectID of organization to which this Publisher belongs.
      * @apiParam (Body (Publisher Schema)) {String} [logo_url]              Google Cloud Storage URL for logo image.
      * @apiParam (Body (Publisher Schema)) {String} [revenue_share]         **DEPRECATED** - Revshare data is stored on
      *  Organization object instead.
@@ -24,6 +24,8 @@ module.exports = function(db, routers){
      * @apiParam (Body (Publisher Schema)) {Array[]} [cliques]                **DEPRECATED**
      * @apiParam (Body (Publisher Schema)) {Object[]} [sites]               Array of Site objects, which represent underlying
      *  websites where ads will be placed.
+     * @apiParam (Body (Publisher Schema)) {ObjectId} [sites.id]            Page ID, MongoDB ObjectID. Will be auto-generated for
+     *  new publishers.
      * @apiParam (Body (Publisher Schema)) {String} sites.name              name of this Site
      * @apiParam (Body (Publisher Schema)) {Boolean} [sites.active=false]         Active flag.
      * @apiParam (Body (Publisher Schema)) {String} [sites.description]           Site description,
@@ -37,6 +39,8 @@ module.exports = function(db, routers){
      *  lower than this price, winning bidder's ad will not be shown, & default condition will kick in.
      * @apiPram (Body (Publisher Schema)) {String} clique                   ObjectID of Clique that this site belongs to.
      * @apiParam (Body (Publisher Schema)) {Object[]} [sites.pages]         Array of Page objects
+     * @apiParam (Body (Publisher Schema)) {ObjectId} [sites.pages.id]      Page ID, MongoDB ObjectID. Will be auto-generated for
+     *  new publishers.
      * @apiParam (Body (Publisher Schema)) {String} sites.pages.name        Name of page
      * @apiParam (Body (Publisher Schema)) {Boolean} [sites.pages.active=false]         active flag for page
      * @apiParam (Body (Publisher Schema)) {String} [sites.pages.description]           Description of page
@@ -46,6 +50,8 @@ module.exports = function(db, routers){
      * @apiParam (Body (Publisher Schema)) {String} sites.pages.clique      ObjectID of Clique that this page belongs to. **NOTE** Not currently used but will be
      *  in the future.
      * @apiParam (Body (Publisher Schema)) {Object[]} [sites.pages.placements]     Array of Page's Placement objects
+     * @apiParam (Body (Publisher Schema)) {ObjectId} [sites.pages.placements.id]  Placement ID, MongoDB ObjectID. Will be auto-generated for
+     *  new publishers.
      * @apiParam (Body (Publisher Schema)) {String} sites.pages.placements.name   Name of placement
      * @apiParam (Body (Publisher Schema)) {Boolean} [sites.pages.placements.active=false]   Active flag for placement
      * @apiParam (Body (Publisher Schema)) {String} [sites.pages.placements.description]    Description for placement
@@ -77,6 +83,8 @@ module.exports = function(db, routers){
          * @apiGroup Publisher
          * @apiDescription Create a new Publisher.  Pass a new Publisher object in the request `body`.
          *
+         * `organization` ref field is 'Populated' with full [Organization](#api-Organization) object on response.
+         *
          * ## Publisher Schema Overview ##
          * The `Publisher` object is pretty complicated, so I've provided an outline of the document structure here
          * for convenience:
@@ -96,7 +104,80 @@ module.exports = function(db, routers){
          * @apiPermission networkAdmin
          * @apiPermission publisher
          *
+         * @apiParamExample {json} Example Request Body:
+         *      {
+	     *          "name": "Test Publisher",
+	     *          "organization": "5696bbdd74a4344240aede43",
+	     *          "website": "www.testpublisher.com"
+         *      }
+         *
          * @apiSuccess {Object} ::publisher:: Newly-created Publisher object as response `body` (see [above](#api-Publisher) for all fields).
+         * 
+         * @apiSuccessExample {json} Success Response:
+         *      HTTP/1.1 200 OK
+         *      {
+         *          "__v": 0,
+         *          "name": "Test Publisher",
+         *          "organization": {
+         *              "_id": "5696bbdd74a4344240aede43",
+         *              "accesscode": null,
+         *              "accountBalance": -50,
+         *              "owner": "559ca7fee1ba1697583b6676",
+         *              "city": "Jamaica Plain",
+         *              "zip": "02130",
+         *              "state": "Massachusetts",
+         *              "__v": 25,
+         *              "primaryContact": "559ca7fee1ba1697583b6676",
+         *              "website": "cliquesads.com",
+         *              "address2": "Unit 9",
+         *              "phone": "+19142620451",
+         *              "address": "172 Green St.",
+         *              "name": "Cliques Labs Inc.",
+         *              "country": "USA",
+         *              "stripeCustomerId": "cus_8kB26g0its90mZ",
+         *              "additionalTerms": null,
+         *              "sendStatementToOwner": true,
+         *              "billingEmails": [],
+         *              "billingPreference": "Stripe",
+         *              "users": [
+         *                  "559ca7fee1ba1697583b6676",
+         *                  "559d8ec735008cd2603e9f4a",
+         *                  "559de1c417317a4fc40489a8",
+         *                  "55b2c1c3162490d3f0caed8e",
+         *                  "55b2c29f162490d3f0caed90",
+         *                  "55de7d42053c30c9c9247d00",
+         *                  "5679b4642c16bbe57c2da670",
+         *                  "57597de897221f4c7db71417",
+         *                  "5764812c15fd6838458b8deb",
+         *                  "57eec470707b55921a841e6d",
+         *                  "580f9a56f9090f9d1a1ece74"
+         *              ],
+         *              "organization_types": [
+         *                  "networkAdmin"
+         *              ],
+         *              "fees": null,
+         *              "payments": [
+         *                  908
+         *              ],
+         *              "promos": [...Promo Objects...],
+         *              "accessTokens": [...Access Token Objects...],
+         *              "termsAndConditions": [
+         *                  "56944ad27a033be2284de0c0",
+         *                  "56944aee415a7c93294a8db8"
+         *              ],
+         *              "tstamp": "2016-07-02T05:28:30.854Z",
+         *              "URI": "http://cliquesads.com",
+         *              "effectiveOrgType": "networkAdmin",
+         *              "id": "5696bbdd74a4344240aede43"
+         *          },
+         *          "website": "www.testpublisher.com",
+         *          "_id": "583365d987cfb72b8b3b3638",
+         *          "cliques": [],
+         *          "sites": [],
+         *          "tstamp": "2016-11-21T21:23:37.447Z",
+         *          "id": "583365d987cfb72b8b3b3638"
+         *      }
+         *
          */
         .post(publishers.create)
         /**
