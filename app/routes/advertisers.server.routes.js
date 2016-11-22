@@ -494,7 +494,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /campaign-draft Get All Campaign Drafts
          * @apiName GetCampaignDrafts
-         * @apiGroup Campaign Draft
+         * @apiGroup CampaignDraft
          * @apiDescription Get all Campaign drafts stored in user session.
          *
          * @apiVersion 0.1.0
@@ -507,7 +507,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /campaign-draft Create Campaign Draft
          * @apiName CreateCampaignDraft
-         * @apiGroup Campaign Draft
+         * @apiGroup CampaignDraft
          * @apiDescription Create a new Campaign Draft in user session.
          *
          * A Campaign Draft is just a partial Campaign object (see [Advertiser](#api-Advertiser) schema for
@@ -536,7 +536,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /campaign-draft/:draftId Get Campaign Draft
          * @apiName GetCampaignDraft
-         * @apiGroup Campaign Draft
+         * @apiGroup CampaignDraft
          * @apiDescription Get one CampaignDraft by ID.
          *
          * @apiVersion 0.1.0
@@ -554,7 +554,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /campaign-draft/:draftId Update Campaign Draft
          * @apiName UpdateCampaignDraft
-         * @apiGroup Campaign Draft
+         * @apiGroup CampaignDraft
          * @apiDescription Update a CampaignDraft by ID.
          *
          * @apiVersion 0.1.0
@@ -572,7 +572,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /campaign-draft/:draftId Remove Campaign Draft
          * @apiName RemoveCampaignDraft
-         * @apiGroup Campaign Draft
+         * @apiGroup CampaignDraft
          * @apiDescription Remove a CampaignDraft by ID.
          *
          * @apiVersion 0.1.0
@@ -593,7 +593,7 @@ module.exports = function(db, routers){
         /**
          * @api {get} /advertiser/:advertiserId/campaign-draft/:draftId Get Campaign Drafts for Advertiser
          * @apiName UpdateCampaignDraft
-         * @apiGroup Advertiser
+         * @apiGroup CampaignDraft
          * @apiDescription Gets all Campaign Drafts in user session that belong to a single parent advertiser
          *
          * @apiVersion 0.1.0

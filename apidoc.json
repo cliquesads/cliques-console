@@ -9,6 +9,7 @@
     "filename": "docs/apiDocHeader.md"
   },
   "order": [
+    "Advertiser",
     "CreateAdvertiser",
     "GetAdvertisers",
     "UpdateOrCreateAdvertiser",
@@ -16,6 +17,22 @@
     "UpdateAdvertiser",
     "RemoveAdvertiser",
     "ActivateCampaign",
-    "DeactivateCampaign"
+    "DeactivateCampaign",
+    "CampaignDraft",
+    "Publisher",
+    "SitesInClique",
+    "Aggregations",
+    "GetHourlyAdStats",
+    "GetHourlyAdStatsAdvSummary",
+    "GetHourlyAdStatsPubSummary",
+    "GetHourlyAdStatsAdvertiser",
+    "GetHourlyAdStatsCampaign",
+    "GetHourlyAdStatsCreativeGroup",
+    "GetHourlyAdStatsCreative",
+    "GetHourlyAdStatsPublisher",
+    "GetHourlyAdStatsSite",
+    "GetHourlyAdStatsPage",
+    "GetHourlyAdStatsPlacement",
+    "GetHourlyAdStatsClique"
   ]
 }
