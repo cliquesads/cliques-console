@@ -289,83 +289,83 @@ module.exports = function(db, routers){
          * @apiSuccessExample {json} Success Response:
          *      HTTP/1.1 200 OK
          *      [{
-         *           "_id": "Snowsports",
-         *           "name": "Snowsports",
-         *           "sites": [
-         *                {
-         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
-         *                      "name": "Wild Snow",
-         *                      "description": "Deep website covers all aspects of backcountry skiing and ski touring, worldwide audience, all season coverage.",
-         *                      "domain_name": "www.wildsnow.com",
-         *                      "clique": "Snowsports",
-         *                      "bidfloor": 4.75,
-         *                      "_id": "56ccc23038791b802e292805",
-         *                      "blacklist": [
-         *                        "donaldtrump.com",
-         *                        "clinton.com"
-         *                      ],
-         *                      "pages": [...Pages Array...],
-         *                      "tstamp": "2016-02-23T20:33:52.724Z",
-         *                      "active": true,
-         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
-         *                      "id": "56ccc23038791b802e292805",
-         *                      "parent_publisher": {...Publisher Metadata...}
-         *                }
-         *                {
-         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
-         *                      "name": "ZRankings LLC",
-         *                      "description": "Best Ski Resorts In North America - thorough data and recommendations on 220 ski resorts. Articles and content on skiing, adventure travel.",
-         *                      "domain_name": "zrankings.com",
-         *                      "clique": "Snowsports",
-         *                      "bidfloor": 2.5,
-         *                      "_id": "56ce6af7c7bc673c48038256",
-         *                      "blacklist": [],
-         *                      "pages": [...Pages Array...],
-         *                      "tstamp": "2016-02-25T02:46:15.734Z",
-         *                      "active": true,
-         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
-         *                      "id": "56ce6af7c7bc673c48038256",
-         *                      "parent_publisher": {...Publisher Metadata...}
-         *                },
-         *                {
-         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
-         *                      "name": "TGR Snow",
-         *                      "description": "Ski & Snowboard related contenton Tetongravity.com",
-         *                      "domain_name": "www.tetongravity.com",
-         *                      "clique": "Snowsports",
-         *                      "bidfloor": null,
-         *                      "_id": "562e6d618a7d5cc269f36e57",
-         *                      "blacklist": [],
-         *                      "pages": [...Pages Array...]
-         *                      "tstamp": "2015-10-26T18:13:53.168Z",
-         *                      "active": true,
-         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
-         *                      "id": "562e6d618a7d5cc269f36e57",
-         *                      "parent_publisher": {...Publisher Metadata...}
-         *                }
-         *           ]
+         *          "_id": "Snowsports",
+         *          "name": "Snowsports",
+         *          "sites": [
+         *              {
+         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *                  "name": "Wild Snow",
+         *                  "description": "Deep website covers all aspects of backcountry skiing and ski touring, worldwide audience, all season coverage.",
+         *                  "domain_name": "www.wildsnow.com",
+         *                  "clique": "Snowsports",
+         *                  "bidfloor": 4.75,
+         *                  "_id": "56ccc23038791b802e292805",
+         *                  "blacklist": [
+         *                     "donaldtrump.com",
+         *                     "clinton.com"
+         *                  ],
+         *                  "pages": [...Pages Array...],
+         *                  "tstamp": "2016-02-23T20:33:52.724Z",
+         *                  "active": true,
+         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/aad90bd51bb010abb7563ec706a2a747",
+         *                  "id": "56ccc23038791b802e292805",
+         *                  "parent_publisher": {...Publisher Metadata...}
+         *              }
+         *              {
+         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *                  "name": "ZRankings LLC",
+         *                  "description": "Best Ski Resorts In North America - thorough data and recommendations on 220 ski resorts. Articles and content on skiing, adventure travel.",
+         *                  "domain_name": "zrankings.com",
+         *                  "clique": "Snowsports",
+         *                  "bidfloor": 2.5,
+         *                  "_id": "56ce6af7c7bc673c48038256",
+         *                  "blacklist": [],
+         *                  "pages": [...Pages Array...],
+         *                  "tstamp": "2016-02-25T02:46:15.734Z",
+         *                  "active": true,
+         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/1ee5cc9727f0fcc6ba8fd2637109d8cd",
+         *                  "id": "56ce6af7c7bc673c48038256",
+         *                  "parent_publisher": {...Publisher Metadata...}
+         *              },
+         *              {
+         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                  "name": "TGR Snow",
+         *                  "description": "Ski & Snowboard related contenton Tetongravity.com",
+         *                  "domain_name": "www.tetongravity.com",
+         *                  "clique": "Snowsports",
+         *                  "bidfloor": null,
+         *                  "_id": "562e6d618a7d5cc269f36e57",
+         *                  "blacklist": [],
+         *                  "pages": [...Pages Array...]
+         *                  "tstamp": "2015-10-26T18:13:53.168Z",
+         *                  "active": true,
+         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/5011123834def5a193f72cc73d7cede0",
+         *                  "id": "562e6d618a7d5cc269f36e57",
+         *                  "parent_publisher": {...Publisher Metadata...}
+         *              }
+         *          ]
          *      },
          *      {
-         *           "_id": "Nordic Skiing",
-         *           "name": "Nordic Skiing",
-         *           "sites": [
-         *                {
-         *                      "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
-         *                      "name": "FasterSkier",
-         *                      "description": "FasterSkier prides itself in being the premier source of English-language news and feature content related to all things nordic: cross-country skiing, biathlon and nordic combined. We are a web-based publication, bringing both the rigor of a daily newspaper and the passion of a targeted magazine to our work.",
-         *                      "domain_name": "fasterskier.com",
-         *                      "clique": "Nordic Skiing",
-         *                      "bidfloor": null,
-         *                      "_id": "565dc3218332938b33de4da7",
-         *                      "blacklist": [],
-         *                      "pages": [...Pages Array...]
-         *                      "tstamp": "2015-12-01T15:56:17.754Z",
-         *                      "active": true,
-         *                      "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
-         *                      "id": "565dc3218332938b33de4da7",
-         *                      "parent_publisher": {...Publisher Metadata...}
-         *                }
-         *           ]
+         *          "_id": "Nordic Skiing",
+         *          "name": "Nordic Skiing",
+         *          "sites": [
+         *              {
+         *                  "logo_url": "http://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
+         *                  "name": "FasterSkier",
+         *                  "domain_name": "fasterskier.com",
+         *                  "description": "FasterSkier prides itself in being the premier source of English-language news and feature content related to all things nordic: cross-country skiing, biathlon and nordic combined. We are a web-based publication, bringing both the rigor of a daily newspaper and the passion of a targeted magazine to our work.",
+         *                  "bidfloor": null,
+         *                  "clique": "Nordic Skiing",
+         *                  "_id": "565dc3218332938b33de4da7",
+         *                  "blacklist": [],
+         *                  "pages": [...Pages Array...]
+         *                  "tstamp": "2015-12-01T15:56:17.754Z",
+         *                  "active": true,
+         *                  "logo_secure_url": "https://storage.googleapis.com/cliquesads-console-logos-us/18eeb14d16f8ab70eb3cd6d6c8b3093f",
+         *                  "id": "565dc3218332938b33de4da7",
+         *                  "parent_publisher": {...Publisher Metadata...}
+         *              }
+         *          ]
          *      }]
          *
          *
