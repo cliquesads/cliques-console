@@ -11,11 +11,19 @@ module.exports = function(db, routers){
          * @api {post} /creativeassets Upload Creative Asset
          * @apiName UploadCreativeAsset
          * @apiGroup CreativeAsset
-         * @apiDescription Uploads a Creative Asset (an image file that's served as an ad creative) to Google Cloud Storage,
-         *  as well as local filesystem.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
          *
+         * @apiDescription Uploads a single Creative Asset (an image file that's served as an ad creative) to Google Cloud Storage,
+         *  as well as local filesystem (currently stores files locally under public/uploads only for backup).
          *
+         * @apiParam (multipart/form-data) {File} CreativeAsset File object representing creative asset. No validation
+         *  is currently performed server-side on this file, so make sure it is a valid creative file before uploading.
          *
+         * @apiSuccess {Object} responseBody
+         * @apiSuccess {String} responseBody.url Google Cloud Storage URL of newly uploaded file.
          */
         .post(upload.single('file'), creativeassets.create);
 };
