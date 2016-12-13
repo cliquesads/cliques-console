@@ -33,6 +33,7 @@
     "GetHourlyAdStatsSite",
     "GetHourlyAdStatsPage",
     "GetHourlyAdStatsPlacement",
-    "GetHourlyAdStatsClique"
+    "GetHourlyAdStatsClique",
+    "GetUser"
   ]
 }
