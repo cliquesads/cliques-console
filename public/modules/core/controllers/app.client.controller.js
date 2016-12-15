@@ -1,3 +1,4 @@
+/* globals consoleVersion, user, latestHour */
 /**=========================================================
  * Module: main.js
  * Main Application Controller
@@ -46,7 +47,7 @@ angular.module('core').controller('AppController',
         // evalulate requireLogin data param here for toState
         var path = '/signin';
         if (toState.data.requireLogin && !$scope.authentication.user){
-            if (toState.name != 'app.home' && toState.name != 'loggedout.signin'){
+            if (toState.name !== 'app.home' && toState.name !== 'loggedout.signin'){
                 path += '?redir=' + encodeURIComponent($location.url());
             }
             $location.url(path);

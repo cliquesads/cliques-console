@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/11/16.
- */
+'use strict';
 
 /**
  * Module dependencies.
@@ -26,7 +24,7 @@ var ClientTermsAndConditions = function(termsAndConditions){
     this.tstamp = termsAndConditions.tstamp;
     this.active = termsAndConditions.active;
     this.name = termsAndConditions.name;
-    this.url = termsAndConditions.url
+    this.url = termsAndConditions.url;
 };
 
 exports.read = function(req, res){

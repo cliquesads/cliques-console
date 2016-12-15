@@ -261,10 +261,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                             var newNode = newSiteTree[i];
                             var oldNode = oldSiteTree.length > 0 ? oldSiteTree[i] : {};
                             if (newNode && oldNode){
-                                if (newNode.weight != oldNode.weight) {
+                                if (newNode.weight !== oldNode.weight) {
                                     newNode.overrideChildWeights();
                                 }
-                                inner(newNode.__children__, oldNode.__children__)
+                                inner(newNode.__children__, oldNode.__children__);
                             }
                         }
                     }
@@ -623,7 +623,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                             imps: imps,
                             spend: spend,
                             cpm: cpm
-                        }
+                        };
                     }
                 }
                 return cpms;
@@ -646,8 +646,9 @@ angular.module('advertiser').controller('SiteTargetingController',
                 siteTree.forEach(function(clique){
                     cliques.push(clique._id);
                 });
+                var cliquesQueryStr;
                 if (cliques.length === 1){
-                    var cliquesQueryStr = cliques[0];
+                    cliquesQueryStr = cliques[0];
                 } else {
                     cliquesQueryStr = '{in}' + cliques.join(',');
                 }

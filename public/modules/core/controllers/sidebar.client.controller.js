@@ -21,7 +21,7 @@ angular.module('core').controller('SidebarController',
 
       if(!item) return;
 
-      if( !item.sref || item.sref == '#') {
+      if( !item.sref || item.sref === '#') {
         var foundActive = false;
         angular.forEach(item.submenu, function(value, key) {
           if(isActive(value)) foundActive = true;

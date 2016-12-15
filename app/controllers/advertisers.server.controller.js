@@ -15,7 +15,7 @@ var node_utils = require('@cliques/cliques-node-utils'),
 	_ = require('lodash');
 
 
-if (process.env.NODE_ENV != 'production'){
+if (process.env.NODE_ENV !== 'production'){
     var pubsub_options = {
         projectId: 'mimetic-codex-781',
         test: true
@@ -58,20 +58,20 @@ var _getTreeEntitiesFromRequest = function(req){
         creativeId = req.param('creativeId');
     // repetitive, I know.  Sorry.
     var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
-        return c._id == campaignId;
+        return c._id === campaignId;
     })];
     var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
-        return c._id == creativeGroupId;
+        return c._id === creativeGroupId;
     })];
     var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
-        return c._id == creativeId;
+        return c._id === creativeId;
     })];
     return {
         advertiser: advertiser,
         campaign: campaign,
         creativegroup: creativeGroup,
         creative: creative
-    }
+    };
 };
 
 var _firstCampaignPromoHook = function(req){
@@ -300,7 +300,7 @@ module.exports = function(db) {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
-                if (req.advertiser.organization != req.user.organization.id){
+                if (req.advertiser.organization !== req.user.organization.id){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
@@ -334,7 +334,7 @@ module.exports = function(db) {
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
                 var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id == campaignId;
+                    return c._id === campaignId;
                 });
                 var campaign = advertiser.campaigns[ind];
                 if (!campaign) {
@@ -368,7 +368,7 @@ module.exports = function(db) {
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
                 var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id == campaignId;
+                    return c._id === campaignId;
                 });
                 var campaign = advertiser.campaigns[ind];
                 if (!campaign) {
@@ -516,7 +516,7 @@ module.exports = function(db) {
                     var sess = req.session;
                     var advertiserId = req.advertiser.id;
                     if (sess.campaignDrafts){
-                        var drafts = sess.campaignDrafts.filter(function(draft){ return draft.advertiserId = advertiserId; });
+                        var drafts = sess.campaignDrafts.filter(function(draft){ return draft.advertiserId === advertiserId; });
                         return res.json(drafts);
                     } else {
                         return res.json(null);
@@ -557,7 +557,7 @@ module.exports = function(db) {
                     var draftId = req.param('draftId');
                     _getDraftById(req, function(err, draft){
                         if (err) return res.status(404).send(err);
-                        _.remove(sess.campaignDrafts, function(d){ return d.draftId === draft.draftId });
+                        _.remove(sess.campaignDrafts, function(d){ return d.draftId === draft.draftId; });
                         // clear campaignDrafts if empty
                         if (sess.campaignDrafts === []){
                             delete sess.campaignDrafts;

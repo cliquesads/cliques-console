@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/15/16.
- */
+'use strict';
 angular.module('advertiser').controller('NewCampaignController', ['$scope','$location',
     function($scope, $location){
         // first get advertiser from ngDialogData
@@ -64,6 +62,6 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
 
         $scope.closeOnDraftSuccess = function(draft){
             return $scope.closeThisDialog('Success');
-        }
+        };
     }
 ]);

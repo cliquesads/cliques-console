@@ -40,7 +40,7 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
             if ($rootScope.publisher && !force){
                 $location.url('/publisher/' + $scope.publisher.id);
             } else {
-                openDialog()
+                openDialog();
             }
         };
 

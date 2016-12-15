@@ -1,6 +1,5 @@
-/**
- * Created by bliang on 1/14/16.
- */
+'use strict';
+
 angular.module('core').directive('compile', ['$compile',
     function ($compile) {
         return {
@@ -11,7 +10,7 @@ angular.module('core').directive('compile', ['$compile',
                         attrs.compile, function (new_val) {
                             if (new_val) {
                                 if (angular.isFunction(element.empty)) {
-                                    element.empty()
+                                    element.empty();
                                 } else {
                                     element.html('');
                                 }

@@ -113,11 +113,12 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             publisher: null
         };
         $scope.getAllFeesFromAccessCode = function(){
+            var fu = function(fee){
+                return fee.type === role;
+            };
             for (var role in $scope.fees){
                 if ($scope.fees.hasOwnProperty(role)){
-                    var feeObj = _.find($scope.authentication.accesscode.fees, function(fee){
-                        return fee.type === role;
-                    });
+                    var feeObj = _.find($scope.authentication.accesscode.fees, fu);
                     feeObj = _.clone(feeObj);
                     // Get rid of _id param
                     delete feeObj._id;
@@ -148,7 +149,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         $scope.$watch(function(scope){ return scope.credentials.email; }, function(newEmail, oldEmail){
             if (newEmail){
-                if (newEmail != oldEmail && !$scope.credentials.username){
+                if (newEmail !== oldEmail && !$scope.credentials.username){
                     $scope.credentials.username = newEmail;
                 }
             }
@@ -157,17 +158,17 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         /**
          * Watcher to switch Terms & Conditions depending on role selected (advertiser or publisher)
          */
-        $scope.$watch(function(scope){ return scope.organization.type }, function(newRole, oldRole){
+        $scope.$watch(function(scope){ return scope.organization.type; }, function(newRole, oldRole){
             if (newRole){
                 TermsAndConditions.getCurrent(newRole)
                     .then(function(response){
                         $scope.template = response.data.html;
-                        $scope.termsAndConditions = response.data
+                        $scope.termsAndConditions = response.data;
                     });
             }
         });
 
-        $scope.$watch(function(scope){ return scope.credentials.username }, function(newUsername, oldUsername){
+        $scope.$watch(function(scope){ return scope.credentials.username; }, function(newUsername, oldUsername){
             if (newUsername){
                 $http.get('/auth/is-username-taken/' + newUsername).success(function(response){
                     $scope.userNameTaken = response.taken;
@@ -195,7 +196,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             $scope.credentials.isOwner = true;
 
             // return the promise
-            return $http.post('/organization', $scope.organization)
+            return $http.post('/organization', $scope.organization);
         };
 
         /**

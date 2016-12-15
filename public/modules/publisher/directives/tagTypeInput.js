@@ -38,7 +38,7 @@ angular.module('publisher').directive('tagTypeInput', ['DEFAULT_TYPES','TAG_TYPE
                     }],
                     data: { tagType: tagType }
                 });
-            }
+            };
         }
     };
 }]);

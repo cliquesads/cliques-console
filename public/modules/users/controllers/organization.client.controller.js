@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('users').controller('OrganizationController', ['$scope', '$http', '$location', '$analytics', 'Users',
     'Authentication','Organizations','Notify','ngDialog',
     function($scope, $http, $location, $analytics, Users, Authentication, Organizations, Notify, ngDialog) {
@@ -73,6 +75,6 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
 
                 }]
             });
-        }
+        };
     }
 ]);

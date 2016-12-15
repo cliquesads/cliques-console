@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/19/16.
- */
+'use strict';
 angular.module('advertiser').controller('CampaignDraftController', ['$scope', '$stateParams', '$location',
     'Authentication', 'Advertiser','CampaignDraft','ngDialog',
     function($scope, $stateParams, $location, Authentication, Advertiser, CampaignDraft, ngDialog){

@@ -12,7 +12,7 @@ function getDatesArray(startDate, stopDate, unit){
         newOffset = currentDate._offset;
         // Have to do this for days when DST comes on/off, else day timestamps will not line up
         // TODO: This will break if hours are used as units, find better solution
-        if (oldOffset != newOffset){
+        if (oldOffset !== newOffset){
             currentDate.add(newOffset - oldOffset, 'minutes');
         }
     }

@@ -1,6 +1,4 @@
-/**
- * Created by bliang on 1/14/16.
- */
+'use strict';
 angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueBranch','openSiteDescriptionDialog','CLIQUE_ICON_CLASSES',
     function(getSitesInCliqueBranch, openSiteDescriptionDialog, CLIQUE_ICON_CLASSES) {
         return {
@@ -32,6 +30,6 @@ angular.module('publisher').directive('sitesInCliqueBranch', ['getSitesInCliqueB
                 // maps icon classes to Clique _id's
                 scope.iconClasses = CLIQUE_ICON_CLASSES;
             }
-        }
+        };
     }
 ]);

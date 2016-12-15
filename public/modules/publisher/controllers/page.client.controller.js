@@ -135,7 +135,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 }],
                 data: { publisher: $scope.publisher, page: $scope.page, placement: newPlacement },
                 preCloseCallback: function(value){
-                    if (value != 'Success'){
+                    if (value !== 'Success'){
                         var placement_ind = _.findIndex($scope.page.placements, function(pl){
                             return pl === newPlacement;
                         });
@@ -159,7 +159,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 scope: $scope,
                 data: { placement: placement },
                 preCloseCallback: function(value){
-                    if (value != 'Success'){
+                    if (value !== 'Success'){
                         var placement_ind = _.findIndex($scope.page.placements, function(pl){
                             return pl._id === placement._id;
                         });

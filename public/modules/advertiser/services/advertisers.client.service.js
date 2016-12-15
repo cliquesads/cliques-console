@@ -41,6 +41,6 @@ angular.module('advertiser').factory('Advertiser', ['$resource',
                         return callback(null, advertiser, i);
                     });
             }
-        }
+        };
     }
 ]);

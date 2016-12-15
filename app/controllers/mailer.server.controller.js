@@ -33,7 +33,7 @@ var Mailer = exports.Mailer = function(options){
     //this.client = new postmark.Client(config.postmark.apiToken);
     this.defaults = {
         appName: config.app.title
-    }
+    };
 };
 
 /**

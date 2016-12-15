@@ -11,11 +11,12 @@ angular.module('advertiser').controller('creativePreviewController', ['$scope', 
             $scope.campaign = $scope.advertiser.campaigns[camp_index];
 
             var crg_index = -1;
+            var fu = function(cr){
+                return cr.id === $scope.ngDialogData.creative.id;
+            };
             for (var i = 0; i < $scope.campaign.creativegroups.length; i++){
                 var creativeGroup = $scope.campaign.creativegroups[i];
-                var ind = _.findIndex(creativeGroup.creatives, function(cr){
-                    return cr.id === $scope.ngDialogData.creative.id;
-                });
+                var ind = _.findIndex(creativeGroup.creatives, fu);
                 if (ind > -1){
                     crg_index = i;
                 }
@@ -66,6 +67,6 @@ angular.module('advertiser').controller('creativePreviewController', ['$scope', 
                     Notify.alert('Error activating creative: ' + errorResponse.message,{status: 'danger'});
                 });
             }
-        }
+        };
     }
 ]);
