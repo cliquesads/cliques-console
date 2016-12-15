@@ -135,7 +135,7 @@ module.exports = function(db) {
             });
         },
         /**
-         * Delete an publisher
+         * Delete a publisher
          */
         remove: function (req, res) {
             var publisher = req.publisher;

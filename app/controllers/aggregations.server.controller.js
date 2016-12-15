@@ -16,33 +16,33 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
  * path params into MongoDB Aggregation Pipeline-compatible objects.
  *
  * Use `pathParams` to provide array of expected path parameters. Any path params
- * found will be use in 'group' and 'match', so query results will be filtered
+ * found will be use in `group` and `match`, so query results will be filtered
  * to match desired param value, and will be grouped by corresponding field.
  *
  * Use `queryParams` to pass in non-hierarchical dimensions by which you wish
  * to filter query results.  Resulting data will not be grouped by these dimensions
  * unless specified using the `groupBy` query parameter.
  *
- * !!!NOTE!!!: When grouped by date unit, converts all dates to user's timezone before returning
+ * **NOTE**: When grouped by date unit, converts all dates to user's timezone before returning
  * so no conversion is necessary on client side
  *
  * Additionally, you can pass in comma-separated values for any queryParam, and you
  * get access to the following operators which are passed directly to $match step
  * in the MongoDB Aggregation Pipeline
  *
- *  - {in} element in array
- *  - {nin} element not in array
- *  - {ne} matches any row with field val not equal to query val
+ * * `{in}` element in array
+ * * `{nin}` element not in array
+ * * `{ne}` matches any row with field val not equal to query val
  *
- * SPECIAL QUERY PARAMS:
- *  - startDate: (inclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
- *  - endDate: (exclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
- *  - groupBy: single value or CSV containing additional fields to group by. NOTE: DO NOT INCLUDE DATE FIELD, use
+ * ## SPECIAL QUERY PARAMS:
+ * * `startDate`: (inclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
+ * * `endDate`: (exclusive) accepts ISO formatted datetimes, assumed to be UTC (e.g. '1995-12-17T03:24:00')
+ * * `groupBy`: single value or CSV containing additional fields to group by. NOTE: DO NOT INCLUDE DATE FIELD, use
  *          dateGroupBy param instead
- *  - dateGroupBy: 'hour', 'day', 'month' or 'year'
+ * * `dateGroupBy`: 'hour', 'day', 'month' or 'year'
  *
- * @param {Array} pathParams
- * @param {Array} queryParams
+ * @param {Array} pathParams Array of parameters to be parsed as URL path parameters
+ * @param {Array} queryParams Array of parameters to be parsed as query parameters
  * @param {String} dateFieldName name of date field in aggregation model, default is 'hour'
  * @constructor
  */
@@ -58,7 +58,7 @@ var HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, date
  * Handles parsing of operator & comma-separated query values
  *
  * Returns either parsed value, or if a recognized operator is used, object
- * with Mongo-compatible operator (i.e. prefixed with '$') as key.
+ * with Mongo-compatible operator (i.e. prefixed with `$`) as key.
  *
  * Also parses special values:
  *      - 'null' --> null
