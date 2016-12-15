@@ -69,7 +69,7 @@ module.exports = function(db, routers) {
 
     /**
      * @api {get} /payment Get All Payments
-     * @apiName GetAllPayment
+     * @apiName GetAllPayments
      * @apiGroup Payment
      * @apiDescription Get all payments available to user. For `advertiser` and `publisher` users, this will
      *  be all payments belonging to their Organization. For `networkAdmin` users, this will be all payments.

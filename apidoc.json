@@ -20,7 +20,6 @@
     "DeactivateCampaign",
     "CampaignDraft",
     "Publisher",
-    "SitesInClique",
     "Aggregations",
     "GetHourlyAdStats",
     "GetHourlyAdStatsAdvSummary",
@@ -34,6 +33,10 @@
     "GetHourlyAdStatsPage",
     "GetHourlyAdStatsPlacement",
     "GetHourlyAdStatsClique",
-    "GetUser"
+    "User",
+    "GetUser",
+    "Organization",
+    "Payment",
+    "GetAllPayments"
   ]
 }
