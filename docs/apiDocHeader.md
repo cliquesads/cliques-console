@@ -28,6 +28,10 @@ curl https://console.cliquesads.com/api/publisher/1234567 -u username:password
 The API path structure from this root is *IDENTICAL* to the `/console` path structure, so for documentation purposes,
 `/api` is used as the root path.
 
+### Model EER Diagram
+Below is a high-level, EER-like diagram that should help visualize how all Cliques models relate to one another (*Last updated 2016-12-16, release 0.6.55*):
+![Cliques Models](https://storage.googleapis.com/cliquesads-docs-images/Database%20architecture%20-%20Page%201%20(1).png)
+
 
 
 

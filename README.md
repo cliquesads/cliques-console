@@ -171,6 +171,12 @@ Mongoose schemas are found in this repository under `app/models/`.
 
 **However**, only models that are specific to the Console reside here (ex: Users, Organizations, Payments, etc.). Models that need to be accessed by multiple repositories are found in the shared [cliques-node-utils](https://github.com/cliquesads/cliques-node-utils/tree/master/lib/mongodb/models) repo in order to centralize shared model specs.
 
+### Mongoose Model EER Diagram
+Below is an EER diagram that should help visualize how all Cliques models relate to one another (*Last updated 2016-12-16, release 0.6.55*):
+![Cliques Models](https://storage.googleapis.com/cliquesads-docs-images/Database%20architecture%20-%20Page%201%20(1).png)
+
+
+
 ## Databases
 There are two MongoDB "databases" (which are like "schemas" in SQL parlance), one for production data & one for development:
 
