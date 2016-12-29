@@ -1,6 +1,6 @@
 {
   "name": "Cliques Console",
-  "version": "0.6.54",
+  "version": "0.6.56",
   "authors": [
     "Ben Liang"
   ],
@@ -61,7 +61,7 @@
     "parsleyjs": "~2.1.2",
     "seiyria-bootstrap-slider": "6.1.8",
     "simple-line-icons": "0.1.1",
-    "angular-datatables": ">=0.5.3",
+    "angular-datatables": "0.5.6",
     "angular-deckgrid": "~0.5.0",
     "angular-tree-dnd": "git+https://2c663350df2f1cdd63dd766c9f0a009489f1a0e9:x-oauth-basic@github.com/cliquesads/angular-tree-dnd.git#remove_node_bug_fix",
     "cliques-icons": "^0.0.2",
@@ -77,7 +77,8 @@
     "angular-payments": "*",
     "angular-country-picker": "~2.0.1",
     "jquery.inputmask": "~3.3.1",
-    "angular-filter": "~0.5.8"
+    "angular-filter": "~0.5.8",
+    "fuck-adblock": "fuckadblock#^3.2.0"
   },
   "resolutions": {
     "angular": "1.5.8",
