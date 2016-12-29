@@ -85,7 +85,7 @@
 
 	<!-- Ad blocker detector -->
 	<script src="./lib/fuck-adblock/fuckadblock.js"></script>
-	<script>function adBlockDetected(){var e=document.createElement('div');e.style.position='fixed';e.style.top='0px';e.style.left='0px';e.style.right='0px';e.style.zIndex='1000';e.style.display='block';e.style.padding='20px 10px';e.style.backgroundColor='#D30000';e.style.textAlign='center';e.style.fontWeight='bold';e.style.color='#ddd';e.innerHTML='Please disable your ad-blocker in while using Cliques. <br>Ad-blocking inadvertently disables much of our Console’s functionality. Also, we’re an ad platform, and our publishers would greatly appreciate it if you disabled ad-blocking in general!';document.body.setAttribute("class", "");document.body.appendChild(e);}if(typeof fuckAdBlock==='undefined'){adBlockDetected();}</script>
+	<script>function adBlockDetected(){var a=document.createElement("div");a.style.position="fixed",a.style.top="30%",a.style.left="30%",a.style.right="0px",a.style.zIndex="1000",a.style.width="40%",a.style.display="block",a.style.padding="20px 10px",a.style.backgroundColor="rgba(211,0,0,0.75)",a.style.textAlign="center",a.style.fontWeight="bold",a.style.color="#ddd",a.innerHTML="<h3>Please disable your ad-blocker in while using Cliques.</h3> Ad-blocking inadvertently disables much of our Console’s functionality. Also, we’re an ad platform, and our publishers would greatly appreciate it if you disabled ad-blocking in general ;)",document.body.setAttribute("class",""),document.body.appendChild(a)}"undefined"==typeof fuckAdBlock&&adBlockDetected();</script>
 	<!-- End of Ad blocker detector -->
 
 	{% if process.env.NODE_ENV === 'local-test' %}
