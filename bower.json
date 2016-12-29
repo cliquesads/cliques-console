@@ -61,7 +61,7 @@
     "parsleyjs": "~2.1.2",
     "seiyria-bootstrap-slider": "6.1.8",
     "simple-line-icons": "0.1.1",
-    "angular-datatables": ">=0.5.3",
+    "angular-datatables": "0.5.6",
     "angular-deckgrid": "~0.5.0",
     "angular-tree-dnd": "git+https://2c663350df2f1cdd63dd766c9f0a009489f1a0e9:x-oauth-basic@github.com/cliquesads/angular-tree-dnd.git#remove_node_bug_fix",
     "cliques-icons": "^0.0.2",
