@@ -9,6 +9,18 @@
 // e.g.
 // @import "../modules/articles/less/articles.styles.less"
 @import "../modules/core/less/core.styles.less";
+
+// General attributes
+.transparent-bg {
+	background-color: transparent;
+}
+.color-white {
+	color: white !important;
+}
+.text-underline {
+	text-decoration: underline;
+}
+
 // Add background image for body
 body {
 	background-image: url("https://storage.googleapis.com/cliquesads-images/console-background.jpg");
@@ -19,6 +31,27 @@ body {
 }
 .wrapper {
 	section {
-		background-color: transparent;
+		.transparent-bg;
 	}
+}
+
+.custom-content-heading {
+	background-color: rgba(255, 255, 255, 0.1) !important;
+	border-bottom: none !important;
+}
+.breadcrumb {
+	font-size: 0.8em !important;
+	li {
+		a {
+			.text-underline;
+			.color-white;
+		}
+		span {
+			.color-white;
+		}
+	}
+}
+.breadcrumb > li + li:before {
+	content: ">";
+	color: white;
 }
