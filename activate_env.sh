@@ -52,7 +52,7 @@ echo "Setting NODE_ENV=$env"
 export NODE_ENV="$env"
 
 # make sure cliques-config repo is cloned & pull any new commits
-if [ ! -d $HOME"/repositories/cliques-config" ]; then
+if [ ! -d "../cliques-config" ]; then
     git clone git@github.com:cliquesads/cliques-config.git ../cliques-config
     ln -s ../cliques-config cliques-config
 else
