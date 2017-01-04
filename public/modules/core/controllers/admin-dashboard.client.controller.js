@@ -8,6 +8,7 @@
 angular.module('core').controller('AdminDashboardController',
     ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
         function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
+
             $scope.creatives = [];
             $scope.advertisers = Advertiser.query(function(advertisers){
                 advertisers.forEach(function(adv){
@@ -166,6 +167,9 @@ angular.module('core').controller('AdminDashboardController',
                 $scope.activeTab = tab;
                 $scope.tabFunctions[tab](dateShortCode);
                 $scope.dateRangeSelection = dateShortCode;
+            };
+
+            $scope.showMoreStats = function(){
             };
         }
     ]
