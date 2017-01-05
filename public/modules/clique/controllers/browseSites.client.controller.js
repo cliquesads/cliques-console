@@ -6,25 +6,48 @@
 
 angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateParams', '$location',
     '$http','Authentication','Advertiser','Clique',
-    'getCliqueTree','getSitesInClique','getSitesInCliqueBranch','ngDialog',
+    'getCliqueTree','getSitesInClique','getSitesInCliqueBranch','ngDialog','openSiteDescriptionDialog',
     function($scope, $stateParams, $location, $http,Authentication,Advertiser,
-             Clique, getCliqueTree) {
+             Clique, getCliqueTree, getSitesInClique, getSitesInCliqueBranch, ngDialog, openSiteDescriptionDialog) {
         $scope.authentication = Authentication;
 
-        // This is our API control variable
-        var tree;
-        $scope.my_tree = tree = {};
+        $scope.maxLengthForDescription = 80;
+        $scope.allSites = [];
 
-        // Populate tree data for tree visualization
+        $scope.getTextAbstract = function(text, maxLength) {
+            if (text == null) {
+                return "";
+            }
+            if (text.length <= maxLength) {
+                return text;
+            }
+            var shortText = text.substring(0, maxLength);
+            var last = shortText.lastIndexOf(" ");
+            shortText = shortText.substring(0, last);
+            return shortText + "... Read More";
+        };
+
         $scope.cliques = [];
         $scope.find = function() {
             getCliqueTree({active: true},function(err, cliques){
                 $scope.cliques = cliques;
+                if ($scope.cliques.length > 0) {
+                    $scope.clique = angular.copy($scope.cliques[0].clique);
+                    getSitesInCliqueBranch($scope.clique._id).then(function(response) {
+                        $scope.mainSites = response.data;
+                        for (var i = 0; i < $scope.mainSites.length; i ++) {
+                            $scope.allSites = $scope.allSites.concat($scope.mainSites[i].sites);
+                        }
+                        for (var i = 0; i < $scope.allSites.length; i ++) {
+                            $scope.allSites[i].shortDescription = $scope.getTextAbstract($scope.allSites[i].description, $scope.maxLengthForDescription);
+                        }
+                    });
+                }
             });
         };
 
-        $scope.set_clique = function(branch) {
-            $scope.clique = angular.copy(branch.clique);
+        $scope.getDescription = function(site) {
+            openSiteDescriptionDialog(site);
         };
     }
 ]);

@@ -166,7 +166,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                     $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
                     $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
                 }
-            }
+            };
             $scope.scrollDownShowingCampaigns = function() {
                 if ($scope.showingCampaignEndIndex < ($scope.allCampaigns.length - 1)) {
                     $scope.showingCampaignEndIndex ++; 
