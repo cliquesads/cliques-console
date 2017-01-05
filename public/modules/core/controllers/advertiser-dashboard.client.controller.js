@@ -8,6 +8,9 @@
 angular.module('core').controller('AdvertiserDashboardController',
     ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
         function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
+
+            $scope.isShowingAllStats = false;
+
             $scope.creatives = [];
             $scope.advertisers = Advertiser.query(function(advertisers){
                 advertisers.forEach(function(adv){
@@ -138,6 +141,13 @@ angular.module('core').controller('AdvertiserDashboardController',
                 $scope.activeTab = tab;
                 $scope.tabFunctions[tab](dateShortCode);
                 $scope.dateRangeSelection = dateShortCode;
+            };
+
+            $scope.showMoreStats = function(){
+                $scope.isShowingAllStats = true;
+            };
+            $scope.hideMoreStats = function() {
+                $scope.isShowingAllStats = false;
             };
         }
     ]

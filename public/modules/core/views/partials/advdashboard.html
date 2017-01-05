@@ -16,8 +16,84 @@
         </div>
     </div>
     <section ng-show="advertisers.length > 0">
-        <em>Lifetime Stats</em>
+        <em class="custom-section-title">Year-To-Date Stats</em>
         <br/><br/>
+
+        <!-- YCX -->
+        <div class="row">
+            <div class="col-lg-6 col-sm-12">
+                <div class="stat-block">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-eye fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].imps | number:"0" }}</strong>
+                        </div>
+                        <div class="note-text text-uppercase">Impressions</div>
+                    </div>
+                </div>
+
+                <div class="stat-block">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-usd fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                        </div>
+                        <div class="note-text text-uppercase">Total Ad Spend</div>
+                    </div>
+                </div>
+
+                <div class="stat-block"
+                    ng-if="isShowingAllStats">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-hand-pointer-o fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                        </div>
+                        <div class="note-text text-uppercase">CTR</div>
+                    </div>
+                </div>
+
+                <div class="stat-block"
+                    ng-if="isShowingAllStats">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-exchange fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                        </div>
+                        <div class="note-text text-uppercase">Total Conversions</div>
+                    </div>
+                </div>
+
+                <!-- Show more stats button -->
+                <div ng-if="!isShowingAllStats">
+                    <button class="toggle-stat-button btn btn-block"
+                        ng-click="showMoreStats()">
+                        <span>More&nbsp;</span>
+                        <i class="fa fa-sort-desc fa-2x"></i>
+                    </button>
+                </div>
+
+                <!-- Hide more stats button -->
+                <div ng-if="isShowingAllStats">
+                    <button class="toggle-stat-button btn btn-block"
+                        ng-click="hideMoreStats()">
+                        <span>Hide&nbsp;</span>
+                        <i class="fa fa-sort fa-2x"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <!-- End of YCX -->
+
         <div class="row">
             <div class="col-lg-3 col-sm-6">
                 <!-- START widget-->
