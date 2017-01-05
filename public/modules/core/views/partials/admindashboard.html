@@ -30,11 +30,47 @@
                 </div>
             </div>
 
-            <div>
-                <button class="more-stat-button btn btn-block"
+            <div class="stat-block"
+                ng-if="isShowingAllStats">
+                <div class="text-center stat-icon">
+                    <i class="fa fa-hand-pointer-o fa-5x"></i>
+                </div>
+                <div class="stat-value">
+                    <div class="value-text">
+                        <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                    </div>
+                    <div class="note-text text-uppercase">CTR</div>
+                </div>
+            </div>
+
+            <div class="stat-block"
+                ng-if="isShowingAllStats">
+                <div class="text-center stat-icon">
+                    <i class="fa fa-exchange fa-5x"></i>
+                </div>
+                <div class="stat-value">
+                    <div class="value-text">
+                        <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                    </div>
+                    <div class="note-text text-uppercase">Total Conversions</div>
+                </div>
+            </div>
+
+            <!-- Show more stats button -->
+            <div ng-if="!isShowingAllStats">
+                <button class="toggle-stat-button btn btn-block"
                     ng-click="showMoreStats()">
                     <span>More&nbsp;</span>
                     <i class="fa fa-sort-desc fa-2x"></i>
+                </button>
+            </div>
+
+            <!-- Hide more stats button -->
+            <div ng-if="isShowingAllStats">
+                <button class="toggle-stat-button btn btn-block"
+                    ng-click="hideMoreStats()">
+                    <span>Hide&nbsp;</span>
+                    <i class="fa fa-sort fa-2x"></i>
                 </button>
             </div>
 
