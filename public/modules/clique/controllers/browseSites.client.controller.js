@@ -15,7 +15,7 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
         $scope.allSites = [];
 
         $scope.getTextAbstract = function(text, maxLength) {
-            if (text == null) {
+            if (text === null) {
                 return "";
             }
             if (text.length <= maxLength) {
@@ -38,7 +38,7 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
                         for (var i = 0; i < $scope.mainSites.length; i ++) {
                             $scope.allSites = $scope.allSites.concat($scope.mainSites[i].sites);
                         }
-                        for (var i = 0; i < $scope.allSites.length; i ++) {
+                        for (i = 0; i < $scope.allSites.length; i ++) {
                             $scope.allSites[i].shortDescription = $scope.getTextAbstract($scope.allSites[i].description, $scope.maxLengthForDescription);
                         }
                     });
