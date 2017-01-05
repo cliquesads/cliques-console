@@ -26,14 +26,16 @@
 	text-decoration: underline;
 }
 
-// Background image for body
-body {
+// Background image
+.bg-image {
+	position: fixed;
 	background-image: url("https://storage.googleapis.com/cliquesads-images/console-background.jpg");
 	background-repeat: no-repeat;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -100;
 }
 .wrapper {
 	section {
