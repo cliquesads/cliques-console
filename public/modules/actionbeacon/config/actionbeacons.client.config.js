@@ -5,12 +5,12 @@ angular.module('actionbeacon').run(['Menus',
 		Menus.addMenuItem(
 			'sidebar',
 			'Action Beacons',
-			'actionbeacon/list-actionbeacons',
+			'actionbeacon',
 			null,
-			'app.listActionbeacons',
+			'app.listActionbeacon',
 			false,
 			['networkAdmin','advertiser'],
-			4,
+			5,
 			'fa fa-podcast'
 		);
 	}

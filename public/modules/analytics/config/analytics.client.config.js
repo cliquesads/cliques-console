@@ -10,7 +10,7 @@ angular.module('actionbeacon').run(['Menus',
 			'app.analytics',
 			false,
 			['networkAdmin','advertiser'],
-			5,
+			4,
 			'fa fa-signal'
 		);
 	}
