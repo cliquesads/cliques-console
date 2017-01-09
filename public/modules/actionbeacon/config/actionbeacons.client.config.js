@@ -11,7 +11,7 @@ angular.module('actionbeacon').run(['Menus',
 			false,
 			['networkAdmin','advertiser'],
 			5,
-			'fa fa-podcast'
+			'cliquesicons-action-beacon'
 		);
 	}
 ]);
