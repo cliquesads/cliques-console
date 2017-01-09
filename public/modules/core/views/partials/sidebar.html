@@ -4,7 +4,7 @@
   <a href="/#!/{{item.link}}" ng-href="/#!/{{item.link}}" title="{{item.title}}">
     <em ng-hide="inSubmenu" class="{{item.iconClass}}"></em>
     <div ng-if="item.alert" ng-class="item.label || 'label label-success'" class="pull-right">{{item.alert}}</div>
-    <i ng-if="inSubmenu" class="{{item.iconClass}}"></i><span class="margin-right-16">{{(item.translate | translate) || item.title}}</span>
+    <i ng-if="inSubmenu" class="{{item.iconClass}}"></i><span class="ml-sm">{{(item.translate | translate) || item.title}}</span>
   </a>
   <ul ng-if="item.items.length" 
       collapse="isCollapse(pIndex)" 
@@ -44,7 +44,7 @@
           <ul class="media-box-list">
             <li>
               <a href="http://support.cliquesads.com" class="color-white-60">
-                Support<i class="fa fa-external-link"></i>
+                Support <i class="fa fa-external-link"></i>
               </a>
             </li>
             <li>
@@ -61,7 +61,7 @@
         <div class="margin-top-16">
           <strong>Data Last Updated</strong>
           <p class="color-white-60">
-            <i class="fa fa-clock-o"></i>{{ latestHour }}
+            <i class="fa fa-clock-o"></i> {{ latestHour }}
           </p>
         </div>
 
