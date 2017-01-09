@@ -16,199 +16,160 @@
         </div>
     </div>
     <section ng-show="advertisers.length > 0">
-        <em>Lifetime Stats</em>
-        <br/><br/>
         <div class="row">
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <a href="/#!/advertiser">
-                    <div class="panel widget bg-primary">
-                        <div class="row row-table">
-                            <div class="col-xs-4 text-center bg-primary-dark pv-md">
-                                <em class="icon-bar-chart fa-3x"></em>
-                            </div>
-                            <div class="col-xs-8 pv-md pt pb">
-                                <div class="h3 mt0">{{ advertisers.length }}</div>
-                                <div class="text-uppercase">Advertiser{{ advertisers.length != 1 ? 's' : ''}}</div>
-                            </div>
-                        </div>
+            <!-- My Campaigns Section -->
+            <div class="col-lg-6 col-sm-12">
+                <em class="custom-section-title">My Campaigns</em>
+                <br/><br/>
+                <!-- scroll up campaigns button -->
+                <div ng-if="showingCampaignEndIndex > 1">
+                    <button class="more-less-button btn btn-block"
+                        ng-click="scrollUpShowingCampaigns()">
+                        <span>Up&nbsp;</span>
+                        <i class="fa fa-sort-asc fa-2x"></i>
+                    </button>
+                </div>
+
+                <a
+                    data-ng-repeat="campaign in currentlyShowingCampaigns track by campaign._id"
+                    data-ng-href="#!/advertiser/{{selectedAdvertiser._id}}/campaign/{{campaign._id}}"
+                    class="campaign-list-item">
+                    <div class="width-15">
+                        <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
+                    </div>
+                    <div class="width-20">
+                        <img src="{{ campaign.adv_logo_url }}" alt="Adv Logo" class="adv-logo">
+                    </div>
+                    <div class="width-35">
+                        <h4 class="campaign-list-item-heading" data-ng-bind="campaign.name"></h4>
+                        <p class="campaign-list-item-text">{{ campaign.clique }}</p>
+                    </div>
+                    <div class="width-15">
+                        <radial percent="campaign.percent_spent" size="sm"></radial>
+                    </div>
+
+                    <div class="hidden-xs width-15">
+                        <h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
+                        <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>
+                <!-- scroll down campaigns button -->
+                <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
+                    <button class="more-less-button btn btn-block"
+                        ng-click="scrollDownShowingCampaigns()">
+                        <span ng-if="showingCampaignEndIndex <= 1">
+                            More&nbsp;
+                        </span>
+                        <span ng-if="showingCampaignEndIndex > 1">
+                            Down&nbsp; 
+                        </span>
+                        <i class="fa fa-sort-desc fa-2x"></i>
+                    </button>
+                </div>
+
             </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-primary-light">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-primary pv-md">
-                            <em class="icon-graph fa-3x"></em>
+            <!-- End of My Campaigns Section -->
+
+            <!-- Year-To-Date Stats Section -->
+            <div class="col-lg-6 col-sm-12">
+                <em class="custom-section-title">Year-To-Date Stats</em>
+                <br/><br/>
+                <div class="stat-block">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-eye fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].imps | number:"0" }}</strong>
                         </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].imps | number:"0" }}</div>
-                            <div class="text-uppercase">Impressions</div>
-                        </div>
+                        <div class="note-text text-uppercase">Impressions</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-green-light">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-green pv-md">
-                            <em class="icon-wallet fa-3x"></em>
+
+                <div class="stat-block">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-usd fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
                         </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].spend | currency:"$":"0" }}</div>
-                            <div class="text-uppercase">Total Ad Spend</div>
-                        </div>
+                        <div class="note-text text-uppercase">Total Ad Spend</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-green">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-green-dark pv-md">
-                            <em class="icon-cursor fa-3x"></em>
+
+                <div class="stat-block"
+                    ng-if="isShowingAllStats">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-hand-pointer-o fa-5x"></i>
+                    </div>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
                         </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].clicks / adStats[0].imps | percentage : 2}}</div>
-                            <div class="text-uppercase">CTR</div>
-                        </div>
+                        <div class="note-text text-uppercase">CTR</div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <hr/>
-        <em>Graphs & Stuff</em>
-        <br/><br/>
-        <div class="row">
-            <div class="col-md-6">
-                <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
-                    <div class="panel-heading">
-                        <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-                            &nbsp&nbsp&nbsp
-                            <small>
-                                <em class="text-muted">
-                                    Reporting Timezone: {{ authentication.user.tz }}
-                                </em>
-                            </small>
-                            <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
-                            </span>
-                        </div>
+
+                <div class="stat-block"
+                    ng-if="isShowingAllStats">
+                    <div class="text-center stat-icon">
+                        <i class="fa fa-exchange fa-5x"></i>
                     </div>
-                    <div class="panel-body">
-                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
+                    <div class="stat-value">
+                        <div class="value-text">
+                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                        </div>
+                        <div class="note-text text-uppercase">Total Conversions</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            {{ dateRanges[dateRangeSelection].label }}
-                            &nbsp&nbsp&nbsp
-                            <small>
-                                <em class="text-muted">
-                                    Reporting Timezone: {{ authentication.user.tz }}
-                                </em>
-                            </small>
-                            <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
-                            </span>
-                        </div>
-                    </div>
-                    <tabset>
-                        <tab heading="Top Publishers" select="getTabData(dateRangeSelection,'publishers')">
-                            <table datatable="ng" dt-options="dtOptions_pubs" dt-column-defs="dtColumnDefs_pubs" class="row-border hover">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Publisher</th>
-                                    <th>Impressions</th>
-                                    <th>Spend</th>
-                                    <th>Avg. CPM</th>
-                                    <th>CTR</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="row in publisherData">
-                                    <td><img ng-src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
-                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
-                                    <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend | currency:"$":"0" }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                                    <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                                    <td>{{ row.view_convs + row.click_convs }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </tab>
-                        <tab heading="My Advertisers" select="getTabData(dateRangeSelection,'advertisers')">
-                            <table datatable="ng" dt-options="dtOptions_advs" dt-column-defs="dtColumnDefs_advs" class="row-border hover">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Advertiser</th>
-                                    <th>Impressions</th>
-                                    <th>Spend</th>
-                                    <th>Avg. CPM</th>
-                                    <th>CTR</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="row in advertiserData">
-                                    <td><img ng-src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Publisher!</em></td>
-                                    <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend | currency:"$":"0" }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                                    <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                                    <td>{{ row.view_convs + row.click_convs }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </tab>
-                    </tabset>
+
+                <!-- Show more stats button -->
+                <div ng-if="!isShowingAllStats">
+                    <button class="more-less-button btn btn-block"
+                        ng-click="showMoreStats()">
+                        <span>More&nbsp;</span>
+                        <i class="fa fa-sort-desc fa-2x"></i>
+                    </button>
+                </div>
+
+                <!-- Hide more stats button -->
+                <div ng-if="isShowingAllStats">
+                    <button class="more-less-button btn btn-block"
+                        ng-click="hideMoreStats()">
+                        <span>Hide&nbsp;</span>
+                        <i class="fa fa-sort fa-2x"></i>
+                    </button>
                 </div>
             </div>
+            <!-- End of Year-To-Date Stats Section -->
         </div>
     </section>
-    <hr/>
-    <em>Notes</em>
-    <div class="row">
-        <div class="col-md-4">
-            <h2>
-                <strong>A</strong>dvertisers & Campaigns
-            </h2>
-            <p>An Advertiser is a top-level entity, and can contain many Campaigns. For example, "Coca-Cola" would be an Advertiser, "Summer 2016" would be a Campaign. All targeting & creative settings are stored in Campaigns. Use the menu items on the left to create, view & edit your Advertiser & Campaign settings.</p>
-        </div>
-        <div class="col-md-4">
-            <h2>
-                <strong>F</strong>eedback
-            </h2>
-            <p>Cliques is built for you, and only you can help make it better! As a beta tester, we strongly encourage you to send us feedback on the platform. Please email <a href="mailto:bliang@cliquesads.com">bliang@cliquesads.com</a> with all feedback.</p>
-        </div>
-        <div class="col-md-4">
-            <h2>
-                <strong>R</strong>esources & Support
-            </h2>
-            <p>If you have any quick questions or issues, or want to learn more about our technology, please wander over to our <a target="_blank" href="http://support.cliquesads.com/">Support Center</a></p>
-        </div>
-    </div>
     <section ng-show="advertisers.length > 0">
         <hr/>
-        <em>Creative Showcase</em>
+        <em class="custom-section-title">Recent Screenshots</em>
         <br/><br/>
-        <div class="row">
-            <div class="container-fluid">
-                <div deckgrid="" source="creatives" cardtemplate="modules/core/views/partials/grid-masonry-deck-card.html" class="deckgrid clearfix"></div>
+        <div class="screenshots-showcase">
+            <!-- Last screenshot button -->
+            <div ng-if="showingScreenshotEndIndex > 2">
+                <button class="horizontal-scroll-button btn"
+                    ng-click="showLastScreenshot()">
+                    <i class="fa fa-chevron-left"></i>
+                </button> 
+            </div>
+        
+            <!-- Screenshot images -->
+            <div class="screenshot"
+                ng-repeat="screenshotImage in currentlyShowingScreenshots track by screenshotImage.id">
+                <img src="{{ screenshotImage.url }}" alt="Screenshot">
+            </div>            
+
+            <!-- Next screenshot button -->
+            <div ng-if="showingScreenshotEndIndex < screenshotImages.length - 1">
+                <button class="horizontal-scroll-button btn"
+                    ng-click="showNextScreenshot()">
+                    <i class="fa fa-chevron-right color-white"></i>
+                </button> 
             </div>
         </div>
     </section>

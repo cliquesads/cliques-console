@@ -1,0 +1,57 @@
+<!-- Page title -->
+<h3 class="color-white">URSA Major</h3>
+
+<!-- Hint to describe what a action beacon is -->
+<div class="actionbeacon-hint">
+	<div>
+		<i class="fa fa-podcast fa-5x"></i>
+	</div>
+	<div class="hint-content">
+		<strong class="color-white">Action beacons</strong> (A.K.A "tracking pixels" or "conversion pixels") are invisible 1x1 pixels that can be installed on any page to let you track downstream actions users take on your website.
+		<br/><br/>
+		For example, if you want to track	how many people who clicked on your Cliques ads later added items to their shopping cart on your site, you would create an action beacon called <strong class="color-white">Add to Cart</strong> and place it in the code controlling your add to cart button. For more information, <a href="">please see our support center.</a>
+	</div>
+</div>
+
+<!-- New action beacon Button -->
+<div class="new-actionbeacon-button"
+	ng-click="showCreateNewActionBeaconDialog()">
+	<i class="fa fa-plus"></i>&nbsp;&nbsp;
+	<strong>CREATE NEW ACTION BEACON</strong>
+</div>
+
+<!-- Existing action beacon list -->
+<div class="beacon-list-container">
+	<div class="beacon-list-item" ng-repeat="actionbeacon in advertiser.actionbeacons">
+
+		<div>
+			<i class="fa fa-podcast fa-3x"></i>	
+		</div>	
+
+		<div class="primary-text">
+			<a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a>
+		</div>
+
+		<div>
+			<div class="primary-text">{{ actionbeacon.view_lookback }} Days</div>
+			<div>View Lookback</div>
+		</div>
+
+		<div>
+			<div class="primary-text">{{ actionbeacon.click_lookback }}  Days</div>
+			<div>Click Lookback</div>
+		</div>
+
+		<div>
+			<button class="btn btn-danger" ng-click="showDeleteActionBeaconDialog(actionbeacon)">
+				<i class="fa fa-trash-o"></i>
+				Remove
+			</button>
+			<button class="btn btn-primary" ng-click="showActionBeaconTagDialog(actionbeacon)">
+				<i class="fa fa-code"></i>
+				Get Code
+			</button>
+		</div>
+
+	</div>
+</div>

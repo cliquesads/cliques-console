@@ -4,7 +4,7 @@
   <a href="/#!/{{item.link}}" ng-href="/#!/{{item.link}}" title="{{item.title}}">
     <em ng-hide="inSubmenu" class="{{item.iconClass}}"></em>
     <div ng-if="item.alert" ng-class="item.label || 'label label-success'" class="pull-right">{{item.alert}}</div>
-    <span>{{(item.translate | translate) || item.title}}</span>
+    <i ng-if="inSubmenu" class="{{item.iconClass}}"></i><span class="margin-right-16">{{(item.translate | translate) || item.title}}</span>
   </a>
   <ul ng-if="item.items.length" 
       collapse="isCollapse(pIndex)" 
@@ -36,6 +36,42 @@
               ></li>
       </ul>
       <!-- END sidebar nav-->
+
+      <!-- Sidebar footer -->
+      <div class="sidebar-footer">
+        <div class="margin-top-16">
+          <strong>Resources</strong>
+          <ul class="media-box-list">
+            <li>
+              <a href="http://support.cliquesads.com" class="color-white-60">
+                Support<i class="fa fa-external-link"></i>
+              </a>
+            </li>
+            <li>
+              <a href="/#!/terms-add-conditions" class="color-white-60">
+                Terms & Conditions
+              </a>
+            </li>
+            <li>
+              <a href="/#!/privacy-policy" class="color-white-60">Privacy</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="margin-top-16">
+          <strong>Data Last Updated</strong>
+          <p class="color-white-60">
+            <i class="fa fa-clock-o"></i>{{ latestHour }}
+          </p>
+        </div>
+
+        <div class="margin-top-16">
+          <small><strong>&copy; {{app.year}} Cliques Labs Inc.</strong></small>
+          <p><small class="color-white-60">Release v{{ consoleVersion }}</small></p>
+        </div>
+      </div>
+      <!-- END sidebar footer -->
+
    </nav>
 </div>
 <!-- END Sidebar (left)-->

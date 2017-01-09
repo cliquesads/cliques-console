@@ -1,0 +1,53 @@
+// Overwrite @aside-bg in theme-f.less to change background color of sidebar
+@aside-bg: rgba(0, 0, 0, 0.25);
+@normal-sidebar-width: 300px;
+@collapsed-sidebar-width: 70px;
+.sidebar-footer {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	bottom: 0;
+	color: white;
+}
+.margin-top-16 {
+	margin-top: 16px;
+}
+.margin-right-16 {
+	margin-left: 16px;
+}
+.margin-left-sidebar {
+	margin-left: @normal-sidebar-width !important;
+}
+.sidebar-subnav {
+	background-color: rgba(0, 0, 0, 0.6);
+	margin-left: @normal-sidebar-width !important;
+}
+.aside, .aside-inner, .sidebar {
+	width: @normal-sidebar-width !important;
+}
+.sidebar {
+	.nav {
+		li {
+			font-size: 1.4em;
+		}
+	}
+}
+.sidebar-subnav {
+	li {
+		font-size: 1.4em;
+	}
+}
+.aside-collapsed {
+	.aside, .aside-inner, .sidebar {
+		width: @collapsed-sidebar-width !important;
+	}
+	.margin-left-sidebar {
+		margin-left: @collapsed-sidebar-width !important;
+	}
+	.sidebar-subnav {
+		margin-left: @collapsed-sidebar-width !important;
+	}
+	.sidebar-footer {
+		display: none;
+	}
+}
