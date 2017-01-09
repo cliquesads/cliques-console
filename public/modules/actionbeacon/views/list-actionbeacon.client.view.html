@@ -15,39 +15,39 @@
 
 <!-- New action beacon Button -->
 <div class="new-actionbeacon-button"
-	ng-click="addNewActionBeacon()">
+	ng-click="showCreateNewActionBeaconDialog()">
 	<i class="fa fa-plus"></i>&nbsp;&nbsp;
 	<strong>CREATE NEW ACTION BEACON</strong>
 </div>
 
 <!-- Existing action beacon list -->
 <div class="beacon-list-container">
-	<div class="beacon-list-item">
+	<div class="beacon-list-item" ng-repeat="actionbeacon in advertiser.actionbeacons">
 
 		<div>
 			<i class="fa fa-podcast fa-3x"></i>	
 		</div>	
 
 		<div class="primary-text">
-			<a href="">Test Beacon</a>
+			<a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a>
 		</div>
 
 		<div>
-			<div class="primary-text">15 Days</div>
+			<div class="primary-text">{{ actionbeacon.view_lookback }} Days</div>
 			<div>View Lookback</div>
 		</div>
 
 		<div>
-			<div class="primary-text">30 Days</div>
+			<div class="primary-text">{{ actionbeacon.click_lookback }}  Days</div>
 			<div>Click Lookback</div>
 		</div>
 
 		<div>
-			<button class="btn btn-danger">
+			<button class="btn btn-danger" ng-click="showDeleteActionBeaconDialog(actionbeacon)">
 				<i class="fa fa-trash-o"></i>
 				Remove
 			</button>
-			<button class="btn btn-primary">
+			<button class="btn btn-primary" ng-click="showActionBeaconTagDialog(actionbeacon)">
 				<i class="fa fa-code"></i>
 				Get Code
 			</button>
