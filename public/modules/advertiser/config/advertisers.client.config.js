@@ -12,7 +12,7 @@ angular.module('advertiser').run(['Menus',
 
       Menus.addMenuItem('sidebar', 'Campaigns', 'advertiser/campaign', null, 'app.listCampaign', false, ['networkAdmin','advertiser'], 2, 'fa fa-bullhorn');
 
-			Menus.addSubMenuItem('sidebar', 'advertiser/campaign', 'All Campaings', 'advertiser/campaign', null, null, null, null, 'fa fa-bullhorn');
+			Menus.addSubMenuItem('sidebar', 'advertiser/campaign', 'All Campaigns', 'advertiser/campaign', null, null, null, null, 'fa fa-bullhorn');
       Menus.addSubMenuItem('sidebar', 'advertiser/campaign', 'Create a New Campaign', 'advertiser/list-campaign', null, null, null, null, 'fa fa-plus');
       Menus.addSubMenuItem('sidebar', 'advertiser/campaign', 'My Campaign Drafts', 'advertiser/campaign-draft', null, null, null, null, 'fa fa-folder-open');
 

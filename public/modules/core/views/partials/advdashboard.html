@@ -101,11 +101,11 @@
                 <div class="stat-block"
                     ng-if="isShowingAllStats">
                     <div class="text-center stat-icon">
-                        <i class="fa fa-hand-pointer-o fa-5x"></i>
+                        <i class="fa fa-mouse-pointer fa-5x"></i>
                     </div>
                     <div class="stat-value">
                         <div class="value-text">
-                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                            <strong>{{ adStats[0].clicks / adStats[0].imps | percentage:2 }}</strong>
                         </div>
                         <div class="note-text text-uppercase">CTR</div>
                     </div>
@@ -114,11 +114,11 @@
                 <div class="stat-block"
                     ng-if="isShowingAllStats">
                     <div class="text-center stat-icon">
-                        <i class="fa fa-exchange fa-5x"></i>
+                        <i class="fa fa-shopping-cart fa-5x"></i>
                     </div>
                     <div class="stat-value">
                         <div class="value-text">
-                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
+                            <strong>{{ adStats[0].view_convs +  adStats[0].click_convs }}</strong>
                         </div>
                         <div class="note-text text-uppercase">Total Conversions</div>
                     </div>
@@ -126,7 +126,7 @@
 
                 <!-- Show more stats button -->
                 <div ng-if="!isShowingAllStats">
-                    <button class="more-less-button btn btn-block"
+                    <button class="btn btn-block btn-third-white-horizontal"
                         ng-click="showMoreStats()">
                         <span>More&nbsp;</span>
                         <i class="fa fa-sort-desc fa-2x"></i>
@@ -135,10 +135,10 @@
 
                 <!-- Hide more stats button -->
                 <div ng-if="isShowingAllStats">
-                    <button class="more-less-button btn btn-block"
+                    <button class="btn btn-block btn-third-white-horizontal"
                         ng-click="hideMoreStats()">
                         <span>Hide&nbsp;</span>
-                        <i class="fa fa-sort fa-2x"></i>
+                        <i class="fa fa-sort-up fa-2x"></i>
                     </button>
                 </div>
             </div>
@@ -152,7 +152,7 @@
         <div class="screenshots-showcase">
             <!-- Last screenshot button -->
             <div ng-if="showingScreenshotEndIndex > 2">
-                <button class="horizontal-scroll-button btn"
+                <button class="btn btn-third-white-vertical"
                     ng-click="showLastScreenshot()">
                     <i class="fa fa-chevron-left"></i>
                 </button> 
@@ -166,7 +166,7 @@
 
             <!-- Next screenshot button -->
             <div ng-if="showingScreenshotEndIndex < screenshotImages.length - 1">
-                <button class="horizontal-scroll-button btn"
+                <button class="btn btn-third-white-vertical"
                     ng-click="showNextScreenshot()">
                     <i class="fa fa-chevron-right color-white"></i>
                 </button> 
