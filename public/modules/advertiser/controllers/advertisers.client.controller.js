@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME', '$state',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME, $state) {
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
@@ -63,6 +63,8 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
 			}, function(){
+                console.log($scope.advertiser);
+
                 HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
                     groupBy: 'campaign'
                 }).then(function(response){

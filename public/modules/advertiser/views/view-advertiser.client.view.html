@@ -2,7 +2,6 @@
 template, depending on the UI Router State. Not ideal, but couldn't figure out
 simple way to have full child template exist inside of parent state w/out
 adding hook in parent template ---->
-
 <div ng-switch on="$state.$current.self.name">
     <div ng-switch-default>
         <!-- View hook for child views -->
@@ -15,34 +14,16 @@ adding hook in parent template ---->
         <!--showNewModal toggles on or off depending on query param showModal-->
         <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
-            <div>
-                <small>
-                    <em class="text-muted">
-                        Created on
-                        <span data-ng-bind="advertiser.tstamp | date:'mediumDate'"></span>
-                        by
-                        <span data-ng-bind="advertiser.user[0].displayName"></span>
-                    </em>
-                </small>
-            </div>
+            <h3 class="color-white ml-sm">{{ advertiser.name }}</h3>
+            <div class="custom-section-title no-font-style ml-sm">All Campaigns</div>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
-
             <!--Upper left panel-->
-            <div class="col-sm-4">
+            <div class="col-sm-4 mt-lg">
                 <!--BEGIN CAMPAIGN PANEL-->
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <!--<strong>Campaigns</strong>-->
-                        <!--<a href="#" class="pull-right ng-click-active" ng-click="newCampaign()" tooltip="Create a new campaign">-->
-                        <!--<span class="fa fa-plus-square-o"></span>-->
-                        <!--</a>-->
-                        <h4>
-                            <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newCampaign()">
-                                <span class="btn-label"><i class="fa fa-plus"></i></span>New Campaign
-                            </button>
-                            Campaigns
-                        </h4>
-                    </li>
+                <div class="new-campaign-button" ng-click="newCampaign()">
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp; CREATE NEW CAMPAIGN
+                </div>
+                <ul class="list-group mt-lg">
                     <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
                         <div class="row row-table">
                             <div class="col-sm-2">
@@ -62,37 +43,29 @@ adding hook in parent template ---->
                         </div>
                     </a>
                 </ul>
-                <!--BEGIN ACTION BEACON PANEL-->
-                <div id="actionbeacons" class="panel widget" ng-click="actionBeacons()" tooltip="{{ TOOLTIPS.actionbeacons }}" tooltip-trigger tooltip-placement="top">
-                    <div class="row row-table row-flush">
-                        <div class="col-xs-4 bg-primary-light text-center">
-                            <em class="fa fa-code fa-2x"></em>
-                        </div>
-                        <div class="col-xs-8">
-                            <div class="panel-body text-center">
-                                <h4 class="mt0">{{ advertiser.actionbeacons.length }}</h4>
-                                <p class="mb0">ACTION BEACON{{ advertiser.actionbeacons.length === 1 ? '' : 'S' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-
-            <div class="col-md-8">
-                <div id="advertiserGraphPanel" class="panel panel-default" data-ng-init="getAdvertiserGraph('7d')">
+            <div class="col-md-8 mt-lg">
+                <div class="custom-section-title no-font-style pl-xl">
+                    <span>Advertiser QuickStats</span>
+                    <span class="pull-right">
+                        Want to see more data? &nbsp;
+                        <i class="fa fa-signal"></i>
+                        <a href="#" class="color-white-60 text-underline">Go to Analytics</a>
+                    </span>
+                </div>
+                <div id="advertiserGraphPanel" class="panel panel-default ml-xl mt" data-ng-init="getAdvertiserGraph('7d')">
                     <div class="panel-heading">
-                        <div class="panel-title">{{ dateRanges[dateRangeSelection].label }}
-                            &nbsp&nbsp&nbsp
+                        <div class="panel-title">{{ dateRanges[dateRangeSelection].label }} &nbsp&nbsp&nbsp
                             <small>
                                 <em class="text-muted">
                                     Reporting Timezone: {{ authentication.user.tz }}
                                 </em>
                             </small>
-                    <span class="pull-right">
-                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('7d')">7d</button>
-                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('30d')">30d</button>
-                        <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('90d')">90d</button>
-                    </span>
+                            <span class="pull-right">
+                                <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('7d')">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('30d')">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getAdvertiserGraph('90d')">90d</button>
+                            </span>
                         </div>
                     </div>
                     <div class="panel-body">

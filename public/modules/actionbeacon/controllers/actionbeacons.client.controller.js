@@ -57,7 +57,7 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
                     advertiser: $scope.advertiser,
                     actionbeacon: actionbeacon
                 }
-            })
+            });
         };
         $scope.showDeleteActionBeaconDialog = function(actionbeacon) {
             ngDialog.open({
@@ -95,18 +95,18 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
                         if (this.newActionBeacon.$valid) {
                             this.advertiser.actionbeacons.push(this.actionbeacon);
                             this.advertiser.$update(function() {
-                                $scope.closeThisDialog(0)
+                                $scope.closeThisDialog(0);
                             }, function(errorResponse) {
                                 $scope.saveerror = errorResponse.data.message;
                             });
                         } else {
-                            $scope.closeThisDialog(0)
+                            $scope.closeThisDialog(0);
                             return false;
                         }
                     };
                 }],
                 data: { advertiser: $scope.advertiser }
-            })
+            });
         };
     }
 ]);
