@@ -1,20 +1,25 @@
-<h3 class="custom-content-heading color-white">
+<h3 class="custom-content-heading">
    <!-- START Language list-->
-   <div class="pull-right">
-      <!--<div dropdown="" is-open="language.listIsOpen" class="btn-group">-->
-         <!--<button type="button" dropdown-toggle="" class="btn btn-default">{{language.selected}}-->
-            <!--<span class="caret"></span>-->
-         <!--</button>-->
-         <!--<ul role="menu" class="dropdown-menu dropdown-menu-right animated fadeInUpShort">-->
-            <!--<li ng-repeat="(localeId, langName) in language.available"><a ng-click="language.set(localeId, $event)">{{langName}}</a>-->
-            <!--</li>-->
-         <!--</ul>-->
-      <!--</div>-->
-   </div>
-   <!-- END Language list    -->
-   Home
+   <!--<div class="pull-right">-->
+      <!--&lt;!&ndash;<div dropdown="" is-open="language.listIsOpen" class="btn-group">&ndash;&gt;-->
+         <!--&lt;!&ndash;<button type="button" dropdown-toggle="" class="btn btn-default">{{language.selected}}&ndash;&gt;-->
+            <!--&lt;!&ndash;<span class="caret"></span>&ndash;&gt;-->
+         <!--&lt;!&ndash;</button>&ndash;&gt;-->
+         <!--&lt;!&ndash;<ul role="menu" class="dropdown-menu dropdown-menu-right animated fadeInUpShort">&ndash;&gt;-->
+            <!--&lt;!&ndash;<li ng-repeat="(localeId, langName) in language.available"><a ng-click="language.set(localeId, $event)">{{langName}}</a>&ndash;&gt;-->
+            <!--&lt;!&ndash;</li>&ndash;&gt;-->
+         <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+      <!--&lt;!&ndash;</div>&ndash;&gt;-->
+   <!--</div>-->
+   <!--&lt;!&ndash; END Language list    &ndash;&gt;-->
+   <!--<ul class="breadcrumb">-->
+       <!--<li>-->
+           <!--Home-->
+       <!--</li>-->
+   <!--</ul>-->
    <!--<small>{{ 'dashboard.WELCOME' | translate:{ appName: app.name } }} !</small>-->
     <!-- <small class="color-white">Welcome to the Cliques Console</small> -->
+    <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
 </h3>
 <section>
     <div ng-switch on="role">
