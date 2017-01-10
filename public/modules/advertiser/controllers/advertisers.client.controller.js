@@ -63,8 +63,6 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
 			$scope.advertiser = Advertiser.get({
 				advertiserId: $stateParams.advertiserId
 			}, function(){
-                console.log($scope.advertiser);
-
                 HourlyAdStat.advQuery({advertiserId: $stateParams.advertiserId},{
                     groupBy: 'campaign'
                 }).then(function(response){
