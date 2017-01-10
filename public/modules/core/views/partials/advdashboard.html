@@ -25,7 +25,7 @@
                     <button class="more-less-button btn btn-block"
                         ng-click="scrollUpShowingCampaigns()">
                         <span>Up&nbsp;</span>
-                        <i class="fa fa-sort-asc fa-2x"></i>
+                        <i class="fa fa-sort-asc fa-2x mt-lg-neg"></i>
                     </button>
                 </div>
 
@@ -54,7 +54,7 @@
                 </a>
                 <!-- scroll down campaigns button -->
                 <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
-                    <button class="more-less-button btn btn-block"
+                    <button class="more-less-button btn btn-block btn-third-white-horizontal"
                         ng-click="scrollDownShowingCampaigns()">
                         <span ng-if="showingCampaignEndIndex <= 1">
                             More&nbsp;
@@ -70,7 +70,7 @@
             <!-- End of My Campaigns Section -->
 
             <!-- Year-To-Date Stats Section -->
-            <div class="col-lg-6 col-sm-12">
+            <div class="col-lg-6 col-sm-12 pl-xl">
                 <em class="custom-section-title mb">Year-To-Date Stats</em>
                 <div class="stat-block">
                     <div class="text-center stat-icon">
@@ -118,16 +118,16 @@
                         <div class="value-text">
                             <strong>{{ adStats[0].view_convs +  adStats[0].click_convs }}</strong>
                         </div>
-                        <div class="note-text text-uppercase">Total Conversions</div>
+                        <div class="note-text text-uppercase">Total Actions</div>
                     </div>
                 </div>
 
                 <!-- Show more stats button -->
                 <div ng-if="!isShowingAllStats">
-                    <button class="btn btn-block btn-third-white-horizontal"
+                    <button class="btn btn-block btn-third-white-horizontal more-less-button"
                         ng-click="showMoreStats()">
                         <span>More&nbsp;</span>
-                        <i class="fa fa-sort-desc fa-2x"></i>
+                        <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
                     </button>
                 </div>
 
@@ -144,7 +144,7 @@
         </div>
     </section>
     <section ng-show="advertisers.length > 0">
-        <hr/>
+        <br/><br/>
         <em class="custom-section-title">Recent Screenshots</em>
         <br/><br/>
         <div class="screenshots-showcase">

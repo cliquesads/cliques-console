@@ -180,29 +180,29 @@ angular.module('core').controller('AdvertiserDashboardController',
             $scope.screenshotImages = [
                 {
                     id: 1,
-                    url: 'http://cartoonbros.com/wp-content/uploads/2016/05/Batman-15.jpg'
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Adventure%20Journal%20Mock%20Screenshot.jpg'
                 },
                 {
                     id: 2,
-                    url: 'http://cartoonbros.com/wp-content/uploads/2016/05/Batman-15.jpg'
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/CXMax%20Mock%20Screenshot.jpg'
                 },
                 {
                     id: 3,
-                    url: 'http://cartoonbros.com/wp-content/uploads/2016/05/Batman-15.jpg'
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Mock%20Screenshot%20TGR.jpg'
                 },
                 {
                     id: 4,
-                    url: 'http://cartoonbros.com/wp-content/uploads/2016/05/Batman-15.jpg'
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Gravelbike%20Screenshot%20Mock.jpg'
                 },
                 {
                     id: 5,
-                    url: 'http://cartoonbros.com/wp-content/uploads/2016/05/Batman-15.jpg'
-                },
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Skiing%20Magazine%20Mock%20Screenshot.jpg'
+                }
             ];
             $scope.currentlyShowingScreenshots = [
                 $scope.screenshotImages[0],
                 $scope.screenshotImages[1],
-                $scope.screenshotImages[2],
+                $scope.screenshotImages[2]
             ];
             $scope.showingScreenshotEndIndex = 2;
             $scope.showLastScreenshot = function() {
