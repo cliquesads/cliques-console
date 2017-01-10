@@ -58,13 +58,13 @@ var _getTreeEntitiesFromRequest = function(req){
         creativeId = req.param('creativeId');
     // repetitive, I know.  Sorry.
     var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
-        return c._id === campaignId;
+        return c._id.toString() === campaignId;
     })];
     var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
-        return c._id === creativeGroupId;
+        return c._id.toString() === creativeGroupId;
     })];
     var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
-        return c._id === creativeId;
+        return c._id.toString() === creativeId;
     })];
     return {
         advertiser: advertiser,
@@ -334,7 +334,7 @@ module.exports = function(db) {
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
                 var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id === campaignId;
+                    return c._id.toString() === campaignId;
                 });
                 var campaign = advertiser.campaigns[ind];
                 if (!campaign) {
@@ -368,7 +368,7 @@ module.exports = function(db) {
                 var advertiser = req.advertiser;
                 var campaignId = req.param('campaignId');
                 var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id === campaignId;
+                    return c._id.toString() === campaignId;
                 });
                 var campaign = advertiser.campaigns[ind];
                 if (!campaign) {
