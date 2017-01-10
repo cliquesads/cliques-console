@@ -15,12 +15,12 @@ adding hook in parent template ---->
         <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
             <h3 class="color-white ml-sm">{{ advertiser.name }}</h3>
-            <div class="custom-section-title no-font-style ml-sm">All Campaigns</div>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <!--Upper left panel-->
             <div class="col-sm-4 mt-lg">
                 <!--BEGIN CAMPAIGN PANEL-->
-                <div class="new-campaign-button" ng-click="newCampaign()">
+                <div class="custom-section-title no-font-style ml-sm">All Campaigns</div>
+                <div class="btn-third-white-horizontal mt" ng-click="newCampaign()">
                     <i class="fa fa-plus"></i>&nbsp;&nbsp; CREATE NEW CAMPAIGN
                 </div>
                 <ul class="list-group mt-lg">
