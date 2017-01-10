@@ -12,7 +12,7 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 		state('app.advertiser.listAdvertiser', {
             url: '/advertiser',
-            title: 'All Advertiser',
+            title: 'All Advertisers',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',

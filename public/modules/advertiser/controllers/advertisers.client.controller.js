@@ -2,8 +2,9 @@
 'use strict';
 
 angular.module('advertiser').controller('AdvertiserController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME', '$state',
-	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME, $state) {
+    'Authentication', 'Advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME', '$state', '$rootScope',
+	function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, ADVERTISER_TOOLTIPS, REVIEW_TIME, $state, $rootScope) {
+
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
@@ -158,6 +159,14 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             // TODO: Need to provide error callback for query promise as well
 
             $scope.dateRangeSelection = dateShortCode;
+        };
+
+        $scope.selectAdvertiser = function(advertiser) {
+            if ($scope.rememberMySelection) {
+                $rootScope.advertiser = advertiser;
+            } else {
+                $rootScope.advertiser = null;
+            }
         };
 	}
 ]);
