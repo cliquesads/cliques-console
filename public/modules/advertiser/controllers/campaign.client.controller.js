@@ -2,8 +2,20 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog', 'REVIEW_TIME',
-	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog, REVIEW_TIME) {
+    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog', 'REVIEW_TIME', '$rootScope',
+	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog, REVIEW_TIME, $rootScope) {
+        $scope.advertisers = Advertiser.query(function(advertisers) {
+            if (advertisers.length === 1) {
+                $scope.selectedAdvertiser = advertisers[0];
+            } else if ($rootScope.advertiser) {
+                // Check whether advertiser has been previously selected and remembered or not.
+                $scope.selectedAdvertiser = $rootScope.advertiser;
+            } else {
+                // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
+                $location.path('/advertiser');
+            }
+
+        });
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -51,8 +63,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
-
-        $scope.advertisers = Advertiser.query();
 
 		$scope.findOne = function() {
             Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex) {

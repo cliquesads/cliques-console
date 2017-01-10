@@ -7,8 +7,20 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
     'ngDialog',
     'Advertiser',
     'ActionBeacon',
-    function($scope, $location, ngDialog, Advertiser, ActionBeacon) {
-        $scope.advertiser = {};
+    '$rootScope',
+    function($scope, $location, ngDialog, Advertiser, ActionBeacon, $rootScope) {
+        $scope.advertisers = Advertiser.query(function(advertisers) {
+            if (advertisers.length === 1) {
+                $scope.advertiser = $scope.advertisers[0];
+            } else if ($rootScope.advertiser) {
+                // Check whether advertiser has been previously selected and remembered or not.
+                $scope.advertiser = $rootScope.advertiser;
+            } else {
+                // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
+                $location.path('/advertiser');
+            }
+        });
+
         $scope.actionbeacon = {
             name: null
         };
@@ -23,11 +35,6 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
             });
         };
 
-        $scope.advertisers = Advertiser.query(function(advertisers) {
-            if (advertisers.length > 0) {
-                $scope.advertiser = $scope.advertisers[0];
-            }
-        });
         $scope.showActionBeaconTagDialog = function(actionbeacon) {
             ngDialog.open({
                 template: 'modules/actionbeacon/views/partials/get-actionbeacon-code.html',
@@ -57,7 +64,7 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
                     advertiser: $scope.advertiser,
                     actionbeacon: actionbeacon
                 }
-            })
+            });
         };
         $scope.showDeleteActionBeaconDialog = function(actionbeacon) {
             ngDialog.open({
@@ -95,18 +102,18 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
                         if (this.newActionBeacon.$valid) {
                             this.advertiser.actionbeacons.push(this.actionbeacon);
                             this.advertiser.$update(function() {
-                                $scope.closeThisDialog(0)
+                                $scope.closeThisDialog(0);
                             }, function(errorResponse) {
                                 $scope.saveerror = errorResponse.data.message;
                             });
                         } else {
-                            $scope.closeThisDialog(0)
+                            $scope.closeThisDialog(0);
                             return false;
                         }
                     };
                 }],
                 data: { advertiser: $scope.advertiser }
-            })
+            });
         };
     }
 ]);
