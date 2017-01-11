@@ -9,7 +9,6 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
     'ActionBeacon',
     '$rootScope',
     function($scope, $location, ngDialog, Advertiser, ActionBeacon, $rootScope) {
-        console.log($location.$$path);
         if ($location.$$path === '/actionbeacon') {
             if (!$rootScope.advertiser) {
                 $scope.advertisers = Advertiser.query(function(advertisers) {
