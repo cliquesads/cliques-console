@@ -44,11 +44,13 @@
                         <p class="campaign-list-item-text">{{ campaign.clique }}</p>
                     </div>
                     <div class="width-15">
-                        <radial percent="campaign.percent_spent" size="sm"></radial>
+                        <!--<radial percent="campaign.percent_spent" size="sm"></radial>-->
+                        <radial percent="0.86" size="sm"></radial>
                     </div>
 
                     <div class="hidden-xs width-15">
-                        <h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
+                        <!--<h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>-->
+                        <h4 class="campaign-list-item-heading">0.22%</h4>
                         <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>
