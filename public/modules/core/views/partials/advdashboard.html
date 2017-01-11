@@ -159,7 +159,7 @@
             <!-- Screenshot images -->
             <div class="screenshot"
                 ng-repeat="screenshotImage in currentlyShowingScreenshots track by screenshotImage.id">
-                <img src="{{ screenshotImage.url }}" alt="Screenshot">
+                <img src="{{ screenshotImage.url }}" alt="Screenshot" ng-click="viewScreenshot(screenshotImage)">
             </div>            
 
             <!-- Next screenshot button -->

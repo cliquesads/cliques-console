@@ -6,8 +6,8 @@
 'use strict';
 
 angular.module('core').controller('AdvertiserDashboardController',
-    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
-        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
+    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog',
+        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog) {
 
             $scope.isShowingAllStats = false;
 
@@ -199,6 +199,15 @@ angular.module('core').controller('AdvertiserDashboardController',
                     url: 'https://storage.googleapis.com/cliquesads-screenshots/Skiing%20Magazine%20Mock%20Screenshot.jpg'
                 }
             ];
+
+            $scope.viewScreenshot = function(screenshot){
+                ngDialog.open({
+                    template: 'modules/core/views/partials/screenshot-dialog.html',
+                    data: { screenshotUrl: screenshot.url },
+                    className: 'ngdialog-theme-default dialogwidth800'
+                });
+            };
+
             $scope.currentlyShowingScreenshots = [
                 $scope.screenshotImages[0],
                 $scope.screenshotImages[1],
