@@ -214,12 +214,20 @@
 .bg-inverse      { .bgcolor-variant('brand-inverse'); }
 .bg-yellow       { .bgcolor-variant('brand-yellow'); }
 
+
 .bg-white        { .make-bg(#fff, inherit); }
 .bg-gray-darker  { .make-bg(@gray-darker); }
 .bg-gray-dark    { .make-bg(@gray-dark); }
 .bg-gray         { .make-bg(@gray, @text-color); }
 .bg-gray-light   { .make-bg(@gray-light, @text-color); }
 .bg-gray-lighter { .make-bg(@gray-lighter, @text-color); }
+
+.bg-one-quarter-black   { .make-bg(@one-quarter-black, @three-quarters-white); }
+.bg-one-third-black   { .make-bg(@one-third-black, @three-quarters-white); }
+.bg-half-black        { .make-bg(@half-black, @three-quarters-white); }
+.bg-two-thirds-black  { .make-bg(@two-thirds-black, @three-quarters-white); }
+
+.bg-none       { background: none; }
 
 .bgcolor-variant(@bgcolor, @text-color: #fff) {
   @amountOfLight: 10%;
