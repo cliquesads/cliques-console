@@ -9,17 +9,20 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
     'ActionBeacon',
     '$rootScope',
     function($scope, $location, ngDialog, Advertiser, ActionBeacon, $rootScope) {
-        $scope.advertisers = Advertiser.query(function(advertisers) {
-            if (advertisers.length === 1) {
-                $scope.advertiser = $scope.advertisers[0];
-            } else if ($rootScope.advertiser) {
-                // Check whether advertiser has been previously selected and remembered or not.
-                $scope.advertiser = $rootScope.advertiser;
-            } else {
-                // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
-                $location.path('/advertiser');
+        console.log($location.$$path);
+        if ($location.$$path === '/actionbeacon') {
+            if (!$rootScope.advertiser) {
+                $scope.advertisers = Advertiser.query(function(advertisers) {
+                    if (advertisers.length === 1) {
+                        $scope.advertiser = advertisers[0];
+                        $rootScope.advertiser = advertisers[0];
+                    } else {
+                        // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
+                        $location.path('/advertiser');
+                    }
+                });
             }
-        });
+        }
 
         $scope.actionbeacon = {
             name: null

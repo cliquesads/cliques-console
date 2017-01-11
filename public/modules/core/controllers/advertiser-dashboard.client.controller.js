@@ -20,6 +20,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                 advertisers.forEach(function(adv){
                     adv.campaigns.forEach(function(camp){
                         camp.adv_logo_url = adv.logo_url;
+                        camp.parentAdvertiserId = adv._id;
                         $scope.allCampaigns.push(camp);
                         if ($scope.currentlyShowingCampaigns.length < 2) {
                             $scope.currentlyShowingCampaigns.push(camp);
@@ -45,6 +46,7 @@ angular.module('core').controller('AdvertiserDashboardController',
             HourlyAdStat.advSummaryQuery({}).then(function(response){
                 $scope.adStats = response.data;
             });
+
 
             // See service in aggregations module for details on aggregationDateRanges object
             $scope.summaryDateRangeSelection = "7d";
@@ -83,6 +85,9 @@ angular.module('core').controller('AdvertiserDashboardController',
                 // TODO: Need to provide error callback for query promise as well
                 $scope.summaryDateRangeSelection = dateShortCode;
             };
+
+$scope.getDashboardGraph('30d');
+
 
             $scope.dateRangeSelection = "7d";
             $scope.tabFunctions = {
