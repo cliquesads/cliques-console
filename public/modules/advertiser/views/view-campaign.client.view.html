@@ -22,9 +22,7 @@ adding hook in parent template ---->
                         <tab heading="Basics">
                             <div class="panel-body">
                                 <!--Only show activate controls for admins right now-->
-                                <!-- <fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1"> -->
-                                <!-- Modified by YCX: Show activate controls for all user roles based on Invision? -->
-                                <fieldset>
+                                <fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
                                     <small><em class="text-muted">Status</em></small>
                                     <div class="form-horizontal">
                                         <div class="form-group m0">

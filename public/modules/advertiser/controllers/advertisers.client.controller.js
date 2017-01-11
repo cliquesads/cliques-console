@@ -105,12 +105,7 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
         };
 
         $scope.newCampaign = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/advertiser/views/partials/new-campaign-dialog.html',
-                controller: 'NewCampaignController',
-                data: {advertiser: $scope.advertiser}
-            });
+            $state.go('app.advertiser.createNewCampaign', {advertiser: $scope.advertiser});
         };
 
         $scope.actionBeacons = function(){
@@ -167,6 +162,10 @@ angular.module('advertiser').controller('AdvertiserController', ['$scope', '$sta
             } else {
                 $rootScope.advertiser = null;
             }
+        };
+
+        $scope.goToCreateNewAdvertiser = function() {
+            $location.path('/advertiser/create');  
         };
 	}
 ]);
