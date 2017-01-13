@@ -107,3 +107,38 @@
 		margin-bottom: 0px;
 	}
 }
+// slide animation
+.slideDown.ng-hide {
+	height: 0;
+	transition: height 0.35s ease;
+	overflow: hidden;
+	position: relative;	
+}
+.slideDown {
+	height: 160px;
+	transition: height 0.35s ease;
+	overflow: hidden;
+	position: relative;
+}
+.slideDown.ng-hide-remove,
+.slideDown.ng-hide-add {
+	/* remember, the .ng-hide class is added to elemenet when the active class is added causing it to appear as hidden. Therefore set the styling to display=block so that the hid animation is visible */
+	display: block !important;
+}
+.slideDown.ng-hide-add {
+    animation-name: hide;
+    -webkit-animation-name: hide;
+    animation-duration: .5s;
+    -webkit-animation-duration: .5s;
+    animation-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+}
+
+.slideDown.ng-hide-remove {
+    animation-name: show;
+    -webkit-animation-name: show;
+    animation-duration: .5s;
+    -webkit-animation-duration: .5s;
+    animation-timing-function: ease-out;
+    -webkit-animation-timing-function: ease-out;
+}

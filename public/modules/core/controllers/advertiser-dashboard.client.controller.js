@@ -86,9 +86,6 @@ angular.module('core').controller('AdvertiserDashboardController',
                 $scope.summaryDateRangeSelection = dateShortCode;
             };
 
-$scope.getDashboardGraph('30d');
-
-
             $scope.dateRangeSelection = "7d";
             $scope.tabFunctions = {
                 publishers: function(dateShortCode){

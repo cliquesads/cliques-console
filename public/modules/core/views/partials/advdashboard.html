@@ -97,33 +97,32 @@
                         <div class="note-text text-uppercase">Total Ad Spend</div>
                     </div>
                 </div>
-
-                <div class="stat-block"
-                    ng-if="isShowingAllStats">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-mouse-pointer fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].clicks / adStats[0].imps | percentage:2 }}</strong>
+                <!-- An animation container that allows the hidden stat block to slide down and slide up -->
+                <div class="slideDown" ng-hide="!isShowingAllStats">
+                    <div class="stat-block">
+                        <div class="text-center stat-icon">
+                            <i class="fa fa-mouse-pointer fa-3x"></i>
                         </div>
-                        <div class="note-text text-uppercase">CTR</div>
+                        <div class="stat-value">
+                            <div class="value-text">
+                                <strong>{{ adStats[0].clicks / adStats[0].imps | percentage:2 }}</strong>
+                            </div>
+                            <div class="note-text text-uppercase">CTR</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-block">
+                        <div class="text-center stat-icon">
+                            <i class="fa fa-shopping-cart fa-3x"></i>
+                        </div>
+                        <div class="stat-value">
+                            <div class="value-text">
+                                <strong>{{ adStats[0].view_convs +  adStats[0].click_convs }}</strong>
+                            </div>
+                            <div class="note-text text-uppercase">Total Actions</div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="stat-block"
-                    ng-if="isShowingAllStats">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-shopping-cart fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].view_convs +  adStats[0].click_convs }}</strong>
-                        </div>
-                        <div class="note-text text-uppercase">Total Actions</div>
-                    </div>
-                </div>
-
                 <!-- Show more stats button -->
                 <div ng-if="!isShowingAllStats">
                     <button class="btn btn-block btn-third-white-horizontal"
@@ -159,7 +158,7 @@
             </div>
         
             <!-- Screenshot images -->
-            <div class="screenshot"
+            <div class="screenshot slide"
                 ng-repeat="screenshotImage in currentlyShowingScreenshots track by screenshotImage.id">
                 <img src="{{ screenshotImage.url }}" alt="Screenshot" ng-click="viewScreenshot(screenshotImage)">
             </div>            
