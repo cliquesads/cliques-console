@@ -1,0 +1,26 @@
+<!--- Base abstract template for Analytics state --->
+<h3 class="custom-content-heading">
+    <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
+</h3>
+<div class="unwrap">
+    <div class="text-center bg-one-quarter-black">
+        <div class="row row-table">
+            <div class="col-xs-6 br p mb hover-gray" ng-click="$state.transitionTo('app.analytics.quickQueries')" ng-class="{'bg-one-third-black': $state.$current.name === 'app.analytics.quickQueries'}">
+                <h4 class="m0"><i class="fa fa-bolt"></i> Quick Queries</h4>
+                <small>Select from one of our prebuilt queries to get number-crunchin' in a hurry.</small>
+            </div>
+            <div class="col-xs-6 br p mb hover-gray" ng-click="$state.transitionTo('app.analytics.customQueries')" ng-class="{'bg-one-third-black': $state.$current.name === 'app.analytics.customQueries'}">
+                <h4 class="m0"><i class="fa fa-wrench"></i> Build Your Own</h4>
+                <small>Nerd out. Go nuts. Build a custom query and save it for later use.</small>
+            </div>
+        </div>
+    </div>
+    <div class="query-container">
+        <div class="col-sm-2">
+            <section ui-view="sideBar"></section>
+        </div>
+        <div class="col-sm-10">
+            <section ui-view="main"></section>
+        </div>
+    </div>
+</div>

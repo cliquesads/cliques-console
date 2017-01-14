@@ -1,11 +1,12 @@
 <div class="row row-table">
-    <div class="col-xs-3 col-sm-2 col-md-1">
+    <div class="col-xs-5 col-sm-4 col-md-2">
         <img ng-src="{{ advertiser.logo_secure_url }}" class="client-logo-md"/>
     </div>
-    <div class="col-xs-9 col-sm-8 col-md-4">
+    <div class="col-xs-6 col-sm-7 col-md-9">
         <h4 class="list-group-item-heading" data-ng-bind="advertiser.name"></h4>
         <p class="list-group-item-text"> Active Campaigns: {{ (advertiser.campaigns | filter: {'active': "true"}).length }}, Inactive Campaigns: {{ (advertiser.campaigns | filter: {'active': "false"}).length }}</p>
     </div>
-    <div class="col-md-7 hidden-sm hidden-xs"></div>
-    <div class="col-sm-2 col-md-1 hidden-xs"></div>
+    <div class="col-xs-1 col-sm-1 col-md-1 text-right">
+    	<i class="fa fa-pencil-square-o"></i>
+    </div>
 </div>

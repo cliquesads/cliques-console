@@ -6,12 +6,26 @@
 'use strict';
 
 angular.module('core').controller('AdvertiserDashboardController',
-    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
-        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
+    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog',
+        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog) {
+
+            $scope.isShowingAllStats = false;
+
+            $scope.allCampaigns = [];
+            $scope.currentlyShowingCampaigns = [];
+            $scope.showingCampaignEndIndex = 0;
+
             $scope.creatives = [];
             $scope.advertisers = Advertiser.query(function(advertisers){
                 advertisers.forEach(function(adv){
                     adv.campaigns.forEach(function(camp){
+                        camp.adv_logo_url = adv.logo_url;
+                        camp.parentAdvertiserId = adv._id;
+                        $scope.allCampaigns.push(camp);
+                        if ($scope.currentlyShowingCampaigns.length < 2) {
+                            $scope.currentlyShowingCampaigns.push(camp);
+                        }
+                        $scope.showingCampaignEndIndex = $scope.currentlyShowingCampaigns.length - 1;
                         camp.creativegroups.forEach(function(crg){
                             crg.creatives.forEach(function(cr){
                                 var description = camp.name + ' - ' + cr.name;
@@ -32,6 +46,7 @@ angular.module('core').controller('AdvertiserDashboardController',
             HourlyAdStat.advSummaryQuery({}).then(function(response){
                 $scope.adStats = response.data;
             });
+
 
             // See service in aggregations module for details on aggregationDateRanges object
             $scope.summaryDateRangeSelection = "7d";
@@ -70,6 +85,9 @@ angular.module('core').controller('AdvertiserDashboardController',
                 // TODO: Need to provide error callback for query promise as well
                 $scope.summaryDateRangeSelection = dateShortCode;
             };
+
+$scope.getDashboardGraph('30d');
+
 
             $scope.dateRangeSelection = "7d";
             $scope.tabFunctions = {
@@ -139,6 +157,92 @@ angular.module('core').controller('AdvertiserDashboardController',
                 $scope.tabFunctions[tab](dateShortCode);
                 $scope.dateRangeSelection = dateShortCode;
             };
+
+            $scope.showMoreStats = function(){
+                $scope.isShowingAllStats = true;
+            };
+            $scope.hideMoreStats = function() {
+                $scope.isShowingAllStats = false;
+            };
+            $scope.scrollUpShowingCampaigns = function() {
+                if ($scope.showingCampaignEndIndex > 0) {
+                    $scope.showingCampaignEndIndex --; 
+                    $scope.currentlyShowingCampaigns = [];
+                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
+                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
+                }
+            };
+            $scope.scrollDownShowingCampaigns = function() {
+                if ($scope.showingCampaignEndIndex < ($scope.allCampaigns.length - 1)) {
+                    $scope.showingCampaignEndIndex ++; 
+                    $scope.currentlyShowingCampaigns = [];
+                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
+                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
+                }
+            };
+
+            // TO-DO:::ycx dummy screenshot images, should be replaced by real screenshot images
+            $scope.screenshotImages = [
+                {
+                    id: 1,
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Adventure%20Journal%20Mock%20Screenshot.jpg'
+                },
+                {
+                    id: 2,
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/CXMax%20Mock%20Screenshot.jpg'
+                },
+                {
+                    id: 3,
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Mock%20Screenshot%20TGR.jpg'
+                },
+                {
+                    id: 4,
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Gravelbike%20Screenshot%20Mock.jpg'
+                },
+                {
+                    id: 5,
+                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Skiing%20Magazine%20Mock%20Screenshot.jpg'
+                }
+            ];
+
+            $scope.viewScreenshot = function(screenshot){
+                ngDialog.open({
+                    template: 'modules/core/views/partials/screenshot-dialog.html',
+                    data: { screenshotUrl: screenshot.url },
+                    className: 'ngdialog-theme-default dialogwidth800'
+                });
+            };
+
+            $scope.currentlyShowingScreenshots = [
+                $scope.screenshotImages[0],
+                $scope.screenshotImages[1],
+                $scope.screenshotImages[2]
+            ];
+            $scope.showingScreenshotEndIndex = 2;
+            $scope.showLastScreenshot = function() {
+                if ($scope.showingScreenshotEndIndex > 2) {
+                    $scope.showingScreenshotEndIndex --;
+                    $scope.currentlyShowingScreenshots = [];
+                    $scope.currentlyShowingScreenshots = [
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 2],
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 1],
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex],
+                    ];
+                }
+            };
+            $scope.showNextScreenshot = function() {
+                if ($scope.showingScreenshotEndIndex < ($scope.screenshotImages.length - 1)) {
+                    $scope.showingScreenshotEndIndex ++;
+                    $scope.currentlyShowingScreenshots = [];
+                    $scope.currentlyShowingScreenshots = [
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 2],
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 1],
+                        $scope.screenshotImages[$scope.showingScreenshotEndIndex],
+                    ];
+                }
+            };
+
+
         }
     ]
 );

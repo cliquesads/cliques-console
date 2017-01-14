@@ -12,25 +12,12 @@ adding hook in parent template ---->
         <!--showNewModal toggles on or off depending on query param showModal-->
         <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
-            <!--<div>-->
-                <!--<small>-->
-                    <!--<em class="text-muted">-->
-                        <!--Created on-->
-                        <!--<span data-ng-bind="campaign.tstamp | date:'mediumDate'"></span>-->
-                        <!--by-->
-                        <!--<span data-ng-bind="advertiser.user.displayName"></span>-->
-                    <!--</em>-->
-                <!--</small>-->
-            <!--</div>-->
+            <h3 class="color-white ml-sm">{{ campaign.name }}</h3>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <div class="col-md-5">
                 <!--BEGIN Campaign Basics Panel-->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            Campaign Settings
-                        </div>
-                    </div>
+                <div class="custom-section-title no-font-style ml-sm">Campaigns Settings</div>
+                <div class="panel panel-default mt-sm">
                     <tabset>
                         <tab heading="Basics">
                             <div class="panel-body">
@@ -255,7 +242,15 @@ adding hook in parent template ---->
                 </div>
             </div>
             <div class="col-md-7">
-                <div id="campaignGraphPanel" class="panel panel-default" data-ng-init="getTabData(dateRangeSelection)">
+                <div class="custom-section-title no-font-style pl-xl">
+                    <span>Advertiser QuickStats</span>
+                    <span class="pull-right">
+                        Want to see more data? &nbsp;
+                        <i class="fa fa-signal"></i>
+                        <a href="#" class="color-white-60 text-underline">Go to Analytics</a>
+                    </span>
+                </div>
+                <div id="campaignGraphPanel" class="panel panel-default ml-xl mt-sm" data-ng-init="getTabData(dateRangeSelection)">
                     <div class="panel-heading">
                         <div class="panel-title">
                             {{ dateRanges[dateRangeSelection].label }}

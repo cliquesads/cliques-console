@@ -1,9 +1,24 @@
 'use strict';
-angular.module('advertiser').controller('NewCampaignController', ['$scope','$location',
-    function($scope, $location){
-        // first get advertiser from ngDialogData
-        $scope.advertiser = $scope.ngDialogData.advertiser;
-        $scope.initCampaigns = $scope.advertiser.campaigns;
+angular.module('advertiser').controller('NewCampaignController', ['$scope','$location', '$rootScope', 'Advertiser', '$stateParams',
+    function($scope, $location, $rootScope, Advertiser, $stateParams){
+        if ($stateParams.advertiser) {
+            $scope.advertiser = $stateParams.advertiser;
+            $scope.initCampaigns = $scope.advertiser.campaigns;
+        } else if ($rootScope.advertiser) {
+            $scope.advertiser = $rootScope.advertiser;
+            $scope.initCampaigns = $scope.advertiser.campaigns;
+        } else {
+            Advertiser.query(function(advertisers) {
+                if (advertisers.length === 1) {
+                    $rootScope.advertiser = advertisers[0];
+                    $scope.advertiser = advertisers[0];
+                    $scope.initCampaigns = $scope.advertiser.campaigns;
+                } else {
+                    // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
+                    $location.path('/advertiser');
+                }
+            });
+        }
         $scope.campaign = null;
 
         $scope.rowTemplate = '<div class="col-sm-1"><div class="label" ng-class="option.active ? \'label-success\':\'label-default\'">{{ option.active ? "Active":"Inactive"}}</div></div>' +

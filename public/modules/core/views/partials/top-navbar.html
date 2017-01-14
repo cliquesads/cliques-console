@@ -90,6 +90,11 @@
                 </ul>
             </li>
             <li class="dropdown" dropdown>
+                <a href="/#!/settings/profile" class="m0 p0">
+                    <img src="{{ authentication.user.secureAvatarUrl ||  userIdenticon }}" alt="Profile Image" class="img-thumbnail avatar avatar-sm mt-sm"/>
+                </a>
+            </li>
+            <li class="dropdown" dropdown>
                 <a href class="dropdown-toggle pb-sm pt-sm" dropdown-toggle>
                     <span data-ng-bind="authentication.user.displayName"></span>
                     <b class="caret"></b>

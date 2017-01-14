@@ -1,20 +1,41 @@
-<div ng-show="(advertisers | filter:hasActiveCampaigns(true)).length">
-    <em>Active</em>
-    <br/>
-    <div class="list-group">
-        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
-            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-        </a>
+<div class="row">
+    <div class="col-sm-offset-2 col-sm-8">
+        <div class="header-section">
+            <div class="header-text">
+                <strong>Please Select an Advertiser to View Campaigns</strong>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="rememberMySelection">Remember My Selection
+                </label>
+            </div> 
+        </div>
     </div>
 </div>
-<div ng-show="(advertisers | filter:hasActiveCampaigns(false)).length">
-    <hr class="mb-sm"/>
-    <em>Inactive</em>
-    <br/>
-    <div class="list-group">
-        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item">
-            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-        </a>
+<div class="row">
+    <div class="col-sm-offset-2 col-sm-8 advertiser-list-container">
+        <div class="btn-third-white-horizontal" ng-click="goToCreateNewAdvertiser()">
+            <i class="fa fa-plus"></i>&nbsp;&nbsp;
+            CREATE NEW ADVERTISER
+        </div> 
+        <div ng-show="(advertisers | filter:hasActiveCampaigns(true)).length">
+            <br/>
+            <em class="custom-section-title">Active</em>
+            <div class="list-group">
+                <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                    <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
+                </a>
+            </div>
+        </div>
+        <div ng-show="(advertisers | filter:hasActiveCampaigns(false)).length">
+            <br/>
+            <em class="custom-section-title">Inactive</em>
+            <div class="list-group">
+                <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                    <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 <div class="alert alert-info text-center pv-xl" data-ng-if="advertisers.$resolved && !advertisers.length">

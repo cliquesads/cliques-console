@@ -12,7 +12,7 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 		state('app.advertiser.listAdvertiser', {
             url: '/advertiser',
-            title: 'List Advertiser',
+            title: 'All Advertisers',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
@@ -41,7 +41,7 @@ angular.module('advertiser').config(['$stateProvider',
             title: 'List Campaigns',
             views: {
                 'main': {
-                    templateUrl: 'modules/advertiser/views/list-campaigns.client.view.html',
+                    templateUrl: 'modules/advertiser/views/view-advertiser.client.view.html',
                     controller: 'CampaignController'
                 },
                 'titleBar': {
@@ -77,7 +77,7 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 		state('app.advertiser.viewAdvertiser', {
 			url: '/advertiser/:advertiserId',
-			title: 'View Advertiser',
+			title: 'All Advertisers',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-advertiser.client.view.html',
@@ -110,6 +110,17 @@ angular.module('advertiser').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/advertiser/views/site-targeting.client.view.html',
                     controller: 'SiteTargetingController'
+                }
+            }
+        }).
+        state('app.advertiser.createNewCampaign', {
+            url: '/advertiser/create/campaign',
+            title: 'New Campaign',
+            params: {advertiser: null},
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/new-campaign.client.view.html',
+                    controller: 'NewCampaignController',
                 }
             }
         });
