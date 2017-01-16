@@ -1,11 +1,15 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
-    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
+    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
     function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations, Timezones,
-             TermsAndConditions, REGEXES){
+             TermsAndConditions, REGEXES, FileUploader){
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
+
+        $scope.logo_uploader = new FileUploader({
+            url: 'console/logos'
+        });
 
         // If user is signed in then redirect back home
         if ($scope.authentication.user) {
