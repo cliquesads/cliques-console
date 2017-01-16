@@ -22,16 +22,6 @@ var mailer = new mail.Mailer();
 // set API key for mailchimp client
 mailchimp.setApiKey(config.get('MailChimp.apiKey'));
 
-function generateDefaultAdvertiser() {
-	return {
-		name: '',
-		description: null,
-		website: '',
-		logo_url: '',
-		campaigns: []
-	};
-}
-
 /**
  * Endpoint to gain access to signup page
  */
@@ -178,10 +168,11 @@ exports.signup = function(req, res) {
             org.save(function (err, org) {
                 if (err) return handleError(res, err);
 
-                // create a default advertiser and attaches it to the new organization
                 if (org.organization_types[0] === 'advertiser') {
+                	// create a default advertiser and attaches it to the new organization
                 	var advertiserModels = new models.AdvertiserModels(global.db);
-                	var advertiser = new advertiserModels.Advertiser(generateDefaultAdvertiser());
+                	var advertiser = new advertiserModels.Advertiser();
+
                 	advertiser.user = user;
                 	advertiser.organization = org;
                 	advertiser.name = org.name;
@@ -204,6 +195,39 @@ exports.signup = function(req, res) {
                 			        mailer.sendMailFromUser('New Advertiser Created',
                 			            'new-advertiser-email.server.view.html',
                 			            { advertiser: advertiser, user: req.user },
+                			            req.user,
+                			            'support@cliquesads.com'
+                			        );
+                			    }
+                			});
+                		}
+                	});
+                } else if (org.organization_types[0] === 'publisher') {
+                	// create a default publisher and attaches it to the new organization
+                	var publisherModels = new models.PublisherModels(global.db);
+                	var publisher = new publisherModels.Publisher();
+                	publisher.user = user;
+                	publisher.organization = org;
+                	publisher.name = org.name;
+                	publisher.website = org.website;
+
+                	publisher.save(function(err) {
+                		if (err) {
+                			console.log(err);
+                			return res.status(400).send({
+                				message: errorHandler.getAndLogErrorMessage(err)
+                			});
+                		} else {
+                			publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
+                			    if (err) {
+                			        return res.status(400).send({
+                			            message: errorHandler.getAndLogErrorMessage(err)
+                			        });
+                			    }
+                			    if (process.env.NODE_ENV === 'production'){
+                			        mailer.sendMailFromUser('New Publisher & Site Created',
+                			            'new-publisher-email.server.view.html',
+                			            { publisher: pub, user: req.user },
                 			            req.user,
                 			            'support@cliquesads.com'
                 			        );
