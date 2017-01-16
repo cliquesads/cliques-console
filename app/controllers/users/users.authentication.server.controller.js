@@ -12,13 +12,25 @@ var _ = require('lodash'),
     AccessCode = mongoose.model('AccessCode'),
     mail = require('../mailer.server.controller.js'),
 	config = require('config'),
-	mailchimp = require('mailchimp-v3');
+	mailchimp = require('mailchimp-v3'),
+	node_utils = require('@cliques/cliques-node-utils'),
+    models = node_utils.mongodb.models;
+
 
 var mailer = new mail.Mailer();
 
 // set API key for mailchimp client
 mailchimp.setApiKey(config.get('MailChimp.apiKey'));
 
+function generateDefaultAdvertiser() {
+	return {
+		name: '',
+		description: null,
+		website: '',
+		logo_url: '',
+		campaigns: []
+	};
+}
 
 /**
  * Endpoint to gain access to signup page
@@ -165,6 +177,41 @@ exports.signup = function(req, res) {
 
             org.save(function (err, org) {
                 if (err) return handleError(res, err);
+
+                // create a default advertiser and attaches it to the new organization
+                if (org.organization_types[0] === 'advertiser') {
+                	var advertiserModels = new models.AdvertiserModels(global.db);
+                	var advertiser = new advertiserModels.Advertiser(generateDefaultAdvertiser());
+                	advertiser.user = user;
+                	advertiser.organization = org;
+                	advertiser.name = org.name;
+                	advertiser.website = org.website;
+
+                	advertiser.save(function(err) {
+                		if (err) {
+                			return res.status(400).send({
+                				message: errorHandler.getAndLogErrorMessage(err)
+                			});
+                		} else {
+                			advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                			    if (err) {
+                			        return res.status(400).send({
+                			            message: errorHandler.getAndLogErrorMessage(err)
+                			        });
+                			    }
+                			    if (process.env.NODE_ENV === 'production'){
+                			        // Now send internal email notifying team of creation
+                			        mailer.sendMailFromUser('New Advertiser Created',
+                			            'new-advertiser-email.server.view.html',
+                			            { advertiser: advertiser, user: req.user },
+                			            req.user,
+                			            'support@cliquesads.com'
+                			        );
+                			    }
+                			});
+                		}
+                	});
+                }
                 // Email support team notifying of account creation
                 if (process.env.NODE_ENV === 'production') {
                     mailer.sendMail({

@@ -19,7 +19,6 @@ var swig = require('swig');
 require('swig-filters')(swig);
 require('./config/swig')(swig);
 
-
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
@@ -42,6 +41,9 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
     }
     console.log(logstring);
 });
+
+// Expose db as a global object
+global.db = db;
 
 // Initialize auto-increment
 autoIncrement.initialize(db);
