@@ -68,6 +68,7 @@ module.exports = function(db) {
 		    // flag to tell whether or not user should be made
 		    // primary contact for organization
 		    var isOwner= req.body.isOwner;
+		    var logoUrl = req.body.logo_url;
 		    var user = new User(req.body);
 		    var message = null;
 
@@ -113,6 +114,9 @@ module.exports = function(db) {
 		                	advertiser.organization = org;
 		                	advertiser.name = org.name;
 		                	advertiser.website = org.website;
+		                	if (logoUrl) {
+		                		advertiser.logo_url = logoUrl;
+		                	}
 
 		                	advertiser.save(function(err) {
 		                		if (err) {
@@ -146,6 +150,9 @@ module.exports = function(db) {
 		                	publisher.organization = org;
 		                	publisher.name = org.name;
 		                	publisher.website = org.website;
+		                	if (logoUrl) {
+		                		publisher.logo_url = logoUrl;
+		                	}
 
 		                	publisher.save(function(err) {
 		                		if (err) {

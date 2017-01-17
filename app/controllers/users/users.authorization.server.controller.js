@@ -49,7 +49,6 @@ exports.basicAuth = function(req, res, next){
 exports.requiresLogin = function(req, res, next) {
 	// Make an exception for uploading logos
 	if (req.url === '/logos') {
-		console.log('is uploading logo');
 		return next();
 	}
 	if (!req.isAuthenticated()) {
