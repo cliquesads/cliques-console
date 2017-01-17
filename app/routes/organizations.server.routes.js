@@ -2,10 +2,9 @@
 'use strict';
 
 var organizations = require('../../app/controllers/organizations.server.controller');
-var users = require('../controllers/users.server.controller');
 
 module.exports = function(db, routers) {
-
+    var users = require('../controllers/users.server.controller')(db);
     /**
      * @apiDefine OrganizationSchema
      * @apiParam (Body (Organization Schema)) {ObjectId} [id]      Organization ID. Will be auto-generated for new organizations

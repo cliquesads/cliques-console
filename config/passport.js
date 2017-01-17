@@ -11,7 +11,7 @@ var passport = require('passport'),
 /**
  * Module init function.
  */
-module.exports = function() {
+module.exports = function(db) {
 	// Serialize sessions
 	passport.serializeUser(function(user, done) {
 		done(null, user.id);
@@ -28,6 +28,6 @@ module.exports = function() {
 
 	// Initialize strategies
 	config.getGlobbedFiles('./config/strategies/**/*.js').forEach(function(strategy) {
-		require(path.resolve(strategy))();
+		require(path.resolve(strategy))(db);
 	});
 };

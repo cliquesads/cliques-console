@@ -42,9 +42,6 @@ var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOp
     console.log(logstring);
 });
 
-// Expose db as a global object
-global.db = db;
-
 // Initialize auto-increment
 autoIncrement.initialize(db);
 
@@ -62,7 +59,7 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
 var app = require('./config/express')(db);
 
 // Bootstrap passport config
-require('./config/passport')();
+require('./config/passport')(db);
 
 // Start the app by listening on <port>
 app.listen(config.port);
