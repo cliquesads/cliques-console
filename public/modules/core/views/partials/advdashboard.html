@@ -1,5 +1,5 @@
 <section data-ng-controller="AdvertiserDashboardController">
-    <div class="jumbotron text-center" ng-show="advertisers.length == 0">
+    <div class="jumbotron text-center" ng-show="allCampaigns.length == 0">
         <div class="text-center">
             Thanks for being a part of the Cliques Beta Program!
         </div>
@@ -15,7 +15,7 @@
             </p>
         </div>
     </div>
-    <section ng-show="advertisers.length > 0">
+    <section ng-show="allCampaigns.length > 0">
         <div class="row">
             <!-- My Campaigns Section -->
             <div class="col-lg-6 col-sm-12">

@@ -23,6 +23,10 @@ adding hook in parent template ---->
                 <div class="btn-third-white-horizontal mt" ng-click="newCampaign()">
                     <i class="fa fa-plus"></i>&nbsp;&nbsp; CREATE NEW CAMPAIGN
                 </div>
+                <!-- Placeholder if there is no campaigns yet -->
+                <div class="alert alert-info text-center mv-lg pv-xl" data-ng-if="advertiser.campaigns.length === 0">
+                    <h4>No Campaigns yet, why don't you <br><a ng-click="newCampaign()">create one</a>?</h4>
+                </div>
                 <ul class="list-group mt-lg">
                     <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
                         <div class="row row-table">
