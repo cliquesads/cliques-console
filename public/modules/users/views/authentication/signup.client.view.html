@@ -1,11 +1,11 @@
-<div ng-show="stateError" class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 alert alert-danger text-center">
+<div ng-show="stateError" class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 alert alert-danger text-center">
     <h3 data-ng-bind="stateError"></h3>
 </div>
 <section ng-hide="stateError" class="row">
     <h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
-    <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 panel panel-default">
+    <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 panel panel-default">
         <div class="panel-body">
-            <form name="userform" id="userform" data-ng-submit="signup()" form-wizard="" validate-steps="true" validate-form="" steps="4" autocomplete="off">
+            <form name="userform" id="userform" data-ng-submit="signup()" form-wizard="" validate-steps="true" validate-form="" steps="4">
                 <div class="form-wizard wizard-horizontal">
                     <!-- START wizard steps indicator-->
                     <ol class="row" style="margin-left: -15px; margin-right: -15px">
@@ -113,8 +113,8 @@
                                 </div>
                             </div>
                             <!-- End of logo uploader -->
-                            <div class="row pt">
-                                <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Website *</label>
                                         <div class="input-group">
@@ -123,9 +123,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row pt">
-                                <div class="col-md-8">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="phone">Phone Number *</label>
                                         <input type="text" required="required" id="phone" data-parsley-intlphone name="phone" class="form-control" data-ng-model="organization.phone" data-parsley-group="step2">
