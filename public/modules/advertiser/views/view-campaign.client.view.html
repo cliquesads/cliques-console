@@ -12,7 +12,7 @@ adding hook in parent template ---->
         <!--showNewModal toggles on or off depending on query param showModal-->
         <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
-            <h3 class="color-white ml-sm">{{ campaign.name }}</h3>
+            <h3 class="ml-sm">{{ campaign.name }}</h3>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <div class="col-md-5">
                 <!--BEGIN Campaign Basics Panel-->
@@ -247,7 +247,7 @@ adding hook in parent template ---->
                     <span class="pull-right">
                         Want to see more data? &nbsp;
                         <i class="fa fa-signal"></i>
-                        <a href="#" class="color-white-60 text-underline">Go to Analytics</a>
+                        <a href="#" class=" text-underline">Go to Analytics</a>
                     </span>
                 </div>
                 <div id="campaignGraphPanel" class="panel panel-default ml-xl mt-sm" data-ng-init="getTabData(dateRangeSelection)">
