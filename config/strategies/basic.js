@@ -7,7 +7,7 @@ var passport = require('passport'),
 	BasicStrategy = require('passport-http').BasicStrategy,
 	User = require('mongoose').model('User');
 
-module.exports = function() {
+module.exports = function(db) {
 	// Use basic auth strategy
 	passport.use(new BasicStrategy(
 		function(username, password, done) {

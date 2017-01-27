@@ -6,10 +6,10 @@
 var passport = require('passport'),
 	url = require('url'),
 	GithubStrategy = require('passport-github').Strategy,
-	config = require('../config'),
-	users = require('../../app/controllers/users.server.controller');
+	config = require('../config');
 
-module.exports = function() {
+module.exports = function(db) {
+	var users = require('../../app/controllers/users.server.controller')(db);
 	// Use github strategy
 	passport.use(new GithubStrategy({
 			clientID: config.github.clientID,

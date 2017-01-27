@@ -1,11 +1,17 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
-    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES',
+    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
     function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations, Timezones,
-             TermsAndConditions, REGEXES){
+             TermsAndConditions, REGEXES, FileUploader){
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
+
+        $scope.logo_uploader = new FileUploader({
+            url: 'console/logos'
+        });
+
+        $scope.logo_url = undefined;
 
         // If user is signed in then redirect back home
         if ($scope.authentication.user) {
@@ -192,6 +198,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 $scope.organization.promos = $scope.promos[$scope.organization.type];
             }
 
+            $scope.logo_url = $scope.organization.logo_url;
             // if we're creating a new organization, make this user the primary contact
             $scope.credentials.isOwner = true;
 
@@ -210,6 +217,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 $scope.credentials.accesscode = $scope.authentication.accesscode._id;
             }
             $scope.credentials.organization = organizationId;
+            $scope.credentials.logo_url = $scope.logo_url;
             // Post the request
             $http.post('/auth/signup', $scope.credentials).success(function(response){
                 // If successful we assign the response to the global user model

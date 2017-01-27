@@ -6,10 +6,10 @@
 var passport = require('passport'),
 	url = require('url'),
 	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-	config = require('../config'),
-	users = require('../../app/controllers/users.server.controller');
+	config = require('../config');
 
-module.exports = function() {
+module.exports = function(db) {
+	var users = require('../../app/controllers/users.server.controller')(db);
 	// Use google strategy
 	passport.use(new GoogleStrategy({
 			clientID: config.google.clientID,

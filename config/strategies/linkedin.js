@@ -6,10 +6,10 @@
 var passport = require('passport'),
 	url = require('url'),
 	LinkedInStrategy = require('passport-linkedin').Strategy,
-	config = require('../config'),
-	users = require('../../app/controllers/users.server.controller');
+	config = require('../config');
 
-module.exports = function() {
+module.exports = function(db) {
+	var users = require('../../app/controllers/users.server.controller')(db);
 	// Use linkedin strategy
 	passport.use(new LinkedInStrategy({
 			consumerKey: config.linkedin.clientID,

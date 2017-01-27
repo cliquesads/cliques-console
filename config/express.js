@@ -35,7 +35,7 @@ module.exports = function(db) {
 	});
 
 	// Have to require users after models are loaded
-	var users = require('../app/controllers/users.server.controller');
+	var users = require('../app/controllers/users.server.controller')(db);
 
 	// Setting application local variables
 	app.locals.title = config.app.title;

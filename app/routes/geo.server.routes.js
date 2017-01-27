@@ -1,7 +1,7 @@
 /* jshint node: true */ 'use strict';
-var users = require('../controllers/users.server.controller');
 
 module.exports = function(db, routers){
+	var users = require('../controllers/users.server.controller')(db);
     var geo = require('../controllers/geo.server.controller.js')(db);
     var router = routers.apiRouter;
 
