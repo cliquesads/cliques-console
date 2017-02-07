@@ -4,13 +4,7 @@
         <span ng-show="$state.current.name === 'app.home'">Home</span>
     </li>
     <li ng-show="$state.current.name != 'app.home'" ng-repeat="crumb in $breadcrumbs" ng-class="{ 'active' : $last }">
-        <!--TODO: the `title.name` variable below should just be title, with the actual title variable returned by the
-            TODO: `$title` resolve. But for some reason, the promise doesn't resolve in the `$title` resolve function when
-            TODO: you add a property call to the resolve chained object (say, `advertiser`), so I had to hack it by calling
-            TODO: the actual property in the template, which works for some reason. I have no idea why.
-            TODO: Fortunately, naming conventions are consistent across all objects, so this shouldn't really be an issue,
-            TODO: it just looks and feels terrible. -->
-        <a ng-if="!$last" href="{{$state.href(crumb.state, crumb.stateParams)}}">{{crumb.title.name || crumb.title }}</a>
-        <strong><span ng-if="$last">{{ crumb.title.name || crumb.title }}</span></strong>
+        <a ng-if="!$last" href="{{$state.href(crumb.state, crumb.stateParams)}}">{{crumb.title}}</a>
+        <strong><span ng-if="$last">{{ crumb.title }}</span></strong>
     </li>
 </ul>

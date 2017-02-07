@@ -159,11 +159,11 @@ angular.module('advertiser').config(['$stateProvider',
             url: '/:advertiserId',
             resolve: {
                 advertiser: function($stateParams, Advertiser){
-                    return Advertiser.get({ advertiserId: $stateParams.advertiserId });
+                    return Advertiser.get({ advertiserId: $stateParams.advertiserId }).$promise;
                 },
                 $title: function(advertiser){
                     // TODO: see comment in breadcrumbs.html for we're not returning `advertiser.name` here
-                    return advertiser;
+                    return advertiser.name;
                 }
             },
             views: {
@@ -199,7 +199,7 @@ angular.module('advertiser').config(['$stateProvider',
                     });
                 },
                 $title: function(campaign){
-                    return campaign;
+                    return campaign.name;
                 }
             },
             views: {

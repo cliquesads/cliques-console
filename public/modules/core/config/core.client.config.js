@@ -87,21 +87,4 @@ angular.module('core').run(['Menus',
                 }
             }
         });
-})
-.config(['$titleProvider', function($titleProvider) {
-    $titleProvider.documentTitle(function($rootScope) {
-        // get base title from document, set server-side
-        var baseDocTitle = $('title').text();
-        var titlePrefix;
-        if ($rootScope.$title){
-            if (typeof $rootScope.$title === 'string'){
-                titlePrefix = $rootScope.$title;
-            } else {
-                // TODO: FIX THIS HACK
-                // TODO: See comments in breadcrumbs.html for why I have to do this
-                titlePrefix = $rootScope.$title.name;
-            }
-        }
-        return titlePrefix + ' - ' + baseDocTitle;
-    });
-}]);
+});
