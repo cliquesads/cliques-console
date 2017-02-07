@@ -177,7 +177,7 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
-        state('app.advertiser.viewAdvertiser.createNewCampaign', {
+        state('app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign', {
             url: '/create/campaign',
             params: {advertiser: null},
             resolve: {

@@ -130,7 +130,7 @@ controller('AdvertiserController', ['$scope', '$stateParams', '$location',
             };
 
             $scope.newCampaign = function(){
-                $state.go('app.advertiser.createNewCampaign', {advertiser: $scope.advertiser});
+                $state.go('app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign', {advertiser: $scope.advertiser});
             };
 
             // ######################################### //
