@@ -1,5 +1,37 @@
 'use strict';
 
+/**
+ * Isolated logic behind campaign routes in which a user must be prompted
+ * to select an advertiser first. Logical switch to direct user to appropriate
+ * view depending on if they have set up advertisers/campaigns already.
+ *
+ * Passes inferred advertiserId, if one is found, to callback function, otherwise
+ * passes null.
+ */
+var getImpliedAdvertiserId = function($state, $rootScope, $location, Advertiser, callback){
+    if ($rootScope.advertiser) {
+        return callback(null, $rootScope.advertiser._id);
+    } else {
+        Advertiser.query(function (advertisers) {
+            // if user only has one advertiser available, the just
+            // set that advertiser as default in $rootScope and go
+            // to that advertiser's page
+            if (advertisers.length === 1) {
+                // set rootScope advertiser, since there's only one and this
+                // will save a trip to the DB next time.
+                $rootScope.advertiser = advertisers[0];
+                return callback($rootScope.advertiser._id);
+            } else {
+                // Otherwise, either user has NOT selected an advertiser yet,
+                // or user doesn't have an advertiser.
+                return callback(null, null);
+            }
+        }, function(err){
+            return callback(err);
+        });
+    }
+};
+
 // Setting up route
 angular.module('advertiser').config(['$stateProvider',
 	function($stateProvider) {
@@ -66,38 +98,41 @@ angular.module('advertiser').config(['$stateProvider',
          * Not a real state, but a logical switch to direct user to appropriate
          * view depending on if they have set up advertisers/campaigns already.
          *
-         * Not abstract, though, since it needs to be browsable.
+         * Not abstract, though, since it needs to be browseable.
          */
         state('app.advertiser.allCampaigns', {
             url: '/all-campaigns',
             resolve: {
                 redirect: function ($state, $rootScope, $location, Advertiser) {
-                    if ($rootScope.advertiser) {
-                        $location.path('/advertiser/' + $rootScope.advertiser._id);
-                        // TODO: State.go just hangs, have no idea why
-                        // $state.go('app.advertiser.allAdvertisers.viewAdvertiser', {
-                        //     advertiserId: $rootScope.advertiser._id
-                        // });
-                    } else {
-                        Advertiser.query(function (advertisers) {
-                            // if user only has one advertiser available, the just
-                            // set that advertiser as default in $rootScope and go
-                            // to that advertiser's page
-                            if (advertisers.length === 1) {
-                                // set
-                                $rootScope.advertiser = advertisers[0];
-                                $location.path('/advertiser/' + $rootScope.advertiser._id);
-                                // $state.go('app.advertiser.allAdvertisers.viewAdvertiser', {
-                                //     advertiserId: $rootScope.advertiser._id
-                                // });
-                            } else {
-                                // Otherwise, either user has NOT selected an advertiser yet,
-                                // or user doesn't have an advertiser. Either way,
-                                // redirect to list advertiser page so they can choose.
-                                $state.go('app.advertiser.allAdvertisers');
-                            }
-                        });
-                    }
+                    getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
+                        if (advertiserId){
+                            // TODO: State.go just hangs, have no idea why
+                            $location.path('/advertiser/' + advertiserId);
+                        } else {
+                            $state.go('app.advertiser.allAdvertisers');
+                        }
+                    });
+                }
+            }
+        }).
+
+        /**
+         * Not a real state, but a logical switch to direct user to appropriate
+         * view depending on if they have set up advertisers/campaigns already.
+         *
+         * Not abstract, though, since it needs to be browseable.
+         */
+        state('app.advertiser.createCampaign', {
+            url: '/new-campaign',
+            resolve: {
+                redirect: function($state, $rootScope, $location, Advertiser){
+                    getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
+                        if (advertiserId){
+                            $location.path('/advertiser/' + advertiserId + '/create/campaign');
+                        } else {
+                            $state.go('app.advertiser.allAdvertisers');
+                        }
+                    });
                 }
             }
         }).
