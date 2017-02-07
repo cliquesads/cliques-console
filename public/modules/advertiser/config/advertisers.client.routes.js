@@ -63,6 +63,46 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 
         /**
+         * Not a real state, but a logical switch to direct user to appropriate
+         * view depending on if they have set up advertisers/campaigns already.
+         *
+         * Not abstract, though, since it needs to be browsable.
+         */
+        state('app.advertiser.allCampaigns', {
+            url: '/all-campaigns',
+            resolve: {
+                redirect: function ($state, $rootScope, $location, Advertiser) {
+                    if ($rootScope.advertiser) {
+                        $location.path('/advertiser/' + $rootScope.advertiser._id);
+                        // TODO: State.go just hangs, have no idea why
+                        // $state.go('app.advertiser.allAdvertisers.viewAdvertiser', {
+                        //     advertiserId: $rootScope.advertiser._id
+                        // });
+                    } else {
+                        Advertiser.query(function (advertisers) {
+                            // if user only has one advertiser available, the just
+                            // set that advertiser as default in $rootScope and go
+                            // to that advertiser's page
+                            if (advertisers.length === 1) {
+                                // set
+                                $rootScope.advertiser = advertisers[0];
+                                $location.path('/advertiser/' + $rootScope.advertiser._id);
+                                // $state.go('app.advertiser.allAdvertisers.viewAdvertiser', {
+                                //     advertiserId: $rootScope.advertiser._id
+                                // });
+                            } else {
+                                // Otherwise, either user has NOT selected an advertiser yet,
+                                // or user doesn't have an advertiser. Either way,
+                                // redirect to list advertiser page so they can choose.
+                                $state.go('app.advertiser.allAdvertisers');
+                            }
+                        });
+                    }
+                }
+            }
+        }).
+
+        /**
          * Begin advertiser-specific states, starting at All Advertisers
          */
         state('app.advertiser.allAdvertisers', {
