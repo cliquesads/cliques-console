@@ -2,8 +2,12 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog', 'REVIEW_TIME', '$rootScope',
-	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog, REVIEW_TIME, $rootScope) {
+    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
+    'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+    'REVIEW_TIME', '$rootScope',
+	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify,
+             DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
+             REVIEW_TIME, $rootScope) {
 
         if ($location.$$path === '/advertiser/campaign') {
             if ($rootScope.advertiser) {

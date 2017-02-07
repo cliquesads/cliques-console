@@ -10,22 +10,11 @@ angular.module('advertiser').config(['$stateProvider',
             abstract: true,
             templateUrl: 'modules/advertiser/views/advertiser-layout.client.view.html'
         }).
-		state('app.advertiser.listAdvertiser', {
-            url: '/advertiser',
-            title: 'All Advertisers',
-            views: {
-                'main': {
-                    templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
-                    controller: 'AdvertiserController'
-                },
-                'titleBar': {
-                    template: 'Advertisers'
-                }
-            }
-		}).
 		state('app.advertiser.createAdvertiser', {
 			url: '/advertiser/create',
-			title: 'New Advertiser',
+            resolve: {
+                $title: function(){ return 'New Advertiser'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/create-advertiser.client.view.html',
@@ -36,22 +25,17 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
 		}).
-        state('app.advertiser.listCampaign', {
-            url: '/advertiser/campaign',
-            title: 'List Campaigns',
-            views: {
-                'main': {
-                    templateUrl: 'modules/advertiser/views/view-advertiser.client.view.html',
-                    controller: 'CampaignController'
-                },
-                'titleBar': {
-                    template: 'Campaigns'
-                }
-            }
-        }).
+
+        /**
+         * Campaign draft states are advertiser-agnostic, just load all drafts in session,
+         * so they're rooted at the abstract view level rather than advertiser-specific level.
+         */
         state('app.advertiser.campaignDrafts', {
             url: '/advertiser/campaign-draft',
             title: 'My Campaigns Drafts',
+            resolve: {
+                $title: function(){ return 'My Campaigns Drafts'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-campaign-drafts.client.view.html',
@@ -64,7 +48,9 @@ angular.module('advertiser').config(['$stateProvider',
         }).
         state('app.advertiser.campaignDrafts.editDraft', {
             url: '/edit/:draftId',
-            title: 'Edit Draft',
+            resolve: {
+                $title: function(){ return 'Edit Draft'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/edit-campaign-draft.client.view.html',
@@ -75,9 +61,36 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
-		state('app.advertiser.viewAdvertiser', {
-			url: '/advertiser/:advertiserId',
-			title: 'All Advertisers',
+
+        /**
+         * Begin advertiser-specific states, starting at All Advertisers
+         */
+        state('app.advertiser.allAdvertisers', {
+            url: '/advertiser',
+            resolve: {
+                $title: function(){ return 'All Advertisers'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
+                    controller: 'ListAdvertisersController'
+                },
+                'titleBar': {
+                    template: 'Advertisers'
+                }
+            }
+        }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser', {
+            url: '/:advertiserId',
+            resolve: {
+                advertiser: function($stateParams, Advertiser){
+                    return Advertiser.get({ advertiserId: $stateParams.advertiserId });
+                },
+                $title: function(advertiser){
+                    // TODO: see comment in breadcrumbs.html for we're not returning `advertiser.name` here
+                    return advertiser;
+                }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-advertiser.client.view.html',
@@ -88,39 +101,48 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'AdvertiserController'
                 }
             }
-		}).
-        state('app.advertiser.viewAdvertiser.viewCampaign', {
+        }).
+        state('app.advertiser.viewAdvertiser.createNewCampaign', {
+            url: '/create/campaign',
+            params: {advertiser: null},
+            resolve: {
+                $title: function(){ return 'New Campaign'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/new-campaign.client.view.html',
+                    controller: 'NewCampaignController'
+                }
+            }
+        }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign', {
             url: '/campaign/:campaignId',
-            title: 'View Campaign',
+            resolve: {
+                campaign: function($stateParams, advertiser){
+                    return _.find(advertiser.campaigns, function(campaign){
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                },
+                $title: function(campaign){
+                    return campaign;
+                }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',
                     controller: 'CampaignController'
-                },
-                'titleBar': {
-                    templateUrl: 'modules/advertiser/views/partials/titlebars/view-campaign.titlebar.html',
-                    controller: 'CampaignController'
                 }
             }
         }).
-        state('app.advertiser.viewAdvertiser.viewCampaign.viewCampaignPlacementTargets', {
+        state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign.viewCampaignPlacementTargets', {
             url: '/placement-targets',
-            title: 'Placement Targets',
+            resolve: {
+                $title: function(){ return 'Placement Targets'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/site-targeting.client.view.html',
                     controller: 'SiteTargetingController'
-                }
-            }
-        }).
-        state('app.advertiser.createNewCampaign', {
-            url: '/advertiser/create/campaign',
-            title: 'New Campaign',
-            params: {advertiser: null},
-            views: {
-                'main': {
-                    templateUrl: 'modules/advertiser/views/new-campaign.client.view.html',
-                    controller: 'NewCampaignController',
                 }
             }
         });
