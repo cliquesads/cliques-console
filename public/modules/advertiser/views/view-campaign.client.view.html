@@ -11,7 +11,7 @@ adding hook in parent template ---->
     <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign">
         <!--showNewModal toggles on or off depending on query param showModal-->
         <section data-ng-init="showNewModal()"></section>
-        <section data-ng-init="findOne()">
+        <section>
             <h3 class="ml-sm">{{ campaign.name }}</h3>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <div class="col-md-5">

@@ -2,13 +2,17 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
+    'Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
     'REVIEW_TIME',
-	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify,
+	function($scope, $stateParams, $location, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
              REVIEW_TIME) {
 
+        $scope.advertiser = campaign.advertiser;
+        $scope.campaignIndex = campaign.index;
+        $scope.campaign = campaign.campaign;
+        
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -56,14 +60,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
-
-		$scope.findOne = function() {
-            Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex) {
-                $scope.advertiser = advertiser;
-                $scope.campaignIndex = campaignIndex;
-                $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
-            });
-		};
 
         $scope.update = function() {
             $scope.advertiser.$update(function(){

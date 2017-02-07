@@ -194,12 +194,17 @@ angular.module('advertiser').config(['$stateProvider',
             url: '/campaign/:campaignId',
             resolve: {
                 campaign: function($stateParams, advertiser){
-                    return _.find(advertiser.campaigns, function(campaign){
+                    var i = _.findIndex(advertiser.campaigns, function(campaign){
                         return campaign._id === $stateParams.campaignId;
                     });
+                    return {
+                        advertiser: advertiser,
+                        index: i,
+                        campaign: advertiser.campaigns[i]
+                    };
                 },
                 $title: function(campaign){
-                    return campaign.name;
+                    return campaign.campaign.name;
                 }
             },
             views: {
