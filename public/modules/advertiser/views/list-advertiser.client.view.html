@@ -28,7 +28,7 @@
                     <br/>
                     <em class="custom-section-title">Active</em>
                     <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
                             <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
                         </a>
                     </div>
@@ -37,7 +37,7 @@
                     <br/>
                     <em class="custom-section-title">Inactive</em>
                     <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#!/advertiser/{{advertiser._id}}" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
                             <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
                         </a>
                     </div>

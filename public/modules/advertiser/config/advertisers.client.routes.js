@@ -95,7 +95,9 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 
         /**
-         * Not a real state, but a logical switch to direct user to appropriate
+         * BEGIN REDIRECT STATES
+         *
+         * Not a real states, but a logical switches to direct user to appropriate
          * view depending on if they have set up advertisers/campaigns already.
          *
          * Not abstract, though, since it needs to be browseable.
@@ -109,28 +111,49 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId);
                         } else {
-                            $state.go('app.advertiser.allAdvertisers');
+                            var nextState = '.viewAdvertiser';
+                            event.preventDefault();
+                            $state.go('app.advertiser.allAdvertisers', {
+                                next: nextState
+                            });
                         }
                     });
                 }
             }
         }).
-
-        /**
-         * Not a real state, but a logical switch to direct user to appropriate
-         * view depending on if they have set up advertisers/campaigns already.
-         *
-         * Not abstract, though, since it needs to be browseable.
-         */
         state('app.advertiser.createCampaign', {
             url: '/new-campaign',
             resolve: {
                 redirect: function($state, $rootScope, $location, Advertiser){
                     getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
                         if (advertiserId){
-                            $location.path('/advertiser/' + advertiserId + '/create/campaign');
+                            // TODO: State.go just hangs, have no idea why
+                            $location.path('/advertiser/' + advertiserId + '/create-campaign');
                         } else {
-                            $state.go('app.advertiser.allAdvertisers');
+                            var nextState = '.viewAdvertiser.createNewCampaign';
+                            event.preventDefault();
+                            $state.go('app.advertiser.allAdvertisers', {
+                                next: nextState
+                            });
+                        }
+                    });
+                }
+            }
+        }).
+        state('app.advertiser.actionbeacons', {
+            url: '/actionbeacon',
+            resolve: {
+                redirect: function($state, $rootScope, $location, Advertiser){
+                    getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
+                        if (advertiserId){
+                            // TODO: State.go just hangs, have no idea why
+                            $location.path('/advertiser/' + advertiserId + '/actionbeacon');
+                        } else {
+                            var nextState = '.viewAdvertiser.actionBeacons';
+                            event.preventDefault();
+                            $state.go('app.advertiser.allAdvertisers',{
+                                next: nextState
+                            });
                         }
                     });
                 }
@@ -138,10 +161,10 @@ angular.module('advertiser').config(['$stateProvider',
         }).
 
         /**
-         * Begin advertiser-specific states, starting at All Advertisers
+         * BEGIN advertiser-specific states, starting at All Advertisers
          */
         state('app.advertiser.allAdvertisers', {
-            url: '/advertiser',
+            url: '/advertiser?next',
             resolve: {
                 $title: function(){ return 'All Advertisers'; }
             },
@@ -178,7 +201,7 @@ angular.module('advertiser').config(['$stateProvider',
             }
         }).
         state('app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign', {
-            url: '/create/campaign',
+            url: '/create-campaign',
             params: {advertiser: null},
             resolve: {
                 $title: function(){ return 'New Campaign'; }
@@ -223,6 +246,21 @@ angular.module('advertiser').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/advertiser/views/site-targeting.client.view.html',
                     controller: 'SiteTargetingController'
+                }
+            }
+        }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser.actionBeacons', {
+            url: '/actionbeacon',
+            resolve: {
+                $title: function(){ return 'Action Beacons'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/actionbeacon/views/list-actionbeacon.client.view.html',
+                    controller: 'ActionBeaconController'
+                },
+                'titleBar': {
+                    template: 'ActionBeacons'
                 }
             }
         });

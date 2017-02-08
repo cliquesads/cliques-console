@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('ListAdvertisersController', ['$scope', '$stateParams', '$location',
-    '$state', '$rootScope', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
-	function($scope, $stateParams, $location, $state, $rootScope, Authentication, Advertiser, ngDialog,
+    '$state', '$rootScope', '$timeout', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
+	function($scope, $stateParams, $location, $state, $rootScope, $timeout, Authentication, Advertiser, ngDialog,
              ADVERTISER_TOOLTIPS, REVIEW_TIME) {
 
         $scope.authentication = Authentication;
@@ -26,16 +26,17 @@ angular.module('advertiser').controller('ListAdvertisersController', ['$scope', 
 
         /**
          * Set $rootScope.advertiser var to remember advertiser selection if
-         * user checks checkbox.
+         * user checks checkbox, and redirect to appropriate view
          * @type {boolean}
          */
         $scope.rememberMySelection = true;
         $scope.selectAdvertiser = function(advertiser) {
-            if ($scope.rememberMySelection) {
-                $rootScope.advertiser = advertiser;
-            } else {
-                $rootScope.advertiser = null;
-            }
+            $rootScope.advertiser = $scope.rememberMySelection ? advertiser : null;
+            var nextState = $stateParams.next ? $stateParams.next : '.viewAdvertiser';
+            event.preventDefault();
+            $state.go(nextState, {
+                advertiserId: advertiser._id
+            });
         };
 
         /**
