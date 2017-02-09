@@ -160,12 +160,12 @@
         
             <!-- Screenshot images -->
             <div class="screenshot"
-                ng-repeat="screenshotImage in currentlyShowingScreenshots track by screenshotImage.id">
-                <img src="{{ screenshotImage.url }}" alt="Screenshot" ng-click="viewScreenshot(screenshotImage)">
+                ng-repeat="screenshot in currentlyShowingScreenshots track by screenshot._id">
+                <img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">
             </div>            
 
             <!-- Next screenshot button -->
-            <div ng-if="showingScreenshotEndIndex < screenshotImages.length - 1">
+            <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
                 <button class="btn btn-third-white-vertical"
                     ng-click="showNextScreenshot()">
                     <i class="fa fa-chevron-right"></i>

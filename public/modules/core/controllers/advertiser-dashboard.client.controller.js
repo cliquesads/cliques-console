@@ -6,8 +6,8 @@
 'use strict';
 
 angular.module('core').controller('AdvertiserDashboardController',
-    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog',
-        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog) {
+    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog', 'ScreenshotFetcher', 'Notify',
+        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog, ScreenshotFetcher, Notify) {
 
             $scope.isShowingAllStats = false;
 
@@ -16,8 +16,10 @@ angular.module('core').controller('AdvertiserDashboardController',
             $scope.showingCampaignEndIndex = 0;
 
             $scope.creatives = [];
+            $scope.advertiserIds = [];
             $scope.advertisers = Advertiser.query(function(advertisers){
                 advertisers.forEach(function(adv){
+                    $scope.advertiserIds.push(adv._id);
                     adv.campaigns.forEach(function(camp){
                         camp.adv_logo_url = adv.logo_url;
                         camp.parentAdvertiserId = adv._id;
@@ -40,6 +42,12 @@ angular.module('core').controller('AdvertiserDashboardController',
                             });
                         });
                     });
+                });
+                ScreenshotFetcher.fetchByAdvertiserIds($scope.advertiserIds)
+                .then(function(response) {
+                    $scope.screenshots = response.data;
+                }, function(errorResponse) {
+                    Notify.alert(errorResponse.data.message, {status: 'danger'});
                 });
             });
 
@@ -86,7 +94,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                 $scope.summaryDateRangeSelection = dateShortCode;
             };
 
-$scope.getDashboardGraph('30d');
+            $scope.getDashboardGraph('30d');
 
 
             $scope.dateRangeSelection = "7d";
@@ -181,30 +189,6 @@ $scope.getDashboardGraph('30d');
                 }
             };
 
-            // TO-DO:::ycx dummy screenshot images, should be replaced by real screenshot images
-            $scope.screenshotImages = [
-                {
-                    id: 1,
-                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Adventure%20Journal%20Mock%20Screenshot.jpg'
-                },
-                {
-                    id: 2,
-                    url: 'https://storage.googleapis.com/cliquesads-screenshots/CXMax%20Mock%20Screenshot.jpg'
-                },
-                {
-                    id: 3,
-                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Mock%20Screenshot%20TGR.jpg'
-                },
-                {
-                    id: 4,
-                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Gravelbike%20Screenshot%20Mock.jpg'
-                },
-                {
-                    id: 5,
-                    url: 'https://storage.googleapis.com/cliquesads-screenshots/Skiing%20Magazine%20Mock%20Screenshot.jpg'
-                }
-            ];
-
             $scope.viewScreenshot = function(screenshot){
                 ngDialog.open({
                     template: 'modules/core/views/partials/screenshot-dialog.html',
@@ -213,36 +197,47 @@ $scope.getDashboardGraph('30d');
                 });
             };
 
-            $scope.currentlyShowingScreenshots = [
-                $scope.screenshotImages[0],
-                $scope.screenshotImages[1],
-                $scope.screenshotImages[2]
-            ];
-            $scope.showingScreenshotEndIndex = 2;
+            $scope.currentlyShowingScreenshots = [];
+            $scope.showingScreenshotEndIndex = 0;
+
+            $scope.$watch('screenshots', function(newValue, oldValue, scope) {
+                if ($scope.screenshots) {
+                    if ($scope.screenshots.length >= 3) {
+                        $scope.showingScreenshotEndIndex = 2;
+                        $scope.currentlyShowingScreenshots = [
+                            $scope.screenshots[0],
+                            $scope.screenshots[1],
+                            $scope.screenshots[2]
+                        ];
+                    } else {
+                        $scope.showingScreenshotEndIndex = $scope.screenshots.length - 1;
+                        $scope.currentlyShowingScreenshots = $scope.screenshots;
+                    }
+                }
+            });
+
             $scope.showLastScreenshot = function() {
                 if ($scope.showingScreenshotEndIndex > 2) {
                     $scope.showingScreenshotEndIndex --;
                     $scope.currentlyShowingScreenshots = [];
                     $scope.currentlyShowingScreenshots = [
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 2],
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 1],
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex - 2],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex - 1],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex],
                     ];
                 }
             };
             $scope.showNextScreenshot = function() {
-                if ($scope.showingScreenshotEndIndex < ($scope.screenshotImages.length - 1)) {
+                if ($scope.showingScreenshotEndIndex < ($scope.screenshots.length - 1)) {
                     $scope.showingScreenshotEndIndex ++;
                     $scope.currentlyShowingScreenshots = [];
                     $scope.currentlyShowingScreenshots = [
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 2],
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex - 1],
-                        $scope.screenshotImages[$scope.showingScreenshotEndIndex],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex - 2],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex - 1],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex],
                     ];
                 }
             };
-
-
         }
     ]
 );
