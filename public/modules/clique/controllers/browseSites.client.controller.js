@@ -28,6 +28,8 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
         };
 
         $scope.cliques = [];
+
+        $scope.loading = true;
         $scope.find = function() {
             getCliqueTree({active: true},function(err, cliques){
                 $scope.cliques = cliques;
@@ -41,6 +43,7 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
                         for (i = 0; i < $scope.allSites.length; i ++) {
                             $scope.allSites[i].shortDescription = $scope.getTextAbstract($scope.allSites[i].description, $scope.maxLengthForDescription);
                         }
+                        $scope.loading = false;
                     });
                 }
             });

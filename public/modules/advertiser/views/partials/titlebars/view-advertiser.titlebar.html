@@ -3,7 +3,7 @@
         <!-- View hook for child views -->
         <section data-ui-view="titleBar"></section>
     </div>
-    <div ng-switch-when="app.advertiser.viewAdvertiser">
+    <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser">
         <h3 class="ml-sm">
             <logo-widget model="advertiser" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
             {{ advertiser.name }}

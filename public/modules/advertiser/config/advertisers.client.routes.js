@@ -174,7 +174,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'ListAdvertisersController'
                 },
                 'titleBar': {
-                    template: 'Advertisers'
+                    template: '<section data-ui-view="titleBar"></section>'
                 }
             }
         }).
@@ -234,6 +234,10 @@ angular.module('advertiser').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',
                     controller: 'CampaignController'
+                },
+                'titleBar': {
+                    templateUrl: 'modules/advertiser/views/partials/titlebars/view-campaign.titlebar.html',
+                    controller: 'CampaignController'
                 }
             }
         }).
@@ -270,7 +274,8 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'ActionBeaconController'
                 },
                 'titleBar': {
-                    template: 'ActionBeacons'
+                    templateUrl: 'modules/actionbeacon/views/partials/actionbeacon.titlebar.html',
+                    controller: 'ActionBeaconController'
                 }
             }
         });

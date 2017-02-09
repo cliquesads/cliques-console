@@ -6,22 +6,12 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
     '$location',
     'ngDialog',
     'Advertiser',
+    'advertiser',
     'ActionBeacon',
     '$rootScope',
-    function($scope, $location, ngDialog, Advertiser, ActionBeacon, $rootScope) {
-        if ($location.$$path === '/actionbeacon') {
-            if (!$rootScope.advertiser) {
-                $scope.advertisers = Advertiser.query(function(advertisers) {
-                    if (advertisers.length === 1) {
-                        $scope.advertiser = advertisers[0];
-                        $rootScope.advertiser = advertisers[0];
-                    } else {
-                        // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
-                        $location.path('/advertiser');
-                    }
-                });
-            }
-        }
+    function($scope, $location, ngDialog, Advertiser, advertiser, ActionBeacon, $rootScope) {
+
+        $scope.advertiser = advertiser;
 
         $scope.actionbeacon = {
             name: null
