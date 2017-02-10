@@ -23,9 +23,15 @@ adding hook in parent template ---->
             </div>
         </div>
         <div class="col-md-8">
-            <h4 class="alert alert-info text-center pv-lg" data-ng-if="drafts.$resolved && !drafts.length">
-                You don't have any working drafts
-            </h4>
+            <div class="box-placeholder text-center" data-ng-if="drafts.$resolved && !drafts.length">
+                <h4>
+                    <i class="fa fa-floppy-o"></i> You don't have any working drafts
+                </h4>
+                <p>
+                    When you set up a new campaign, drafts will be saved here if you decide to go take a coffee break
+                    (or a nap, naps are fine too) and want to come back and finish the setup process later.
+                </p>
+            </div>
         </div>
     </div>
 </div>

@@ -3,10 +3,10 @@
         <!-- View hook for child views -->
         <section data-ui-view="titleBar"></section>
     </div>
-    <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign">
+    <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign">
         <h3 class="ml-sm">
-            <logo-widget model="advertiser" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
-            {{ campaign.name }}
+            <logo-widget model="advertiser" size="sm" deactivate-uploader="true"></logo-widget>
+            {{ advertiser.name }}
         </h3>
     </div>
 </div>

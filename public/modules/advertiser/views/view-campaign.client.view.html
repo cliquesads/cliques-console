@@ -8,19 +8,18 @@ adding hook in parent template ---->
         <!-- View hook for child views -->
         <section data-ui-view="main"></section>
     </div>
-    <div ng-switch-when="app.advertiser.viewAdvertiser.viewCampaign">
+    <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign">
         <!--showNewModal toggles on or off depending on query param showModal-->
         <section data-ng-init="showNewModal()"></section>
-        <section data-ng-init="findOne()">
-            <h3 class="ml-sm">{{ campaign.name }}</h3>
+        <section>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <div class="col-md-5">
                 <!--BEGIN Campaign Basics Panel-->
                 <div class="custom-section-title no-font-style ml-sm">Campaigns Settings</div>
-                <div class="panel panel-default mt-sm">
-                    <tabset>
+                <!--<div class="panel panel-default mt-sm">-->
+                    <tabset class="mt-sm">
                         <tab heading="Basics">
-                            <div class="panel-body">
+                            <!--<div class="panel-body">-->
                                 <!--Only show activate controls for admins right now-->
                                 <fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
                                     <small><em class="text-muted">Status</em></small>
@@ -125,7 +124,7 @@ adding hook in parent template ---->
                                         </div>
                                     </form>
                                 </fieldset>
-                            </div>
+                            <!--</div>-->
                         </tab>
                         <tab heading="Bids">
                             <div class="panel-body">
@@ -239,15 +238,14 @@ adding hook in parent template ---->
                             </div>
                         </tab>
                     </tabset>
-                </div>
+                <!--</div>-->
             </div>
             <div class="col-md-7">
                 <div class="custom-section-title no-font-style pl-xl">
                     <span>Advertiser QuickStats</span>
                     <span class="pull-right">
                         Want to see more data? &nbsp;
-                        <i class="fa fa-signal"></i>
-                        <a href="#" class=" text-underline">Go to Analytics</a>
+                        <a href="/#!/analytics" class=" text-underline"><i class="fa fa-signal"></i> Go to Analytics</a>
                     </span>
                 </div>
                 <div id="campaignGraphPanel" class="panel panel-default ml-xl mt-sm" data-ng-init="getTabData(dateRangeSelection)">

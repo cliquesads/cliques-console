@@ -3,14 +3,21 @@
 
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','Notify','$timeout','DndTreeWrapper','getSitesInCliqueBranch',
-        'Campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
+        'campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
         'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog',
         function($scope, $stateParams, Notify, $timeout, DndTreeWrapper, getSitesInCliqueBranch,
-                 Campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
+                 campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
                  MongoTimeSeries, aggregationDateRanges, openSiteDescriptionDialog){
 
             $scope.Math = Math;
             $scope.dirty = false;
+
+            /**
+             * Get Campaign from URL state params on load
+             */
+            $scope.advertiser = campaign.advertiser;
+            $scope.campaignIndex = campaign.index;
+            $scope.campaign = campaign.campaign;
 
             /**
              * Adds custom methods & properties to tree node object.
@@ -705,14 +712,7 @@ angular.module('advertiser').controller('SiteTargetingController',
             //================= END Tree Initialization Handlers ===================//
             //======================================================================//
 
-            /**
-             * Get Campaign from URL state params on load
-             */
-            Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex){
-                $scope.advertiser = advertiser;
-                $scope.campaignIndex = campaignIndex;
-                $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
-                $scope.initializeAllTrees();
-            });
+            // Initialize the targeting tree objects
+            $scope.initializeAllTrees();
         }
 ]);

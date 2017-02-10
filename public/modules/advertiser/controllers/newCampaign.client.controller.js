@@ -1,24 +1,9 @@
 'use strict';
-angular.module('advertiser').controller('NewCampaignController', ['$scope','$location', '$rootScope', 'Advertiser', '$stateParams',
-    function($scope, $location, $rootScope, Advertiser, $stateParams){
-        if ($stateParams.advertiser) {
-            $scope.advertiser = $stateParams.advertiser;
-            $scope.initCampaigns = $scope.advertiser.campaigns;
-        } else if ($rootScope.advertiser) {
-            $scope.advertiser = $rootScope.advertiser;
-            $scope.initCampaigns = $scope.advertiser.campaigns;
-        } else {
-            Advertiser.query(function(advertisers) {
-                if (advertisers.length === 1) {
-                    $rootScope.advertiser = advertisers[0];
-                    $scope.advertiser = advertisers[0];
-                    $scope.initCampaigns = $scope.advertiser.campaigns;
-                } else {
-                    // either user has NOT selected an advertiser yet, or user doesn't have an advertiser, either way, redirect to list advertiser page
-                    $location.path('/advertiser');
-                }
-            });
-        }
+angular.module('advertiser').controller('NewCampaignController', ['$scope','$location', 'advertiser',
+    function($scope, $location, advertiser){
+        // first get advertiser
+        $scope.advertiser = advertiser;
+        $scope.initCampaigns = $scope.advertiser.campaigns;
         $scope.campaign = null;
 
         $scope.rowTemplate = '<div class="col-sm-1"><div class="label" ng-class="option.active ? \'label-success\':\'label-default\'">{{ option.active ? "Active":"Inactive"}}</div></div>' +
@@ -53,13 +38,17 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
             campaign: null
         };
 
+        // Set metaStep to 'campaignWizard' if there are no campaigns in advertiser
+        if (!$scope.initCampaigns || $scope.initCampaigns.length === 0){
+            $scope.stepControl.metaStep = 'campaign-wizard';
+        }
+
         // Success handler
         $scope.updateAdvertiser = function(campaign){
             $scope.loading = true;
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
                 $scope.loading = false;
-                $scope.closeThisDialog('Success');
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign
                 // is the new one

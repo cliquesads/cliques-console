@@ -12,7 +12,9 @@ angular.module('analytics').config(['$stateProvider',
         }).
 		state('app.analytics.quickQueries', {
             url: '/analytics',
-            title: 'Analytics',
+            resolve: {
+                $title: function(){ return 'Analytics'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/analytics/views/partials/quick-queries.client.view.html',
@@ -27,6 +29,9 @@ angular.module('analytics').config(['$stateProvider',
         state('app.analytics.customQueries', {
             url: '/analytics/customQueries',
             title: 'Analytics',
+            resolve: {
+                $title: function(){ return 'Analytics'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/analytics/views/partials/custom-queries.client.view.html',

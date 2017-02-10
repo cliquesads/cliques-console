@@ -10,7 +10,8 @@ angular.module('core').directive('logoWidget', [
                 model: '=',
                 oncompleteall: '&',
                 onremove: '&',
-                size: '@'
+                size: '@',
+                deactivateUploader: '@'
             },
             template: '<img class="client-logo-{{ size }}" ng-src="{{ model.logo_secure_url || default_url }}" ng-click="openUploader()"/>',
             link: function(scope, element, attrs){
@@ -18,18 +19,21 @@ angular.module('core').directive('logoWidget', [
                     url: 'console/logos'
                 });
                 scope.size = scope.size || 'md';
+                scope.deactivateUploader = scope.deactivateUploader || false;
                 scope.default_url = LOGO.default_secure_url;
                 scope.openUploader = function(){
-                    ngDialog.open({
-                        template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader" onremove="onremove()"></logo-uploader>',
-                        plain: true,
-                        data: {model: scope.model, uploader: scope.uploader },
-                        controller: ['$scope', function ($scope) {
-                            $scope.model = $scope.ngDialogData.model;
-                            $scope.uploader = $scope.ngDialogData.uploader;
-                            $scope.onremove = scope.onremove;
-                        }]
-                    });
+                    if (!scope.deactivateUploader){
+                        ngDialog.open({
+                            template: '<h4>Upload a New Logo</h4><logo-uploader model="model" uploader="uploader" onremove="onremove()"></logo-uploader>',
+                            plain: true,
+                            data: {model: scope.model, uploader: scope.uploader },
+                            controller: ['$scope', function ($scope) {
+                                $scope.model = $scope.ngDialogData.model;
+                                $scope.uploader = $scope.ngDialogData.uploader;
+                                $scope.onremove = scope.onremove;
+                            }]
+                        });
+                    }
                 };
 
                 // Hook for update method after upload complete
