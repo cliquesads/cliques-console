@@ -95,18 +95,20 @@ module.exports = {
                     accessCode.redeemIssuerPromos(promoType,function(err, results){
                         if (err) console.error(err);
                         // results is array of { user: <User>, promo: <Promo> } objects
-                        results.forEach(function(userPromo){
-                            var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
-                                organization.name);
-                            if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
-                            mailer.sendMail({
-                                subject: subject,
-                                templateName: 'accesscode-redeemed-email.server.view.html',
-                                data: { organization: org, promo: userPromo.promo, accessCode: accessCode, promoType: promoType },
-                                to: userPromo.user.email,
-                                fromAlias: 'Cliques'
+                        if (process.env.NODE_ENV === 'production'){
+                            results.forEach(function(userPromo){
+                                var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
+                                    organization.name);
+                                if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                                mailer.sendMail({
+                                    subject: subject,
+                                    templateName: 'accesscode-redeemed-email.server.view.html',
+                                    data: { organization: org, promo: userPromo.promo, accessCode: accessCode, promoType: promoType },
+                                    to: userPromo.user.email,
+                                    fromAlias: 'Cliques'
+                                });
                             });
-                        });
+                        }
                     });
                 });
             }
