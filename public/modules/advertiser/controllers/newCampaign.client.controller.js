@@ -49,7 +49,6 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
                 $scope.loading = false;
-                $scope.closeThisDialog('Success');
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign
                 // is the new one

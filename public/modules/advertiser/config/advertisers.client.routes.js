@@ -53,7 +53,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'AdvertiserWizardController'
                 },
                 'titleBar': {
-                    template: 'New Advertiser'
+                    template: '<h3>Create a New Advertiser</h3>'
                 }
             }
 		}).
@@ -74,7 +74,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'CampaignDraftController'
                 },
                 'titleBar': {
-                    template: 'Campaigns Drafts'
+                    template: '<h3>Campaigns Drafts</h3>'
                 }
             }
         }).
@@ -209,6 +209,10 @@ angular.module('advertiser').config(['$stateProvider',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/new-campaign.client.view.html',
+                    controller: 'NewCampaignController'
+                },
+                'titleBar': {
+                    templateUrl: 'modules/advertiser/views/partials/titlebars/new-campaign.titlebar.html',
                     controller: 'NewCampaignController'
                 }
             }
