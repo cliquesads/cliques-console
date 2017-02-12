@@ -15,7 +15,7 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
         $scope.allSites = [];
 
         $scope.getTextAbstract = function(text, maxLength) {
-            if (text === null) {
+            if (!text) {
                 return "";
             }
             if (text.length <= maxLength) {

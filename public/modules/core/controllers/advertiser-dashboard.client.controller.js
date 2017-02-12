@@ -192,7 +192,7 @@ angular.module('core').controller('AdvertiserDashboardController',
             $scope.viewScreenshot = function(screenshot){
                 ngDialog.open({
                     template: 'modules/core/views/partials/screenshot-dialog.html',
-                    data: { screenshotUrl: screenshot.url },
+                    data: { screenshotUrl: screenshot.image_url },
                     className: 'ngdialog-theme-default dialogwidth800'
                 });
             };
