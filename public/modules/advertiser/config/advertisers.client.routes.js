@@ -53,7 +53,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'AdvertiserWizardController'
                 },
                 'titleBar': {
-                    template: 'New Advertiser'
+                    template: '<h3>Create a New Advertiser</h3>'
                 }
             }
 		}).
@@ -74,7 +74,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'CampaignDraftController'
                 },
                 'titleBar': {
-                    template: 'Campaigns Drafts'
+                    template: '<h3>Campaigns Drafts</h3>'
                 }
             }
         }).
@@ -174,7 +174,7 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'ListAdvertisersController'
                 },
                 'titleBar': {
-                    template: 'Advertisers'
+                    template: '<section data-ui-view="titleBar"></section>'
                 }
             }
         }).
@@ -210,6 +210,10 @@ angular.module('advertiser').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/advertiser/views/new-campaign.client.view.html',
                     controller: 'NewCampaignController'
+                },
+                'titleBar': {
+                    templateUrl: 'modules/advertiser/views/partials/titlebars/new-campaign.titlebar.html',
+                    controller: 'NewCampaignController'
                 }
             }
         }).
@@ -233,6 +237,10 @@ angular.module('advertiser').config(['$stateProvider',
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/view-campaign.client.view.html',
+                    controller: 'CampaignController'
+                },
+                'titleBar': {
+                    templateUrl: 'modules/advertiser/views/partials/titlebars/view-campaign.titlebar.html',
                     controller: 'CampaignController'
                 }
             }
@@ -270,7 +278,8 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'ActionBeaconController'
                 },
                 'titleBar': {
-                    template: 'ActionBeacons'
+                    templateUrl: 'modules/actionbeacon/views/partials/actionbeacon.titlebar.html',
+                    controller: 'ActionBeaconController'
                 }
             }
         });
