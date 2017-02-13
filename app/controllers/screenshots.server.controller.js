@@ -7,6 +7,29 @@
 var node_utils = require('@cliques/cliques-node-utils'),
 	models = node_utils.mongodb.models;
 
+// This method creates a map that maps campaign name to the screenshots that belong to this campaign. The returned object has the following format:
+// {
+//		someCampaignName: [
+//			screenshotDocument1,
+// 			screenshotDocument2,
+// 		],
+//		anotherCampaignName: [
+//			screenshotDocument3,
+//			screenshotDocument4,
+//		]
+// }
+var groupScreenshotsByCampaignName = function(screenshots) {
+	var campaignScreenshots = {};
+	for (var i = 0; i < screenshots.length; i ++) {
+		if (!campaignScreenshots[screenshots[i].campaignName]) {
+			campaignScreenshots[screenshots[i].campaignName] = [screenshots[i]];
+		} else {
+			campaignScreenshots[screenshots[i].campaignName].push(screenshots[i]);
+		}
+	}
+	return campaignScreenshots;
+};
+
 module.exports = function(db) {
 	var screenshotModels = new models.ScreenshotModels(db);
 
@@ -16,6 +39,7 @@ module.exports = function(db) {
 		 */
 		getManyByAdvertiserIds: function (req, res) {
 			var advertiserIds = req.query.advertiserIds;
+			var shouldGroupByCampaign = req.query.groupByCampaign;
 			try {
 				advertiserIds = JSON.parse(advertiserIds);
 			} catch(err) {
@@ -35,7 +59,11 @@ module.exports = function(db) {
 						message: errorMessage
 					});
 				}
-				return res.json(screenshots);
+				if (shouldGroupByCampaign) {
+					return res.json(groupScreenshotsByCampaignName(screenshots));
+				} else {
+					return res.json(screenshots);
+				}
 			});
 		},	
 
@@ -44,6 +72,7 @@ module.exports = function(db) {
 		 */
 		getManyByPublisherIds: function (req, res) {
 			var publisherIds = req.query.publisherIds;
+			var shouldGroupByCampaign = req.query.groupByCampaign;
 			try {
 				publisherIds = JSON.parse(publisherIds);
 			} catch(err) {
@@ -63,7 +92,11 @@ module.exports = function(db) {
 						message: errorMessage
 					});
 				}
-				return res.json(screenshots);
+				if (shouldGroupByCampaign) {
+					return res.json(groupScreenshotsByCampaignName(screenshots));
+				} else {
+					return res.json(screenshots);
+				}
 			});
 		},
 

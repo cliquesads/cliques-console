@@ -10,9 +10,9 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			advertisers.forEach(function(adv) {
 				$scope.advertiserIds.push(adv._id);
 			});
-			ScreenshotFetcher.fetchByAdvertiserIds($scope.advertiserIds)
+			ScreenshotFetcher.fetchByAdvertiserIds($scope.advertiserIds, true)
 			.then(function(response) {
-			    $scope.screenshots = response.data;
+			    $scope.groupedScreenshots = response.data;
 			}, function(errorResponse) {
 			    Notify.alert(errorResponse.data.message, {status: 'danger'});
 			});
