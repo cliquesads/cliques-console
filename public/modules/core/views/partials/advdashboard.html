@@ -149,7 +149,7 @@
         <br/><br/>
         <em class="custom-section-title">Recent Screenshots</em>
         <br/><br/>
-        <div class="screenshots-showcase">
+        <div class="screenshots-showcase" ng-if="screenshots.length > 0">
             <!-- Last screenshot button -->
             <div ng-if="showingScreenshotEndIndex > 2">
                 <button class="btn btn-third-white-vertical"
@@ -171,6 +171,9 @@
                     <i class="fa fa-chevron-right"></i>
                 </button> 
             </div>
+        </div>
+        <div class="box-placeholder text-center pv-xl" ng-if="screenshots.length === 0">
+            <h4>No Screenshots yet.</h4>
         </div>
     </section>
 </section>
