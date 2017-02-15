@@ -22,7 +22,7 @@ module.exports = function(db, routers) {
 		 *
 		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
 		 */
-		.get(screenshots.hasAdvertiserType, screenshots.getManyByAdvertiserIds);
+		.get(screenshots.hasAdvertiserType, screenshots.getManyByAdvertisers);
 
 	router.route('/screenshot/byPublisher')
 		/**
@@ -37,6 +37,6 @@ module.exports = function(db, routers) {
 		 *
 		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
 		 */
-		.get(screenshots.hasPublisherType, screenshots.getManyByPublisherIds);
+		.get(screenshots.hasPublisherType, screenshots.getManyByPublishers);
 
 };

@@ -5,6 +5,7 @@
  * Module dependencies.
  */
 var node_utils = require('@cliques/cliques-node-utils'),
+	errorHandler = require('./errors.server.controller'),
 	models = node_utils.mongodb.models;
 
 // This method creates a map that maps campaign name to the screenshots that belong to this campaign. The returned object has the following format:
@@ -32,71 +33,85 @@ var groupScreenshotsByCampaignName = function(screenshots) {
 
 module.exports = function(db) {
 	var screenshotModels = new models.ScreenshotModels(db);
+    var advertiserModels = new models.AdvertiserModels(db);
+    var publisherModels = new models.PublisherModels(db);
 
 	return {
 		/**
 		 * Get screenshots by advertiserId
 		 */
-		getManyByAdvertiserIds: function (req, res) {
-			var advertiserIds = req.query.advertiserIds;
+		getManyByAdvertisers: function (req, res) {
 			var shouldGroupByCampaign = req.query.groupByCampaign;
-			try {
-				advertiserIds = JSON.parse(advertiserIds);
-			} catch(err) {
-				var errorMessage = 'ERROR when parsing advertiserIds';
-				console.error(errorMessage);
-				return res.status(400).send({
-					message: errorMessage
-				});
+			req.query.groupByCampaign = null;
+			var advertiserIds = [];
+
+			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+				req.query.organization = req.user.organization.id;
 			}
-			screenshotModels.Screenshot.find({
-				advertiser: { $in: advertiserIds }
-			}, function(err, screenshots) {
+			advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
 				if (err) {
-					var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
-					console.error(errorMessage + JSON.stringify(advertiserIds));
 					return res.status(400).send({
-						message: errorMessage
+						message: errorHandler.getAndLogErrorMessage(err)
 					});
 				}
-				if (shouldGroupByCampaign) {
-					return res.json(groupScreenshotsByCampaignName(screenshots));
-				} else {
-					return res.json(screenshots);
+				for (var i = 0; i < advertisers.length; i ++) {
+					advertiserIds.push(advertisers[i]._id);
 				}
+				screenshotModels.Screenshot.find({
+					advertiser: { $in: advertiserIds }
+				}, function(err, screenshots) {
+					if (err) {
+						var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
+						console.error(errorMessage + JSON.stringify(advertiserIds));
+						return res.status(400).send({
+							message: errorMessage
+						});
+					}
+					if (shouldGroupByCampaign) {
+						return res.json(groupScreenshotsByCampaignName(screenshots));
+					} else {
+						return res.json(screenshots);
+					}
+				});
 			});
 		},	
 
 		/**
 		 * Get screenshots by publisherId
 		 */
-		getManyByPublisherIds: function (req, res) {
-			var publisherIds = req.query.publisherIds;
+		getManyByPublishers: function (req, res) {
 			var shouldGroupByCampaign = req.query.groupByCampaign;
-			try {
-				publisherIds = JSON.parse(publisherIds);
-			} catch(err) {
-				var errorMessage = 'ERROR when parsing publisherIds';
-				console.error(errorMessage);
-				return res.status(400).send({
-					message: errorMessage
-				});
+			req.query.groupByCampaign = null;
+			var publisherIds = [];
+
+			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+				req.query.organization = req.user.organization.id;
 			}
-			screenshotModels.Screenshot.find({
-				publisher: { $in: publisherIds }
-			}, function(err, screenshots) {
+			publisherModels.Publisher.find(req.query, function (err, publishers) {
 				if (err) {
-					var errorMessage = 'ERROR when getting screenshots with publisherIds ';
-					console.error(errorMessage + JSON.stringify(publisherIds));
 					return res.status(400).send({
-						message: errorMessage
+						message: errorHandler.getAndLogErrorMessage(err)
 					});
 				}
-				if (shouldGroupByCampaign) {
-					return res.json(groupScreenshotsByCampaignName(screenshots));
-				} else {
-					return res.json(screenshots);
+				for (var i = 0; i < publishers.length; i ++) {
+					publisherIds.push(publishers[i]._id);
 				}
+				screenshotModels.Screenshot.find({
+					publisher: { $in: publisherIds }
+				}, function(err, screenshots) {
+					if (err) {
+						var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
+						console.error(errorMessage + JSON.stringify(publisherIds));
+						return res.status(400).send({
+							message: errorMessage
+						});
+					}
+					if (shouldGroupByCampaign) {
+						return res.json(groupScreenshotsByCampaignName(screenshots));
+					} else {
+						return res.json(screenshots);
+					}
+				});
 			});
 		},
 

@@ -3,25 +3,18 @@
 
 angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Advertiser', 'ScreenshotFetcher', 'Notify', 'ngDialog',
 	function($scope, Advertiser, ScreenshotFetcher, Notify, ngDialog) {
-
-		$scope.advertiserIds = [];
 		$scope.numberOfScreenshotGroups = 0;
 
-		Advertiser.query(function(advertisers) {
-			advertisers.forEach(function(adv) {
-				$scope.advertiserIds.push(adv._id);
-			});
-			ScreenshotFetcher.fetchByAdvertiserIds($scope.advertiserIds, true)
-			.then(function(response) {
-			    $scope.groupedScreenshots = response.data;
-			    for (var key in $scope.groupedScreenshots) {
-			    	if ($scope.groupedScreenshots.hasOwnProperty(key)) {
-			    		$scope.numberOfScreenshotGroups ++;
-			    	}
-			    }
-			}, function(errorResponse) {
-			    Notify.alert(errorResponse.data.message, {status: 'danger'});
-			});
+		ScreenshotFetcher.fetchByAdvertisers(true)
+		.then(function(response) {
+		    $scope.groupedScreenshots = response.data;
+		    for (var key in $scope.groupedScreenshots) {
+		    	if ($scope.groupedScreenshots.hasOwnProperty(key)) {
+		    		$scope.numberOfScreenshotGroups ++;
+		    	}
+		    }
+		}, function(errorResponse) {
+		    Notify.alert(errorResponse.data.message, {status: 'danger'});
 		});
 
 		$scope.viewScreenshot = function(screenshot){
