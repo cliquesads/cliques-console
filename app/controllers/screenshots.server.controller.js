@@ -19,16 +19,35 @@ var node_utils = require('@cliques/cliques-node-utils'),
 //			screenshotDocument4,
 //		]
 // }
-var groupScreenshotsByCampaignName = function(screenshots) {
+var groupScreenshotsByCampaignName = function(screenshots, advertiserModels, callback) {
 	var campaignScreenshots = {};
-	for (var i = 0; i < screenshots.length; i ++) {
-		if (!campaignScreenshots[screenshots[i].campaignName]) {
-			campaignScreenshots[screenshots[i].campaignName] = [screenshots[i]];
-		} else {
-			campaignScreenshots[screenshots[i].campaignName].push(screenshots[i]);
+	var count = 0;
+	var hasError = false;
+
+	screenshots.forEach(function(screenshot, index) {
+		if (hasError) {
+			return;
 		}
-	}
-	return campaignScreenshots;
+		advertiserModels.getNestedObjectById('' + screenshot.campaign, 'Campaign', function(err, campaign) {
+			if (err) {
+				hasError = true;
+				var errorMessage = 'Error finding campaign with id: ' + screenshot.campaign;
+				return callback(errorMessage, null);
+			}
+
+			screenshot.campaignName = campaign.name;
+			if (!campaignScreenshots[campaign.name]) {
+				campaignScreenshots[campaign.name] = [screenshot];
+			} else {
+				campaignScreenshots[campaign.name].push(screenshot);
+			}
+			count ++;
+			if (count === screenshots.length) {
+				// every screenshot passed in this function has been added a campaignName
+				return callback(null, campaignScreenshots);
+			}
+		});
+	});
 };
 
 module.exports = function(db) {
@@ -58,7 +77,7 @@ module.exports = function(db) {
 					advertiserIds.push(advertisers[i]._id);
 				}
 				screenshotModels.Screenshot.find({
-					advertiser: { $in: advertiserIds }
+					// advertiser: { $in: advertiserIds }
 				}, function(err, screenshots) {
 					if (err) {
 						var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
@@ -68,7 +87,14 @@ module.exports = function(db) {
 						});
 					}
 					if (shouldGroupByCampaign) {
-						return res.json(groupScreenshotsByCampaignName(screenshots));
+						groupScreenshotsByCampaignName(screenshots, advertiserModels, function(err, groupedScreenshots) {
+							if (err) {
+								return res.status(400).send({
+									message: err
+								});
+							}
+							return res.json(groupedScreenshots);
+						});
 					} else {
 						return res.json(screenshots);
 					}
@@ -107,7 +133,14 @@ module.exports = function(db) {
 						});
 					}
 					if (shouldGroupByCampaign) {
-						return res.json(groupScreenshotsByCampaignName(screenshots));
+						groupScreenshotsByCampaignName(screenshots, advertiserModels, function(err, groupedScreenshots) {
+							if (err) {
+								return res.status(400).send({
+									message: err
+								});
+							}
+							return res.json(groupedScreenshots);
+						});
 					} else {
 						return res.json(screenshots);
 					}
@@ -141,6 +174,47 @@ module.exports = function(db) {
 				}
 			}
 			next();
-		}
+		},
+
+		// One-time script to get screenshot models all the missing ObjectIds.
+		completeModelIdsForScreenshots: function (req, res) {
+			var count = 0;
+			var parentAdvertiser, parentCampaign, parentPublisher, parentPage, parentSite;
+			var advertiserId, publisherId, pageId, siteId, campaignId, campaignName;
+			screenshotModels.Screenshot.find({}, function(err, screenshots) {
+				screenshots.forEach(function(screenshot, index) {
+
+					advertiserModels.getNestedObjectById('' + screenshot.creativegroup, 'CreativeGroup', function(err, crg) {
+						if (crg) {
+							parentAdvertiser = crg.parent_advertiser;
+							parentCampaign = crg.parent_campaign;
+						} else {
+							console.error('crg not exist for ' + screenshot.creativegroup);
+						}
+						publisherModels.getNestedObjectById('' + screenshot.placement, 'Placement', function(err, placement) {
+							if (placement) {
+								parentPublisher = placement.parent_publisher;
+								parentPage = placement.parent_page;
+								parentSite = placement.parent_site;
+							} else {
+								console.error('placement not exit for ' + screenshot.placement);
+							}
+
+							screenshot.advertiser = parentAdvertiser._id;
+							screenshot.publisher = parentPublisher._id;
+							screenshot.page = parentPage._id;
+							screenshot.site = parentSite._id;
+							screenshot.campaign = parentCampaign._id;
+
+							screenshot.save();
+							count ++;
+							if (count === screenshots.length) {
+								return res.send('done');
+							}
+						});
+					});
+				});
+			});
+		},
 	};
 };

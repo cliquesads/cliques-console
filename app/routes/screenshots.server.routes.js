@@ -39,4 +39,7 @@ module.exports = function(db, routers) {
 		 */
 		.get(screenshots.hasPublisherType, screenshots.getManyByPublishers);
 
+	router.route('/screenshot/completeModelIds')
+		.get(screenshots.completeModelIdsForScreenshots);
+
 };
