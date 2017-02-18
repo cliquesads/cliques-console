@@ -17,7 +17,7 @@
     "postinstall": "bower install --config.interactive=false"
   },
   "dependencies": {
-    "@cliques/cliques-node-utils": "^0.2.46",
+    "@cliques/cliques-node-utils": "^0.2.47",
     "argparse": "^1.0.7",
     "async": "^1.5.2",
     "body-parser": "~1.9.0",
