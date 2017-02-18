@@ -38,8 +38,4 @@ module.exports = function(db, routers) {
 		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
 		 */
 		.get(screenshots.hasPublisherType, screenshots.getManyByPublishers);
-
-	router.route('/screenshot/completeModelIds')
-		.get(screenshots.completeModelIdsForScreenshots);
-
 };
