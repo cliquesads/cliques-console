@@ -7,9 +7,37 @@ module.exports = function(db, routers) {
 	var router = routers.apiRouter;
 
 	/* ---- Screenshot API routes ---- */
+	router.route('/screenshot/getFilters')
+		/**
+		 * @api {get} /screenshot/getFilters Get all campaigns and sites for current signed in user's organization so user may select any of them that act as query filter when fetching screenshots
+		 * @apiName GetFilters
+		 * @apiDescription Get all campaigns and sites for current signed in user's organization so user may select any of them that act as query filter when fetching screenshots
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin
+		 * @apiPermission advertiser
+		 * @apiPermission publisher
+		 *
+		 * @apiSuccess Object with following structure:
+		 * {
+		 *  	campaigns: [
+		 *			{
+		 *     			name: 'someCampaignName',
+		 * 		   		id: ObjectId("someCampaignObjectId")
+		 *     		},
+		 *			...
+		 *     	],
+		 *		sites: [
+		 *			{
+		 *				name: 'someSiteName',
+		 *				id: ObjectId("someSiteName")
+		 *			},
+		 * 			...
+		 * 		]
+		 * }
+		 */
+		.get(screenshots.getScreenshotFilters);
 
 	router.route('/screenshot/byAdvertiser')
-
 		/**
 		 * @api {get} /screenshot/byAdvertiser Get all screenshots that belong to current logged in user's advertiser
 		 * @apiName ReadScreenshot
