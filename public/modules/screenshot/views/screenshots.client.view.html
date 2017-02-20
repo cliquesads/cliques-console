@@ -3,53 +3,21 @@
 		<h3 class="text-gray-darker"><i class="fa fa-rocket"></i> We're just getting started.</h3>
 		<p class="lead">The following websites are some of the finest outdoor-focused publications in existence, and we're excited to partner with all of them. <strong>But this is only the beginning.</strong> We'll keep you posted as more sites join Cliques in the coming months!</p>
 	</div>
-
-	<!-- Screenshot filters -->
-	<div class="bg-gray-lighter ph">
-		<div class="row mb pt">
-			<!-- Filter by campaign dropdown list -->
-			<div class="form-horizontal col-sm-5">
-				<div class="form-group">
-					<label for="campaignFilter" class="col-sm-2 text-md text-right mt-sm">Campaign</label>
-					<div class="col-sm-10">
-						<select name="campaignFilter" class=" form-control chosen-select" ng-model="filterCampaign" ng-options="campaign.name for campaign in filter.campaigns" ng-change="filterChanged()">
-							<option value="" selected>Select campaign to filter</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<!-- Filter by site dropdown list -->
-			<div class="form-horizontal col-sm-5">
-				<div class="form-group">
-					<label for="siteFilter" class="col-sm-2 text-md text-right mt-sm">Site</label>
-					<div class="col-sm-10">
-						<select name="siteFilter" class=" form-control chosen-select" ng-model="filterSite" ng-options="site.name for site in filter.sites" ng-change="filterChanged()">
-							<option value="" selected>Select site to filter</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-2">
-				<button type="button" class="btn btn-primary btn-block" ng-click="clearFilters()">Clear Filters</button>
-			</div>
-
-		</div>
-	</div>
-
-	<div class="screenshot-container">
-		<div class="col-md-3 col-sm-4 col-xs-5"
-			ng-repeat="screenshot in screenshots">
-			<div class="screenshot-block"
-				ng-click="viewScreenshot(screenshot)">
-				<div>
-					<img src="{{ screenshot.image_url }}" alt="Screenshot">
+	<div ng-repeat="(campaignName, screenshots) in groupedScreenshots" ng-if="numberOfScreenshotGroups > 0">
+		<h4>{{ campaignName }}</h4>	
+		<div class="screenshot-container">
+			<div class="col-md-3 col-sm-4 col-xs-5"
+				ng-repeat="screenshot in screenshots">
+				<div class="screenshot-block"
+					ng-click="viewScreenshot(screenshot)">
+					<div>
+						<img src="{{ screenshot.image_url }}" alt="Screenshot">
+					</div>	
 				</div>	
-			</div>	
+			</div>
 		</div>
 	</div>
-	<div ng-if="screenshots.length === 0" class="box-placeholder text-center mv-lg pv-xl">
+	<div ng-if="numberOfScreenshotGroups === 0" class="box-placeholder text-center mv-lg pv-xl">
 		<h4>No Screenshots yet.</h4>
 	</div>
 </section>

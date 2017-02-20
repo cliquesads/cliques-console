@@ -6,8 +6,49 @@
  */
 var node_utils = require('@cliques/cliques-node-utils'),
 	errorHandler = require('./errors.server.controller'),
-	models = node_utils.mongodb.models,
-	config = require('config');
+	models = node_utils.mongodb.models;
+
+// This method creates a map that maps campaign name to the screenshots that belong to this campaign. The returned object has the following format:
+// {
+//		someCampaignName: [
+//			screenshotDocument1,
+// 			screenshotDocument2,
+// 		],
+//		anotherCampaignName: [
+//			screenshotDocument3,
+//			screenshotDocument4,
+//		]
+// }
+var groupScreenshotsByCampaignName = function(screenshots, advertiserModels, callback) {
+	var campaignScreenshots = {};
+	var count = 0;
+	var hasError = false;
+
+	screenshots.forEach(function(screenshot, index) {
+		if (hasError) {
+			return;
+		}
+		advertiserModels.getNestedObjectById('' + screenshot.campaign, 'Campaign', function(err, campaign) {
+			if (err) {
+				hasError = true;
+				var errorMessage = 'Error finding campaign with id: ' + screenshot.campaign;
+				return callback(errorMessage, null);
+			}
+
+			screenshot.campaignName = campaign.name;
+			if (!campaignScreenshots[campaign.name]) {
+				campaignScreenshots[campaign.name] = [screenshot];
+			} else {
+				campaignScreenshots[campaign.name].push(screenshot);
+			}
+			count ++;
+			if (count === screenshots.length) {
+				// every screenshot passed in this function has been added a campaignName
+				return callback(null, campaignScreenshots);
+			}
+		});
+	});
+};
 
 module.exports = function(db) {
 	var screenshotModels = new models.ScreenshotModels(db);
@@ -16,13 +57,13 @@ module.exports = function(db) {
 
 	return {
 		/**
-		 * Get all possible campaigns and sites as screenshot filters
+		 * Get screenshots by advertiserId
 		 */
-		getScreenshotFilters: function (req, res) {
-			var filter = {
-				campaigns: [],
-				sites: []
-			};
+		getManyByAdvertisers: function (req, res) {
+			var shouldGroupByCampaign = req.query.groupByCampaign;
+			req.query.groupByCampaign = null;
+			var advertiserIds = [];
+
 			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
 				req.query.organization = req.user.organization.id;
 			}
@@ -33,173 +74,78 @@ module.exports = function(db) {
 					});
 				}
 				for (var i = 0; i < advertisers.length; i ++) {
-					for (var j = 0; j < advertisers[i].campaigns.length; j ++) {
-						filter.campaigns.push({
-							name: advertisers[i].campaigns[j].name,
-							id: advertisers[i].campaigns[j]._id	
-						});
-					}
+					advertiserIds.push(advertisers[i]._id);
 				}
-				publisherModels.Publisher.find(req.query, function(err, publishers) {
+				screenshotModels.Screenshot.find({
+					// advertiser: { $in: advertiserIds }
+				}, function(err, screenshots) {
 					if (err) {
+						var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
+						console.error(errorMessage + JSON.stringify(advertiserIds));
 						return res.status(400).send({
-							message: errorHandler.getAndLogErrorMessage(err)
+							message: errorMessage
 						});
 					}
-					for (var i = 0; i < publishers.length; i ++) {
-						for (var j = 0; j < publishers[i].sites.length; j ++) {
-							filter.sites.push({
-								name: publishers[i].sites[j].name,
-								id: publishers[i].sites[j]._id
-							})
-						}
+					if (shouldGroupByCampaign) {
+						groupScreenshotsByCampaignName(screenshots, advertiserModels, function(err, groupedScreenshots) {
+							if (err) {
+								return res.status(400).send({
+									message: err
+								});
+							}
+							return res.json(groupedScreenshots);
+						});
+					} else {
+						return res.json(screenshots);
 					}
-					return res.json(filter);
 				});
 			});
-		},
-		/**
-		 * Get screenshots by advertiserId
-		 */
-		getManyByAdvertisers: function (req, res) {
-			var page = req.query.page;
-			var filterCampaignId = req.query.filterCampaignId;
-			var filterSiteId = req.query.filterSiteId;
-			// var itemsPerPage = config.get('Screenshots.itemsPerPage');
-			var itemsPerPage = 25;
-
-			delete req.query.page;
-			delete req.query.filterCampaignId;
-			delete req.query.filterSiteId;
-
-			if (filterCampaignId || filterSiteId) {
-				var queryParams = {};
-				if (filterCampaignId) {
-					queryParams.campaign = filterCampaignId;
-				}
-				if (filterSiteId) {
-					queryParams.site = filterSiteId;
-				}
-				screenshotModels.Screenshot.find(queryParams)
-				.sort({tstamp: -1})
-				.skip((page - 1) * itemsPerPage)
-				.limit(itemsPerPage)
-				.exec(function(err, screenshots) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getAndLogErrorMessage(err)
-						});
-					}
-					return res.json({
-						itemsPerPage: itemsPerPage,
-						models: screenshots
-					});
-				});
-			} else {
-				var advertiserIds = [];
-				if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
-					req.query.organization = req.user.organization.id;
-				}
-				advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getAndLogErrorMessage(err)
-						});
-					}
-					for (var i = 0; i < advertisers.length; i ++) {
-						advertiserIds.push(advertisers[i]._id);
-					}
-					screenshotModels.Screenshot.find({
-						advertiser: { $in: advertiserIds }
-					})
-					.sort({tstamp: -1})
-					.skip((page - 1) * itemsPerPage)
-					.limit(itemsPerPage)
-					.exec(function(err, screenshots) {
-						if (err) {
-							return res.status(400).send({
-								message: errorHandler.getAndLogErrorMessage(err)
-							});
-						}
-						return res.json({
-							itemsPerPage: itemsPerPage,
-							models: screenshots
-						});
-					});
-				});
-			}
 		},	
 
 		/**
 		 * Get screenshots by publisherId
 		 */
 		getManyByPublishers: function (req, res) {
-			var page = req.query.page;
-			var filterCampaignId = req.query.filterCampaignId;
-			var filterSiteId = req.query.filterSiteId;
-			// var itemsPerPage = config.get('Screenshots.itemsPerPage');
-			var itemsPerPage = 25;
-			
-			delete req.query.page;
-			delete req.query.filterCampaignId;
-			delete req.query.filterSiteId;
+			var shouldGroupByCampaign = req.query.groupByCampaign;
+			req.query.groupByCampaign = null;
+			var publisherIds = [];
 
-			if (filterCampaignId || filterSiteId) {
-				var queryParams = {};
-				if (filterCampaignId) {
-					queryParams.campaign = filterCampaignId;
-				}
-				if (filterSiteId) {
-					queryParams.site = filterSiteId;
-				}
-				screenshotModels.Screenshot.find(queryParams)
-				.sort({tstamp: -1})
-				.skip((page - 1) * itemsPerPage)
-				.limit(itemsPerPage)
-				.exec(function(err, screenshots) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getAndLogErrorMessage(err)
-						});
-					}
-					return res.json({
-						itemsPerPage: itemsPerPage,
-						models: screenshots
-					});
-				});
-			} else {
-				var publisherIds = [];
-				if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
-					req.query.organization = req.user.organization.id;
-				}
-				publisherModels.Publisher.find(req.query, function (err, publishers) {
-					if (err) {
-						return res.status(400).send({
-							message: errorHandler.getAndLogErrorMessage(err)
-						});
-					}
-					for (var i = 0; i < publishers.length; i ++) {
-						publisherIds.push(publishers[i]._id);
-					}
-					screenshotModels.Screenshot.find({
-						publisher: { $in: publisherIds }
-					})
-					.sort({tstamp: -1})
-					.skip((page - 1) * itemsPerPage)
-					.limit(itemsPerPage)
-					.exec(function(err, screenshots) {
-						if (err) {
-							return res.status(400).send({
-								message: errorHandler.getAndLogErrorMessage(err)
-							});
-						}
-						return res.json({
-							itemsPerPage: itemsPerPage,
-							models: screenshots
-						});
-					});
-				});
+			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+				req.query.organization = req.user.organization.id;
 			}
+			publisherModels.Publisher.find(req.query, function (err, publishers) {
+				if (err) {
+					return res.status(400).send({
+						message: errorHandler.getAndLogErrorMessage(err)
+					});
+				}
+				for (var i = 0; i < publishers.length; i ++) {
+					publisherIds.push(publishers[i]._id);
+				}
+				screenshotModels.Screenshot.find({
+					publisher: { $in: publisherIds }
+				}, function(err, screenshots) {
+					if (err) {
+						var errorMessage = 'ERROR when getting screenshots with advertiserIds ';
+						console.error(errorMessage + JSON.stringify(publisherIds));
+						return res.status(400).send({
+							message: errorMessage
+						});
+					}
+					if (shouldGroupByCampaign) {
+						groupScreenshotsByCampaignName(screenshots, advertiserModels, function(err, groupedScreenshots) {
+							if (err) {
+								return res.status(400).send({
+									message: err
+								});
+							}
+							return res.json(groupedScreenshots);
+						});
+					} else {
+						return res.json(screenshots);
+					}
+				});
+			});
 		},
 
 		/**

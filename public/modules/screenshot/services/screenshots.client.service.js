@@ -2,20 +2,24 @@
 
 angular.module('screenshot').factory('ScreenshotFetcher', ['$http', function($http) {
 	var fetcher = {};
-	fetcher.fetchByAdvertisers = function(queryParams) {
+	fetcher.fetchByAdvertisers = function(groupByCampaign) {
 		var path = '/console/screenshot/byAdvertiser';
 		return $http({
 			method: 'GET',
 			url: path,
-			params: queryParams
+			params: {
+				groupByCampaign: groupByCampaign
+			}
 		});
 	};
-	fetcher.fetchByPublishers = function(queryParams) {
+	fetcher.fetchByPublishers = function(groupByCampaign) {
 		var path = '/console/screenshot/byPublisher';
 		return $http({
 			method: 'GET',
 			url: path,
-			params: queryParams
+			params: {
+				groupByCampaign: groupByCampaign
+			}
 		});
 	};
 	return fetcher;
