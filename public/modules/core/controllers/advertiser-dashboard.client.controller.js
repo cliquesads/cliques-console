@@ -45,7 +45,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                 });
                 ScreenshotFetcher.fetch()
                 .then(function(response) {
-                    $scope.screenshots = response.data;
+                    $scope.screenshots = response.data.models;
                 }, function(errorResponse) {
                     Notify.alert(errorResponse.data.message, {status: 'danger'});
                 });
