@@ -2,16 +2,8 @@
 
 angular.module('screenshot').factory('ScreenshotFetcher', ['$http', function($http) {
 	var fetcher = {};
-	fetcher.fetchByAdvertisers = function(queryParams) {
-		var path = '/console/screenshot/byAdvertiser';
-		return $http({
-			method: 'GET',
-			url: path,
-			params: queryParams
-		});
-	};
-	fetcher.fetchByPublishers = function(queryParams) {
-		var path = '/console/screenshot/byPublisher';
+	fetcher.fetch = function(queryParams) {
+		var path = '/console/screenshot/getMany';
 		return $http({
 			method: 'GET',
 			url: path,

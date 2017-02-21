@@ -37,7 +37,7 @@ module.exports = function(db, routers) {
 		 */
 		.get(screenshots.getScreenshotFilters);
 
-	router.route('/screenshot/byAdvertiser')
+	router.route('/screenshot/getMany')
 		/**
 		 * @api {get} /screenshot/byAdvertiser Get all screenshots that belong to current logged in user's advertiser
 		 * @apiName ReadScreenshot
@@ -50,20 +50,5 @@ module.exports = function(db, routers) {
 		 *
 		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
 		 */
-		.get(screenshots.hasAdvertiserType, screenshots.getManyByAdvertisers);
-
-	router.route('/screenshot/byPublisher')
-		/**
-		 * @api {get} /screenshot/byPublisher Get all screenshots that belong to specific publisher
-		 * @apiName ReadScreenshot
-		 * @apiDescription Get all screenshots that belong to specific publisher
-		 * @apiVersion 0.1.0
-		 * @apiPermission networkAdmin
-		 * @apiPermission publisher
-		 *
-		 * @apiParam (Path Parameters){String} advertiserId Objectid of Advertiser
-		 *
-		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
-		 */
-		.get(screenshots.hasPublisherType, screenshots.getManyByPublishers);
+		.get(screenshots.getMany);
 };

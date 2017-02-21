@@ -23,7 +23,7 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			if ($scope.filterSite) {
 				queryParams.filterSiteId = $scope.filterSite.id;
 			}
-			ScreenshotFetcher.fetchByAdvertisers(queryParams)
+			ScreenshotFetcher.fetch(queryParams)
 			.then(function(response) {
 			    $scope.screenshots = $scope.screenshots.concat(response.data.models);
 			    if (response.data.length < response.data.itemsPerPage) {
