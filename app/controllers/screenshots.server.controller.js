@@ -16,7 +16,24 @@ module.exports = function(db) {
 
 	return {
 		/**
-		 * Get all possible campaigns and sites as screenshot filters
+		 * Get all possible campaigns and sites as screenshot filters, the response filter
+		 * has the following structure:
+		 * {
+		 *  	campaigns: [
+		 *			{
+		 *     			name: 'someCampaignName',
+		 * 		   		id: ObjectId("someCampaignObjectId")
+		 *     		},
+		 *			...
+		 *     	],
+		 *		sites: [
+		 *			{
+		 *				name: 'someSiteName',
+		 *				id: ObjectId("someSiteName")
+		 *			},
+		 * 			...
+		 * 		]
+		 * }
 		 */
 		getScreenshotFilters: function (req, res) {
 			var filter = {
