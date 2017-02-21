@@ -6,6 +6,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
     function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, 
              aggregationDateRanges, ngDialog, $state) {
         $scope.views = null;
+
+        $scope.goToQuery = function(queryName) {
+        	if (queryName === 'time') {
+        		$location.path('/analytics/timeQuery');
+        	}
+        };
     }
 ]);
 

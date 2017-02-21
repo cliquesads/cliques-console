@@ -1,0 +1,26 @@
+<div class="time-query-container">
+	<div class="row">
+		<div class="col-md-6">
+			<div id="timeQueryGraphPanel" class="panel panel-default">
+				<div class="panel-heading">
+					<div class="panel-title">Some time query
+						&nbsp&nbsp&nbsp
+						<small>
+						    <em class="text-muted">
+						        Reporting Timezone: {{ authentication.user.tz }}
+						    </em>
+						</small>
+						<span class="pull-right">
+						    <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
+						    <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
+						    <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
+						</span>
+					</div>
+				</div>
+				<div class="panel-body">
+					<daily-ad-stats-graph height="250px"></daily-ad-stats-graph>
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
