@@ -43,7 +43,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                         });
                     });
                 });
-                ScreenshotFetcher.fetchByAdvertisers()
+                ScreenshotFetcher.fetch()
                 .then(function(response) {
                     $scope.screenshots = response.data;
                 }, function(errorResponse) {
