@@ -1,7 +1,13 @@
 <section>
-	<div class="jumbotron text-center">
-		<h3 class="text-gray-darker"><i class="fa fa-rocket"></i> We're just getting started.</h3>
-		<p class="lead">The following websites are some of the finest outdoor-focused publications in existence, and we're excited to partner with all of them. <strong>But this is only the beginning.</strong> We'll keep you posted as more sites join Cliques in the coming months!</p>
+	<div class="hint actionbeacon-hint">
+		<div>
+			<h2 class="cliquesicons-action-beacon"></h2>
+		</div>
+		<div class="hint-content">
+			<strong>Action beacons</strong> (A.K.A "tracking pixels" or "conversion pixels") are invisible 1x1 pixels that can be installed on any page to let you track downstream actions users take on your website.
+			<br/><br/>
+			For example, if you want to track	how many people who clicked on your Cliques ads later added items to their shopping cart on your site, you would create an action beacon called <strong>Add to Cart</strong> and place it in the code controlling your add to cart button. For more information, <a href="">please see our support center.</a>
+		</div>
 	</div>
 
 	<!-- Screenshot filters -->
@@ -48,8 +54,19 @@
 				</div>	
 			</div>	
 		</div>
+		<div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-hide="screenshotRequest.$resolved">
+			<div class="panel">
+				<div class="panel-body text-center">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>
+					</div>
+					<h4>Loading more screenshots...</h4>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div ng-if="screenshots.length === 0" class="box-placeholder text-center mv-lg pv-xl">
+	<div ng-if="screenshots.length === 0 && screenshotRequest.$resolved" class="box-placeholder text-center mv-lg pv-xl">
 		<h4>No Screenshots yet.</h4>
 	</div>
 </section>
