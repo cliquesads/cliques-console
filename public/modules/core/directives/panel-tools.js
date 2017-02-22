@@ -80,10 +80,12 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
 
         // Run the animation before destroy the panel
         function destroyMiddleware() {
-          if(Utils.support.animation) {
-            parent.animo({animation: 'bounceOut'}, destroyPanel);
-          }
-          else destroyPanel();
+          // disable animation, I don't think this is useful
+          // if(Utils.support.animation) {
+          //   parent.animo({animation: 'flash'}, destroyPanel);
+          // }
+          // else destroyPanel();
+          destroyPanel();
         }
 
         function destroyPanel() {
