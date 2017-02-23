@@ -1,20 +1,28 @@
-@hint-bg: #777;
+@hint-bg: @brand-primary;
 @hint-color: white;
 
 .hint {
-  background-color: @hint-bg;
+  //background-color: @hint-bg;
   padding: 15px;
-  color: @hint-color;
+  //color: @hint-color;
+  border-color: @hint-bg;
+  border-top-width: 4px !important;
+  //box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   //border: 1px solid @panel-default-border;
   h3, h4 {
     margin: 0;
   }
   a {
-    color: @hint-color;
+    //color: @hint-color;
   }
   .panel-heading {
-    background-color: @hint-bg;
-    color: @hint-color;
+    //background-color: @hint-bg;
+    //color: @hint-color;
+    padding: 0;
+  }
+
+  .panel-body{
+    padding: 5px 0 0 0;
   }
 
   .hint-content {
