@@ -25,14 +25,20 @@ require('./config/swig')(swig);
  */
 // Build the connection string
 var exchangeMongoURI = util.format('mongodb://%s:%s/%s',
-    config.mongodb.host,
-    config.mongodb.port,
-    config.mongodb.db);
+    'localhost',
+    '27017',
+    'exchange_dev');
+    // config.mongodb.host,
+    // config.mongodb.port,
+    // config.mongodb.db);
 
 var exchangeMongoOptions = {
-    user: config.mongodb.user,
-    pass: config.mongodb.pwd,
-    auth: {authenticationDatabase: config.mongodb.db}
+    user: 'root',
+    pass: '',
+    auth: {authenticationDatabase: 'exchange_dev'}
+    // user: config.mongodb.user,
+    // pass: config.mongodb.pwd,
+    // auth: {authenticationDatabase: config.mongodb.db}
 };
 var db = cliques_mongo.createConnectionWrapper(exchangeMongoURI, exchangeMongoOptions, function(err, logstring){
     if (err) {

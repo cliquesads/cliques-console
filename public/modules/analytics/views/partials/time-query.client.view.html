@@ -1,7 +1,30 @@
 <div class="time-query-container">
+	<div class="bg-gray-lighter">
+		<div class="row mt-xl pt">
+			<!-- Select time unit -->
+			<div class="form-horizontal col-sm-8">
+				<div class="form-group">
+					<label for="timeUnitSelection" class="col-sm-2 text-md pl-xl mt-sm">Time Unit</label>
+					<div class="col-sm-10">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('hour')">Hour</button>
+							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('day')">Day</button>
+							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('month')">Month</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Export to CSV button -->
+			<div class="col-sm-4">
+				<button class="btn btn-primary btn-block text-md" ng-click="exportToCSV()">Export to CSV</button>
+			</div>
+
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-md-6">
-			<div id="timeQueryGraphPanel" class="panel panel-default mt-xl" data-ng-init="getTimeQueryGraph('7d')">
+			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getTimeQueryGraph('7d')">
 				<div class="panel-heading">
 					<div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
 						&nbsp;&nbsp;&nbsp;
@@ -24,7 +47,7 @@
 		</div>
 
 		<div class="col-sm-6">
-			<div class="panel panel-default mt-xl">
+			<div class="panel panel-default mt">
 				<div class="panel-heading">
 					<div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
 						&nbsp;&nbsp;&nbsp;

@@ -1,14 +1,36 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder',
-    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$http',
+    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, $http) {
         $scope.views = null;
+        $scope.timeUnit = 'day';
 
         $scope.goToQuery = function(queryName) {
             if (queryName === 'time') {
                 $location.path('/analytics/timeQuery');
             }
+        };
+
+        $scope.changeTimeUnit = function(timeUnit) {
+            // For grouping & MongoTimeSeries generation
+            $scope.timeUnit = timeUnit;
+        };
+
+        $scope.exportToCSV = function() {
+            $http({
+                url: '/console/hourlyadstat/export',
+                method: 'GET',
+                params: {timeSeries: $scope.timeSeries}
+            })
+            .success(function(data) {
+                console.log('************** success');
+                console.log(data);
+            })
+            .error(function(data) {
+                console.log('************** error');
+                console.log(data);
+            });
         };
 
         $scope.summaryDateRangeSelection = "7d";
@@ -22,16 +44,14 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             // Only have this so points won't show for lines with tons of data
             $scope.showPoints = $scope.dateRanges[dateShortCode].showPoints;
 
-            // For grouping & MongoTimeSeries generation
-            var timeUnit = 'day';
 
             // query HourlyAdStats api endpoint
             HourlyAdStat.query({
-                dateGroupBy: timeUnit,
+                dateGroupBy: $scope.timeUnit,
                 startDate: startDate,
                 endDate: endDate
             }).then(function(response) {
-                $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit, {
+                $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, $scope.timeUnit, {
                     fields: [
                         'imps', {
                             'CTR': function(row) {
