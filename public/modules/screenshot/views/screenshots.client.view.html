@@ -58,7 +58,7 @@
 				</div>	
 			</div>	
 		</div>
-		<div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-hide="screenshotRequest.$resolved">
+		<div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-hide="resolved">
 			<div class="panel">
 				<div class="panel-body text-center">
 					<div class="ball-clip-rotate-pulse" style="display: inline-block">
@@ -70,7 +70,7 @@
 			</div>
 		</div>
 	</div>
-	<div ng-if="screenshots.length === 0 && screenshotRequest.$resolved" class="box-placeholder text-center mv-lg pv-xl">
+	<div ng-if="screenshots.length === 0 && resolved" class="box-placeholder text-center mv-lg pv-xl">
 		<h4>No Screenshots yet.</h4>
 	</div>
 </section>

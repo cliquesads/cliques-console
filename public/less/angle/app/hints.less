@@ -2,22 +2,18 @@
 @hint-color: white;
 
 .hint {
-  //background-color: @hint-bg;
   padding: 15px;
-  //color: @hint-color;
-  border-color: @hint-bg;
-  border-top-width: 4px !important;
-  //box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  //border: 1px solid @panel-default-border;
+  border-left-color: @hint-bg;
+  border-top-color: @panel-default-border;
+  border-right-color: @panel-default-border;
+  border-bottom-color: @panel-default-border;
+  border-width: 1px 1px 1px 6px !important;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
   h3, h4 {
+    color: @hint-bg;
     margin: 0;
   }
-  a {
-    //color: @hint-color;
-  }
   .panel-heading {
-    //background-color: @hint-bg;
-    //color: @hint-color;
     padding: 0;
   }
 
@@ -27,9 +23,7 @@
 
   .hint-content {
     font-size: 1.1em;
-    //color: rgba(255, 255, 255, 0.8);
     a {
-      //color: rgba(255, 255, 255, 0.7);
       text-decoration: underline;
     }
   }

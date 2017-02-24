@@ -31,13 +31,19 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			if ($scope.filterSite) {
 				queryParams.filterSiteId = $scope.filterSite.id;
 			}
+			// TODO: $http's returned promise's $resolved property doesn't
+			// TODO: exactly behave as expected here so have to manually set resolved flags,
+			// TODO: which is really annoying
+			$scope.resolved = false;
 			$scope.screenshotRequest = ScreenshotFetcher.fetch(queryParams)
 			.then(function(response) {
+				$scope.resolved = true;
 			    $scope.screenshots = $scope.screenshots.concat(response.data.models);
 			    if (response.data.length < response.data.itemsPerPage) {
 			    	$scope.hasMore = false;
 			    }
 			}, function(errorResponse) {
+				$scope.resolved = true;
 			    Notify.alert(errorResponse.data.message, {status: 'danger'});
 			});
 		};
