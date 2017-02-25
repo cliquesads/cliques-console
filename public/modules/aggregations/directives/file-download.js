@@ -22,7 +22,6 @@ angular.module('aggregations').directive('fileDownload', [function() {
                     var url, fileURL;
                     if (isFirefox || isIE || isChrome) {
                         if (isChrome) {
-                            console.log('Manage Google Chrome download');
                             url = window.URL || window.webkitURL;
                             fileURL = url.createObjectURL(scope.fileDownload);
                             var downloadLink = angular.element('<a></a>'); //create a new  <a> tag element
@@ -33,11 +32,9 @@ angular.module('aggregations').directive('fileDownload', [function() {
                             url.revokeObjectURL(fileURL); //revoke the object from URL
                         }
                         if (isIE) {
-                            console.log('Manage IE download>10');
                             window.navigator.msSaveOrOpenBlob(scope.fileDownload, scope.fileName);
                         }
                         if (isFirefox) {
-                            console.log('Manage Mozilla Firefox download');
                             url = window.URL || window.webkitURL;
                             fileURL = url.createObjectURL(scope.fileDownload);
                             var a = elem[0]; //recover the <a> tag from directive
@@ -47,7 +44,7 @@ angular.module('aggregations').directive('fileDownload', [function() {
                             a.click(); //we call click function
                         }
                     } else {
-                        alert('SORRY YOUR BROWSER IS NOT COMPATIBLE');
+                        console.error('Sorry, your browser is not compatible');
                     }
                 }
             });
