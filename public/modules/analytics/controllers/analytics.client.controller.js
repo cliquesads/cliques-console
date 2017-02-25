@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$http',
-    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, $http) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$http', 'Notify',
+    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, $http, Notify) {
         $scope.views = null;
         $scope.timeUnit = 'day';
 
@@ -24,12 +24,13 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 params: {timeSeries: $scope.timeSeries}
             })
             .success(function(data) {
-                console.log('************** success');
-                console.log(data);
+                $scope.downloadFileName = new Date().getTime() + '.csv';
+                $scope.downloadFileBlob = new Blob([data], {
+                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
             })
             .error(function(data) {
-                console.log('************** error');
-                console.log(data);
+                Notify.alert('Error exporting CSV');
             });
         };
 
