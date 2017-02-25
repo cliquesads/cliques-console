@@ -612,7 +612,8 @@ module.exports = function(db) {
                 }
             }
 
-            var filePath = process.cwd() + '/public/exports/test.csv';
+            var fileName = new Date().getTime();
+            var filePath = process.cwd() + '/public/exports/' + fileName;
             fs.promisifiedWriteFile = promise.promisify(fs.writeFile);
             fs.promisifiedAppendFile = promise.promisify(fs.appendFile);
             return fs.promisifiedWriteFile(filePath, fields.join() + '\n')
