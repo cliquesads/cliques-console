@@ -682,8 +682,4 @@ module.exports = function(db, routers){
          */
         .get(cliques.hasAuthorization, aggregations.hourlyAdStat.getManyClique);
 
-    /* ---- EXPORT CSV ROUTES ---- */
-    router.route('/hourlyadstat/export')
-        .get(cliques.hasAuthorization, aggregations.exportToCSV);
-
 };
