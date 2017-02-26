@@ -64,11 +64,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             cliques: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
-
-                // ycx!!!!!!
-                startDate = new Date('2017-02-17T05:00:00.000Z');
-                endDate = new Date('2017-02-23T05:00:00.000Z');
-
                 // query HourlyAdStats endpoint
                 HourlyAdStat.query({
                     groupBy: 'pub_clique',
@@ -98,12 +93,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             publishers: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
-
-                // ycx!!!!!!
-                startDate = new Date('2017-02-17T05:00:00.000Z');
-                endDate = new Date('2017-02-23T05:00:00.000Z');
-
-
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query({
                     groupBy: 'publisher',
@@ -135,12 +124,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             advertisers: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
-
-
-                // ycx!!!!!!
-                startDate = new Date('2017-02-17T05:00:00.000Z');
-                endDate = new Date('2017-02-23T05:00:00.000Z');
-
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query({
                     groupBy: 'advertiser',
