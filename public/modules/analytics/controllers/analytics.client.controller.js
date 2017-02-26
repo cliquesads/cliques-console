@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$http', 'Notify',
-    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, $http, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$http', 'Notify', 'Analytics',
+    function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, $http, Notify, Analytics) {
         $scope.views = null;
         $scope.timeUnit = 'day';
 
@@ -18,19 +18,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         };
 
         $scope.exportToCSV = function() {
-            $http({
-                url: '/console/hourlyadstat/export',
-                method: 'GET',
-                params: {timeSeries: $scope.timeSeries}
-            })
-            .success(function(data) {
-                $scope.downloadFileName = new Date().getTime() + '.csv';
-                $scope.downloadFileBlob = new Blob([data], {
-                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                });
-            })
-            .error(function(data) {
-                Notify.alert('Error exporting CSV');
+            // download on the frontend
+            var blobStringForCSV = Analytics.generateCSVData(JSON.stringify($scope.timeSeries));
+
+            $scope.downloadFileName = Analytics.getCSVFileName();
+            $scope.downloadFileBlob = new Blob([blobStringForCSV], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
         };
 
@@ -44,7 +37,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             // Pass "show-points" to graph directive to toggle line points
             // Only have this so points won't show for lines with tons of data
             $scope.showPoints = $scope.dateRanges[dateShortCode].showPoints;
-
 
             // query HourlyAdStats api endpoint
             HourlyAdStat.query({
@@ -72,6 +64,11 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             cliques: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
+
+                // ycx!!!!!!
+                startDate = new Date('2017-02-17T05:00:00.000Z');
+                endDate = new Date('2017-02-23T05:00:00.000Z');
+
                 // query HourlyAdStats endpoint
                 HourlyAdStat.query({
                     groupBy: 'pub_clique',
@@ -101,6 +98,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             publishers: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
+
+                // ycx!!!!!!
+                startDate = new Date('2017-02-17T05:00:00.000Z');
+                endDate = new Date('2017-02-23T05:00:00.000Z');
+
+
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query({
                     groupBy: 'publisher',
@@ -132,6 +135,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             advertisers: function(dateShortCode) {
                 var startDate = $scope.dateRanges[dateShortCode].startDate;
                 var endDate = $scope.dateRanges[dateShortCode].endDate;
+
+
+                // ycx!!!!!!
+                startDate = new Date('2017-02-17T05:00:00.000Z');
+                endDate = new Date('2017-02-23T05:00:00.000Z');
+
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query({
                     groupBy: 'advertiser',

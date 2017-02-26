@@ -50,7 +50,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/custom-queries.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/custom-query.client.view.html',
                     controller: 'AnalyticsController'
                 },
                 'sideBar': {
