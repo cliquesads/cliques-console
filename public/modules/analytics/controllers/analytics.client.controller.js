@@ -13,7 +13,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         };
 
         $scope.goToQuery = function(queryName) {
-            if (queryName === 'time') {
+            if (queryName === 'Time') {
                 $location.path('/analytics/timeQuery');
             }
         };
