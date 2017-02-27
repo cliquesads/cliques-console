@@ -1,43 +1,46 @@
 <div class="time-query-container">
 	<div class="bg-gray-lighter">
-		<div class="row mt-xl pt">
-			<!-- Select time unit -->
-			<div class="form-horizontal col-sm-8">
-				<div class="form-group">
-					<label for="timeUnitSelection" class="col-sm-2 text-md pl-xl mt-sm">Time Unit</label>
-					<div class="col-sm-10">
-						<div class="btn-group">
-							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('hour')">Hour</button>
-							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('day')">Day</button>
-							<button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('month')">Month</button>
-						</div>
-					</div>
-				</div>
-			</div>
+        <div class="row mt-xl p">
+            <!-- start & end dates -->
+            <div class="col-sm-8">
+                <custom-dates width="6" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
+            </div>
 
-			<!-- Export to CSV button -->
-			<div class="col-sm-4">
-				<button class="btn btn-primary text-md pull-right mr-lg" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName">Export to CSV</button>
-			</div>
+            <!-- Select time unit -->
+            <div class="col-sm-4">
+                <div class="pull-right">
+                    <div>
+                        <label for="timeUnitSelection" class="">Time Unit</label>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('hour')">Hour</button>
+                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('day')">Day</button>
+                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('month')">Month</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		</div>
+        <div class="row p">
+            <!-- Export to CSV button -->
+            <div class="col-sm-3 col-sm-offset-9">
+                <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName">Export to CSV</button>
+            </div>
+        </div>
 	</div>
 	<div class="row">
 		<div class="col-md-6">
 			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getTimeQueryGraph('7d')">
 				<div class="panel-heading">
-					<div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-						&nbsp;&nbsp;&nbsp;
-						<small>
-						    <em class="text-muted">
-						        Reporting Timezone: {{ authentication.user.tz }}
-						    </em>
-						</small>
-						<span class="pull-right">
-						    <button class="btn btn-sm btn-default" ng-click="getTimeQueryGraph('7d')">7d</button>
-						    <button class="btn btn-sm btn-default" ng-click="getTimeQueryGraph('30d')">30d</button>
-						    <button class="btn btn-sm btn-default" ng-click="getTimeQueryGraph('90d')">90d</button>
-						</span>
+					<div class="panel-title">
+                        <div>{{ queryResultTitle }}</div>
+                        <div>
+                            <small>
+                                <em class="text-muted">
+                                    Reporting Timezone: {{ authentication.user.tz }}
+                                </em>
+                            </small>
+                        </div>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -49,18 +52,15 @@
 		<div class="col-sm-6">
 			<div class="panel panel-default mt">
 				<div class="panel-heading">
-					<div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-						&nbsp;&nbsp;&nbsp;
-						<small>
-							<em class="text-muted">
-								Reporting Timezone: {{ authentication.user.tz }}
-							</em>
-						</small>
-						<span class="pull-right">
-							<button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-							<button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-							<button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
-						</span>
+					<div class="panel-title">
+                        <div>{{ queryResultTitle }}</div>
+                        <div>
+                            <small>
+                                <em class="text-muted">
+                                    Reporting Timezone: {{ authentication.user.tz }}
+                                </em>
+                            </small>
+                        </div>
 					</div>
 				</div>
 				<tabset>
