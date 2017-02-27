@@ -84,7 +84,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.summaryDateRangeSelection = dateShortCode;
         };
 
-        $scope.dateRangeSelection = "30d";
+        $scope.dateRangeSelection = "7d";
         $scope.tabFunctions = {
             cliques: function(dateShortCode) {
                 var startDate, endDate;
