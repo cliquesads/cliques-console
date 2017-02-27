@@ -1,35 +1,8 @@
 <div class="quick-query-container">
-    <div class="col-sm-4">
-        <div class="query-block" ng-click="goToQuery('time')">
-            <h3>Time</h3>
-            <div class="description">View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.</div>
-        </div>
-        <div class="query-block" ng-click="goToQuery('states')">
-            <h3>States</h3>
-            <div class="description">Check on performance by state/region to see what's happening at a regional level.</div>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="query-block" ng-click="goToQuery('sites')">
-            <h3>Sites</h3>
-            <div class="description">See all sites you've served impressions on and how well each site has performed.</div>
-        </div>
-        <div class="query-block" ng-click="goToQuery('cities')">
-            <h3>Cities</h3>
-            <div class="description">Drill down to the city level to spot any hyper-regional trends.</div>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="query-block" ng-click="goToQuery('creatives')">
-            <h3>Creatives</h3>
-            <div class="description">The best way to tell what brand messaging is resonating. See which creatives
-                are performing well & which ones aren't.
-            </div>
-        </div>
-        <div class="query-block" ng-click="goToQuery('countries')">
-            <h3>Countries</h3>
-            <div class="description">Zoom way out and see if there are any interesting trends at the country level for
-                your campaigns.</div>
+    <div class="col-sm-4" ng-repeat="queryPair in quickQueries">
+        <div class="query-block" ng-click="" ng-repeat="query in queryPair">
+            <h3>{{ query.name }}</h3>
+            <div class="description">{{ query.description }}</div>
         </div>
     </div>
 </div>
