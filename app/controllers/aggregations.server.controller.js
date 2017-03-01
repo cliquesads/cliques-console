@@ -5,6 +5,7 @@
  */
 var models = require('@cliques/cliques-node-utils').mongodb.models,
     mongoose = require('mongoose'),
+    Query = mongoose.model('Query'),
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash'),
     async = require('async'),
@@ -396,19 +397,38 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                //catch populate query param here and call model populate
-                // NOTE: Can only pass populate for object in 'group' object
-                // otherwise this will throw out the populate param
-                if (req.query.populate){
-                    self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
-                        if (err) {
-                            return res.status(400).send({ message: err });
-                        }
-                        res.json(results);
-                    });
-                } else {
-                    res.json(hourlyAdStats);
+                // Now save the query as Query model in database
+                var startDate = req.query.startDate;
+                if (startDate) {
+                    startDate = startDate.slice(0, 16);
                 }
+                var endDate = req.query.endDate;
+                if (endDate) {
+                    endDate = endDate.slice(0, 16);
+                }
+                var newQuery = new Query(req.query);
+                newQuery.user = req.user._id;
+                newQuery.humanizedDateRange = startDate + ' - ' + endDate;
+                newQuery.save(function(err) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: 'Error saving query'
+                        });
+                    }
+                    //catch populate query param here and call model populate
+                    // NOTE: Can only pass populate for object in 'group' object
+                    // otherwise this will throw out the populate param
+                    if (req.query.populate){
+                        self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
+                            if (err) {
+                                return res.status(400).send({ message: err });
+                            }
+                            return res.json(results);
+                        });
+                    } else {
+                        return res.json(hourlyAdStats);
+                    }
+                });
             }
         });
     };

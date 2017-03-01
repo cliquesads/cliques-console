@@ -2,35 +2,47 @@
 	<div class="bg-gray-lighter">
         <div class="row mt-xl p">
             <!-- start & end dates -->
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <custom-dates width="6" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
             </div>
 
             <!-- Select time unit -->
-            <div class="col-sm-4">
-                <div class="pull-right">
-                    <div>
-                        <label for="timeUnitSelection" class="">Time Unit</label>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('hour')">Hour</button>
-                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('day')">Day</button>
-                        <button type="button" class="btn btn-default text-md" ng-click="changeTimeUnit('month')">Month</button>
-                    </div>
-                </div>
+            <div class="col-sm-3">
+                <time-unit-selector time-unit="timeUnit"></time-unit-selector>
+            </div>
+
+            <!-- Checkbox to save as cron task or not -->
+            <div class="col-sm-2 pt-xl">
+                <label class="checkbox-inline">
+                    <input type="checkbox" ng-model="isSaved" ng-change="toggleSave()">
+                    <span class="text-md">
+                        Save as cron task
+                    </span>
+                </label>
             </div>
         </div>
 
-        <div class="row p">
-            <!-- Export to CSV button -->
-            <div class="col-sm-3 col-sm-offset-9">
-                <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName">Export to CSV</button>
+        <!-- Cron task scheduler -->
+        <div class="row pl-lg" ng-if="isSaved">
+            <div class="col-sm-12 pt">
+                <scheduler weekday="weekday"
+                    month="month"
+                    date="date"
+                    hour="hour"
+                    minute="minute"
+                    second="second">
+                </scheduler>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2 col-sm-offset-10 ph-lg pv">
+                <button class="btn btn-success btn-block text-md" ng-click="query()">Query</button>
             </div>
         </div>
 	</div>
 	<div class="row">
 		<div class="col-md-6">
-			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getTimeQueryGraph('7d')">
+			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getQueryGraph('7d', graphQueryParam)">
 				<div class="panel-heading">
 					<div class="panel-title">
                         <div>{{ queryResultTitle }}</div>
@@ -145,4 +157,11 @@
 		</div>
 
 	</div>	
+    
+    <!-- Export to CSV button -->
+    <div class="row p">
+        <div class="col-sm-3 col-sm-offset-9">
+            <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName">Export to CSV</button>
+        </div>
+    </div>
 </div>
