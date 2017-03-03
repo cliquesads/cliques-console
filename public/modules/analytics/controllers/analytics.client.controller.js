@@ -88,11 +88,24 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             case 'app.analytics.timeQuery':
                 $scope.setQueryName('time');
                 break;
+            case 'app.analytics.sitesQuery':
+                $scope.setQueryName('sites');
+                break;
+            default:
+                break;
         }
         $scope.goToQuerySection = function(queryName) {
-            if (queryName === 'Time') {
-                $scope.setQueryName('time');
-                $location.path('/analytics/timeQuery');
+            switch (queryName) {
+                case 'Time':
+                    $scope.setQueryName('time');
+                    $location.path('/analytics/timeQuery');
+                    break;
+                case 'Sites':
+                    $scope.setQueryName('sites');
+                    $location.path('/analytics/sitesQuery');
+                    break;
+                default:
+                    break;
             }
         };
 
@@ -121,17 +134,23 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             }
             return queryParam;
         };
+        $scope.prepareQueryHumanizedDateRange = function(queryParam, dateRangeString) {
+            queryParam.humanizedDateRange = dateRangeString;
+            return queryParam;
+        };
 
         $scope.summaryDateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
         $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
 
         $scope.queryForGraphAndTabData = function() {
-            $scope.getQueryGraph(null, $scope.graphQueryParam);
-            $scope.getTabData();
             if ($scope.dates.startDate && $scope.dates.endDate) {
                 $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' / ' + $scope.timeUnit;
+            } else {
+                $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
             }
+            $scope.getQueryGraph(null, $scope.graphQueryParam);
+            $scope.getTabData();
         };
 
         $scope.getQueryGraph = function(dateShortCode, queryParam) {
@@ -140,6 +159,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
             // get cron task scheduling params ready
             queryParam = $scope.prepareCronScheduleParam(queryParam);
+            // get humanizedDateRange param ready
+            queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
 
             // Pass "show-points" to graph directive to toggle line points
             // Only have this so points won't show for lines with tons of data
@@ -167,6 +188,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             cliques: function(dateShortCode, queryParam) {
                 queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
                 queryParam = $scope.prepareCronScheduleParam(queryParam);
+                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
                 // query HourlyAdStats endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object
@@ -192,6 +214,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             publishers: function(dateShortCode, queryParam) {
                 queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
                 queryParam = $scope.prepareCronScheduleParam(queryParam);
+                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object
@@ -218,6 +241,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             advertisers: function(dateShortCode, queryParam) {
                 queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
                 queryParam = $scope.prepareCronScheduleParam(queryParam);
+                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object

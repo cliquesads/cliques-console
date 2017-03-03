@@ -29,11 +29,27 @@ angular.module('analytics').config(['$stateProvider',
         state('app.analytics.timeQuery', {
             url: '/analytics/timeQuery',
             resolve: {
-                $title: function(){ return 'Analytics'; }
+                $title: function(){ return 'Time Query'; }
             },
             views: {
                 'main': {
                     templateUrl: 'modules/analytics/views/partials/time-query.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.sitesQuery', {
+            url: '/analytics/sitesQuery',
+            resolve: {
+                $title: function(){ return 'Sites Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/sites-query.client.view.html',
                     controller: 'AnalyticsController'
                 },
                 'sideBar': {

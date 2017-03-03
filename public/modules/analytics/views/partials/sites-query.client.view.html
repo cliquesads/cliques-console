@@ -1,23 +1,48 @@
-<div class="time-query-container">
+<div class="sites-query-container">
 	<div class="bg-gray-lighter">
-        <div class="row mt-xl p">
-            <!-- start & end dates -->
-            <div class="col-sm-7">
-                <custom-dates width="6" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
-            </div>
+		<div class="row mt-xl ph pt">
+			<!-- select date range -->
+			<div class="col-sm-7">
+				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
+			</div>
 
-            <!-- Select time unit -->
-            <div class="col-sm-3">
-                <time-unit-selector time-unit="timeUnit"></time-unit-selector>
-            </div>
+			<!-- select time unit -->
+			<div class="col-sm-3">
+				<time-unit-selector time-unit="timeUnit"></time-unit-selector>
+			</div>
 
-            <!-- Checkbox to save as crontab or not -->
-            <div class="col-sm-2 pt-sm">
-                <br>
-                <button class="btn btn-success btn-block text-md" ng-click="queryForGraphAndTabData()">Query</button>
-            </div>
-        </div>
+			<!-- Checkbox to save as cron task or not -->
+			<div class="col-sm-2 pt-xl">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="isSaved" ng-change="toggleSave()">
+					<span class="text-md">
+						Save as crontab
+					</span>
+				</label>
+			</div>
+		</div>
+
+		<!-- Crontab scheduler -->
+		<div class="row pl-lg" ng-if="isSaved">
+			<div class="col-sm-12">
+				<scheduler
+					weekday="cronScheduleParam.weekday"
+					month="cronScheduleParam.month"
+					date="cronScheduleParam.date"
+					hour="cronScheduleParam.hour"
+					minute="cronScheduleParam.minute"
+					second="cronScheduleParam.second">
+				</scheduler>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2 col-sm-offset-10 ph-lg pb">
+				<button class="btn btn-success btn-block text-md" ng-click="queryForGraphAndTabData()">Query</button>
+			</div>
+		</div>
+
 	</div>
+
 	<div class="row">
 		<div class="col-md-6">
 			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getQueryGraph('7d', graphQueryParam)">
@@ -134,11 +159,4 @@
 			</div>
 		</div>
 	</div>	
-    
-    <!-- Export to CSV button -->
-    <div class="row p">
-        <div class="col-sm-3 col-sm-offset-9">
-            <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName">Export to CSV</button>
-        </div>
-    </div>
 </div>

@@ -1,0 +1,10 @@
+<div class="form-group">
+	<label for="dateRangeSelection" class="text-md">Date Range</label>
+	<select
+		name="dateRangeSelection"
+		id="dateRangeSelection"
+		class="form-control"
+		ng-model="selectedDateRange"
+		ng-options="key as value.label for (key, value) in dateRanges">
+	</select>
+</div>

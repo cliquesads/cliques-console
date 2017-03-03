@@ -428,7 +428,6 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     }
                 }
                 newQuery.user = req.user._id;
-                newQuery.humanizedDateRange = startDate + ' - ' + endDate;
                 newQuery.save(function(err) {
                     if (err) {
                         return res.status(400).send({
