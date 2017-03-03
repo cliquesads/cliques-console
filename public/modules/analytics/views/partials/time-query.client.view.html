@@ -25,18 +25,19 @@
         <!-- Cron task scheduler -->
         <div class="row pl-lg" ng-if="isSaved">
             <div class="col-sm-12 pt">
-                <scheduler weekday="weekday"
-                    month="month"
-                    date="date"
-                    hour="hour"
-                    minute="minute"
-                    second="second">
+                <scheduler
+                    weekday="cronScheduleParam.weekday"
+                    month="cronScheduleParam.month"
+                    date="cronScheduleParam.date"
+                    hour="cronScheduleParam.hour"
+                    minute="cronScheduleParam.minute"
+                    second="cronScheduleParam.second">
                 </scheduler>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-2 col-sm-offset-10 ph-lg pv">
-                <button class="btn btn-success btn-block text-md" ng-click="query()">Query</button>
+                <button class="btn btn-success btn-block text-md" ng-click="queryForGraphAndTabData()">Query</button>
             </div>
         </div>
 	</div>

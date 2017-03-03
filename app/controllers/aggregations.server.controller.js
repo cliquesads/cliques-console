@@ -11,6 +11,17 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
     async = require('async'),
     moment = require('moment-timezone');
 
+/**
+ * Validates the schedule string before saving query model to database.
+ *
+ * A valid schedule string should have the following format:
+ * '* * * * * *'
+ * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
+ */
+var validateScheduleString = function(scheduleString) {
+    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7])$/;
+    return re.test(scheduleString);
+};
 
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
@@ -407,6 +418,15 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     endDate = endDate.slice(0, 16);
                 }
                 var newQuery = new Query(req.query);
+                var scheduleString = req.query.schedule;
+                if (scheduleString) {
+                    // validate schedule string
+                    if (!validateScheduleString(scheduleString)) {
+                        return res.status(400).send({
+                            message: 'Illegal schedule string'
+                        });
+                    }
+                }
                 newQuery.user = req.user._id;
                 newQuery.humanizedDateRange = startDate + ' - ' + endDate;
                 newQuery.save(function(err) {

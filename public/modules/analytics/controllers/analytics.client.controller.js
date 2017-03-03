@@ -8,6 +8,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         $scope.timeUnit = 'day';
         $scope.isSaved = false;
         $scope.dates = {};
+        $scope.cronScheduleParam = {};
 
         // query params for graph and tab respectively
         $scope.graphQueryParam = {
@@ -16,43 +17,79 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         };
         $scope.tabQueryParams = {
             cliques: {
+                dateGroupBy: $scope.timeUnit,
                 groupBy: 'pub_clique',
                 isSaved: $scope.isSaved
             },
             publishers: {
+                dateGroupBy: $scope.timeUnit,
                 groupBy: 'publisher',
                 populate: 'publisher',
                 isSaved: $scope.isSaved
             },
             advertisers: {
+                dateGroupBy: $scope.timeUnit,
                 groupBy: 'advertiser',
                 populate: 'advertiser',
                 isSaved: $scope.isSaved
             }
         };
 
-        $scope.changeTimeUnit = function(unit) {
-            $scope.timeUnit = unit;
+        // function to form cron task string based on user input of scheduler directive
+        var formCronTaskString = function(cronScheduleParam) {
+            var secondPos = 0,
+                minutePos = 0,
+                hourPos = 0,
+                datePos = '*',
+                monthPos = '*',
+                weekdayPos = '*';
+            if (cronScheduleParam.second) {
+                secondPos = cronScheduleParam.second;
+            }
+            if (cronScheduleParam.minute) {
+                minutePos = cronScheduleParam.minute;
+            }
+            if (cronScheduleParam.hour) {
+                hourPos = cronScheduleParam.hour;
+            }
+            if (cronScheduleParam.date) {
+                datePos = cronScheduleParam.date;
+            }
+            if (cronScheduleParam.month) {
+                monthPos = cronScheduleParam.month.value;
+            }
+            if (cronScheduleParam.weekday) {
+                weekdayPos = cronScheduleParam.weekday.value;
+            }
+            var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
+            return cronString;
         };
+
+        $scope.$watch('timeUnit', function() {
+            $scope.graphQueryParam.dateGroupBy = $scope.timeUnit;
+            $scope.tabQueryParams.cliques.dateGroupBy = $scope.timeUnit;
+            $scope.tabQueryParams.publishers.dateGroupBy = $scope.timeUnit;
+            $scope.tabQueryParams.advertisers.dateGroupBy = $scope.timeUnit;
+        });
         $scope.toggleSave = function() {
             $scope.graphQueryParam.isSaved = $scope.isSaved;
-            $scope.tabQueryParams.cliques.isSaved = $scope.isSaved; 
-            $scope.tabQueryParams.publishers.isSaved = $scope.isSaved; 
-            $scope.tabQueryParams.advertisers.isSaved = $scope.isSaved; 
+            $scope.tabQueryParams.cliques.isSaved = $scope.isSaved;
+            $scope.tabQueryParams.publishers.isSaved = $scope.isSaved;
+            $scope.tabQueryParams.advertisers.isSaved = $scope.isSaved;
         };
         $scope.setQueryName = function(name) {
             $scope.graphQueryParam.name = name;
             $scope.tabQueryParams.cliques.name = name;
             $scope.tabQueryParams.publishers.name = name;
-            $scope.tabQueryParams.advertisers.name = name; 
+            $scope.tabQueryParams.advertisers.name = name;
         };
         // set query name depending on what current state/query section it is
-        switch($state.current.name) {
+        switch ($state.current.name) {
             case 'app.analytics.timeQuery':
                 $scope.setQueryName('time');
-            break;
+                break;
         }
-        $scope.goToQuery = function(queryName) {
+        $scope.goToQuerySection = function(queryName) {
             if (queryName === 'Time') {
                 $scope.setQueryName('time');
                 $location.path('/analytics/timeQuery');
@@ -68,20 +105,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
         };
-
-        $scope.query = function() {
-            $scope.getQueryGraph(null, $scope.graphQueryParam);
-            $scope.getTabData();
-            if ($scope.dates.startDate && $scope.dates.endDate) {
-                $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' / ' + $scope.timeUnit;
-            }
-        };
-
-        $scope.summaryDateRangeSelection = "7d";
-        $scope.dateRanges = aggregationDateRanges(user.tz);
-        $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
-        $scope.getQueryGraph = function(dateShortCode, queryParam) {
-            dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
+        $scope.prepareStartAndEndDate = function(dateShortCode, queryParam) {
             if (!$scope.dates.startDate || !$scope.dates.endDate) {
                 queryParam.startDate = $scope.dateRanges[dateShortCode].startDate;
                 queryParam.endDate = $scope.dateRanges[dateShortCode].endDate;
@@ -89,6 +113,33 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 queryParam.startDate = $scope.dates.startDate;
                 queryParam.endDate = $scope.dates.endDate;
             }
+            return queryParam;
+        };
+        $scope.prepareCronScheduleParam = function(queryParam) {
+            if (queryParam.isSaved) {
+                queryParam.schedule = formCronTaskString($scope.cronScheduleParam);
+            }
+            return queryParam;
+        };
+
+        $scope.summaryDateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+        $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
+
+        $scope.queryForGraphAndTabData = function() {
+            $scope.getQueryGraph(null, $scope.graphQueryParam);
+            $scope.getTabData();
+            if ($scope.dates.startDate && $scope.dates.endDate) {
+                $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' / ' + $scope.timeUnit;
+            }
+        };
+
+        $scope.getQueryGraph = function(dateShortCode, queryParam) {
+            dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
+            // get start date and end date for query params ready
+            queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
+            // get cron task scheduling params ready
+            queryParam = $scope.prepareCronScheduleParam(queryParam);
 
             // Pass "show-points" to graph directive to toggle line points
             // Only have this so points won't show for lines with tons of data
@@ -114,13 +165,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         $scope.dateRangeSelection = "7d";
         $scope.tabFunctions = {
             cliques: function(dateShortCode, queryParam) {
-                if (!$scope.dates.startDate || !$scope.dates.endDate) {
-                    queryParam.startDate = $scope.dateRanges[dateShortCode].startDate;
-                    queryParam.endDate = $scope.dateRanges[dateShortCode].endDate;
-                } else {
-                    queryParam.startDate = $scope.dates.startDate;
-                    queryParam.endDate = $scope.dates.endDate;
-                }
+                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
+                queryParam = $scope.prepareCronScheduleParam(queryParam);
                 // query HourlyAdStats endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object
@@ -144,13 +190,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 });
             },
             publishers: function(dateShortCode, queryParam) {
-                if (!$scope.dates.startDate || !$scope.dates.endDate) {
-                    queryParam.startDate = $scope.dateRanges[dateShortCode].startDate;
-                    queryParam.endDate = $scope.dateRanges[dateShortCode].endDate;
-                } else {
-                    queryParam.startDate = $scope.dates.startDate;
-                    queryParam.endDate = $scope.dates.endDate;
-                }
+                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
+                queryParam = $scope.prepareCronScheduleParam(queryParam);
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object
@@ -175,15 +216,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 });
             },
             advertisers: function(dateShortCode, queryParam) {
-                console.log(queryParam);
-                var startDate, endDate;
-                if (!$scope.dates.startDate || !$scope.dates.endDate) {
-                    queryParam.startDate = $scope.dateRanges[dateShortCode].startDate;
-                    queryParam.endDate = $scope.dateRanges[dateShortCode].endDate;
-                } else {
-                    queryParam.startDate = $scope.dates.startDate;
-                    queryParam.endDate = $scope.dates.endDate;
-                }
+                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
+                queryParam = $scope.prepareCronScheduleParam(queryParam);
                 // query HourlyAdStats api endpoint
                 HourlyAdStat.query(queryParam).then(function(response) {
                     // build datatables options object
