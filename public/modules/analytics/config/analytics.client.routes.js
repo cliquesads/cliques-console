@@ -28,6 +28,9 @@ angular.module('analytics').config(['$stateProvider',
 		}).
         state('app.analytics.timeQuery', {
             url: '/analytics/timeQuery',
+            params: {
+                query: null
+            },
             resolve: {
                 $title: function(){ return 'Time Query'; }
             },
@@ -44,6 +47,9 @@ angular.module('analytics').config(['$stateProvider',
         }).
         state('app.analytics.sitesQuery', {
             url: '/analytics/sitesQuery',
+            params: {
+                query: null
+            },
             resolve: {
                 $title: function(){ return 'Sites Query'; }
             },

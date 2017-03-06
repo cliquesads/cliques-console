@@ -418,6 +418,10 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     endDate = endDate.slice(0, 16);
                 }
                 var newQuery = new Query(req.query);
+                if (!newQuery.name) {
+                    // Set default query name if missing
+                    newQuery.name = 'Time';
+                }
                 var scheduleString = req.query.schedule;
                 if (scheduleString) {
                     // validate schedule string

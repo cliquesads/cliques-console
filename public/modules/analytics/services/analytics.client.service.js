@@ -1,7 +1,7 @@
 'use strict';
 
 // Export csv transforms object/array to csv data blob
-angular.module('analytics').factory('Analytics', [function() {
+angular.module('analytics').factory('Analytics', ['$http', function($http) {
 	var getCSVFileName = function() {
 		return new Date().getTime() + '.csv';
 	};
@@ -124,8 +124,59 @@ angular.module('analytics').factory('Analytics', [function() {
         }
         return blobString;
     };
+    var getRecentQueries = function() {
+        return $http.get('/console/analytics/recentQueries');
+    };
+    var getMyQueries = function() {
+        return $http.get('/console/analytics/customQueries');
+    };
+    var formatDatetimeString = function(datetimeString) {
+        var datetime = new Date(datetimeString);
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var month = months[datetime.getMonth()];
+        var date = datetime.getDate();
+        var year = datetime.getFullYear();
+        var hour = datetime.getHours();
+        var minute = datetime.getMinutes();
+        var ampm = hour < 12 ? "AM" : "PM";
+        var timezoneAbbr = datetime.toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2]
+        return month + " " + date + " " + year + " " + hour + ":" + minute + ampm + " " + timezoneAbbr; 
+    };
+    // function to form cron task string based on user input of scheduler directive
+    var formCronTaskString = function(cronScheduleParam) {
+        var secondPos = 0,
+            minutePos = 0,
+            hourPos = 0,
+            datePos = '*',
+            monthPos = '*',
+            weekdayPos = '*';
+        if (cronScheduleParam.second) {
+            secondPos = cronScheduleParam.second;
+        }
+        if (cronScheduleParam.minute) {
+            minutePos = cronScheduleParam.minute;
+        }
+        if (cronScheduleParam.hour) {
+            hourPos = cronScheduleParam.hour;
+        }
+        if (cronScheduleParam.date) {
+            datePos = cronScheduleParam.date;
+        }
+        if (cronScheduleParam.month) {
+            monthPos = cronScheduleParam.month.value;
+        }
+        if (cronScheduleParam.weekday) {
+            weekdayPos = cronScheduleParam.weekday.value;
+        }
+        var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
+        return cronString;
+    };
     return {
         generateCSVData: generateCSVData,
-        getCSVFileName: getCSVFileName
+        getCSVFileName: getCSVFileName,
+        getRecentQueries: getRecentQueries,
+        getMyQueries: getMyQueries,
+        formatDatetimeString: formatDatetimeString,
+        formCronTaskString: formCronTaskString
     };
 }]);

@@ -34,37 +34,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 isSaved: $scope.isSaved
             }
         };
-
-        // function to form cron task string based on user input of scheduler directive
-        var formCronTaskString = function(cronScheduleParam) {
-            var secondPos = 0,
-                minutePos = 0,
-                hourPos = 0,
-                datePos = '*',
-                monthPos = '*',
-                weekdayPos = '*';
-            if (cronScheduleParam.second) {
-                secondPos = cronScheduleParam.second;
-            }
-            if (cronScheduleParam.minute) {
-                minutePos = cronScheduleParam.minute;
-            }
-            if (cronScheduleParam.hour) {
-                hourPos = cronScheduleParam.hour;
-            }
-            if (cronScheduleParam.date) {
-                datePos = cronScheduleParam.date;
-            }
-            if (cronScheduleParam.month) {
-                monthPos = cronScheduleParam.month.value;
-            }
-            if (cronScheduleParam.weekday) {
-                weekdayPos = cronScheduleParam.weekday.value;
-            }
-            var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
-            return cronString;
-        };
-
         $scope.$watch('timeUnit', function() {
             $scope.graphQueryParam.dateGroupBy = $scope.timeUnit;
             $scope.tabQueryParams.cliques.dateGroupBy = $scope.timeUnit;
@@ -83,26 +52,33 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.tabQueryParams.publishers.name = name;
             $scope.tabQueryParams.advertisers.name = name;
         };
+
+
+        // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the query user selected on the sidebar, so the exact query should be reconstructed
+        $scope.selectedQuery = $stateParams.query;
+        if ($scope.selectedQuery) {
+            // TO-DO:::ycx reconstruct the exact query
+        }
+
         // set query name depending on what current state/query section it is
         switch ($state.current.name) {
             case 'app.analytics.timeQuery':
-                $scope.setQueryName('time');
+                $scope.setQueryName('Time');
                 break;
             case 'app.analytics.sitesQuery':
-                $scope.setQueryName('sites');
+                $scope.setQueryName('Sites');
                 break;
             default:
                 break;
         }
         $scope.goToQuerySection = function(queryName) {
+            $scope.setQueryName(queryName)
             switch (queryName) {
                 case 'Time':
-                    $scope.setQueryName('time');
-                    $location.path('/analytics/timeQuery');
+                    $state.go('app.analytics.timeQuery');
                     break;
                 case 'Sites':
-                    $scope.setQueryName('sites');
-                    $location.path('/analytics/sitesQuery');
+                    $state.go('app.analytics.sitesQuery');
                     break;
                 default:
                     break;
@@ -130,7 +106,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         };
         $scope.prepareCronScheduleParam = function(queryParam) {
             if (queryParam.isSaved) {
-                queryParam.schedule = formCronTaskString($scope.cronScheduleParam);
+                queryParam.schedule = Analytics.formCronTaskString($scope.cronScheduleParam);
             }
             return queryParam;
         };
