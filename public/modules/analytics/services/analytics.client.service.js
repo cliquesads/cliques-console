@@ -9,6 +9,9 @@ angular.module('analytics').factory('Analytics', [function() {
     	data = JSON.parse(data);
         var property, arrayLength, i;
 
+        /**
+         * Clone a new object with the given object data so the original object data won't get modified
+         */
         function clone(obj) {
             var copy;
             // Handle the 3 simple types, and null or undefined
@@ -95,7 +98,7 @@ angular.module('analytics').factory('Analytics', [function() {
             }
         }
 
-        // write fields as the first line
+        // write fields/column name as the first line
         var blobString = fields.join() + '\n';
 
         for (i = 0; i < largestArrayLength; i++) {
@@ -103,6 +106,14 @@ angular.module('analytics').factory('Analytics', [function() {
             for (property in copy) {
                 if (copy.hasOwnProperty(property)) {
                     if (copy[property][i] instanceof Array) {
+                        // Check if the array element has the format:
+                        // [1488240000000, 0], if so convert the timestamp to human readable datetime format
+                        if (copy[property][i].length === 2) {
+                            var datetime = new Date(copy[property][i][0]);
+                            if (datetime) {
+                                copy[property][i][0] = datetime.toISOString();
+                            }
+                        }
                         singleRow.push(copy[property][i].join('/'));
                     } else {
                         singleRow.push(copy[property][i]);
