@@ -1,3 +1,4 @@
+/* global _, angular, user */
 'use strict';
 
 // Export csv transforms object/array to csv data blob
@@ -131,16 +132,8 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         return $http.get('/console/analytics/customQueries');
     };
     var formatDatetimeString = function(datetimeString) {
-        var datetime = new Date(datetimeString);
-        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var month = months[datetime.getMonth()];
-        var date = datetime.getDate();
-        var year = datetime.getFullYear();
-        var hour = datetime.getHours();
-        var minute = datetime.getMinutes();
-        var ampm = hour < 12 ? "AM" : "PM";
-        var timezoneAbbr = datetime.toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2];
-        return month + " " + date + " " + year + " " + hour + ":" + minute + ampm + " " + timezoneAbbr; 
+        var dateMoment = moment(datetimeString);
+        return dateMoment.format('MMM DD YYYY h:mmA ') + dateMoment.tz(user.tz).format('z');
     };
     // function to form cron task string based on user input of scheduler directive
     var formCronTaskString = function(cronScheduleParam) {

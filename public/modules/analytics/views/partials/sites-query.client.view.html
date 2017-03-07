@@ -46,7 +46,7 @@
 	<div class="row">
 		<!-- Report Graph -->
 		<div class="col-md-6">
-			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getQueryGraph('7d', graphQueryParam)">
+			<div id="timeQueryGraphPanel" class="panel panel-default mt" data-ng-init="getQueryGraph()">
 				<div class="panel-heading">
 					<div class="panel-title">
                         <div>{{ queryResultTitle }}</div>
@@ -81,7 +81,7 @@
 					</div>
 				</div>
 				<tabset>
-                    <tab heading="Cliques" select="getTabData(dateRangeSelection,'cliques')">
+                    <tab heading="Cliques" select="getTabData('cliques')">
                         <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
                             <thead>
                                 <tr>
@@ -105,7 +105,7 @@
                             </tbody>
                         </table>
                     </tab>
-                    <tab heading="Publishers" select="getTabData(dateRangeSelection,'publishers')">
+                    <tab heading="Publishers" select="getTabData('publishers')">
                         <table datatable="ng" dt-options="dtOptions_pubs" dt-column-defs="dtColumnDefs_pubs" class="row-border hover">
                             <thead>
                             <tr>
@@ -131,7 +131,7 @@
                             </tbody>
                         </table>
                     </tab>
-                    <tab heading="Advertisers" select="getTabData(dateRangeSelection,'advertisers')">
+                    <tab heading="Advertisers" select="getTabData('advertisers')">
                         <table datatable="ng" dt-options="dtOptions_advs" dt-column-defs="dtColumnDefs_advs" class="row-border hover">
                             <thead>
                             <tr>

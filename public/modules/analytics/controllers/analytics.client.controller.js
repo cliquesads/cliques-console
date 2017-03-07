@@ -15,36 +15,40 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
         $scope.activeTab = 'cliques';
 
-        /*************************** QUERY PARAMS SETUP ***************************/ 
+        /*************************** QUERY PARAMS SETUP ***************************/
         $scope.graphQueryParam = {
+            hasQueriedBefore: false,
             dateGroupBy: $scope.timeUnit,
             isSaved: $scope.isSaved
         };
         $scope.tabQueryParams = {
             cliques: {
+                hasQueriedBefore: false,
                 dateGroupBy: $scope.timeUnit,
                 groupBy: 'pub_clique',
                 isSaved: $scope.isSaved
             },
             publishers: {
+                hasQueriedBefore: false,
                 dateGroupBy: $scope.timeUnit,
                 groupBy: 'publisher',
                 populate: 'publisher',
                 isSaved: $scope.isSaved
             },
             advertisers: {
+                hasQueriedBefore: false,
                 dateGroupBy: $scope.timeUnit,
                 groupBy: 'advertiser',
                 populate: 'advertiser',
                 isSaved: $scope.isSaved
             }
         };
-        $scope.$watch('timeUnit', function() {
+        $scope.prepareDateGroupBy = function() {
             $scope.graphQueryParam.dateGroupBy = $scope.timeUnit;
             $scope.tabQueryParams.cliques.dateGroupBy = $scope.timeUnit;
             $scope.tabQueryParams.publishers.dateGroupBy = $scope.timeUnit;
             $scope.tabQueryParams.advertisers.dateGroupBy = $scope.timeUnit;
-        });
+        };
         $scope.toggleSave = function() {
             $scope.graphQueryParam.isSaved = $scope.isSaved;
             $scope.tabQueryParams.cliques.isSaved = $scope.isSaved;
@@ -56,6 +60,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.tabQueryParams.cliques.name = name;
             $scope.tabQueryParams.publishers.name = name;
             $scope.tabQueryParams.advertisers.name = name;
+        };
+        $scope.setHistoryQueryFlag = function(booleanValue) {
+            $scope.graphQueryParam.hasQueriedBefore = booleanValue;
+            $scope.tabQueryParams.cliques.hasQueriedBefore = booleanValue;
+            $scope.tabQueryParams.publishers.hasQueriedBefore = booleanValue;
+            $scope.tabQueryParams.advertisers.hasQueriedBefore = booleanValue;
         };
         $scope.prepareStartAndEndDate = function(dateShortCode, queryParam) {
             if (!$scope.dates.startDate || !$scope.dates.endDate) {
@@ -77,6 +87,27 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             queryParam.humanizedDateRange = dateRangeString;
             return queryParam;
         };
+        $scope.setupAllQueryParams = function() {
+            $scope.prepareDateGroupBy();
+            // GRAPH PARAMS
+            $scope.graphQueryParam = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.graphQueryParam);
+            $scope.graphQueryParam = $scope.prepareCronScheduleParam($scope.graphQueryParam);
+            $scope.graphQueryParam = $scope.prepareQueryHumanizedDateRange($scope.graphQueryParam, $scope.queryResultTitle);
+            // CLIQUES TAB PARAMS
+            $scope.tabQueryParams.cliques = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.cliques);
+            $scope.tabQueryParams.cliques = $scope.prepareCronScheduleParam($scope.tabQueryParams.cliques);
+            $scope.tabQueryParams.cliques = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.cliques, $scope.queryResultTitle);
+            // PUBLISHERS TAB PARAMS
+            $scope.tabQueryParams.publishers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.publishers);
+            $scope.tabQueryParams.publishers = $scope.prepareCronScheduleParam($scope.tabQueryParams.publishers);
+            $scope.tabQueryParams.publishers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.publishers, $scope.queryResultTitle);
+            // ADVERTISERS TAB PARAMS
+            $scope.tabQueryParams.advertisers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.advertisers);
+            $scope.tabQueryParams.advertisers = $scope.prepareCronScheduleParam($scope.tabQueryParams.advertisers);
+            $scope.tabQueryParams.advertisers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.advertisers, $scope.queryResultTitle);
+        };
+        // setup query params for the first query when page loads
+        $scope.setupAllQueryParams();
 
         /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
         // set query name depending on what current state/query section it is
@@ -103,38 +134,56 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                     break;
             }
         };
-        $scope.selectedQuery = $stateParams.query;
-        if ($scope.selectedQuery) {
-            // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the query user selected on the sidebar, so the exact query should be reconstructed
-            // TO-DO:::ycx reconstruct the exact query
+
+        /*********************** HISTORY QUERY FROM SIDEBAR ***********************/
+        $scope.historyQuery = $stateParams.query;
+        if ($scope.historyQuery) {
+            $scope.setHistoryQueryFlag(true);
+            // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the history query that user selected on the sidebar, so reconstruct query request based on the selected history query
+            // Check if the selected query is queried based on date short code
+            var dateShortCodeUsed = false;
+            var humanizedDateRange = $scope.historyQuery.humanizedDateRange;
+            for (var key in aggregationDateRanges(user.tz)) {
+                if (aggregationDateRanges(user.tz)[key].label === humanizedDateRange) {
+                    $scope.summaryDateRangeSelection = key;
+                    dateShortCodeUsed = true;
+                }
+            }
+            if (!dateShortCodeUsed) {
+                // start/end date designated by user manually for this history query
+                var dateArr = humanizedDateRange.split(' - ');
+                $scope.dates.startDate = dateArr[0];
+                $scope.dates.endDate = dateArr[1];
+            }
+
+            // history query datetime unit
+            $scope.timeUnit = $scope.historyQuery.dateGroupBy;
+            $scope.queryResultTitle = humanizedDateRange;
+            $scope.setupAllQueryParams();
         }
 
         /**************************** QUERY FUNCTIONS ****************************/
         $scope.queryForGraphAndTabData = function() {
             if ($scope.dates.startDate && $scope.dates.endDate) {
-                $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' / ' + $scope.timeUnit;
+                $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' - ' + $scope.timeUnit;
             } else {
                 $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
             }
-            $scope.getQueryGraph(null, $scope.graphQueryParam);
+            // Setup query params before launching query requests
+            $scope.setupAllQueryParams();
+            $scope.setHistoryQueryFlag(false);
+            // Actual query requests happen here
+            $scope.getQueryGraph($scope.graphQueryParam);
             $scope.getTabData();
         };
-        $scope.getQueryGraph = function(dateShortCode, queryParam) {
-            dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
-            // get start date and end date for query params ready
-            queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
-            // get cron task scheduling params ready
-            queryParam = $scope.prepareCronScheduleParam(queryParam);
-            // get humanizedDateRange param ready
-            queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
-
+        $scope.getQueryGraph = function() {
             // Pass "show-points" to graph directive to toggle line points
             // Only have this so points won't show for lines with tons of data
-            $scope.showPoints = $scope.dateRanges[dateShortCode].showPoints;
+            $scope.showPoints = $scope.dateRanges[$scope.summaryDateRangeSelection].showPoints;
 
             // query HourlyAdStats api endpoint
-            HourlyAdStat.query(queryParam).then(function(response) {
-                $scope.timeSeries = new MongoTimeSeries(response.data, queryParam.startDate, queryParam.endDate, user.tz, $scope.timeUnit, {
+            HourlyAdStat.query($scope.graphQueryParam).then(function(response) {
+                $scope.timeSeries = new MongoTimeSeries(response.data, $scope.graphQueryParam.startDate, $scope.graphQueryParam.endDate, user.tz, $scope.timeUnit, {
                     fields: [
                         'imps', {
                             'CTR': function(row) {
@@ -146,17 +195,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                     ]
                 });
             });
-            $scope.summaryDateRangeSelection = dateShortCode;
         };
 
-        $scope.dateRangeSelection = "7d";
         $scope.tabFunctions = {
-            cliques: function(dateShortCode, queryParam) {
-                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
-                queryParam = $scope.prepareCronScheduleParam(queryParam);
-                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
+            cliques: function() {
                 // query HourlyAdStats endpoint
-                HourlyAdStat.query(queryParam).then(function(response) {
+                HourlyAdStat.query($scope.tabQueryParams.cliques).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions = DTOptionsBuilder.newOptions();
                     $scope.dtOptions.withOption('paging', false);
@@ -177,12 +221,9 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                     $scope.cliqueData = response.data;
                 });
             },
-            publishers: function(dateShortCode, queryParam) {
-                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
-                queryParam = $scope.prepareCronScheduleParam(queryParam);
-                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
+            publishers: function() {
                 // query HourlyAdStats api endpoint
-                HourlyAdStat.query(queryParam).then(function(response) {
+                HourlyAdStat.query($scope.tabQueryParams.publishers).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_pubs.withOption('paging', false);
@@ -204,12 +245,9 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                     $scope.publisherData = response.data;
                 });
             },
-            advertisers: function(dateShortCode, queryParam) {
-                queryParam = $scope.prepareStartAndEndDate(dateShortCode, queryParam);
-                queryParam = $scope.prepareCronScheduleParam(queryParam);
-                queryParam = $scope.prepareQueryHumanizedDateRange(queryParam, $scope.queryResultTitle);
+            advertisers: function() {
                 // query HourlyAdStats api endpoint
-                HourlyAdStat.query(queryParam).then(function(response) {
+                HourlyAdStat.query($scope.tabQueryParams.advertisers).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions_advs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_advs.withOption('paging', false);
@@ -232,12 +270,10 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 });
             }
         };
-        $scope.getTabData = function(dateShortCode, tab) {
-            dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
+        $scope.getTabData = function(tab) {
             tab = tab || $scope.activeTab;
             $scope.activeTab = tab;
-            $scope.tabFunctions[tab](dateShortCode, $scope.tabQueryParams[tab]);
-            $scope.dateRangeSelection = dateShortCode;
+            $scope.tabFunctions[tab]();
         };
 
         /**************************** EXPORT TO CSV ****************************/

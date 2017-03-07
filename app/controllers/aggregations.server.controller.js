@@ -408,39 +408,45 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                // Now save the query as Query model in database
-                var startDate = req.query.startDate;
-                if (startDate) {
-                    startDate = startDate.slice(0, 16);
-                }
-                var endDate = req.query.endDate;
-                if (endDate) {
-                    endDate = endDate.slice(0, 16);
-                }
-                var newQuery = new Query(req.query);
-                if (!newQuery.name) {
-                    // Set default query name if missing
-                    newQuery.name = 'Time';
-                }
-                var scheduleString = req.query.schedule;
-                if (scheduleString) {
-                    // validate schedule string
-                    if (!validateScheduleString(scheduleString)) {
-                        return res.status(400).send({
-                            message: 'Illegal schedule string'
-                        });
+                if (req.query.hasQueriedBefore === 'false') {
+                    // This is NOT a history query that user trying to reconstruct, so save the query as Query model in database
+                    var newQuery = new Query(req.query);
+                    if (!newQuery.name) {
+                        // Set default query name if missing
+                        newQuery.name = 'Time';
                     }
-                }
-                newQuery.user = req.user._id;
-                newQuery.save(function(err) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: 'Error saving query'
-                        });
+                    var scheduleString = req.query.schedule;
+                    if (scheduleString) {
+                        // validate schedule string
+                        if (!validateScheduleString(scheduleString)) {
+                            return res.status(400).send({
+                                message: 'Illegal schedule string'
+                            });
+                        }
                     }
-                    //catch populate query param here and call model populate
-                    // NOTE: Can only pass populate for object in 'group' object
-                    // otherwise this will throw out the populate param
+                    newQuery.user = req.user._id;
+                    newQuery.save(function(err) {
+                        if (err) {
+                            return res.status(400).send({
+                                message: 'Error saving query'
+                            });
+                        }
+                        // catch populate query param here and call model populate
+                        // NOTE: Can only pass populate for object in 'group' object
+                        // otherwise this will throw out the populate param
+                        if (req.query.populate){
+                            self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
+                                if (err) {
+                                    return res.status(400).send({ message: err });
+                                }
+                                return res.json(results);
+                            });
+                        } else {
+                            return res.json(hourlyAdStats);
+                        }
+                    });
+                } else {
+                    // A history query, DON'T save to database
                     if (req.query.populate){
                         self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
                             if (err) {
@@ -451,7 +457,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     } else {
                         return res.json(hourlyAdStats);
                     }
-                });
+                }
             }
         });
     };
