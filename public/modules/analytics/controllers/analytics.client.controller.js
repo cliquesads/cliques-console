@@ -5,12 +5,17 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
     function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES) {
         $scope.views = null;
         $scope.quickQueries = QUICKQUERIES;
+        /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.timeUnit = 'day';
         $scope.isSaved = false;
         $scope.dates = {};
         $scope.cronScheduleParam = {};
+        $scope.summaryDateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+        $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
+        $scope.activeTab = 'cliques';
 
-        // query params for graph and tab respectively
+        /*************************** QUERY PARAMS SETUP ***************************/ 
         $scope.graphQueryParam = {
             dateGroupBy: $scope.timeUnit,
             isSaved: $scope.isSaved
@@ -52,48 +57,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.tabQueryParams.publishers.name = name;
             $scope.tabQueryParams.advertisers.name = name;
         };
-
-
-        // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the query user selected on the sidebar, so the exact query should be reconstructed
-        $scope.selectedQuery = $stateParams.query;
-        if ($scope.selectedQuery) {
-            // TO-DO:::ycx reconstruct the exact query
-        }
-
-        // set query name depending on what current state/query section it is
-        switch ($state.current.name) {
-            case 'app.analytics.timeQuery':
-                $scope.setQueryName('Time');
-                break;
-            case 'app.analytics.sitesQuery':
-                $scope.setQueryName('Sites');
-                break;
-            default:
-                break;
-        }
-        $scope.goToQuerySection = function(queryName) {
-            $scope.setQueryName(queryName)
-            switch (queryName) {
-                case 'Time':
-                    $state.go('app.analytics.timeQuery');
-                    break;
-                case 'Sites':
-                    $state.go('app.analytics.sitesQuery');
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        $scope.exportToCSV = function() {
-            // download on the frontend
-            var blobStringForCSV = Analytics.generateCSVData(JSON.stringify($scope.timeSeries));
-
-            $scope.downloadFileName = Analytics.getCSVFileName();
-            $scope.downloadFileBlob = new Blob([blobStringForCSV], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            });
-        };
         $scope.prepareStartAndEndDate = function(dateShortCode, queryParam) {
             if (!$scope.dates.startDate || !$scope.dates.endDate) {
                 queryParam.startDate = $scope.dateRanges[dateShortCode].startDate;
@@ -115,10 +78,38 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             return queryParam;
         };
 
-        $scope.summaryDateRangeSelection = "7d";
-        $scope.dateRanges = aggregationDateRanges(user.tz);
-        $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
+        /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
+        // set query name depending on what current state/query section it is
+        switch ($state.current.name) {
+            case 'app.analytics.timeQuery':
+                $scope.setQueryName('Time');
+                break;
+            case 'app.analytics.sitesQuery':
+                $scope.setQueryName('Sites');
+                break;
+            default:
+                break;
+        }
+        $scope.goToQuerySection = function(queryName) {
+            $scope.setQueryName(queryName);
+            switch (queryName) {
+                case 'Time':
+                    $state.go('app.analytics.timeQuery');
+                    break;
+                case 'Sites':
+                    $state.go('app.analytics.sitesQuery');
+                    break;
+                default:
+                    break;
+            }
+        };
+        $scope.selectedQuery = $stateParams.query;
+        if ($scope.selectedQuery) {
+            // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the query user selected on the sidebar, so the exact query should be reconstructed
+            // TO-DO:::ycx reconstruct the exact query
+        }
 
+        /**************************** QUERY FUNCTIONS ****************************/
         $scope.queryForGraphAndTabData = function() {
             if ($scope.dates.startDate && $scope.dates.endDate) {
                 $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' / ' + $scope.timeUnit;
@@ -128,7 +119,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.getQueryGraph(null, $scope.graphQueryParam);
             $scope.getTabData();
         };
-
         $scope.getQueryGraph = function(dateShortCode, queryParam) {
             dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
             // get start date and end date for query params ready
@@ -242,13 +232,23 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
                 });
             }
         };
-        $scope.activeTab = 'cliques';
         $scope.getTabData = function(dateShortCode, tab) {
             dateShortCode = dateShortCode || $scope.summaryDateRangeSelection;
             tab = tab || $scope.activeTab;
             $scope.activeTab = tab;
             $scope.tabFunctions[tab](dateShortCode, $scope.tabQueryParams[tab]);
             $scope.dateRangeSelection = dateShortCode;
+        };
+
+        /**************************** EXPORT TO CSV ****************************/
+        $scope.exportToCSV = function() {
+            // download on the frontend
+            var blobStringForCSV = Analytics.generateCSVData(JSON.stringify($scope.timeSeries));
+
+            $scope.downloadFileName = Analytics.getCSVFileName();
+            $scope.downloadFileBlob = new Blob([blobStringForCSV], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
         };
     }
 ]);

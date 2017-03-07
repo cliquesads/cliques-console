@@ -139,7 +139,7 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         var hour = datetime.getHours();
         var minute = datetime.getMinutes();
         var ampm = hour < 12 ? "AM" : "PM";
-        var timezoneAbbr = datetime.toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2]
+        var timezoneAbbr = datetime.toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2];
         return month + " " + date + " " + year + " " + hour + ":" + minute + ampm + " " + timezoneAbbr; 
     };
     // function to form cron task string based on user input of scheduler directive
