@@ -1,0 +1,82 @@
+<div ng-switch on="$state.$current.self.name">
+	<div ng-switch-default>
+		<!-- View hook for child views -->
+		<section data-ui-view="main"></section>
+	</div>
+	<div ng-switch-when="app.screenshot.listScreenshots">
+        <section>
+            <div class="panel panel-default pb0 hint" id="screenshot-hint">
+                <div class="panel-heading pt0 pb0">
+                    <paneltool tool-dismiss="tool-dismiss"></paneltool>
+                    <h4><i class="fa fa-camera-retro"></i> Screenshots</h4>
+                </div>
+                <div class="panel-body">
+                    <p>Whenever you run a campaign or run Cliques ads on your site, our spider takes <strong>screenshots of real ads on real sites</strong> to show you exactly where your ads are running.</p>
+                    <p>It may take an hour or two after your campaign or site is activated for your first screenshots to show up.</p>
+                </div>
+            </div>
+
+            <!-- Screenshot filters -->
+            <div class="panel panel-default">
+                <div class="panel-heading pt0">
+                    <h4><i class="fa fa-filter"></i> Filters</h4>
+                    <hr class="m0"/>
+                </div>
+                <div class="panel-body pt0 pb0">
+                    <!-- Filter by campaign dropdown list -->
+                    <div class="form-horizontal col-sm-5">
+                        <div class="form-group">
+                            <label for="campaignFilter" class="col-sm-2 text-md text-right mt-sm">Campaign</label>
+                            <div class="col-sm-10">
+                                <select name="campaignFilter" id="campaignFilter" class=" form-control chosen-select" data-ng-model="queryParams.filterCampaignId" ng-options="campaign.id as campaign.name for campaign in filter.campaigns track by campaign.id" ng-change="filterChanged()">
+                                    <option value="" selected>Select campaign to filter</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter by site dropdown list -->
+                    <div class="form-horizontal col-sm-5">
+                        <div class="form-group">
+                            <label for="siteFilter" class="col-sm-2 text-md text-right mt-sm">Site</label>
+                            <div class="col-sm-10">
+                                <select name="siteFilter" id="siteFilter" class=" form-control chosen-select" data-ng-model="queryParams.filterCampaignId" ng-options="site.id as site.name for site in filter.sites track by site.id" ng-change="filterChanged()">
+                                    <option value="" selected>Select site to filter</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-primary btn-block" ng-click="clearFilters()">Clear Filters</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="screenshot-container">
+                <div class="col-md-3 col-sm-4 col-xs-5"
+                    ng-repeat="screenshot in screenshots">
+                    <screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
+                </div>
+                <div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-hide="resolved">
+                    <div class="panel">
+                        <div class="panel-body text-center">
+                            <div class="ball-clip-rotate-pulse" style="display: inline-block">
+                                <div></div>
+                                <div></div>
+                            </div>
+                            <h4>Loading more screenshots...</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="screenshots.length === 0 && resolved" class="box-placeholder text-center mv-lg pv-xl">
+                <h4>No Screenshots yet.</h4>
+            </div>
+        </section>
+	</div>
+
+</div>
+
+

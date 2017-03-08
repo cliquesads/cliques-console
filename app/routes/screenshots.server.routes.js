@@ -37,18 +37,37 @@ module.exports = function(db, routers) {
 		 */
 		.get(screenshots.getScreenshotFilters);
 
-	router.route('/screenshot/getMany')
+	router.route('/screenshot')
 		/**
-		 * @api {get} /screenshot/byAdvertiser Get all screenshots that belong to current logged in user's advertiser
-		 * @apiName ReadScreenshot
-		 * @apiDescription Get all screenshots that belong to current logged in user's advertiser
+		 * @api {get} /screenshot Get all screenshots that belong to current logged in user's advertiser or publisher
+		 * @apiName GetScreenshots
+		 * @apiDescription Get all screenshots that belong to current logged in user's advertiser or publisher
 		 * @apiVersion 0.1.0
 		 * @apiPermission networkAdmin
 		 * @apiPermission advertiser
+		 * @apiPermission publisher
 		 *
 		 * @apiParam (Path Parameters){String} advertiserId Objectid of Advertiser
 		 *
 		 * @apiSuccess {[Object]} ::[screenshot]:: Matching Screenshot objects as response `body`
 		 */
 		.get(screenshots.getMany);
+
+	router.route('/screenshot/:screenshotId')
+		/**
+		 * @api {get} /screenshot/:screenshotId Get individual screenshot by Id
+		 * @apiName ReadScreenshot
+		 * @apiDescription Get single screenshot by ID
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin
+		 * @apiPermission advertiser
+		 * @apiPermission publisher
+		 *
+		 * @apiParam (Path Parameters){String} screenshotId Objectid of Screenshot
+		 *
+		 * @apiSuccess {[Object]} ::screenshot:: Matching Screenshot object as response `body`
+		 */
+		.get(screenshots.hasAuthorization, screenshots.read);
+
+	router.param('screenshotId', screenshots.screenshotByID);
 };

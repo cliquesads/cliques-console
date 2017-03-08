@@ -17,6 +17,48 @@ module.exports = function(db) {
 
 	return {
 		/**
+		 * Get single screenshot by ID
+		 * @param req
+         * @param res
+         */
+		read: function(req, res){
+			return res.json(req.screenshot);
+		},
+
+		/**
+		 * Screenshot middleware
+		 */
+		screenshotByID: function (req, res, next, id) {
+			screenshotModels.Screenshot
+				.findById(id)
+				.populate('advertiser publisher')
+				.exec(function (err, screenshot) {
+					if (err) return next(err);
+					if (!screenshot) return next(new Error('Failed to load screenshot ' + id));
+					req.screenshot = screenshot;
+					next();
+				});
+		},
+
+		/**
+		 * Screenshot authorization middleware -- user has to either be a networkAdmin,
+		 * or screenshot must belong to an advertiser or publisher under their organization.
+		 */
+		hasAuthorization: function (req, res, next) {
+			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+				var ss = req.screenshot;
+				var org = req.user.organization.id;
+				var isAuthorized = ss.advertiser.organization === org || ss.publisher === org;
+				if (!isAuthorized){
+					return res.status(403).send({
+						message: 'User is not authorized'
+					});
+				}
+			}
+			next();
+		},
+
+		/**
 		 * Get all possible campaigns and sites as screenshot filters, the response filter
 		 * has the following structure:
 		 * {
@@ -241,6 +283,6 @@ module.exports = function(db) {
 					});	
 				}
 			}
-		},	
+		}
 	};
 };

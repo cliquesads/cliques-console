@@ -11,7 +11,7 @@ angular.module('screenshot').config(['$stateProvider',
 			abstract: true,
 			templateUrl: 'modules/screenshot/views/screenshot-layout.client.view.html'
 		}).
-		state('app.screenshot.viewScreenshots', {
+		state('app.screenshot.listScreenshots', {
 			url: '/screenshots',
 			title: 'Screenshots',
 			resolve: {
@@ -19,11 +19,26 @@ angular.module('screenshot').config(['$stateProvider',
 			},
 			views: {
 				'main': {
-					templateUrl: 'modules/screenshot/views/screenshots.client.view.html',
-					controller: 'ScreenshotController'
+					templateUrl: 'modules/screenshot/views/list-screenshots.client.view.html',
+					controller: 'ListScreenshotsController'
+				}
+			}
+		}).
+		state('app.screenshot.listScreenshots.viewScreenshot', {
+			url: '/:screenshotId',
+			title: 'Screenshots',
+			resolve: {
+				screenshot: function($stateParams, Screenshot){
+					return Screenshot.get({ screenshotId: $stateParams.screenshotId }).$promise;
 				},
-				'titleBar': {
-					template: 'Screenshots Showcase'
+				$title: function(screenshot){
+					return screenshot.tstamp;
+				}
+			},
+			views: {
+				'main': {
+					templateUrl: 'modules/screenshot/views/view-screenshot.client.view.html',
+					controller: 'ScreenshotController'
 				}
 			}
 		});

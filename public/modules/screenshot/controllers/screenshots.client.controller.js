@@ -1,12 +1,17 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Advertiser', 'ScreenshotFetcher', 'Notify', 'ngDialog', '$http', '$window',
-	function($scope, Advertiser, ScreenshotFetcher, Notify, ngDialog, $http, $window) {
+angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 'Advertiser', 'Screenshot', 'Notify', 'ngDialog', '$http', '$window',
+	function($scope, Advertiser, Screenshot, Notify, ngDialog, $http, $window) {
 		$scope.hasMore = true;
-		$scope.currentPage = 1;
-		$scope.filterCampaign = undefined;
-		$scope.filterSite = undefined;
+
+		var initialQueryParams = {
+			page: 1,
+			filterCampaignId: null,
+			filterSiteId: null
+		};
+
+		$scope.queryParams = _.clone(initialQueryParams);
 
 		// Handler for 'panel-remove' event, when user clicks the "close panel"
 		// button. You can add custom events here to trigger on removal, right now it just
@@ -22,29 +27,20 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			if (!$scope.hasMore) {
 				return;
 			}
-			var queryParams = {
-				page: $scope.currentPage
-			};
-			if ($scope.filterCampaign) {
-				queryParams.filterCampaignId = $scope.filterCampaign.id;
-			} 
-			if ($scope.filterSite) {
-				queryParams.filterSiteId = $scope.filterSite.id;
-			}
 			// TODO: $http's returned promise's $resolved property doesn't
 			// TODO: exactly behave as expected here so have to manually set resolved flags,
 			// TODO: which is really annoying
 			$scope.resolved = false;
-			$scope.screenshotRequest = ScreenshotFetcher.fetch(queryParams)
+			$scope.screenshotRequest = Screenshot.query($scope.queryParams).$promise
 			.then(function(response) {
 				$scope.resolved = true;
-			    $scope.screenshots = $scope.screenshots.concat(response.data.models);
-			    if (response.data.length < response.data.itemsPerPage) {
+			    $scope.screenshots = $scope.screenshots.concat(response.models);
+			    if (response.length < response.itemsPerPage) {
 			    	$scope.hasMore = false;
 			    }
 			}, function(errorResponse) {
 				$scope.resolved = true;
-			    Notify.alert(errorResponse.data.message, {status: 'danger'});
+			    Notify.alert(errorResponse.message, {status: 'danger'});
 			});
 		};
 
@@ -58,19 +54,17 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 		$scope.filterChanged = function() {
 			// reset currentPage and screenshots, then fetch screenshots
 			$scope.hasMore = true;
-			$scope.currentPage = 1;
+			$scope.queryParams.page = 1;
 			$scope.screenshots = [];
 			$scope.getPaginatedScreenshots();
 		};
 
 		$scope.clearFilters = function() {
-			if ($scope.filterCampaign || $scope.filterSite) {
+			if ($scope.queryParams.filterCampaignId || $scope.queryParams.filterSiteId) {
 				// reset currentPage, filters and screenshots, then fetch screenshots
 				$scope.hasMore = true;
-				$scope.currentPage = 1;
 				$scope.screenshots = [];
-				$scope.filterCampaign = undefined;
-				$scope.filterSite = undefined;
+				$scope.queryParams = _.clone(initialQueryParams);
 				$scope.getPaginatedScreenshots();
 			}
 		};
@@ -84,15 +78,15 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			if (windowBottom >= docHeight) {
 				// reached bottom, fetching next page if there're more screenshots
 				if ($scope.hasMore) {
-					$scope.currentPage ++;
+					$scope.queryParams.page ++;
 					$scope.getPaginatedScreenshots();
 				}
 			}
 		});
 	}
-]).controller('ScreenshotDialogController', ['$scope', 'Advertiser', 'Publisher','Authentication',
-	function($scope, Advertiser, Publisher, Authentication) {
-		$scope.screenshot = $scope.ngDialogData.screenshot;
+]).controller('ScreenshotController', ['$scope', 'screenshot', 'Advertiser', 'Publisher','Authentication',
+	function($scope, screenshot, Advertiser, Publisher, Authentication) {
+		$scope.screenshot = screenshot;
 		$scope.user = Authentication.user;
 
 		// Get timezone based abbreviation to pass to date filter
@@ -108,18 +102,14 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 			};
 		};
 
-		Advertiser.get({ advertiserId: $scope.screenshot.advertiser }, function(advertiser){
-			$scope.advertiser = advertiser;
-			$scope.campaign = _.find($scope.advertiser.campaigns, predicate($scope.screenshot.campaign));
-			$scope.creativegroup = _.find($scope.campaign.creativegroups, predicate($scope.screenshot.creativegroup));
-		});
+        $scope.advertiser = $scope.screenshot.advertiser;
+        $scope.campaign = _.find($scope.advertiser.campaigns, predicate($scope.screenshot.campaign));
+        $scope.creativegroup = _.find($scope.campaign.creativegroups, predicate($scope.screenshot.creativegroup));
 
-		Publisher.get({ publisherId: $scope.screenshot.publisher }, function(publisher){
-			$scope.publisher = publisher;
-			$scope.site = _.find($scope.publisher.sites, predicate($scope.screenshot.site));
-			$scope.page = _.find($scope.site.pages, predicate($scope.screenshot.page));
-			$scope.placement = _.find($scope.page.placements, predicate($scope.screenshot.placement));
-		});
+        $scope.publisher = $scope.screenshot.publisher;
+        $scope.site = _.find($scope.publisher.sites, predicate($scope.screenshot.site));
+        $scope.page = _.find($scope.site.pages, predicate($scope.screenshot.page));
+        $scope.placement = _.find($scope.page.placements, predicate($scope.screenshot.placement));
 
 	}
 ]);

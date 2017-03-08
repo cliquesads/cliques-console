@@ -1,6 +1,6 @@
 angular.module('screenshot').directive('screenshotThumbnail', [
-    'ngDialog',
-    function(ngDialog) {
+    '$state',
+    function($state) {
         'use strict';
         return {
             restrict: 'E',
@@ -10,12 +10,7 @@ angular.module('screenshot').directive('screenshotThumbnail', [
             templateUrl: 'modules/screenshot/views/partials/screenshot-thumbnail.client.view.html',
             link: function (scope, element, attrs) {
                 scope.viewScreenshot = function(screenshot){
-                    ngDialog.open({
-                        template: 'modules/screenshot/views/partials/screenshot-dialog.html',
-                        data: { screenshot: screenshot },
-                        className: 'ngdialog-theme-default dialogwidth800',
-                        controller: 'ScreenshotDialogController'
-                    });
+                    $state.go('app.screenshot.listScreenshots.viewScreenshot', { screenshotId: screenshot._id });
                 };
             }
         };
