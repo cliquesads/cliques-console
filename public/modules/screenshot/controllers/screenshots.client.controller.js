@@ -84,8 +84,9 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
 			}
 		});
 	}
-]).controller('ScreenshotController', ['$scope', 'screenshot', 'Advertiser', 'Publisher','Authentication',
-	function($scope, screenshot, Advertiser, Publisher, Authentication) {
+]).controller('ScreenshotController', ['$scope', '$window', 'screenshot', 'Advertiser', 'Publisher','Authentication',
+	function($scope, $window, screenshot, Advertiser, Publisher, Authentication) {
+
 		$scope.screenshot = screenshot;
 		$scope.user = Authentication.user;
 

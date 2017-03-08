@@ -32,7 +32,7 @@ angular.module('screenshot').config(['$stateProvider',
 					return Screenshot.get({ screenshotId: $stateParams.screenshotId }).$promise;
 				},
 				$title: function(screenshot){
-					return screenshot.tstamp;
+					return screenshot.advertiser.name + ' / ' + screenshot.publisher.name;
 				}
 			},
 			views: {

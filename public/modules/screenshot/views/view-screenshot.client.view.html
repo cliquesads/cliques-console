@@ -1,41 +1,52 @@
-<div id="wrapper">
-    <div ng-switch="user.organization.effectiveOrgType">
-        <div ng-switch-when="publisher">
-
+<div class="col-md-12">
+    <div class="panel panel-default pb0">
+        <div class="panel-heading pb0 mb0">
+            <strong><i class="fa fa-info-circle"></i> Screenshot Info</strong>
         </div>
-        <div ng-switch-default>
-            <h4>Screenshot for {{ campaign.name}}</h4>
-            <div class="col-md-6">
-                <small class="text-muted">Advertiser</small>
-                <p class="mb0 pb0">{{ advertiser.name }}</p>
-                <small class="text-muted">Campaign</small>
-                <p class="mb0 pb0">{{ campaign.name }}</p>
+        <div class="panel-body mt-sm ml-lg pt0 pb0">
+            <div class="col-md-3">
+                <small class="text-muted">Date/Time Captured</small>
+                <p>{{ screenshot.tstamp | date: "medium" : tz }} {{ tz }}</p>
             </div>
             <div class="col-md-6">
-                <small class="text-muted">Advertiser</small>
-                <p class="mb0 pb0">{{ advertiser.name }}</p>
-                <small class="text-muted">Campaign</small>
-                <p class="mb0 pb0">{{ campaign.name }}</p>
-                <p>
-                    <a href="#">Report this screenshot</a>
-                </p>
-            </div>
-            <div class="col-md-2 well pt0">
-                <strong><i class="fa fa-info-circle"></i> Publisher</strong>
-                <small class="text-muted">Publisher</small>
-                <p class="mb0">{{ publisher.name }}</p>
-                <small class="text-muted">Site</small>
-                <p class="mb0">{{ site.name }}</p>
-                <small class="text-muted">Page</small>
-                <p class="mb0">{{ page.name }}</p>
-                <small class="text-muted">Placement</small>
-                <p class="mb0">{{ placement.name }}</p>
                 <small class="text-muted">URL</small>
+                <p><a href="{{ screenshot.url }}">{{ screenshot.url }}</a></p>
+            </div>
+            <div class="col-md-3">
+                <small class="text-muted">Actions</small>
+                <p><a href="#">Report this screenshot</a></p>
             </div>
         </div>
     </div>
-
-    <div class="col-md-10 text-center">
-        <img src="{{ screenshot.image_url }}" class="screenshot-expanded">
+</div>
+<div class="col-md-3 pt0">
+    <div class="panel panel-default">
+        <div class="panel-heading pb0 mb0">
+            <strong><i class="icon-book-open"></i> Publisher Details</strong>
+        </div>
+        <div class="panel-body ml-lg mt-sm pt0">
+            <small class="text-muted">Publisher</small>
+            <p class="mb0">{{ publisher.name }}</p>
+            <small class="text-muted">Site</small>
+            <p class="mb0">{{ site.name }}</p>
+            <small class="text-muted">Page</small>
+            <p class="mb0">{{ page.name }}</p>
+            <small class="text-muted">Placement</small>
+            <p class="mb0">{{ placement.name }}</p>
+        </div>
+        <div class="panel-heading pb0 mb0">
+            <strong><i class="fa fa-bullhorn"></i> Advertiser Details</strong>
+        </div>
+        <div class="panel-body ml-lg mt-sm pt0">
+            <small class="text-muted">Advertiser</small>
+            <p class="mb0 pb0">{{ advertiser.name }}</p>
+            <small class="text-muted">Campaign</small>
+            <p class="mb0 pb0">{{ campaign.name }}</p>
+            <small class="text-muted">Creative Group</small>
+            <p class="mb0 pb0">{{ creativegroup.name }}</p>
+        </div>
     </div>
+</div>
+<div class="col-md-9 text-center">
+    <img src="{{ screenshot.image_url }}" class="screenshot-expanded">
 </div>
