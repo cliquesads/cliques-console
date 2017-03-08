@@ -51,12 +51,7 @@
 	<div class="screenshot-container">
 		<div class="col-md-3 col-sm-4 col-xs-5"
 			ng-repeat="screenshot in screenshots">
-			<div class="screenshot-block"
-				ng-click="viewScreenshot(screenshot)">
-				<div>
-					<img src="{{ screenshot.image_url }}" alt="Screenshot">
-				</div>	
-			</div>	
+			<screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
 		</div>
 		<div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-hide="resolved">
 			<div class="panel">

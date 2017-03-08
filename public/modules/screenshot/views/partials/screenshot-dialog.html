@@ -1,0 +1,41 @@
+<div id="wrapper">
+    <div ng-switch="user.organization.effectiveOrgType">
+        <div ng-switch-when="publisher">
+
+        </div>
+        <div ng-switch-default>
+            <h4>Screenshot for {{ campaign.name}}</h4>
+            <div class="col-md-6">
+                <small class="text-muted">Advertiser</small>
+                <p class="mb0 pb0">{{ advertiser.name }}</p>
+                <small class="text-muted">Campaign</small>
+                <p class="mb0 pb0">{{ campaign.name }}</p>
+            </div>
+            <div class="col-md-6">
+                <small class="text-muted">Advertiser</small>
+                <p class="mb0 pb0">{{ advertiser.name }}</p>
+                <small class="text-muted">Campaign</small>
+                <p class="mb0 pb0">{{ campaign.name }}</p>
+                <p>
+                    <a href="#">Report this screenshot</a>
+                </p>
+            </div>
+            <div class="col-md-2 well pt0">
+                <strong><i class="fa fa-info-circle"></i> Publisher</strong>
+                <small class="text-muted">Publisher</small>
+                <p class="mb0">{{ publisher.name }}</p>
+                <small class="text-muted">Site</small>
+                <p class="mb0">{{ site.name }}</p>
+                <small class="text-muted">Page</small>
+                <p class="mb0">{{ page.name }}</p>
+                <small class="text-muted">Placement</small>
+                <p class="mb0">{{ placement.name }}</p>
+                <small class="text-muted">URL</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-10 text-center">
+        <img src="{{ screenshot.image_url }}" class="screenshot-expanded">
+    </div>
+</div>

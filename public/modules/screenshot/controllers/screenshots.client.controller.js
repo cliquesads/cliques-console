@@ -55,14 +55,6 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 
 		$scope.getPaginatedScreenshots();
 
-		$scope.viewScreenshot = function(screenshot){
-		    ngDialog.open({
-		        template: 'modules/core/views/partials/screenshot-dialog.html',
-		        data: { screenshotUrl: screenshot.image_url },
-		        className: 'ngdialog-theme-default dialogwidth800'
-		    });
-		};
-
 		$scope.filterChanged = function() {
 			// reset currentPage and screenshots, then fetch screenshots
 			$scope.hasMore = true;
@@ -97,5 +89,37 @@ angular.module('screenshot').controller('ScreenshotController', ['$scope', 'Adve
 				}
 			}
 		});
+	}
+]).controller('ScreenshotDialogController', ['$scope', 'Advertiser', 'Publisher','Authentication',
+	function($scope, Advertiser, Publisher, Authentication) {
+		$scope.screenshot = $scope.ngDialogData.screenshot;
+		$scope.user = Authentication.user;
+
+		// Get timezone based abbreviation to pass to date filter
+		// get from user's TZ preference, which is saved as unique Moment timezone identifier.
+		// EX: 'America/New_York' becomes "EST" or "EDT", depending on the timestamp.
+		$scope.tz = moment.tz.zone(user.tz).abbr(
+			moment($scope.screenshot.tstamp).unix()
+		);
+
+		var predicate = function(id){
+			return function(object){
+				return object._id === id;
+			};
+		};
+
+		Advertiser.get({ advertiserId: $scope.screenshot.advertiser }, function(advertiser){
+			$scope.advertiser = advertiser;
+			$scope.campaign = _.find($scope.advertiser.campaigns, predicate($scope.screenshot.campaign));
+			$scope.creativegroup = _.find($scope.campaign.creativegroups, predicate($scope.screenshot.creativegroup));
+		});
+
+		Publisher.get({ publisherId: $scope.screenshot.publisher }, function(publisher){
+			$scope.publisher = publisher;
+			$scope.site = _.find($scope.publisher.sites, predicate($scope.screenshot.site));
+			$scope.page = _.find($scope.site.pages, predicate($scope.screenshot.page));
+			$scope.placement = _.find($scope.page.placements, predicate($scope.screenshot.placement));
+		});
+
 	}
 ]);

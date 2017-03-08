@@ -78,7 +78,7 @@ module.exports = function(db) {
 							filter.sites.push({
 								name: foundSite.name,
 								id: foundSite._id
-							})
+							});
 						});
 					});
 				})
@@ -124,7 +124,7 @@ module.exports = function(db) {
 							filter.campaigns.push({
 								name: foundCampaign.name,
 								id: foundCampaign._id
-							})
+							});
 						});
 					});
 				})

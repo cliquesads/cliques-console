@@ -1,0 +1,20 @@
+<div class="panel panel-default screenshot-block">
+    <div class="panel-heading">
+        <a href="#" ng-click="viewScreenshot(screenshot)">
+            <strong>{{ screenshot.tstamp | date : "medium" : "UTC"}} </strong>
+        </a>
+    </div>
+    <div class="panel-body" ng-click="viewScreenshot(screenshot)">
+        <img src="{{ screenshot.image_url }}" alt="Screenshot">
+    </div>
+    <div class="panel-footer">
+        <hm-read-more
+                hm-text="{{ screenshot.url }}"
+                hm-limit="20"
+                hm-more-text="read more"
+                hm-less-text="read less"
+                hm-dots-class="dots"
+                hm-link-class="links">
+        </hm-read-more>
+    </div>
+</div>
