@@ -9,9 +9,12 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
 	moment = require('moment-timezone');	
 
+var itemsPerPage = 25;
+
 module.exports = function(db) {
 	return {
 		getRecentQueries: function (req, res) {
+			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id
 			};
@@ -19,7 +22,8 @@ module.exports = function(db) {
 			.sort({
 				createdAt: -1
 			})
-			.limit(5)
+			.skip((currentPage - 1) * itemsPerPage)
+			.limit(itemsPerPage)
 			.exec(function(err, queries) {
 				if (err) {
 					return res.status(400).send({
@@ -41,6 +45,7 @@ module.exports = function(db) {
 			});
 		},
 		getCustomQueries: function (req, res) {
+			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
 				name: 'custom'
@@ -49,6 +54,8 @@ module.exports = function(db) {
 			.sort({
 				createdAt: -1
 			})
+			.skip((currentPage - 1) * itemsPerPage)
+			.limit(itemsPerPage)
 			.exec(function(err, queries) {
 				if (err) {
 					return res.status(400).send({

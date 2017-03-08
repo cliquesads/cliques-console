@@ -13,7 +13,7 @@ angular.module('analytics').config(['$stateProvider',
 		state('app.analytics.quickQueries', {
             url: '/analytics',
             resolve: {
-                $title: function(){ return 'Analytics'; }
+                $title: function(){ return 'Quick Queries'; }
             },
             views: {
                 'main': {
@@ -26,13 +26,45 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
 		}).
+        state('app.analytics.recentQueries', {
+            url: '/analytics/recentQueries',
+            resolve: {
+                $title: function(){ return 'Recent Queries'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/recent-queries.client.view.html',
+                    controller: 'AnalyticsListController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.myQueries', {
+            url: '/analytics/myQueries',
+            resolve: {
+                $title: function(){ return 'My Queries'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/my-queries.client.view.html',
+                    controller: 'AnalyticsListController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }                
+            }
+        }).
         state('app.analytics.timeQuery', {
             url: '/analytics/timeQuery',
             params: {
                 query: null
             },
             resolve: {
-                $title: function(){ return 'Time Query'; }
+                $title: function(){ return 'Quick Queries > Time Query'; }
             },
             views: {
                 'main': {
@@ -51,7 +83,7 @@ angular.module('analytics').config(['$stateProvider',
                 query: null
             },
             resolve: {
-                $title: function(){ return 'Sites Query'; }
+                $title: function(){ return 'Quick Queries > Sites Query'; }
             },
             views: {
                 'main': {
@@ -68,7 +100,7 @@ angular.module('analytics').config(['$stateProvider',
             url: '/analytics/customQueries',
             title: 'Analytics',
             resolve: {
-                $title: function(){ return 'Analytics'; }
+                $title: function(){ return 'Custom Queries'; }
             },
             views: {
                 'main': {

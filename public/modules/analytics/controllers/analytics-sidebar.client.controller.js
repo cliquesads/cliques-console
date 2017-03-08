@@ -8,12 +8,18 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
         $scope.views = null;
 
         // Fetch recent queries from backend
+        var i;
         Analytics.getRecentQueries()
             .success(function(data) {
-                $scope.recentQueries = data.queries;
+                // showing only 5 recent queries at most on sidebar
+                if (data.queries.length <= 5) {
+                    $scope.recentQueries = data.queries;
+                } else {
+                    $scope.recentQueries = data.queries.slice(0, 5);
+                }
                 $scope.totalRecentQueries = data.total;
                 // format creation datetime for each recent query
-                for (var i = 0; i < $scope.recentQueries.length; i ++) {
+                for (i = 0; i < $scope.recentQueries.length; i ++) {
                 	$scope.recentQueries[i].createdAt = Analytics.formatDatetimeString($scope.recentQueries[i].createdAt);
                 }
             })
@@ -24,10 +30,14 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
         // Fetch custom queries from backend
         Analytics.getMyQueries()
             .success(function(data) {
-            	$scope.customQueries = data.queries;
+                if (data.queries.length <= 5) {
+                    $scope.customQueries = data.queries;
+                } else {
+                    $scope.customQueries = data.queries.slice(0, 5);
+                }
             	$scope.totalCustomQueries = data.total;
             	// format creation datetime for each custom query
-            	for (var i = 0; i < $scope.customQueries.length; i ++) {
+            	for (i = 0; i < $scope.customQueries.length; i ++) {
             		$scope.customQueries[i].createdAt = Analytics.formatDatetimeString($scope.customQueries[i].createdAt);
             	}
             })
@@ -42,6 +52,9 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
 					break;
 				case 'Sites':
 					$state.go('app.analytics.sitesQuery', {query: query});
+                    break;
+                default:
+                    break;
 			}
 		};
     }

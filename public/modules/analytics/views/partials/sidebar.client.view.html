@@ -7,7 +7,7 @@
         </li>
         <li ng-if="recentQueries.length === 0">No Recent Queries</li>
     </ul>
-    <a class="indent" href="" ng-if="recentQueries.length < totalRecentQueries">
+    <a class="indent" href="#!/analytics/recentQueries" ng-if="recentQueries.length < totalRecentQueries">
         <em>View more...</em>
     </a>
     <br/><br/>
@@ -19,7 +19,7 @@
         </li>
         <li ng-if="customQueries.length === 0">No Custom Queries</li>
     </ul>
-    <a class="indent" href="" ng-if="customQueries.length < totalCustomQueries">
+    <a class="indent" href="#!/analytics/myQueries" ng-if="customQueries.length < totalCustomQueries">
         <em>View more...</em>
     </a>
 </div>

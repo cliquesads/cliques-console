@@ -125,11 +125,17 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         }
         return blobString;
     };
-    var getRecentQueries = function() {
-        return $http.get('/console/analytics/recentQueries');
+    var getRecentQueries = function(currentPage) {
+        if (!currentPage) {
+            currentPage = 1;
+        }
+        return $http.get('/console/analytics/recentQueries?currentPage=' + currentPage);
     };
-    var getMyQueries = function() {
-        return $http.get('/console/analytics/customQueries');
+    var getMyQueries = function(currentPage) {
+        if (!currentPage) {
+            currentPage = 1;
+        }
+        return $http.get('/console/analytics/customQueries?currentPage=' + currentPage);
     };
     var formatDatetimeString = function(datetimeString) {
         var dateMoment = moment(datetimeString);
