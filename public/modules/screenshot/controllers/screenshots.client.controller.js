@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 'Advertiser', 'Screenshot', 'Notify', 'ngDialog', '$http', '$window',
-	function($scope, Advertiser, Screenshot, Notify, ngDialog, $http, $window) {
+angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 'Advertiser', 'Screenshot', 'Notify', 'ngDialog', '$http', '$window', '$state',
+	function($scope, Advertiser, Screenshot, Notify, ngDialog, $http, $window, $state) {
 		$scope.hasMore = true;
 
 		var initialQueryParams = {
@@ -69,23 +69,16 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
 			}
 		};
 
-		angular.element($window).bind("scroll", function() {
-			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-			var body = document.body, html = document.documentElement;
-			var docHeight = Math.max(body.scrollHeight,
-			body.offsetHeight, html.clientHeight,html.scrollHeight, html.offsetHeight);
-			var windowBottom = windowHeight + window.pageYOffset;
-			if (windowBottom >= docHeight) {
-				// reached bottom, fetching next page if there're more screenshots
-				if ($scope.hasMore) {
-					$scope.queryParams.page ++;
-					$scope.getPaginatedScreenshots();
-				}
+		$scope.reachedBottom = function() {
+			if ($state.current.name === 'app.screenshot.listScreenshots' && $scope.hasMore) {
+				console.log('loading...!!!!!!');
+				$scope.queryParams.page ++;
+				$scope.getPaginatedScreenshots();
 			}
-		});
+		};
 	}
-]).controller('ScreenshotController', ['$scope', '$window', 'screenshot', 'Advertiser', 'Publisher','Authentication',
-	function($scope, $window, screenshot, Advertiser, Publisher, Authentication) {
+]).controller('ScreenshotController', ['$scope', '$window', 'screenshot', 'Advertiser', 'Publisher','Authentication', '$state',
+	function($scope, $window, screenshot, Advertiser, Publisher, Authentication, $state) {
 
 		$scope.screenshot = screenshot;
 		$scope.user = Authentication.user;
@@ -111,6 +104,5 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
         $scope.site = _.find($scope.publisher.sites, predicate($scope.screenshot.site));
         $scope.page = _.find($scope.site.pages, predicate($scope.screenshot.page));
         $scope.placement = _.find($scope.page.placements, predicate($scope.screenshot.placement));
-
 	}
 ]);
