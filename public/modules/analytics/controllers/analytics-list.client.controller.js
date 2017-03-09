@@ -9,6 +9,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.isLoading = false;
 		$scope.hasMore = false;
 
+		// Make query results human readable
 		$scope.handleQueryResults = function(queries) {
 			for (var i = 0; i < queries.length; i ++) {
 				queries[i].createdAt = Analytics.formatDatetimeString(queries[i].createdAt);
@@ -19,7 +20,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 
 		$scope.loadRelatedQueries = function() {
 			switch ($state.current.name) {
-				case 'app.analytics.recentQueries':
+				case 'app.analytics.recentQueriesList':
 					$scope.isLoading = true;
 					// Fetch recent queries from backend
 					Analytics.getRecentQueries($scope.currentPage)
@@ -39,7 +40,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 							Notify.alert('Error fetching recent queries: ' + error.message);
 						});
 					break;
-				case 'app.analytics.myQueries':
+				case 'app.analytics.myQueriesList':
 					$scope.isLoading = true;
 					// Fetch my/custom queries from backend
 					Analytics.getMyQueries($scope.currentPage)
@@ -78,19 +79,14 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 			}
 		};
 
-		angular.element($window).bind("scroll", function() {
-			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
-			var body = document.body, html = document.documentElement;
-			var docHeight = Math.max(body.scrollHeight,
-			body.offsetHeight, html.clientHeight,html.scrollHeight, html.offsetHeight);
-			var windowBottom = windowHeight + window.pageYOffset;
-			if (windowBottom >= docHeight) {
-				// reached bottom, fetching next page if there're more screenshots
+		$scope.reachedQueryListBottom = function() {
+			if ($state.current.name === 'app.analytics.recentQueriesList' ||
+				$state.current.name === 'app.analytics.myQueriesList') {
 				if ($scope.hasMore) {
 					$scope.currentPage ++;
 					$scope.loadRelatedQueries();
 				}
 			}
-		});
+		};
 	}
 ]);

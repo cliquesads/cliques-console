@@ -26,8 +26,8 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
 		}).
-        state('app.analytics.recentQueries', {
-            url: '/analytics/recentQueries',
+        state('app.analytics.recentQueriesList', {
+            url: '/analytics/recentQueriesList',
             resolve: {
                 $title: function(){ return 'Recent Queries'; }
             },
@@ -42,8 +42,8 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.myQueries', {
-            url: '/analytics/myQueries',
+        state('app.analytics.myQueriesList', {
+            url: '/analytics/myQueriesList',
             resolve: {
                 $title: function(){ return 'My Queries'; }
             },
