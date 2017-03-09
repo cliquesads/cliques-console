@@ -15,7 +15,14 @@ angular.module('actionbeacon').controller('ActionBeaconController', [
 
         $scope.actionbeacon = {
             name: null
-        };
+        };  
+        // Handler for 'panel-remove' event, when user clicks the "close panel"
+        // button. You can add custom events here to trigger on removal, right now it just
+        // resolves the promise and nothing else. You HAVE to resolve the promise in
+        // order for the panel to remove.
+        $scope.$on('panel-remove', function(event, id, deferred){
+            deferred.resolve();
+        });
 
         $scope.update = function(callback) {
             this.advertiser.$update(function() {
