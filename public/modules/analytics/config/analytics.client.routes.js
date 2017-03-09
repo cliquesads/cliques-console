@@ -33,7 +33,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/recent-queries.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/recent-queries-list.client.view.html',
                     controller: 'AnalyticsListController'
                 },
                 'sideBar': {
@@ -49,7 +49,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/my-queries.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/my-queries-list.client.view.html',
                     controller: 'AnalyticsListController'
                 },
                 'sideBar': {
@@ -96,15 +96,15 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.customQueries', {
-            url: '/analytics/customQueries',
+        state('app.analytics.customizeQuery', {
+            url: '/analytics/customizeQuery',
             title: 'Analytics',
             resolve: {
-                $title: function(){ return 'Custom Queries'; }
+                $title: function(){ return 'Customize Query'; }
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/custom-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/customize-query.client.view.html',
                     controller: 'AnalyticsController'
                 },
                 'sideBar': {

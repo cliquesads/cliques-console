@@ -1,6 +1,6 @@
 <div class="panel panel-default mt-xl p">
 	<div class="panel-body table-responsive">
-		<h4 class="mt0 text-center">Recent Queries</h4>	
+		<h4 class="mt0 text-center">My Queries</h4>
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -22,7 +22,9 @@
 					<td>{{ query.groupBy }}</td>
 					<td>{{ query.humanizedDateRange }}</td>
 					<td>
-						<a href="" ng-click="goToQuerySection(query)"><i class="fa fa-eye"></i></a>
+						<a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="MyQueriesList_CheckQuery">
+							<i class="fa fa-eye"></i>
+						</a>
 					</td>
 				</tr>
 			</tbody>

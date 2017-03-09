@@ -2,24 +2,24 @@
     <i class="fa fa-clock-o"></i><strong> Recent Queries</strong>
     <ul>
         <li ng-repeat="query in recentQueries">
-            <a href="" ng-click="goToQuerySection(query)">{{ query.name }}</a><br/>
+            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckRecentQuery">{{ query.name }}</a><br/>
             <small>{{ query.createdAt }}</small>
         </li>
         <li ng-if="recentQueries.length === 0">No Recent Queries</li>
     </ul>
-    <a class="indent" href="#!/analytics/recentQueries" ng-if="recentQueries.length < totalRecentQueries">
+    <a class="indent" href="#!/analytics/recentQueries" ng-if="recentQueries.length < totalRecentQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreRecentQueries">
         <em>View more...</em>
     </a>
     <br/><br/>
     <i class="fa fa-folder"></i><strong> My Queries</strong>
     <ul>
         <li ng-repeat="query in customQueries">
-            <a href="" ng-click="goToQuerySection(query)">{{ query.name }}</a> 
+            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckMyQuery">{{ query.name }}</a> 
             <small>{{ query.createdAt }}</small>
         </li>
         <li ng-if="customQueries.length === 0">No Custom Queries</li>
     </ul>
-    <a class="indent" href="#!/analytics/myQueries" ng-if="customQueries.length < totalCustomQueries">
+    <a class="indent" href="#!/analytics/myQueries" ng-if="customQueries.length < totalCustomQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreMyQueries">
         <em>View more...</em>
     </a>
 </div>
