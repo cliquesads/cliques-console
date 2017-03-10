@@ -1,7 +1,7 @@
 <h4>Creatives</h4>
 <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
 <p>
-    <button type="button" class="btn btn-labeled btn-primary" ng-click="formVisible = !formVisible">
+    <button type="button" class="btn btn-labeled btn-primary" ng-click="formVisible = !formVisible" analytics-on="click" analytics-event="EditCreatives_ToggleVisible">
         <div ng-show="!formVisible"><span class="btn-label"><i class="fa fa-plus"></i></span>Add New Creative</div>
         <div ng-show="formVisible"><span class="btn-label"><i class="fa fa-minus"></i></span>Hide</div>
     </button>
@@ -33,7 +33,7 @@
             <tbody ng-repeat="creativegroup in campaign.creativegroups">
                 <tr ng-repeat="creative in creativegroup.creatives">
                     <td><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
-                    <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required>{{ creative.name }}</a></p></td>
+                    <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required analytics-on="click" analytics-event="EditCreatives_Update">{{ creative.name }}</a></p></td>
                     <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
                     <td style="max-width: 300px;">
                         <p class="form-control-static" style="overflow-wrap: break-word;">
@@ -41,7 +41,7 @@
                             <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
                         </p>
                     </td>
-                    <td><button type="button" ng-click="remove(creativegroup, creative)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button></td>
+                    <td><button type="button" ng-click="remove(creativegroup, creative)" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="EditCreatives_Remove"><span class="icon-trash mr"></span>Remove</button></td>
                 </tr>
             </tbody>
         </table>

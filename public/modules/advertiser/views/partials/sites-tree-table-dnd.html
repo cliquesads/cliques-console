@@ -18,7 +18,7 @@
             <td tree-dnd-node-handle
                 ng-style="expandingProperty.cellStyle ? expandingProperty.cellStyle : {'padding-left': $callbacks.calsIndent(node.__level__)}"
                 ng-class="expandingProperty.cellClass">
-                <a ng-show="node.nodeType != 'Clique'" data-nodrag>
+                <a ng-show="node.nodeType != 'Clique'" data-nodrag analytics-on="click" analytics-event="SitesTreeTableDnd_ToggleExpand">
                     <i ng-class="node.__icon_class__" ng-click="toggleExpand(node)" class="tree-icon"></i>
                 </a>
                 <span ng-switch="node.nodeType">
@@ -32,11 +32,11 @@
                     <span ng-switch-when="Site">
                         <img ng-src="{{ node.logo_secure_url }}" ng-class="expandingProperty.logoSize === 'xs' ? 'client-logo-xs' : 'client-logo-sm'" ng-click="getSiteDescription(node)"/>
                         <strong ng-click="getSiteDescription(node)"> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Page{{node.__children__.length != 1 ? 's': null}})</strong>
-                        &nbsp;<a href="#" ng-click="getSiteDescription(node)"><i class="fa fa-info-circle"></i></a>
+                        &nbsp;<a href="#" ng-click="getSiteDescription(node)" analytics-on="click" analytics-event="SitesTreeTableDnd_GetSiteDescription"><i class="fa fa-info-circle"></i></a>
                     </span>
                     <span ng-switch-when="Page">
                         <i class="fa fa-file"></i> {{node[expandingProperty.field] || node[expandingProperty]}} ({{ node.__children__.length }} Placement{{node.__children__.length != 1 ? 's': null}})
-                        &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL"></a>
+                        &nbsp;<a href="{{ node.url }}" ng-show="node.url" class="fa fa-external-link" target="_blank" tooltip="Go to URL" analytics-on="click" analytics-event="SitesTreeTableDnd_TooltipGoToURL"></a>
                     </span>
                     <span ng-switch-when="Placement">
                         {{node[expandingProperty.field] || node[expandingProperty]}}

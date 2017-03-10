@@ -21,7 +21,7 @@
                 </div>
                 <ul class="pager">
                     <li class="next">
-                        <a href="#" ng-click="stepControl.goToSecondStep()">Next <span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToSecondStep()" analytics-on="click" analytics-event="NewCampaign_SecondStep">Next <span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>
@@ -32,12 +32,12 @@
                 <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
                 <ul class="pager">
                     <li class="previous">
-                        <a href="#" ng-click="stepControl.goToStep('init')">
+                        <a href="#" ng-click="stepControl.goToStep('init')" analytics-on="click" analytics-event="NewCampaign_Init">
                         <span>&larr; Previous</span>
                         </a>
                     </li>
                     <li ng-show="stepControl.campaign" class="next">
-                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Next <span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="NewCampaign_CampaignWizard">Next <span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>

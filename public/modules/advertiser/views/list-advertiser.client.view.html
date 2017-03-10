@@ -28,7 +28,7 @@
                     <br/>
                     <em class="custom-section-title">Active</em>
                     <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectActiveAdvertiser">
                             <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
                         </a>
                     </div>
@@ -37,7 +37,7 @@
                     <br/>
                     <em class="custom-section-title">Inactive</em>
                     <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)">
+                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectInactiveAdvertiser">
                             <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
                         </a>
                     </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="alert alert-info text-center pv-xl" data-ng-if="advertisers.$resolved && !advertisers.length">
-            <h4>No advertisers yet, why don't you <a href="/#!/advertiser/create">create one</a>?</h4>
+            <h4>No advertisers yet, why don't you <a href="/#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">create one</a>?</h4>
         </div>
     </div>
 </div>

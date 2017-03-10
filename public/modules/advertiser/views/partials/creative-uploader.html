@@ -44,7 +44,7 @@
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td nowrap="">
-                            <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+                            <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove">
                                 <span class="icon-trash mr"></span>Remove</button>
                         </td>
                         <td ng-show="uploader.isHTML5">
@@ -67,11 +67,11 @@
                     <div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>
                 </div>
             </div>
-            <button type="button" ng-click="onuploadall()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s">
+            <button type="button" ng-click="onuploadall()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s" analytics-on="click" analytics-event="CreativeUploader_UploadAll">
                 <span class="icon-cloud-upload mr"></span>Upload all</button>
-            <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s">
+            <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s" analytics-on="click" analytics-event="CreativeUploader_CancelAll">
                 <span class="icon-close mr"></span>Cancel all</button>
-            <button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s">
+            <button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s" analytics-on="click" analytics-event="CreativeUploader_ClearQueue">
                 <span class="icon-trash mr"></span>Remove all</button>
         </form>
     </div>
