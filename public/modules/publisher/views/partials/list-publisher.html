@@ -1,7 +1,7 @@
 <div class="text-md p-sm">Please select a Publisher to view its Sites</div>
 <div style="overflow: auto; max-height: 500px">
 <div class="list-group">
-    <a data-ng-repeat="pub in publishers | orderBy:'name'" ng-click="selectAndClose(pub)" class="list-group-item">
+    <a data-ng-repeat="pub in publishers | orderBy:'name'" ng-click="selectAndClose(pub)" class="list-group-item" analytics-on="click" analytics-event="ListPublisher_SelectAndClose">
         <div class="row row-table">
             <div class="col-xs-3 col-sm-2 col-md-2">
                 <img ng-src="{{ pub.logo_secure_url }}" class="client-logo-md"/>
@@ -16,7 +16,7 @@
     </a>
 </div>
 <h4 class="alert alert-info text-center pv-lg" data-ng-if="publishers.$resolved && !publishers.length">
-    No Publishers yet, why don't you <a ng-click="createPublisher()">create one</a>?
+    No Publishers yet, why don't you <a ng-click="createPublisher()" analytics-on="click" analytics-event="ListPublisher_CreateOne">create one</a>?
 </h4>
 </div>
 <div>

@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label>Domain Name *</label>
                     &nbsp;&nbsp;&nbsp;
-                    <a href="#" tooltip="{{ TOOLTIPS.domain_name }}">
+                    <a href="#" tooltip="{{ TOOLTIPS.domain_name }}" analytics-on="click" analytics-event="CreateSite_TooltipDomainName">
                         <em class="fa fa-question-circle"></em>
                     </a>
                     <div class="input-group">
@@ -63,7 +63,7 @@
                 <div class="form-group">
                     <label>Bid Floor (CPM)</label>
                     &nbsp;&nbsp;&nbsp;
-                    <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}">
+                    <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}" analytics-on="click" analytics-event="CreateSite_TooltipBidFloor">
                         <em class="fa fa-question-circle"></em>
                     </a>
                     <div class="input-group">
@@ -74,7 +74,7 @@
                 <br/>
                 <div class="form-group">
                     <label class="control-label">Block Advertisers by Domain Name</label>
-                    <a href="#" tooltip="{{ TOOLTIPS.blacklist }}">
+                    <a href="#" tooltip="{{ TOOLTIPS.blacklist }}" analytics-on="click" analytics-event="CreateSite_TooltipBlackList">
                         <em class="fa fa-question-circle"></em>
                     </a>
                     <div class="text-sm text-muted">Type and press Enter</div>
@@ -83,7 +83,7 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(1)">
+                    <a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CreateSite_WizardStepOne">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -97,7 +97,7 @@
             <legend>Choose the Clique that best describes your site</legend>
             <p>
                 <em class="text-muted">
-                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/58-choosing-a-clique" target="_blank">here</a>
+                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/58-choosing-a-clique" target="_blank" analytics-on="click" analytics-event="CreateSite_WhatIsClique">here</a>
                 </em>
             </p>
             <fieldset>
@@ -111,7 +111,7 @@
             <small class="text-muted">* Required</small>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(2)">
+                    <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CreateSite_WizardStepTwo">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -132,7 +132,7 @@
                 <br/>
                 <div class="form-group">
                     <label>URL *</label>
-                    <a href="#" tooltip="{{ TOOLTIPS.page_url }}">
+                    <a href="#" tooltip="{{ TOOLTIPS.page_url }}" analytics-on="click" analytics-event="CreateSite_TooltipPageURL">
                         <em class="fa fa-question-circle"></em>
                     </a>
                     <div class="input-group">
@@ -151,12 +151,12 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(3)">
+                    <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CreateSite_WizardStepThree">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
                 <li class="next">
-                    <a href="#" ng-click="wizard.go(5)"> Next <span>&rarr;</span></a>
+                    <a href="#" ng-click="wizard.go(5)" analytics-on="click" analytics-event="CreateSite_WizardStepFive"> Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
@@ -167,22 +167,22 @@
             <legend>Review your new publisher</legend>
             <div ng-show="creation_error" class="alert alert-danger">{{ creation_error }}</div>
             <fieldset>
-                <div class="col-sm-12"><em>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></em></div>
+                <div class="col-sm-12"><em>Site Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CreateSite_WizardStepOne"><span class="fa fa-edit"></span></a></em></div>
                 <div class="col-sm-2"><b>Name</b></div><div class="col-sm-10">{{ site.name }}</div>
                 <div class="col-sm-2"><b>Description</b></div><div class="col-sm-10">{{ site.description || &apos;empty&apos; }}</div>
                 <div class="col-sm-2"><b>Domain</b></div><div class="col-sm-10">{{ site.domain_name || &apos;empty&apos; }}</div>
             </fieldset>
             <fieldset>
-                <div class="col-sm-12"><em>Advanced Site Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></em></div>
+                <div class="col-sm-12"><em>Advanced Site Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CreateSite_WizardStepTwo"><span class="fa fa-edit"></span></a></em></div>
                 <div class="col-sm-2"><b>Bid Floor</b></div><div class="col-sm-10">{{ site.bid_floor | currency:"$":0 }}</div>
                 <div class="col-sm-2"><b>Blacklist</b></div><div class="col-sm-8">{{ site.blacklist || &apos;empty&apos; }}</div>
             </fieldset>
             <fieldset>
-                <div class="col-sm-12"><em>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></em></div>
+                <div class="col-sm-12"><em>Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CreateSite_WizardStepThree"><span class="fa fa-edit"></span></a></em></div>
                 <div class="col-sm-2"><b>Clique</b></div><div class="col-sm-10">{{ site.clique }}</div>
             </fieldset>
             <fieldset>
-                <div class="col-sm-12"><em>Page & Placements &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></em></div>
+                <div class="col-sm-12"><em>Page & Placements &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CreateSite_WizardStepFour"><span class="fa fa-edit"></span></a></em></div>
                 <div class="col-sm-4"><b>Page Name</b></div><div class="col-sm-8">{{ page.name || &apos;empty&apos; }}</div>
                 <div class="col-sm-4"><b>Page URL</b></div><div class="col-sm-8">{{ page.url || &apos;empty&apos; }}</div>
                 <div class="col-sm-4"><b>Page Description</b></div><div class="col-sm-8">{{ page.description || &apos;empty&apos; }}</div>
@@ -208,7 +208,7 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(4)">
+                    <a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CreateSite_WizardStepFour">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
