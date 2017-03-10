@@ -11,7 +11,7 @@
         </div>
         <div class="row">
             <p>
-                <a class="btn btn-primary btn-lg" href="#!/new-campaign">Get Started</a>
+                <a class="btn btn-primary btn-lg" href="#!/new-campaign" analytics-on="click" analytics-event="AdvDashboard_NewCampaign">Get Started</a>
             </p>
         </div>
     </div>
@@ -23,7 +23,7 @@
                 <!-- scroll up campaigns button -->
                 <div ng-if="showingCampaignEndIndex > 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90"
-                        ng-click="scrollUpShowingCampaigns()">
+                        ng-click="scrollUpShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_ScrollUpShowingCampaigns">
                         <span>Up&nbsp;</span>
                         <i class="fa fa-sort-asc fa-2x"></i>
                     </button>
@@ -32,7 +32,8 @@
                 <a
                     data-ng-repeat="campaign in currentlyShowingCampaigns track by campaign._id"
                     data-ng-href="#!/advertiser/{{campaign.parentAdvertiserId}}/campaign/{{campaign._id}}"
-                    class="campaign-list-item">
+                    class="campaign-list-item"
+                    analytics-on="click" analytics-event="AdvDashboard_SelectCampaign">
                     <div class="width-15">
                         <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
                     </div>
@@ -57,7 +58,7 @@
                 <!-- scroll down campaigns button -->
                 <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
                     <button class="btn btn-block btn-third-white-horizontal width-90"
-                        ng-click="scrollDownShowingCampaigns()">
+                        ng-click="scrollDownShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_ScrollDownShowingCampaigns">
                         <span ng-if="showingCampaignEndIndex <= 1">
                             More&nbsp;
                         </span>
@@ -127,7 +128,7 @@
                 <!-- Show more stats button -->
                 <div ng-if="!isShowingAllStats">
                     <button class="btn btn-block btn-third-white-horizontal"
-                        ng-click="showMoreStats()">
+                        ng-click="showMoreStats()" analytics-on="click" analytics-event="AdvDashboard_ShowMoreStats">
                         <span>More&nbsp;</span>
                         <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
                     </button>
@@ -136,7 +137,7 @@
                 <!-- Hide more stats button -->
                 <div ng-if="isShowingAllStats">
                     <button class="btn btn-block btn-third-white-horizontal"
-                        ng-click="hideMoreStats()">
+                        ng-click="hideMoreStats()" analytics-on="click" analytics-event="AdvDashboard_HideMoreStats">
                         <span>Hide&nbsp;</span>
                         <i class="fa fa-sort-up fa-2x"></i>
                     </button>
@@ -153,7 +154,7 @@
             <!-- Last screenshot button -->
             <div ng-if="showingScreenshotEndIndex > 2">
                 <button class="btn btn-third-white-vertical"
-                    ng-click="showLastScreenshot()">
+                    ng-click="showLastScreenshot()" analytics-on="click" analytics-event="AdvDashoard_ShowLastScreenshot">
                     <i class="fa fa-chevron-left"></i>
                 </button> 
             </div>
@@ -167,7 +168,7 @@
             <!-- Next screenshot button -->
             <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
                 <button class="btn btn-third-white-vertical"
-                    ng-click="showNextScreenshot()">
+                    ng-click="showNextScreenshot()" analytics-on="click" analytics-event="AdvDashoard_ShowNextScreenshot">
                     <i class="fa fa-chevron-right"></i>
                 </button> 
             </div>

@@ -11,7 +11,7 @@
         </div>
         <div class="row" ng-show="publishers.length == 0">
             <p>
-                <a class="btn btn-primary btn-lg" href="#!/publisher/create">Get Started</a>
+                <a class="btn btn-primary btn-lg" href="#!/publisher/create" analytics-on="click" analytics-event="PubDashboard_Create">Get Started</a>
             </p>
         </div>
     </div>
@@ -21,7 +21,7 @@
         <div class="row">
             <div class="col-lg-3 col-sm-6">
                 <!-- START widget-->
-                <a href="/#!/publisher">
+                <a href="/#!/publisher" analytics-on="click" analytics-event="PubDashboard_Publisher">
                     <div class="panel widget bg-primary">
                         <div class="row row-table">
                             <div class="col-xs-4 text-center bg-primary-dark pv-md">
@@ -93,9 +93,9 @@
                                 </em>
                             </small>
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="PubDashboard_Query7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="PubDashboard_Query30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="PubDashboard_Query90d">90d</button>
                             </span>
                         </div>
                     </div>
@@ -116,9 +116,9 @@
                                 </em>
                             </small>
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')" analytics-on="click" analytics-event="PubDashboard_QueryTabData7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')" analytics-on="click" analytics-event="PubDashboard_QueryTabData30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')" analytics-on="click" analytics-event="PubDashboard_QueryTabData90d">90d</button>
                             </span>
                         </div>
                     </div>
@@ -193,13 +193,13 @@
             <h2>
                 <strong>F</strong>eedback
             </h2>
-            <p>Cliques is built for you, and only you can help make it better! As a beta tester, we strongly encourage you to send us feedback on the platform. Please email <a href="mailto:bliang@cliquesads.com">bliang@cliquesads.com</a> with all feedback.</p>
+            <p>Cliques is built for you, and only you can help make it better! As a beta tester, we strongly encourage you to send us feedback on the platform. Please email <a href="mailto:bliang@cliquesads.com" analytics-on="click" analytics-event="PubDashboard_SendEmail">bliang@cliquesads.com</a> with all feedback.</p>
         </div>
         <div class="col-md-4">
             <h2>
                 <strong>R</strong>esources & Support
             </h2>
-            <p>If you have any quick questions or issues, or want to learn more about our technology, please wander over to our <a target="_blank" href="http://support.cliquesads.com/">Support Center</a></p>
+            <p>If you have any quick questions or issues, or want to learn more about our technology, please wander over to our <a target="_blank" href="http://support.cliquesads.com/" analytics-on="click" analytics-event="PubDashboard_VisitSupportCenter">Support Center</a></p>
         </div>
     </div>
 </section>
