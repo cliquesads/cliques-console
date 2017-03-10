@@ -20,14 +20,14 @@
     </div>
     <div class="row ml0 mr0 pt-lg">
         <div class="col-sm-12">
-            <button type="button" class="btn btn-labeled btn-default btn-xs pull-left" ng-click="invites.push({})">
+            <button type="button" class="btn btn-labeled btn-default btn-xs pull-left" ng-click="invites.push({})" analytics-on="click" analytics-event="InviteUsersDialog_PushInvites">
                 <span class="btn-label"><i class="fa fa-plus"></i></span>Add Another User
             </button>
         </div>
     </div>
     <div class="row text-center">
         <div class="text-center form-group mt-xl">
-            <button type="submit" class="btn btn-large btn-primary">Send Invites</button>
+            <button type="submit" class="btn btn-large btn-primary" analytics-on="click" analytics-event="InviteUsersDialog_SendInvites">Send Invites</button>
         </div>
         <div ng-show="loading">
             <div class="ball-pulse">

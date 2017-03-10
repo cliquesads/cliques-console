@@ -90,7 +90,7 @@
                             <legend>Organization</legend>
                             <p class="legend-help-text text-muted">You have been invited to join the following organization:</p>
                             <h4>{{ organization.name }}</h4>
-                            <small><em class="text-muted">If you do not recognize this organization or believe you have received this invite in error, please <a href="mailto:support@cliquesads.com">contact us.</a></em></small>
+                            <small><em class="text-muted">If you do not recognize this organization or believe you have received this invite in error, please <a href="mailto:support@cliquesads.com" analytics-on="click" analytics-event="Signup_ContactUs">contact us.</a></em></small>
                         </fieldset>
                         <fieldset ng-switch-default>
                             <legend>Organization Info</legend>
@@ -178,7 +178,7 @@
                         <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="previous">
-                                <a href="#" ng-click="wizard.go(1)"><span>&larr; Previous</span></a>
+                                <a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="Signup_Step1"><span>&larr; Previous</span></a>
                             </li>
                             <li class="next">
                                 <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="Signup_Step3"> Next <span>&rarr;</span></a>
@@ -227,7 +227,7 @@
                         <small class="text-muted">* Required</small>
                         <ul class="pager">
                             <li class="previous">
-                                <a href="#" ng-click="wizard.go(2)"><span>&larr; Previous</span></a>
+                                <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="Signup_Step2"><span>&larr; Previous</span></a>
                             </li>
                             <li class="next">
                                 <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
@@ -290,7 +290,7 @@
                             </div>
                             <em>
                                 <div class="text-sm">
-                                    <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
+                                    <p>By clicking “I Accept”, you (as an individual, company, business, corporation or other entity) agree that you have read, and are bound by, the Terms and Conditions located <a href="{{ termsAndConditions.url }}" target="_blank" analytics-on="click" analytics-event="Signup_TermsAndConditions">here</a> (the “Terms and Conditions”, and together with this Service Form, the “Agreement”).  This Order Form is governed by, and hereby incorporates by reference, the Terms and Conditions.</p>
                                     <p>If you are accepting the Agreement on behalf of a company, business, corporation or entity, you and the applicable company, business, corporation or entity represent and warrant that you have the authority to bind such company, business, corporation or entity to the Agreement.  If you do not have such authority, do not complete this Service Form or indicate your acceptance to the Agreement.</p>
                                 </div>
                             </em>
