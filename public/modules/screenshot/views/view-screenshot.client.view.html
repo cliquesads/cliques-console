@@ -10,11 +10,11 @@
             </div>
             <div class="col-md-6">
                 <small class="text-muted">URL</small>
-                <p><a href="{{ screenshot.url }}">{{ screenshot.url }}</a></p>
+                <p><a href="{{ screenshot.url }}" analytics-on="click" analytics-event="ViewScreenshot_ScreenshotURL">{{ screenshot.url }}</a></p>
             </div>
             <div class="col-md-3">
                 <small class="text-muted">Actions</small>
-                <p><a href="#">Report this screenshot</a></p>
+                <p><a href="#" analytics-on="click" analytics-event="ViewScreenshot_ReportScreenshot">Report this screenshot</a></p>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <div class="panel panel-default screenshot-block">
     <div class="panel-heading">
-        <a href="#" ng-click="viewScreenshot(screenshot)">
+        <a href="#" ng-click="viewScreenshot(screenshot)" analytics-on="click" analytics-event="ScreenshotThumbnail_ViewScreenshot">
             <strong>{{ screenshot.tstamp | date : "medium" : "UTC"}} </strong>
         </a>
     </div>
