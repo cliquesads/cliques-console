@@ -27,7 +27,7 @@ angular.module('clique').config(['$stateProvider',
             }
 		}).
         state('app.cliques.browseSites', {
-            url: '/browse-sites',
+            url: '/browse-sites/:siteId',
             title: 'Browse All Sites',
             resolve: {
                 $title: function(){ return 'Browse All Sites'; }
