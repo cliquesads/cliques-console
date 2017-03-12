@@ -39,7 +39,7 @@
                                     <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}">{{ site.name }}</a>
                                 </span>
                                 <span ng-switch-default>
-                                    <a href="/#!/browse-sites/{{ site._id }}">{{ site.name }}</a>
+                                    <a href="/#!/browse-sites?siteId={{ site._id }}">{{ site.name }}</a>
                                 </span>
                             </span>
                         </strong>
@@ -64,7 +64,7 @@
                                         <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}">{{ site.name }}</a>
                                     </span>
                                     <span ng-switch-default>
-                                        <a href="/#!/browse-sites/{{ site._id }}">{{ site.name }}</a>
+                                        <a href="/#!/browse-sites?siteId={{ site._id }}">{{ site.name }}</a>
                                     </span>
                                 </span>
                             </p>
