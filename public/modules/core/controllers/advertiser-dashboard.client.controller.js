@@ -51,10 +51,6 @@ angular.module('core').controller('AdvertiserDashboardController',
                 });
             });
 
-            HourlyAdStat.advSummaryQuery({}).then(function(response){
-                $scope.adStats = response.data;
-            });
-
 
             // See service in aggregations module for details on aggregationDateRanges object
             $scope.summaryDateRangeSelection = "7d";
@@ -78,100 +74,18 @@ angular.module('core').controller('AdvertiserDashboardController',
                     endDate: endDate
                 }).then(function (response) {
                     $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                        {
-                            fields: [
-                                'imps',
-                                {'CTR':
-                                    function (row) {
-                                        return row.clicks / row.imps;
-                                    }
-                                },
-                                'clicks',
-                                'spend']
-                        });
+                        {fields: ['imps',{'CTR': function(row){return row.clicks / row.imps;}}, 'clicks','spend', 'view_convs', 'click_convs']});
+                    $scope.impressions = _.sumBy($scope.timeSeries.imps, function(item){ return item[1];});
+                    $scope.clicks = _.sumBy($scope.timeSeries.clicks, function(item){ return item[1];});
+                    $scope.spend = _.sumBy($scope.timeSeries.spend, function(item){ return item[1];});
+                    $scope.actions = _.sumBy($scope.timeSeries.view_convs, function(item){ return item[1];}) + _.sumBy($scope.timeSeries.click_convs, function(item){ return item[1];});
+                    $scope.CTR = $scope.clicks / $scope.impressions;
                 });
                 // TODO: Need to provide error callback for query promise as well
                 $scope.summaryDateRangeSelection = dateShortCode;
             };
 
-            $scope.getDashboardGraph('30d');
 
-
-            $scope.dateRangeSelection = "7d";
-            $scope.tabFunctions = {
-                publishers: function(dateShortCode){
-                    var startDate = $scope.dateRanges[dateShortCode].startDate;
-                    var endDate = $scope.dateRanges[dateShortCode].endDate;
-                    // query HourlyAdStats api endpoint
-                    HourlyAdStat.advSummaryQuery({
-                        groupBy: 'publisher',
-                        populate: 'publisher',
-                        startDate: startDate,
-                        endDate: endDate
-                    }).then(function(response) {
-                        // build datatables options object
-                        $scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
-                        $scope.dtOptions_pubs.withOption('paging', false);
-                        $scope.dtOptions_pubs.withOption('searching', false);
-                        $scope.dtOptions_pubs.withOption('scrollX', true);
-                        $scope.dtOptions_pubs.withOption('order', [[2, 'desc']]);
-                        // Not entirely sure if this is necessary
-                        $scope.dtColumnDefs_pubs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5),
-                            DTColumnDefBuilder.newColumnDef(6)
-                        ];
-                        $scope.publisherData = response.data;
-                    });
-                },
-                advertisers: function(dateShortCode){
-                    var startDate = $scope.dateRanges[dateShortCode].startDate;
-                    var endDate = $scope.dateRanges[dateShortCode].endDate;
-                    // query HourlyAdStats api endpoint
-                    HourlyAdStat.advSummaryQuery({
-                        groupBy: 'advertiser',
-                        populate: 'advertiser',
-                        startDate: startDate,
-                        endDate: endDate
-                    }).then(function(response) {
-                        // build datatables options object
-                        $scope.dtOptions_advs = DTOptionsBuilder.newOptions();
-                        $scope.dtOptions_advs.withOption('paging', false);
-                        $scope.dtOptions_advs.withOption('searching', false);
-                        $scope.dtOptions_advs.withOption('scrollX', true);
-                        $scope.dtOptions_advs.withOption('order', [[2, 'desc']]);
-                        // Not entirely sure if this is necessary
-                        $scope.dtColumnDefs_advs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5),
-                            DTColumnDefBuilder.newColumnDef(6)
-                        ];
-                        $scope.advertiserData = response.data;
-                    });
-                }
-            };
-            $scope.activeTab = 'publishers';
-            $scope.getTabData = function(dateShortCode, tab){
-                tab = tab || $scope.activeTab;
-                $scope.activeTab = tab;
-                $scope.tabFunctions[tab](dateShortCode);
-                $scope.dateRangeSelection = dateShortCode;
-            };
-
-            $scope.showMoreStats = function(){
-                $scope.isShowingAllStats = true;
-            };
-            $scope.hideMoreStats = function() {
-                $scope.isShowingAllStats = false;
-            };
             $scope.scrollUpShowingCampaigns = function() {
                 if ($scope.showingCampaignEndIndex > 0) {
                     $scope.showingCampaignEndIndex --; 
@@ -187,14 +101,6 @@ angular.module('core').controller('AdvertiserDashboardController',
                     $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
                     $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
                 }
-            };
-
-            $scope.viewScreenshot = function(screenshot){
-                ngDialog.open({
-                    template: 'modules/core/views/partials/screenshot-dialog.html',
-                    data: { screenshotUrl: screenshot.image_url },
-                    className: 'ngdialog-theme-default dialogwidth800'
-                });
             };
 
             $scope.currentlyShowingScreenshots = [];
@@ -223,7 +129,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                     $scope.currentlyShowingScreenshots = [
                         $scope.screenshots[$scope.showingScreenshotEndIndex - 2],
                         $scope.screenshots[$scope.showingScreenshotEndIndex - 1],
-                        $scope.screenshots[$scope.showingScreenshotEndIndex],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex]
                     ];
                 }
             };
@@ -234,7 +140,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                     $scope.currentlyShowingScreenshots = [
                         $scope.screenshots[$scope.showingScreenshotEndIndex - 2],
                         $scope.screenshots[$scope.showingScreenshotEndIndex - 1],
-                        $scope.screenshots[$scope.showingScreenshotEndIndex],
+                        $scope.screenshots[$scope.showingScreenshotEndIndex]
                     ];
                 }
             };
