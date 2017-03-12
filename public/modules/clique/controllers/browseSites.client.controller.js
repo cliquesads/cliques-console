@@ -44,6 +44,13 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
                             $scope.allSites[i].shortDescription = $scope.getTextAbstract($scope.allSites[i].description, $scope.maxLengthForDescription);
                         }
                         $scope.loading = false;
+                        // bring up dialog if siteID in state params
+                        if ($stateParams.siteId){
+                            var site = _.find($scope.allSites, function(site){
+                                return site._id === $stateParams.siteId;
+                            });
+                            $scope.getDescription(site);
+                        }
                     });
                 }
             });

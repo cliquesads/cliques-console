@@ -77,8 +77,9 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
 			}
 		};
 	}
-]).controller('ScreenshotController', ['$scope', '$window', 'screenshot', 'Advertiser', 'Publisher','Authentication', '$state',
-	function($scope, $window, screenshot, Advertiser, Publisher, Authentication, $state) {
+]).controller('ScreenshotController', ['$scope', '$window', 'screenshot', 'Advertiser', 'Publisher','Authentication',
+    'Notify','ngDialog','$analytics',
+	function($scope, $window, screenshot, Advertiser, Publisher, Authentication, Notify, ngDialog, $analytics) {
 
 		$scope.screenshot = screenshot;
 		$scope.user = Authentication.user;
@@ -96,6 +97,10 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
 			};
 		};
 
+		$scope.copySuccess = function(e){
+			Notify.alert('This URL has been copied to your clipboard.',{});
+		};
+
         $scope.advertiser = $scope.screenshot.advertiser;
         $scope.campaign = _.find($scope.advertiser.campaigns, predicate($scope.screenshot.campaign));
         $scope.creativegroup = _.find($scope.campaign.creativegroups, predicate($scope.screenshot.creativegroup));
@@ -104,5 +109,34 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
         $scope.site = _.find($scope.publisher.sites, predicate($scope.screenshot.site));
         $scope.page = _.find($scope.site.pages, predicate($scope.screenshot.page));
         $scope.placement = _.find($scope.page.placements, predicate($scope.screenshot.placement));
+
+		$scope.reportScreenshotDialog = function(screenshot){
+            ngDialog.open({
+                className: 'ngdialog-theme-default',
+                template: 'modules/screenshot/views/partials/report-screenshot-dialog.html',
+                controller: ['$scope', '$http', '$analytics', function ($scope, $http, $analytics) {
+                    $scope.screenshot = $scope.ngDialogData.screenshot;
+                    $scope.submit = function(){
+                        $scope.loading = true;
+                        if ($scope.reportScreenshotForm.$valid){
+                            $http.post('/console/screenshot/' + $scope.screenshot._id + '/report', {"comment": $scope.comment})
+                                .success(function(response){
+                                    Notify.alert('Screenshot has been reported, someone from our team will get back to you shortly.', {status: 'success'});
+                                    $scope.loading = false;
+                                    $scope.closeThisDialog('success');
+                                    $analytics.eventTrack('screenshotReported', { comment: $scope.reportScreenshotForm.comment });
+                                })
+                                .error(function(response){
+                                    $scope.loading = false;
+                                    Notify.alert(response.message, {status: 'danger'});
+                                });
+                        } else {
+                            $scope.loading = false;
+                        }
+                    };
+                }],
+                data: {screenshot: screenshot}
+            });
+		};
 	}
 ]);

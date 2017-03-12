@@ -69,5 +69,8 @@ module.exports = function(db, routers) {
 		 */
 		.get(screenshots.hasAuthorization, screenshots.read);
 
+	router.route('/screenshot/:screenshotId/report')
+		.post(screenshots.hasAuthorization, screenshots.reportScreenshot);
+
 	router.param('screenshotId', screenshots.screenshotByID);
 };

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+	<p>A screenshot has been reported by {{ user.displayName }}:</p>
+    <p><img style="max-width: 500px !important" src="{{ screenshot.image_url }}"></p>
+    <p><a href="https://console.cliquesads.com/#!/screenshot/{{ screenshot._id }}">View This Screenshot in the Console</a></p>
+    <p><strong>Comment:</strong></p>
+    <p><em>{{ comment }}</em></p>
+    <p>You must reply to this reported screenshot within 48 hours.</p>
+	<br>
+	<p>The {{appName}} Support Team</p>
+</body>
+</html>

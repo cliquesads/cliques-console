@@ -8,7 +8,11 @@ var node_utils = require('@cliques/cliques-node-utils'),
 	errorHandler = require('./errors.server.controller'),
 	models = node_utils.mongodb.models,
 	config = require('config'),
+    util = require('util'),
+    mail = require('./mailer.server.controller'),
 	promise = require('bluebird');
+
+var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
 module.exports = function(db) {
 	var screenshotModels = new models.ScreenshotModels(db);
@@ -56,6 +60,33 @@ module.exports = function(db) {
 				}
 			}
 			next();
+		},
+
+		/**
+		 * Handles reporting of screenshot by user, takes comments & context data & sends an email.
+		 * @param req
+		 * @param res
+         * @param next
+         */
+		reportScreenshot: function(req, res, next){
+			var comment = req.body.comment;
+            var subject = util.format("%s Has Reported a Screenshot",
+                req.user.displayName);
+            mailer.sendMailFromUser(subject, 'report-screenshot-email.server.view.html',
+                { user: req.user, comment: comment, screenshot: req.screenshot },
+                req.user,
+                'support@cliquesads.com',
+                function(err, success){
+                    if (err){
+                        res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        return res.status(200).send();
+                    }
+                }
+            );
+
 		},
 
 		/**
