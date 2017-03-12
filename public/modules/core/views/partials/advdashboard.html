@@ -22,10 +22,10 @@
                 <em class="custom-section-title mb">My Campaigns</em>
                 <!-- scroll up campaigns button -->
                 <div ng-if="showingCampaignEndIndex > 1">
-                    <button class="btn btn-block btn-third-white-horizontal width-90"
+                    <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
                         ng-click="scrollUpShowingCampaigns()">
                         <span>Up&nbsp;</span>
-                        <i class="fa fa-sort-asc fa-2x"></i>
+                        <i class="fa fa-sort-asc fa-2x mb-lg-neg"></i>
                     </button>
                 </div>
 
@@ -56,7 +56,7 @@
                 </a>
                 <!-- scroll down campaigns button -->
                 <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
-                    <button class="btn btn-block btn-third-white-horizontal width-90"
+                    <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
                         ng-click="scrollDownShowingCampaigns()">
                         <span ng-if="showingCampaignEndIndex <= 1">
                             More&nbsp;
@@ -126,7 +126,7 @@
 
                 <!-- Show more stats button -->
                 <div ng-if="!isShowingAllStats">
-                    <button class="btn btn-block btn-third-white-horizontal"
+                    <button class="btn btn-block btn-third-white-horizontal p-sm"
                         ng-click="showMoreStats()">
                         <span>More&nbsp;</span>
                         <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
@@ -135,10 +135,10 @@
 
                 <!-- Hide more stats button -->
                 <div ng-if="isShowingAllStats">
-                    <button class="btn btn-block btn-third-white-horizontal"
+                    <button class="btn btn-block btn-third-white-horizontal p-sm"
                         ng-click="hideMoreStats()">
                         <span>Hide&nbsp;</span>
-                        <i class="fa fa-sort-up fa-2x"></i>
+                        <i class="fa fa-sort-up fa-2x mb-lg-neg"></i>
                     </button>
                 </div>
             </div>
@@ -147,8 +147,7 @@
     </section>
     <section ng-show="allCampaigns.length > 0">
         <br/><br/>
-        <em class="custom-section-title">Recent Screenshots</em>
-        <br/><br/>
+        <em class="custom-section-title pb-sm">Recent Screenshots</em>
         <div class="screenshots-showcase" ng-if="screenshots.length > 0">
             <!-- Last screenshot button -->
             <div ng-if="showingScreenshotEndIndex > 2">
@@ -161,7 +160,8 @@
             <!-- Screenshot images -->
             <div class="screenshot"
                 ng-repeat="screenshot in currentlyShowingScreenshots track by screenshot._id">
-                <img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">
+                <!--<img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">-->
+                <screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
             </div>            
 
             <!-- Next screenshot button -->
