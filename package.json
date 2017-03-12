@@ -20,6 +20,7 @@
     "@cliques/cliques-node-utils": "^0.2.47",
     "argparse": "^1.0.7",
     "async": "^1.5.2",
+    "bluebird": "^3.4.7",
     "body-parser": "~1.9.0",
     "bower": "~1.3.8",
     "chalk": "~0.5",

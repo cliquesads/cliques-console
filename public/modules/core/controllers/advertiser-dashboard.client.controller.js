@@ -6,8 +6,8 @@
 'use strict';
 
 angular.module('core').controller('AdvertiserDashboardController',
-    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog', 'ScreenshotFetcher', 'Notify',
-        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog, ScreenshotFetcher, Notify) {
+    ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication', 'ngDialog', 'Screenshot', 'Notify',
+        function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, ngDialog, Screenshot, Notify) {
 
             $scope.isShowingAllStats = false;
 
@@ -43,11 +43,11 @@ angular.module('core').controller('AdvertiserDashboardController',
                         });
                     });
                 });
-                ScreenshotFetcher.fetchByAdvertisers()
+                Screenshot.query({}).$promise
                 .then(function(response) {
-                    $scope.screenshots = response.data;
+                    $scope.screenshots = response.models;
                 }, function(errorResponse) {
-                    Notify.alert(errorResponse.data.message, {status: 'danger'});
+                    Notify.alert(errorResponse.message, {status: 'danger'});
                 });
             });
 
