@@ -71,7 +71,6 @@ angular.module('screenshot').controller('ListScreenshotsController', ['$scope', 
 
 		$scope.reachedBottom = function() {
 			if ($state.current.name === 'app.screenshot.listScreenshots' && $scope.hasMore) {
-				console.log('loading...!!!!!!');
 				$scope.queryParams.page ++;
 				$scope.getPaginatedScreenshots();
 			}
