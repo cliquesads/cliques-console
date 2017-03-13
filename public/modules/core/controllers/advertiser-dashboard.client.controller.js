@@ -11,9 +11,30 @@ angular.module('core').controller('AdvertiserDashboardController',
 
             $scope.isShowingAllStats = false;
 
+            /**
+             * BEGIN MY CAMPAIGN PANEL STUFF
+             */
+            // number of campaigns to show in "my campaigns" panel at any given time
+            $scope.CAMPAIGNS_TO_SHOW = 3;
+            
             $scope.allCampaigns = [];
             $scope.currentlyShowingCampaigns = [];
             $scope.showingCampaignEndIndex = 0;
+
+            $scope.scrollUpShowingCampaigns = function() {
+                if ($scope.showingCampaignEndIndex > 0) {
+                    $scope.showingCampaignEndIndex --;
+                    $scope.currentlyShowingCampaigns.splice(-1,1);
+                    $scope.currentlyShowingCampaigns.splice(0, 0, $scope.allCampaigns[$scope.showingCampaignEndIndex - ($scope.CAMPAIGNS_TO_SHOW - 1)]);
+                }
+            };
+            $scope.scrollDownShowingCampaigns = function() {
+                if ($scope.showingCampaignEndIndex < ($scope.allCampaigns.length - 1)) {
+                    $scope.showingCampaignEndIndex ++;
+                    $scope.currentlyShowingCampaigns.splice(0,1);
+                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
+                }
+            };
 
             $scope.creatives = [];
             $scope.advertiserIds = [];
@@ -24,7 +45,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                         camp.adv_logo_url = adv.logo_url;
                         camp.parentAdvertiserId = adv._id;
                         $scope.allCampaigns.push(camp);
-                        if ($scope.currentlyShowingCampaigns.length < 2) {
+                        if ($scope.currentlyShowingCampaigns.length < $scope.CAMPAIGNS_TO_SHOW) {
                             $scope.currentlyShowingCampaigns.push(camp);
                         }
                         $scope.showingCampaignEndIndex = $scope.currentlyShowingCampaigns.length - 1;
@@ -51,6 +72,10 @@ angular.module('core').controller('AdvertiserDashboardController',
                 });
             });
 
+
+            /**
+             * BEGIN QUICKSTATS STUFF
+             */
 
             // See service in aggregations module for details on aggregationDateRanges object
             $scope.summaryDateRangeSelection = "7d";
@@ -86,22 +111,9 @@ angular.module('core').controller('AdvertiserDashboardController',
             };
 
 
-            $scope.scrollUpShowingCampaigns = function() {
-                if ($scope.showingCampaignEndIndex > 0) {
-                    $scope.showingCampaignEndIndex --; 
-                    $scope.currentlyShowingCampaigns = [];
-                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
-                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
-                }
-            };
-            $scope.scrollDownShowingCampaigns = function() {
-                if ($scope.showingCampaignEndIndex < ($scope.allCampaigns.length - 1)) {
-                    $scope.showingCampaignEndIndex ++; 
-                    $scope.currentlyShowingCampaigns = [];
-                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex - 1]);
-                    $scope.currentlyShowingCampaigns.push($scope.allCampaigns[$scope.showingCampaignEndIndex]);
-                }
-            };
+            /**
+             * BEGIN SCREENSHOT STUFF
+             */
 
             $scope.currentlyShowingScreenshots = [];
             $scope.showingScreenshotEndIndex = 0;
