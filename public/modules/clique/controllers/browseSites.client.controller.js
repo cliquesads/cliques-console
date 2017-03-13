@@ -45,9 +45,9 @@ angular.module('clique').controller('BrowseSitesController', ['$scope', '$stateP
                         }
                         $scope.loading = false;
                         // bring up dialog if siteID in state params
-                        if ($stateParams.siteId){
+                        if ($location.$$search.siteId){
                             var site = _.find($scope.allSites, function(site){
-                                return site._id === $stateParams.siteId;
+                                return site._id === $location.$$search.siteId;
                             });
                             $scope.getDescription(site);
                         }
