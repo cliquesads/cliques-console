@@ -16,7 +16,6 @@ angular.module('core').controller('AdvertiserDashboardController',
              */
             // number of campaigns to show in "my campaigns" panel at any given time
             $scope.CAMPAIGNS_TO_SHOW = 3;
-            
             $scope.allCampaigns = [];
             $scope.currentlyShowingCampaigns = [];
             $scope.showingCampaignEndIndex = 0;
