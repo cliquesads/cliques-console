@@ -4,13 +4,13 @@
             <strong>{{ screenshot.tstamp | date : "medium" : "UTC"}} </strong>
         </a>
     </div>
-    <div class="panel-body" ng-click="viewScreenshot(screenshot)">
+    <div class="panel-body pt0" ng-click="viewScreenshot(screenshot)">
         <img src="{{ screenshot.image_url }}" alt="Screenshot">
     </div>
     <div class="panel-footer">
         <hm-read-more
                 hm-text="{{ screenshot.url }}"
-                hm-limit="20"
+                hm-limit="30"
                 hm-more-text="read more"
                 hm-less-text="read less"
                 hm-dots-class="dots"
