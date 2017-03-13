@@ -11,7 +11,7 @@
         </div>
         <div class="row">
             <p>
-                <a class="btn btn-primary btn-lg" href="#!/new-campaign">Get Started</a>
+                <a class="btn btn-primary btn-lg" href="#!/new-campaign" analytics-on="click" analytics-event="AdvDashboard_GetStarted">Get Started</a>
             </p>
         </div>
     </div>
@@ -22,13 +22,13 @@
                 <div class="width-90">
                     <span class="custom-section-title no-font-style mb"><i class="fa fa-bullhorn"></i> My Campaigns</span>
                     <span class="pull-right">
-                        <a href="/#!/all-campaigns"><i class="fa fa-bullhorn"></i> All Campaigns</a>
+                        <a href="/#!/all-campaigns" analytics-on="click" analytics-event="AdvDashboard_AllCampaigns"><i class="fa fa-bullhorn"></i> All Campaigns</a>
                     </span>
                 </div>
                 <!-- scroll up campaigns button -->
                 <div ng-if="showingCampaignEndIndex > CAMPAIGNS_TO_SHOW - 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
-                        ng-click="scrollUpShowingCampaigns()">
+                        ng-click="scrollUpShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_UpCampaigns">
                         <span>Up&nbsp;</span>
                         <i class="fa fa-sort-asc fa-2x mb-lg-neg"></i>
                     </button>
@@ -36,38 +36,33 @@
 
                 <a data-ng-repeat="campaign in currentlyShowingCampaigns track by campaign._id"
                     data-ng-href="#!/advertiser/{{campaign.parentAdvertiserId}}/campaign/{{campaign._id}}"
-                    class="campaign-list-item">
+                    class="campaign-list-item" analytics-on="click" analytics-event="AdvDashboard_GoToCampaign">
                     <div class="col-sm-2">
                         <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
                     </div>
                     <div class="col-sm-2">
                         <img src="{{ campaign.adv_logo_url }}" alt="Adv Logo" class="client-logo-md-lg">
                     </div>
-                    <div class="col-sm-4">
-                        <h4 class="campaign-list-item-heading" data-ng-bind="campaign.name"></h4>
+                    <div class="col-sm-5">
+                        <h4 class="campaign-list-item-heading mb-sm">{{ campaign.name | limitTo: 27 }}{{campaign.name.length > 27 ? '...' : ''}}</h4>
                         <p class="campaign-list-item-text">{{ campaign.clique }}</p>
                     </div>
                     <div class="col-sm-2">
-                        <!--<radial percent="campaign.percent_spent" size="sm"></radial>-->
-                        <radial percent="0.86" size="sm"></radial>
+                        <radial percent="campaign.percent_spent" size="sm"></radial>
+                        <!--<radial percent="0.86" size="sm"></radial>-->
                     </div>
 
                     <div class="col-sm-2">
-                        <!--<h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>-->
-                        <h4 class="campaign-list-item-heading">0.22%</h4>
+                        <h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
+                        <!--<h4 class="campaign-list-item-heading">0.22%</h4>-->
                         <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>
                 <!-- scroll down campaigns button -->
                 <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
-                        ng-click="scrollDownShowingCampaigns()">
-                        <span ng-if="showingCampaignEndIndex <= 1">
-                            More&nbsp;
-                        </span>
-                        <span ng-if="showingCampaignEndIndex > 1">
-                            Down&nbsp; 
-                        </span>
+                        ng-click="scrollDownShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_MoreCampaigns">
+                        More &nbsp;
                         <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
                     </button>
                 </div>
@@ -78,16 +73,16 @@
             <div class="col-lg-6 col-sm-12 pl">
                 <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
                 <span class="pull-right">
-                    <a href="/#!/analytics"><i class="fa fa-signal"></i> Go to Analytics</a>
+                    <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="AdvDashboard_GoToAnalytics"></i> Go to Analytics</a>
                 </span>
                 <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
                     <div class="panel-heading">
                         <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')">YTD</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange90d">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="AdvDashboard_StatsRangeYTD">YTD</button>
                             </span>
                         </div>
                     </div>
@@ -129,14 +124,14 @@
         <br/>
         <span class="custom-section-title no-font-style"><i class="fa fa-camera-retro"></i> Recent Screenshots</span>
         <span class="pull-right">
-            <a href="/#!/screenshots"><i class="fa fa-camera-retro"></i> View all Screenshots</a>
+            <a href="/#!/screenshots"><i class="fa fa-camera-retro" analytics-on="click" analytics-event="AdvDashboard_GoToScreenshots"></i> View all Screenshots</a>
         </span>
         <br/>
         <div class="screenshots-showcase" ng-if="screenshots.length > 0">
             <!-- Last screenshot button -->
             <div ng-if="showingScreenshotEndIndex > 2">
                 <button class="btn btn-third-white-vertical"
-                    ng-click="showLastScreenshot()">
+                    ng-click="showLastScreenshot()" analytics-on="click" analytics-event="AdvDashboard_ScreenshotsScrollLeft">
                     <i class="fa fa-chevron-left"></i>
                 </button> 
             </div>
@@ -151,7 +146,7 @@
             <!-- Next screenshot button -->
             <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
                 <button class="btn btn-third-white-vertical"
-                    ng-click="showNextScreenshot()">
+                    ng-click="showNextScreenshot()" analytics-on="click" analytics-event="AdvDashboard_ScreenshotsScrollRight">
                     <i class="fa fa-chevron-right"></i>
                 </button> 
             </div>

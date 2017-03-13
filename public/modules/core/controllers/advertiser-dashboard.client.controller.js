@@ -36,41 +36,44 @@ angular.module('core').controller('AdvertiserDashboardController',
                 }
             };
 
-            $scope.creatives = [];
             $scope.advertiserIds = [];
             $scope.advertisers = Advertiser.query(function(advertisers){
-                advertisers.forEach(function(adv){
-                    $scope.advertiserIds.push(adv._id);
-                    adv.campaigns.forEach(function(camp){
-                        camp.adv_logo_url = adv.logo_url;
-                        camp.parentAdvertiserId = adv._id;
-                        $scope.allCampaigns.push(camp);
-                        if ($scope.currentlyShowingCampaigns.length < $scope.CAMPAIGNS_TO_SHOW) {
-                            $scope.currentlyShowingCampaigns.push(camp);
-                        }
-                        $scope.showingCampaignEndIndex = $scope.currentlyShowingCampaigns.length - 1;
-                        camp.creativegroups.forEach(function(crg){
-                            crg.creatives.forEach(function(cr){
-                                var description = camp.name + ' - ' + cr.name;
-                                var link = '#!/advertiser/' + adv._id + '/campaign/' + camp._id;
-                                $scope.creatives.push({
-                                    id: cr._id,
-                                    title: adv.name,
-                                    description: description,
-                                    src: cr.secureUrl,
-                                    link: link
-                                });
+                // after getting all advertisers, kick off request to get hourlyAdStat data as well,
+                // which we will then bind to the appropriate Campaign
+                HourlyAdStat.advSummaryQuery({
+                    groupBy: 'campaign'
+                }).then(function(response){
+                    advertisers.forEach(function(adv){
+                        $scope.advertiserIds.push(adv._id);
+                        _.orderBy(adv.campaigns, ['active', '']);
+                        adv.campaigns.forEach(function(camp){
+                            camp.adv_logo_url = adv.logo_url;
+                            camp.tstamp = adv.tstamp;
+                            camp.parentAdvertiserId = adv._id;
+
+                            // Bind hourlyAdStat data to campaign object
+                            var data = _.find(response.data, function(d){
+                                return d._id.campaign === camp._id;
                             });
+                            if (data){
+                                camp.percent_spent = (data.spend / camp.budget).toFixed(4);
+                                camp.ctr = (data.clicks / data.imps).toFixed(4);
+                            }
+
+                            // finally, push to allCampaigns array
+                            $scope.allCampaigns.push(camp);
                         });
                     });
-                });
-                Screenshot.query({}).$promise
-                .then(function(response) {
-                    $scope.screenshots = response.models;
-                }, function(errorResponse) {
-                    Notify.alert(errorResponse.message, {status: 'danger'});
+
+                    // Sort all campaigns array
+                    $scope.allCampaigns = _.orderBy($scope.allCampaigns, ['active','tstamp'],['desc','desc']);
+
+                    // Now set current campaign view
+                    $scope.currentlyShowingCampaigns = _.slice($scope.allCampaigns, 0, $scope.CAMPAIGNS_TO_SHOW);
+                    $scope.showingCampaignEndIndex = $scope.currentlyShowingCampaigns.length - 1;
                 });
             });
+
 
 
             /**
@@ -114,6 +117,13 @@ angular.module('core').controller('AdvertiserDashboardController',
             /**
              * BEGIN SCREENSHOT STUFF
              */
+
+            Screenshot.query({}).$promise
+                .then(function(response) {
+                    $scope.screenshots = response.models;
+                }, function(errorResponse) {
+                    Notify.alert(errorResponse.message, {status: 'danger'});
+                });
 
             $scope.currentlyShowingScreenshots = [];
             $scope.showingScreenshotEndIndex = 0;
