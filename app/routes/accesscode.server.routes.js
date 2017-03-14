@@ -77,7 +77,7 @@ module.exports = function(db, routers) {
 
     router.route('/accesscode/:accessCodeId')
         /**
-         * @api {post} /accesscode/:accessCodeId Get One Access Code
+         * @api {get} /accesscode/:accessCodeId Get One Access Code
          * @apiName ReadAccessCode
          * @apiGroup AccessCode
          * @apiDescription Gets a single access code.
@@ -94,7 +94,7 @@ module.exports = function(db, routers) {
          */
         .get(accesscode.hasAuthorization, accesscode.read)
         /**
-         * @api {post} /accesscode/:accessCodeId Update Access Code
+         * @api {patch} /accesscode/:accessCodeId Update Access Code
          * @apiName UpdateAccessCode
          * @apiGroup AccessCode
          * @apiDescription Updates an [AccessCode](#api-AccessCode) by ID. AccessCode will be updated completely
@@ -113,6 +113,23 @@ module.exports = function(db, routers) {
         .patch(accesscode.hasAuthorization, accesscode.update);
 
     router.route('/accesscode/:accessCodeId/send-to-user')
+        /**
+         * @api {post} /accesscode/:accessCodeId/send-to-user Send Access Code to Users
+         * @apiName SendAccessCode
+         * @apiGroup AccessCode
+         * @apiDescription Sends an [AccessCode](#api-AccessCode) email to users specified in request body.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         * @apiPermission networkAdmin
+         *
+         * @apiParam (Path Parameters) {ObjectId} accessCodeId Object ID of AccessCode object.
+         * @apiParam (Body) {Object[]} [users] array of [User](#api-User) objects to create access tokens for.
+         * @apiParam (Body) {String} users.email email address
+         * @apiParam (Body) {String} users.firstName first name
+         * @apiParam (Body) {String} users.lastName last name
+         */
         .post(accesscode.hasAuthorization, accesscode.sendToUser);
 
     router.param('accessCodeId', accesscode.accessCodeByID);
