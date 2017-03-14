@@ -25,7 +25,7 @@ module.exports = {
      * AccessCode middleware
      */
     accessCodeByID: function (req, res, next, id) {
-        AccessCode.findById(id).exec(function (err, accessCode) {
+        AccessCode.findById(id).populate('issuerOrgs').exec(function (err, accessCode) {
             if (err) return next(err);
             if (!accessCode) return next(new Error('Failed to load accessCode ' + id));
             req.accessCode = accessCode;
@@ -81,7 +81,7 @@ module.exports = {
         if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
             query = { issuerOrg: req.user.organization.id };
         }
-        AccessCode.find(query, function (err, accessCodes) {
+        AccessCode.find(query).populate('issuerOrgs').exec(function (err, accessCodes) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -90,5 +90,5 @@ module.exports = {
                 res.json(accessCodes);
             }
         });
-    },
+    }
 };
