@@ -507,9 +507,6 @@ var AccessCodeSchema = new Schema({
         default: '',
         validate: [validateLocalStrategyPassword, 'Code should be longer']
     },
-    salt: {
-        type: String
-    },
     created: {
         type: Date,
         default: Date.now
@@ -524,39 +521,15 @@ var AccessCodeSchema = new Schema({
 	issuerSitePromo: billing.PromoSchema
 });
 
-/**
- * Hook a pre save method to hash the password
- */
-// AccessCodeSchema.pre('save', function(next) {
-//     if (this.code && this.code.length > 6) {
-//         this.salt = new Buffer(crypto.randomBytes(16).toString('base64'), 'base64');
-//         this.code = this.hashCode(this.code);
-//     }
-//     next();
-// });
-AccessCodeSchema.methods.hashCode = function(code) {
-    if (this.salt && code) {
-        return crypto.pbkdf2Sync(code, this.salt, 10000, 64).toString('base64');
-    } else {
-        return code;
-    }
-};
 AccessCodeSchema.statics.validate = function(code, callback) {
     var _this = this;
-    _this.find({}, function(err, codes) {
-        if (!err){
-            var valid = false;
-            var accesscode;
-            codes.forEach(function(c){
-                if (c.code === c.hashCode(code)){
-                    valid = true;
-                    accesscode = c;
-                }
-            });
-            callback(null, valid, accesscode);
-        } else {
-            callback(err);
-        }
+    _this.findOne({ code: code }, function(err, code) {
+		if (!err && code){
+			var valid = true;
+			callback(null, valid, code);
+		} else {
+			callback(err);
+		}
     });
 };
 
