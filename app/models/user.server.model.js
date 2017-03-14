@@ -523,13 +523,13 @@ var AccessCodeSchema = new Schema({
 
 AccessCodeSchema.statics.validate = function(code, callback) {
     var _this = this;
-    _this.find({ code: code }, function(err, code) {
-        if (!err){
-            var valid = true;
-            callback(null, valid, code);
-        } else {
-            callback(err);
-        }
+    _this.findOne({ code: code }, function(err, code) {
+		if (!err && code){
+			var valid = true;
+			callback(null, valid, code);
+		} else {
+			callback(err);
+		}
     });
 };
 
