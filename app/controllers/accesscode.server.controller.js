@@ -12,6 +12,16 @@ var errorHandler = require('./errors.server.controller'),
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
+var buildInviteURL = function(req, organizationId, accessTokenId){
+    var protocol = 'https';
+    if (process.env.NODE_ENV === 'local-test'){
+        protocol = 'http';
+    }
+    var hostname = req.headers.host;
+    var base = util.format("%s://%s", protocol, hostname);
+    return util.format("%s/#!/invite/organization/%s/%s", base, organizationId, accessTokenId);
+};
+
 module.exports = {
 
     /**
@@ -40,12 +50,34 @@ module.exports = {
         var accessCode = new AccessCode(req.body);
         accessCode.save(function (err, ac) {
             if (err) {
-                console.log(err);
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
                 res.json(ac);
+            }
+        });
+    },
+
+    /**
+     * Update AccessCode
+     */
+    update: function(req, res) {
+        var thisAccessCode = _.extend(req.accessCode, req.body);
+        thisAccessCode.save(function (err, newAccessCode) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                AccessCode.populate(newAccessCode, {path: 'issuerOrgs'}, function(err, c) {
+                    if (err){
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    return res.json(c);
+                });
             }
         });
     },
@@ -88,6 +120,41 @@ module.exports = {
                 });
             } else {
                 res.json(accessCodes);
+            }
+        });
+    },
+
+    sendToUser: function(req, res){
+        var accessCode = req.accessCode;
+        var asyncFuncs = [];
+        var fu = function(thisUser){
+            return function(callback){
+                var protocol = 'https';
+                if (process.env.NODE_ENV === 'local-test'){
+                    protocol = 'http';
+                }
+                var hostname = req.headers.host;
+                var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
+                var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
+                mailer.sendMailFromUser(subject, 'send-access-code-to-user-email.server.view.html',
+                    { user: thisUser, accessCode: accessCode, inviteUrl: inviteUrl },
+                    req.user,
+                    thisUser.email,
+                    callback
+                );
+            };
+        };
+        req.body.forEach(function(user){
+            var func = fu(user);
+            asyncFuncs.push(func);
+        });
+        async.parallel(asyncFuncs, function(err, results){
+            if (err){
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                return res.status(200).send();
             }
         });
     }

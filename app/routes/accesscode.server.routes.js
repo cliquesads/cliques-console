@@ -92,7 +92,28 @@ module.exports = function(db, routers) {
          * @apiSuccess {Object} ::accessCode:: AccessCode object as response body (see [above](#api-AccessCode)
          *  for all fields).
          */
-        .get(accesscode.hasAuthorization, accesscode.read);
+        .get(accesscode.hasAuthorization, accesscode.read)
+        /**
+         * @api {post} /accesscode/:accessCodeId Update Access Code
+         * @apiName UpdateAccessCode
+         * @apiGroup AccessCode
+         * @apiDescription Updates an [AccessCode](#api-AccessCode) by ID. AccessCode will be updated completely
+         *  with the contents of request `body`.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         * @apiPermission networkAdmin
+         *
+         * @apiParam (Path Parameters){String} accessCodeId ObjectID of AccessCode
+         *
+         * @apiSuccess {Object} ::accessCode:: Updated AccessCode object as response body (see [above](#api-AccessCode)
+         *  for all fields).
+         */
+        .patch(accesscode.hasAuthorization, accesscode.update);
+
+    router.route('/accesscode/:accessCodeId/send-to-user')
+        .post(accesscode.hasAuthorization, accesscode.sendToUser);
 
     router.param('accessCodeId', accesscode.accessCodeByID);
 };

@@ -12,16 +12,38 @@ angular.module('accesscode').controller('AccessCodeController', ['$scope', '$htt
         };
 
         $scope.openSendDialog = function(accessCode){
-            ngDialog.openConfirm({
-                template: '\
-                        <br>\
-                        <p>Email invoice to Organization as well?</p>\
-                        <p class="text-center">\
-                            <button class="btn btn-lg btn-success" ng-click="confirm(true)">Yes</button>\
-                            <button class="btn btn-lg btn-primary" ng-click="confirm(false)">No, just generate the invoice.</button>\
-                            <button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
-                        </p>',
-                plain: true
+            ngDialog.open({
+                template: 'modules/accesscode/views/partials/send-access-code-dialog.html',
+                className: 'ngdialog-theme-default dialogwidth650',
+                data: {
+                    accessCode: accessCode
+                },
+                controller: ['$scope','$http', function($scope, $http) {
+                    $scope.accessCode = $scope.ngDialogData.accessCode;
+                    $scope.invites = [{
+                        firstName: null,
+                        lastName: null,
+                        email: null
+                    }];
+                    $scope.submit = function(){
+                        $scope.loading = true;
+                        if ($scope.inviteForm.$valid){
+                            $http.post('/console/accesscode/' + $scope.accessCode._id + '/send-to-user', $scope.invites)
+                                .success(function(response){
+                                    Notify.alert('Access codes sent', {status: 'success'});
+                                    $scope.loading = false;
+                                    $scope.closeThisDialog('success');
+                                })
+                                .error(function(response){
+                                    $scope.loading = false;
+                                    Notify.alert(response.message, {status: 'danger'});
+                                });
+                        } else {
+                            $scope.loading = false;
+                        }
+                    };
+
+                }]
             });
         };
     }
