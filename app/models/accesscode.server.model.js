@@ -19,7 +19,9 @@ var AccessCodeSchema = new Schema({
     code: {
         type: String,
         default: '',
-        validate: [user.validateLocalStrategyPassword, 'Code should be longer']
+        validate: [user.validateLocalStrategyPassword, 'Code should be longer'],
+        unique: true,
+        index: true
     },
     created: {
         type: Date,
