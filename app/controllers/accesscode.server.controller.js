@@ -12,16 +12,6 @@ var errorHandler = require('./errors.server.controller'),
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
-var buildInviteURL = function(req, organizationId, accessTokenId){
-    var protocol = 'https';
-    if (process.env.NODE_ENV === 'local-test'){
-        protocol = 'http';
-    }
-    var hostname = req.headers.host;
-    var base = util.format("%s://%s", protocol, hostname);
-    return util.format("%s/#!/invite/organization/%s/%s", base, organizationId, accessTokenId);
-};
-
 module.exports = {
 
     /**
