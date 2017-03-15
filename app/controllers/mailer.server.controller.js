@@ -27,23 +27,22 @@ var Mailer = exports.Mailer = function(options){
     this.mailerType     = options.mailerType || 'local';
     this.templatePath   = options.templatePath || config.templatePath;
 
-    this.smtpTransport  = nodemailer.createTransport(this.mailerOptions);
+    //// Default to mailer options stored in environment config
+    this.mailerOptions  = options.mailerOptions || config.mailer.options;
+
     if (this.mailerType === 'local'){
         // init email templates compiler, which uses Swig to compile templates
         // and Juice to take care of inlining all CSS to be compatible with email clients
         this.templateRenderer = new EmailTemplates({
             root: this.templatePath
         });
+        this.smtpTransport  = nodemailer.createTransport(this.mailerOptions);
     } else if (this.mailerType === 'mandrill'){
         this.mandrillClient = mandrillClient;
     } else {
         throw Error('options.mailerType must be either local or mandrill');
     }
-
-    //// Default to mailer options stored in environment config
-    this.mailerOptions  = options.mailerOptions || config.mailer.options;
-
-    //this.client = new postmark.Client(config.postmark.apiToken);
+    
     this.defaults = {
         appName: config.app.title
     };
