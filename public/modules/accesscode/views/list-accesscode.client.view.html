@@ -36,31 +36,34 @@
                             <th>Actions</th>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="accessCode in accessCodes | orderBy : '-created'" ng-click="goToAccessCode(accessCode)">
+                            <tr ng-repeat="accessCode in accessCodes | orderBy : '-created'">
                                 <td>
                                     <div class="label" ng-class="accessCode.active ? 'label-success':'label-default'">{{ accessCode.active ? "Active":"Inactive"}}</div>
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     {{ accessCode.created | date: "short": "UTC" }}
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     <strong>{{ accessCode.code }}</strong>
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     {{ (accessCode.fees | filter : feeTypeFilter('advertiser'))[0].percentage | percentage : 2 }}
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     {{ (accessCode.fees | filter : feeTypeFilter('publisher'))[0].percentage | percentage : 2 }}
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     <p ng-repeat="promo in accessCode.promos">{{ promo.description }}</p>
                                 </td>
-                                <td>
+                                <td ng-click="goToAccessCode(accessCode)">
                                     <p ng-repeat="org in accessCode.issuerOrgs">{{ org.name}}</p>
                                 </td>
                                 <td>
                                     <button type="button" ng-click="openSendDialog(accessCode)" class="btn btn-primary btn-xs" tooltip="Send Access Code to User">
                                         <i class="fa fa-lg fa-envelope"></i>
+                                    </button>
+                                    <button type="button" ng-click="deleteAccessCode(accessCode)" class="btn btn-danger btn-xs" tooltip="Remove Access Code">
+                                        <i class="fa fa-lg fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>

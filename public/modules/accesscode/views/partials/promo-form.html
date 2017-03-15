@@ -2,12 +2,12 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="description">Description*</label>
-            <input type="text" id="description" name="description" class="form-control" data-ng-model="promo.description" placeholder="10% off">
+            <input type="text" id="description" required="required" name="description" class="form-control" data-ng-model="promo.description" placeholder="10% off">
         </div>
     </div>
     <div class="col-md-2">
         <label>Active*</label>
-        <div class="form-group form-control-static">
+        <div class="form-group form-control-static" ng-init="promo.active = promo.active || true">
             <label class="switch">
                 <input type="checkbox" checked="checked" ng-model="promo.active"/>
                 <span></span>
@@ -18,9 +18,9 @@
     <div class="col-md-4">
         <label>Promo Type*</label>
         <div class="form-group">
-            <div class="radio c-radio">
+            <div class="radio c-radio" ng-init="promo.type = promo.type || 'advertiser'">
                 <label ng-repeat="type in typeChoices">
-                    <input type="radio" ng-model="promo.type" value="{{ type }}">
+                    <input type="radio" required="required" ng-model="promo.type" value="{{ type }}">
                     <span class="fa fa-circle"></span>{{ type | capitalize }} &nbsp;
                 </label>
             </div>

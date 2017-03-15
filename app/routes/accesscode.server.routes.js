@@ -110,7 +110,19 @@ module.exports = function(db, routers) {
          * @apiSuccess {Object} ::accessCode:: Updated AccessCode object as response body (see [above](#api-AccessCode)
          *  for all fields).
          */
-        .patch(accesscode.hasAuthorization, accesscode.update);
+        .patch(accesscode.hasAuthorization, accesscode.update)/**
+         * @api {delete} /accesscode/:accessCodeId Remove AccessCode
+         * @apiName RemoveAccessCode
+         * @apiGroup AccessCode
+         * @apiDescription Removes an [AccessCode](#api-AccessCode) by ID.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         *
+         * @apiParam (Path Parameters){String} accessCode ObjectID of AccessCode
+         *
+         * @apiSuccess {Object} ::accesscode:: AccessCode object that was just removed as response `body`
+         */
+        .delete(accesscode.hasAuthorization, accesscode.remove);
 
     router.route('/accesscode/:accessCodeId/send-to-user')
         /**

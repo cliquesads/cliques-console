@@ -117,6 +117,23 @@ module.exports = {
         });
     },
 
+    /**
+     * Delete an advertiser
+     */
+    remove: function (req, res) {
+        var accessCode = req.accessCode;
+        accessCode.remove(function (err) {
+            if (err) {
+                console.log(err);
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                res.json(accessCode);
+            }
+        });
+    },
+
     sendToUser: function(req, res){
         var accessCode = req.accessCode;
         var asyncFuncs = [];
