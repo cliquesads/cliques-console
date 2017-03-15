@@ -129,9 +129,7 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
         });
     });
     message.global_merge_vars = _.union(message.global_merge_vars, merge_vars);
-
-
-
+    
     // Now extend message w/ options passed to mailOptions.mandrillOptions
     if (mailOptions.mandrillOptions){
         _.assignIn(message, mailOptions.mandrillOptions);

@@ -40,16 +40,33 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
-        state('app.admin.accessCodes', {
+        state('app.admin.listAccessCodes', {
             url: '/admin/access-codes',
-            title: 'Send Access Codes',
+            title: 'All Access Codes',
             resolve: {
-                $title: function(){ return 'Send Access Codes'; }
+                $title: function(){ return 'All Access Codes'; }
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/accesscode/views/accesscode-view.client.view.html',
-                    controller: 'AccessCodeController'
+                    templateUrl: 'modules/accesscode/views/list-accesscode.client.view.html',
+                    controller: 'ListAccessCodeController'
+                }
+            }
+        }).
+        state('app.admin.listAccessCodes.viewAccessCode', {
+            url: '/admin/access-codes/:accessCodeId',
+            title: 'View Access Codes',
+            resolve: {
+                accessCode: function(AccessCode, $stateParams){
+                    return AccessCode.get({ accessCodeId: $stateParams.accessCodeId }).$promise;
+
+                },
+                $title: function(accessCode){ return accessCode.code; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/accesscode/views/view-access-code.client.view.html',
+                    controller: 'ViewAccessCodeController'
                 }
             }
         });

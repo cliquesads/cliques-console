@@ -4,7 +4,8 @@
 angular.module('accesscode').factory('AccessCode', ['$resource',
     function($resource) {
         return $resource('console/accesscode/:accessCodeId', { accessCodeId: '@_id'}, {
-            update: { method: 'PATCH'}
+            update: { method: 'PATCH'},
+            create: { method: 'POST'}
         });
     }
 ]);
