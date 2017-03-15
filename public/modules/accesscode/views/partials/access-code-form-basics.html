@@ -1,0 +1,32 @@
+<div class="row pt">
+    <div class="col-md-2">
+        <label>Active*</label>
+        <div class="form-group form-control-static">
+            <label class="switch">
+                <input type="checkbox" checked="checked" ng-model="accessCode.active"/>
+                <span></span>
+            </label>
+            <div class="label" ng-class="accessCode.active ? 'label-success':'label-default'">{{ accessCode.active ? "Active":"Inactive"}}</div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div class="form-group">
+            <label for="code">Access Code*</label>
+            <input type="text" required="required" id="code" name="code" class="form-control" data-ng-model="accessCode.code" placeholder="ILoveCliques123">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="advertiserfee">{{ accessCode.fees[0].type | capitalize }} Fee*</label>
+            <input type="number" ng-min="0" ng-max="0.99" step="0.01" required="required" id="advertiserfee" name="advertiserfee" class="form-control" data-ng-model="accessCode.fees[0].percentage">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="publisherfee">{{ accessCode.fees[1].type | capitalize }} Fee*</label>
+            <input type="number" ng-min="0" ng-max="0.99" step="0.01" required="required" id="publisherfee" name="publisherfee" class="form-control" data-ng-model="accessCode.fees[1].percentage">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,86 @@
+<form name="accessCodeForm" data-ng-submit="submit()">
+    <div class="topsavebar bg-primary-light" ng-show="dirty">
+        <div class="text-center">
+            <button class="btn btn-lg btn-primary" type="submit">
+                Save
+            </button>
+            <button type="button" class="btn btn-lg btn-default" ng-click="reset()">
+                Reset
+            </button>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading pb0 mb0">
+                <h4>Basic Info</h4>
+                <hr class="m0"/>
+            </div>
+            <div class="panel-body pt-sm">
+                <access-code-form-basics access-code="accessCode"></access-code-form-basics>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading pb0 mb0">
+                <h4>Promos & Issuer Promos</h4>
+                <hr class="m0"/>
+            </div>
+            <div class="panel-body pt-sm">
+                <fieldset class="pb">
+                    <legend class="mb-sm">Promos</legend>
+                    <div ng-repeat="promo in accessCode.promos">
+                        <promo-form promo="promo"></promo-form>
+                        <hr/>
+                    </div>
+                    <div class="box-placeholder" ng-show="accessCode.promos.length === 0">
+                        <h4><em>No Promos for this Access Code</em></h4>
+                    </div>
+                    <div class="row ml0 mr0">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-labeled btn-default btn-xs pull-left" ng-click="accessCode.promos.push({})">
+                                <span class="btn-label"><i class="fa fa-plus"></i></span>Add Another Promo
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="pb">
+                    <legend class="mb-sm">Issuer Organizations</legend>
+                    <div class="row pt">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="issuerOrgs">Issuer Organizations</label>
+                                <p><small class="text-muted">Select an organization to be designated as the "issuer" of this access code. If none (i.e. Cliques is the only issuer and there aren't any downstream issuer promos) then just skip it.</small></p>
+                                <select chosen="" multiple="multiple" name="issuerOrgs" id="issuerOrgs" ng-options="org._id as org.name for org in organizations" ng-model="accessCode.issuerOrgs" data-placeholder="Select an organization" class="form-control chosen-select">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well mt" ng-show="accessCode.issuerOrgs.length > 0">
+                        <div ng-switch on="accessCode.issuerOrgs.length === 0">
+                            <div ng-switch-when="false">
+                                <div class="row pt">
+                                    <h4>Issuer Signup Promo</h4>
+                                    <promo-form promo="accessCode.issuerSignupPromo"></promo-form>
+                                    <hr/>
+                                </div>
+                                <div class="row pt">
+                                    <h4>Issuer Campaign Promo</h4>
+                                    <promo-form promo="accessCode.issuerCampaignPromo"></promo-form>
+                                    <hr/>
+                                </div>
+                                <div class="row pt">
+                                    <h4>Issuer Site Promo</h4>
+                                    <promo-form promo="accessCode.issuerSitePromo"></promo-form>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div ng-switch-default></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</form>

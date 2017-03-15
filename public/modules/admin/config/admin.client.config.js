@@ -6,5 +6,6 @@ angular.module('admin').run(['Menus',
         Menus.addMenuItem('sidebar', 'Admin', 'admin', null, 'app.admin.main', false, ['networkAdmin'], 7, 'icon-settings');
         Menus.addSubMenuItem('sidebar', 'admin', 'Network Report', 'admin/network-report');
         Menus.addSubMenuItem('sidebar', 'admin', 'Payments & Billing', 'admin/payment-admin');
+        Menus.addSubMenuItem('sidebar', 'admin', 'Access Codes', 'admin/access-codes');
 	}
 ]);
