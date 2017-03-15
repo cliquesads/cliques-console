@@ -7,10 +7,13 @@ var errorHandler = require('./errors.server.controller'),
     AccessCode = mongoose.model('AccessCode'),
     util = require('util'),
     config = require('config'),
-    mandrill = require('mandrill-api'),
+    mail = require('./mailer.server.controller'),
     async = require('async');
 
-var mandrillClient = new mandrill.Mandrill(config.get("Mandrill.apiKey"));
+var mailer = new mail.Mailer({
+    mailerType: 'mandrill',
+    fromAddress: 'support@cliquesads.com'
+});
 
 module.exports = {
 
@@ -126,51 +129,12 @@ module.exports = {
                 var hostname = req.headers.host;
                 var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
                 var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
-                var message = {
-                    "subject": subject,
-                    "from_email": req.user.email,
-                    "from_name": req.user.displayName,
-                    "to": [{
-                        "email": thisUser.email,
-                        "name": thisUser.firstName + ' ' + thisUser.lastName,
-                        "type": "to"
-                    }],
-                    "headers": {
-                        "Reply-To": req.user.email
-                    },
-                    "global_merge_vars": [{
-                        "name": "CURRENT_YEAR",
-                        "content": "2017"
-                    },
-                    {
-                        "name": "firstName",
-                        "content": thisUser.firstName
-                    },
-                    {
-                        "name": "inviteUrl",
-                        "content": inviteUrl
-                    },
-                    {
-                        "name": "accessCode",
-                        "content": accessCode.code
-                    }]
-                };
                 var templateName = 'welcome-cliques-access-code';
-                mandrillClient.messages.sendTemplate({
-                    "template_name": templateName,
-                    "template_content": [{}],
-                    "message": message},
-                    function(result){
-                        if (result[0].status === 'sent'){
-                            callback(null, result);
-                        } else {
-                            callback(result[0].reject_reason, null);
-                        }
-                    },
-                    function(err) {
-                        callback(err);
-                    }
-                );
+                mailer.sendMailFromUser(subject, templateName, {
+                    firstName: thisUser.firstName,
+                    inviteUrl: inviteUrl,
+                    accessCode: accessCode.code
+                }, req.user, thisUser.email, callback);
             };
         };
         req.body.forEach(function(user){
