@@ -5,12 +5,12 @@ var errorHandler = require('./errors.server.controller'),
     _ = require('lodash'),
     Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode'),
-    mail = require('./mailer.server.controller'),
     util = require('util'),
     config = require('config'),
+    mandrill = require('mandrill-api'),
     async = require('async');
 
-var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
+var mandrillClient = new mandrill.Mandrill(config.get("Mandrill.apiKey"));
 
 module.exports = {
 
@@ -126,11 +126,50 @@ module.exports = {
                 var hostname = req.headers.host;
                 var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
                 var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
-                mailer.sendMailFromUser(subject, 'send-access-code-to-user-email.server.view.html',
-                    { user: thisUser, accessCode: accessCode, inviteUrl: inviteUrl },
-                    req.user,
-                    thisUser.email,
-                    callback
+                var message = {
+                    "subject": subject,
+                    "from_email": req.user.email,
+                    "from_name": req.user.displayName,
+                    "to": [{
+                        "email": thisUser.email,
+                        "name": thisUser.firstName + ' ' + thisUser.lastName,
+                        "type": "to"
+                    }],
+                    "headers": {
+                        "Reply-To": req.user.email
+                    },
+                    "global_merge_vars": [{
+                        "name": "CURRENT_YEAR",
+                        "content": "2017"
+                    },
+                    {
+                        "name": "firstName",
+                        "content": thisUser.firstName
+                    },
+                    {
+                        "name": "inviteUrl",
+                        "content": inviteUrl
+                    },
+                    {
+                        "name": "accessCode",
+                        "content": accessCode.code
+                    }]
+                };
+                var templateName = 'welcome-cliques-access-code';
+                mandrillClient.messages.sendTemplate({
+                    "template_name": templateName,
+                    "template_content": [{}],
+                    "message": message},
+                    function(result){
+                        if (result[0].status === 'sent'){
+                            callback(null, result);
+                        } else {
+                            callback(result[0].reject_reason, null);
+                        }
+                    },
+                    function(err) {
+                        callback(err);
+                    }
                 );
             };
         };
