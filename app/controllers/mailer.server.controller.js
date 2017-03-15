@@ -42,7 +42,7 @@ var Mailer = exports.Mailer = function(options){
     } else {
         throw Error('options.mailerType must be either local or mandrill');
     }
-    
+
     this.defaults = {
         appName: config.app.title
     };
@@ -81,24 +81,7 @@ Mailer.prototype.sendMail = function(mailOptions, callback){
     // NOTE: probably not a good idea to set it anyway
     _.extend(mailOptions.data, { subject: mailOptions.subject});
     if (self.mailerType === 'local'){
-        mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
-        self.templateRenderer.render(mailOptions.templateName, mailOptions.data, function(err, html, text){
-            if (err){
-                if (callback) callback(err);
-                return console.error("Error rendering email template: " + err);
-            }
-            mailOptions.html = html;
-            mailOptions.text = text;
-            self.smtpTransport.sendMail(mailOptions, function(err, success){
-                if (callback){
-                    callback(err, success);
-                }
-                if (err) {
-                    console.error("Error sending email: " + err);
-                    console.error("Used the following mailOptions: " + mailOptions);
-                }
-            });
-        });
+        self._nodemailerSendMail(mailOptions, callback);
     } else if (self.mailerType === 'mandrill'){
         self._mandrillSendMail(mailOptions, callback);
     }
@@ -182,6 +165,24 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
  */
 Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
     var self = this;
+    mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
+    self.templateRenderer.render(mailOptions.templateName, mailOptions.data, function(err, html, text){
+        if (err){
+            if (callback) callback(err);
+            return console.error("Error rendering email template: " + err);
+        }
+        mailOptions.html = html;
+        mailOptions.text = text;
+        self.smtpTransport.sendMail(mailOptions, function(err, success){
+            if (callback){
+                callback(err, success);
+            }
+            if (err) {
+                console.error("Error sending email: " + err);
+                console.error("Used the following mailOptions: " + mailOptions);
+            }
+        });
+    });
 };
 
 /**
