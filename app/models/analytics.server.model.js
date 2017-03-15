@@ -19,7 +19,9 @@ var QuerySchema = exports.Query = new Schema({
     name: { type: String, require: true },
     // cron syntax
     //TODO: add validator function using cron-parser
-    schedule: { type: String }
+    schedule: { type: String },
+    // If saved as periodic query, the next datetime this query will be executed again
+    nextRun: { type: Date }
 }, {
     timestamps: true
 });

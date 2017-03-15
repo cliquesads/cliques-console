@@ -416,6 +416,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                         newQuery.name = 'Time';
                     }
                     var scheduleString = req.query.schedule;
+                    var nextRun;
                     if (scheduleString) {
                         // validate schedule string
                         if (!validateScheduleString(scheduleString)) {
@@ -423,8 +424,15 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                                 message: 'Illegal schedule string'
                             });
                         }
+                        var parser = require('cron-parser');
+                        var interval = parser.parseExpression(scheduleString);
+                        nextRun = new Date(interval.next().toString());
                     }
                     newQuery.user = req.user._id;
+                    if (nextRun) {
+                        // Save the next datetime this periodic query will be run
+                        newQuery.nextRun = nextRun;
+                    }
                     newQuery.save(function(err) {
                         if (err) {
                             return res.status(400).send({
