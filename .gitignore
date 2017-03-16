@@ -48,3 +48,7 @@ logs/
 build/
 doc/
 out/
+
+# Crontab list
+# ============
+cronjob_list

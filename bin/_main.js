@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Wrapper for all scripts that need DB & server config variables.
  *
@@ -29,7 +30,7 @@
  *                  [ [['-d', '--derp'], { help: 'derp derp'}], [['-b', '--bar'], { help: 'bar bar'}] ]
  */
 module.exports = function(func, cliArgs){
-
+    var chalk = require('chalk');
     // First handle command line args via argparse
     cliArgs = cliArgs || false;
     var ArgumentParser = require('argparse').ArgumentParser;
