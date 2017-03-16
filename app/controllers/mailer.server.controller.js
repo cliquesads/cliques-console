@@ -141,7 +141,6 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
             "message": message
         },
         function(result){
-            console.log(result);
             if (result[0].status === 'sent'){
                 callback(null, result);
             } else {
