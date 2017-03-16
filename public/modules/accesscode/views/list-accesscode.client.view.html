@@ -36,7 +36,7 @@
                             <th>Actions</th>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="accessCode in accessCodes | orderBy : '-created'">
+                            <tr ng-repeat="accessCode in accessCodes | orderBy : '-fees[0].percentage'">
                                 <td>
                                     <div class="label" ng-class="accessCode.active ? 'label-success':'label-default'">{{ accessCode.active ? "Active":"Inactive"}}</div>
                                 </td>
@@ -58,7 +58,7 @@
                                 <td ng-click="goToAccessCode(accessCode)">
                                     <p ng-repeat="org in accessCode.issuerOrgs">{{ org.name}}</p>
                                 </td>
-                                <td>
+                                <td style="min-width: 100px">
                                     <button type="button" ng-click="openSendDialog(accessCode)" class="btn btn-primary btn-xs" tooltip="Send Access Code to User">
                                         <i class="fa fa-lg fa-envelope"></i>
                                     </button>

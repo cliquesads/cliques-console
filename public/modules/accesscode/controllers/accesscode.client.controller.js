@@ -31,7 +31,7 @@ angular.module('accesscode').controller('ListAccessCodeController', ['$scope', '
             dialog.then(function(confirm){
                 if (confirm){
                     accessCode.$delete(function(response){
-                        Notify.alert('Access code ' + accessCode.code + 'was deleted successfully', {status: 'success'});
+                        Notify.alert('Access code ' + accessCode.code + ' was deleted successfully', {status: 'success'});
                         _.remove($scope.accessCodes, function(ac){
                             return ac._id === accessCode._id;
                         });
@@ -65,7 +65,7 @@ angular.module('accesscode').controller('ListAccessCodeController', ['$scope', '
                         if (scope.accessCodeForm.$valid){
                             scope.accessCode.$create(function(response){
                                 scope.loading = false;
-                                Notify.alert('Access code ' + scope.accessCode.code + 'created', {status: 'success'});
+                                Notify.alert('Access code ' + scope.accessCode.code + ' created', {status: 'success'});
                                 scope.closeThisDialog(response);
                                 $scope.accessCodes.splice(0, 0, response);
                             }, function(errorResponse){
@@ -146,7 +146,7 @@ angular.module('accesscode').controller('ListAccessCodeController', ['$scope', '
             if ($scope.accessCodeForm.$valid){
                 $scope.accessCode.$update(function(response){
                     $scope.loading = false;
-                    Notify.alert('Access code ' + $scope.accessCode.code + 'updated successfully', {status: 'success'});
+                    Notify.alert('Access code ' + $scope.accessCode.code + ' updated successfully', {status: 'success'});
                     $scope._accessCodeInit = angular.copy($scope.accessCode);
                     $scope.dirty = false;
                 }, function(errorResponse){

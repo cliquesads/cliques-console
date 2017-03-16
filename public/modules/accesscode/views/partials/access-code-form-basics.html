@@ -20,13 +20,13 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="advertiserfee">{{ accessCode.fees[0].type | capitalize }} Fee*</label>
-            <input type="number" ng-min="0" ng-max="0.99" step="0.01" required="required" id="advertiserfee" name="advertiserfee" class="form-control" data-ng-model="accessCode.fees[0].percentage">
+            <input type="number" ng-min="0" ng-max="0.999" step="0.001" required="required" id="advertiserfee" name="advertiserfee" class="form-control" data-ng-model="accessCode.fees[0].percentage">
         </div>
     </div>
     <div class="col-md-6">
         <div class="form-group">
             <label for="publisherfee">{{ accessCode.fees[1].type | capitalize }} Fee*</label>
-            <input type="number" ng-min="0" ng-max="0.99" step="0.01" required="required" id="publisherfee" name="publisherfee" class="form-control" data-ng-model="accessCode.fees[1].percentage">
+            <input type="number" ng-min="0" ng-max="0.999" step="0.001" required="required" id="publisherfee" name="publisherfee" class="form-control" data-ng-model="accessCode.fees[1].percentage">
         </div>
     </div>
 </div>

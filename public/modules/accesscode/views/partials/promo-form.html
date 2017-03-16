@@ -20,26 +20,28 @@
         <div class="form-group">
             <div class="radio c-radio" ng-init="promo.type = promo.type || 'advertiser'">
                 <label ng-repeat="type in typeChoices">
-                    <input type="radio" required="required" ng-model="promo.type" value="{{ type }}">
+                    <input type="radio" ng-model="promo.type" value="{{ type }}">
                     <span class="fa fa-circle"></span>{{ type | capitalize }} &nbsp;
                 </label>
             </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row pt">
     <div class="col-md-4">
         <div class="form-group">
-            <label for="promoAmount">Promo Fixed $ Amount</label>
+            <label for="promoAmount" class="mb0 pb0">Promo Fixed $ Amount</label>
+            <p><small class="text-muted pb-sm">Promo amounts should be <strong>negative</strong></small></p>
             <div class="input-group">
                 <span class="input-group-addon align-top">$</span>
-                <input type="number" id="promoAmount" name="description" class="form-control" data-ng-model="promo.promoAmount" placeholder="500">
+                <input type="number" id="promoAmount" max="0" step="0.01" name="promoAmount" class="form-control" data-ng-model="promo.promoAmount" placeholder="500">
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label for="minimumSpend">Minimum Spend $ Amount</label>
+            <label for="minimumSpend" class="mb0 pb0">Minimum Spend $ Amount</label>
+            <p><small class="text-muted pb-sm">Min. spend level to get this promo</small></p>
             <div class="input-group">
                 <span class="input-group-addon align-top">$</span>
                 <input type="number" id="minimumSpend" name="minimumSpend" class="form-control" data-ng-model="promo.minimumSpend" placeholder="500">
@@ -47,9 +49,10 @@
         </div>
     </div>
     <div class="col-md-4">
+        <label for="percentage" class="mb0 pb0">Percentage Discount</label>
+        <p><small class="text-muted pb-sm">Fixed % Discount/Credit</small></p>
         <div class="form-group">
-            <label for="percentage">Percentage Discount</label>
-            <input type="number" ng-min="0" ng-max="0.99" step="0.01" id="percentage" name="percentage" class="form-control" data-ng-model="promo.percentage">
+            <input type="number" ng-min="0" ng-max="0.999" step="0.001" id="percentage" name="percentage" class="form-control" data-ng-model="promo.percentage">
         </div>
     </div>
 </div>
