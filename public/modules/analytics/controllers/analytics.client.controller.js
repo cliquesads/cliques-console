@@ -162,6 +162,19 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.setupAllQueryParams();
         }
 
+        /**
+         * Depending on different user types(advertiser, publisher or networkAdmin), the query function can be different
+         */
+        if (user) {
+            if (user.organization.organization_types.indexOf('networkAdmin') > -1){
+                $scope.queryFunction = HourlyAdStat.query;
+            } else if (user.organization.organization_types.indexOf('advertiser') > -1){
+                $scope.queryFunction = HourlyAdStat.advSummaryQuery;
+            } else if (user.organization.organization_types.indexOf('publisher') > -1){
+                $scope.queryFunction = HourlyAdStat.pubSummaryQuery;
+            }
+        }
+
         /**************************** QUERY FUNCTIONS ****************************/
         $scope.queryForGraphAndTabData = function() {
             if ($scope.dates.startDate && $scope.dates.endDate) {
@@ -182,7 +195,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             $scope.showPoints = $scope.dateRanges[$scope.summaryDateRangeSelection].showPoints;
 
             // query HourlyAdStats api endpoint
-            HourlyAdStat.query($scope.graphQueryParam).then(function(response) {
+            $scope.queryFunction($scope.graphQueryParam).then(function(response) {
                 $scope.timeSeries = new MongoTimeSeries(response.data, $scope.graphQueryParam.startDate, $scope.graphQueryParam.endDate, user.tz, $scope.timeUnit, {
                     fields: [
                         'imps', {
@@ -200,7 +213,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         $scope.tabFunctions = {
             cliques: function() {
                 // query HourlyAdStats endpoint
-                HourlyAdStat.query($scope.tabQueryParams.cliques).then(function(response) {
+                $scope.queryFunction($scope.tabQueryParams.cliques).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions = DTOptionsBuilder.newOptions();
                     $scope.dtOptions.withOption('paging', false);
@@ -223,7 +236,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             },
             publishers: function() {
                 // query HourlyAdStats api endpoint
-                HourlyAdStat.query($scope.tabQueryParams.publishers).then(function(response) {
+                $scope.queryFunction($scope.tabQueryParams.publishers).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_pubs.withOption('paging', false);
@@ -247,7 +260,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             },
             advertisers: function() {
                 // query HourlyAdStats api endpoint
-                HourlyAdStat.query($scope.tabQueryParams.advertisers).then(function(response) {
+                $scope.queryFunction($scope.tabQueryParams.advertisers).then(function(response) {
                     // build datatables options object
                     $scope.dtOptions_advs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_advs.withOption('paging', false);
