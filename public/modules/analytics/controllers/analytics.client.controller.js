@@ -9,6 +9,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         $scope.timeUnit = 'day';
         $scope.isSaved = false;
         $scope.dates = {};
+        $scope.filters = [];
         $scope.cronScheduleParam = {};
         $scope.summaryDateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
@@ -87,24 +88,32 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             queryParam.humanizedDateRange = dateRangeString;
             return queryParam;
         };
+        $scope.prepareQueryFilters = function(queryParam, filters) {
+            queryParam.filters = filters;
+            return queryParam;
+        };
         $scope.setupAllQueryParams = function() {
             $scope.prepareDateGroupBy();
             // GRAPH PARAMS
             $scope.graphQueryParam = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.graphQueryParam);
             $scope.graphQueryParam = $scope.prepareCronScheduleParam($scope.graphQueryParam);
             $scope.graphQueryParam = $scope.prepareQueryHumanizedDateRange($scope.graphQueryParam, $scope.queryResultTitle);
+            $scope.graphQueryParam = $scope.prepareQueryFilters($scope.graphQueryParam, $scope.filters);
             // CLIQUES TAB PARAMS
             $scope.tabQueryParams.cliques = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.cliques);
             $scope.tabQueryParams.cliques = $scope.prepareCronScheduleParam($scope.tabQueryParams.cliques);
             $scope.tabQueryParams.cliques = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.cliques, $scope.queryResultTitle);
+            $scope.tabQueryParams.cliques = $scope.prepareQueryFilters($scope.tabQueryParams.cliques, $scope.filters);
             // PUBLISHERS TAB PARAMS
             $scope.tabQueryParams.publishers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.publishers);
             $scope.tabQueryParams.publishers = $scope.prepareCronScheduleParam($scope.tabQueryParams.publishers);
             $scope.tabQueryParams.publishers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.publishers, $scope.queryResultTitle);
+            $scope.tabQueryParams.publishers = $scope.prepareQueryFilters($scope.tabQueryParams.publishers, $scope.filters);
             // ADVERTISERS TAB PARAMS
             $scope.tabQueryParams.advertisers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.advertisers);
             $scope.tabQueryParams.advertisers = $scope.prepareCronScheduleParam($scope.tabQueryParams.advertisers);
             $scope.tabQueryParams.advertisers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.advertisers, $scope.queryResultTitle);
+            $scope.tabQueryParams.advertisers = $scope.prepareQueryFilters($scope.tabQueryParams.advertisers, $scope.filters);
         };
         // setup query params for the first query when page loads
         $scope.setupAllQueryParams();
@@ -159,6 +168,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             // history query datetime unit
             $scope.timeUnit = $scope.historyQuery.dateGroupBy;
             $scope.queryResultTitle = humanizedDateRange;
+            $scope.filters = $scope.historyQuery.filters;
             $scope.setupAllQueryParams();
         }
 

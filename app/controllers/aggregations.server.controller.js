@@ -24,6 +24,28 @@ var validateScheduleString = function(scheduleString) {
 };
 
 /**
+ * Based on filter_query parameter, this function prepares the `filters` array when saving query
+ * filterParam @param string
+ * entityType @param string
+ * For instance, filterParam with req.query.advertiser = '{in}123,456'
+ * becomes the following filters array:
+ * ['advertiser123, advertiser456'] 
+ */
+var formFilters = function(filterParam, entityType) {
+    var filters = [];
+    var entityIds = [];
+    if (filterParam.lastIndexOf('{in}', 0) === 0) {
+        entityIds = filterParam.replace('{in}', '').split(',');
+    } else {
+        entityIds.push(filterParam);
+    }
+    for (var i = 0; i < entityIds.length; i ++) {
+        filters.push(entityType + entityIds[i]);
+    }
+    return filters
+};
+
+/**
  * Constructor for PipelineVarsBuilder object, which translates API request
  * path params into MongoDB Aggregation Pipeline-compatible objects.
  *
@@ -382,6 +404,9 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
             });
         }
 
+        console.log('============== _getManyWrapper req.query: ');
+        console.log(req.query);
+
         // toggle demo or non-demo aggregation model, depending on
         // request query param sent in
         var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
@@ -432,6 +457,12 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
                     if (nextRun) {
                         // Save the next datetime this periodic query will be run
                         newQuery.nextRun = nextRun;
+                    }
+                    // Check if this query has filters
+                    if (req.query.advertiser) {
+                        newQuery.filters = formFilters(req.query.advertiser, 'advertiser');
+                    } else if (req.query.publisher) {
+                        newQuery.filters = formFilters(req.query.publisher, 'publisher');
                     }
                     newQuery.save(function(err) {
                         if (err) {
@@ -494,18 +525,35 @@ HourlyAdStatAPI.prototype.getMany = function(req, res){
  */
 HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
     var self = this;
-    var filter_query = {};
-    if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
-        filter_query.organization = req.user.organization.id;
-    }
-    self.advertiserModels.Advertiser.find(filter_query, function(err, advertisers){
-        var ids = [];
-        advertisers.forEach(function(doc){
-            ids.push(doc.id);
+    var filters = req.query.filters;
+    if (!filters || filters.length === 0) {
+        var filter_query = {};
+        if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+            filter_query.organization = req.user.organization.id;
+        }
+        self.advertiserModels.Advertiser.find(filter_query, function(err, advertisers){
+            var ids = [];
+            advertisers.forEach(function(doc){
+                ids.push(doc.id);
+            });
+            req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+            return self._getManyWrapper(self.genPipelineBuilder)(req, res);
         });
-        req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+    } else {
+        if (filters.length === 1) {
+            req.query.advertiser = filters[0].replace('advertiser', '');
+        } else {
+            req.query.advertiser = '{in}';
+            for (var i = 0; i < filters.length; i ++) {
+                if (i < (filters.length - 1)) {
+                    req.query.advertiser += filters[i].replace('advertiser', '') + ',';
+                } else {
+                    req.query.advertiser += filters[i].replace('advertiser', '');
+                }
+            }
+        }
         return self._getManyWrapper(self.genPipelineBuilder)(req, res);
-    });
+    }
 };
 
 /**
@@ -518,19 +566,37 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
  */
 HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
     var self = this;
-    var filter_query = {};
-    // allow Advertisers & Admins to access publisher data
-    if (req.user.organization.organization_types.indexOf('publisher') > -1){
-        filter_query.organization = req.user.organization.id;
-    }
-    self.publisherModels.Publisher.find(filter_query, function(err, publishers){
-        var ids = [];
-        publishers.forEach(function(doc){
-            ids.push(doc.id);
+    var filters = req.query.filters;
+
+    if (!filters || filters.length === 0) {
+        var filter_query = {};
+        // allow Advertisers & Admins to access publisher data
+        if (req.user.organization.organization_types.indexOf('publisher') > -1){
+            filter_query.organization = req.user.organization.id;
+        }
+        self.publisherModels.Publisher.find(filter_query, function(err, publishers){
+            var ids = [];
+            publishers.forEach(function(doc){
+                ids.push(doc.id);
+            });
+            req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+            return self._getManyWrapper(self.genPipelineBuilder)(req, res);
         });
-        req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+    } else {
+        if (filters.length === 1) {
+            req.query.publisher = filters[0].replace('publisher', '');
+        } else {
+            req.query.publisher = '{in}';
+            for (var i = 0; i < filters.length; i ++) {
+                if (i < (filters.length - 1)) {
+                    req.query.publisher += filters[i].replace('publisher', '') + ',';
+                } else {
+                    req.query.publisher += filters[i].replace('publisher', '');
+                }
+            }
+        }
         return self._getManyWrapper(self.genPipelineBuilder)(req, res);
-    });
+    }
 };
 
 /*------------ Hierarchical, path-param methods ------------ */
