@@ -23,7 +23,8 @@ require('./_main')(function(GLOBALS) {
         mongoose = GLOBALS.mongoose,
         users = require('../app/models/user.server.model.js'),
         Query = mongoose.model('Query'),
-        User = mongoose.model('User');
+        User = mongoose.model('User'),
+        Organization = mongoose.model('Organization');
 
     var getUrl = function(path, params) {
         params = params || {};
@@ -76,14 +77,22 @@ require('./_main')(function(GLOBALS) {
         };
     };
 
-    var getRequestParams = function(query) {
+    var getRequestParams = function(query, organizationType) {
+        var queryAPIUrl;
+        if (organizationType === 'networkAdmin') {
+            queryAPIUrl = '/api/hourlyadstat';
+        } else if (organizationType === 'advertiser') {
+            queryAPIUrl = '/api/hourlyadstat/advSummary';
+        } else if (organizationType === 'publisher') {
+            queryAPIUrl = '/api/hourlyadstat/pubSummary';
+        }
         var dateRanges = getStartDateAndEndDateForQuery(query.humanizedDateRange);
         return {
             auth: {
                 user: process.argv[3],
                 pass: process.argv[5]
             },
-            url: getUrl("/api/hourlyadstat", {
+            url: getUrl(queryAPIUrl, {
                 dateGroupBy: query.dateGroupBy,
                 startDate: dateRanges.startDate,
                 endDate: dateRanges.endDate,
@@ -126,64 +135,65 @@ require('./_main')(function(GLOBALS) {
         // send request
         request.promisifiedGet = promise.promisify(request.get);
         return request.promisifiedGet(queryOpts)
-        .then(function(response) {
-            var rows = JSON.parse(response.body);
+            .then(function(response) {
+                var rows = JSON.parse(response.body);
 
-            // sort rows by date
-            rows = rows.sort(sortByDate);
+                // sort rows by date
+                rows = rows.sort(sortByDate);
 
-            // calculate totals, store in separate object
-            var totals = {
-                imps: _.sumBy(rows, function(r) {
-                    return r.imps;
-                }),
-                defaults: _.sumBy(rows, function(r) {
-                    return r.defaults;
-                }),
-                spend: _.sumBy(rows, function(r) {
-                    return r.spend;
-                }),
-                clicks: _.sumBy(rows, function(r) {
-                    return r.clicks;
-                })
-            };
-            totals = formatRow(totals);
+                // calculate totals, store in separate object
+                var totals = {
+                    imps: _.sumBy(rows, function(r) {
+                        return r.imps;
+                    }),
+                    defaults: _.sumBy(rows, function(r) {
+                        return r.defaults;
+                    }),
+                    spend: _.sumBy(rows, function(r) {
+                        return r.spend;
+                    }),
+                    clicks: _.sumBy(rows, function(r) {
+                        return r.clicks;
+                    })
+                };
+                totals = formatRow(totals);
 
-            // Now calculate derived fields and format (template engine
-            // doesn't handle formatting filters)
+                // Now calculate derived fields and format (template engine
+                // doesn't handle formatting filters)
 
-            for (var i = 0; i < rows.length; i ++) {
-                var row = rows[i];
-                row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-                if (row._id.placement) {
-                    row.placement = row._id.placement.name;
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+                    if (row._id.placement) {
+                        row.placement = row._id.placement.name;
+                    }
+                    formatRow(row);
+                    // write to csv as well, only picking headers passed in
+                    csv.write(_.pick(row, headers));
                 }
-                formatRow(row);
-                // write to csv as well, only picking headers passed in
-                csv.write(_.pick(row, headers));
-            }
 
-            // end csv stream
-            csv.end();
-            var csvName = asOfDate + '_report.csv';
+                // end csv stream
+                csv.end();
+                var csvName = asOfDate + '_report.csv';
 
-            // now send mail
-            mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
-            return mailer.promisifiedSendMail({
-                subject: emailSubject,
-                templateName: emailTemplate,
-                to: toEmail,
-                attachments: [{
-                    filename: csvName,
-                    content: csv
-                }],
-                data: { placementData: rows, totals: totals, asOfDate: asOfDate }
+                // now send mail
+                mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
+                return mailer.promisifiedSendMail({
+                    subject: emailSubject,
+                    templateName: emailTemplate,
+                    to: toEmail,
+                    attachments: [{
+                        filename: csvName,
+                        content: csv
+                    }],
+                    data: { placementData: rows, totals: totals, asOfDate: asOfDate }
+                });
+            })
+            .catch(function(err) {
+                console.error(err);
             });
-        })
-        .catch(function(err) {
-            console.error(err); 
-        });
     };
+
     var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
     Query.promisifiedFind = promise.promisify(Query.find);
     // Find all queries from database and check if any of them are saved as periodic queries and are due at the moment
@@ -194,6 +204,8 @@ require('./_main')(function(GLOBALS) {
                     // This query is saved as a periodic query
                     var now = new Date();
                     var nextRunForQuery = new Date(query.nextRun);
+
+                    var toEmail;
 
                     if (nextRunForQuery < now) {
                         // The next execution time for this query is overdue
@@ -211,12 +223,26 @@ require('./_main')(function(GLOBALS) {
                                 User.promisifiedFindOne = promise.promisify(User.findOne);
                                 return User.promisifiedFindOne({
                                     _id: query.user
-                                })
+                                });
                             })
                             .then(function(user) {
-                                var toEmail = user.email;
+                                toEmail = user.email;
+                                Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
+                                return Organization.promisifiedFindOne({
+                                    _id: user.organization
+                                });
+                            }).then(function(organization) {
+                                var orgType;
+                                if (organization.organization_types.indexOf('networkAdmin') > -1) {
+                                    orgType = 'networkAdmin';
+                                } else if (organization.organization_types.indexOf('advertiser') > -1) {
+                                    orgType = 'advertiser';
+                                } else if (organization.organization_types.indexOf('publisher') > -1) {
+                                    orgType = 'publisher';
+                                }
+
                                 return generateReport(
-                                    getRequestParams(query),
+                                    getRequestParams(query, orgType),
                                     'Cliques Periodic Report',
                                     toEmail,
                                     'outdoorProject-email.server.view.html', ['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'],
@@ -231,10 +257,10 @@ require('./_main')(function(GLOBALS) {
             });
         })
         .then(function() {
-            mongoose.disconnect(); 
+            mongoose.disconnect();
         })
         .catch(function(err) {
-            mongoose.disconnect(); 
+            mongoose.disconnect();
             console.error(err);
         });
 }, [
@@ -243,7 +269,7 @@ require('./_main')(function(GLOBALS) {
         { help: 'Username' }
     ],
     [
-       ['-p', '--password'],
-       { help: 'Password' }
+        ['-p', '--password'],
+        { help: 'Password' }
     ]
 ]);
