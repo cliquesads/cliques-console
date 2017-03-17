@@ -42,7 +42,7 @@ var formFilters = function(filterParam, entityType) {
     for (var i = 0; i < entityIds.length; i ++) {
         filters.push(entityType + entityIds[i]);
     }
-    return filters
+    return filters;
 };
 
 /**
