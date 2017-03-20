@@ -206,6 +206,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
 
             // query HourlyAdStats api endpoint
             $scope.queryFunction($scope.graphQueryParam).then(function(response) {
+                $scope.graphQueryResults = response.data;
                 $scope.timeSeries = new MongoTimeSeries(response.data, $scope.graphQueryParam.startDate, $scope.graphQueryParam.endDate, user.tz, $scope.timeUnit, {
                     fields: [
                         'imps', {
@@ -224,6 +225,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             cliques: function() {
                 // query HourlyAdStats endpoint
                 $scope.queryFunction($scope.tabQueryParams.cliques).then(function(response) {
+                    $scope.tabQueryResults = response.data;
                     // build datatables options object
                     $scope.dtOptions = DTOptionsBuilder.newOptions();
                     $scope.dtOptions.withOption('paging', false);
@@ -247,6 +249,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             publishers: function() {
                 // query HourlyAdStats api endpoint
                 $scope.queryFunction($scope.tabQueryParams.publishers).then(function(response) {
+                    $scope.tabQueryResults = response.data;
                     // build datatables options object
                     $scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_pubs.withOption('paging', false);
@@ -271,6 +274,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
             advertisers: function() {
                 // query HourlyAdStats api endpoint
                 $scope.queryFunction($scope.tabQueryParams.advertisers).then(function(response) {
+                    $scope.tabQueryResults = response.data;
                     // build datatables options object
                     $scope.dtOptions_advs = DTOptionsBuilder.newOptions();
                     $scope.dtOptions_advs.withOption('paging', false);
@@ -302,7 +306,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         /**************************** EXPORT TO CSV ****************************/
         $scope.exportToCSV = function() {
             // download on the frontend
-            var blobStringForCSV = Analytics.generateCSVData(JSON.stringify($scope.timeSeries));
+            var blobStringForCSV = Analytics.generateCSVData(['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'], $scope.tabQueryResults);
 
             $scope.downloadFileName = Analytics.getCSVFileName();
             $scope.downloadFileBlob = new Blob([blobStringForCSV], {

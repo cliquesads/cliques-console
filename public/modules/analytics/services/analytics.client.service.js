@@ -4,16 +4,14 @@
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', ['$http', function($http) {
 	var getCSVFileName = function() {
-		return new Date().getTime() + '.csv';
+        var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
+        return asOfDate + '_report.csv';
 	};
-    var generateCSVData = function(data) {
-    	data = JSON.parse(data);
-        var property, arrayLength, i;
-
+    var generateCSVData = function(headers, data) {
         /**
          * Clone a new object with the given object data so the original object data won't get modified
          */
-        function clone(obj) {
+        var clone = function(obj) {
             var copy;
             // Handle the 3 simple types, and null or undefined
             if (null === obj || "object" !== typeof obj) return obj;
@@ -40,90 +38,81 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
                 return copy;
             }
             throw new Error("Unable to copy obj! Its type isn't supported.");
-        }
+        };
+        var rows = clone(data);
 
-        var copy = clone(data);
-        /* flatten the object, that is to extract the nested object to the first hierachy of the object, for instance, an object with this structure:
-        {
-            'a': {
-                foo: 1,
-                bar: 2
-            },
-            'b': 'hello'
-        }
-        becomes:
-        {
-            'a/foo': 1,
-            'a/bar': 2,
-            'b': 'hello'
-        }
-        */
-        for (property in copy) {
-            if (copy.hasOwnProperty(property)) {
-                if (copy[property] instanceof Object && !(copy[property] instanceof Array)) {
-                    for (var p in copy[property]) {
-                        if (copy[property].hasOwnProperty(p)) {
-                            copy[property + '/' + p] = copy[property][p];
-                        }
-                    }
-                    delete copy[property];
+        var csvString = headers.join(',');
+        csvString += '\n';
+
+        var fillRate = function(row) {
+            return ((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%';
+        };
+
+        var CTR = function(row) {
+            return ((row.clicks / row.imps) * 100).toFixed(3) + '%';
+        };
+
+        var CPM = function(row) {
+            return '$' + ((row.spend / row.imps) * 1000).toFixed(2);
+        };
+
+        var formatRow = function(row) {
+            row.CPM = CPM(row);
+            row.spend = '$' + row.spend.toFixed(2);
+            row.fillRate = fillRate(row);
+            row.CTR = CTR(row);
+            return row;
+        };
+
+        var sortByDate = function(a, b) {
+            var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
+            var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
+            return aDate - bDate;
+        };
+
+        // sort rows by date
+        rows = rows.sort(sortByDate);
+
+        // calculate totals, store in separate object
+        var totals = {
+            imps: _.sumBy(rows, function(r) {
+                return r.imps;
+            }),
+            defaults: _.sumBy(rows, function(r) {
+                return r.defaults;
+            }),
+            spend: _.sumBy(rows, function(r) {
+                return r.spend;
+            }),
+            clicks: _.sumBy(rows, function(r) {
+                return r.clicks;
+            })
+        };
+        totals = formatRow(totals);
+
+        // Now calculate derived fields and format (template engine
+        // doesn't handle formatting filters)
+
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            if (row._id.placement) {
+                row.placement = row._id.placement.name;
+            }
+            formatRow(row);
+            // write to csv as well, only picking headers passed in
+            var rowObject = _.pick(row, headers);
+            var csvRow = '';
+            for (var j = 0; j < headers.length; j ++) {
+                if (j < headers.length - 1) {
+                    csvRow += (rowObject[headers[j]] || rowObject[headers[j]] === 0) ? (rowObject[headers[j]] + ',') : ',';
+                } else {
+                    csvRow += (rowObject[headers[j]] || rowObject[headers[j]] === 0) ? (rowObject[headers[j]] + '\n') : '\n';
                 }
             }
+            csvString += csvRow;
         }
-
-        var largestArrayLength = 0;
-        var fields = [];
-        for (property in copy) {
-            if (copy.hasOwnProperty(property)) {
-                fields.push(property);
-                if (copy[property] instanceof Array) {
-                    arrayLength = copy[property].length;
-                    if (arrayLength > largestArrayLength) {
-                        largestArrayLength = arrayLength;
-                    }
-                }
-            }
-        }
-
-        for (property in copy) {
-            if (typeof copy[property] === 'string' || copy[property] instanceof String) {
-                copy[property] = [copy[property]];
-                for (i = 1; i < largestArrayLength; i++) {
-                    copy[property].push("");
-                }
-            } else if (copy[property] instanceof Array && copy[property].length < largestArrayLength) {
-                arrayLength = copy[property].length;
-                for (i = arrayLength; i < largestArrayLength; i++) {
-                    copy[property].push("");
-                }
-            }
-        }
-
-        // write fields/column name as the first line
-        var blobString = fields.join() + '\n';
-
-        for (i = 0; i < largestArrayLength; i++) {
-            var singleRow = [];
-            for (property in copy) {
-                if (copy.hasOwnProperty(property)) {
-                    if (copy[property][i] instanceof Array) {
-                        // Check if the array element has the format:
-                        // [1488240000000, 0], if so convert the timestamp to human readable datetime format
-                        if (copy[property][i].length === 2) {
-                            var datetime = new Date(copy[property][i][0]);
-                            if (datetime) {
-                                copy[property][i][0] = datetime.toISOString();
-                            }
-                        }
-                        singleRow.push(copy[property][i].join('/'));
-                    } else {
-                        singleRow.push(copy[property][i]);
-                    }
-                }
-            }
-            blobString += singleRow.join() + '\n';
-        }
-        return blobString;
+        return csvString;
     };
     var getRecentQueries = function(currentPage) {
         if (!currentPage) {
@@ -170,12 +159,13 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
     };
+
     return {
         generateCSVData: generateCSVData,
         getCSVFileName: getCSVFileName,
         getRecentQueries: getRecentQueries,
         getMyQueries: getMyQueries,
         formatDatetimeString: formatDatetimeString,
-        formCronTaskString: formCronTaskString
+        formCronTaskString: formCronTaskString,
     };
 }]);

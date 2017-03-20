@@ -404,9 +404,6 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
             });
         }
 
-        console.log('============== _getManyWrapper req.query: ');
-        console.log(req.query);
-
         // toggle demo or non-demo aggregation model, depending on
         // request query param sent in
         var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
