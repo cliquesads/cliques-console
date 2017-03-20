@@ -129,7 +129,7 @@ require('./_main')(function(GLOBALS) {
         return aDate - bDate;
     };
 
-    var generateReport = function(queryOpts, emailSubject, toEmail, emailTemplate, headers, asOfDate) {
+    var generateReport = function(queryOpts, emailSubject, toEmail, emailTemplate, headers, asOfDate, organizationWebsite, dateRange) {
         // create csv write stream
         var csv = csvWriter({ headers: headers });
         // send request
@@ -186,7 +186,13 @@ require('./_main')(function(GLOBALS) {
                         filename: csvName,
                         content: csv
                     }],
-                    data: { placementData: rows, totals: totals, asOfDate: asOfDate }
+                    data: {
+                        placementData: rows,
+                        totals: totals,
+                        asOfDate: asOfDate,
+                        organizationWebsite: organizationWebsite,
+                        dateRange: dateRange
+                    }
                 });
             })
             .catch(function(err) {
@@ -240,13 +246,17 @@ require('./_main')(function(GLOBALS) {
                                 } else if (organization.organization_types.indexOf('publisher') > -1) {
                                     orgType = 'publisher';
                                 }
-
+                                var organizationWebsite = organization.website;
+                                var dateRange = query.humanizedDateRange;
                                 return generateReport(
                                     getRequestParams(query, orgType),
                                     'Cliques Periodic Report',
                                     toEmail,
-                                    'outdoorProject-email.server.view.html', ['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'],
-                                    asOfDate
+                                    'cron-report-email.server.view.html',
+                                    ['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'],
+                                    asOfDate,
+                                    organizationWebsite,
+                                    dateRange
                                 );
                             })
                             .catch(function(err) {
