@@ -96,6 +96,82 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
+        state('app.analytics.creativesQuery', {
+            url: '/analytics/creativesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Quick Queries > Creatives Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/creatives-query.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.statesQuery', {
+            url: '/analytics/statesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Quick Queries > States Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/states-query.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.citiesQuery', {
+            url: '/analytics/citiesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Quick Queries > Cities Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/cities-query.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.countriesQuery', {
+            url: '/analytics/countriesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Quick Queries > Countries Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/countries-query.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
         state('app.analytics.customizeQuery', {
             url: '/analytics/customizeQuery',
             title: 'Analytics',

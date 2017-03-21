@@ -1,10 +1,12 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES',
-    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'QUERY_FILTERS',
+    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, QUERY_FILTERS) {
         $scope.views = null;
         $scope.quickQueries = QUICKQUERIES;
+        $scope.queryRoutes = QUERY_ROUTES;
+        $scope.queryFilterConstants = QUERY_FILTERS;
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.timeUnit = 'day';
         $scope.isSaved = false;
@@ -119,29 +121,16 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.setupAllQueryParams();
 
         /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
-        // set query name depending on what current state/query section it is
-        switch ($state.current.name) {
-            case 'app.analytics.timeQuery':
-                $scope.setQueryName('Time');
+        // set query name and filters depending on what current state/query section it is
+        for (var queryName in $scope.queryRoutes) {
+            if ($state.current.name === $scope.queryRoutes[queryName]) {
+                $scope.setQueryName(queryName);
+                $scope.filters = $scope.queryFilterConstants[queryName];
                 break;
-            case 'app.analytics.sitesQuery':
-                $scope.setQueryName('Sites');
-                break;
-            default:
-                break;
+            }
         }
         $scope.goToQuerySection = function(queryName) {
-            $scope.setQueryName(queryName);
-            switch (queryName) {
-                case 'Time':
-                    $state.go('app.analytics.timeQuery');
-                    break;
-                case 'Sites':
-                    $state.go('app.analytics.sitesQuery');
-                    break;
-                default:
-                    break;
-            }
+            $state.go($scope.queryRoutes[queryName]);
         };
 
         /*********************** HISTORY QUERY FROM SIDEBAR ***********************/
