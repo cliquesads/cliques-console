@@ -37,4 +37,34 @@ module.exports = function(db, routers) {
 		 * 
 		 */
 		.get(analytics.getCustomQueries);
+	router.route('/analytics/getAllCreatives')
+		/**
+		 * @api {get} /analytics/getAllCreatives Get all creatives for current user's organization
+		 * @apiName GetAllCreatives
+		 * @apiGroup - 
+		 * @apiDescription Get all creatives for current user's organization
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiParam -
+		 * @apiSuccess {Object[]} ::Creative:: Array of creatives that belong to current user's organization
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.get(analytics.getAllCreatives);
+	router.route('/analytics/getAllSites')
+		/**
+		 * @api {get} /analytics/getAllSites Get all sites for current user's organization
+		 * @apiName GetAllSites
+		 * @apiGroup - 
+		 * @apiDescription Get all sites for current user's organization
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiParam -
+		 * @apiSuccess {Object[]} ::Creative:: Array of sites that belong to current user's organization
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.get(analytics.getAllSites);
 };

@@ -1,14 +1,22 @@
 <div class="creatives-query-container">
 	<div class="bg-gray-lighter">
 		<div class="row mt-xl ph pt">
-			<!-- select date range -->
+			<!-- select creative -->
 			<div class="col-sm-7">
-				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
+				<label for="creativeFilter" class="text-md">Creative filter</label>
+				<select name="creativeFilter"
+					id="creativeFilter"
+					class="form-control chosen-select"
+					data-ng-model="selectedCreative"
+					ng-options="creative.name for creative in allCreatives track by creative._id"
+					ng-change="creativeChanged()">
+					<option value="" selected>Select creative to filter</option>
+				</select>
 			</div>
 
-			<!-- select time unit -->
+			<!-- select date range -->
 			<div class="col-sm-3">
-				<time-unit-selector time-unit="timeUnit"></time-unit-selector>
+				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
 			</div>
 
 			<!-- Checkbox to save as cron task or not -->

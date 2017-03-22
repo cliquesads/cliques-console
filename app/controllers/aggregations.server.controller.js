@@ -382,7 +382,7 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
     });
 };
 
-HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder){
+HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
     var self = this;
     return function (req, res) {
         var group;

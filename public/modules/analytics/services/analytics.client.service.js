@@ -159,6 +159,12 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
     };
+    var getAllCreatives = function() {
+        return $http.get('/console/analytics/getAllCreatives');
+    };
+    var getAllSites = function() {
+        return $http.get('/console/analytics/getAllSites');
+    };
 
     return {
         generateCSVData: generateCSVData,
@@ -167,5 +173,7 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         getMyQueries: getMyQueries,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
+        getAllCreatives: getAllCreatives,
+        getAllSites: getAllSites
     };
 }]);

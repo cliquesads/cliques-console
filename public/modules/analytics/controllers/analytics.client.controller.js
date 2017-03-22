@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'QUERY_FILTERS',
-    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, QUERY_FILTERS) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'QUERY_FILTERS', 'Notify',
+    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, QUERY_FILTERS, Notify) {
         $scope.views = null;
         $scope.quickQueries = QUICKQUERIES;
         $scope.queryRoutes = QUERY_ROUTES;
@@ -120,12 +120,55 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         // setup query params for the first query when page loads
         $scope.setupAllQueryParams();
 
+        /************************* FILTER FOR CREATIVES/SITES *************************/
+        $scope.getCreatives = function() {
+            Analytics.getAllCreatives()
+            .success(function(data) {
+                $scope.allCreatives = data;
+            })
+            .error(function(error) {
+                Notify.alert(error.message, {status: 'danger'});
+            });
+        };
+        $scope.creativeChanged = function() {
+            if ($scope.selectedCreative) {
+                // setup creative filter for query params
+                $scope.graphQueryParam.creative = $scope.selectedCreative._id;
+                $scope.tabQueryParams.cliques.creative = $scope.selectedCreative._id;
+                $scope.tabQueryParams.publishers.creative = $scope.selectedCreative._id;
+                $scope.tabQueryParams.advertisers.creative = $scope.selectedCreative._id;
+            }
+        };
+        $scope.getSites = function() {
+            Analytics.getAllSites()
+            .success(function(data) {
+                $scope.allSites = data;
+            })
+            .error(function(error) {
+                Notify.alert(error.message, {status: 'danger'});
+            });
+        };
+        $scope.siteChanged = function() {
+            if ($scope.selectedSite) {
+                // setup site filter for query params
+                $scope.graphQueryParam.site = $scope.selectedSite._id;
+                $scope.tabQueryParams.cliques.site = $scope.selectedSite._id;
+                $scope.tabQueryParams.publishers.site = $scope.selectedSite._id;
+                $scope.tabQueryParams.advertisers.site = $scope.selectedSite._id;
+            }
+        }
+
         /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
         // set query name and filters depending on what current state/query section it is
         for (var queryName in $scope.queryRoutes) {
             if ($state.current.name === $scope.queryRoutes[queryName]) {
                 $scope.setQueryName(queryName);
                 $scope.filters = $scope.queryFilterConstants[queryName];
+                if (queryName === 'Creatives') {
+                    $scope.getCreatives();
+                } else if (queryName === 'Sites') {
+                    $scope.getSites();
+                }
                 break;
             }
         }

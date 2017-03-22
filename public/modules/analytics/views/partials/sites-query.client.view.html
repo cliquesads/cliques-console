@@ -1,14 +1,22 @@
 <div class="sites-query-container">
 	<div class="bg-gray-lighter">
 		<div class="row mt-xl ph pt">
-			<!-- select date range -->
+			<!-- select site -->
 			<div class="col-sm-7">
-				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
+				<label for="siteFilter" class="text-md">Site filter</label>
+				<select name="siteFilter"
+					id="siteFilter"
+					class="form-control chosen-select"
+					data-ng-model="selectedSite"
+					ng-options="site.name for site in allSites track by site._id"
+					ng-change="siteChanged()">
+					<option value="" selected>Select site to filter</option>		
+				</select>
 			</div>
 
-			<!-- select time unit -->
+			<!-- select date range -->
 			<div class="col-sm-3">
-				<time-unit-selector time-unit="timeUnit"></time-unit-selector>
+				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
 			</div>
 
 			<!-- Checkbox to save as cron task or not -->
