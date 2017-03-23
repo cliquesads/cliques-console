@@ -217,9 +217,21 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             // Send message to query-graph-table directive to launch query
             $rootScope.$broadcast('launchQuery', {});
         };
+        // Listen to tabQueryResults message sent by child directive to receive the query results
+        $scope.$on('tabQueryResults', function(event, args) {
+            $scope.tabQueryResults = args;
+        });
 
         /**************************** EXPORT TO CSV ****************************/
         $scope.exportToCSV = function() {
+            // Check if there are data to be exported
+            if (!$scope.tabQueryResults) {
+                Notify.alert('No data to export');
+                return; 
+            } else if ($scope.tabQueryResults.length === 0) {
+                Notify.alert('No data to export');
+                return;
+            }
             // download on the frontend
             var blobStringForCSV = Analytics.generateCSVData(['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'], $scope.tabQueryResults);
 

@@ -1,13 +1,14 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsListController', ['$scope', 'Analytics', 'Notify', '$state', '$window',
-	function($scope, Analytics, Notify, $state, $window) {
+angular.module('analytics').controller('AnalyticsListController', ['$scope', 'Analytics', 'Notify', '$state', '$window', 'QUERY_ROUTES',
+	function($scope, Analytics, Notify, $state, $window, QUERY_ROUTES) {
 		$scope.queries = [];
 		$scope.total = 0;
 		$scope.currentPage = 1;
 		$scope.isLoading = false;
 		$scope.hasMore = false;
+		$scope.queryRoutes = QUERY_ROUTES;
 
 		// Make query results human readable
 		$scope.handleQueryResults = function(queries) {
@@ -67,16 +68,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.loadRelatedQueries();
 
 		$scope.goToQuerySection = function(query) {
-			switch (query.name) {
-				case 'Time':
-					$state.go('app.analytics.timeQuery', {query: query});
-					break;
-				case 'Sites':
-					$state.go('app.analytics.sitesQuery', {query: query});
-					break;
-				default:
-					break;
-			}
+			$state.go($scope.queryRoutes[query.name], {query: query});
 		};
 
 		$scope.reachedQueryListBottom = function() {

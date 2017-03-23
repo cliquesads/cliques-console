@@ -2,7 +2,7 @@
  * Created by Chuoxian Yang on 21/3/2017
  */
  /* global _, angular, user */
-angular.module('analytics').directive('queryGraphTable', ['MongoTimeSeries', 'HourlyAdStat', 'DTOptionsBuilder', 'DTColumnDefBuilder', function(MongoTimeSeries, HourlyAdStat, DTOptionsBuilder, DTColumnDefBuilder) {
+angular.module('analytics').directive('queryGraphTable', ['$rootScope', 'MongoTimeSeries', 'HourlyAdStat', 'DTOptionsBuilder', 'DTColumnDefBuilder', function($rootScope, MongoTimeSeries, HourlyAdStat, DTOptionsBuilder, DTColumnDefBuilder) {
     'use strict';
     return {
         restrict: 'E',
@@ -70,6 +70,8 @@ angular.module('analytics').directive('queryGraphTable', ['MongoTimeSeries', 'Ho
                     // query HourlyAdStats endpoint
                     scope.queryFunction(scope.tabQueryParams.cliques).then(function(response) {
                         scope.tabQueryResults = response.data;
+                        // send message to parent controller notifying the query results
+                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
                         // build datatables options object
                         scope.dtOptions = DTOptionsBuilder.newOptions();
                         scope.dtOptions.withOption('paging', false);
@@ -94,6 +96,8 @@ angular.module('analytics').directive('queryGraphTable', ['MongoTimeSeries', 'Ho
                     // query HourlyAdStats api endpoint
                     scope.queryFunction(scope.tabQueryParams.publishers).then(function(response) {
                         scope.tabQueryResults = response.data;
+                        // send message to parent controller notifying the query results
+                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
                         // build datatables options object
                         scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
                         scope.dtOptions_pubs.withOption('paging', false);
@@ -119,6 +123,8 @@ angular.module('analytics').directive('queryGraphTable', ['MongoTimeSeries', 'Ho
                     // query HourlyAdStats api endpoint
                     scope.queryFunction(scope.tabQueryParams.advertisers).then(function(response) {
                         scope.tabQueryResults = response.data;
+                        // send message to parent controller notifying the query results
+                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
                         // build datatables options object
                         scope.dtOptions_advs = DTOptionsBuilder.newOptions();
                         scope.dtOptions_advs.withOption('paging', false);
