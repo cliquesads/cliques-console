@@ -2,10 +2,11 @@
 'use strict';
 
 angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'Notify', 'Analytics',
+    'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'Notify', 'Analytics', 'QUERY_ROUTES',
     function($scope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries,
-        aggregationDateRanges, ngDialog, $state, Notify, Analytics) {
+        aggregationDateRanges, ngDialog, $state, Notify, Analytics, QUERY_ROUTES) {
         $scope.views = null;
+        $scope.queryRoutes = QUERY_ROUTES;
 
         // Fetch recent queries from backend
         var i;
@@ -46,16 +47,7 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
             });
 
 		$scope.goToQuerySection = function(query) {
-			switch (query.name) {
-				case 'Time':
-					$state.go('app.analytics.timeQuery', {query: query});
-					break;
-				case 'Sites':
-					$state.go('app.analytics.sitesQuery', {query: query});
-                    break;
-                default:
-                    break;
-			}
+            $state.go($scope.queryRoutes[query.name]);
 		};
     }
 ]);

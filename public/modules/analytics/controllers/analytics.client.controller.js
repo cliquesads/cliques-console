@@ -156,7 +156,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
                 $scope.tabQueryParams.publishers.site = $scope.selectedSite._id;
                 $scope.tabQueryParams.advertisers.site = $scope.selectedSite._id;
             }
-        }
+        };
 
         /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
         // set query name and filters depending on what current state/query section it is
