@@ -1,5 +1,5 @@
 <section data-ng-controller="AdvertiserDashboardController">
-    <div class="jumbotron text-center" ng-show="advertisers.$resolved && advertisers.length === 0">
+    <div class="jumbotron text-center" ng-show="advertisers.$resolved && allCampaigns.length === 0">
         <div class="text-center">
             Thanks for being a part of the Cliques Beta Program!
         </div>
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" ng-show="advertisers.$resolved && allCampaigns.length > 0">
         <!-- My Campaigns Section -->
         <div class="col-lg-6 col-sm-12">
             <div class="width-90">
@@ -179,8 +179,11 @@
             </div>
         </section>
         <section ng-show="screenshots && screenshots.length === 0">
-            <div class="box-placeholder text-center pv-xl">
-                <h4>No Screenshots yet.</h4>
+            <div class="screenshots-showcase">
+                <div class="screenshot"
+                     ng-repeat="screenshot in demoScreenshots">
+                    <screenshot-thumbnail screenshot="screenshot" demo="true"></screenshot-thumbnail>
+                </div>
             </div>
         </section>
     </div>

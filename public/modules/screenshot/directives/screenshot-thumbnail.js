@@ -5,7 +5,8 @@ angular.module('screenshot').directive('screenshotThumbnail', [
         return {
             restrict: 'E',
             scope: {
-                screenshot: '='
+                screenshot: '=',
+                demo: '@'
             },
             templateUrl: 'modules/screenshot/views/partials/screenshot-thumbnail.client.view.html',
             link: function (scope, element, attrs) {

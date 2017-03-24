@@ -116,6 +116,23 @@ angular.module('core').controller('AdvertiserDashboardController',
             /**
              * BEGIN SCREENSHOT STUFF
              */
+            $scope.demoScreenshots = [
+                {
+                    tstamp: "2017-02-04T00:20:30.955Z",
+                    image_url: "https://storage.googleapis.com/cliquesads-screenshots/Mock%20Screenshot%20TGR.jpg",
+                    url: "http://demo-site-dot-com.com"
+                },
+                {
+                    tstamp: "2017-02-04T00:20:30.955Z",
+                    image_url: "https://storage.googleapis.com/cliquesads-screenshots/Skiing%20Magazine%20Mock%20Screenshot.jpg",
+                    url: "http://www.kafkas-fatbike.com"
+                },
+                {
+                    tstamp: "2017-02-04T00:20:30.955Z",
+                    image_url: "https://storage.googleapis.com/cliquesads-screenshots/Adventure%20Journal%20Mock%20Screenshot.jpg",
+                    url: "http://not-a-real-website.com"
+                }
+            ];
 
             Screenshot.query({}).$promise
                 .then(function(response) {
