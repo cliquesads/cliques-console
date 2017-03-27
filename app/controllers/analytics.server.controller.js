@@ -23,7 +23,8 @@ module.exports = function(db) {
 		getRecentQueries: function (req, res) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
-				user: req.user._id
+				user: req.user._id,
+				name: { $ne: 'Custom' }
 			};
 			Query.find(queryParam)
 			.sort({
@@ -58,7 +59,7 @@ module.exports = function(db) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				name: 'custom'
+				name: 'Custom'
 			};
 			Query.find(queryParam)
 			.sort({

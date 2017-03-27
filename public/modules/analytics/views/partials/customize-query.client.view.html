@@ -1,0 +1,87 @@
+<div class="custom-query-container">
+	<div class="bg-gray-lighter">
+		<div class="row mt-xl pt ph">
+			<!-- start & end dates -->
+			<div class="col-sm-6">
+			<!-- select date range -->
+				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
+			</div>
+			<!-- Select time unit -->
+			<div class="col-sm-3 col-sm-offset-3">
+			    <time-unit-selector time-unit="timeUnit"></time-unit-selector>
+			</div>
+		</div>
+		<div class="row pt ph">
+			<!-- select site -->
+			<div class="col-sm-6">
+				<label for="siteFilter" class="text-md">Site filter</label>
+				<select name="siteFilter"
+					id="siteFilter"
+					class="form-control chosen-select"
+					data-ng-model="selectedSite"
+					ng-options="site.name for site in allSites track by site._id"
+					ng-change="siteChanged()">
+					<option value="" selected>Select site to filter</option>		
+				</select>
+			</div>
+			<!-- select creative -->
+			<div class="col-sm-6">
+				<label for="creativeFilter" class="text-md">Creative filter</label>
+				<select name="creativeFilter"
+					id="creativeFilter"
+					class="form-control chosen-select"
+					data-ng-model="selectedCreative"
+					ng-options="creative.name for creative in allCreatives track by creative._id"
+					ng-change="creativeChanged()">
+					<option value="" selected>Select creative to filter</option>
+				</select>
+			</div>
+		</div>
+		<!-- Crontab scheduler -->
+		<div class="row pt-lg ph" ng-if="isSaved">
+			<div class="col-sm-12">
+				<scheduler
+					weekday="cronScheduleParam.weekday"
+					month="cronScheduleParam.month"
+					date="cronScheduleParam.date"
+					hour="cronScheduleParam.hour"
+					minute="cronScheduleParam.minute"
+					second="cronScheduleParam.second">
+				</scheduler>
+			</div>
+		</div>
+		<div class="row pt-lg ph">
+			<!-- Checkbox to save as cron task or not -->
+			<div class="col-sm-2 col-sm-offset-8">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="isSaved" ng-change="toggleSave()">
+					<span class="text-md">
+						Save as crontab
+					</span>
+				</label>
+			</div>
+			<!-- Query button -->
+			<div class="col-sm-2 pb">
+				<button class="btn btn-success btn-block text-md" ng-click="launchQuery()" analytics-on="click" analytics-event="CreativesQuery_LaunchQuery">Query</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- The graph and table showing the query results -->
+	<query-graph-table
+	    date-ranges="dateRanges"
+	    date-range-title="queryResultTitle"
+	    time-unit="timeUnit"
+	    summary-date-range-selection="summaryDateRangeSelection"
+	    graph-query-param="graphQueryParam"
+	    tab-query-params="tabQueryParams">
+	</query-graph-table>
+
+	<!-- Export to CSV button -->
+	<div class="row p">
+	    <div class="col-sm-3 col-sm-offset-9">
+	        <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="TimeQuery_ExportCSV">Export to CSV</button>
+	    </div>
+	</div>	
+
+</div>

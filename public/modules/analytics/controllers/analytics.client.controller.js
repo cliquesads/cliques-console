@@ -168,6 +168,9 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
                     $scope.getCreatives();
                 } else if (queryName === 'Sites') {
                     $scope.getSites();
+                } else if (queryName === 'Custom') {
+                    $scope.getCreatives();
+                    $scope.getSites();
                 }
                 break;
             }

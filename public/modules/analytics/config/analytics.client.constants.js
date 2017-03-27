@@ -44,7 +44,8 @@ angular.module('analytics')
         Creatives: 'app.analytics.creativesQuery',
         States: 'app.analytics.statesQuery',
         Cities: 'app.analytics.citiesQuery',
-        Countries: 'app.analytics.countriesQuery'
+        Countries: 'app.analytics.countriesQuery',
+        Custom: 'app.analytics.customizeQuery'
     })
     /**
      * Will be used as filters for different quick queries
@@ -55,5 +56,6 @@ angular.module('analytics')
         Creatives: [],
         States: [],
         Cities: [],
-        Countries: []
+        Countries: [],
+        Custom: []
     });
