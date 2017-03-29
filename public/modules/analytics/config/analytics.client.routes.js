@@ -26,6 +26,96 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
 		}).
+        state('app.analytics.quickQueries.timeQuery', {
+            url: '/timeQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Time Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/time-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.sitesQuery', {
+            url: '/sitesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Sites Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/sites-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.creativesQuery', {
+            url: '/creativesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Creatives Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/creatives-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.statesQuery', {
+            url: '/statesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'States Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/states-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.citiesQuery', {
+            url: '/citiesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Quick Queries > Cities Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/cities-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.countriesQuery', {
+            url: '/countriesQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function(){ return 'Countries Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/countries-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
         state('app.analytics.recentQueriesList', {
             url: '/analytics/recentQueriesList',
             resolve: {
@@ -56,120 +146,6 @@ angular.module('analytics').config(['$stateProvider',
                     templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
                     controller: 'AnalyticsSidebarController'
                 }                
-            }
-        }).
-        state('app.analytics.timeQuery', {
-            url: '/analytics/timeQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > Time Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/time-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
-            }
-        }).
-        state('app.analytics.sitesQuery', {
-            url: '/analytics/sitesQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > Sites Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/sites-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
-            }
-        }).
-        state('app.analytics.creativesQuery', {
-            url: '/analytics/creativesQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > Creatives Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/creatives-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
-            }
-        }).
-        state('app.analytics.statesQuery', {
-            url: '/analytics/statesQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > States Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/states-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
-            }
-        }).
-        state('app.analytics.citiesQuery', {
-            url: '/analytics/citiesQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > Cities Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/cities-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
-            }
-        }).
-        state('app.analytics.countriesQuery', {
-            url: '/analytics/countriesQuery',
-            params: {
-                query: null
-            },
-            resolve: {
-                $title: function(){ return 'Quick Queries > Countries Query'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/countries-query.client.view.html',
-                    controller: 'AnalyticsController'
-                },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
-                }
             }
         }).
         state('app.analytics.customizeQuery', {

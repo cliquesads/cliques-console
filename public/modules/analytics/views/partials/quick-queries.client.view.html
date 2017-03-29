@@ -1,8 +1,11 @@
-<div class="quick-query-container mt-sm">
+<div class="quick-query-container mt-sm" ng-if="$state.$current.name === 'app.analytics.quickQueries'">
     <div class="col-sm-4" ng-repeat="queryPair in quickQueries">
         <div class="query-block" ng-click="goToQuerySection(query.name)" ng-repeat="query in queryPair" analytics-on="click" analytics-event="QuickQueries_GoToQuerySection">
             <h3>{{ query.name }}</h3>
             <div class="description">{{ query.description }}</div>
         </div>
     </div>
+</div>
+<div class="quick-query-container m">
+	<section data-ui-view="main"></section>
 </div>

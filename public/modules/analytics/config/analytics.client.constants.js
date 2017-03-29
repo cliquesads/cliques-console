@@ -39,13 +39,14 @@ angular.module('analytics')
      * Will be used to set query name for different quick queries
      */
     .constant('QUERY_ROUTES', {
-        Time: 'app.analytics.timeQuery',
-        Sites: 'app.analytics.sitesQuery',
-        Creatives: 'app.analytics.creativesQuery',
-        States: 'app.analytics.statesQuery',
-        Cities: 'app.analytics.citiesQuery',
-        Countries: 'app.analytics.countriesQuery',
-        Custom: 'app.analytics.customizeQuery'
+        Time: 'app.analytics.quickQueries.timeQuery',
+        Sites: 'app.analytics.quickQueries.sitesQuery',
+        Creatives: 'app.analytics.quickQueries.creativesQuery',
+        States: 'app.analytics.quickQueries.statesQuery',
+        Cities: 'app.analytics.quickQueries.citiesQuery',
+        Countries: 'app.analytics.quickQueries.countriesQuery',
+        Custom: 'app.analytics.customizeQuery',
+        QuickQueries: 'app.analytics.quickQueries'
     })
     /**
      * Will be used as filters for different quick queries

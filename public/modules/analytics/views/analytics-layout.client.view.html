@@ -17,9 +17,9 @@
     </div>
     <div class="query-container">
         <div class="col-sm-2">
-            <section ui-view="sideBar"></section>
+            <section ui-view="sideBar" ng-if="$state.$current.name === 'app.analytics.quickQueries' || $state.$current.name === 'app.analytics.customizeQuery'"></section>
         </div>
-        <div class="col-sm-10">
+        <div ng-class="{'col-sm-10': $state.$current.name === 'app.analytics.quickQueries' || $state.$current.name === 'app.analytics.customizeQuery', 'col-sm-12': $state.$current.name !== 'app.analytics.quickQueries' && $state.$current.name !== 'app.analytics.customizeQuery'}">
             <section ui-view="main"></section>
         </div>
     </div>
