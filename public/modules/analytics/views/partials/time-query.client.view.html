@@ -29,9 +29,16 @@
         tab-query-params="tabQueryParams">
     </query-graph-table>
     
-    <!-- Export to CSV button -->
     <div class="row p">
-        <div class="col-sm-3 col-sm-offset-9">
+        <!-- Back to quick queries button -->
+        <div class="col-sm-2">
+            <a ui-sref="app.analytics.quickQueries" class="btn btn-default btn-block text-md">
+                Back to Quick Queries
+            </a> 
+        </div>
+
+        <!-- Export to CSV button -->
+        <div class="col-sm-3 col-sm-offset-7">
             <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="TimeQuery_ExportCSV">Export to CSV</button>
         </div>
     </div>
