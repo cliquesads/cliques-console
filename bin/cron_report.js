@@ -89,8 +89,8 @@ require('./_main')(function(GLOBALS) {
         var dateRanges = getStartDateAndEndDateForQuery(query.humanizedDateRange);
         return {
             auth: {
-                user: process.argv[3],
-                pass: process.argv[5]
+                user: GLOBALS.args.username,
+                pass: GLOBALS.args.password
             },
             url: getUrl(queryAPIUrl, {
                 dateGroupBy: query.dateGroupBy,
