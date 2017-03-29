@@ -224,6 +224,32 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.$on('tabQueryResults', function(event, args) {
             $scope.tabQueryResults = args;
         });
+        // Launch customized query and go to custom query result view
+        $scope.showCustomizedQueryResult = function() {
+            if ($scope.dates.startDate && $scope.dates.endDate) {
+                $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' - ' + $scope.timeUnit;
+            } else {
+                $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
+            }
+            // Setup query params before launching query requests
+            $scope.setupAllQueryParams();
+            $scope.setHistoryQueryFlag(false);
+            var customQuery = {
+                dateRanges: $scope.dateRanges,
+                queryResultTitle: $scope.queryResultTitle,
+                timeUnit: $scope.timeUnit,
+                summaryDateRangeSelection: $scope.summaryDateRangeSelection,
+                graphQueryParam: $scope.graphQueryParam,
+                tabQueryParams: $scope.tabQueryParams
+            };
+            $state.go('app.analytics.customizeQuery.queryResult', {customQuery: customQuery});
+        };
+        if ($stateParams.customQuery) {
+            $scope.customQuery = $stateParams.customQuery;
+            $rootScope.$broadcast('launchQuery', {});
+        } else if ($state.current.name === 'app.analytics.customizeQuery.queryResult') {
+            $state.go('app.analytics.customizeQuery', {});
+        }
 
         /**************************** EXPORT TO CSV ****************************/
         $scope.exportToCSV = function() {

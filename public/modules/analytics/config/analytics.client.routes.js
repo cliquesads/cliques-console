@@ -92,7 +92,7 @@ angular.module('analytics').config(['$stateProvider',
                 query: null
             },
             resolve: {
-                $title: function(){ return 'Quick Queries > Cities Query'; }
+                $title: function(){ return 'Cities Query'; }
             },
             views: {
                 'main': {
@@ -162,6 +162,21 @@ angular.module('analytics').config(['$stateProvider',
                 'sideBar': {
                     templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
                     controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+        state('app.analytics.customizeQuery.queryResult', {
+            url: '/queryResult',
+            params: {
+                customQuery: null
+            },
+            resolve: {
+                $title: function(){ return 'Query Result'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/custom-query-result.client.view.html',
+                    controller: 'AnalyticsController'
                 }
             }
         });

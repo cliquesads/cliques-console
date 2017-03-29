@@ -1,4 +1,4 @@
-<div class="custom-query-container">
+<div class="custom-query-container" ng-if="$state.$current.name === 'app.analytics.customizeQuery'">
 	<div class="bg-gray-lighter">
 		<div class="row mt-xl pt ph">
 			<!-- start & end dates -->
@@ -62,26 +62,11 @@
 			</div>
 			<!-- Query button -->
 			<div class="col-sm-2 pb">
-				<button class="btn btn-success btn-block text-md" ng-click="launchQuery()" analytics-on="click" analytics-event="CreativesQuery_LaunchQuery">Query</button>
+				<button class="btn btn-success btn-block text-md" ng-click="showCustomizedQueryResult()" analytics-on="click" analytics-event="CustomizeQuery_LaunchQuery">Query</button>
 			</div>
 		</div>
 	</div>
-
-	<!-- The graph and table showing the query results -->
-	<query-graph-table
-	    date-ranges="dateRanges"
-	    date-range-title="queryResultTitle"
-	    time-unit="timeUnit"
-	    summary-date-range-selection="summaryDateRangeSelection"
-	    graph-query-param="graphQueryParam"
-	    tab-query-params="tabQueryParams">
-	</query-graph-table>
-
-	<!-- Export to CSV button -->
-	<div class="row p">
-	    <div class="col-sm-3 col-sm-offset-9">
-	        <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="TimeQuery_ExportCSV">Export to CSV</button>
-	    </div>
-	</div>	
-
+</div>
+<div class="custom-query-container m">
+	<section data-ui-view="main"></section>
 </div>

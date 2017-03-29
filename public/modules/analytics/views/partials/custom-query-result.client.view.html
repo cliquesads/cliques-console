@@ -1,0 +1,26 @@
+<div class="custom-query-container">
+	<!-- The graph and table showing the query results -->
+	<query-graph-table
+		date-ranges="customQuery.dateRanges"
+		date-range-title="customQuery.queryResultTitle"
+		time-unit="customQuery.timeUnit"
+		summary-date-range-selection="customQuery.summaryDateRangeSelection"
+		graph-query-param="customQuery.graphQueryParam"
+		tab-query-params="customQuery.tabQueryParams">
+	</query-graph-table>
+
+	<div class="row p">
+		<!-- Back to customized query builder button -->
+		<div class="col-sm-2">
+			<a ui-sref="app.analytics.customizeQuery" class="btn btn-default btn-block text-md">
+				Back to query builder
+			</a>
+		</div>
+		
+		<!-- Export to CSV button -->
+	    <div class="col-sm-3 col-sm-offset-7">
+	        <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="TimeQuery_ExportCSV">Export to CSV</button>
+	    </div>
+	</div>	
+
+</div>
