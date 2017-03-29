@@ -14,7 +14,7 @@
     <i class="fa fa-folder"></i><strong> My Queries</strong>
     <ul>
         <li ng-repeat="query in customQueries">
-            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckMyQuery">{{ query.name }}</a> 
+            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckMyQuery">{{ query.name }}</a><br/> 
             <small>{{ query.createdAt }}</small>
         </li>
         <li ng-if="customQueries.length === 0">No Custom Queries</li>

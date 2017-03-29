@@ -430,7 +430,7 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                if (req.query.hasQueriedBefore === 'false') {
+                if (req.query.hasQueriedBefore === 'false' && req.query.isSaved === 'true') {
                     // This is NOT a history query that user trying to reconstruct, so save the query as Query model in database
                     var newQuery = new Query(req.query);
                     if (!newQuery.name) {
