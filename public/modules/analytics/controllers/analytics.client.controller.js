@@ -16,7 +16,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.summaryDateRangeSelection = "7d";
         $scope.dateRanges = aggregationDateRanges(user.tz);
         $scope.queryResultTitle = $scope.dateRanges[$scope.summaryDateRangeSelection].label;
-        $scope.activeTab = 'cliques';
 
         /*************************** QUERY PARAMS SETUP ***************************/
         $scope.graphQueryParam = {
@@ -24,51 +23,27 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             dateGroupBy: $scope.timeUnit,
             isSaved: $scope.isSaved
         };
-        $scope.tabQueryParams = {
-            cliques: {
-                hasQueriedBefore: false,
-                dateGroupBy: $scope.timeUnit,
-                groupBy: 'pub_clique',
-                isSaved: $scope.isSaved
-            },
-            publishers: {
-                hasQueriedBefore: false,
-                dateGroupBy: $scope.timeUnit,
-                groupBy: 'publisher',
-                populate: 'publisher',
-                isSaved: $scope.isSaved
-            },
-            advertisers: {
-                hasQueriedBefore: false,
-                dateGroupBy: $scope.timeUnit,
-                groupBy: 'advertiser',
-                populate: 'advertiser',
-                isSaved: $scope.isSaved
-            }
+        $scope.tableQueryParam = {
+            hasQueriedBefore: false,
+            dateGroupBy: $scope.timeUnit,
+            groupBy: 'pub_clique',
+            isSaved: $scope.isSaved
         };
         $scope.prepareDateGroupBy = function() {
             $scope.graphQueryParam.dateGroupBy = $scope.timeUnit;
-            $scope.tabQueryParams.cliques.dateGroupBy = $scope.timeUnit;
-            $scope.tabQueryParams.publishers.dateGroupBy = $scope.timeUnit;
-            $scope.tabQueryParams.advertisers.dateGroupBy = $scope.timeUnit;
+            $scope.tableQueryParam.dateGroupBy = $scope.timeUnit;
         };
         $scope.toggleSave = function() {
             $scope.graphQueryParam.isSaved = $scope.isSaved;
-            $scope.tabQueryParams.cliques.isSaved = $scope.isSaved;
-            $scope.tabQueryParams.publishers.isSaved = $scope.isSaved;
-            $scope.tabQueryParams.advertisers.isSaved = $scope.isSaved;
+            $scope.tableQueryParam.isSaved = $scope.isSaved;
         };
         $scope.setQueryName = function(name) {
             $scope.graphQueryParam.name = name;
-            $scope.tabQueryParams.cliques.name = name;
-            $scope.tabQueryParams.publishers.name = name;
-            $scope.tabQueryParams.advertisers.name = name;
+            $scope.tableQueryParam.name = name;
         };
         $scope.setHistoryQueryFlag = function(booleanValue) {
             $scope.graphQueryParam.hasQueriedBefore = booleanValue;
-            $scope.tabQueryParams.cliques.hasQueriedBefore = booleanValue;
-            $scope.tabQueryParams.publishers.hasQueriedBefore = booleanValue;
-            $scope.tabQueryParams.advertisers.hasQueriedBefore = booleanValue;
+            $scope.tableQueryParam.hasQueriedBefore = booleanValue;
         };
         $scope.prepareStartAndEndDate = function(dateShortCode, queryParam) {
             if (!$scope.dates.startDate || !$scope.dates.endDate) {
@@ -101,21 +76,11 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             $scope.graphQueryParam = $scope.prepareCronScheduleParam($scope.graphQueryParam);
             $scope.graphQueryParam = $scope.prepareQueryHumanizedDateRange($scope.graphQueryParam, $scope.queryResultTitle);
             $scope.graphQueryParam = $scope.prepareQueryFilters($scope.graphQueryParam, $scope.filters);
-            // CLIQUES TAB PARAMS
-            $scope.tabQueryParams.cliques = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.cliques);
-            $scope.tabQueryParams.cliques = $scope.prepareCronScheduleParam($scope.tabQueryParams.cliques);
-            $scope.tabQueryParams.cliques = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.cliques, $scope.queryResultTitle);
-            $scope.tabQueryParams.cliques = $scope.prepareQueryFilters($scope.tabQueryParams.cliques, $scope.filters);
-            // PUBLISHERS TAB PARAMS
-            $scope.tabQueryParams.publishers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.publishers);
-            $scope.tabQueryParams.publishers = $scope.prepareCronScheduleParam($scope.tabQueryParams.publishers);
-            $scope.tabQueryParams.publishers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.publishers, $scope.queryResultTitle);
-            $scope.tabQueryParams.publishers = $scope.prepareQueryFilters($scope.tabQueryParams.publishers, $scope.filters);
-            // ADVERTISERS TAB PARAMS
-            $scope.tabQueryParams.advertisers = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tabQueryParams.advertisers);
-            $scope.tabQueryParams.advertisers = $scope.prepareCronScheduleParam($scope.tabQueryParams.advertisers);
-            $scope.tabQueryParams.advertisers = $scope.prepareQueryHumanizedDateRange($scope.tabQueryParams.advertisers, $scope.queryResultTitle);
-            $scope.tabQueryParams.advertisers = $scope.prepareQueryFilters($scope.tabQueryParams.advertisers, $scope.filters);
+            // TABLE PARAMS
+            $scope.tableQueryParam = $scope.prepareStartAndEndDate($scope.summaryDateRangeSelection, $scope.tableQueryParam);
+            $scope.tableQueryParam = $scope.prepareCronScheduleParam($scope.tableQueryParam);
+            $scope.tableQueryParam = $scope.prepareQueryHumanizedDateRange($scope.tableQueryParam, $scope.queryResultTitle);
+            $scope.tableQueryParam = $scope.prepareQueryFilters($scope.tableQueryParam, $scope.filters);
         };
         // setup query params for the first query when page loads
         $scope.setupAllQueryParams();
@@ -134,9 +99,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             if ($scope.selectedCreative) {
                 // setup creative filter for query params
                 $scope.graphQueryParam.creative = $scope.selectedCreative._id;
-                $scope.tabQueryParams.cliques.creative = $scope.selectedCreative._id;
-                $scope.tabQueryParams.publishers.creative = $scope.selectedCreative._id;
-                $scope.tabQueryParams.advertisers.creative = $scope.selectedCreative._id;
+                $scope.tableQueryParam.creative = $scope.selectedCreative._id;
             }
         };
         $scope.getSites = function() {
@@ -152,9 +115,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             if ($scope.selectedSite) {
                 // setup site filter for query params
                 $scope.graphQueryParam.site = $scope.selectedSite._id;
-                $scope.tabQueryParams.cliques.site = $scope.selectedSite._id;
-                $scope.tabQueryParams.publishers.site = $scope.selectedSite._id;
-                $scope.tabQueryParams.advertisers.site = $scope.selectedSite._id;
+                $scope.tableQueryParam.site = $scope.selectedSite._id;
             }
         };
 
@@ -207,7 +168,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             $scope.setupAllQueryParams();
         }
 
-        /**************************** QUERY FUNCTIONS ****************************/
+        /********************* QUERY FUNCTIONS FOR QUICK QUERIES *********************/
         $scope.launchQuery = function() {
             if ($scope.dates.startDate && $scope.dates.endDate) {
                 $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' - ' + $scope.timeUnit;
@@ -220,11 +181,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             // Send message to query-graph-table directive to launch query
             $rootScope.$broadcast('launchQuery', {});
         };
-        // Listen to tabQueryResults message sent by child directive to receive the query results
-        $scope.$on('tabQueryResults', function(event, args) {
-            $scope.tabQueryResults = args;
+        // Listen to tableQueryResults message sent by child directive to receive the query results
+        $scope.$on('tableQueryResults', function(event, args) {
+            $scope.tableQueryResults = args;
         });
-        // Launch customized query and go to custom query result view
+
+        /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showCustomizedQueryResult = function() {
             if ($scope.dates.startDate && $scope.dates.endDate) {
                 $scope.queryResultTitle = $scope.dates.startDate.toISOString().slice(0, 16) + ' - ' + $scope.dates.endDate.toISOString().slice(0, 16) + ' - ' + $scope.timeUnit;
@@ -240,7 +202,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
                 timeUnit: $scope.timeUnit,
                 summaryDateRangeSelection: $scope.summaryDateRangeSelection,
                 graphQueryParam: $scope.graphQueryParam,
-                tabQueryParams: $scope.tabQueryParams
+                tableQueryParam: $scope.tableQueryParam
             };
             $state.go('app.analytics.customizeQuery.queryResult', {customQuery: customQuery});
         };
@@ -254,15 +216,15 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         /**************************** EXPORT TO CSV ****************************/
         $scope.exportToCSV = function() {
             // Check if there are data to be exported
-            if (!$scope.tabQueryResults) {
+            if (!$scope.tableQueryResults) {
                 Notify.alert('No data to export');
                 return; 
-            } else if ($scope.tabQueryResults.length === 0) {
+            } else if ($scope.tableQueryResults.length === 0) {
                 Notify.alert('No data to export');
                 return;
             }
             // download on the frontend
-            var blobStringForCSV = Analytics.generateCSVData(['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'], $scope.tabQueryResults);
+            var blobStringForCSV = Analytics.generateCSVData(['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'], $scope.tableQueryResults);
 
             $scope.downloadFileName = Analytics.getCSVFileName();
             $scope.downloadFileBlob = new Blob([blobStringForCSV], {

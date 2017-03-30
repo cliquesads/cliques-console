@@ -1,6 +1,6 @@
 <div class="row">
     <!-- Report Graph -->
-	<div class="col-md-6">
+	<div class="col-sm-12">
 		<div id="timeQueryGraphPanel" class="panel panel-default mt">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -22,7 +22,7 @@
     <!-- End of Report Graph -->
 
     <!-- Report Table -->
-	<div class="col-sm-6">
+	<div class="col-sm-12">
 		<div class="panel panel-default mt">
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -36,84 +36,30 @@
                     </div>
 				</div>
 			</div>
-			<tabset>
-                <tab heading="Cliques" select="getTabData('cliques')">
-                    <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
-                        <thead>
-                            <tr>
-                                <th>Clique</th>
-                                <th>Impressions</th>
-                                <th>Spend</th>
-                                <th>Avg. CPM</th>
-                                <th>CTR</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in cliqueData">
-                            <td>{{ row._id.pub_clique }}</td>
-                            <td>{{ row.imps | number: 0 }}</td>
-                            <td>{{ row.spend | currency:"$":"0" }}</td>
-                            <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                            <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                            <td>{{ row.view_convs + row.click_convs }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </tab>
-                <tab heading="Publishers" select="getTabData('publishers')">
-                    <table datatable="ng" dt-options="dtOptions_pubs" dt-column-defs="dtColumnDefs_pubs" class="row-border hover">
-                        <thead>
+            <div class="m">
+                <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                    <thead>
                         <tr>
-                            <th></th>
-                            <th>Publisher</th>
+                            <th>Clique</th>
                             <th>Impressions</th>
                             <th>Spend</th>
                             <th>Avg. CPM</th>
                             <th>CTR</th>
                             <th>Actions</th>
                         </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in publisherData">
-                            <td><img ng-src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
-                            <td style="max-width: 120px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
-                            <td>{{ row.imps | number: 0 }}</td>
-                            <td>{{ row.spend | currency:"$":"0" }}</td>
-                            <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                            <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                            <td>{{ row.view_convs + row.click_convs }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </tab>
-                <tab heading="Advertisers" select="getTabData('advertisers')">
-                    <table datatable="ng" dt-options="dtOptions_advs" dt-column-defs="dtColumnDefs_advs" class="row-border hover">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Advertiser</th>
-                            <th>Impressions</th>
-                            <th>Spend</th>
-                            <th>Avg. CPM</th>
-                            <th>CTR</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in advertiserData">
-                            <td><img ng-src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                            <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Publisher!</em></td>
-                            <td>{{ row.imps | number: 0 }}</td>
-                            <td>{{ row.spend | currency:"$":"0" }}</td>
-                            <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                            <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                            <td>{{ row.view_convs + row.click_convs }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </tab>
-            </tabset>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in cliqueData">
+                    <td>{{ row._id[tableQueryParam.groupBy] }}</td>
+                        <td>{{ row.imps | number: 0 }}</td>
+                        <td>{{ row.spend | currency:"$":"0" }}</td>
+                        <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
+                        <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
+                        <td>{{ row.view_convs + row.click_convs }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 		</div>
 	</div>
     <!-- End of Report Table -->

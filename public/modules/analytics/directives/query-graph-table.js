@@ -12,7 +12,7 @@ angular.module('analytics').directive('queryGraphTable', ['$rootScope', 'MongoTi
             timeUnit: '=',
             summaryDateRangeSelection: '=',
             graphQueryParam: '=',
-            tabQueryParams: '='
+            tableQueryParam: '='
         },
         templateUrl: 'modules/analytics/views/partials/query-graph-table.html',
         link: function(scope, element, attrs) {
@@ -30,12 +30,12 @@ angular.module('analytics').directive('queryGraphTable', ['$rootScope', 'MongoTi
         	}
 			// Listens to the 'launchQuery' message sent by parent controller, whenever receives it, send query http request with query params and display results
             scope.$on('launchQuery', function(event, args) {
-            	scope.queryForGraphAndTabData();
+            	scope.queryForGraphAndTableData();
             });
-            scope.queryForGraphAndTabData = function() {
+            scope.queryForGraphAndTableData = function() {
                 // Actual query requests happen here
-                scope.getQueryGraph(scope.graphQueryParam);
-                scope.getTabData();
+                scope.getQueryGraph();
+                scope.getTableData();
             };
             scope.getQueryGraph = function() {
                 // Pass "show-points" to graph directive to toggle line points
@@ -65,95 +65,35 @@ angular.module('analytics').directive('queryGraphTable', ['$rootScope', 'MongoTi
 	                );
                 });
             };
-            scope.tabFunctions = {
-                cliques: function() {
-                    // query HourlyAdStats endpoint
-                    scope.queryFunction(scope.tabQueryParams.cliques).then(function(response) {
-                        scope.tabQueryResults = response.data;
-                        // send message to parent controller notifying the query results
-                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
-                        // build datatables options object
-                        scope.dtOptions = DTOptionsBuilder.newOptions();
-                        scope.dtOptions.withOption('paging', false);
-                        scope.dtOptions.withOption('searching', false);
-                        scope.dtOptions.withOption('scrollX', true);
-                        scope.dtOptions.withOption('order', [
-                            [1, 'desc']
-                        ]);
-                        // Not entirely sure if this is necessary
-                        scope.dtColumnDefs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5)
-                        ];
-                        scope.cliqueData = response.data;
-                    });
-                },
-                publishers: function() {
-                    // query HourlyAdStats api endpoint
-                    scope.queryFunction(scope.tabQueryParams.publishers).then(function(response) {
-                        scope.tabQueryResults = response.data;
-                        // send message to parent controller notifying the query results
-                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
-                        // build datatables options object
-                        scope.dtOptions_pubs = DTOptionsBuilder.newOptions();
-                        scope.dtOptions_pubs.withOption('paging', false);
-                        scope.dtOptions_pubs.withOption('searching', false);
-                        scope.dtOptions_pubs.withOption('scrollX', true);
-                        scope.dtOptions_pubs.withOption('order', [
-                            [2, 'desc']
-                        ]);
-                        // Not entirely sure if this is necessary
-                        scope.dtColumnDefs_pubs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5),
-                            DTColumnDefBuilder.newColumnDef(6)
-                        ];
-                        scope.publisherData = response.data;
-                    });
-                },
-                advertisers: function() {
-                    // query HourlyAdStats api endpoint
-                    scope.queryFunction(scope.tabQueryParams.advertisers).then(function(response) {
-                        scope.tabQueryResults = response.data;
-                        // send message to parent controller notifying the query results
-                        $rootScope.$broadcast('tabQueryResults', scope.tabQueryResults);
-                        // build datatables options object
-                        scope.dtOptions_advs = DTOptionsBuilder.newOptions();
-                        scope.dtOptions_advs.withOption('paging', false);
-                        scope.dtOptions_advs.withOption('searching', false);
-                        scope.dtOptions_advs.withOption('scrollX', true);
-                        scope.dtOptions_advs.withOption('order', [
-                            [2, 'desc']
-                        ]);
-                        // Not entirely sure if this is necessary
-                        scope.dtColumnDefs_advs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5),
-                            DTColumnDefBuilder.newColumnDef(6)
-                        ];
-                        scope.advertiserData = response.data;
-                    });
-                }
-            };
-            scope.getTabData = function(tab) {
-                tab = tab || scope.activeTab;
-                scope.activeTab = tab;
-                scope.tabFunctions[tab]();
+            scope.getTableData = function() {
+                // query HourlyAdStats endpoint
+                scope.queryFunction(scope.tableQueryParam).then(function(response) {
+                    scope.tableQueryResults = response.data;
+                    // send message to parent controller notifying the query results
+                    $rootScope.$broadcast('tableQueryResults', scope.tableQueryResults);
+                    // build datatables options object
+                    scope.dtOptions = DTOptionsBuilder.newOptions();
+                    scope.dtOptions.withOption('paging', false);
+                    scope.dtOptions.withOption('searching', false);
+                    scope.dtOptions.withOption('scrollX', true);
+                    scope.dtOptions.withOption('order', [
+                        [1, 'desc']
+                    ]);
+                    // Not entirely sure if this is necessary
+                    scope.dtColumnDefs = [
+                        DTColumnDefBuilder.newColumnDef(0),
+                        DTColumnDefBuilder.newColumnDef(1),
+                        DTColumnDefBuilder.newColumnDef(2),
+                        DTColumnDefBuilder.newColumnDef(3),
+                        DTColumnDefBuilder.newColumnDef(4),
+                        DTColumnDefBuilder.newColumnDef(5)
+                    ];
+                    scope.cliqueData = response.data;
+                });
             };
 
             scope.getQueryGraph();
+            scope.getTableData();
         }
     };
 }]);
