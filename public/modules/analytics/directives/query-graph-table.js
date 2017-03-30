@@ -19,6 +19,7 @@ angular.module('analytics').directive('queryGraphTable', ['$rootScope', 'MongoTi
         	/**
         	 * Depending on different user types(advertiser, publisher or networkAdmin), the query function can be different
         	 */
+            scope.user = user;
         	if (user) {
         	    if (user.organization.organization_types.indexOf('networkAdmin') > -1){
         	        scope.queryFunction = HourlyAdStat.query;
