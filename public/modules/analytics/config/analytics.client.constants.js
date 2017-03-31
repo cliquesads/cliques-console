@@ -48,15 +48,16 @@ angular.module('analytics')
         Custom: 'app.analytics.customizeQuery',
         QuickQueries: 'app.analytics.quickQueries'
     })
-    /**
-     * Will be used as filters for different quick queries
-     */
-    .constant('QUERY_FILTERS', {
-        Time: [],
-        Sites: [],
-        Creatives: [],
-        States: [],
-        Cities: [],
-        Countries: [],
-        Custom: []
-    });
+    .constant('CRONTAB_DAY_OPTIONS', [
+        'Every day',
+        'Every week day',
+        'The 1st of each month',
+        'The last day of each month',
+        'Every Monday',
+        'Every Tuesday',
+        'Every Wednesday',
+        'Every Thursday',
+        'Every Friday',
+        'Every Saturday',
+        'Every Sunday'
+    ]);

@@ -88,35 +88,6 @@ module.exports = function(db) {
 			});
 		},
 		/**
-		 * Get all creatives that belong to current user's organization
-		 */
-		getAllCreatives: function (req, res) {
-			var organizationId = req.user.organization._id;
-			var allCreatives = [];
-			advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
-			advertiserModels.Advertiser.promisifiedFind({
-				organization: organizationId
-			})
-			.then(function(advertisers) {
-				// iterate through each advertiser
-				advertisers.forEach(function(advertiser) {
-					advertiser.campaigns.forEach(function(campaign) {
-						campaign.creativegroups.forEach(function(creativegroup) {
-							creativegroup.creatives.forEach(function(creative) {
-								allCreatives.push(creative);	
-							});
-						});
-					});
-				});
-				return res.json(allCreatives);
-			})
-			.catch(function(err) {
-				return res.status(400).send({
-					message: 'Error getting advertisers'
-				});
-			});
-		},
-		/**
 		 * Get all sites that belong to current user's organization
 		 */
 		getAllSites: function (req, res) {
@@ -138,6 +109,31 @@ module.exports = function(db) {
 			.catch(function(err) {
 				return res.status(400).send({
 					message: 'Error getting publishers'
+				});
+			});
+		},
+		/**
+		 * Get all campaigns that belong to current user's organization
+		 */
+		getAllCampaigns: function (req, res) {
+			var organizationId = req.user.organization._id;
+			var allCampaigns = [];
+			advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
+			advertiserModels.Advertiser.promisifiedFind({
+				organization: organizationId
+			})
+			.then(function(advertisers) {
+				// iterate through each advertiser
+				advertisers.forEach(function(advertiser) {
+					advertiser.campaigns.forEach(function(campaign) {
+						allCampaigns.push(campaign);
+					});
+				});
+				return res.json(allCampaigns);
+			})
+			.catch(function(err) {
+				return res.status(400).send({
+					message: 'Error getting advertisers'
 				});
 			});
 		}

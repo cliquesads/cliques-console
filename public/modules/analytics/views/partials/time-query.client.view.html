@@ -1,12 +1,20 @@
 <div class="row">
     <!-- Back to quick queries button -->
-    <div class="col-sm-2">
+    <div class="col-sm-3">
         <a ui-sref="app.analytics.quickQueries" class="btn btn-default btn-block text-md">
             <i class="fa fa-angle-double-left"></i>
             Back to Quick Queries
         </a> 
     </div>
 </div>
+
+<!-- Report Settings -->
+<div>
+    <report-settings
+        available-settings="availableSettings">
+    </report-settings>
+</div>
+
 <div class="time-query-container">
 	<div class="bg-gray-lighter">
         <div class="row mt p">

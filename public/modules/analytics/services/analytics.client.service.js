@@ -159,11 +159,11 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
     };
-    var getAllCreatives = function() {
-        return $http.get('/console/analytics/getAllCreatives');
-    };
     var getAllSites = function() {
         return $http.get('/console/analytics/getAllSites');
+    };
+    var getAllCampaigns = function() {
+        return $http.get('/console/analytics/getAllCampaigns');
     };
 
     return {
@@ -173,7 +173,7 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         getMyQueries: getMyQueries,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
-        getAllCreatives: getAllCreatives,
-        getAllSites: getAllSites
+        getAllSites: getAllSites,
+        getAllCampaigns: getAllCampaigns
     };
 }]);

@@ -1,12 +1,11 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'QUERY_FILTERS', 'Notify',
-    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, QUERY_FILTERS, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'Notify',
+    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, Notify) {
         $scope.views = null;
         $scope.quickQueries = QUICKQUERIES;
         $scope.queryRoutes = QUERY_ROUTES;
-        $scope.queryFilterConstants = QUERY_FILTERS;
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.timeUnit = 'day';
         $scope.isSaved = false;
@@ -86,52 +85,37 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.setupAllQueryParams();
 
         /************************* FILTER FOR CREATIVES/SITES *************************/
-        $scope.getCreatives = function() {
-            Analytics.getAllCreatives()
-            .success(function(data) {
-                $scope.allCreatives = data;
-            })
-            .error(function(error) {
-                Notify.alert(error.message, {status: 'danger'});
-            });
-        };
-        $scope.creativeChanged = function() {
-            if ($scope.selectedCreative) {
-                // setup creative filter for query params
-                $scope.graphQueryParam.creative = $scope.selectedCreative._id;
-                $scope.tableQueryParam.creative = $scope.selectedCreative._id;
-            }
-        };
-        $scope.getSites = function() {
-            Analytics.getAllSites()
-            .success(function(data) {
-                $scope.allSites = data;
-            })
-            .error(function(error) {
-                Notify.alert(error.message, {status: 'danger'});
-            });
-        };
-        $scope.siteChanged = function() {
-            if ($scope.selectedSite) {
-                // setup site filter for query params
-                $scope.graphQueryParam.site = $scope.selectedSite._id;
-                $scope.tableQueryParam.site = $scope.selectedSite._id;
-            }
-        };
+        $scope.hasCampaignFilter = false;
+        $scope.hasSiteFilter = false;
+        switch (user.organization.effectiveOrgType) {
+            case 'networkAdmin':
+                $scope.hasCampaignFilter = true;
+                $scope.hasSiteFilter = true;
+                break;
+            case 'advertiser':
+                $scope.hasCampaignFilter = true;
+                break;
+            case 'publisher':
+                $scope.hasSiteFilter = true;
+                break;
+            default:
+                break;
+        }
 
         /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
-        // set query name and filters depending on what current state/query section it is
+        // set query name, filters and available report settings depending on what current state/query section it is
+        $scope.availableSettings = {
+            timePeriod: true,
+            dateGroupBy: false,
+            campaignFilter: $scope.hasCampaignFilter,
+            siteFilter: $scope.hasSiteFilter
+        };
         for (var queryName in $scope.queryRoutes) {
             if ($state.current.name === $scope.queryRoutes[queryName]) {
                 $scope.setQueryName(queryName);
-                $scope.filters = $scope.queryFilterConstants[queryName];
-                if (queryName === 'Creatives') {
-                    $scope.getCreatives();
-                } else if (queryName === 'Sites') {
-                    $scope.getSites();
-                } else if (queryName === 'Custom') {
-                    $scope.getCreatives();
-                    $scope.getSites();
+                // Set available report settings for different queries
+                if (queryName === 'Time') {
+                    $scope.availableSettings.dateGroupBy = true;
                 }
                 break;
             }
