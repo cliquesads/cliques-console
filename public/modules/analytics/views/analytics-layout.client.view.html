@@ -3,7 +3,7 @@
     <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
 </h3>
 <div class="unwrap">
-    <div class="text-center bg-one-quarter-black">
+    <div class="text-center bg-one-quarter-black" ng-if="$state.$current.name === 'app.analytics.quickQueries' || $state.$current.name === 'app.analytics.customizeQuery'">
         <div class="row row-table">
             <div class="col-xs-6 br p mb hover-gray" ng-click="$state.transitionTo('app.analytics.quickQueries')" ng-class="{'bg-one-third-black': $state.$current.name === 'app.analytics.quickQueries'}">
                 <h4 class="m0"><i class="fa fa-bolt"></i> Quick Queries</h4>

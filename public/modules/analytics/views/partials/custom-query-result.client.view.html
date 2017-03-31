@@ -1,3 +1,12 @@
+<div class="row">
+	<!-- Back to customized query builder button -->
+    <div class="col-sm-2">
+	    <a ui-sref="app.analytics.customizeQuery" class="btn btn-default btn-block text-md">
+            <i class="fa fa-angle-double-left"></i>
+            Back to Query Builder
+        </a> 
+    </div>
+</div>
 <div class="custom-query-container">
 	<!-- The graph and table showing the query results -->
 	<query-graph-table
@@ -10,15 +19,8 @@
 	</query-graph-table>
 
 	<div class="row p">
-		<!-- Back to customized query builder button -->
-		<div class="col-sm-2">
-			<a ui-sref="app.analytics.customizeQuery" class="btn btn-default btn-block text-md">
-				Back to query builder
-			</a>
-		</div>
-		
 		<!-- Export to CSV button -->
-	    <div class="col-sm-3 col-sm-offset-7">
+	    <div class="col-sm-3 col-sm-offset-9">
 	        <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="TimeQuery_ExportCSV">Export to CSV</button>
 	    </div>
 	</div>	

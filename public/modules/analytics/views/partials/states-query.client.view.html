@@ -1,6 +1,15 @@
+<div class="row">
+    <!-- Back to quick queries button -->
+    <div class="col-sm-2">
+        <a ui-sref="app.analytics.quickQueries" class="btn btn-default btn-block text-md">
+            <i class="fa fa-angle-double-left"></i>
+            Back to Quick Queries
+        </a> 
+    </div>
+</div>
 <div class="states-query-container">
 	<div class="bg-gray-lighter">
-		<div class="row mt-xl ph pt">
+		<div class="row mt ph pt">
 			<!-- select date range -->
 			<div class="col-sm-7">
 				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
@@ -53,13 +62,6 @@
     </query-graph-table>
 
     <div class="row p">
-    	<!-- Back to quick queries button -->
-    	<div class="col-sm-2">
-    	    <a ui-sref="app.analytics.quickQueries" class="btn btn-default btn-block text-md">
-    	        Back to Quick Queries
-    	    </a> 
-    	</div>
-
 	    <!-- Export to CSV button -->
         <div class="col-sm-3 col-sm-offset-9">
             <button class="btn btn-primary btn-block text-md pull-right" ng-click="exportToCSV()" file-download="downloadFileBlob" file-name="downloadFileName" analytics-on="click" analytics-event="StatesQuery_ExportCSV">Export to CSV</button>
