@@ -114,7 +114,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             if ($state.current.name === $scope.queryRoutes[queryName]) {
                 $scope.setQueryName(queryName);
                 // Set available report settings for different queries
-                if (queryName === 'Time') {
+                if (queryName === 'Time' || queryName === 'Custom') {
                     $scope.availableSettings.dateGroupBy = true;
                 }
                 break;
