@@ -4,7 +4,8 @@
 angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'Notify',
     function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, Notify) {
         $scope.views = null;
-        $scope.quickQueries = QUICKQUERIES;
+        // Depending on different organization type, quick query options may vary
+        $scope.quickQueries = QUICKQUERIES[user.organization.effectiveOrgType];
         $scope.queryRoutes = QUERY_ROUTES;
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.timeUnit = 'day';

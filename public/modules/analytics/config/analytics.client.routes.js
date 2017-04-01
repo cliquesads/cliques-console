@@ -36,7 +36,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/time-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
@@ -51,7 +51,22 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/sites-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.campaignsQuery', {
+            url: '/campaignsQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function() { return 'Campaigns Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
@@ -66,7 +81,22 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/creatives-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
+        state('app.analytics.quickQueries.placementsQuery', {
+            url: '/placementsQuery',
+            params: {
+                query: null
+            },
+            resolve: {
+                $title: function() { return 'Placements Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
@@ -81,7 +111,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/states-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
@@ -96,7 +126,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/cities-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
@@ -111,7 +141,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/countries-query.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
                     controller: 'AnalyticsController'
                 }
             }
