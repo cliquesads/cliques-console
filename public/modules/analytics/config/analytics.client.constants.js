@@ -48,16 +48,16 @@ angular.module('analytics')
         Custom: 'app.analytics.customizeQuery',
         QuickQueries: 'app.analytics.quickQueries'
     })
-    .constant('CRONTAB_DAY_OPTIONS', [
-        'Every day',
-        'Every week day',
-        'The 1st of each month',
-        'The last day of each month',
-        'Every Monday',
-        'Every Tuesday',
-        'Every Wednesday',
-        'Every Thursday',
-        'Every Friday',
-        'Every Saturday',
-        'Every Sunday'
-    ]);
+    .constant('CRONTAB_DAY_OPTIONS', {
+        'Every day': ' * * *',
+        'Every week day': ' * * 1-5',
+        'The 1st of each month': ' 1 * *',
+        'The last day of each month': ' 28 * *',
+        'Every Monday': ' * * 1',
+        'Every Tuesday': ' * * 2',
+        'Every Wednesday': ' * * 3',
+        'Every Thursday': ' * * 4',
+        'Every Friday': ' * * 5',
+        'Every Saturday': ' * * 6',
+        'Every Sunday': ' * * 7'
+    });

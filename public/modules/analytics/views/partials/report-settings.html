@@ -9,12 +9,6 @@
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<!-- Should a checkbox fits in better here?
-				<button class="btn btn-default">
-					<i class="fa fa-floppy-o"></i>
-					Save to My Queries
-				</button>
-				-->
 				<div class="checkbox text-md">
 					<label>
 						<input type="checkbox"
@@ -39,7 +33,7 @@
 								name="timePeriod"
 								id="timePeriod"
 								class="form-control chosen-select"
-								ng-model="selectedSettings.dateRange"
+								ng-model="selectedSettings.dateRangeShortCode"
 								ng-options="key as value.label for (key, value) in dateRanges">
 								<option value="" selected>
 									Select time period
@@ -59,26 +53,26 @@
 						<div class="col-sm-9 btn-group">
 						    <button type="button"
 						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.timeUnit='hour'"
+						    	ng-click="selectedSettings.dateGroupBy='hour'"
 						    	analytics-on="click"
 						    	analytics-event="Analytics_ChangeTimeUnitToHour"
-						    	ng-class="{'selected-time-unit': selectedSettings.timeUnit === 'hour'}">
+						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'hour'}">
 						    	Hour
 						    </button>
 						    <button type="button"
 						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.timeUnit='day'"
+						    	ng-click="selectedSettings.dateGroupBy='day'"
 						    	analytics-on="click"
 						    	analytics-event="Analytics_ChangeTimeUnitToDay"
-						    	ng-class="{'selected-time-unit': selectedSettings.timeUnit === 'day'}">
+						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'day'}">
 						    	Day
 						    </button>
 						    <button type="button"
 						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.timeUnit='month'"
+						    	ng-click="selectedSettings.dateGroupBy='month'"
 						    	analytics-on="click"
 						    	analytics-event="Analytics_ChangeTimeUnitToMonth"
-						    	ng-class="{'selected-time-unit': selectedSettings.timeUnit === 'month'}">
+						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'month'}">
 						    	Month
 						    </button>
 						</div>
@@ -86,7 +80,7 @@
 				</div>
 
 				<!-- Custom start date & end date -->
-				<div ng-if="selectedSettings.dateRange === 'custom'">
+				<div ng-if="selectedSettings.dateRangeShortCode === 'custom'">
 					<!-- Start Date -->
 					<div class="form-horizontal col-sm-6">
 						<div class="form-group">
@@ -173,7 +167,7 @@
 								id="campaignFilter"
 								class="form-control chosen-select"
 								ng-model="selectedSettings.campaign"
-								ng-options="campaign.name for campaign in allCampaigns track by campaign._id">
+								ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
 								<option value="" selected>
 									Select campaign to filter
 								</option>
@@ -195,7 +189,7 @@
 								id="siteFilter"
 								class="form-control chosen-select"
 								ng-model="selectedSettings.site"
-								ng-options="site.name for site in allSites track by site._id">
+								ng-options="site._id as site.name for site in allSites track by site._id">
 								<option value="" selected>
 									Select site to filter
 								</option>

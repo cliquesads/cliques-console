@@ -30,7 +30,7 @@
 					id="crontabDay"
 					class="form-control chosen-select"
 					ng-model="crontabDay"
-					ng-options="option for option in crontabDayOptions track by option">
+					ng-options="key for (key, value) in crontabDayOptions">
 					<option value="" selected>
 						Select day to repeat query
 					</option>	
@@ -76,6 +76,7 @@
 	<!-- Save button -->
 	<div class="text-right">
 		<button class="btn btn-primary text-md mt"
+			ng-disabled="!inputValid()"
 			ng-click="saveQuery()">
 			Save
 		</button>

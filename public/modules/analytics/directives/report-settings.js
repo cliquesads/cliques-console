@@ -9,15 +9,13 @@ angular.module('analytics').directive('reportSettings', [
     'Analytics',
     'Notify',
     'ngDialog',
-    'CRONTAB_DAY_OPTIONS',
     function(
         $rootScope,
         aggregationDateRanges,
         DatepickerService,
         Analytics,
         Notify,
-        ngDialog,
-        CRONTAB_DAY_OPTIONS
+        ngDialog
     ) {
         'use strict';
         return {
@@ -28,11 +26,12 @@ angular.module('analytics').directive('reportSettings', [
             templateUrl: 'modules/analytics/views/partials/report-settings.html',
             link: function(scope, element, attrs) {
                 // Default values for selectedSettings
-                scope.selectedSettings = {
-                    dateRange: '7d',
-                    timeUnit: 'day'
-                };
-                scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
+                if (!scope.selectedSettings) {
+                	scope.selectedSettings = {
+                	    dateRangeShortCode: '7d',
+                	    timeUnit: 'day'
+                	};
+                }
 
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
@@ -66,9 +65,22 @@ angular.module('analytics').directive('reportSettings', [
                 	if (scope.selectedSettings.isSaved) {
                 		ngDialog.open({
                 			template: 'modules/analytics/views/partials/save-query-dialog.html',
-                			controller: ['$scope', function($scope) {
+                			controller: ['$scope', 'CRONTAB_DAY_OPTIONS', function($scope, CRONTAB_DAY_OPTIONS) {
                 				$scope.selectedSettings = scope.selectedSettings;
-                				$scope.crontabDayOptions = scope.crontabDayOptions;
+                				$scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
+                				// Validate input so as to decide whether to disable save button or not
+                				$scope.inputValid = function() {
+									if ($scope.selectedSettings.queryName && $scope.selectedSettings.queryName.length > 0) {
+										if ($scope.crontabDay && $scope.crontabHour && $scope.crontabMinute) {
+											return true;
+										}
+									} 
+									return false;
+                				};
+                				$scope.saveQuery = function() {
+									$scope.selectedSettings.crontabString = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
+									$scope.closeThisDialog(0);
+                				};
                 			}]
                 		});
                 	}
@@ -76,8 +88,15 @@ angular.module('analytics').directive('reportSettings', [
 
                 scope.launchQuery = function(event) {
                     event.preventDefault();
-                    // TO-DO:::ycx
-                    // Should set up query params here and launch query
+                    // set up start date and end date if not designated as custom dates by user already
+                    if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
+						scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
+						scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
+                    }
+					// Send broadcast message to notify query graph/table directive to launch query
+					$rootScope.$broadcast('launchQuery', {
+						queryParam: scope.selectedSettings
+					});
                 };
             }
         };
