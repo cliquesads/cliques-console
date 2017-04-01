@@ -7,58 +7,12 @@
         </a> 
     </div>
 </div>
+
+<!-- Report Settings -->
+<report-settings available-settings="availableSettings">
+</report-settings>
+
 <div class="sites-query-container">
-	<div class="bg-gray-lighter">
-		<div class="row mt ph pt">
-			<!-- select site -->
-			<div class="col-sm-7">
-				<label for="siteFilter" class="text-md">Site filter</label>
-				<select name="siteFilter"
-					id="siteFilter"
-					class="form-control chosen-select"
-					data-ng-model="selectedSite"
-					ng-options="site.name for site in allSites track by site._id"
-					ng-change="siteChanged()">
-					<option value="" selected>Select site to filter</option>		
-				</select>
-			</div>
-
-			<!-- select date range -->
-			<div class="col-sm-3">
-				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
-			</div>
-
-			<!-- Checkbox to save as cron task or not -->
-			<div class="col-sm-2 pt-xl">
-				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="isSaved" ng-change="toggleSave()">
-					<span class="text-md">
-						Save as crontab
-					</span>
-				</label>
-			</div>
-		</div>
-
-		<!-- Crontab scheduler -->
-		<div class="row pl-lg" ng-if="isSaved">
-			<div class="col-sm-12">
-				<scheduler
-					weekday="cronScheduleParam.weekday"
-					month="cronScheduleParam.month"
-					date="cronScheduleParam.date"
-					hour="cronScheduleParam.hour"
-					minute="cronScheduleParam.minute"
-					second="cronScheduleParam.second">
-				</scheduler>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2 col-sm-offset-10 ph-lg pb">
-				<button class="btn btn-success btn-block text-md" ng-click="launchQuery()" analytics-on="click" analytics-event="SitesQuery_LaunchQuery">Query</button>
-			</div>
-		</div>
-	</div>
-
     <!-- The graph and table showing the query results -->
     <query-graph-table
         date-ranges="dateRanges"

@@ -7,58 +7,12 @@
         </a> 
     </div>
 </div>
+
+<!-- Report Settings -->
+<report-settings available-settings="availableSettings">
+</report-settings>
+
 <div class="creatives-query-container">
-	<div class="bg-gray-lighter">
-		<div class="row mt ph pt">
-			<!-- select creative -->
-			<div class="col-sm-7">
-				<label for="creativeFilter" class="text-md">Creative filter</label>
-				<select name="creativeFilter"
-					id="creativeFilter"
-					class="form-control chosen-select"
-					data-ng-model="selectedCreative"
-					ng-options="creative.name for creative in allCreatives track by creative._id"
-					ng-change="creativeChanged()">
-					<option value="" selected>Select creative to filter</option>
-				</select>
-			</div>
-
-			<!-- select date range -->
-			<div class="col-sm-3">
-				<date-range-selector selected-date-range="summaryDateRangeSelection"></date-range-selector>
-			</div>
-
-			<!-- Checkbox to save as cron task or not -->
-			<div class="col-sm-2 pt-xl">
-				<label class="checkbox-inline">
-					<input type="checkbox" ng-model="isSaved" ng-change="toggleSave()">
-					<span class="text-md">
-						Save as crontab
-					</span>
-				</label>
-			</div>
-		</div>
-
-		<!-- Crontab scheduler -->
-		<div class="row pl-lg" ng-if="isSaved">
-			<div class="col-sm-12">
-				<scheduler
-					weekday="cronScheduleParam.weekday"
-					month="cronScheduleParam.month"
-					date="cronScheduleParam.date"
-					hour="cronScheduleParam.hour"
-					minute="cronScheduleParam.minute"
-					second="cronScheduleParam.second">
-				</scheduler>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-2 col-sm-offset-10 ph-lg pb">
-				<button class="btn btn-success btn-block text-md" ng-click="launchQuery()" analytics-on="click" analytics-event="CreativesQuery_LaunchQuery">Query</button>
-			</div>
-		</div>
-	</div>
-
     <!-- The graph and table showing the query results -->
     <query-graph-table
         date-ranges="dateRanges"

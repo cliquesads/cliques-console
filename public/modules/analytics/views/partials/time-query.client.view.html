@@ -9,33 +9,10 @@
 </div>
 
 <!-- Report Settings -->
-<div>
-    <report-settings
-        available-settings="availableSettings">
-    </report-settings>
-</div>
+<report-settings available-settings="availableSettings">
+</report-settings>
 
 <div class="time-query-container">
-	<div class="bg-gray-lighter">
-        <div class="row mt p">
-            <!-- start & end dates -->
-            <div class="col-sm-7">
-                <custom-dates width="6" enddatemodel="dates.endDate" startdatemodel="dates.startDate"></custom-dates>
-            </div>
-
-            <!-- Select time unit -->
-            <div class="col-sm-3">
-                <time-unit-selector time-unit="timeUnit"></time-unit-selector>
-            </div>
-
-            <!-- Checkbox to save as crontab or not -->
-            <div class="col-sm-2 pt-sm">
-                <br>
-                <button class="btn btn-success btn-block text-md" ng-click="launchQuery()" analytics-on="click" analytics-event="TimeQuery_LaunchQuery">Query</button>
-            </div>
-        </div>
-	</div>
-
     <!-- The graph and table showing the query results -->
     <query-graph-table
         date-ranges="dateRanges"
