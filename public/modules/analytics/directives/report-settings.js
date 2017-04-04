@@ -21,18 +21,11 @@ angular.module('analytics').directive('reportSettings', [
         return {
             restrict: 'E',
             scope: {
-                availableSettings: '=',
+                selectedSettings: '=',
+                availableSettings: '='
             },
             templateUrl: 'modules/analytics/views/partials/report-settings.html',
             link: function(scope, element, attrs) {
-                // Default values for selectedSettings
-                if (!scope.selectedSettings) {
-                	scope.selectedSettings = {
-                	    dateRangeShortCode: '7d',
-                	    timeUnit: 'day'
-                	};
-                }
-
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
@@ -88,14 +81,21 @@ angular.module('analytics').directive('reportSettings', [
 
                 scope.launchQuery = function(event) {
                     event.preventDefault();
-                    // set up start date and end date if not designated as custom dates by user already
+                    // set up start date and end date if not designated as custom dates by user already, also setup date range title for displaying and humanizedDateRange so as to save in database in case needed
                     if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
 						scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
 						scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
+                        // dateRangeTitle setup for displaying
+                        scope.dateRangeTitle = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].label;
+                    } else {
+                        // dateRangeTitle setup for displaying
+                        scope.dateRangeTitle = scope.selectedSettings.startDate + ' - ' + scope.selectedSettings.endDate;
                     }
+                    scope.selectedSettings.humanizedDateRange = scope.dateRangeTitle;
 					// Send broadcast message to notify query graph/table directive to launch query
 					$rootScope.$broadcast('launchQuery', {
-						queryParam: scope.selectedSettings
+						queryParam: scope.selectedSettings,
+                        dateRangeTitle: scope.dateRangeTitle
 					});
                 };
             }

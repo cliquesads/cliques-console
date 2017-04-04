@@ -14,6 +14,7 @@ var QuerySchema = exports.Query = new Schema({
     groupBy: [{ type: String }],
     dateGroupBy: { type: String },
     filters: [{ type: String }],
+    dateRangeShortCode: { type: String },
     humanizedDateRange: { type: String },
     isSaved: { type: Boolean, required: true, default: false },
     name: { type: String, require: true },

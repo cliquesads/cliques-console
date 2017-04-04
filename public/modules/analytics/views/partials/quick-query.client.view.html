@@ -10,29 +10,13 @@
 </div>
 
 <!-- Report Settings -->
-<report-settings available-settings="availableSettings">
+<report-settings
+	selected-settings="defaultQueryParam"
+	available-settings="availableSettings">
 </report-settings>
 
-<!-- The graph and table showing the query results -->
-<query-graph-table
-    date-ranges="dateRanges"
-    date-range-title="queryResultTitle"
-    time-unit="timeUnit"
-    summary-date-range-selection="summaryDateRangeSelection"
-    graph-query-param="graphQueryParam"
-    table-query-param="tableQueryParam">
-</query-graph-table>
+<!-- Query Graph -->
+<query-graph></query-graph>
 
-<div class="row p">
-    <!-- Export to CSV button -->
-    <div class="col-sm-3 col-sm-offset-9">
-        <button class="btn btn-primary btn-block text-md pull-right"
-            ng-click="exportToCSV()"
-            file-download="downloadFileBlob"
-            file-name="downloadFileName"
-            analytics-on="click"
-            analytics-event="Query_ExportCSV">
-            Export to CSV
-        </button>
-    </div>
-</div>
+<!-- Query Table -->
+<query-table></query-table>

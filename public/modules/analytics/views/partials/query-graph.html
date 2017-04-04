@@ -1,0 +1,39 @@
+<div class="row">
+	<div class="col-sm-12">
+		<div class="panel panel-default mt">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<div class="row">
+						<div class="col-sm-6">
+							{{ dateRangeTitle }} - Graph
+							<small>
+								<em class="text-muted">
+									Reporting Timezone: {{ user.tz }}
+								</em>
+							</small>	
+						</div>
+						<div class="col-sm-1 col-sm-offset-5 text-right">
+							<a class="text-muted"
+								ng-click="isCollapsed=!isCollapsed">
+								<i class="fa"
+									ng-class="{
+										'fa-minus': !isCollapsed,
+										'fa-plus': isCollapsed
+									}">
+								</i>	
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body pt0"
+				ng-if="!isCollapsed">
+				<hr class="m0">
+				<daily-ad-stats-graph time-series="timeSeries"
+					show-points="showPoints"
+					height="250px">
+				</daily-ad-stats-graph>
+			</div>
+		</div>
+	</div>
+</div>

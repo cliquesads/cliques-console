@@ -1,0 +1,68 @@
+<div class="row">
+	<div class="col-sm-12">
+		<div class="panel panel-default mt">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<div class="row">
+						<div class="col-sm-6">
+							{{ dateRangeTitle }} - Table
+							<small>
+								<em class="text-muted">
+									Reporting Timezone: {{ user.tz }}
+								</em>
+							</small>
+						</div>
+						<div class="col-sm-2 col-sm-offset-3">
+							<button class="btn btn-primary btn-block text-md"
+								ng-click="exportToCSV()"
+								file-download="downloadFileBlob"
+								file-name="downloadFileName"
+								ng-disabled="!tableQueryResults || tableQueryResults.length === 0"
+								analytics-on="click"
+								analytics-event="Query_ExportToCSV">
+								Export to CSV
+							</button>
+						</div>
+						<div class="col-sm-1 text-right">
+							<a class="text-muted"
+								ng-click="isCollapsed=!isCollapsed">
+								<i class="fa"
+									ng-class="{
+										'fa-minus': !isCollapsed,
+										'fa-plus': isCollapsed
+									}">
+								</i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body pt0"
+				ng-if="!isCollapsed">
+				<hr class="m0">
+				<table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+				    <thead>
+				        <tr>
+				            <th>Clique</th>
+				            <th>Impressions</th>
+				            <th>Spend</th>
+				            <th>Avg. CPM</th>
+				            <th>CTR</th>
+				            <th>Actions</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    <tr ng-repeat="row in cliqueData">
+				    <td>{{ row._id[tableQueryParam.groupBy] }}</td>
+				        <td>{{ row.imps | number: 0 }}</td>
+				        <td>{{ row.spend | currency:"$":"0" }}</td>
+				        <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
+				        <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
+				        <td>{{ row.view_convs + row.click_convs }}</td>
+				    </tr>
+				    </tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

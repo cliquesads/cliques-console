@@ -2,7 +2,7 @@
 'use strict';
 
 // Export csv transforms object/array to csv data blob
-angular.module('analytics').factory('Analytics', ['$http', function($http) {
+angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', function($http, HourlyAdStat) {
 	var getCSVFileName = function() {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
         return asOfDate + '_report.csv';
@@ -165,6 +165,22 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
     var getAllCampaigns = function() {
         return $http.get('/console/analytics/getAllCampaigns');
     };
+    var queryFunction = function() {
+        var queryFunction;
+        /**
+         * Depending on different user types(advertiser, publisher or networkAdmin), the query function can be different
+         */
+        if (user) {
+            if (user.organization.organization_types.indexOf('networkAdmin') > -1){
+                queryFunction = HourlyAdStat.query;
+            } else if (user.organization.organization_types.indexOf('advertiser') > -1){
+                queryFunction = HourlyAdStat.advSummaryQuery;
+            } else if (user.organization.organization_types.indexOf('publisher') > -1){
+                queryFunction = HourlyAdStat.pubSummaryQuery;
+            }
+        }
+        return queryFunction;
+    };
 
     return {
         generateCSVData: generateCSVData,
@@ -174,6 +190,7 @@ angular.module('analytics').factory('Analytics', ['$http', function($http) {
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
         getAllSites: getAllSites,
-        getAllCampaigns: getAllCampaigns
+        getAllCampaigns: getAllCampaigns,
+        queryFunction: queryFunction
     };
 }]);
