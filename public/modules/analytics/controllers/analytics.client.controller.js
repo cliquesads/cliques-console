@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', '$location', 'Authentication', 'Advertiser', 'HourlyAdStat', 'MongoTimeSeries', 'aggregationDateRanges', 'ngDialog', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'Notify',
-    function($scope, $rootScope, $stateParams, $location, Authentication, Advertiser, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, $state, DTOptionsBuilder, DTColumnDefBuilder, Analytics, QUICKQUERIES, QUERY_ROUTES, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'Notify',
+    function($scope, $rootScope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, QUERY_ROUTES, Notify) {
         $scope.views = null;
         // Depending on different organization type, quick query options may vary
         $scope.quickQueries = QUICKQUERIES[user.organization.effectiveOrgType];
@@ -15,7 +15,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             queryName: '',
             dateRangeShortCode: '7d',
             dateGroupBy: 'day',
-            humanizedDateRange: ''
+            humanizedDateRange: 'Last 7 Days'
         };
 
         /********************** FILTER OPTIONS FOR CREATIVES/SITES **********************/

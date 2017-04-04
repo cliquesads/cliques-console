@@ -2,7 +2,9 @@
 	ng-if="$state.$current.name === 'app.analytics.customizeQuery'">
 
 	<!-- Report Settings -->
-	<report-settings available-settings="availableSettings">
+	<report-settings
+		selected-settings="defaultQueryParam"
+		available-settings="availableSettings">
 	</report-settings>
 
 </div>
