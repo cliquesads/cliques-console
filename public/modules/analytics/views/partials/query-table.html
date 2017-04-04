@@ -5,7 +5,7 @@
 				<div class="panel-title">
 					<div class="row">
 						<div class="col-sm-6">
-							{{ dateRangeTitle }} - Table
+							{{ humanizedDateRange }} - Table
 							<small>
 								<em class="text-muted">
 									Reporting Timezone: {{ user.tz }}
@@ -24,8 +24,7 @@
 							</button>
 						</div>
 						<div class="col-sm-1 text-right">
-							<a class="text-muted"
-								ng-click="isCollapsed=!isCollapsed">
+							<a ng-click="isCollapsed=!isCollapsed">
 								<i class="fa"
 									ng-class="{
 										'fa-minus': !isCollapsed,

@@ -23,7 +23,7 @@ angular.module('analytics').directive('queryTable', [
 		return {
 			restrict: 'E',
 			scope: {
-
+				defaultQueryParam: '='
 			},
 			templateUrl: 'modules/analytics/views/partials/query-table.html',
 			link: function(scope, element, attrs) {
@@ -33,10 +33,10 @@ angular.module('analytics').directive('queryTable', [
 			    scope.queryFunction = Analytics.queryFunction();
 				scope.$on('launchQuery', function(event, args) {
 					var queryParam = args.queryParam;
-					scope.dateRangeTitle = args.dateRangeTitle;
 					scope.getTableData(queryParam);
 				});
 				scope.getTableData = function(queryParam) {
+					scope.humanizedDateRange = queryParam.humanizedDateRange;
 					// query HourlyAdStats endpoint
 					scope.queryFunction(queryParam)
 					.then(function(response) {
@@ -80,7 +80,7 @@ angular.module('analytics').directive('queryTable', [
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });
 				};
-
+				scope.getTableData(scope.defaultQueryParam);
 			}
 		};
 	}

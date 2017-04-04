@@ -85,17 +85,17 @@ angular.module('analytics').directive('reportSettings', [
                     if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
 						scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
 						scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
-                        // dateRangeTitle setup for displaying
-                        scope.dateRangeTitle = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].label;
+                        // humanizedDateRange setup for displaying
+                        scope.humanizedDateRange = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].label;
                     } else {
-                        // dateRangeTitle setup for displaying
-                        scope.dateRangeTitle = scope.selectedSettings.startDate + ' - ' + scope.selectedSettings.endDate;
+                        // humanizedDateRange setup for displaying
+                        scope.humanizedDateRange = scope.selectedSettings.startDate + ' - ' + scope.selectedSettings.endDate;
                     }
-                    scope.selectedSettings.humanizedDateRange = scope.dateRangeTitle;
+                    scope.selectedSettings.humanizedDateRange = scope.humanizedDateRange;
 					// Send broadcast message to notify query graph/table directive to launch query
 					$rootScope.$broadcast('launchQuery', {
 						queryParam: scope.selectedSettings,
-                        dateRangeTitle: scope.dateRangeTitle
+                        humanizedDateRange: scope.humanizedDateRange
 					});
                 };
             }

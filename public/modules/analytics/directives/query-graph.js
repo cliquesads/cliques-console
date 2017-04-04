@@ -17,7 +17,7 @@ angular.module('analytics').directive('queryGraph', [
 		return {
 			restrict: 'E',
 			scope: {
-
+				defaultQueryParam: '='
 			},
 			templateUrl: 'modules/analytics/views/partials/query-graph.html',
 			link: function(scope, element, attrs) {
@@ -28,10 +28,11 @@ angular.module('analytics').directive('queryGraph', [
 				scope.queryFunction = Analytics.queryFunction();
 				scope.$on('launchQuery', function(event, args) {
 					var queryParam = args.queryParam;
-					scope.dateRangeTitle = args.dateRangeTitle;
 					scope.getGraphData(queryParam);
 				});
 				scope.getGraphData = function(queryParam) {
+					scope.humanizedDateRange = queryParam.humanizedDateRange;
+
 					// Pass "show-points" to graph directive to toggle line points
 					// Only have this so points won't show for lines with tons of data
 					scope.showPoints = scope.dateRanges[queryParam.dateRangeShortCode].showPoints;
@@ -61,6 +62,7 @@ angular.module('analytics').directive('queryGraph', [
 						);
 					});
 				};
+				scope.getGraphData(scope.defaultQueryParam);
 			}
 		};
 	}

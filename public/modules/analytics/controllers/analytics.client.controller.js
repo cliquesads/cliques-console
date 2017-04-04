@@ -9,13 +9,13 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.queryRoutes = QUERY_ROUTES;
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.dateRanges = aggregationDateRanges(user.tz);
-
-        /*************************** QUERY PARAMS SETUP ***************************/
         $scope.defaultQueryParam = {
             queryName: '',
             dateRangeShortCode: '7d',
             dateGroupBy: 'day',
-            humanizedDateRange: 'Last 7 Days'
+            humanizedDateRange: 'Last 7 Days',
+            startDate: $scope.dateRanges['7d'].startDate,
+            endDate: $scope.dateRanges['7d'].endDate
         };
 
         /********************** FILTER OPTIONS FOR CREATIVES/SITES **********************/
@@ -77,10 +77,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
                 $scope.dates.startDate = dateArr[0];
                 $scope.dates.endDate = dateArr[1];
             }
-
-            // history query datetime unit
-            $scope.timeUnit = $scope.historyQuery.dateGroupBy;
-            $scope.queryResultTitle = humanizedDateRange;
         }
 
         /************************ CUSTOM QUERY & RESULTS ************************/
