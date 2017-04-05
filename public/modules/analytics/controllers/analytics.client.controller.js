@@ -71,6 +71,32 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.goToQuerySection = function(queryName) {
             $state.go($scope.queryRoutes[queryName]);
         };
+        // groupBy parameter
+        switch($scope.defaultQueryParam.type) {
+            case 'Sites':
+                $scope.defaultQueryParam.groupBy = 'site';
+                break;
+            case 'Campaigns':
+                $scope.defaultQueryParam.groupBy = 'campaign';
+                break;
+            case 'Creatives':
+                $scope.defaultQueryParam.groupBy = 'creative';
+                break;
+            case 'Placements':
+                $scope.defaultQueryParam.groupBy = 'placement';
+                break;
+            case 'States':
+                $scope.defaultQueryParam.groupBy = 'state';
+                break;
+            case 'Cities':
+                $scope.defaultQueryParam.groupBy = 'city';
+                break;
+            case 'Countries':
+                $scope.defaultQueryParam.groupBy = 'country';
+                break;
+            default:
+                break;
+        }
 
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showCustomizedQueryResult = function() {

@@ -24,7 +24,7 @@ module.exports = function(db) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				name: { $ne: 'Custom' }
+				type: { $ne: 'Custom' }
 			};
 			Query.find(queryParam)
 			.sort({
@@ -59,7 +59,7 @@ module.exports = function(db) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				name: 'Custom'
+				type: 'Custom'
 			};
 			Query.find(queryParam)
 			.sort({

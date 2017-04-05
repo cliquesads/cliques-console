@@ -27,13 +27,14 @@ angular.module('analytics').directive('queryTable', [
 			},
 			templateUrl: 'modules/analytics/views/partials/query-table.html',
 			link: function(scope, element, attrs) {
+				scope.queryParam = scope.defaultQueryParam;
 				// table collapse state
 				scope.isCollapsed = false;
 			    scope.user = user;
 			    scope.queryFunction = Analytics.queryFunction();
 				scope.$on('launchQuery', function(event, args) {
-					var queryParam = args.queryParam;
-					scope.getTableData(queryParam);
+					scope.queryParam = args.queryParam;
+					scope.getTableData(scope.queryParam);
 				});
 				scope.getTableData = function(queryParam) {
 					scope.isLoading = true;
@@ -84,7 +85,7 @@ angular.module('analytics').directive('queryTable', [
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });
 				};
-				scope.getTableData(scope.defaultQueryParam);
+				scope.getTableData(scope.queryParam);
 			}
 		};
 	}
