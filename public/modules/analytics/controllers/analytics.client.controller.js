@@ -57,12 +57,15 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             campaignFilter: $scope.hasCampaignFilter,
             siteFilter: $scope.hasSiteFilter
         };
+        $scope.hasTable = true;
+        $scope.hasGraph = false;
         for (var queryName in $scope.queryRoutes) {
             if ($state.current.name === $scope.queryRoutes[queryName]) {
                 $scope.defaultQueryParam.name = queryName;
                 $scope.defaultQueryParam.type = queryName;
                 // Set available report settings for different queries
                 if (queryName === 'Time' || queryName === 'Custom') {
+                    $scope.hasGraph = true;
                     $scope.availableSettings.dateGroupBy = true;
                 }
                 break;
