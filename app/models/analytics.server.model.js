@@ -18,6 +18,9 @@ var QuerySchema = exports.Query = new Schema({
     humanizedDateRange: { type: String },
     isSaved: { type: Boolean, required: true, default: false },
     name: { type: String, require: true },
+    // Allowed type values are::: 
+    // Time, Sites, Campaigns, Creatives, Placements, Cities, States, Countries and Custom
+    type: { type: String, require: true },
     // cron syntax
     //TODO: add validator function using cron-parser
     schedule: { type: String },

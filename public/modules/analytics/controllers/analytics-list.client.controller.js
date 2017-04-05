@@ -68,7 +68,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.loadRelatedQueries();
 
 		$scope.goToQuerySection = function(query) {
-			$state.go($scope.queryRoutes[query.name], {query: query});
+			$state.go($scope.queryRoutes[query.type], {query: query});
 		};
 
 		$scope.reachedQueryListBottom = function() {

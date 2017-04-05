@@ -47,7 +47,7 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
             });
 
 		$scope.goToQuerySection = function(query) {
-            $state.go($scope.queryRoutes[query.name], {query: query});
+            $state.go($scope.queryRoutes[query.type], {query: query});
 		};
     }
 ]);
