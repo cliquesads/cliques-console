@@ -63,15 +63,17 @@ angular.module('analytics').directive('reportSettings', [
                 				$scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
                 				// Validate input so as to decide whether to disable save button or not
                 				$scope.inputValid = function() {
-									if ($scope.selectedSettings.queryName && $scope.selectedSettings.queryName.length > 0) {
-										if ($scope.crontabDay && $scope.crontabHour && $scope.crontabMinute) {
+									if ($scope.selectedSettings.name && $scope.selectedSettings.name.length > 0) {
+										if ($scope.crontabDay &&
+                                            ($scope.crontabHour || $scope.crontabHour === 0) &&
+                                            ($scope.crontabMinute || $scope.crontabMinute === 0)) {
 											return true;
 										}
 									} 
 									return false;
                 				};
                 				$scope.saveQuery = function() {
-									$scope.selectedSettings.crontabString = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
+									$scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
 									$scope.closeThisDialog(0);
                 				};
                 			}]

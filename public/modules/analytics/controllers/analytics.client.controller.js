@@ -9,14 +9,27 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.queryRoutes = QUERY_ROUTES;
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.dateRanges = aggregationDateRanges(user.tz);
-        $scope.defaultQueryParam = {
-            queryName: '',
-            dateRangeShortCode: '7d',
-            dateGroupBy: 'day',
-            humanizedDateRange: 'Last 7 Days',
-            startDate: $scope.dateRanges['7d'].startDate,
-            endDate: $scope.dateRanges['7d'].endDate
-        };
+        if ($stateParams.query) {
+            // History query entered from sidebar
+            $scope.defaultQueryParam = $stateParams.query;
+            $scope.defaultQueryParam._id = undefined;
+            $scope.defaultQueryParam.isSaved = false;
+        } else {
+            $scope.defaultQueryParam = {
+                name: '',
+                dateRangeShortCode: '7d',
+                dateGroupBy: 'day',
+                humanizedDateRange: 'Last 7 Days'
+            };
+        }
+        if ($scope.defaultQueryParam.dateRangeShortCode !== 'custom') {
+            $scope.defaultQueryParam.startDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].startDate;
+            $scope.defaultQueryParam.endDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].endDate;
+        } else {
+            var dateArr = $scope.defaultQueryParam.humanizedDateRange.split(' - ');
+            $scope.defaultQueryParam.startDate = dateArr[0];
+            $scope.defaultQueryParam.endDate = dateArr[1];
+        }
 
         /********************** FILTER OPTIONS FOR CREATIVES/SITES **********************/
         $scope.hasCampaignFilter = false;
@@ -46,7 +59,7 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         };
         for (var queryName in $scope.queryRoutes) {
             if ($state.current.name === $scope.queryRoutes[queryName]) {
-                $scope.defaultQueryParam.queryName = queryName;
+                $scope.defaultQueryParam.name = queryName;
                 // Set available report settings for different queries
                 if (queryName === 'Time' || queryName === 'Custom') {
                     $scope.availableSettings.dateGroupBy = true;
@@ -57,27 +70,6 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         $scope.goToQuerySection = function(queryName) {
             $state.go($scope.queryRoutes[queryName]);
         };
-
-        /*********************** HISTORY QUERY FROM SIDEBAR ***********************/
-        $scope.historyQuery = $stateParams.query;
-        if ($scope.historyQuery) {
-            // If user entered the query section through entries in analytics-sidebar, $stateParams.query will be the history query that user selected on the sidebar, so reconstruct query request based on the selected history query
-            // Check if the selected query is queried based on date short code
-            var dateShortCodeUsed = false;
-            var humanizedDateRange = $scope.historyQuery.humanizedDateRange;
-            for (var key in aggregationDateRanges(user.tz)) {
-                if (aggregationDateRanges(user.tz)[key].label === humanizedDateRange) {
-                    $scope.summaryDateRangeSelection = key;
-                    dateShortCodeUsed = true;
-                }
-            }
-            if (!dateShortCodeUsed) {
-                // start/end date designated by user manually for this history query
-                var dateArr = humanizedDateRange.split(' - ');
-                $scope.dates.startDate = dateArr[0];
-                $scope.dates.endDate = dateArr[1];
-            }
-        }
 
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showCustomizedQueryResult = function() {

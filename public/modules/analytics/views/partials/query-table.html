@@ -37,9 +37,12 @@
 				</div>
 			</div>
 			<div class="panel-body pt0"
-				ng-if="!isCollapsed">
+				ng-if="!isCollapsed && !isLoading">
 				<hr class="m0">
-				<table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+				<table datatable="ng"
+					dt-options="dtOptions"
+					dt-column-defs="dtColumnDefs"
+					class="row-border hover">
 				    <thead>
 				        <tr>
 				            <th>Clique</th>
@@ -61,6 +64,11 @@
 				    </tr>
 				    </tbody>
 				</table>
+			</div>
+			<!-- Spin Loader -->
+			<div class="panel-body pt0"
+				ng-if="isLoading">
+				<spin-loader></spin-loader>	
 			</div>
 		</div>
 	</div>

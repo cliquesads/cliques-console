@@ -36,10 +36,12 @@ angular.module('analytics').directive('queryTable', [
 					scope.getTableData(queryParam);
 				});
 				scope.getTableData = function(queryParam) {
+					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
 					// query HourlyAdStats endpoint
 					scope.queryFunction(queryParam)
 					.then(function(response) {
+						scope.isLoading = false;
 						scope.tableQueryResults = response.data;
 						// build datatables options object
 						scope.dtOptions = DTOptionsBuilder.newOptions();
@@ -59,6 +61,8 @@ angular.module('analytics').directive('queryTable', [
 						];
 					})
 					.catch(function(error) {
+						scope.isLoading = false;
+
 						Notify.alert('Error on query for table data.');
 					});
 				};

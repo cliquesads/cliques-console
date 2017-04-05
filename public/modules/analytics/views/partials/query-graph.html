@@ -26,12 +26,17 @@
 				</div>
 			</div>
 			<div class="panel-body pt0"
-				ng-if="!isCollapsed">
+				ng-if="!isCollapsed && !isLoading">
 				<hr class="m0">
 				<daily-ad-stats-graph time-series="timeSeries"
 					show-points="showPoints"
 					height="250px">
 				</daily-ad-stats-graph>
+			</div>
+			<!-- Spin Loader -->
+			<div class="panel-body pt0"
+				ng-if="isLoading">
+				<spin-loader></spin-loader>	
 			</div>
 		</div>
 	</div>

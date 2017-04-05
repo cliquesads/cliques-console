@@ -19,7 +19,7 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
  * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
  */
 var validateScheduleString = function(scheduleString) {
-    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7])$/;
+    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5)$/;
     return re.test(scheduleString);
 };
 
@@ -430,13 +430,9 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                if (req.query.hasQueriedBefore === 'false' && req.query.isSaved === 'true') {
+                if (req.query.isSaved === 'true') {
                     // This is NOT a history query that user trying to reconstruct, so save the query as Query model in database
                     var newQuery = new Query(req.query);
-                    if (!newQuery.name) {
-                        // Set default query name if missing
-                        newQuery.name = 'Time';
-                    }
                     var scheduleString = req.query.schedule;
                     var nextRun;
                     if (scheduleString) {

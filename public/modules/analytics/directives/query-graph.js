@@ -7,11 +7,13 @@ angular.module('analytics').directive('queryGraph', [
 	'Analytics',
 	'aggregationDateRanges',
 	'MongoTimeSeries',
+	'Notify',
 	function(
 		$rootScope,
 		Analytics,
 		aggregationDateRanges,
-		MongoTimeSeries
+		MongoTimeSeries,
+		Notify
 	) {
 		'use strict';
 		return {
@@ -31,6 +33,7 @@ angular.module('analytics').directive('queryGraph', [
 					scope.getGraphData(queryParam);
 				});
 				scope.getGraphData = function(queryParam) {
+					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
 
 					// Pass "show-points" to graph directive to toggle line points
@@ -40,6 +43,7 @@ angular.module('analytics').directive('queryGraph', [
 					// query HourlyAdStats api endpoint
 					scope.queryFunction(queryParam)
 					.then(function(response) {
+						scope.isLoading = false;
 						scope.graphQueryResults = response.data;
 						scope.timeSeries = new MongoTimeSeries(
 							response.data,
@@ -60,6 +64,9 @@ angular.module('analytics').directive('queryGraph', [
 								]
 							}
 						);
+					}).catch(function(error) {
+						scope.isLoading = false;
+						Notify.alert('Error on query for graph data.');
 					});
 				};
 				scope.getGraphData(scope.defaultQueryParam);
