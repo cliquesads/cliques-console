@@ -1,0 +1,27 @@
+<div class="row p-lg">
+	<h4>Select additional table fields</h4>
+
+	<!-- Additional table field options -->
+	<div>
+		<ul class="list-group">
+			<li class="list-group-item table-field-list-item"
+				ng-repeat="header in additionalHeaders"
+				ng-click="toggleAdditionalHeader(header)">
+				<span>{{ header }}</span>
+				<span class="pull-right"
+					ng-if="headers.indexOf(header) !== -1">
+					<i class="fa fa-check"></i>
+				</span>
+			</li>
+		</ul>
+	</div>
+
+	<!-- Add button -->
+	<div class="text-right">
+		<button class="btn btn-primary text-md"
+			ng-disabled=""
+			ng-click="finishedSelectingAdditionalHeaders()">
+			Ok	
+		</button>	
+	</div>
+</div>

@@ -46,14 +46,19 @@
     padding-left: 20px;
   }
 }
-.scheduler {
-  .form-control {
-    width: 100%;
-  }
-  .connector {
-    margin-top: 30px;
-  }
-}
 .selected-time-unit {
   background-color: @body-bg;
+}
+.table-field-list-item {
+  cursor: pointer;
+  i {
+    color: @brand-success-light;
+  }
+  &:hover {
+    color: white;
+    background-color: @brand-primary-light;
+    i {
+      color: white;
+    }
+  }
 }

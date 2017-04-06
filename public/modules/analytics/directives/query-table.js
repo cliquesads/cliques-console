@@ -10,6 +10,7 @@ angular.module('analytics').directive('queryTable', [
 	'Notify',
 	'aggregationDateRanges',
 	'Analytics',
+    'ngDialog',
 	function(
 		$rootScope,
 		HourlyAdStat,
@@ -17,7 +18,8 @@ angular.module('analytics').directive('queryTable', [
 		DTColumnDefBuilder,
 		Notify,
 		aggregationDateRanges,
-		Analytics
+		Analytics,
+		ngDialog
 	) {
 		'use strict';
 		return {
@@ -46,9 +48,11 @@ angular.module('analytics').directive('queryTable', [
 						scope.isLoading = false;
 						scope.tableQueryResults = response.data;
 						// Decide default table headers and format/calculate values for each row
-						var tableInfo = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.groupBy);
-						scope.headers = tableInfo.headers;
-						scope.tableQueryResults = tableInfo.rows;
+						var tableHeaders = Analytics.getQueryTableHeaders(scope.queryParam.type);
+						scope.headers = tableHeaders.headers;
+						scope.additionalHeaders = tableHeaders.additionalHeaders;
+
+						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.headers, scope.queryParam.type, scope.queryParam.groupBy);
 
 						// build datatables options object
 						scope.dtOptions = DTOptionsBuilder.newOptions();
@@ -64,7 +68,7 @@ angular.module('analytics').directive('queryTable', [
 						Notify.alert('Error on query for table data.');
 					});
 				};
-				/**************************** EXPORT TO CSV ****************************/
+				/************************* EXPORT TO CSV *************************/
 				scope.exportToCSV = function() {
 				    // Check if there are data to be exported
 				    if (!scope.tableQueryResults) {
@@ -83,8 +87,39 @@ angular.module('analytics').directive('queryTable', [
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });
 				};
+				/********************** SHOW MORE TABLE FIELDS **********************/
+				scope.showMoreTableFields = function() {
+					ngDialog.open({
+						template: 'modules/analytics/views/partials/more-table-fields.html',
+						controller: ['$scope', function($scope) {
+							$scope.headers = scope.headers;
+
+							var parentScope = scope;
+							$scope.additionalHeaders = scope.additionalHeaders;
+
+							$scope.toggleAdditionalHeader = function(header) {
+								parentScope.isLoading = true;
+								
+								var indexOfHeader = $scope.headers.indexOf(header);
+								if (indexOfHeader !== -1) {
+									$scope.headers.splice(indexOfHeader, 1);
+								} else {
+									$scope.headers.push(header);
+								}
+
+								parentScope.tableQueryResults = Analytics.formatQueryTable(parentScope.tableQueryResults, parentScope.headers, parentScope.queryParam.type, parentScope.queryParam.groupBy);
+								parentScope.isLoading = false;
+							};
+
+							$scope.finishedSelectingAdditionalHeaders = function() {
+								$scope.closeThisDialog(0);	
+							};
+						}]
+					});
+				};
+
+				// Initial query when loading
 				scope.getTableData(scope.queryParam);
-				console.log(scope.queryParam);
 			}
 		};
 	}

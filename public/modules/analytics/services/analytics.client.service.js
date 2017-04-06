@@ -141,19 +141,27 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         }
         return queryFunction;
     };
+    var getQueryTableHeaders = function(queryType) {
+        var headers = [queryType];
+        var additionalHeaders;
+        if (user.organization.organization_types.indexOf('networkAdmin') > -1 ||
+            user.organization.organization_types.indexOf('advertiser') > -1) {
+            headers = headers.concat(TABLE_HEADERS['Default Advertiser Metrics']);
+            additionalHeaders = TABLE_HEADERS['Additional Advertiser Metrics'];
+        } else if (user.organization.organization_types.indexOf('publisher') > -1){
+            headers = headers.concat(TABLE_HEADERS['Default Publisher Metrics']);
+            additionalHeaders = TABLE_HEADERS['Additional Publisher Metrics'];
+        }
+        return {
+            headers: headers,
+            additionalHeaders: additionalHeaders
+        };
+    };
     /**
      * Decide default query table headers based on user/organization type,
      * and also calculate field values for each table row
      */
-    var formatQueryTable = function(rows, queryType, groupBy) {
-        var headers = [queryType];
-        if (user.organization.organization_types.indexOf('networkAdmin') > -1 ||
-            user.organization.organization_types.indexOf('advertiser') > -1) {
-            headers = headers.concat(TABLE_HEADERS['Default Advertiser Metrics']);
-        } else if (user.organization.organization_types.indexOf('publisher') > -1){
-            headers = headers.concat(TABLE_HEADERS['Default Publisher Metrics']);
-        }
-
+    var formatQueryTable = function(rows, headers, queryType, groupBy) {
         rows.forEach(function(row) {
             row[queryType] = row._id[groupBy];
 
@@ -194,7 +202,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : 'NaN';
             }
             if (headers.indexOf('CPAC') !== -1) {
-                row.CPAV = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : 'NaN';
+                row.CPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : 'NaN';
             }
             if (headers.indexOf('CPA') !== -1) {
                 row.CPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
@@ -221,10 +229,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
             }
         });
-        return {
-            headers: headers,
-            rows: rows
-        };
+        return rows;
     };
 
     return {
@@ -237,6 +242,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         getAllSites: getAllSites,
         getAllCampaigns: getAllCampaigns,
         queryFunction: queryFunction,
+        getQueryTableHeaders: getQueryTableHeaders, 
         formatQueryTable: formatQueryTable 
     };
 }]);

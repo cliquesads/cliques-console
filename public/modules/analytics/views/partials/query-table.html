@@ -13,7 +13,16 @@
 								</em>
 							</small>
 						</div>
-						<div class="col-sm-2 col-sm-offset-3">
+						<!-- More data fields dropdown -->
+						<div class="col-sm-2">
+							<button class="btn btn-default btn-block text-md"
+								type="button"
+								ng-click="showMoreTableFields()">
+								Show more table fields
+							</button>
+						</div>
+						<!-- Export to CSV button -->
+						<div class="col-sm-2 col-sm-offset-1">
 							<button class="btn btn-primary btn-block text-md"
 								ng-click="exportToCSV()"
 								file-download="downloadFileBlob"
@@ -43,7 +52,6 @@
 				<hr class="m0">
 				<table datatable="ng"
 					dt-options="dtOptions"
-					dt-column-defs="dtColumnDefs"
 					class="row-border hover">
 				    <thead>
 				        <tr>
@@ -51,9 +59,9 @@
 				        </tr>
 				    </thead>
 				    <tbody>
-				    <tr ng-repeat="row in tableQueryResults">
-					    <td ng-repeat="header in headers">{{ row[header] }}</td>
-				    </tr>
+					    <tr ng-repeat="row in tableQueryResults">
+						    <td ng-repeat="header in headers">{{ row[header] }}</td>
+					    </tr>
 				    </tbody>
 				</table>
 			</div>
