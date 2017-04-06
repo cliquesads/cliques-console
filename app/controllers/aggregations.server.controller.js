@@ -419,7 +419,9 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                         spend: {$sum: "$spend"},
                         clicks: {$sum: "$clicks"},
                         view_convs: {$sum: "$view_convs"},
-                        click_convs: {$sum: "$click_convs"}
+                        click_convs: {$sum: "$click_convs"},
+
+                        uniques: {$sum: "$uniques"} 
                     }
                 }
             ]);
@@ -429,56 +431,43 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
-            } else {
-                if (req.query.isSaved === 'true') {
-                    // This is NOT a history query that user trying to reconstruct, so save the query as Query model in database
-                    var newQuery = new Query(req.query);
-                    var scheduleString = req.query.schedule;
-                    var nextRun;
-                    if (scheduleString) {
-                        // validate schedule string
-                        if (!validateScheduleString(scheduleString)) {
-                            return res.status(400).send({
-                                message: 'Illegal schedule string'
-                            });
-                        }
-                        var parser = require('cron-parser');
-                        var interval = parser.parseExpression(scheduleString);
-                        nextRun = new Date(interval.next().toString());
+            }
+            if (req.query.isSaved === 'true') {
+                // A query that should be saved to database
+                var newQuery = new Query(req.query);
+                var scheduleString = req.query.schedule;
+                var nextRun;
+                if (scheduleString) {
+                    // validate schedule string
+                    if (!validateScheduleString(scheduleString)) {
+                        return res.status(400).send({
+                            message: 'Illegal schedule string'
+                        });
                     }
-                    newQuery.user = req.user._id;
-                    if (nextRun) {
-                        // Save the next datetime this periodic query will be run
-                        newQuery.nextRun = nextRun;
+                    var parser = require('cron-parser');
+                    var interval = parser.parseExpression(scheduleString);
+                    nextRun = new Date(interval.next().toString());
+                }
+                newQuery.user = req.user._id;
+                if (nextRun) {
+                    // Save the next datetime this periodic query will be run
+                    newQuery.nextRun = nextRun;
+                }
+                // Check if this query has filters
+                if (req.query.advertiser) {
+                    newQuery.filters = formFilters(req.query.advertiser, 'advertiser');
+                } else if (req.query.publisher) {
+                    newQuery.filters = formFilters(req.query.publisher, 'publisher');
+                }
+                newQuery.save(function(err) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: 'Error saving query'
+                        });
                     }
-                    // Check if this query has filters
-                    if (req.query.advertiser) {
-                        newQuery.filters = formFilters(req.query.advertiser, 'advertiser');
-                    } else if (req.query.publisher) {
-                        newQuery.filters = formFilters(req.query.publisher, 'publisher');
-                    }
-                    newQuery.save(function(err) {
-                        if (err) {
-                            return res.status(400).send({
-                                message: 'Error saving query'
-                            });
-                        }
-                        // catch populate query param here and call model populate
-                        // NOTE: Can only pass populate for object in 'group' object
-                        // otherwise this will throw out the populate param
-                        if (req.query.populate){
-                            self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
-                                if (err) {
-                                    return res.status(400).send({ message: err });
-                                }
-                                return res.json(results);
-                            });
-                        } else {
-                            return res.json(hourlyAdStats);
-                        }
-                    });
-                } else {
-                    // A history query, DON'T save to database
+                    // catch populate query param here and call model populate
+                    // NOTE: Can only pass populate for object in 'group' object
+                    // otherwise this will throw out the populate param
                     if (req.query.populate){
                         self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
                             if (err) {
@@ -489,6 +478,18 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                     } else {
                         return res.json(hourlyAdStats);
                     }
+                });
+            } else {
+                // Query that doesn't required to save in database
+                if (req.query.populate) {
+                    self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
+                        if (err) {
+                            return res.status(400).send({ message: err });
+                        }
+                        return res.json(results);
+                    });
+                } else {
+                    return res.json(hourlyAdStats);
                 }
             }
         });

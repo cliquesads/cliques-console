@@ -2,7 +2,7 @@
 'use strict';
 
 // Export csv transforms object/array to csv data blob
-angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', function($http, HourlyAdStat) {
+angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$filter', 'TABLE_HEADERS', function($http, HourlyAdStat, $filter, TABLE_HEADERS) {
 	var getCSVFileName = function() {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
         return asOfDate + '_report.csv';
@@ -44,26 +44,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', funct
         var csvString = headers.join(',');
         csvString += '\n';
 
-        var fillRate = function(row) {
-            return ((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%';
-        };
-
-        var CTR = function(row) {
-            return ((row.clicks / row.imps) * 100).toFixed(3) + '%';
-        };
-
-        var CPM = function(row) {
-            return '$' + ((row.spend / row.imps) * 1000).toFixed(2);
-        };
-
-        var formatRow = function(row) {
-            row.CPM = CPM(row);
-            row.spend = '$' + row.spend.toFixed(2);
-            row.fillRate = fillRate(row);
-            row.CTR = CTR(row);
-            return row;
-        };
-
         var sortByDate = function(a, b) {
             var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
             var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
@@ -73,33 +53,13 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', funct
         // sort rows by date
         rows = rows.sort(sortByDate);
 
-        // calculate totals, store in separate object
-        var totals = {
-            imps: _.sumBy(rows, function(r) {
-                return r.imps;
-            }),
-            defaults: _.sumBy(rows, function(r) {
-                return r.defaults;
-            }),
-            spend: _.sumBy(rows, function(r) {
-                return r.spend;
-            }),
-            clicks: _.sumBy(rows, function(r) {
-                return r.clicks;
-            })
-        };
-        totals = formatRow(totals);
-
         // Now calculate derived fields and format (template engine
         // doesn't handle formatting filters)
 
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
-            row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            if (row._id.placement) {
-                row.placement = row._id.placement.name;
-            }
-            formatRow(row);
+            row.Time = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+
             // write to csv as well, only picking headers passed in
             var rowObject = _.pick(row, headers);
             var csvRow = '';
@@ -181,6 +141,91 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', funct
         }
         return queryFunction;
     };
+    /**
+     * Decide default query table headers based on user/organization type,
+     * and also calculate field values for each table row
+     */
+    var formatQueryTable = function(rows, queryType, groupBy) {
+        var headers = [queryType];
+        if (user.organization.organization_types.indexOf('networkAdmin') > -1 ||
+            user.organization.organization_types.indexOf('advertiser') > -1) {
+            headers = headers.concat(TABLE_HEADERS['Default Advertiser Metrics']);
+        } else if (user.organization.organization_types.indexOf('publisher') > -1){
+            headers = headers.concat(TABLE_HEADERS['Default Publisher Metrics']);
+        }
+
+        rows.forEach(function(row) {
+            row[queryType] = row._id[groupBy];
+
+            if (headers.indexOf('Impressions') !== -1) {
+                row.Impressions = $filter('number')(row.imps, 0);
+            }
+            if (headers.indexOf('Spend') !== -1) {
+                row.Spend = $filter('currency')(row.spend, '$', 0);
+            }
+            if (headers.indexOf('CPM') !== -1) {
+                row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 0) : 'NaN';
+            }
+            if (headers.indexOf('CTR') !== -1) {
+                row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): 'NaN';
+            }
+            if (headers.indexOf('Total Actions') !== -1) {
+                row['Total Actions'] = $filter('number')(row.view_convs + row.click_convs, 0);
+            }
+            if (headers.indexOf('Clicks') !== -1) {
+                row.Clicks = row.clicks;
+            }
+            if (headers.indexOf('CPC') !== -1) {
+                row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('Bids') !== -1) {
+                row.Bids = row.bids;
+            }
+            if (headers.indexOf('Uniques') !== -1) {
+                row.Uniques = row.uniques;
+            }
+            if (headers.indexOf('View-Through Actions') !== -1) {
+                row['View-Through Actions'] = $filter('number')(row.view_convs, 0);
+            }
+            if (headers.indexOf('Click-Through Actions') !== -1) {
+                row['Click-Through Actions'] = $filter('number')(row.click_convs, 0);
+            }
+            if (headers.indexOf('CPAV') !== -1) {
+                row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('CPAC') !== -1) {
+                row.CPAV = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('CPA') !== -1) {
+                row.CPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('RPM') !== -1) {
+                row.RPM = row.imps ? row.spend / row.imps * 1000 : 'NaN';
+            }
+            if (headers.indexOf('Defaults') !== -1) {
+                row.Defaults = row.defaults;
+            }
+            if (headers.indexOf('RPAV') !== -1) {
+                row.RPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('RPAC') !== -1) {
+                row.RPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('RPA') !== -1) {
+                row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
+            }
+            if (headers.indexOf('Fill Rate') !== -1) {
+                row['Fill Rate'] = row.defaults ? row.imps / row.defaults : 'NaN';
+            }
+            if (headers.indexOf('RPC') !== -1) {
+                row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
+            }
+        });
+        return {
+            headers: headers,
+            rows: rows
+        };
+    };
 
     return {
         generateCSVData: generateCSVData,
@@ -191,6 +236,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', funct
         formCronTaskString: formCronTaskString,
         getAllSites: getAllSites,
         getAllCampaigns: getAllCampaigns,
-        queryFunction: queryFunction
+        queryFunction: queryFunction,
+        formatQueryTable: formatQueryTable 
     };
 }]);

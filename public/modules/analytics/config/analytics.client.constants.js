@@ -126,4 +126,44 @@ angular.module('analytics')
         'Every Friday': ' * * 5',
         'Every Saturday': ' * * 6',
         'Every Sunday': ' * * 7'
+    })
+    .constant('TABLE_HEADERS', {
+        'Default Advertiser Metrics': [
+            'Impressions',
+            'Spend',
+            'CPM',
+            'Clicks',
+            'CPC',
+            'CTR',
+            'Total Actions',
+        ],
+        'Additional Advertiser Metrics': [
+            'Bids',
+            'Uniques',
+            'Win Rate',
+            'View-Through Actions',
+            'Click-Through Actions',
+            'CPAV',
+            'CPAC',
+            'CPA'
+        ],
+        'Default Publisher Metrics': [
+            'Impressions',
+            'Revenue',
+            'RPM',
+            'Defaults',
+            'Fill Rate',
+            'Clicks',
+            'RPC',
+            'CTR',
+            'Total Actions'
+        ],
+        'Additional Publisher Metrics': [
+            'Uniques',
+            'View-Through Actions',
+            'Click-Through Actions',
+            'RPAV',
+            'RPAC',
+            'RPA'
+        ]
     });

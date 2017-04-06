@@ -1,6 +1,7 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="panel panel-default mt">
+			<!-- Heading & buttons -->
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
@@ -36,6 +37,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- Table -->
 			<div class="panel-body pt0"
 				ng-if="!isCollapsed && !isLoading">
 				<hr class="m0">
@@ -45,22 +47,12 @@
 					class="row-border hover">
 				    <thead>
 				        <tr>
-				            <th>{{ queryParam.groupBy }}</th>
-				            <th>Impressions</th>
-				            <th>Spend</th>
-				            <th>Avg. CPM</th>
-				            <th>CTR</th>
-				            <th>Actions</th>
+				        	<th ng-repeat="header in headers">{{ header }}</th>
 				        </tr>
 				    </thead>
 				    <tbody>
 				    <tr ng-repeat="row in tableQueryResults">
-				    <td>{{ row._id[queryParam.groupBy] }}</td>
-				        <td>{{ row.imps | number: 0 }}</td>
-				        <td>{{ row.spend | currency:"$":"0" }}</td>
-				        <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-				        <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-				        <td>{{ row.view_convs + row.click_convs }}</td>
+					    <td ng-repeat="header in headers">{{ row[header] }}</td>
 				    </tr>
 				    </tbody>
 				</table>

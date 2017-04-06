@@ -32,6 +32,7 @@ angular.module('analytics').directive('queryTable', [
 				scope.isCollapsed = false;
 			    scope.user = user;
 			    scope.queryFunction = Analytics.queryFunction();
+			    // Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
 					scope.getTableData(scope.queryParam);
@@ -44,6 +45,11 @@ angular.module('analytics').directive('queryTable', [
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.tableQueryResults = response.data;
+						// Decide default table headers and format/calculate values for each row
+						var tableInfo = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.groupBy);
+						scope.headers = tableInfo.headers;
+						scope.tableQueryResults = tableInfo.rows;
+
 						// build datatables options object
 						scope.dtOptions = DTOptionsBuilder.newOptions();
 						scope.dtOptions.withOption('paging', false);
@@ -52,18 +58,9 @@ angular.module('analytics').directive('queryTable', [
 						scope.dtOptions.withOption('order', [
 							[1, 'desc']
 						]);
-						scope.dtColumnDefs = [
-							DTColumnDefBuilder.newColumnDef(0),
-							DTColumnDefBuilder.newColumnDef(1),
-							DTColumnDefBuilder.newColumnDef(2),
-							DTColumnDefBuilder.newColumnDef(3),
-							DTColumnDefBuilder.newColumnDef(4),
-							DTColumnDefBuilder.newColumnDef(5)
-						];
 					})
 					.catch(function(error) {
 						scope.isLoading = false;
-
 						Notify.alert('Error on query for table data.');
 					});
 				};
@@ -77,8 +74,9 @@ angular.module('analytics').directive('queryTable', [
 				        Notify.alert('No data to export');
 				        return;
 				    }
+
 				    // download on the frontend
-				    var blobStringForCSV = Analytics.generateCSVData(['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'], scope.tableQueryResults);
+				    var blobStringForCSV = Analytics.generateCSVData(scope.headers, scope.tableQueryResults);
 
 				    scope.downloadFileName = Analytics.getCSVFileName();
 				    scope.downloadFileBlob = new Blob([blobStringForCSV], {
@@ -86,6 +84,7 @@ angular.module('analytics').directive('queryTable', [
 				    });
 				};
 				scope.getTableData(scope.queryParam);
+				console.log(scope.queryParam);
 			}
 		};
 	}
