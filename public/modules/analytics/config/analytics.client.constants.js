@@ -128,42 +128,172 @@ angular.module('analytics')
         'Every Sunday': ' * * 7'
     })
     .constant('TABLE_HEADERS', {
-        'Default Advertiser Metrics': [
-            'Impressions',
-            'Spend',
-            'CPM',
-            'Clicks',
-            'CPC',
-            'CTR',
-            'Total Actions',
+        'advertiser': [
+            {
+                index: 1,
+                name: 'Impressions',
+                type: 'default'
+            },
+            {
+                index: 2,
+                name: 'Spend',
+                type: 'default'
+            },
+            { 
+                index: 3,
+                name: 'CPM',
+                type: 'default'
+            },
+            {
+                index: 4,
+                name: 'Clicks',
+                type: 'default'
+            },
+            {
+                index: 5,
+                name: 'CPC',
+                type: 'default'
+            },
+            {
+                index: 6,
+                name: 'CTR',
+                type: 'default'
+            },
+            {
+                index: 7,
+                name: 'Total Actions',
+                type: 'default'
+            },
+            {
+                index: 8,
+                name: 'Bids',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 9,
+                name: 'Uniques',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 10,
+                name: 'Win Rate',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 11,
+                name: 'View-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 12,
+                name: 'Click-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 13,
+                name: 'CPAV',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 14,
+                name: 'CPAC',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 15,
+                name: 'CPA',
+                type: 'additional',
+                selected: false
+            }
         ],
-        'Additional Advertiser Metrics': [
-            'Bids',
-            'Uniques',
-            'Win Rate',
-            'View-Through Actions',
-            'Click-Through Actions',
-            'CPAV',
-            'CPAC',
-            'CPA'
-        ],
-        'Default Publisher Metrics': [
-            'Impressions',
-            'Revenue',
-            'RPM',
-            'Defaults',
-            'Fill Rate',
-            'Clicks',
-            'RPC',
-            'CTR',
-            'Total Actions'
-        ],
-        'Additional Publisher Metrics': [
-            'Uniques',
-            'View-Through Actions',
-            'Click-Through Actions',
-            'RPAV',
-            'RPAC',
-            'RPA'
+        'publisher': [
+            {
+                index: 1,
+                name: 'Impressions',
+                type: 'default'
+            },
+            {
+                index: 2,
+                name: 'Revenue',
+                type: 'default'
+            },
+            {
+                index: 3,
+                name: 'RPM',
+                type: 'default'
+            },
+            {
+                index: 4,
+                name: 'Defaults',
+                type: 'default'
+            },
+            {
+                index: 5,
+                name: 'Fill Rate',
+                type: 'default'
+            },
+            {
+                index: 6,
+                name: 'Clicks',
+                type: 'default'
+            },
+            {
+                index: 7,
+                name: 'RPC',
+                type: 'default'
+            },
+            {
+                index: 8,
+                name: 'CTR',
+                type: 'default'
+            },
+            {
+                index: 9,
+                name: 'Total Actions',
+                type: 'default'
+            },
+            {
+                index: 10,
+                name: 'Uniques',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 11,
+                name: 'View-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 12,
+                name: 'Click-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 13,
+                name: 'RPAV',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 14,
+                name: 'RPAC',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 15,
+                name: 'RPA',
+                type: 'additional',
+                selected: false
+            }
         ]
     });

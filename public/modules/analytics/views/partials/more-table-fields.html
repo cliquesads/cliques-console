@@ -5,11 +5,12 @@
 	<div>
 		<ul class="list-group">
 			<li class="list-group-item table-field-list-item"
-				ng-repeat="header in additionalHeaders"
+				ng-repeat="header in headers track by header.index"
+				ng-if="header.type === 'additional'"
 				ng-click="toggleAdditionalHeader(header)">
-				<span>{{ header }}</span>
+				<span>{{ header.name }}</span>
 				<span class="pull-right"
-					ng-if="headers.indexOf(header) !== -1">
+					ng-if="header.selected === true">
 					<i class="fa fa-check"></i>
 				</span>
 			</li>
