@@ -74,6 +74,17 @@ angular.module('analytics').directive('reportSettings', [
                 				};
                 				$scope.saveQuery = function() {
 									$scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
+                                    // Post query param to backend
+                                    Analytics.saveQuery($scope.selectedSettings)
+                                    .then(function(response) {
+                                        // Notify that this query has been saved and inform other directives the saved query id
+                                        $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
+                                    })
+                                    .catch(function(error) {
+                                        Notify.alert(error.message, {
+                                            status: 'danger'
+                                        });
+                                    });
 									$scope.closeThisDialog(0);
                 				};
                 			}]
@@ -98,10 +109,7 @@ angular.module('analytics').directive('reportSettings', [
                     }
                     scope.selectedSettings.humanizedDateRange = scope.humanizedDateRange;
 					// Send broadcast message to notify query graph/table directive to launch query
-					$rootScope.$broadcast('launchQuery', {
-						queryParam: scope.selectedSettings,
-                        humanizedDateRange: scope.humanizedDateRange
-					});
+					$rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
                 };
             }
         };

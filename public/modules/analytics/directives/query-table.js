@@ -35,6 +35,10 @@ angular.module('analytics').directive('queryTable', [
 					scope.queryParam = args.queryParam;
 					scope.getTableData(scope.queryParam);
 				});
+				// Listen to broadcast message when query is saved to the backend
+				scope.$on('querySaved', function(event, args) {
+					scope.savedQueryId = args.savedQueryId;
+				});
 				/**
 				 * Make query and display query results
 				 */
@@ -95,11 +99,9 @@ angular.module('analytics').directive('queryTable', [
 							// Remove format characters and convert string to number so as to compare
 							aValue = aValue.replace('$', '');
 							aValue = aValue.replace('%', '');
-							aValue = aValue.replace(',', '');
 
 							bValue = bValue.replace('$', '');
 							bValue = bValue.replace('%', '');
-							bValue = bValue.replace(',', '');
 
 							aValue = Number(aValue);
 							bValue = Number(bValue);
@@ -150,13 +152,20 @@ angular.module('analytics').directive('queryTable', [
 						controller: ['$scope', function($scope) {
 							$scope.headers = scope.headers;
 							var parentScope = scope;
-
 							$scope.toggleAdditionalHeader = function(header) {
 								header.selected = !header.selected;
 							};
-
 							$scope.finishedSelectingAdditionalHeaders = function() {
-								// TO-DO:::ycx should send the user selected additional headers to the backend in order to save in database
+								if (parentScope.savedQueryId) {
+									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
+									var selectedAdditionalHeaders = [];
+									$scope.headers.forEach(function(header) {
+										if (header.selected === true) {
+											selectedAdditionalHeaders.push(header.name);
+										}
+									});
+									Analytics.saveAdditionalSelectedHeaders(selectedAdditionalHeaders, parentScope.savedQueryId);
+								}
 								$scope.closeThisDialog(0);	
 							};
 						}]

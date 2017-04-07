@@ -82,6 +82,15 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
     var getAllCampaigns = function() {
         return $http.get('/console/analytics/getAllCampaigns');
     };
+    var saveQuery = function(queryParam) {
+        return $http.post('/console/analytics/save', {queryParam: queryParam});
+    };
+    var saveAdditionalSelectedHeaders = function(selectedAdditionalHeaders, queryId) {
+        return $http.post('/console/analytics/saveAdditionalSelectedHeaders', {
+            selectedAdditionalHeaders: selectedAdditionalHeaders,
+            queryId: queryId
+        });
+    };
     var queryFunction = function() {
         var queryFunction;
         /**
@@ -122,17 +131,17 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         rows.forEach(function(row) {
             row[queryType] = row._id[groupBy];
 
-            row.Impressions = $filter('number')(row.imps, 0);
+            row.Impressions = row.imps;
             row.Spend = $filter('currency')(row.spend, '$', 0);
             row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 0) : 'NaN';
             row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): 'NaN';
-            row['Total Actions'] = $filter('number')(row.view_convs + row.click_convs, 0);
+            row['Total Actions'] = row.view_convs + row.click_convs;
             row.Clicks = row.clicks;
             row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
             row.Bids = row.bids;
             row.Uniques = row.uniques;
-            row['View-Through Actions'] = $filter('number')(row.view_convs, 0);
-            row['Click-Through Actions'] = $filter('number')(row.click_convs, 0);
+            row['View-Through Actions'] = row.view_convs;
+            row['Click-Through Actions'] = row.click_convs;
             row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : 'NaN';
             row.CPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : 'NaN';
             row.CPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
@@ -154,6 +163,8 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         getMyQueries: getMyQueries,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
+        saveQuery: saveQuery,
+        saveAdditionalSelectedHeaders: saveAdditionalSelectedHeaders,
         getAllSites: getAllSites,
         getAllCampaigns: getAllCampaigns,
         queryFunction: queryFunction,

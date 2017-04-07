@@ -69,4 +69,36 @@ module.exports = function(db, routers) {
 		 *
 		 */
 		.get(analytics.getAllCampaigns);
+
+	router.route('/analytics/save')
+		/**
+		 * @api {get} /analytics/save save query in database
+		 * @apiName saveQuery
+		 * @apiGroup - 
+		 * @apiDescription save query in database
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiParam -
+		 * @apiSuccess String saved query ObjectId
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.post(analytics.save);
+
+	router.route('/analytics/saveAdditionalSelectedHeaders')
+		/**
+		 * @api {get} /analytics/saveAdditionalSelectedHeaders save additional headers selected by user for specific query
+		 * @apiName saveAdditionalSelectedHeaders
+		 * @apiGroup - 
+		 * @apiDescription save additional headers selected by user for specific query
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiParam -
+		 * @apiSuccess -
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.post(analytics.saveAdditionalSelectedHeaders);
 };

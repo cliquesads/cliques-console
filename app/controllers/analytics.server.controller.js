@@ -12,11 +12,135 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 
 var itemsPerPage = 25;
 
+/**
+ * Validates the schedule string before saving query model to database.
+ *
+ * A valid schedule string should have the following format:
+ * '* * * * * *'
+ * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
+ */
+var validateScheduleString = function(scheduleString) {
+    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5)$/;
+    return re.test(scheduleString);
+};
+
+/**
+ * Based on filter_query parameter, this function prepares the `filters` array when saving query
+ * filterParam @param string
+ * entityType @param string
+ * For instance, filterParam with req.query.advertiser = '{in}123,456'
+ * becomes the following filters array:
+ * ['advertiser123, advertiser456'] 
+ */
+var formFilters = function(filterParam, entityType) {
+    var filters = [];
+    var entityIds = [];
+    if (filterParam.lastIndexOf('{in}', 0) === 0) {
+        entityIds = filterParam.replace('{in}', '').split(',');
+    } else {
+        entityIds.push(filterParam);
+    }
+    for (var i = 0; i < entityIds.length; i ++) {
+        filters.push(entityType + entityIds[i]);
+    }
+    return filters;
+};
+
 module.exports = function(db) {
 	var advertiserModels = new models.AdvertiserModels(db);
 	var publisherModels = new models.PublisherModels(db);
+	advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
+	publisherModels.Publisher.promisifiedFind = promise.promisify(publisherModels.Publisher.find);
 
 	return {
+		/**
+		 * Save query
+		 */
+		save: function(req, res) {
+			var newQuery = new Query(req.body.queryParam);
+
+			var scheduleString = newQuery.schedule;
+			var nextRun;
+			if (scheduleString) {
+			    // validate schedule string
+			    if (!validateScheduleString(scheduleString)) {
+			        return res.status(400).send({
+			            message: 'Illegal schedule string'
+			        });
+			    }
+			    var parser = require('cron-parser');
+			    var interval = parser.parseExpression(scheduleString);
+			    nextRun = new Date(interval.next().toString());
+			}
+			newQuery.user = req.user._id;
+			if (nextRun) {
+			    // Save the next datetime this periodic query will be run
+			    newQuery.nextRun = nextRun;
+			}
+			// If user is NOT networkAdmin, this query should be filtered by the user's advertisers/publishers
+			if (!newQuery.filters) {
+				newQuery.filters = [];	
+			}
+			return promise.resolve()
+			.then(function() {
+				if (req.user.organization.organization_types.indexOf('advertiser') !== -1) {
+					return advertiserModels.Advertiser.promisifiedFind({
+						organization: req.user.organization.id
+					})
+					.then(function(advertisers) {
+						advertisers.forEach(function(advertiser) {
+							newQuery.filters.push('advertiser' + advertiser._id);
+						});
+					});
+				} else if (req.user.organization.organization_types.indexOf('publisher') !== -1) {
+					return publisherModels.Publisher.promisifiedFind({
+						organization: req.user.organization.id
+					})
+					.then(function(publishers) {
+						publishers.forEach(function(publisher) {
+							newQuery.filters.push('publisher' + publisher._id);
+						});
+					});
+				} else {
+					return promise.resolve();
+				}
+			})
+			.then(function() {
+				newQuery.save(function(err) {
+					if (err) {
+						return res.status(400).send({
+							message: 'Error saving query'
+						});
+					}
+					return res.send(newQuery._id);
+				});
+			})
+			.catch(function(err) {
+				return res.status(400).send({ message: err });
+			});
+		},
+		/**
+		 * Save user selected additional query table headers
+		 */
+		saveAdditionalSelectedHeaders: function(req, res) {
+			var selectedAdditionalHeaders = req.body.selectedAdditionalHeaders;
+			var queryId = req.body.queryId;
+
+			Query.findOne({
+				_id: queryId
+			}, function(err, query) {
+				if (err) {
+					return res.status(400).send({ message: err });
+				}
+				query.additionalHeaders = selectedAdditionalHeaders;
+				query.save(function(err) {
+					if (err) {
+						return res.status(400).send({ message: err });
+					}
+					return res.send('');
+				});
+			});
+		},
 		/**
 		 * Get recent quick queries for current user
 		 */
@@ -93,7 +217,6 @@ module.exports = function(db) {
 		getAllSites: function (req, res) {
 			var organizationId = req.user.organization._id;	
 			var allSites = [];
-			publisherModels.Publisher.promisifiedFind = promise.promisify(publisherModels.Publisher.find);
 			publisherModels.Publisher.promisifiedFind({
 				organization: organizationId
 			})
@@ -118,7 +241,6 @@ module.exports = function(db) {
 		getAllCampaigns: function (req, res) {
 			var organizationId = req.user.organization._id;
 			var allCampaigns = [];
-			advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
 			advertiserModels.Advertiser.promisifiedFind({
 				organization: organizationId
 			})

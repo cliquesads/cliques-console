@@ -12,40 +12,6 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
     moment = require('moment-timezone');
 
 /**
- * Validates the schedule string before saving query model to database.
- *
- * A valid schedule string should have the following format:
- * '* * * * * *'
- * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
- */
-var validateScheduleString = function(scheduleString) {
-    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5)$/;
-    return re.test(scheduleString);
-};
-
-/**
- * Based on filter_query parameter, this function prepares the `filters` array when saving query
- * filterParam @param string
- * entityType @param string
- * For instance, filterParam with req.query.advertiser = '{in}123,456'
- * becomes the following filters array:
- * ['advertiser123, advertiser456'] 
- */
-var formFilters = function(filterParam, entityType) {
-    var filters = [];
-    var entityIds = [];
-    if (filterParam.lastIndexOf('{in}', 0) === 0) {
-        entityIds = filterParam.replace('{in}', '').split(',');
-    } else {
-        entityIds.push(filterParam);
-    }
-    for (var i = 0; i < entityIds.length; i ++) {
-        filters.push(entityType + entityIds[i]);
-    }
-    return filters;
-};
-
-/**
  * Constructor for PipelineVarsBuilder object, which translates API request
  * path params into MongoDB Aggregation Pipeline-compatible objects.
  *
@@ -432,65 +398,16 @@ HourlyAdStatAPI.prototype._getManyWrapper = function(pipelineBuilder) {
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             }
-            if (req.query.isSaved === 'true') {
-                // A query that should be saved to database
-                var newQuery = new Query(req.query);
-                var scheduleString = req.query.schedule;
-                var nextRun;
-                if (scheduleString) {
-                    // validate schedule string
-                    if (!validateScheduleString(scheduleString)) {
-                        return res.status(400).send({
-                            message: 'Illegal schedule string'
-                        });
-                    }
-                    var parser = require('cron-parser');
-                    var interval = parser.parseExpression(scheduleString);
-                    nextRun = new Date(interval.next().toString());
-                }
-                newQuery.user = req.user._id;
-                if (nextRun) {
-                    // Save the next datetime this periodic query will be run
-                    newQuery.nextRun = nextRun;
-                }
-                // Check if this query has filters
-                if (req.query.advertiser) {
-                    newQuery.filters = formFilters(req.query.advertiser, 'advertiser');
-                } else if (req.query.publisher) {
-                    newQuery.filters = formFilters(req.query.publisher, 'publisher');
-                }
-                newQuery.save(function(err) {
+            // Query that doesn't required to save in database
+            if (req.query.populate) {
+                self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
                     if (err) {
-                        return res.status(400).send({
-                            message: 'Error saving query'
-                        });
+                        return res.status(400).send({ message: err });
                     }
-                    // catch populate query param here and call model populate
-                    // NOTE: Can only pass populate for object in 'group' object
-                    // otherwise this will throw out the populate param
-                    if (req.query.populate){
-                        self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
-                            if (err) {
-                                return res.status(400).send({ message: err });
-                            }
-                            return res.json(results);
-                        });
-                    } else {
-                        return res.json(hourlyAdStats);
-                    }
+                    return res.json(results);
                 });
             } else {
-                // Query that doesn't required to save in database
-                if (req.query.populate) {
-                    self._populate(req.query.populate, hourlyAdStats, group, function(err, results){
-                        if (err) {
-                            return res.status(400).send({ message: err });
-                        }
-                        return res.json(results);
-                    });
-                } else {
-                    return res.json(hourlyAdStats);
-                }
+                return res.json(hourlyAdStats);
             }
         });
     };
