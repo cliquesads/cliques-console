@@ -46,13 +46,12 @@ angular.module('analytics').directive('queryTable', [
 					.then(function(response) {
 						scope.isLoading = false;
 
-						var sortByDate = function(a, b) {
+						// sort rows by date
+						scope.tableQueryResults = response.data.sort(function(a, b) {
 						    var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
 						    var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
 						    return aDate - bDate;
-						};
-						// sort rows by date
-						scope.tableQueryResults = response.data.sort(sortByDate);
+						});
 
 						// Decide default table headers and format/calculate values for each row
 						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type);
@@ -157,6 +156,7 @@ angular.module('analytics').directive('queryTable', [
 							};
 
 							$scope.finishedSelectingAdditionalHeaders = function() {
+								// TO-DO:::ycx should send the user selected additional headers to the backend in order to save in database
 								$scope.closeThisDialog(0);	
 							};
 						}]

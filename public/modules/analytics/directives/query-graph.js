@@ -32,6 +32,19 @@ angular.module('analytics').directive('queryGraph', [
 					var queryParam = args.queryParam;
 					scope.getGraphData(queryParam);
 				});
+
+				var fields = [
+					'imps',
+					{
+						'CTR': function(row) { return row.clicks / row.imps; }
+					},
+					'clicks',
+					'spend'
+				];
+				// Graph showing data may vary depending on user type
+				if (user.organization.organization_types.indexOf('publisher') > -1) {
+					fields = ['imps', 'defaults', 'clicks', 'spend'];
+				}
 				scope.getGraphData = function(queryParam) {
 					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
@@ -51,18 +64,7 @@ angular.module('analytics').directive('queryGraph', [
 							queryParam.endDate,
 							user.tz,
 							queryParam.dateGroupBy,
-							{
-								fields: [
-									'imps',
-									{
-										'CTR': function(row) {
-											return row.clicks / row.imps;
-										}
-									},
-									'clicks',
-									'spend'
-								]
-							}
+							{fields: fields}
 						);
 					}).catch(function(error) {
 						scope.isLoading = false;
