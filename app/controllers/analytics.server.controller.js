@@ -24,28 +24,6 @@ var validateScheduleString = function(scheduleString) {
     return re.test(scheduleString);
 };
 
-/**
- * Based on filter_query parameter, this function prepares the `filters` array when saving query
- * filterParam @param string
- * entityType @param string
- * For instance, filterParam with req.query.advertiser = '{in}123,456'
- * becomes the following filters array:
- * ['advertiser123, advertiser456'] 
- */
-var formFilters = function(filterParam, entityType) {
-    var filters = [];
-    var entityIds = [];
-    if (filterParam.lastIndexOf('{in}', 0) === 0) {
-        entityIds = filterParam.replace('{in}', '').split(',');
-    } else {
-        entityIds.push(filterParam);
-    }
-    for (var i = 0; i < entityIds.length; i ++) {
-        filters.push(entityType + entityIds[i]);
-    }
-    return filters;
-};
-
 module.exports = function(db) {
 	var advertiserModels = new models.AdvertiserModels(db);
 	var publisherModels = new models.PublisherModels(db);
