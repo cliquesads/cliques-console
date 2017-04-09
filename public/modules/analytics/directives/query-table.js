@@ -37,7 +37,7 @@ angular.module('analytics').directive('queryTable', [
 				});
 				// Listen to broadcast message when query is saved to the backend
 				scope.$on('querySaved', function(event, args) {
-					scope.savedQueryId = args.savedQueryId;
+					scope.queryParam.savedQueryId = args.savedQueryId;
 				});
 				/**
 				 * Make query and display query results
@@ -58,7 +58,7 @@ angular.module('analytics').directive('queryTable', [
 						});
 
 						// Decide default table headers and format/calculate values for each row
-						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type);
+						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.additionalHeaders);
 
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.groupBy);
 					})
@@ -156,7 +156,7 @@ angular.module('analytics').directive('queryTable', [
 								header.selected = !header.selected;
 							};
 							$scope.finishedSelectingAdditionalHeaders = function() {
-								if (parentScope.savedQueryId) {
+								if (parentScope.queryParam.savedQueryId) {
 									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
 									var selectedAdditionalHeaders = [];
 									$scope.headers.forEach(function(header) {
@@ -164,7 +164,7 @@ angular.module('analytics').directive('queryTable', [
 											selectedAdditionalHeaders.push(header.name);
 										}
 									});
-									Analytics.saveAdditionalSelectedHeaders(selectedAdditionalHeaders, parentScope.savedQueryId);
+									Analytics.saveAdditionalSelectedHeaders(selectedAdditionalHeaders, parentScope.queryParam.savedQueryId);
 								}
 								$scope.closeThisDialog(0);	
 							};

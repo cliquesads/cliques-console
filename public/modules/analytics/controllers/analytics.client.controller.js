@@ -12,8 +12,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         if ($stateParams.query) {
             // History query entered from sidebar
             $scope.defaultQueryParam = $stateParams.query;
+            $scope.defaultQueryParam.savedQueryId = $scope.defaultQueryParam._id;
             $scope.defaultQueryParam._id = undefined;
-            $scope.defaultQueryParam.isSaved = false;
+            // delete date related
+            delete $scope.defaultQueryParam.createdAt;
+            delete $scope.defaultQueryParam.updatedAt;
+            delete $scope.defaultQueryParam.nextRun;
         } else {
             $scope.defaultQueryParam = {
                 name: '',

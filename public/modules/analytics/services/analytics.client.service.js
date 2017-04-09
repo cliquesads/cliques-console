@@ -107,7 +107,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType) {
+    var getQueryTableHeaders = function(queryType, additionalHeaders) {
         var headers = [
             {
                 index: 0,
@@ -120,6 +120,15 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             headers = headers.concat(TABLE_HEADERS.advertiser);
         } else if (user.organization.organization_types.indexOf('publisher') > -1){
             headers = headers.concat(TABLE_HEADERS.publisher);
+        }
+        if (additionalHeaders) {
+            additionalHeaders.forEach(function(additionalHeader) {
+                for (var i = 0; i < headers.length; i ++) {
+                    if (headers[i].name === additionalHeader) {
+                        headers[i].selected = true;
+                    }
+                }
+            });
         }
         return headers;
     };
