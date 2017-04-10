@@ -14,6 +14,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             $scope.defaultQueryParam = $stateParams.query;
             $scope.defaultQueryParam.savedQueryId = $scope.defaultQueryParam._id;
             $scope.defaultQueryParam._id = undefined;
+            // delete groupBy
+            delete $scope.defaultQueryParam.groupBy;
             // delete date related
             delete $scope.defaultQueryParam.createdAt;
             delete $scope.defaultQueryParam.updatedAt;
@@ -63,47 +65,44 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         };
         $scope.hasTable = true;
         $scope.hasGraph = false;
-        for (var queryName in $scope.queryRoutes) {
-            if ($state.current.name === $scope.queryRoutes[queryName]) {
-                $scope.defaultQueryParam.name = queryName;
-                $scope.defaultQueryParam.type = queryName;
+        for (var queryType in $scope.queryRoutes) {
+            if ($state.current.name === $scope.queryRoutes[queryType]) {
+                $scope.defaultQueryParam.name = queryType;
+                $scope.defaultQueryParam.type = queryType;
+                // groupBy and populate parameter
+                if ($scope.defaultQueryParam.type !== 'time') {
+                    $scope.defaultQueryParam.groupBy = queryType;
+                    $scope.defaultQueryParam.populate = queryType;
+                }
+                if (user.organization.effectiveOrgType === 'networkAdmin') {
+                    if ($scope.defaultQueryParam.groupBy) {
+                        $scope.defaultQueryParam.groupBy += ',advertiser,publisher';
+                        $scope.defaultQueryParam.populate += ',advertiser,publisher';
+                    } else {
+                        $scope.defaultQueryParam.groupBy = 'advertiser,publisher';
+                        $scope.defaultQueryParam.populate = 'advertiser,publisher';
+                    }
+                } else {
+                    if ($scope.defaultQueryParam.groupBy) {
+                        $scope.defaultQueryParam.groupBy += ',' + user.organization.effectiveOrgType;
+                        $scope.defaultQueryParam.populate += ',' + user.organization.effectiveOrgType;
+                    } else {
+                        $scope.defaultQueryParam.groupBy = user.organization.effectiveOrgType;
+                        $scope.defaultQueryParam.populate = user.organization.effectiveOrgType;
+                    }
+                }
                 // Set available report settings for different queries
-                if (queryName === 'Time' || queryName === 'Custom') {
+                if (queryType === 'time' || queryType === 'custom') {
                     $scope.hasGraph = true;
                     $scope.availableSettings.dateGroupBy = true;
                 }
                 break;
             }
         }
-        $scope.goToQuerySection = function(queryName) {
-            $state.go($scope.queryRoutes[queryName]);
+
+        $scope.goToQuerySection = function(queryType) {
+            $state.go($scope.queryRoutes[queryType]);
         };
-        // groupBy parameter
-        switch($scope.defaultQueryParam.type) {
-            case 'Sites':
-                $scope.defaultQueryParam.groupBy = 'site';
-                break;
-            case 'Campaigns':
-                $scope.defaultQueryParam.groupBy = 'campaign';
-                break;
-            case 'Creatives':
-                $scope.defaultQueryParam.groupBy = 'creative';
-                break;
-            case 'Placements':
-                $scope.defaultQueryParam.groupBy = 'placement';
-                break;
-            case 'States':
-                $scope.defaultQueryParam.groupBy = 'state';
-                break;
-            case 'Cities':
-                $scope.defaultQueryParam.groupBy = 'city';
-                break;
-            case 'Countries':
-                $scope.defaultQueryParam.groupBy = 'country';
-                break;
-            default:
-                break;
-        }
 
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showCustomizedQueryResult = function() {

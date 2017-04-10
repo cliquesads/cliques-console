@@ -8,90 +8,110 @@ angular.module('analytics')
         'networkAdmin': [
             {
                 name: 'Time',
+                type: 'time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.'
             },
             {
                 name: 'Sites',
+                type: 'site',
                 description: 'See all sites you\'ve served impressions on and how well each site has performed.'
             },
             {
                 name: 'Campaigns',
+                type: 'campaign',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.'
             },
             {
                 name: 'Creatives',
+                type: 'creative',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.'
             },
             {
                 name: 'Placements',
+                type: 'placement',
                 description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
                 + '& which ones aren\'t.'
             },
             {
                 name: 'Cities',
+                type: 'city',
                 description: 'Drill down to the city level to spot any hyper-regional trends.'
             },
             {
                 name: 'States',
+                type: 'state',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level'
             },
             {
                 name: 'Countries',
+                type: 'country',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.'
             }
         ],
         'advertiser': [
             {
                 name: 'Time',
+                type: 'time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.'
             },
             {
                 name: 'Sites',
+                type: 'site',
                 description: 'See all sites you\'ve served impressions on and how well each site has performed.'
             },
             {
                 name: 'Creatives',
+                type: 'creative',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.'
             },
             {
                 name: 'Cities',
+                type: 'city',
                 description: 'Drill down to the city level to spot any hyper-regional trends.'
             },
             {
                 name: 'States',
+                type: 'state',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level'
             },
             {
                 name: 'Countries',
+                type: 'country',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.'
             }
         ],
         'publisher': [
             {
                 name: 'Time',
+                type: 'time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.'
             },
             {
                 name: 'Campaigns',
+                type: 'campaign',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.'
             },
             {
                 name: 'Placements',
+                type: 'placement',
                 description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
                 + '& which ones aren\'t.'
             },
             {
                 name: 'Cities',
+                type: 'city',
                 description: 'Drill down to the city level to spot any hyper-regional trends.'
             },
             {
                 name: 'States',
+                type: 'state',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level'
             },
             {
                 name: 'Countries',
+                type: 'country',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.'
             }
         ]
@@ -100,16 +120,16 @@ angular.module('analytics')
      * Will be used to set query name for different quick queries
      */
     .constant('QUERY_ROUTES', {
-        Time: 'app.analytics.quickQueries.timeQuery',
-        Sites: 'app.analytics.quickQueries.sitesQuery',
-        Campaigns: 'app.analytics.quickQueries.campaignsQuery',
-        Creatives: 'app.analytics.quickQueries.creativesQuery',
-        Placements: 'app.analytics.quickQueries.placementsQuery',
-        States: 'app.analytics.quickQueries.statesQuery',
-        Cities: 'app.analytics.quickQueries.citiesQuery',
-        Countries: 'app.analytics.quickQueries.countriesQuery',
-        Custom: 'app.analytics.customizeQuery',
-        QuickQueries: 'app.analytics.quickQueries'
+        time: 'app.analytics.quickQueries.timeQuery',
+        site: 'app.analytics.quickQueries.sitesQuery',
+        campaign: 'app.analytics.quickQueries.campaignsQuery',
+        creative: 'app.analytics.quickQueries.creativesQuery',
+        placement: 'app.analytics.quickQueries.placementsQuery',
+        state: 'app.analytics.quickQueries.statesQuery',
+        city: 'app.analytics.quickQueries.citiesQuery',
+        country: 'app.analytics.quickQueries.countriesQuery',
+        custom: 'app.analytics.customizeQuery',
+        quickQueries: 'app.analytics.quickQueries'
     })
     /**
      * Crontab day options and corresponding crontab string

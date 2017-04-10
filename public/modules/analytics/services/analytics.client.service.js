@@ -15,7 +15,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         // doesn't handle formatting filters)
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
-            row.Time = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
 
             // write to csv as well, only picking headers passed in
             var rowObject = _.pick(row, headers);
@@ -138,7 +137,17 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
      */
     var formatQueryTable = function(rows, queryType, groupBy) {
         rows.forEach(function(row) {
-            row[queryType] = row._id[groupBy];
+            if (queryType === 'time') {
+                row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            } else {
+                row[queryType] = row._id[queryType].name;
+            }
+            // Logo for each row
+            if (row._id.advertiser) {
+                row.logo = row._id.advertiser.logo_secure_url;
+            } else if (row._id.publisher) {
+                row.logo = row._id.publisher.logo_secure_url;
+            }
 
             row.Impressions = row.imps;
             row.Spend = $filter('currency')(row.spend, '$', 0);

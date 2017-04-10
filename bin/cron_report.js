@@ -91,18 +91,22 @@ require('./_main')(function(GLOBALS) {
             queryAPIUrl = '/api/hourlyadstat/pubSummary';
         }
         var dateRanges = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
+        var queryParam = {
+            dateGroupBy: query.dateGroupBy,
+            startDate: dateRanges.startDate,
+            endDate: dateRanges.endDate,
+            groupBy: query.groupBy,
+            filters: query.filters
+        };
+        if (query.type !== 'time') {
+            queryParam.populate = query.type;
+        }
         return {
             auth: {
                 user: GLOBALS.args.username,
                 pass: GLOBALS.args.password
             },
-            url: getUrl(queryAPIUrl, {
-                dateGroupBy: query.dateGroupBy,
-                startDate: dateRanges.startDate,
-                endDate: dateRanges.endDate,
-                groupBy: query.groupBy,
-                filters: query.filters
-            }),
+            url: getUrl(queryAPIUrl, queryParam),
             jar: false // to enable sessions
         };
     };
@@ -122,10 +126,10 @@ require('./_main')(function(GLOBALS) {
 
     var formatRow = function(row, queryType, groupBy) {
         if (row._id) {
-            if (queryType === 'Time') {
+            if (queryType === 'time') {
                 row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
             } else {
-                row[queryType] = row._id[groupBy]
+                row[queryType] = row._id[queryType].name;
             }
         }
         row.Impressions = row.imps;
@@ -134,6 +138,7 @@ require('./_main')(function(GLOBALS) {
         row.CTR = row.imps ? (((row.clicks / row.imps) * 100).toFixed(3) + '%') : 'NaN';
         row['Fill Rate'] = (row.imps + row.defaults) ? (((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%') : 'NaN';
         row['Total Actions'] = row.view_convs + row.click_convs;
+        row.Clicks = row.clicks;
         row.CPC = row.clicks ? (row.spend / row.clicks, '$', 2) : 'NaN';
         row.Bids = row.bids;
         row.Uniques = row.uniques;

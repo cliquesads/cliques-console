@@ -18,7 +18,7 @@
 							<button class="btn btn-default btn-block text-md"
 								type="button"
 								ng-click="showMoreTableFields()">
-								Show more table fields
+								More table fields
 							</button>
 						</div>
 						<!-- Export to CSV button -->
@@ -54,12 +54,13 @@
 				<table class="table table-striped table-hover mb0">
 				    <thead>
 				        <tr>
+				        	<th>Logo</th>
 				        	<th class="clickable"
 				        		ng-class="{
 				        			'current-sorting': currentSorting.orderBy === header.name
 				        		}"
 				        		ng-click="sortTableBy(header.name)"
-				        		ng-repeat="header in headers track by header.index"
+				        		ng-repeat="header in headers"
 				        		ng-if="header.type === 'default' || header.selected === true">
 				        		{{ header.name }}
 				        		<span class="pull-right">
@@ -76,7 +77,10 @@
 				    </thead>
 				    <tbody>
 					    <tr ng-repeat="row in tableQueryResults">
-						    <td ng-repeat="header in headers track by header.index"
+					    	<td>
+					    		<img ng-src="{{ row.logo }}" class="client-logo-xs">
+					    	</td>
+						    <td ng-repeat="header in headers"
 						    	ng-if="header.type === 'default' || header.selected === true">
 						    	{{ row[header.name] }}
 						    </td>
