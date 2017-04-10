@@ -92,22 +92,27 @@ angular.module('analytics').directive('reportSettings', [
                 	}
                 };
 
+                scope.timePeriodChanged = function() {
+                    if (scope.selectedSettings.dateRangeShortCode) {
+                        // set up start date and end date if not designated as custom dates by user already, also setup date range title for displaying and humanizedDateRange so as to save in database in case needed
+                        if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
+                            scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
+                            scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
+                            // humanizedDateRange setup for selected date short code
+                            scope.humanizedDateRange = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].label;
+                        } else {
+                            // humanizedDateRange setup for custom selected start/end date
+                            var momentStartDate = moment(scope.selectedSettings.startDate);
+                            var momentEndDate = moment(scope.selectedSettings.endDate);
+
+                            scope.humanizedDateRange = momentStartDate.format('YYYY-MM-DD') + ' - ' + momentEndDate.format('YYYY-MM-DD');
+                        }
+                        scope.selectedSettings.humanizedDateRange = scope.humanizedDateRange;
+                    }
+                };
+
                 scope.launchQuery = function(event) {
                     event.preventDefault();
-                    // set up start date and end date if not designated as custom dates by user already, also setup date range title for displaying and humanizedDateRange so as to save in database in case needed
-                    if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
-						scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
-						scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
-                        // humanizedDateRange setup for selected date short code
-                        scope.humanizedDateRange = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].label;
-                    } else {
-                        // humanizedDateRange setup for custom selected start/end date
-                        var momentStartDate = moment(scope.selectedSettings.startDate);
-                        var momentEndDate = moment(scope.selectedSettings.endDate);
-
-                        scope.humanizedDateRange = momentStartDate.format('YYYY-MM-DD') + ' - ' + momentEndDate.format('YYYY-MM-DD');
-                    }
-                    scope.selectedSettings.humanizedDateRange = scope.humanizedDateRange;
 					// Send broadcast message to notify query graph/table directive to launch query
 					$rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
                 };
