@@ -3,9 +3,9 @@
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$filter', 'TABLE_HEADERS', function($http, HourlyAdStat, $filter, TABLE_HEADERS) {
-	var getCSVFileName = function() {
+	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
-        return asOfDate + '_report.csv';
+        return queryName + '_' + asOfDate.substring(0, 10) + '_report.csv';
 	};
     var generateCSVData = function(headers, rows) {
         var csvString = headers.join(',');

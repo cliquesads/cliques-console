@@ -138,7 +138,7 @@ angular.module('analytics').directive('queryTable', [
 				    // download on the frontend
 				    var blobStringForCSV = Analytics.generateCSVData(csvHeaders, scope.tableQueryResults);
 
-				    scope.downloadFileName = Analytics.getCSVFileName();
+				    scope.downloadFileName = Analytics.getCSVFileName(scope.queryParam.name);
 				    scope.downloadFileBlob = new Blob([blobStringForCSV], {
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });

@@ -5,26 +5,16 @@
 <p style="text-align: center">Statistics for the {{ dateRange }} (as of {{ asOfDate|date('F jS\, Y') }}, US/Pacific Time)</p>
 <table>
     <thead>
-        <th>Date</th>
-        <th>Placement</th>
-        <th>Revenue</th>
-        <th>Impressions</th>
-        <th>Clicks</th>
-        <th>Fill Rate</th>
-        <th>CTR</th>
-        <th>CPM</th>
+        {% for header in tableHeaders %}
+        <th>{{ header }}</th>
+        {% endfor %}
     </thead>
     <tbody>
         {% for row in placementData %}
         <tr>
-            <td>{{ row._id.date.month }}/{{ row._id.date.day }}/{{ row._id.date.year }}</td>
-            <td>{{ row._id.placement.name }}</td>
-            <td>{{ row.spend }}</td>
-            <td>{{ row.imps }}</td>
-            <td>{{ row.clicks }}</td>
-            <td>{{ row.fillRate }}</td>
-            <td>{{ row.CTR }}</td>
-            <td>{{ row.CPM }}</td>
+            {% for header in tableHeaders %}
+            <td>{{ row[header] }}</td>
+            {% endfor %}
         </tr>
         {% endfor %}
         <tr>

@@ -17,7 +17,6 @@ var promise = require('bluebird');
 var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com" });
 var BASE_URL = "https://console.cliquesads.com";
 
-
 require('./_main')(function(GLOBALS) {
     var config = GLOBALS.cliques_config,
         mongoose = GLOBALS.mongoose,
@@ -35,37 +34,42 @@ require('./_main')(function(GLOBALS) {
         return url;
     };
 
-    var getStartDateAndEndDateForQuery = function(queryHumanizedDateRange) {
+    var getTimePeriod = function(dateRangeShortCode, humanizedDateRange) {
         var timezone = 'America/Los_Angeles';
         var startDate, endDate;
-        switch (queryHumanizedDateRange) {
-            case "Last 7 Days":
+        switch (dateRangeShortCode) {
+            case "7d":
                 startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(6, 'days').toISOString();
                 endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
                 break;
-            case "Last 30 Days":
+            case "30d":
                 startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(29, 'days').toISOString();
                 endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
                 break;
-            case "Last 90 Days":
+            case "90d":
                 startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(89, 'days').toISOString();
                 endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
                 break;
-            case "Last Month":
+            case "lastMonth":
                 startDate = moment().tz(timezone).subtract(1, 'months').startOf('month').toISOString();
                 endDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
                 break;
-            case "Month to Date":
+            case "mtd":
                 startDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
                 endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
                 break;
-            case "Yesterday":
+            case "yesterday":
                 startDate = moment().tz(timezone).subtract(1, 'days').startOf('day').toISOString();
                 endDate = moment().tz(timezone).startOf('day').toISOString();
                 break;
-            case "Today":
+            case "today":
                 startDate = moment().tz(timezone).startOf('day').toISOString();
                 endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+                break;
+            case "custom":
+                var dates = humanizedDateRange.split(' - ');
+                startDate = dates[0];
+                endDate = dates[1];
                 break;
             default:
                 break;
@@ -86,7 +90,7 @@ require('./_main')(function(GLOBALS) {
         } else if (organizationType === 'publisher') {
             queryAPIUrl = '/api/hourlyadstat/pubSummary';
         }
-        var dateRanges = getStartDateAndEndDateForQuery(query.humanizedDateRange);
+        var dateRanges = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
         return {
             auth: {
                 user: GLOBALS.args.username,
@@ -103,176 +107,211 @@ require('./_main')(function(GLOBALS) {
         };
     };
 
-    var fillRate = function(row) {
-        return ((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%';
+    var getCSVHeaders = function(query, organizationType) {
+        var headers = [query.type];
+        if (organizationType === 'networkAdmin' || organizationType === 'advertiser') {
+            headers = headers.concat(['Impressions', 'Spend', 'CPM', 'Clicks', 'CPC', 'CTR', 'Total Actions']);
+        } else if (organizationType === 'publisher') {
+            headers = headers.concat(['Impressions', 'Revenue', 'RPM', 'Defaults', 'Fill Rate', 'Clicks', 'RPC', 'CTR', 'Total Actions']);
+        }
+        if (query.additionalHeaders && query.additionalHeaders.length > 0) {
+            headers = headers.concat(query.additionalHeaders);
+        }
+        return headers;
     };
 
-    var CTR = function(row) {
-        return ((row.clicks / row.imps) * 100).toFixed(3) + '%';
-    };
+    var formatRow = function(row, queryType, groupBy) {
+        if (row._id) {
+            if (queryType === 'Time') {
+                row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            } else {
+                row[queryType] = row._id[groupBy]
+            }
+        }
+        row.Impressions = row.imps;
+        row.Spend = '$' + row.spend.toFixed(2);
+        row.CPM = row.imps ? ('$' + ((row.spend / row.imps) * 1000).toFixed(2)) : 'NaN';
+        row.CTR = row.imps ? (((row.clicks / row.imps) * 100).toFixed(3) + '%') : 'NaN';
+        row['Fill Rate'] = (row.imps + row.defaults) ? (((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%') : 'NaN';
+        row['Total Actions'] = row.view_convs + row.click_convs;
+        row.CPC = row.clicks ? (row.spend / row.clicks, '$', 2) : 'NaN';
+        row.Bids = row.bids;
+        row.Uniques = row.uniques;
+        row['View-Through Actions'] = row.view_convs;
+        row['Click-Through Actions'] = row.click_convs;
+        row.CPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : 'NaN';
+        row.CPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : 'NaN';
+        row.CPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
+        row.RPM = row.imps ? row.spend / row.imps * 1000 : 'NaN';
+        row.Defaults = row.defaults;
+        row.RPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : 'NaN';
+        row.RPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : 'NaN';
+        row.RPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
+        row['Fill Rate'] = row.defaults ? row.imps / row.defaults : 'NaN';
+        row.RPC = row.clicks ? (row.spend / row.clicks, '$', 2) : 'NaN';
 
-    var CPM = function(row) {
-        return '$' + ((row.spend / row.imps) * 1000).toFixed(2);
-    };
-
-    var formatRow = function(row) {
-        row.CPM = CPM(row);
-        row.spend = '$' + row.spend.toFixed(2);
-        row.fillRate = fillRate(row);
-        row.CTR = CTR(row);
         return row;
     };
 
     var sortByDate = function(a, b) {
-        var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
-        var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
-        return aDate - bDate;
+        if (a._id && b._id) {
+            var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
+            var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
+            return aDate - bDate;
+        } else {
+            return;
+        }
     };
 
-    var generateReport = function(queryOpts, emailSubject, toEmail, emailTemplate, headers, asOfDate, organizationWebsite, dateRange) {
+    var generateReport = function(
+        queryOpts,
+        emailSubject,
+        toEmail,
+        emailTemplate,
+        headers,
+        asOfDate,
+        organizationWebsite,
+        query
+    ) {
         // create csv write stream
         var csv = csvWriter({ headers: headers });
         // send request
         request.promisifiedGet = promise.promisify(request.get);
         return request.promisifiedGet(queryOpts)
-            .then(function(response) {
-                var rows = JSON.parse(response.body);
+        .then(function(response) {
+            var rows = JSON.parse(response.body);
 
-                // sort rows by date
-                rows = rows.sort(sortByDate);
+            // sort rows by date
+            rows = rows.sort(sortByDate);
 
-                // calculate totals, store in separate object
-                var totals = {
-                    imps: _.sumBy(rows, function(r) {
-                        return r.imps;
-                    }),
-                    defaults: _.sumBy(rows, function(r) {
-                        return r.defaults;
-                    }),
-                    spend: _.sumBy(rows, function(r) {
-                        return r.spend;
-                    }),
-                    clicks: _.sumBy(rows, function(r) {
-                        return r.clicks;
-                    })
-                };
-                totals = formatRow(totals);
+            // calculate totals, store in separate object
+            var totals = {
+                imps: _.sumBy(rows, function(r) {
+                    return r.imps;
+                }),
+                defaults: _.sumBy(rows, function(r) {
+                    return r.defaults;
+                }),
+                spend: _.sumBy(rows, function(r) {
+                    return r.spend;
+                }),
+                clicks: _.sumBy(rows, function(r) {
+                    return r.clicks;
+                })
+            };
+            totals = formatRow(totals, query.type, query.groupBy);
 
-                // Now calculate derived fields and format (template engine
-                // doesn't handle formatting filters)
+            // Now calculate derived fields and format (template engine
+            // doesn't handle formatting filters)
 
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    row.date = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-                    if (row._id.placement) {
-                        row.placement = row._id.placement.name;
-                    }
-                    formatRow(row);
-                    // write to csv as well, only picking headers passed in
-                    csv.write(_.pick(row, headers));
-                }
-
-                // end csv stream
-                csv.end();
-                var csvName = asOfDate + '_report.csv';
-
-                // now send mail
-                mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
-                return mailer.promisifiedSendMail({
-                    subject: emailSubject,
-                    templateName: emailTemplate,
-                    to: toEmail,
-                    attachments: [{
-                        filename: csvName,
-                        content: csv
-                    }],
-                    data: {
-                        placementData: rows,
-                        totals: totals,
-                        asOfDate: asOfDate,
-                        organizationWebsite: organizationWebsite,
-                        dateRange: dateRange
-                    }
-                });
-            })
-            .catch(function(err) {
-                console.error(err);
+            rows.forEach(function(row) {
+                row = formatRow(row, query.type, query.groupBy);
+                // write to csv as well, only picking headers passed in
+                csv.write(_.pick(row, headers));
             });
+
+            // end csv stream
+            csv.end();
+            var csvName = query.name + '_' + asOfDate.substring(0, 10) + '_report.csv';
+
+            // now send mail
+            mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
+            return mailer.promisifiedSendMail({
+                subject: emailSubject,
+                templateName: emailTemplate,
+                to: toEmail,
+                attachments: [{
+                    filename: csvName,
+                    content: csv
+                }],
+                data: {
+                    placementData: rows,
+                    totals: totals,
+                    asOfDate: asOfDate,
+                    organizationWebsite: organizationWebsite,
+                    dateRange: query.humanizedDateRange,
+                    tableHeaders: headers
+                }
+            });
+        })
+        .catch(function(err) {
+            console.error(err);
+        });
     };
 
     var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
     Query.promisifiedFind = promise.promisify(Query.find);
     // Find all queries from database and check if any of them are saved as periodic queries and are due at the moment
     return Query.promisifiedFind({})
-        .then(function(allQueries) {
-            return promise.each(allQueries, function(query) {
-                if (query.schedule) {
-                    // This query is saved as a periodic query
-                    var now = new Date();
-                    var nextRunForQuery = new Date(query.nextRun);
+    .then(function(allQueries) {
+        return promise.each(allQueries, function(query) {
+            if (query.schedule) {
+                // This query is saved as a periodic query
+                var now = new Date();
+                var nextRunForQuery = new Date(query.nextRun);
 
-                    var toEmail;
+                var toEmail;
 
-                    if (nextRunForQuery < now) {
-                        // The next execution time for this query is overdue
-                        // 1. Update the `nextRun` field for this query in database
-                        // 2. Run this query and generate csv report
-                        var interval = parser.parseExpression(query.schedule);
-                        var nextRun = new Date(interval.next().toString());
-                        while (nextRun < now) {
-                            nextRun = new Date(interval.next().toString());
-                        }
-                        query.nextRun = nextRun;
-                        query.promisifiedSave = promise.promisify(query.save);
-                        return query.promisifiedSave()
-                            .then(function() {
-                                User.promisifiedFindOne = promise.promisify(User.findOne);
-                                return User.promisifiedFindOne({
-                                    _id: query.user
-                                });
-                            })
-                            .then(function(user) {
-                                toEmail = user.email;
-                                Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
-                                return Organization.promisifiedFindOne({
-                                    _id: user.organization
-                                });
-                            }).then(function(organization) {
-                                var orgType;
-                                if (organization.organization_types.indexOf('networkAdmin') > -1) {
-                                    orgType = 'networkAdmin';
-                                } else if (organization.organization_types.indexOf('advertiser') > -1) {
-                                    orgType = 'advertiser';
-                                } else if (organization.organization_types.indexOf('publisher') > -1) {
-                                    orgType = 'publisher';
-                                }
-                                var organizationWebsite = organization.website;
-                                var dateRange = query.humanizedDateRange;
-                                return generateReport(
-                                    getRequestParams(query, orgType),
-                                    'Cliques Periodic Report',
-                                    toEmail,
-                                    'cron-report-email.server.view.html',
-                                    ['date', 'placement', 'spend', 'imps', 'clicks', 'fillRate', 'CTR', 'CPM'],
-                                    asOfDate,
-                                    organizationWebsite,
-                                    dateRange
-                                );
-                            })
-                            .catch(function(err) {
-                                console.error(err);
-                            });
+                if (nextRunForQuery < now) {
+                    // The next execution time for this query is overdue
+                    // 1. Update the `nextRun` field for this query in database
+                    // 2. Run this query and generate csv report
+                    var interval = parser.parseExpression(query.schedule);
+                    var nextRun = new Date(interval.next().toString());
+                    while (nextRun < now) {
+                        nextRun = new Date(interval.next().toString());
                     }
+                    query.nextRun = nextRun;
+                    query.promisifiedSave = promise.promisify(query.save);
+                    return query.promisifiedSave()
+                    .then(function() {
+                        User.promisifiedFindOne = promise.promisify(User.findOne);
+                        return User.promisifiedFindOne({
+                            _id: query.user
+                        });
+                    })
+                    .then(function(user) {
+                        toEmail = user.email;
+                        Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
+                        return Organization.promisifiedFindOne({
+                            _id: user.organization
+                        });
+                    })
+                    .then(function(organization) {
+                        var orgType;
+                        if (organization.organization_types.indexOf('networkAdmin') > -1) {
+                            orgType = 'networkAdmin';
+                        } else if (organization.organization_types.indexOf('advertiser') > -1) {
+                            orgType = 'advertiser';
+                        } else if (organization.organization_types.indexOf('publisher') > -1) {
+                            orgType = 'publisher';
+                        }
+                        var organizationWebsite = organization.website;
+                        return generateReport(
+                            getRequestParams(query, orgType),
+                            'Cliques Periodic Report',
+                            toEmail,
+                            'cron-report-email.server.view.html',
+                            getCSVHeaders(query, orgType),
+                            asOfDate,
+                            organizationWebsite,
+                            query
+                        );
+                    })
+                    .catch(function(err) {
+                        console.error(err);
+                    });
                 }
-            });
-        })
-        .then(function() {
-            mongoose.disconnect();
-        })
-        .catch(function(err) {
-            mongoose.disconnect();
-            console.error(err);
+            }
         });
+    })
+    .then(function() {
+        mongoose.disconnect();
+    })
+    .catch(function(err) {
+        mongoose.disconnect();
+        console.error(err);
+    });
 }, [
     [
         ['-u', '--username'],
