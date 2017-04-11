@@ -1,11 +1,233 @@
 <div class="custom-query-container m"
 	ng-if="$state.$current.name === 'app.analytics.customizeQuery'">
 
-	<!-- Report Settings -->
-	<report-settings
-		selected-settings="defaultQueryParam"
-		available-settings="availableSettings">
-	</report-settings>
+	<br>
+	<div class="panel panel-default">
+		<div class="panel-heading pt0">
+			<div class="row">
+				<div class="col-sm-5">
+					<h4>
+						<i class="fa fa-wrench"></i>
+						Query Builder
+					</h4>
+				</div>
+				<div class="col-sm-offset-4 col-sm-3 text-right">
+					<div class="checkbox text-md">
+						<label>
+							<input type="checkbox"
+								ng-model="defaultQueryParam.isSaved"
+								ng-change="showSaveQueryDialog()"> Save to My Queries
+						</label>
+					</div>
+				</div>
+			</div>
+			<hr class="m0">
+		</div>
+		<div class="panel-body pt0 pb0">
+			<div class="row">
+
+				<!-- Date range selection -->
+				<div class="form-horizontal col-sm-6">
+					<div class="form-group">
+						<label for="timePeriod"
+							class="col-sm-4 text-md mt-sm">
+							Time Period	
+						</label>
+						<div class="col-sm-8">
+							<select name="timePeriod"
+								id="timePeriod"
+								class="form-control chosen-select"
+								ng-model="defaultQueryParam.dateRangeShortCode"
+								ng-change="timePeriodChanged()"
+								ng-options="key as value.label for (key, value) in dateRanges">
+								<option value="" selected>
+									Select time period	
+								</option>	
+							</select>
+						</div>
+					</div>	
+				</div>
+
+				<!-- Time unit selection -->
+				<div class="form-horizontal col-sm-6">
+					<div class="form-group">
+						<label for="timeUnitSelection"
+							class="col-sm-4 text-md mt-sm">
+							Group By		
+						</label>
+						<div class="col-sm-8 btn-group">
+							<button type="button"
+								class="btn btn-default text-md"
+								ng-click="defaultQueryParam.dateGroupBy='hour'"
+								analytics-on="click"
+								analytics-event="Analytics_ChangeTimeUnitToHour"
+								ng-class="{'selected-time-unit': defaultQueryParam.dateGroupBy === 'hour'}">
+								Hour
+							</button>
+							<button type="button"
+								class="btn btn-default text-md"
+								ng-click="defaultQueryParam.dateGroupBy='day'"
+								analytics-on="click"
+								analytics-event="Analytics_ChangeTimeUnitToDay"
+								ng-class="{'selected-time-unit': defaultQueryParam.dateGroupBy === 'day'}">
+								Day
+							</button>
+							<button type="button"
+								class="btn btn-default text-md"
+								ng-click="defaultQueryParam.dateGroupBy='month'"
+								analytics-on="click"
+								analytics-event="Analytics_ChangeTimeUnitToMonth"
+								ng-class="{'selected-time-unit': defaultQueryParam.dateGroupBy === 'month'}">
+								Month
+							</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<!-- Custom date range -->
+			<div class="row"
+				ng-if="defaultQueryParam.dateRangeShortCode === 'custom'">
+				<!-- Start date -->
+				<div class="form-horizontal col-sm-6">
+					<div class="form-group">
+						<label for="startDate"
+							class="col-sm-4 text-md mt-sm">
+							Start Date
+						 </label>
+						 <div class="col-sm-8">
+						 	<div class="input-group">
+						 		<input
+						 			type="text"
+						 			name="startDate"
+						 			id="startDate"
+						 			data-ng-model="defaultQueryParam.startDate"
+						 			is-open="calendar.opened.startDate"
+						 			datepicker-popup="yyyy-MM-dd"
+						 			placeholder="yyyy-MM-dd"
+						 			datepicker-options="calendar.dateOptions"
+						 			class="form-control"
+						 			required="required"
+						 			close-text="Close"/>
+						 		<!--Button to enable popup Angular UI datepicker-->
+						 		<span class="input-group-btn">
+						 		     <button
+						 		     	type="button"
+						 		     	ng-click="calendar.open($event,'startDate')"
+						 		     	class="btn btn-default"
+						 		     	analytics-on="click"
+						 		     	analytics-event="CustomizeQuery_OpenCalendarStartDate">
+						 				<em class="fa fa-calendar"></em>
+						 		     </button>
+						 		</span>	
+						 	</div>
+						 </div>
+					</div>
+				</div>
+
+				<!-- End Date -->
+				<div class="form-horizontal col-sm-6">
+					<div class="form-group">
+						<label for="endDate" class="col-sm-4 text-md mt-sm">
+							End Date
+						</label>
+						<div class="col-sm-8">
+							<div class="input-group">
+								<input
+									type="text"
+									name="endDate"
+									id="endDate"
+									data-ng-model="defaultQueryParam.endDate"
+									min-date="startDate"
+									is-open="calendar.opened.endDate"
+									datepicker-popup="yyyy-MM-dd"
+									placeholder="yyyy-MM-dd"
+									datepicker-options="calendar.dateOptions"
+									class="form-control"
+									required="required"
+									close-text="Close"/>
+								<!--Button to enable popup Angular UI datepicker-->
+								<span class="input-group-btn">
+								     <button type="button"
+								     	ng-click="calendar.open($event,'endDate')"
+								     	class="btn btn-default"
+								     	analytics-on="click"
+								     	analytics-event="CustomizeQuery_OpenCalendarEndDate">
+										<em class="fa fa-calendar"></em>
+								     </button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>	
+
+			</div>
+
+			<div class="row">
+				<div class="col-sm-12">
+
+					<!-- Campaign filter -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.campaignFilter">
+							<label for="campaignFilter"
+								class="col-sm-4 text-md mt-sm">
+								Campaign	
+							</label>
+							<div class="col-sm-8">
+								<select name="campaignFilter"
+									id="campaignFilter"
+									class="form-control chosen-select"
+									ng-model="defaultQueryParam.campaign"
+									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
+									<option value="" selected>
+										Select campaign to filter
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- Site filter -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.siteFilter">
+							<label for="siteFilter"
+								class="col-sm-4 text-md mt-sm">
+								Site	
+							</label>
+							<div class="col-sm-8">
+								<select name="siteFilter"
+									id="siteFilter"
+									class="form-control chosen-select"
+									ng-model="defaultQueryParam.site"
+									ng-options="site._id as site.name for site in allSites track by site._id">
+									<option value="" selected>
+										Select site to filter
+									</option>	
+								</select>
+							</div>
+						</div>
+					</div>
+						
+				</div>
+			</div>
+
+			<div class="row pb-lg">
+				<div class="col-sm-12">
+					<div class="col-sm-2 col-sm-offset-10">
+						<button type="button"
+							class="btn btn-primary btn-block text-md"
+							ng-click="showCustomizedQueryResult()">
+							Query	
+						</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
 
 </div>
 <div class="custom-query-container m">

@@ -139,6 +139,8 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         rows.forEach(function(row) {
             if (queryType === 'time') {
                 row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            } else if (queryType === 'custom') {
+                // TO-DO:::ycx should fill in row[custom] for customized query
             } else {
                 row[queryType] = row._id[queryType].name;
             }

@@ -198,7 +198,7 @@ angular.module('analytics').config(['$stateProvider',
         state('app.analytics.customizeQuery.queryResult', {
             url: '/queryResult',
             params: {
-                customQuery: null
+                defaultQueryParam: null
             },
             resolve: {
                 $title: function(){ return 'Query Result'; }
@@ -206,7 +206,7 @@ angular.module('analytics').config(['$stateProvider',
             views: {
                 'main': {
                     templateUrl: 'modules/analytics/views/partials/custom-query-result.client.view.html',
-                    controller: 'AnalyticsController'
+                    controller: 'CustomQueryResultsController'
                 }
             }
         });

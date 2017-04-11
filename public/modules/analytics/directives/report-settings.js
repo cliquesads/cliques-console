@@ -21,6 +21,8 @@ angular.module('analytics').directive('reportSettings', [
         return {
             restrict: 'E',
             scope: {
+                allCampaigns: '=',
+                allSites: '=',
                 selectedSettings: '=',
                 availableSettings: '='
             },
@@ -28,31 +30,6 @@ angular.module('analytics').directive('reportSettings', [
             link: function(scope, element, attrs) {
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
-
-                if (scope.availableSettings.campaignFilter) {
-                    // report settings has campaign fileter, should get all campaigns for current user
-                    Analytics.getAllCampaigns()
-                        .success(function(data) {
-                            scope.allCampaigns = data;
-                        })
-                        .error(function(error) {
-                            Notify.alert(error.message, {
-                                status: 'danger'
-                            });
-                        });
-                }
-                if (scope.availableSettings.siteFilter) {
-                    // report settings has site filter, should get all sites for current user	
-                    Analytics.getAllSites()
-                        .success(function(data) {
-                            scope.allSites = data;
-                        })
-                        .error(function(error) {
-                            Notify.alert(error.message, {
-                                status: 'danger'
-                            });
-                        });
-                }
 
                 scope.showSaveQueryDialog = function() {
                 	if (scope.selectedSettings.isSaved) {
