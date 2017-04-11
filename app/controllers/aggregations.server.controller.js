@@ -292,29 +292,34 @@ HourlyAdStatAPI.prototype._populate = function(populateQueryString, query_result
                 // sub routine to pass to async.map. Just gets child document given
                 // populated top-level node doc
                 var populateChildField = function(doc, callback) {
-                    self[treeDocument].getChildDocument(
-                        doc._id[field],
-                        modelName,
-                        doc._id[parentFieldName],
-                        function (err, child) {
-                            if (err) {
-                                if (err instanceof ReferenceError){
-                                    // this means the object was deleted, just don't populate anything
-                                    child = null;
-                                } else {
-                                    return callback(err);
+                    if (doc._id[field] && doc._id[parentFieldName]){
+                        self[treeDocument].getChildDocument(
+                            doc._id[field],
+                            modelName,
+                            doc._id[parentFieldName],
+                            function (err, child) {
+                                if (err) {
+                                    if (err instanceof ReferenceError){
+                                        // this means the object was deleted, just don't populate anything
+                                        child = null;
+                                    } else {
+                                        return callback(err);
+                                    }
                                 }
+                                if (populates.indexOf(parentFieldName) === -1){
+                                    // strip off advertiser object for compactness if it's not required
+                                    // by the API call
+                                    doc._id[parentFieldName] = doc._id[parentFieldName]._id;
+                                }
+                                // replace doc ID with object & callback
+                                doc._id[field] = child;
+                                return callback(null, doc);
                             }
-                            if (populates.indexOf(parentFieldName) === -1){
-                                // strip off advertiser object for compactness if it's not required
-                                // by the API call
-                                doc._id[parentFieldName] = doc._id[parentFieldName]._id;
-                            }
-                            // replace doc ID with object & callback
-                            doc._id[field] = child;
-                            return callback(null, doc);
-                        }
-                    );
+                        );
+                    } else {
+                        doc._id[field] = null;
+                        return callback(null, doc);
+                    }
                 };
                 // TODO: Don't have to populate here if top-level node has already
                 // TODO: been populated, can save a trip to the database
