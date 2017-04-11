@@ -65,39 +65,34 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
         };
         $scope.hasTable = true;
         $scope.hasGraph = false;
+
+        var currentQueryType;
         for (var queryType in $scope.queryRoutes) {
             if ($state.current.name === $scope.queryRoutes[queryType]) {
-                $scope.defaultQueryParam.name = queryType;
-                $scope.defaultQueryParam.type = queryType;
-                // groupBy and populate parameter
-                if ($scope.defaultQueryParam.type !== 'time') {
-                    $scope.defaultQueryParam.groupBy = queryType;
-                    $scope.defaultQueryParam.populate = queryType;
-                }
-                if (user.organization.effectiveOrgType === 'networkAdmin') {
-                    if ($scope.defaultQueryParam.groupBy) {
-                        $scope.defaultQueryParam.groupBy += ',advertiser,publisher';
-                        $scope.defaultQueryParam.populate += ',advertiser,publisher';
-                    } else {
-                        $scope.defaultQueryParam.groupBy = 'advertiser,publisher';
-                        $scope.defaultQueryParam.populate = 'advertiser,publisher';
-                    }
-                } else {
-                    if ($scope.defaultQueryParam.groupBy) {
-                        $scope.defaultQueryParam.groupBy += ',' + user.organization.effectiveOrgType;
-                        $scope.defaultQueryParam.populate += ',' + user.organization.effectiveOrgType;
-                    } else {
-                        $scope.defaultQueryParam.groupBy = user.organization.effectiveOrgType;
-                        $scope.defaultQueryParam.populate = user.organization.effectiveOrgType;
-                    }
-                }
-                // Set available report settings for different queries
-                if (queryType === 'time' || queryType === 'custom') {
-                    $scope.hasGraph = true;
-                    $scope.availableSettings.dateGroupBy = true;
-                }
+                currentQueryType = queryType;
                 break;
             }
+        }
+        $scope.defaultQueryParam.name = currentQueryType;
+        $scope.defaultQueryParam.type = currentQueryType;
+
+        // groupBy and populate parameter
+        var groupByFields = [];
+        if ($scope.defaultQueryParam.type !== 'time') {
+            groupByFields.push(currentQueryType);
+        }
+        if (user.organization.effectiveOrgType === 'networkAdmin') {
+            groupByFields = groupByFields.concat(['advertiser', 'publisher']);
+        } else {
+            groupByFields.push(user.organization.effectiveOrgType);
+        }
+        $scope.defaultQueryParam.groupBy = groupByFields.join();
+        $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
+
+        // Set available report settings for different queries
+        if (currentQueryType === 'time' || currentQueryType === 'custom') {
+            $scope.hasGraph = true;
+            $scope.availableSettings.dateGroupBy = true;
         }
 
         $scope.goToQuerySection = function(queryType) {
