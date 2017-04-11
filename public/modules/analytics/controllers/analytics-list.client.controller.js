@@ -10,6 +10,12 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.hasMore = false;
 		$scope.queryRoutes = QUERY_ROUTES;
 
+		if ($state.current.name === 'app.analytics.recentQueriesList') {
+			$scope.queriesListTitle = 'Recent Queries';
+		} else {
+			$scope.queriesListTitle = 'Custom Queries';
+		}
+
 		// Make query results human readable
 		$scope.handleQueryResults = function(queries) {
 			for (var i = 0; i < queries.length; i ++) {
@@ -41,7 +47,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 							Notify.alert('Error fetching recent queries: ' + error.message);
 						});
 					break;
-				case 'app.analytics.myQueriesList':
+				case 'app.analytics.customQueriesList':
 					$scope.isLoading = true;
 					// Fetch my/custom queries from backend
 					Analytics.getMyQueries($scope.currentPage)
@@ -73,7 +79,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 
 		$scope.reachedQueryListBottom = function() {
 			if ($state.current.name === 'app.analytics.recentQueriesList' ||
-				$state.current.name === 'app.analytics.myQueriesList') {
+				$state.current.name === 'app.analytics.customQueriesList') {
 				if ($scope.hasMore) {
 					$scope.currentPage ++;
 					$scope.loadRelatedQueries();

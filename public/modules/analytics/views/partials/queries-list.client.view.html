@@ -1,6 +1,7 @@
-<div class="panel panel-default m p">
+<div class="panel panel-default m p"
+	scroll-to-bottom="reachedQueryListBottom()">
 	<div class="panel-body table-responsive">
-		<h4 class="mt0 text-center">My Queries</h4>
+		<h4 class="mt0 text-center">{{ queriesListTitle }}</h4>
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -12,7 +13,7 @@
 					<th>Date Range</th>
 					<th>Actions</th>
 				</tr>
-			</thead>
+			</thead>	
 			<tbody>
 				<tr ng-repeat="query in queries">
 					<td>{{ $index + 1 }}</td>
@@ -22,24 +23,20 @@
 					<td>{{ query.groupBy }}</td>
 					<td>{{ query.humanizedDateRange }}</td>
 					<td>
-						<a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="MyQueriesList_CheckQuery">
-							<i class="fa fa-eye"></i>
+						<a href=""
+							ng-click="goToQuerySection(query)"
+							analytics-on="click"
+							analytics-event="QueriesList_CheckQuery">
+							<i class="fa fa-eye"></i>	
 						</a>
-					</td>
+					</td>	
 				</tr>
 			</tbody>
 		</table>
 		<!-- Spin Loader -->
-		<div class="col-md-offset-4 col-md-4 text-center mv-lg pv-xl" ng-if="isLoading">
-			<div class="panel">
-				<div class="panel-body text-center">
-					<div class="ball-clip-rotate-pulse" style="display: inline-block">
-						<div></div>
-						<div></div>
-					</div>
-					<h4>Loading more queries...</h4>
-				</div>
-			</div>
+ 		<div class="col-md-offset-4 col-md-4"
+			ng-if="isLoading">
+			<spin-loader></spin-loader>	
 		</div>
-	</div>
+	</div>	
 </div>

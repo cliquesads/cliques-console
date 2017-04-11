@@ -153,7 +153,7 @@ angular.module('analytics').config(['$stateProvider',
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/recent-queries-list.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/queries-list.client.view.html',
                     controller: 'AnalyticsListController'
                 },
                 'sideBar': {
@@ -162,14 +162,14 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.myQueriesList', {
-            url: '/analytics/myQueriesList',
+        state('app.analytics.customQueriesList', {
+            url: '/analytics/customQueriesList',
             resolve: {
                 $title: function(){ return 'My Queries'; }
             },
             views: {
                 'main': {
-                    templateUrl: 'modules/analytics/views/partials/my-queries-list.client.view.html',
+                    templateUrl: 'modules/analytics/views/partials/queries-list.client.view.html',
                     controller: 'AnalyticsListController'
                 },
                 'sideBar': {
