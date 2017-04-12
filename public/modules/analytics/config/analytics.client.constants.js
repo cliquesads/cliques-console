@@ -233,6 +233,101 @@ angular.module('analytics')
                 selected: false
             }
         ],
+        'networkAdmin': [
+            {
+                index: 1,
+                name: 'Impressions',
+                type: 'default'
+            },
+            {
+                index: 2,
+                name: 'Spend',
+                type: 'default'
+            },
+            { 
+                index: 3,
+                name: 'CPM',
+                type: 'default'
+            },
+            {
+                index: 4,
+                name: 'Clicks',
+                type: 'default'
+            },
+            {
+                index: 5,
+                name: 'CPC',
+                type: 'default'
+            },
+            {
+                index: 6,
+                name: 'CTR',
+                type: 'default'
+            },
+            {
+                index: 7,
+                name: 'Total Actions',
+                type: 'default'
+            },
+            {
+                index: 8,
+                name: 'Defaults',
+                type: 'default'
+            },
+            {
+                index: 9,
+                name: 'Fill Rate',
+                type: 'default'
+            }, 
+            {
+                index: 10,
+                name: 'Bids',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 11,
+                name: 'Uniques',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 12,
+                name: 'Win Rate',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 13,
+                name: 'View-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 14,
+                name: 'Click-Through Actions',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 15,
+                name: 'CPAV',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 16,
+                name: 'CPAC',
+                type: 'additional',
+                selected: false
+            },
+            {
+                index: 17,
+                name: 'CPA',
+                type: 'additional',
+                selected: false
+            }
+        ],
         'publisher': [
             {
                 index: 1,

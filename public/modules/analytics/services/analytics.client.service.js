@@ -114,11 +114,12 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 type: 'default'
             }
         ];
-        if (user.organization.organization_types.indexOf('networkAdmin') > -1 ||
-            user.organization.organization_types.indexOf('advertiser') > -1) {
+        if (user.organization.organization_types.indexOf('advertiser') > -1) {
             headers = headers.concat(TABLE_HEADERS.advertiser);
         } else if (user.organization.organization_types.indexOf('publisher') > -1){
             headers = headers.concat(TABLE_HEADERS.publisher);
+        } else {
+            headers = headers.concat(TABLE_HEADERS.networkAdmin);
         }
         if (additionalHeaders) {
             additionalHeaders.forEach(function(additionalHeader) {
@@ -142,7 +143,9 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             } else if (queryType === 'custom') {
                 // TO-DO:::ycx should fill in row[custom] for customized query
             } else {
-                row[queryType] = row._id[queryType].name;
+                if (row._id[queryType]) {
+                    row[queryType] = row._id[queryType].name;
+                }
             }
             // Logo for each row
             if (row._id.advertiser) {
@@ -160,6 +163,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
             row.Bids = row.bids;
             row.Uniques = row.uniques;
+            row.Revenue = $filter('currency')(row.spend, '$', 0);
             row['View-Through Actions'] = row.view_convs;
             row['Click-Through Actions'] = row.click_convs;
             row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : 'NaN';
@@ -172,6 +176,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
             row['Fill Rate'] = row.defaults ? row.imps / row.defaults : 'NaN';
             row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : 'NaN';
+            row['Win Rate'] = row.bids ? $filter('percentage')(row.imps / row.bids, 2) : 'NaN';
         });
         return rows;
     };
