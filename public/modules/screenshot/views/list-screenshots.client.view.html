@@ -40,7 +40,7 @@
                         <div class="form-group">
                             <label for="siteFilter" class="col-sm-2 text-md text-right mt-sm">Site</label>
                             <div class="col-sm-10">
-                                <select name="siteFilter" id="siteFilter" class=" form-control chosen-select" data-ng-model="queryParams.filterCampaignId" ng-options="site.id as site.name for site in filter.sites track by site.id" ng-change="filterChanged()">
+                                <select name="siteFilter" id="siteFilter" class=" form-control chosen-select" data-ng-model="queryParams.filterSiteId" ng-options="site.id as site.name for site in filter.sites track by site.id" ng-change="filterChanged()">
                                     <option value="" selected>Select site to filter</option>
                                 </select>
                             </div>
