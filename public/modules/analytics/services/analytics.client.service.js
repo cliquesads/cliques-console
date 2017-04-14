@@ -20,6 +20,11 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             var rowObject = _.pick(row, headers);
             var csvRow = '';
             for (var j = 0; j < headers.length; j ++) {
+                // delimit commas by surrounding the value with " and "
+                if (("" + rowObject[headers[j]]).indexOf(',') !== -1) {
+                    rowObject[headers[j]] = "\"" + rowObject[headers[j]] + "\"";
+                }
+                
                 if (j < headers.length - 1) {
                     csvRow += (rowObject[headers[j]] || rowObject[headers[j]] === 0) ? (rowObject[headers[j]] + ',') : ',';
                 } else {
