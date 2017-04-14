@@ -24,7 +24,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 if (("" + rowObject[headers[j]]).indexOf(',') !== -1) {
                     rowObject[headers[j]] = "\"" + rowObject[headers[j]] + "\"";
                 }
-                
+
                 if (j < headers.length - 1) {
                     csvRow += (rowObject[headers[j]] || rowObject[headers[j]] === 0) ? (rowObject[headers[j]] + ',') : ',';
                 } else {
@@ -111,14 +111,21 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType, additionalHeaders) {
-        var headers = [
-            {
+    var getQueryTableHeaders = function(queryType, dateGroupBy, additionalHeaders) {
+        var headers = [];
+        if (queryType !== 'time') {
+            headers = [{
                 index: 0,
                 name: queryType,
                 type: 'default'
-            }
-        ];
+            }];
+        } else {
+            headers = [{
+                index: 0,
+                name: dateGroupBy.charAt(0).toUpperCase() + dateGroupBy.slice(1), // make the 1st character uppercase for dateGroupBy name
+                type: 'default'
+            }];
+        }
         if (user.organization.organization_types.indexOf('advertiser') > -1) {
             headers = headers.concat(TABLE_HEADERS.advertiser);
         } else if (user.organization.organization_types.indexOf('publisher') > -1){
@@ -141,10 +148,22 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
      * Decide default query table headers based on user/organization type,
      * and also calculate field values for each table row
      */
-    var formatQueryTable = function(rows, queryType, groupBy) {
+    var formatQueryTable = function(rows, queryType, dateGroupBy, groupBy) {
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
         rows.forEach(function(row) {
             if (queryType === 'time') {
+                console.log(row._id.date);
                 row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+                if (dateGroupBy === 'hour') {
+                    row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
+                } else if (dateGroupBy === 'day') {
+                    row.Day = row[queryType];
+                } else {
+                    // date group by month
+                    row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
+                }
             } else if (queryType === 'custom') {
                 // TO-DO:::ycx should fill in row[custom] for customized query
             } else {
