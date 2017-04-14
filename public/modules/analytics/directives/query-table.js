@@ -99,9 +99,11 @@ angular.module('analytics').directive('queryTable', [
 							// Remove format characters and convert string to number so as to compare
 							aValue = aValue.replace('$', '');
 							aValue = aValue.replace('%', '');
+							aValue = aValue.replace(',', '');
 
 							bValue = bValue.replace('$', '');
 							bValue = bValue.replace('%', '');
+							bValue = bValue.replace(',', '');
 
 							aValue = Number(aValue);
 							bValue = Number(bValue);

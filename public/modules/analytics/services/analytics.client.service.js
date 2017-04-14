@@ -154,7 +154,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         ];
         rows.forEach(function(row) {
             if (queryType === 'time') {
-                console.log(row._id.date);
                 row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
                 if (dateGroupBy === 'hour') {
                     row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
