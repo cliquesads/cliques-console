@@ -23,14 +23,15 @@ angular.module('analytics').directive('queryGraph', [
 			},
 			templateUrl: 'modules/analytics/views/partials/query-graph.html',
 			link: function(scope, element, attrs) {
+				scope.queryParam = scope.defaultQueryParam;
 				// table collapse state
 				scope.isCollapsed = false;	
 				scope.user = user;
 				scope.dateRanges = aggregationDateRanges(user.tz);
 				scope.queryFunction = Analytics.queryFunction();
 				scope.$on('launchQuery', function(event, args) {
-					var queryParam = args.queryParam;
-					scope.getGraphData(queryParam);
+					scope.queryParam = args.queryParam;
+					scope.getGraphData(scope.queryParam);
 				});
 
 				var fields = [
@@ -71,7 +72,8 @@ angular.module('analytics').directive('queryGraph', [
 						Notify.alert('Error on query for graph data.');
 					});
 				};
-				scope.getGraphData(scope.defaultQueryParam);
+				// Initial query when loading
+				scope.getGraphData(scope.queryParam);
 			}
 		};
 	}

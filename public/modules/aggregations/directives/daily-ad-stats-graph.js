@@ -5,10 +5,23 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
         scope: {
             showPoints: '=',
             timeSeries: '=',
+            timeUnit: '=',
             height: '@'
         },
         template: '<flot dataset="dataSet" options="graphOptions" callback="callback" height="{{ height }}"></flot>',
         link: function(scope, element, attribute){
+            var timeformat, minTickSize;
+            // Decide the x-axis time scale depending on differe time unit passed in
+            if (!scope.timeUnit || scope.timeUnit === 'day') {
+                timeformat = '%m/%d/%y';
+                minTickSize = [1, 'day'];
+            } else if (scope.timeUnit === 'hour') {
+                timeformat = '%m/%d/%y %h:00';
+                minTickSize = [1, 'hour'];
+            } else if (scope.timeUnit === 'month') {
+                timeformat = '%m/%y';
+                minTickSize = [1, 'month'];
+            }
             scope.graphOptions = {
                 grid: {
                     borderColor: '#eee',
@@ -33,8 +46,9 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                     tickColor: '#fcfcfc',
                     mode: 'time',
                     timezone: 'UTC',
-                    timeformat: '%m/%d/%y',
-                    minTickSize: [1, 'day'],
+                    timeformat: timeformat,
+                    minTickSize: minTickSize,
+
                     axisLabelPadding: 5
                 },
                 yaxes: [
