@@ -103,7 +103,9 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
 
         // groupBy and populate parameter
         var groupByFields = ['advertiser', 'publisher'];
-        if (currentQueryType && currentQueryType !== 'time' && currentQueryType !== 'custom') {
+        if (currentQueryType === 'time') {
+            groupByFields = [];
+        } else if (currentQueryType && currentQueryType !== 'custom') {
             groupByFields.push(currentQueryType);
         }
 

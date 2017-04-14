@@ -148,10 +148,12 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 }
             }
             // Logo for each row
-            if (row._id.advertiser) {
-                row.logo = row._id.advertiser.logo_secure_url;
-            } else if (row._id.publisher) {
-                row.logo = row._id.publisher.logo_secure_url;
+            if (queryType !== 'time') {
+                if (row._id.advertiser) {
+                    row.logo = row._id.advertiser.logo_secure_url;
+                } else if (row._id.publisher) {
+                    row.logo = row._id.publisher.logo_secure_url;
+                }
             }
 
             row.Impressions = row.imps;
