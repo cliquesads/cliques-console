@@ -6,7 +6,7 @@
     </div>
     <div class="panel-body pt0 screenshot-wrapper" ng-click="!demo ? viewScreenshot(screenshot) : null">
         <img src="{{ screenshot.image_url }}" alt="Screenshot">
-        <div ng-class="{'demoWrapper': demo }">
+        <div ng-class="{'demoWrapper': demo }" ng-if="demo">
             <strong>Screenshots for ads you've run will appear here once you've activated a campaign.</strong>
         </div>
     </div>
