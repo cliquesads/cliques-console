@@ -5,7 +5,7 @@
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-5">
 							{{ humanizedDateRange }} - Table
 							<small>
 								<em class="text-muted">
@@ -14,27 +14,29 @@
 							</small>
 						</div>
 						<!-- More data fields dropdown -->
-						<div class="col-sm-2">
-							<button class="btn btn-default btn-block text-md"
+						<div class="col-sm-4 col-sm-offset-3 text-right">
+
+							<button class="btn btn-primary"
 								type="button"
 								ng-click="showMoreTableFields()">
-								More table fields
+								<i class="fa fa-table"></i> Show/hide table fields
 							</button>
-						</div>
+						<!--</div>-->
 						<!-- Export to CSV button -->
-						<div class="col-sm-2 col-sm-offset-1">
-							<button class="btn btn-primary btn-block text-md"
+						<!--<div class="col-sm-2 col-sm-offset-2">-->
+							<button class="btn btn-primary btn-sm mr-lg"
 								ng-click="exportToCSV()"
 								file-download="downloadFileBlob"
 								file-name="downloadFileName"
 								ng-disabled="!tableQueryResults || tableQueryResults.length === 0"
 								analytics-on="click"
 								analytics-event="Query_ExportToCSV">
-								Export to CSV
+								<i class="fa fa-file-excel-o"></i> Export CSV
 							</button>
-						</div>
-						<div class="col-sm-1 text-right">
-							<a ng-click="isCollapsed=!isCollapsed">
+						<!--</div>-->
+						<!--<div class="col-sm-1 text-right">-->
+							<a ng-click="isCollapsed=!isCollapsed" tooltip="Expand/Collapse Panel"
+							   tooltip-placement="left">
 								<i class="fa"
 									ng-class="{
 										'fa-minus': !isCollapsed,

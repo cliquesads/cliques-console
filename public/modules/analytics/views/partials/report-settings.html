@@ -1,4 +1,3 @@
-<br>
 <div class="panel panel-default">
 	<div class="panel-heading pt0">
 		<div class="row">
@@ -9,13 +8,17 @@
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<div class="checkbox text-md">
-					<label>
-						<input type="checkbox"
-							ng-model="selectedSettings.isSaved"
-							ng-change="showSaveQueryDialog()"> Save to My Queries
-					</label>
-				</div>
+				<button ng-click="showSaveQueryDialog()" ng-disabled="selectedSettings.isSaved"
+						class="btn btn-sm mt-sm" ng-class="selectedSettings.isSaved ? 'btn-default' : 'btn-primary'">
+					<span ng-switch="selectedSettings.isSaved">
+						<span ng-switch-when="true">
+							<i class="fa fa-check"></i> Saved
+						</span>
+						<span ng-switch-default>
+							<i class="fa fa-floppy-o"></i> Save / Schedule
+						</span>
+					</span>
+				</button>
 			</div>
 		</div>
 		<hr class="m0">
@@ -80,17 +83,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-
-			<!-- Refresh button -->
-			<div class="col-sm-2">
-				<button
-					class="btn btn-primary btn-block text-md"
-					ng-disabled="!selectedSettings.dateRangeShortCode"
-					ng-click="launchQuery($event)">
-					<i class="fa fa-refresh"></i>
-					Refresh
-				</button>
 			</div>
 		</div>
 
@@ -218,6 +210,16 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<!-- Refresh button -->
+			<div class="col-sm-2">
+				<button
+						class="btn btn-success btn-block text-md"
+						ng-disabled="!selectedSettings.dateRangeShortCode"
+						ng-click="launchQuery($event)">
+					<i class="fa fa-refresh"></i>
+					Refresh
+				</button>
 			</div>
 		</div>
 

@@ -1,8 +1,15 @@
+<h4><i class="fa fa-floppy-o"></i> Save Query</h4>
+<p>
+	Save this query to easily run later from <strong>My Queries</strong>.
+</p>
+<p>
+	You can also schedule this query to run automatically. When it runs, the results
+	will be conveniently emailed to you in CSV format.
+</p>
 <div class="row p-lg">
-	<h4>Save Query</h4>
-
 	<!-- Query name -->
-	<div class="form-horizontal">
+	<form name="saveQueryForm" id="saveQueryForm" data-ng-submit="saveQuery()">
+		<div class="form-horizontal">
 		<div class="form-group">
 			<label for="name"
 				class="col-sm-3 text-md mt-sm">
@@ -13,72 +20,85 @@
 					name="name"
 					id="name"
 					ng-model="selectedSettings.name"
+				    required="required"
 					class="form-control" />
 			</div>
 		</div>
-	</div>
-
-	<!-- Crontab day selection -->
-	<div class="form-horizontal">
-		<div class="form-group">
-			<label for="crontabDay"
-				class="col-sm-3 text-md mt-sm">
-				Crontab	
+		<div class="checkbox text-md">
+			<label>
+				<input type="checkbox"
+					   ng-model="isScheduled">
+				Schedule to run...
 			</label>
-			<div class="col-sm-9">
-				<select name="crontabDay"
-					id="crontabDay"
-					class="form-control chosen-select"
-					ng-model="crontabDay"
-					ng-options="key for (key, value) in crontabDayOptions">
-					<option value="" selected>
-						Select day to repeat query
-					</option>	
-				</select>
+		</div>
+
+		<div ng-show="isScheduled">
+			<div class="form-group">
+				<!-- Crontab day selection -->
+				<label for="crontabDay" class="col-sm-3 text-md mt-sm">
+					Repeat
+				</label>
+				<div class="col-sm-9">
+					<select name="crontabDay"
+							id="crontabDay"
+							class="form-control chosen-select"
+							ng-model="crontabDay"
+							ng-required="isScheduled"
+							ng-options="key for (key, value) in crontabDayOptions">
+						<option value="" selected>
+							Every...
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<!-- Crontab hour/minute -->
+				<label for="crontabHour"
+					   class="col-sm-3 text-md mt-sm">
+					at
+				</label>
+				<div class="col-sm-3">
+					<input type="number"
+						   placeholder="Hour"
+						   min="0"
+						   max="12"
+						   name="crontabHour"
+						   id="crontabHour"
+						   ng-model="crontabHour"
+						   ng-required="isScheduled"
+						   class="form-control">
+				</div>
+				<label for="crontabMinute"
+					   class="col-sm-1 text-md mt-sm text-center">
+					:
+				</label>
+				<div class="col-sm-3">
+					<input type="number"
+						   placeholder="Minute"
+						   min="0"
+						   max="60"
+						   name="crontabMinute"
+						   id="crontabMinute"
+						   ng-model="crontabMinute"
+						   ng-required="isScheduled"
+						   class="form-control">
+				</div>
+				<div class="col-sm-2">
+					<select name="crontabAmPm" id="crontabAmPm" ng-model="crontabAmPm"
+							ng-required="isScheduled" class="form-control chosen-select">
+						<option value="AM" selected>AM</option>
+						<option value="PM">PM</option>
+					</select>
+				</div>
 			</div>
 		</div>
-	</div>
-
-	<!-- Crontab hour/minute -->
-	<div class="form-group">
-		<label for="crontabHour"
-			class="col-sm-3 text-md mt-sm">
-			at
-		</label>
-		<div class="col-sm-4">
-			<input type="number"
-				placeholder="hour" 
-				min="0"
-				max="24"
-				name="crontabHour"
-				id="crontabHour"
-				ng-model="crontabHour"
-				class="form-control">
+		<!-- Save button -->
+		<div class="text-center">
+			<button class="btn btn-primary text-md mt"
+				type="submit">
+				Save
+			</button>
 		</div>
 	</div>
-	<div class="form-group">
-		<label for="crontabMinute"
-			class="col-sm-1 text-md mt-sm text-center">
-			:
-		</label>
-		<div class="col-sm-4">
-			<input type="number"
-				placeholder="minute" 
-				min="0"
-				max="60"
-				name="crontabMinute"
-				id="crontabMinute"
-				ng-model="crontabMinute"
-				class="form-control">
-		</div>
-	</div>
-
-	<!-- Save button -->
-	<div class="text-right">
-		<button class="btn btn-primary text-md mt"
-			ng-disabled="!inputValid()"
-			ng-click="saveQuery()">
-			Save
-		</button>
-	</div>
+	</form>
 </div>

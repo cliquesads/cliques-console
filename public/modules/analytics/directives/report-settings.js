@@ -32,41 +32,47 @@ angular.module('analytics').directive('reportSettings', [
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
                 scope.showSaveQueryDialog = function() {
-                	if (scope.selectedSettings.isSaved) {
-                		ngDialog.open({
-                			template: 'modules/analytics/views/partials/save-query-dialog.html',
-                			controller: ['$scope', 'CRONTAB_DAY_OPTIONS', function($scope, CRONTAB_DAY_OPTIONS) {
-                				$scope.selectedSettings = scope.selectedSettings;
-                				$scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
-                				// Validate input so as to decide whether to disable save button or not
-                				$scope.inputValid = function() {
-									if ($scope.selectedSettings.name && $scope.selectedSettings.name.length > 0) {
-										if ($scope.crontabDay &&
-                                            ($scope.crontabHour || $scope.crontabHour === 0) &&
-                                            ($scope.crontabMinute || $scope.crontabMinute === 0)) {
-											return true;
-										}
-									} 
-									return false;
-                				};
-                				$scope.saveQuery = function() {
-									$scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
-                                    // Post query param to backend
-                                    Analytics.saveQuery($scope.selectedSettings)
+                    var parentScope = scope;
+                    ngDialog.open({
+                        template: 'modules/analytics/views/partials/save-query-dialog.html',
+                        controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', function($scope, CRONTAB_DAY_OPTIONS, Notify) {
+                            $scope.selectedSettings = parentScope.defaultQueryParam;
+                            $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
+                            $scope.isScheduled = false;
+                            $scope.crontabAmPm = 'AM';
+
+                            $scope.saveQuery = function() {
+                                if ($scope.crontabHour === 12){
+                                    if ($scope.crontabAmPm === 'AM'){
+                                        $scope.crontabHour = 0;
+                                    }
+                                } else {
+                                    if ($scope.crontabAmPm === 'PM'){
+                                        $scope.crontabHour += 12;
+                                    }
+                                }
+                                if ($scope.isScheduled){
+                                    $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
+                                }
+                                // Post query param to backend
+                                Analytics.saveQuery($scope.selectedSettings)
                                     .then(function(response) {
                                         // Notify that this query has been saved and inform other directives the saved query id
                                         $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
-                                    })
-                                    .catch(function(error) {
+                                        Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
+                                            status: 'success'
+                                        });
+                                        $scope.closeThisDialog(0);
+                                        scope.selectedSettings.isSaved = true;
+                                    }, function(error) {
                                         Notify.alert(error.message, {
                                             status: 'danger'
                                         });
+                                        $scope.closeThisDialog(1);
                                     });
-									$scope.closeThisDialog(0);
-                				};
-                			}]
-                		});
-                	}
+                            };
+                        }]
+                    });
                 };
 
                 scope.timePeriodChanged = function() {

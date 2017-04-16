@@ -124,45 +124,39 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
 
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showSaveQueryDialog = function() {
-            if ($scope.defaultQueryParam.isSaved) {
-                var parentScope = $scope;
-                ngDialog.open({
-                    template: 'modules/analytics/views/partials/save-query-dialog.html',
-                    controller: ['$scope', 'CRONTAB_DAY_OPTIONS', function($scope, CRONTAB_DAY_OPTIONS) {
+            $scope.defaultQueryParam.isSaved = true;
+            var parentScope = $scope;
+            ngDialog.open({
+                template: 'modules/analytics/views/partials/save-query-dialog.html',
+                controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', function($scope, CRONTAB_DAY_OPTIONS, Notify) {
+                    $scope.selectedSettings = parentScope.defaultQueryParam;
+                    $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
+                    $scope.isScheduled = false;
 
-                        $scope.selectedSettings = parentScope.defaultQueryParam;
-                        $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
-                        // Validate input so as to decide whether to disable save button or not
-                        $scope.inputValid = function() {
-                            if ($scope.selectedSettings.name && $scope.selectedSettings.name.length > 0) {
-                                if ($scope.crontabDay &&
-                                    ($scope.crontabHour || $scope.crontabHour === 0) &&
-                                    ($scope.crontabMinute || $scope.crontabMinute === 0)) {
-                                    return true;
-                                }
-                            } 
-                            return false;
-                        };
-                        $scope.saveQuery = function() {
+                    $scope.saveQuery = function() {
+                        if ($scope.crontabAmPm === 'PM'){
+                            $scope.crontabHour += 12;
+                        }
+                        if ($scope.isScheduled){
                             $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
-                            // Post query param to backend
-                            Analytics.saveQuery($scope.selectedSettings)
-                            .then(function(response) {
-                                // Notify that this query has been saved and inform other directives the saved query id
-                                $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
-                            })
-                            .catch(function(error) {
-                                Notify.alert(error.message, {
-                                    status: 'danger'
-                                });
-                            });
+                        }
+                        // Post query param to backend
+                        Analytics.saveQuery($scope.selectedSettings)
+                        .then(function(response) {
+                            // Notify that this query has been saved and inform other directives the saved query id
+                            $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
                             $scope.closeThisDialog(0);
-                        };
-
-                    }]
-                });
-            }
+                        }, function(error) {
+                            Notify.alert(error.message, {
+                                status: 'danger'
+                            });
+                            $scope.closeThisDialog(1);
+                        });
+                    };
+                }]
+            });
         };
+
         $scope.timePeriodChanged = function() {
             if ($scope.defaultQueryParam.dateRangeShortCode) {
                 // set up start date and end date if not designated as custom dates by user already, also setup date range title for displaying and humanizedDateRange so as to save in database in case needed
