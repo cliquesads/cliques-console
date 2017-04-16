@@ -179,7 +179,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
                 }
             }
 
-            row.Impressions = row.imps;
+            row.Impressions = $filter('number')(row.imps);
             row.Spend = $filter('currency')(row.spend, '$', 0);
             row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
             row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): '0';
