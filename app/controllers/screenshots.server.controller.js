@@ -220,7 +220,6 @@ module.exports = function(db) {
 			var page = req.query.page;
 			var filterCampaignId = req.query.filterCampaignId;
 			var filterSiteId = req.query.filterSiteId;
-			// var itemsPerPage = config.get('Screenshots.itemsPerPage');
 			var itemsPerPage = 25;
 
 			delete req.query.page;
