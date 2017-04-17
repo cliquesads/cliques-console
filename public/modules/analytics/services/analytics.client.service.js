@@ -180,15 +180,15 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             }
 
             row.Impressions = $filter('number')(row.imps);
-            row.Spend = $filter('currency')(row.spend, '$', 0);
+            row.Spend = $filter('currency')(row.spend, '$', 2);
             row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
             row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): '0';
             row['Total Actions'] = row.view_convs + row.click_convs;
-            row.Clicks = row.clicks;
+            row.Clicks = $filter('number')(row.imps);
             row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
-            row.Bids = row.bids;
-            row.Uniques = row.uniques;
-            row.Revenue = $filter('currency')(row.spend, '$', 0);
+            row.Bids = $filter('number')(row.imps);
+            row.Uniques = $filter('number')(row.imps);
+            row.Revenue = $filter('currency')(row.spend, '$', 2);
             row['View-Through Actions'] = row.view_convs;
             row['Click-Through Actions'] = row.click_convs;
             row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
@@ -199,7 +199,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             row.RPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
             row.RPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
             row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row['Fill Rate'] = row.defaults ? $filter('number')(row.imps / row.defaults, 2) : '0';
+            row['Fill Rate'] = row.defaults ? $filter('percentage')(row.imps / row.defaults, 2) : '0';
             row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
             row['Win Rate'] = row.bids ? $filter('percentage')(row.imps / row.bids, 2) : '0';
         });
