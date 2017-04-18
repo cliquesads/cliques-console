@@ -5,7 +5,7 @@
  */
 var models = require('@cliques/cliques-node-utils').mongodb.models,
     mongoose = require('mongoose'),
-    errorHandler = require('./errors.server.controller'),
+    errorHandler = require('../../errors.server.controller'),
     _ = require('lodash'),
     async = require('async'),
     moment = require('moment-timezone');

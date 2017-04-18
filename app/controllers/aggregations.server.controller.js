@@ -8,12 +8,25 @@ module.exports = function(db) {
     var geoAdStatAPI = new GeoAdStatAPI(db);
     return {
         hourlyAdStat: {
-            getMany: hourlyAdStatAPI.getMany,
-            getManyAdvertiserSummary: hourlyAdStatAPI.getManyAdvertiserSummary,
-            getManyPublisherSummary: hourlyAdStatAPI.getManyPublisherSummary,
-            getManyAdvertiser: hourlyAdStatAPI.getManyAdvertiser,
-            getManyPublisher: hourlyAdStatAPI.getManyPublisher,
-            getManyClique: hourlyAdStatAPI.getManyClique,
+            getMany: function(req, res) {
+                return hourlyAdStatAPI.getMany(req, res);
+            },
+            getManyAdvertiserSummary: function(req, res) {
+                return hourlyAdStatAPI.getManyAdvertiserSummary(req, res);
+            },
+            getManyPublisherSummary: function(req, res) {
+                return hourlyAdStatAPI.getManyPublisherSummary(req, res);
+            },
+            getManyAdvertiser: function(req, res){
+                return hourlyAdStatAPI.getManyAdvertiser(req, res);
+
+            },
+            getManyPublisher: function(req, res){
+                return hourlyAdStatAPI.getManyPublisher(req, res);
+            },
+            getManyClique: function(req, res) {
+                return hourlyAdStatAPI.getManyClique(req, res);
+            },
             getLatestHour: function(callback){
                 hourlyAdStatAPI.aggregationModels.HourlyAdStat.findOne().sort('-hour').exec(function(err, result){
                     if (err) return callback(err);
@@ -22,14 +35,14 @@ module.exports = function(db) {
             }
         },
         geoAdStat: {
-            getMany: geoAdStatAPI.getMany,
-            getManyAdvertiserSummary: geoAdStatAPI.getManyAdvertiserSummary,
-            getManyPublisherSummary: geoAdStatAPI.getManyPublisherSummary,
-            getLatestHour: function(callback){
-                geoAdStatAPI.aggregationModels.GeoAdStat.findOne().sort('-hour').exec(function(err, result){
-                    if (err) return callback(err);
-                    return callback(null, result.hour);
-                });
+            getMany: function(req, res){
+                return geoAdStatAPI.getMany(req, res);
+            },
+            getManyAdvertiserSummary: function(req, res){
+                return geoAdStatAPI.getManyAdvertiserSummary(req, res);
+            },
+            getManyPublisherSummary: function(req, res) {
+                return geoAdStatAPI.getManyPublisherSummary(req, res);
             }
         }
     };
