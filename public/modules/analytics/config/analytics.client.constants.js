@@ -82,7 +82,6 @@ angular.module('analytics')
                     name: 'Sites',
                     type: 'site',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,site',
                     populate: 'advertiser,publisher,site'
@@ -104,7 +103,6 @@ angular.module('analytics')
                     name: 'Campaigns',
                     type: 'campaign',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,campaign',
                     populate: 'advertiser,publisher,campaign'
@@ -127,7 +125,6 @@ angular.module('analytics')
                     name: 'Creatives',
                     type: 'creative',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,creative',
                     populate: 'advertiser,publisher,creative'
@@ -150,7 +147,6 @@ angular.module('analytics')
                     name: 'Placements',
                     type: 'placement',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,placement',
                     populate: 'advertiser,publisher,placement'
@@ -172,7 +168,6 @@ angular.module('analytics')
                     name: 'Cities',
                     type: 'city',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,city',
                     populate: 'advertiser,publisher,city'
@@ -194,7 +189,6 @@ angular.module('analytics')
                     name: 'States',
                     type: 'state',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,state',
                     populate: 'advertiser,publisher,state'
@@ -216,7 +210,6 @@ angular.module('analytics')
                     name: 'Countries',
                     type: 'country',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,publisher,country',
                     populate: 'advertiser,publisher,country'
@@ -260,7 +253,6 @@ angular.module('analytics')
                     name: 'Sites',
                     type: 'site',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'publisher,site',
                     populate: 'publisher,site'
@@ -283,7 +275,6 @@ angular.module('analytics')
                     name: 'Creatives',
                     type: 'creative',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'publisher,creative',
                     populate: 'publisher,creative'
@@ -305,7 +296,6 @@ angular.module('analytics')
                     name: 'Cities',
                     type: 'city',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'publisher,city',
                     populate: 'publisher,city'
@@ -327,7 +317,6 @@ angular.module('analytics')
                     name: 'States',
                     type: 'state',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'publisher,state',
                     populate: 'publisher,state'
@@ -349,7 +338,6 @@ angular.module('analytics')
                     name: 'Countries',
                     type: 'country',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'publisher,country',
                     populate: 'publisher,country'
@@ -393,7 +381,6 @@ angular.module('analytics')
                     name: 'Campaigns',
                     type: 'campaign',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,campaign',
                     populate: 'advertiser,campaign'
@@ -416,7 +403,6 @@ angular.module('analytics')
                     name: 'Placements',
                     type: 'placement',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,placement',
                     populate: 'advertiser,placement'
@@ -438,7 +424,6 @@ angular.module('analytics')
                     name: 'Cities',
                     type: 'city',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,city',
                     populate: 'advertiser,city'
@@ -460,7 +445,6 @@ angular.module('analytics')
                     name: 'States',
                     type: 'state',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,state',
                     populate: 'advertiser,state'
@@ -482,7 +466,6 @@ angular.module('analytics')
                     name: 'Countries',
                     type: 'country',
                     dateRangeShortCode: '7d',
-                    dateGroupBy: 'day',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'advertiser,country',
                     populate: 'advertiser,country'
