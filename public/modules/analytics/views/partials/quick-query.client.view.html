@@ -19,12 +19,12 @@
 
 <!-- Query Graph -->
 <query-graph
-    ng-if="hasGraph"
+    ng-if="availableSettings.hasGraph"
     default-query-param="defaultQueryParam">
 </query-graph>
 
 <!-- Query Table -->
 <query-table
-    ng-if="hasTable"
+    ng-if="availableSettings.hasTable"
     default-query-param="defaultQueryParam">
 </query-table>

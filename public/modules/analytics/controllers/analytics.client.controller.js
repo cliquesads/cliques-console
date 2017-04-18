@@ -1,12 +1,12 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootScope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'QUERY_ROUTES', 'Notify', 'ngDialog',
-    function($scope, $rootScope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, QUERY_ROUTES, Notify, ngDialog) {
-        $scope.views = null;
+angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
+    function($scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
         // Depending on different organization type, quick query options may vary
         $scope.quickQueries = QUICKQUERIES[user.organization.effectiveOrgType];
-        $scope.queryRoutes = QUERY_ROUTES;
+        $scope.currentQueryType = $state.current.queryType;
+
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.dateRanges = aggregationDateRanges(user.tz);
         if ($stateParams.query) {
@@ -20,108 +20,63 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
             delete $scope.defaultQueryParam.createdAt;
             delete $scope.defaultQueryParam.updatedAt;
             delete $scope.defaultQueryParam.nextRun;
-        } else {
-            $scope.defaultQueryParam = {
-                name: '',
-                dateRangeShortCode: '7d',
-                dateGroupBy: 'day',
-                humanizedDateRange: 'Last 7 Days'
-            };
-        }
-        if ($scope.defaultQueryParam.dateRangeShortCode !== 'custom') {
-            $scope.defaultQueryParam.startDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].startDate;
-            $scope.defaultQueryParam.endDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].endDate;
-        } else {
-            var dateArr = $scope.defaultQueryParam.humanizedDateRange.split(' - ');
-            $scope.defaultQueryParam.startDate = dateArr[0];
-            $scope.defaultQueryParam.endDate = dateArr[1];
+        } else if ($scope.currentQueryType) {
+            $scope.defaultQueryParam = $scope.quickQueries[$scope.currentQueryType].defaultQueryParam;
         }
 
-        /********************** FILTER OPTIONS FOR CREATIVES/SITES **********************/
-        $scope.hasCampaignFilter = false;
-        $scope.hasSiteFilter = false;
-        switch (user.organization.effectiveOrgType) {
-            case 'networkAdmin':
-                $scope.hasCampaignFilter = true;
-                $scope.hasSiteFilter = true;
-                break;
-            case 'advertiser':
-                $scope.hasCampaignFilter = true;
-                break;
-            case 'publisher':
-                $scope.hasSiteFilter = true;
-                break;
-            default:
-                break;
-        }
-
-        /******************** DIFFERENT QUERY ENTRIES/SECTIONS ********************/
-        // set query name, filters and available report settings depending on what current state/query section it is
-        $scope.availableSettings = {
-            timePeriod: true,
-            dateGroupBy: false,
-            campaignFilter: $scope.hasCampaignFilter,
-            siteFilter: $scope.hasSiteFilter
-        };
-        $scope.hasTable = true;
-        $scope.hasGraph = false;
-
-        if ($scope.availableSettings.campaignFilter) {
-            // has campaign fileter, should get all campaigns for current user
-            Analytics.getAllCampaigns()
-                .success(function(data) {
-                    $scope.allCampaigns = data;
-                })
-                .error(function(error) {
-                    Notify.alert(error.message, {
-                        status: 'danger'
-                    });
-                });
-        }
-        if ($scope.availableSettings.siteFilter) {
-            // has site filter, should get all sites for current user   
-            Analytics.getAllSites()
-                .success(function(data) {
-                    $scope.allSites = data;
-                })
-                .error(function(error) {
-                    Notify.alert(error.message, {
-                        status: 'danger'
-                    });
-                });
-        }
-
-        var currentQueryType;
-        for (var queryType in $scope.queryRoutes) {
-            if ($state.current.name === $scope.queryRoutes[queryType]) {
-                currentQueryType = queryType;
-                break;
+        if ($scope.defaultQueryParam) {
+            if ($scope.defaultQueryParam.dateRangeShortCode !== 'custom') {
+                $scope.defaultQueryParam.startDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].startDate;
+                $scope.defaultQueryParam.endDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].endDate;
+            } else {
+                var dateArr = $scope.defaultQueryParam.humanizedDateRange.split(' - ');
+                $scope.defaultQueryParam.startDate = dateArr[0];
+                $scope.defaultQueryParam.endDate = dateArr[1];
             }
         }
-        $scope.defaultQueryParam.name = currentQueryType;
-        $scope.defaultQueryParam.type = currentQueryType;
 
-        // groupBy and populate parameter
-        var groupByFields = ['advertiser', 'publisher'];
-        if (currentQueryType === 'time') {
-            groupByFields = [];
-        } else if (currentQueryType && currentQueryType !== 'custom') {
-            groupByFields.push(currentQueryType);
+        /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
+        if ($scope.currentQueryType) {
+            $scope.availableSettings = $scope.quickQueries[$scope.currentQueryType].availableSettings;
+            if ($scope.availableSettings.campaignFilter) {
+                // has campaign fileter, should get all campaigns for current user
+                Analytics.getAllCampaigns()
+                    .success(function(data) {
+                        $scope.allCampaigns = data;
+                    })
+                    .error(function(error) {
+                        Notify.alert(error.message, {
+                            status: 'danger'
+                        });
+                    });
+            }
+            if ($scope.availableSettings.siteFilter) {
+                // has site filter, should get all sites for current user   
+                Analytics.getAllSites()
+                    .success(function(data) {
+                        $scope.allSites = data;
+                    })
+                    .error(function(error) {
+                        Notify.alert(error.message, {
+                            status: 'danger'
+                        });
+                    });
+            }
         }
-
-        $scope.defaultQueryParam.groupBy = groupByFields.join();
-        $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
-
-        // Set available report settings for different queries
-        if (currentQueryType === 'time' || currentQueryType === 'custom') {
-            $scope.hasGraph = true;
-            $scope.availableSettings.dateGroupBy = true;
-        }
-
-        $scope.goToQuerySection = function(queryType) {
-            $state.go($scope.queryRoutes[queryType]);
+        $scope.goToQuerySection = function(queryRoute) {
+            $state.go(queryRoute);
         };
-
+    }
+]).controller('AnalyticsCustomizeController', [
+    '$scope', '$rootScope', '$state', '$stateParams', 'ngDialog', 'Analytics', 'CUSTOMQUERY',
+    function($scope, $rootScope, $state, $stateParams, ngDialog, Analytics, CUSTOMQUERY) {
+        $scope.availableSettings = CUSTOMQUERY[user.organization.effectiveOrgType].availableSettings;
+        if ($stateParams.defaultQueryParam) {
+            $scope.defaultQueryParam = $stateParams.defaultQueryParam;
+        } else {
+            // $state.go('app.analytics.customize');
+            $scope.defaultQueryParam = CUSTOMQUERY[user.organization.effectiveOrgType].defaultQueryParam;
+        }
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showSaveQueryDialog = function() {
             $scope.defaultQueryParam.isSaved = true;
@@ -174,19 +129,8 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$rootS
                 }
             }
         };
-
         $scope.showCustomizedQueryResult = function() {
-            $state.go('app.analytics.customizeQuery.queryResult', {defaultQueryParam: $scope.defaultQueryParam});
+            $state.go('app.analytics.customize.result', {defaultQueryParam: $scope.defaultQueryParam});
         };
     }
-]).controller('CustomQueryResultsController', [
-    '$scope',
-    '$state',
-    '$stateParams',
-    function($scope, $state, $stateParams) {
-    if ($stateParams.defaultQueryParam) {
-        $scope.defaultQueryParam = $stateParams.defaultQueryParam;
-    } else {
-        $state.go('app.analytics.customizeQuery');
-    }
-}]);
+]);

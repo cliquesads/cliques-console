@@ -51,11 +51,7 @@ angular.module('analytics').directive('queryTable', [
 						scope.isLoading = false;
 
 						// sort rows by date
-						scope.tableQueryResults = response.data.sort(function(a, b) {
-						    var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
-						    var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
-						    return aDate - bDate;
-						});
+						scope.tableQueryResults = response.data;
 
 						// Decide default table headers and format/calculate values for each row
 						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.additionalHeaders);
