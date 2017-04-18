@@ -36,7 +36,6 @@ module.exports = function(db) {
 		 */
 		save: function(req, res) {
 			var newQuery = new Query(req.body.queryParam);
-
 			var scheduleString = newQuery.schedule;
 			var nextRun;
 			if (scheduleString) {
@@ -84,14 +83,10 @@ module.exports = function(db) {
 				}
 			})
 			.then(function() {
-				newQuery.save(function(err) {
-					if (err) {
-						return res.status(400).send({
-							message: 'Error saving query'
-						});
-					}
-					return res.send(newQuery._id);
-				});
+				newQuery.promisifiedSave = promise.promisify(newQuery.save);
+				return newQuery.promisifiedSave();
+			}).then(function() {
+				return res.send(newQuery._id);
 			})
 			.catch(function(err) {
 				return res.status(400).send({ message: err });
@@ -126,7 +121,7 @@ module.exports = function(db) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				type: { $ne: 'Custom' }
+				type: { $ne: 'custom' }
 			};
 			Query.find(queryParam)
 			.sort({
@@ -161,7 +156,7 @@ module.exports = function(db) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				type: 'Custom'
+				type: 'custom'
 			};
 			Query.find(queryParam)
 			.sort({

@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
  */
 var QuerySchema = exports.Query = new Schema({
     user: { type: Schema.ObjectId, required: true, ref: 'User' },
-    groupBy: [{ type: String }],
+    groupBy: { type: String },
     dateGroupBy: { type: String },
     filters: [{ type: String }],
     additionalHeaders: [{type: String}],

@@ -36,7 +36,7 @@ angular.module('analytics').directive('reportSettings', [
                     ngDialog.open({
                         template: 'modules/analytics/views/partials/save-query-dialog.html',
                         controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', function($scope, CRONTAB_DAY_OPTIONS, Notify) {
-                            $scope.selectedSettings = parentScope.defaultQueryParam;
+                            $scope.selectedSettings = parentScope.selectedSettings;
                             $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
                             $scope.isScheduled = false;
                             $scope.crontabAmPm = 'AM';
@@ -55,21 +55,21 @@ angular.module('analytics').directive('reportSettings', [
                                     $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
                                 }
                                 // Post query param to backend
+                                scope.selectedSettings.isSaved = true;
                                 Analytics.saveQuery($scope.selectedSettings)
-                                    .then(function(response) {
-                                        // Notify that this query has been saved and inform other directives the saved query id
-                                        $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
-                                        Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
-                                            status: 'success'
-                                        });
-                                        $scope.closeThisDialog(0);
-                                        scope.selectedSettings.isSaved = true;
-                                    }, function(error) {
-                                        Notify.alert(error.message, {
-                                            status: 'danger'
-                                        });
-                                        $scope.closeThisDialog(1);
+                                .then(function(response) {
+                                    // Notify that this query has been saved and inform other directives the saved query id
+                                    $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
+                                    Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
+                                        status: 'success'
                                     });
+                                    $scope.closeThisDialog(0);
+                                }, function(error) {
+                                    Notify.alert(error.message, {
+                                        status: 'danger'
+                                    });
+                                    $scope.closeThisDialog(1);
+                                });
                             };
                         }]
                     });

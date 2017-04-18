@@ -12,10 +12,9 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
         if ($stateParams.query) {
             // History query entered from sidebar
             $scope.defaultQueryParam = $stateParams.query;
+            $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
             $scope.defaultQueryParam.savedQueryId = $scope.defaultQueryParam._id;
             $scope.defaultQueryParam._id = undefined;
-            // delete groupBy
-            delete $scope.defaultQueryParam.groupBy;
             // delete date related
             delete $scope.defaultQueryParam.createdAt;
             delete $scope.defaultQueryParam.updatedAt;
