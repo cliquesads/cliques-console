@@ -187,7 +187,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
             row.Clicks = $filter('number')(row.imps);
             row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
             row.Bids = $filter('number')(row.imps);
-            row.Uniques = $filter('number')(row.imps);
             row.Revenue = $filter('currency')(row.spend, '$', 2);
             row['View-Through Actions'] = row.view_convs;
             row['Click-Through Actions'] = row.click_convs;

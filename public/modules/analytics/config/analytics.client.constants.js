@@ -542,42 +542,36 @@ angular.module('analytics')
             },
             {
                 index: 9,
-                name: 'Uniques',
-                type: 'additional',
-                selected: false
-            },
-            {
-                index: 10,
                 name: 'Win Rate',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 11,
+                index: 10,
                 name: 'View-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 12,
+                index: 11,
                 name: 'Click-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 13,
+                index: 12,
                 name: 'CPAV',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 14,
+                index: 13,
                 name: 'CPAC',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 15,
+                index: 14,
                 name: 'CPA',
                 type: 'additional',
                 selected: false
@@ -637,42 +631,36 @@ angular.module('analytics')
             },
             {
                 index: 11,
-                name: 'Uniques',
-                type: 'additional',
-                selected: false
-            },
-            {
-                index: 12,
                 name: 'Win Rate',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 13,
+                index: 12,
                 name: 'View-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 14,
+                index: 13,
                 name: 'Click-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 15,
+                index: 14,
                 name: 'CPAV',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 16,
+                index: 15,
                 name: 'CPAC',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 17,
+                index: 16,
                 name: 'CPA',
                 type: 'additional',
                 selected: false
@@ -726,36 +714,30 @@ angular.module('analytics')
             },
             {
                 index: 10,
-                name: 'Uniques',
-                type: 'additional',
-                selected: false
-            },
-            {
-                index: 11,
                 name: 'View-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 12,
+                index: 11,
                 name: 'Click-Through Actions',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 13,
+                index: 12,
                 name: 'RPAV',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 14,
+                index: 13,
                 name: 'RPAC',
                 type: 'additional',
                 selected: false
             },
             {
-                index: 15,
+                index: 14,
                 name: 'RPA',
                 type: 'additional',
                 selected: false
