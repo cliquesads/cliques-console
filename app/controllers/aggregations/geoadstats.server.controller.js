@@ -37,7 +37,7 @@ util.inherits(GeoAdStatAPI, AdStatsAPIHandler);
 /*------------ General (non-path-param) methods ------------ */
 
 GeoAdStatAPI.prototype.getMany = function(req, res){
-    return this._getManyWrapper(this.genPipelineBuilder)(req, res);
+    return this._getManyWrapper(this.genPipelineBuilder, this.aggregationModels.GeoAdStat)(req, res);
 };
 
 /**
@@ -60,7 +60,7 @@ GeoAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
             ids.push(doc.id);
         });
         req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-        return self._getManyWrapper(self.genPipelineBuilder)(req, res);
+        return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.GeoAdStat)(req, res);
     });
 };
 
@@ -85,6 +85,6 @@ GeoAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
             ids.push(doc.id);
         });
         req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-        return self._getManyWrapper(self.genPipelineBuilder)(req, res);
+        return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.GeoAdStat)(req, res);
     });
 };
