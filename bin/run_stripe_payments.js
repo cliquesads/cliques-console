@@ -17,7 +17,7 @@ require('./_main')(function(GLOBALS){
         paymentsType = GLOBALS.args.type;
 
     var users = require('../app/models/user.server.model.js'),
-        Organization = mongoose.model('Organization'),
+        Organization = require('../app/models/organization.server.model').Organization,
         Payment = mongoose.model('Payment');
 
     var stripe = require('stripe')(config.get("Stripe.secret_key"));

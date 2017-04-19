@@ -22,7 +22,7 @@ require('./_main')(function(GLOBALS){
     var publisherModels = new models.PublisherModels(db);
     var user = require('../app/models/user.server.model');
     var billing = require('../app/models/billing.server.model');
-    var Organization = mongoose.model('Organization');
+    var Organization = require('../app/models/organization.server.model').Organization;
     var Payment = mongoose.model('Payment');
     var InsertionOrder = mongoose.model('InsertionOrder');
 

@@ -9,8 +9,9 @@ module.exports = function(db, routers) {
 	/* ---- Screenshot API routes ---- */
 	router.route('/screenshot/getFilters')
 		/**
-		 * @api {get} /screenshot/getFilters Get all campaigns and sites for current signed in user's organization so user may select any of them that act as query filter when fetching screenshots
+		 * @api {get} /screenshot/getFilters Get Screenshot Filters
 		 * @apiName GetFilters
+		 * @apiGroup Screenshot
 		 * @apiDescription Get all campaigns and sites for current signed in user's organization so user may select any of them that act as query filter when fetching screenshots
 		 * @apiVersion 0.1.0
 		 * @apiPermission networkAdmin
@@ -39,8 +40,9 @@ module.exports = function(db, routers) {
 
 	router.route('/screenshot')
 		/**
-		 * @api {get} /screenshot Get all screenshots that belong to current logged in user's advertiser or publisher
-		 * @apiName GetScreenshots
+		 * @api {get} /screenshot Get All Screenshots
+		 * @apiName GetAllScreenshots
+		 * @apiGroup Screenshot
 		 * @apiDescription Get all screenshots that belong to current logged in user's advertiser or publisher
 		 * @apiVersion 0.1.0
 		 * @apiPermission networkAdmin
@@ -55,8 +57,9 @@ module.exports = function(db, routers) {
 
 	router.route('/screenshot/:screenshotId')
 		/**
-		 * @api {get} /screenshot/:screenshotId Get individual screenshot by Id
+		 * @api {get} /screenshot/:screenshotId Get Screenshot
 		 * @apiName ReadScreenshot
+		 * @apiGroup Screenshot
 		 * @apiDescription Get single screenshot by ID
 		 * @apiVersion 0.1.0
 		 * @apiPermission networkAdmin
