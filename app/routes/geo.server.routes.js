@@ -117,7 +117,7 @@ module.exports = function(db, routers){
          * @apiSuccess {Object[]} ::regions:: Array of all Region objects as response `body` (see [above](#api-Region)
          *  for all fields).
          */
-        .get(geo.region.getManyCountries);
+        .get(geo.region.getManyRegions);
 
     router.route('/region/:regionId')
         /**
