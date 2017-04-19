@@ -17,10 +17,11 @@ function getDatesArray(startDate, stopDate, unit){
             currentDate.add(newOffset - oldOffset, 'minutes');
         }
     }
-
     // when timeUnit is 'month', make sure the month of stopDate gets counted as well
-    if (unit === 'month' && startDate.month() !== stopDate.month()) {
-        dateArray.push(currentDate.valueOf());
+    if (unit === 'month') {
+        if (moment(dateArray[dateArray.length - 1]).month() < stopDate.month()) {
+            dateArray.push(currentDate.valueOf());
+        } 
     }
     return dateArray;
 }
