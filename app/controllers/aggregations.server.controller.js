@@ -19,7 +19,6 @@ module.exports = function(db) {
             },
             getManyAdvertiser: function(req, res){
                 return hourlyAdStatAPI.getManyAdvertiser(req, res);
-
             },
             getManyPublisher: function(req, res){
                 return hourlyAdStatAPI.getManyPublisher(req, res);
