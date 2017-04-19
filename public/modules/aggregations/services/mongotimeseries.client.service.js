@@ -3,7 +3,8 @@
 
 function getDatesArray(startDate, stopDate, unit){
     var dateArray = [];
-    var currentDate = startDate;
+    // clone startDate to a new moment object without modifying the original startDate
+    var currentDate = moment(startDate);
     var oldOffset, newOffset;
     while (currentDate.isBefore(stopDate) || currentDate.isSame(stopDate)) {
         dateArray.push( currentDate.valueOf() );
@@ -15,6 +16,11 @@ function getDatesArray(startDate, stopDate, unit){
         if (oldOffset !== newOffset){
             currentDate.add(newOffset - oldOffset, 'minutes');
         }
+    }
+
+    // when timeUnit is 'month', make sure the month of stopDate gets counted as well
+    if (unit === 'month' && startDate.month() !== stopDate.month()) {
+        dateArray.push(currentDate.valueOf());
     }
     return dateArray;
 }
@@ -98,7 +104,16 @@ angular.module('aggregations').factory('MongoTimeSeries',function(){
                 var fieldFunc = self.fieldOperators[field];
                 // get index in initial zeros array of this date and
                 // replace element
-                var ind = _.findIndex(self[field], function(ar){ return ar[0] === thisDate;});
+                var ind = _.findIndex(self[field], function(ar) {
+                    if (self.timeUnit !== 'month') {
+                        return ar[0] === thisDate;
+                    } else {
+                        // check if 2 values are within the same month
+                        var tempDate1 = moment.tz(ar[0], 'UTC');
+                        var tempDate2 = moment.tz(thisDate, 'UTC');
+                        return tempDate1.month() === tempDate2.month();
+                    }
+                });
                 if (ind > -1){
                     self[field][ind] = [thisDate, fieldFunc(row)];
                 }
