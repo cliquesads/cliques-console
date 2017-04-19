@@ -14,13 +14,10 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
             // Decide the x-axis time scale depending on differe time unit passed in
             if (!scope.timeUnit || scope.timeUnit === 'day') {
                 timeformat = '%m/%d/%y';
-                minTickSize = [1, 'day'];
             } else if (scope.timeUnit === 'hour') {
                 timeformat = '%m/%d/%y %h:00';
-                minTickSize = [1, 'hour'];
             } else if (scope.timeUnit === 'month') {
                 timeformat = '%m/%y';
-                minTickSize = [1, 'month'];
             }
             scope.graphOptions = {
                 grid: {
@@ -47,8 +44,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                     mode: 'time',
                     timezone: 'UTC',
                     timeformat: timeformat,
-                    minTickSize: minTickSize,
-
+                    minTickSize: [1, 'day'],
                     axisLabelPadding: 5
                 },
                 yaxes: [
@@ -95,7 +91,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                             show: true,
                             align: "center",
                             fill: true,
-                            barWidth: 24 * 60 * 60 * 600,
+                            barWidth: scope.timeUnit === 'hour' ? 60 * 60 * 600 : 24 * 60 * 60 * 600,
                             lineWidth: 0.4
                         },
                         color: "#768294",
@@ -109,7 +105,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                             show: true,
                             align: "center",
                             fill: true,
-                            barWidth: 24 * 60 * 60 * 600,
+                            barWidth: scope.timeUnit === 'hour' ? 60 * 60 * 600 : 24 * 60 * 60 * 600,
                             lineWidth: 0.4
                         },
                         color: "#9BE3BF",

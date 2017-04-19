@@ -49,8 +49,6 @@ angular.module('analytics').directive('queryTable', [
 					scope.queryFunction(queryParam)
 					.then(function(response) {
 						scope.isLoading = false;
-
-						// sort rows by date
 						scope.tableQueryResults = response.data;
 
 						// Decide default table headers and format/calculate values for each row

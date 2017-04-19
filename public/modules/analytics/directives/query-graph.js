@@ -37,7 +37,7 @@ angular.module('analytics').directive('queryGraph', [
 				var fields = [
 					'imps',
 					{
-						'CTR': function(row) { return row.clicks / row.imps; }
+						CTR: function(row) { return row.clicks / row.imps; }
 					},
 					'clicks',
 					'spend'
@@ -59,6 +59,7 @@ angular.module('analytics').directive('queryGraph', [
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.graphQueryResults = response.data;
+
 						scope.timeSeries = new MongoTimeSeries(
 							response.data,
 							queryParam.startDate,
