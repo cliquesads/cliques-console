@@ -13,6 +13,9 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
             tz: 'America/New_York'
         };
 
+        // set access code to search param access code, if passed in, otherwise don't set it.
+        $scope.accesscode = $location.$$search.accessCode || null;
+
         $scope.loading = false;
         $scope.requestAccess = function(){
             $scope.loading = true;

@@ -1,0 +1,20 @@
+<h4>Create a New Access Code</h4>
+<form name="accessCodeForm" id="accessCodeForm" data-ng-submit="submit()" autocomplete="off">
+    <access-code-form-basics access-code="accessCode" ></access-code-form-basics>
+    <small class="text-muted">* Required</small>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary">Save</button>
+        </div>
+        <div data-ng-show="error" class="alert alert-danger">
+            <strong data-ng-bind="error"></strong>
+        </div>
+        <div ng-show="loading">
+            <div class="ball-pulse">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</form>

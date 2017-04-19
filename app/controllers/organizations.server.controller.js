@@ -139,6 +139,23 @@ module.exports = {
     },
 
     /**
+     * getMany organizations
+     * @param req
+     * @param res
+     */
+    getMany: function(req, res) {
+        Organization.find({}, function (err, organizations){
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                res.json(organizations);
+            }
+        });
+    },
+
+    /**
      * Delete an organization
      */
     remove: function (req, res) {
@@ -164,11 +181,19 @@ module.exports = {
      * @returns {*}
      */
     hasAuthorization: function (req, res, next) {
-        var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
-        if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
-            if (!user) {
+        if (req.organization){
+            var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+                if (!user) {
+                    return res.status(403).send({
+                        message: 'User is not authorized to access this organization'
+                    });
+                }
+            }
+        } else {
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
                 return res.status(403).send({
-                    message: 'User is not authorized to access this organization'
+                    message: 'User is not authorized to access this endpoint'
                 });
             }
         }

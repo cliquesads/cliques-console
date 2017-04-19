@@ -5,6 +5,7 @@ require('./_main')(function(GLOBALS){
         mongoose = GLOBALS.mongoose,
         db = GLOBALS.db,
         _ = require('lodash'),
+        chalk = require('chalk'),
         async = require('async'),
         Promise = require('promise'),
         util = require('util'),
@@ -21,7 +22,7 @@ require('./_main')(function(GLOBALS){
     var publisherModels = new models.PublisherModels(db);
     var user = require('../app/models/user.server.model');
     var billing = require('../app/models/billing.server.model');
-    var Organization = mongoose.model('Organization');
+    var Organization = require('../app/models/organization.server.model').Organization;
     var Payment = mongoose.model('Payment');
     var InsertionOrder = mongoose.model('InsertionOrder');
 
@@ -499,23 +500,22 @@ require('./_main')(function(GLOBALS){
             function(){
                 console.log('Done!');
                 var d = moment(START_DATE).tz("UTC");
-                if (process.env.NODE_ENV === 'production') {
-                    mailer.sendMail({
-                        subject: 'Monthly Billing ETL Complete - ' + d.format("MMMM YYYY"),
-                        templateName: 'billing-complete-email.server.view.html',
-                        data: {month: d.format("MMMM YYYY")},
-                        to: 'bliang@cliquesads.com'
-                    }, function(err, success){
-                        if (err) return console.error(chalk.red(err));
-                        return process.exit(0);
-                    });
-                } else {
+                mailer.sendMail({
+                    subject: 'Monthly Billing ETL Complete - ' + d.format("MMMM YYYY"),
+                    templateName: 'billing-complete-email.server.view.html',
+                    data: {month: d.format("MMMM YYYY")},
+                    to: 'bliang@cliquesads.com'
+                }, function(err, success){
+                    if (err) {
+                        console.error(chalk.red(err));
+                        return process.exit(1);
+                    }
                     return process.exit(0);
-                }
+                });
             },
             function(err){
                 console.error(chalk.red(err.stack));
                 process.exit(1);
             }
-        )
+        );
 });

@@ -34,6 +34,12 @@ angular.module('aggregations').factory('aggregationDateRanges',function(){
                 label: "Month to Date",
                 showPoints: false
             },
+            "ytd":{
+                startDate: moment().tz(timezone).startOf('year').startOf('day').toISOString(),
+                endDate: moment().tz(timezone).add(1,'days').startOf('day').toISOString(),
+                label: "Year to Date",
+                showPoints: false
+            },
             "yesterday":{
                 startDate: moment().tz(timezone).subtract(1,'days').startOf('day').toISOString(),
                 endDate: moment().tz(timezone).startOf('day').toISOString(),

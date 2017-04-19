@@ -38,37 +38,44 @@
       <!-- END sidebar nav-->
 
       <!-- Sidebar footer -->
-      <div class="sidebar-footer">
-        <div class="margin-top-16">
-          <strong>Resources</strong>
-          <ul class="media-box-list">
-            <li>
-              <a href="http://support.cliquesads.com" class="color-white" analytics-on="click" analytics-event="Sidebar_VisitSupport">
-                Support <i class="fa fa-external-link"></i>
-              </a>
-            </li>
-            <li>
-              <a href="/#!/terms-and-conditions" class="color-white" analytics-on="click" analytics-event="Sidebar_VisitTermsAndConditions">
-                Terms & Conditions
-              </a>
-            </li>
-            <li>
-              <a href="/#!/privacy-policy" class="color-white" analytics-on="click" analytics-event="Sidebar_VisitPrivacyPolicy">Privacy</a>
-            </li>
-          </ul>
-        </div>
+      <div class="sidebar-footer bg-gray-light">
+            <div ng-click="showResources = !showResources">
+                <strong>
+                    <i class="fa fa-chevron-up" ng-show="!showResources"></i>
+                    <i class="fa fa-chevron-down" ng-show="showResources"></i>
+                    Resources
+                </strong>
+            </div>
+            <div ng-show="showResources">
+                <div class="margin-top-16">
+                    <ul class="media-box-list">
+                        <li>
+                            <a href="http://support.cliquesads.com">
+                                Support <i class="fa fa-external-link"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#!/terms-and-conditions">
+                                Terms & Conditions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#!/privacy-policy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="margin-top-16">
+                    <strong>Data Last Updated</strong>
+                    <p>
+                        <i class="fa fa-clock-o"></i> {{ latestHour }}
+                    </p>
+                </div>
 
-        <div class="margin-top-16">
-          <strong>Data Last Updated</strong>
-          <p class="color-white">
-            <i class="fa fa-clock-o"></i> {{ latestHour }}
-          </p>
-        </div>
-
-        <div class="margin-top-16">
-          <small><strong>&copy; {{app.year}} Cliques Labs Inc.</strong></small>
-          <p><small class="color-white">Release v{{ consoleVersion }}</small></p>
-        </div>
+                <div class="margin-top-16">
+                    <small><strong>&copy; {{app.year}} Cliques Labs Inc.</strong></small>
+                    <p><small>Release v{{ consoleVersion }}</small></p>
+                </div>
+            </div>
       </div>
       <!-- END sidebar footer -->
 

@@ -1,7 +1,7 @@
 {
   "name": "cliques-console",
   "description": "Cliques UI -- MEAN.js + Bootstrap Angular",
-  "version": "0.6.58",
+  "version": "0.6.63",
   "author": "Cliques Labs Inc.",
   "engines": {
     "node": "5.5.x",
@@ -17,7 +17,7 @@
     "postinstall": "bower install --config.interactive=false"
   },
   "dependencies": {
-    "@cliques/cliques-node-utils": "^0.2.47",
+    "@cliques/cliques-node-utils": "^0.2.52",
     "argparse": "^1.0.7",
     "async": "^1.5.2",
     "bluebird": "^3.4.7",
@@ -56,6 +56,7 @@
     "jsdoc": "^3.4.3",
     "lodash": "^4.7.0",
     "mailchimp-v3": "^1.0.1",
+    "mandrill-api": "^1.0.45",
     "method-override": "~2.3.0",
     "methods": "^1.1.2",
     "mkdirp": "^0.5.1",

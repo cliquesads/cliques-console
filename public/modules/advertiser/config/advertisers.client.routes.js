@@ -20,7 +20,7 @@ var getImpliedAdvertiserId = function($state, $rootScope, $location, Advertiser,
                 // set rootScope advertiser, since there's only one and this
                 // will save a trip to the DB next time.
                 $rootScope.advertiser = advertisers[0];
-                return callback($rootScope.advertiser._id);
+                return callback(null, $rootScope.advertiser._id);
             } else {
                 // Otherwise, either user has NOT selected an advertiser yet,
                 // or user doesn't have an advertiser.

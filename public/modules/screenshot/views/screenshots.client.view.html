@@ -1,0 +1,23 @@
+<section>
+	<div class="jumbotron text-center">
+		<h3 class="text-gray-darker"><i class="fa fa-rocket"></i> We're just getting started.</h3>
+		<p class="lead">The following websites are some of the finest outdoor-focused publications in existence, and we're excited to partner with all of them. <strong>But this is only the beginning.</strong> We'll keep you posted as more sites join Cliques in the coming months!</p>
+	</div>
+	<div ng-repeat="(campaignName, screenshots) in groupedScreenshots" ng-if="numberOfScreenshotGroups > 0">
+		<h4>{{ campaignName }}</h4>	
+		<div class="screenshot-container">
+			<div class="col-md-3 col-sm-4 col-xs-5"
+				ng-repeat="screenshot in screenshots">
+				<div class="screenshot-block"
+					ng-click="viewScreenshot(screenshot)">
+					<div>
+						<img src="{{ screenshot.image_url }}" alt="Screenshot">
+					</div>	
+				</div>	
+			</div>
+		</div>
+	</div>
+	<div ng-if="numberOfScreenshotGroups === 0" class="box-placeholder text-center mv-lg pv-xl">
+		<h4>No Screenshots yet.</h4>
+	</div>
+</section>

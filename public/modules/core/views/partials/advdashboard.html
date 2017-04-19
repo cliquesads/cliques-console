@@ -1,5 +1,5 @@
 <section data-ng-controller="AdvertiserDashboardController">
-    <div class="jumbotron text-center" ng-show="allCampaigns.length == 0">
+    <div class="jumbotron text-center" ng-show="advertisers.$resolved && allCampaigns.length === 0">
         <div class="text-center">
             Thanks for being a part of the Cliques Beta Program!
         </div>
@@ -11,170 +11,179 @@
         </div>
         <div class="row">
             <p>
-                <a class="btn btn-primary btn-lg" href="#!/new-campaign" analytics-on="click" analytics-event="AdvDashboard_NewCampaign">Get Started</a>
+                <a class="btn btn-primary btn-lg" href="#!/new-campaign" analytics-on="click" analytics-event="AdvDashboard_GetStarted">Get Started</a>
             </p>
         </div>
     </div>
-    <section ng-show="allCampaigns.length > 0">
-        <div class="row">
-            <!-- My Campaigns Section -->
-            <div class="col-lg-6 col-sm-12">
-                <em class="custom-section-title mb">My Campaigns</em>
+
+    <div class="row" ng-show="advertisers.$resolved && allCampaigns.length > 0">
+        <!-- My Campaigns Section -->
+        <div class="col-lg-6 col-sm-12">
+            <div class="width-90">
+                <span class="custom-section-title no-font-style mb"><i class="fa fa-bullhorn"></i> My Campaigns</span>
+                <span class="pull-right">
+                    <a href="/#!/all-campaigns" analytics-on="click" analytics-event="AdvDashboard_AllCampaigns"><i class="fa fa-bullhorn"></i> All Campaigns</a>
+                </span>
+            </div>
+            <!-- Begin Loader-->
+            <section ng-show="allCampaigns.length === 0">
+                <div class="panel panel-default width-90">
+                    <div class="panel-body text-center">
+                        <h4>Loading...</h4>
+                        <div class="ball-pulse"><div></div><div></div><div></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!--Begin campaign section contents -->
+            <section ng-show="allCampaigns.length > 0">
                 <!-- scroll up campaigns button -->
-                <div ng-if="showingCampaignEndIndex > 1">
+                <div ng-if="showingCampaignEndIndex > CAMPAIGNS_TO_SHOW - 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
-                        ng-click="scrollUpShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_ScrollUpShowingCampaigns">
+                        ng-click="scrollUpShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_UpCampaigns">
                         <span>Up&nbsp;</span>
                         <i class="fa fa-sort-asc fa-2x mb-lg-neg"></i>
                     </button>
                 </div>
-
-                <a
-                    data-ng-repeat="campaign in currentlyShowingCampaigns track by campaign._id"
+                <a data-ng-repeat="campaign in currentlyShowingCampaigns track by campaign._id"
                     data-ng-href="#!/advertiser/{{campaign.parentAdvertiserId}}/campaign/{{campaign._id}}"
-                    class="campaign-list-item"
-                    analytics-on="click" analytics-event="AdvDashboard_SelectCampaign">
-                    <div class="width-15">
+                    class="campaign-list-item" analytics-on="click" analytics-event="AdvDashboard_GoToCampaign">
+                    <div class="col-sm-2">
                         <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
                     </div>
-                    <div class="width-20">
-                        <img src="{{ campaign.adv_logo_url }}" alt="Adv Logo" class="adv-logo">
+                    <div class="col-sm-2">
+                        <img src="{{ campaign.adv_logo_url }}" alt="Adv Logo" class="client-logo-md-lg">
                     </div>
-                    <div class="width-35">
-                        <h4 class="campaign-list-item-heading" data-ng-bind="campaign.name"></h4>
+                    <div class="col-sm-5">
+                        <h4 class="campaign-list-item-heading mb-sm">{{ campaign.name | limitTo: 27 }}{{campaign.name.length > 27 ? '...' : ''}}</h4>
                         <p class="campaign-list-item-text">{{ campaign.clique }}</p>
                     </div>
-                    <div class="width-15">
-                        <!--<radial percent="campaign.percent_spent" size="sm"></radial>-->
-                        <radial percent="0.86" size="sm"></radial>
+                    <div class="col-sm-2">
+                        <radial percent="campaign.percent_spent" size="sm"></radial>
                     </div>
 
-                    <div class="hidden-xs width-15">
-                        <!--<h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>-->
-                        <h4 class="campaign-list-item-heading">0.22%</h4>
+                    <div class="col-sm-2">
+                        <h4 class="campaign-list-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
                         <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>
                 <!-- scroll down campaigns button -->
                 <div ng-if="showingCampaignEndIndex < (allCampaigns.length - 1)">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
-                        ng-click="scrollDownShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_ScrollDownShowingCampaigns">
-                        <span ng-if="showingCampaignEndIndex <= 1">
-                            More&nbsp;
-                        </span>
-                        <span ng-if="showingCampaignEndIndex > 1">
-                            Down&nbsp; 
-                        </span>
+                        ng-click="scrollDownShowingCampaigns()" analytics-on="click" analytics-event="AdvDashboard_MoreCampaigns">
+                        More &nbsp;
                         <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
                     </button>
                 </div>
+            </section>
+        </div>
+        <!-- End of My Campaigns Section -->
 
+        <!-- Year-To-Date Stats Section -->
+        <div class="col-lg-6 col-sm-12 pl">
+            <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
+            <span class="pull-right">
+                <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="AdvDashboard_GoToAnalytics"></i> Go to Analytics</a>
+            </span>
+            <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
+                <div class="panel-heading">
+                    <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
+                        <span class="pull-right">
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange7d">7d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange30d">30d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange90d">90d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="AdvDashboard_StatsRangeYTD">YTD</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="panel-body pt-sm">
+                    <!-- BEGIN Loader-->
+                    <section ng-hide="timeSeries">
+                        <div class="text-center">
+                            <h4>Loading...</h4>
+                            <div class="ball-pulse"><div></div><div></div><div></div></div>
+                        </div>
+                    </section>
+                    <!-- BEGIN Actual Graph & Stats -->
+                    <section ng-show="timeSeries">
+                        <div class="row mb">
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
+                                <small class="text-muted">Impressions</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center ">
+                                <div class="h3 mt-sm mb0">{{ CTR | percentage:2 }}</div>
+                                <small class="text-muted">CTR</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ clicks | number: 0 }}</div>
+                                <small class="text-muted">Clicks</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ actions | number: 0 }}</div>
+                                <small class="text-muted">Actions</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ spend | currency:"$":"0" }}</div>
+                                <small class="text-muted">Spend</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
+                                <small class="text-muted">Avg. CPM</small>
+                            </div>
+                        </div>
+                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
+                    </section>
+                </div>
             </div>
-            <!-- End of My Campaigns Section -->
+        </div>
+        <!-- End of Year-To-Date Stats Section -->
+    </div>
 
-            <!-- Year-To-Date Stats Section -->
-            <div class="col-lg-6 col-sm-12 pl-xl">
-                <em class="custom-section-title mb">Year-To-Date Stats</em>
-                <div class="stat-block">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-eye fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].imps | number:"0" }}</strong>
-                        </div>
-                        <div class="note-text text-uppercase">Impressions</div>
-                    </div>
-                </div>
-
-                <div class="stat-block">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-usd fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].spend | currency:"$":"0" }}</strong>
-                        </div>
-                        <div class="note-text text-uppercase">Total Ad Spend</div>
-                    </div>
-                </div>
-
-                <div class="stat-block"
-                    ng-if="isShowingAllStats">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-mouse-pointer fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].clicks / adStats[0].imps | percentage:2 }}</strong>
-                        </div>
-                        <div class="note-text text-uppercase">CTR</div>
-                    </div>
-                </div>
-
-                <div class="stat-block"
-                    ng-if="isShowingAllStats">
-                    <div class="text-center stat-icon">
-                        <i class="fa fa-shopping-cart fa-3x"></i>
-                    </div>
-                    <div class="stat-value">
-                        <div class="value-text">
-                            <strong>{{ adStats[0].view_convs +  adStats[0].click_convs }}</strong>
-                        </div>
-                        <div class="note-text text-uppercase">Total Actions</div>
-                    </div>
-                </div>
-
-                <!-- Show more stats button -->
-                <div ng-if="!isShowingAllStats">
-                    <button class="btn btn-block btn-third-white-horizontal p-sm"
-                        ng-click="showMoreStats()" analytics-on="click" analytics-event="AdvDashboard_ShowMoreStats">
-                        <span>More&nbsp;</span>
-                        <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
+    <div class="row">
+        <span class="custom-section-title no-font-style"><i class="fa fa-camera-retro"></i> Recent Screenshots</span>
+        <span class="pull-right">
+            <a href="/#!/screenshots"><i class="fa fa-camera-retro" analytics-on="click" analytics-event="AdvDashboard_GoToScreenshots"></i> View all Screenshots</a>
+        </span>
+        <br/>
+        <section ng-hide="screenshots" class="text-center">
+            <div class="col-sm-12 text-center">
+                <h4>Loading...</h4>
+                <div class="ball-pulse"><div></div><div></div><div></div></div>
+            </div>
+        </section>
+        <section ng-show="screenshots && screenshots.length > 0">
+            <div class="screenshots-showcase">
+                <!-- Last screenshot button -->
+                <div ng-if="showingScreenshotEndIndex > 2">
+                    <button class="btn btn-third-white-vertical"
+                            ng-click="showLastScreenshot()" analytics-on="click" analytics-event="AdvDashboard_ScreenshotsScrollLeft">
+                        <i class="fa fa-chevron-left"></i>
                     </button>
                 </div>
+                <!-- Screenshot images -->
+                <div class="screenshot"
+                     ng-repeat="screenshot in currentlyShowingScreenshots track by screenshot._id">
+                    <!--<img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">-->
+                    <screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
+                </div>
 
-                <!-- Hide more stats button -->
-                <div ng-if="isShowingAllStats">
-                    <button class="btn btn-block btn-third-white-horizontal p-sm"
-                        ng-click="hideMoreStats()" analytics-on="click" analytics-event="AdvDashboard_HideMoreStats">
-                        <span>Hide&nbsp;</span>
-                        <i class="fa fa-sort-up fa-2x mb-lg-neg"></i>
+                <!-- Next screenshot button -->
+                <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
+                    <button class="btn btn-third-white-vertical"
+                            ng-click="showNextScreenshot()" analytics-on="click" analytics-event="AdvDashboard_ScreenshotsScrollRight">
+                        <i class="fa fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
-            <!-- End of Year-To-Date Stats Section -->
-        </div>
-    </section>
-    <section ng-show="allCampaigns.length > 0">
-        <br/><br/>
-        <em class="custom-section-title pb-sm">Recent Screenshots</em>
-        <div class="screenshots-showcase" ng-if="screenshots.length > 0">
-            <!-- Last screenshot button -->
-            <div ng-if="showingScreenshotEndIndex > 2">
-                <button class="btn btn-third-white-vertical"
-                    ng-click="showLastScreenshot()" analytics-on="click" analytics-event="AdvDashoard_ShowLastScreenshot">
-                    <i class="fa fa-chevron-left"></i>
-                </button> 
+        </section>
+        <section ng-show="screenshots && screenshots.length === 0">
+            <div class="screenshots-showcase">
+                <div class="screenshot"
+                     ng-repeat="screenshot in demoScreenshots">
+                    <screenshot-thumbnail screenshot="screenshot" demo="true"></screenshot-thumbnail>
+                </div>
             </div>
-        
-            <!-- Screenshot images -->
-            <div class="screenshot"
-                ng-repeat="screenshot in currentlyShowingScreenshots track by screenshot._id">
-                <!--<img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">-->
-                <screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
-            </div>            
-
-            <!-- Next screenshot button -->
-            <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
-                <button class="btn btn-third-white-vertical"
-                    ng-click="showNextScreenshot()" analytics-on="click" analytics-event="AdvDashoard_ShowNextScreenshot">
-                    <i class="fa fa-chevron-right"></i>
-                </button> 
-            </div>
-        </div>
-        <div class="box-placeholder text-center pv-xl" ng-if="screenshots.length === 0">
-            <h4>No Screenshots yet.</h4>
-        </div>
-    </section>
+        </section>
+    </div>
 </section>

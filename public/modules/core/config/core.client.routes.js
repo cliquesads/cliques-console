@@ -30,7 +30,7 @@ angular.module('core').config(['$stateProvider', '$locationProvider', '$urlRoute
             .state('app.home', {
                 url: '/home',
                 resolve: {
-                    $title: function(){ return "Home"; }
+                    $title: function(){ return "Cliques Console"; }
                 },
                 templateUrl: 'modules/core/views/home.client.view.html'
             })
