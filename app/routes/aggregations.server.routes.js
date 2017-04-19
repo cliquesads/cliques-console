@@ -121,9 +121,9 @@ module.exports = function(db, routers){
          * @apiSuccess {Number} [hourlyAdStats.defaults] Total number of defaults, i.e. failed auctions
          * @apiSuccess {Number} [hourlyAdStats.spend] Total media spend in USD, not including any fees / not net of any rev-share
          * @apiSuccess {Number} [hourlyAdStats.clicks] Total number of clicks on ads served
-         * @apiSuccess {Number} [hourlyAdStats.view] Total number of view-through conversions observed during aggregation grouping timeframe.
+         * @apiSuccess {Number} [hourlyAdStats.view_convs] Total number of view-through conversions observed during aggregation grouping timeframe.
          *  That is, the total number of action-beacon calls that were observed from a user for which an impression was previously recorded.
-         * @apiSuccess {Number} [hourlyAdStats.click] Total number of click-through conversions observed during aggregation grouping timeframe.
+         * @apiSuccess {Number} [hourlyAdStats.click_convs] Total number of click-through conversions observed during aggregation grouping timeframe.
          *  That is, the total number of action-beacon calls that were observed from a user for which a click was previously recorded.
          *
          * @apiSuccessExample {json} Example Request URL:
@@ -704,11 +704,11 @@ module.exports = function(db, routers){
          * @apiParam (Query Parameters) {String} [page] Page ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [adv_clique] Advertiser Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [pub_clique] Publisher Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
-         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Countries](#api-Countries) NOTE: `country` is
+         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Country](#api-Country) NOTE: `country` is
          *      populate-able, i.e. you can pass `country` to the `populate` query param to populate it with the full country object.
-         * @apiParam (Query Parameters) {String} [region] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [Regions](#api-Regions) NOTE: `region` is
+         * @apiParam (Query Parameters) {String} [region] {ISO-3166 Alpha-3 Country Code}-{region-code}, which are `_id`'s for Regions. See [Region](#api-Region) NOTE: `region` is
          *      populate-able, i.e. you can pass `region` to the `populate` query param to populate it with the full region object.
-         * @apiParam (Query Parameters) {String} [dma] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [DMAs](#api-DMAs) NOTE: `dma` is
+         * @apiParam (Query Parameters) {Number} [dma] DMA Code, which are `_id`'s for DMAs. See [DMA](#api-DMA) NOTE: `dma` is
          *      populate-able, i.e. you can pass `dma` to the `populate` query param to populate it with the full DMA object.
          * @apiParam (Query Parameters) {String} [city] String representing city, ex: "Beijing" or "Boston". Not populate-able. Note: exact cities are not
          *      available for many impressions
@@ -731,9 +731,9 @@ module.exports = function(db, routers){
          * @apiSuccess {Number} [geoAdStats.defaults] Total number of defaults, i.e. failed auctions
          * @apiSuccess {Number} [geoAdStats.spend] Total media spend in USD, not including any fees / not net of any rev-share
          * @apiSuccess {Number} [geoAdStats.clicks] Total number of clicks on ads served
-         * @apiSuccess {Number} [geoAdStats.view] Total number of view-through conversions observed during aggregation grouping timeframe.
+         * @apiSuccess {Number} [geoAdStats.view_convs] Total number of view-through conversions observed during aggregation grouping timeframe.
          *  That is, the total number of action-beacon calls that were observed from a user for which an impression was previously recorded.
-         * @apiSuccess {Number} [geoAdStats.click] Total number of click-through conversions observed during aggregation grouping timeframe.
+         * @apiSuccess {Number} [geoAdStats.click_convs] Total number of click-through conversions observed during aggregation grouping timeframe.
          *  That is, the total number of action-beacon calls that were observed from a user for which a click was previously recorded.
          *
          * @apiSuccessExample {json} Example Request URL:
@@ -838,11 +838,11 @@ module.exports = function(db, routers){
          * @apiParam (Query Parameters) {String} [page] Page ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [adv_clique] Advertiser Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [pub_clique] Publisher Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
-         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Countries](#api-Countries) NOTE: `country` is
+         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Country](#api-Country) NOTE: `country` is
          *      populate-able, i.e. you can pass `country` to the `populate` query param to populate it with the full country object.
-         * @apiParam (Query Parameters) {String} [region] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [Regions](#api-Regions) NOTE: `region` is
+         * @apiParam (Query Parameters) {String} [region] {ISO-3166 Alpha-3 Country Code}-{region-code}, which are `_id`'s for Regions. See [Region](#api-Region) NOTE: `region` is
          *      populate-able, i.e. you can pass `region` to the `populate` query param to populate it with the full region object.
-         * @apiParam (Query Parameters) {String} [dma] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [DMAs](#api-DMAs) NOTE: `dma` is
+         * @apiParam (Query Parameters) {Number} [dma] DMA Code, which are `_id`'s for DMAs. See [DMA](#api-DMA) NOTE: `dma` is
          *      populate-able, i.e. you can pass `dma` to the `populate` query param to populate it with the full DMA object.
          * @apiParam (Query Parameters) {String} [city] String representing city, ex: "Beijing" or "Boston". Not populate-able. Note: exact cities are not
          *      available for many impressions
@@ -970,11 +970,11 @@ module.exports = function(db, routers){
          * @apiParam (Query Parameters) {String} [page] Page ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [adv_clique] Advertiser Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
          * @apiParam (Query Parameters) {String} [pub_clique] Publisher Clique ObjectID, or CSV of IDs (see [Aggregations Primer](#api-Aggregations) for a list of available operators).
-         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Countries](#api-Countries) NOTE: `country` is
+         * @apiParam (Query Parameters) {String} [country] ISO-3166 Alpha-3 Country Code, which are `_id`'s for Countries. See [Country](#api-Country) NOTE: `country` is
          *      populate-able, i.e. you can pass `country` to the `populate` query param to populate it with the full country object.
-         * @apiParam (Query Parameters) {String} [region] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [Regions](#api-Regions) NOTE: `region` is
+         * @apiParam (Query Parameters) {String} [region] {ISO-3166 Alpha-3 Country Code}-{region-code}, which are `_id`'s for Regions. See [Region](#api-Region) NOTE: `region` is
          *      populate-able, i.e. you can pass `region` to the `populate` query param to populate it with the full region object.
-         * @apiParam (Query Parameters) {String} [dma] <ISO-3166 Alpha-3 Country Code>-<region-code>, which are `_id`'s for Regions. See [DMAs](#api-DMAs) NOTE: `dma` is
+         * @apiParam (Query Parameters) {Number} [dma] DMA Code, which are `_id`'s for DMAs. See [DMA](#api-DMA) NOTE: `dma` is
          *      populate-able, i.e. you can pass `dma` to the `populate` query param to populate it with the full DMA object.
          * @apiParam (Query Parameters) {String} [city] String representing city, ex: "Beijing" or "Boston". Not populate-able. Note: exact cities are not
          *      available for many impressions
