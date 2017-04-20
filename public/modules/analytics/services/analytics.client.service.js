@@ -2,7 +2,16 @@
 'use strict';
 
 // Export csv transforms object/array to csv data blob
-angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$filter', 'TABLE_HEADERS', function($http, HourlyAdStat, $filter, TABLE_HEADERS) {
+angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS', function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
+
+    var base_path = '/console/analytics';
+    var recentQueries_path = base_path + '/recentQueries';
+    var customQueries_path = base_path + '/customQueries';
+    var getAllSites_path = base_path + '/getAllSites';
+    var getAllCampaigns_path = base_path + '/getAllCampaigns';
+    var saveQuery_path = base_path + '/save';
+    var saveHeader_path = base_path + '/saveAdditionalSelectedHeaders';
+
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
         return queryName + '_' + asOfDate.substring(0, 10) + '_report.csv';
@@ -39,13 +48,13 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         if (!currentPage) {
             currentPage = 1;
         }
-        return $http.get('/console/analytics/recentQueries?currentPage=' + currentPage);
+        return $http.get(recentQueries_path, {params: {currentPage: currentPage}});
     };
     var getMyQueries = function(currentPage) {
         if (!currentPage) {
             currentPage = 1;
         }
-        return $http.get('/console/analytics/customQueries?currentPage=' + currentPage);
+        return $http.get(customQueries_path, {params: {currentPage: currentPage}});
     };
     var formatDatetimeString = function(datetimeString) {
         var dateMoment = moment(datetimeString);
@@ -81,32 +90,43 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', '$fil
         return cronString;
     };
     var getAllSites = function() {
-        return $http.get('/console/analytics/getAllSites');
+        return $http.get(getAllSites_path);
     };
     var getAllCampaigns = function() {
-        return $http.get('/console/analytics/getAllCampaigns');
+        return $http.get(getAllCampaigns_path);
     };
     var saveQuery = function(queryParam) {
-        return $http.post('/console/analytics/save', {queryParam: queryParam});
+        return $http.post(saveQuery_path, {queryParam: queryParam});
     };
     var saveAdditionalSelectedHeaders = function(selectedAdditionalHeaders, queryId) {
-        return $http.post('/console/analytics/saveAdditionalSelectedHeaders', {
+        return $http.post(saveHeader_path, {
             selectedAdditionalHeaders: selectedAdditionalHeaders,
             queryId: queryId
         });
     };
-    var queryFunction = function() {
+    var queryFunction = function(queryType) {
         var queryFunction;
-        /**
-         * Depending on different user types(advertiser, publisher or networkAdmin), the query function can be different
-         */
         if (user) {
-            if (user.organization.organization_types.indexOf('networkAdmin') > -1){
-                queryFunction = HourlyAdStat.query;
-            } else if (user.organization.organization_types.indexOf('advertiser') > -1){
-                queryFunction = HourlyAdStat.advSummaryQuery;
-            } else if (user.organization.organization_types.indexOf('publisher') > -1){
-                queryFunction = HourlyAdStat.pubSummaryQuery;
+            /**
+             * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
+             */
+            var effectiveOrgType = user.organization.effectiveOrgType;
+            if (queryType !== 'city' && queryType !== 'state' && queryType !== 'country') {
+                if (effectiveOrgType === 'networkAdmin') {
+                    queryFunction = HourlyAdStat.query;
+                } else if (effectiveOrgType === 'advertiser') {
+                    queryFunction = HourlyAdStat.advSummaryQuery;
+                } else if (effectiveOrgType === 'publisher') {
+                    queryFunction = HourlyAdStat.pubSummaryQuery;
+                }
+            } else {
+                if (effectiveOrgType === 'networkAdmin') {
+                    queryFunction = GeoAdStat.query;
+                } else if (effectiveOrgType === 'advertiser') {
+                    queryFunction = GeoAdStat.advSummaryQuery;
+                } else if (effectiveOrgType === 'publisher') {
+                    queryFunction = GeoAdStat.pubSummaryQuery;
+                }
             }
         }
         return queryFunction;

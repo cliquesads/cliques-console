@@ -66,3 +66,28 @@ angular.module('aggregations').factory('HourlyAdStat', ['Authentication','$http'
         return hourlyadstatfactory;
 	}
 ]);
+
+/**
+ * Factory to help query GeoAdStat API endpoints.
+ *
+ *
+ */
+angular.module('aggregations').factory('GeoAdStat', ['$http',
+    function($http) {
+        var base_path = '/console/geoadstat';
+        var advSummary_path = base_path + '/advSummary';
+        var pubSummary_path = base_path + '/pubSummary';
+        var geoadstatfactory = {};
+
+        geoadstatfactory.query = function(queryParams) {
+            return $http.get(base_path, {params: queryParams});
+        };
+        geoadstatfactory.advSummaryQuery = function(queryParams) {
+            return $http.get(advSummary_path, {params: queryParams});
+        };
+        geoadstatfactory.pubSummaryQuery = function(queryParams) {
+            return $http.get(pubSummary_path, {params: queryParams});
+        };
+        return geoadstatfactory;
+    }
+]);

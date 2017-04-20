@@ -48,7 +48,7 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
             if (query.type !== 'custom') {
                 $state.go('app.analytics.quickQueries.' + query.type, {query: query});
             } else {
-                $state.go('app.analytics.customizeQuery.queryResult', {query: query});
+                $state.go('app.analytics.customize.result', {query: query});
             }
 		};
     }

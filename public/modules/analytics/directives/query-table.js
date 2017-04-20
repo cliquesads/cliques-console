@@ -4,14 +4,12 @@
 /* global _, angular, user */
 angular.module('analytics').directive('queryTable', [
 	'$rootScope',
-	'HourlyAdStat',
 	'Notify',
 	'aggregationDateRanges',
 	'Analytics',
     'ngDialog',
 	function(
 		$rootScope,
-		HourlyAdStat,
 		Notify,
 		aggregationDateRanges,
 		Analytics,
@@ -29,10 +27,11 @@ angular.module('analytics').directive('queryTable', [
 				// table collapse state
 				scope.isCollapsed = false;
 			    scope.user = user;
-			    scope.queryFunction = Analytics.queryFunction();
+			    scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
 			    // Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
+					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
 					scope.getTableData(scope.queryParam);
 				});
 				// Listen to broadcast message when query is saved to the backend
@@ -45,7 +44,7 @@ angular.module('analytics').directive('queryTable', [
 				scope.getTableData = function(queryParam) {
 					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
-					// query HourlyAdStats endpoint
+					// query aggregations endpoint
 					scope.queryFunction(queryParam)
 					.then(function(response) {
 						scope.isLoading = false;

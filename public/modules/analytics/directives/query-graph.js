@@ -28,9 +28,10 @@ angular.module('analytics').directive('queryGraph', [
 				scope.isCollapsed = false;	
 				scope.user = user;
 				scope.dateRanges = aggregationDateRanges(user.tz);
-				scope.queryFunction = Analytics.queryFunction();
+				scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
+					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
 					scope.getGraphData(scope.queryParam);
 				});
 
@@ -54,7 +55,7 @@ angular.module('analytics').directive('queryGraph', [
 					// Only have this so points won't show for lines with tons of data
 					scope.showPoints = scope.dateRanges[queryParam.dateRangeShortCode].showPoints;
 
-					// query HourlyAdStats api endpoint
+					// query aggregations api endpoint
 					scope.queryFunction(queryParam)
 					.then(function(response) {
 						scope.isLoading = false;
