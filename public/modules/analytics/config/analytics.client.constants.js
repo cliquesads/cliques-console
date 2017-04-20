@@ -169,8 +169,8 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,city',
-                    populate: 'advertiser,publisher,city'
+                    groupBy: 'advertiser,publisher',
+                    populate: 'advertiser,publisher'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -190,8 +190,8 @@ angular.module('analytics')
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,state',
-                    populate: 'advertiser,publisher,state'
+                    groupBy: 'advertiser,publisher',
+                    populate: 'advertiser,publisher'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -297,8 +297,8 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,city',
-                    populate: 'publisher,city'
+                    groupBy: 'publisher',
+                    populate: 'publisher'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -318,8 +318,8 @@ angular.module('analytics')
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,state',
-                    populate: 'publisher,state'
+                    groupBy: 'publisher',
+                    populate: 'publisher'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -425,8 +425,8 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,city',
-                    populate: 'advertiser,city'
+                    groupBy: 'advertiser',
+                    populate: 'advertiser'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -446,8 +446,8 @@ angular.module('analytics')
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,state',
-                    populate: 'advertiser,state'
+                    groupBy: 'advertiser',
+                    populate: 'advertiser'
                 },
                 availableSettings: {
                     timePeriod: true,
