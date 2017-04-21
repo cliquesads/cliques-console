@@ -83,8 +83,8 @@ angular.module('analytics')
                     type: 'site',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,site',
-                    populate: 'advertiser,publisher,site'
+                    groupBy: 'publisher,site',
+                    populate: 'publisher,site'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -104,8 +104,8 @@ angular.module('analytics')
                     type: 'campaign',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,campaign',
-                    populate: 'advertiser,publisher,campaign'
+                    groupBy: 'advertiser,campaign',
+                    populate: 'advertiser,campaign'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -126,8 +126,8 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,creative',
-                    populate: 'advertiser,publisher,creative'
+                    groupBy: 'publisher,creative',
+                    populate: 'publisher,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -148,8 +148,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,placement',
-                    populate: 'advertiser,publisher,placement'
+                    groupBy: 'advertiser,placement',
+                    populate: 'advertiser,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
