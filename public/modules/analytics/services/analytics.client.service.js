@@ -218,7 +218,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
             row.RPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
             row.RPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
             row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row['Fill Rate'] = row.defaults ? $filter('percentage')(row.imps / row.defaults, 2) : '0';
+            row['Fill Rate'] = row.defaults ? $filter('percentage')(row.imps / (row.imps + row.defaults), 2) : '0';
             row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
             row['Win Rate'] = row.bids ? $filter('percentage')(row.imps / row.bids, 2) : '0';
         });
