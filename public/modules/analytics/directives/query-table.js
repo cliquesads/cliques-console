@@ -83,8 +83,7 @@ angular.module('analytics').directive('queryTable', [
 							}
 						}
 					}
-
-					var sortBy = function(a, b) {
+					var sortByValue = function(a, b) {
 						var aValue = a[headerName];
 						var bValue = b[headerName];
 
@@ -101,14 +100,37 @@ angular.module('analytics').directive('queryTable', [
 							aValue = Number(aValue);
 							bValue = Number(bValue);
 						}
-
 						if (scope.currentSorting.order === 'asc') {
 							return aValue - bValue;
 						} else {
 							return bValue - aValue;
 						}
 					};
-					scope.tableQueryResults = scope.tableQueryResults.sort(sortBy);
+					var sortByDate = function(a, b) {
+						var aDate, bDate;
+						if (a._id.date.day && a._id.date.hour) {
+							aDate = new Date(a._id.date.year, a._id.date.month-1, a._id.date.day, a._id.date.hour, 0, 0);
+							bDate = new Date(b._id.date.year, b._id.date.month-1, b._id.date.day, b._id.date.hour, 0, 0);
+						} else if (a._id.date.day) {
+							aDate = new Date(a._id.date.year, a._id.date.month-1, a._id.date.day);
+							bDate = new Date(b._id.date.year, b._id.date.month-1, b._id.date.day);
+						} else {
+							aDate = new Date(a._id.date.year, a._id.date.month-1);
+							bDate = new Date(b._id.date.year, b._id.date.month-1);
+						}
+						if (scope.currentSorting.order === 'asc') {
+							return aDate - bDate;
+						} else {
+							return bDate - aDate;
+						}
+					};
+					if (scope.currentSorting.orderBy !== 'Hour' &&
+						scope.currentSorting.orderBy !== 'Day' &&
+						scope.currentSorting.orderBy !== 'Month') {
+						scope.tableQueryResults = scope.tableQueryResults.sort(sortByValue);
+					} else {
+						scope.tableQueryResults = scope.tableQueryResults.sort(sortByDate);
+					}
 				};
 				/**
 				 * Export to CSV
