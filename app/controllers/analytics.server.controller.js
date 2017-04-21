@@ -188,11 +188,18 @@ module.exports = function(db) {
 		 * Get all sites that belong to current user's organization
 		 */
 		getAllSites: function (req, res) {
-			var organizationId = req.user.organization._id;	
 			var allSites = [];
-			publisherModels.Publisher.promisifiedFind({
-				organization: organizationId
-			})
+
+			var publisherQueryParam;
+			// for networkAdmin, site filters should be all sites,
+			// for advertiser/publisher, site filters should contain sites belong to the organization only
+			if (req.user.organization.effectiveOrgType !== 'networkAdmin') {
+				publisherQueryParam = {
+					organization: req.user.organization._id
+				};
+			}
+
+			publisherModels.Publisher.promisifiedFind(publisherQueryParam)
 			.then(function(publishers) {
 				// iterate through each publisher
 				publishers.forEach(function(publisher) {
@@ -212,11 +219,18 @@ module.exports = function(db) {
 		 * Get all campaigns that belong to current user's organization
 		 */
 		getAllCampaigns: function (req, res) {
-			var organizationId = req.user.organization._id;
 			var allCampaigns = [];
-			advertiserModels.Advertiser.promisifiedFind({
-				organization: organizationId
-			})
+
+			var advertiserQueryParam;
+			// for networkAdmin, campaign filters should be all sites,
+			// for advertiser/publisher, campaign filters should contain campaigns belong to the organization only
+			if (req.user.organization.effectiveOrgType !== 'networkAdmin') {
+				advertiserQueryParam = {
+					organization: req.user.organization._id
+				};
+			}
+
+			advertiserModels.Advertiser.promisifiedFind(advertiserQueryParam)
 			.then(function(advertisers) {
 				// iterate through each advertiser
 				advertisers.forEach(function(advertiser) {
