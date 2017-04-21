@@ -55,6 +55,10 @@ angular.module('analytics').directive('queryTable', [
 
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
 					})
+					.then(function() {
+						// save this query in backend database
+						return Analytics.saveQuery(queryParam);
+					})
 					.catch(function(error) {
 						scope.isLoading = false;
 						Notify.alert('Error on query for table data.');
