@@ -19,7 +19,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                 timeformat = '%m/%d/%y %h:00';
                 minTickSize = [1, 'hour'];
             } else if (scope.timeUnit === 'month') {
-                timeformat = '%m/%y';
+                timeformat = '%Y/%m';
                 minTickSize = [1, 'month'];
             }
             scope.graphOptions = {
@@ -33,7 +33,26 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                 tooltipOpts: {
                     content: function (label, x, y) {
                         var date = new Date(x);
-                        var str = (date.getUTCMonth() + 1).toString() + '/' + date.getUTCDate().toString();
+                        var str;
+
+                        var month = date.getUTCMonth() + 1;
+                        var day = date.getUTCDate();
+                        var hour = date.getUTCHours();
+
+                        var yearStr = date.getUTCFullYear().toString();
+                        var monthStr = (month >= 10) ? month.toString() : ('0' + month.toString());
+                        var dayStr = (day >= 10) ? day.toString() : ('0' + day.toString());
+                        var hourStr = (hour >= 10) ? hour.toString() : ('0' + hour.toString());
+
+                        if (scope.timeUnit === 'hour') {
+                            str = monthStr + '/' + dayStr + ' ' + hourStr + ':00';
+                        } else if (scope.timeUnit === 'month') {
+                            str = yearStr + '/' + monthStr;
+                        } else {
+                            // timeUnit is day or undefined
+                            str = monthStr + '/' + dayStr;
+                        }
+
                         if (label === 'Impressions'){
                             y = y.toLocaleString();
                         } else if (label === 'CTR'){
