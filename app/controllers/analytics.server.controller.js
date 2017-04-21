@@ -119,10 +119,7 @@ module.exports = function(db) {
 		 */
 		getRecentQueries: function (req, res) {
 			var currentPage = req.query.currentPage;
-			var queryParam = {
-				user: req.user._id,
-				type: { $ne: 'custom' }
-			};
+			var queryParam = {user: req.user._id};
 			Query.find(queryParam)
 			.sort({
 				createdAt: -1
@@ -150,13 +147,13 @@ module.exports = function(db) {
 			});
 		},
 		/**
-		 * Get recent custom queries for current user
+		 * Get recent queries saved by current user
 		 */
-		getCustomQueries: function (req, res) {
+		getMyQueries: function (req, res) {
 			var currentPage = req.query.currentPage;
 			var queryParam = {
 				user: req.user._id,
-				type: 'custom'
+				isSaved: true
 			};
 			Query.find(queryParam)
 			.sort({

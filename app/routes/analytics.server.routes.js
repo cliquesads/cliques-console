@@ -21,22 +21,22 @@ module.exports = function(db, routers) {
 		 * 
 		 */
 		.get(analytics.getRecentQueries);
-	router.route('/analytics/customQueries')
+	router.route('/analytics/myQueries')
 		/**
-		 * @api {get} /analytics/customQueries Get queries with name as 'custom' for current logged in user
-		 * @apiName GetCustomQueries
+		 * @api {get} /analytics/myQueries Get queries saved by current logged in user
+		 * @apiName GetMyQueries
 		 * @apiGroup -
-		 * @apiDescription Get queries with name as 'custom' for current logged in user
+		 * @apiDescription Get queries saved by current logged in user
 		 *
 		 * @apiVersion 0.1.0
 		 * @apiPermission networkAdmin/advertiser/publisher
 		 *
 		 * @apiParam -
-		 * @apiSuccess {Object[]} ::Query:: Array of query objects that current user customzied 
+		 * @apiSuccess {Object[]} ::Query:: Array of query objects that current user saved 
 		 * @apiError (400 Bad Request) {String} error message
 		 * 
 		 */
-		.get(analytics.getCustomQueries);
+		.get(analytics.getMyQueries);
 		
 	router.route('/analytics/getAllSites')
 		/**

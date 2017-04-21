@@ -45,7 +45,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 							Notify.alert('Error fetching recent queries: ' + error.message);
 						});
 					break;
-				case 'app.analytics.customQueriesList':
+				case 'app.analytics.myQueriesList':
 					$scope.isLoading = true;
 					// Fetch my/custom queries from backend
 					Analytics.getMyQueries($scope.currentPage)
@@ -81,7 +81,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 
 		$scope.reachedQueryListBottom = function() {
 			if ($state.current.name === 'app.analytics.recentQueriesList' ||
-				$state.current.name === 'app.analytics.customQueriesList') {
+				$state.current.name === 'app.analytics.myQueriesList') {
 				if ($scope.hasMore) {
 					$scope.currentPage ++;
 					$scope.loadRelatedQueries();

@@ -30,14 +30,14 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
         Analytics.getMyQueries()
             .success(function(data) {
                 if (data.queries.length <= 5) {
-                    $scope.customQueries = data.queries;
+                    $scope.myQueries = data.queries;
                 } else {
-                    $scope.customQueries = data.queries.slice(0, 5);
+                    $scope.myQueries = data.queries.slice(0, 5);
                 }
-            	$scope.totalCustomQueries = data.total;
+            	$scope.totalMyQueries = data.total;
             	// format creation datetime for each custom query
-            	for (i = 0; i < $scope.customQueries.length; i ++) {
-            		$scope.customQueries[i].createdAt = Analytics.formatDatetimeString($scope.customQueries[i].createdAt);
+            	for (i = 0; i < $scope.myQueries.length; i ++) {
+            		$scope.myQueries[i].createdAt = Analytics.formatDatetimeString($scope.myQueries[i].createdAt);
             	}
             })
             .error(function(error) {

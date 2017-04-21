@@ -170,8 +170,8 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.customQueriesList', {
-            url: '/analytics/customQueriesList',
+        state('app.analytics.myQueriesList', {
+            url: '/analytics/myQueriesList',
             resolve: {
                 $title: function(){ return 'My Queries'; }
             },

@@ -6,7 +6,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
 
     var base_path = '/console/analytics';
     var recentQueries_path = base_path + '/recentQueries';
-    var customQueries_path = base_path + '/customQueries';
+    var myQueries_path = base_path + '/myQueries';
     var getAllSites_path = base_path + '/getAllSites';
     var getAllCampaigns_path = base_path + '/getAllCampaigns';
     var saveQuery_path = base_path + '/save';
@@ -54,7 +54,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         if (!currentPage) {
             currentPage = 1;
         }
-        return $http.get(customQueries_path, {params: {currentPage: currentPage}});
+        return $http.get(myQueries_path, {params: {currentPage: currentPage}});
     };
     var formatDatetimeString = function(datetimeString) {
         var dateMoment = moment(datetimeString);
