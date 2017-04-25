@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default mt">
 	<div class="panel-heading pt0">
 		<div class="row">
 			<div class="col-sm-5">
@@ -30,9 +30,8 @@
 				<div class="row">
 
 					<!-- Date range selection -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="availableSettings.timePeriod">
+					<div class="form-horizontal col-sm-6" ng-if="availableSettings.timePeriod">
+						<div class="form-group">
 							<label for="timePeriod" class="col-sm-3 text-md mt-sm">Time Period</label>
 							<div class="col-sm-9">
 								<select
@@ -51,11 +50,10 @@
 					</div>
 
 					<!-- Time unit selection -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="availableSettings.dateGroupBy">
+					<div class="form-horizontal col-sm-6" ng-if="availableSettings.dateGroupBy">
+						<div class="form-group">
 							<label for="timeUnitSelection"
-								class="col-sm-3 text-md mt-sm pl-xl">
+								class="col-sm-3 text-md mt-sm">
 								Group By
 							</label>
 							<div class="col-sm-9 btn-group">
@@ -90,12 +88,10 @@
 				</div>
 
 				<div class="row">
-				
 					<!-- Custom start date & end date -->
 					<!-- Start Date -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+					<div class="form-horizontal col-sm-6" ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+						<div class="form-group">
 							<label for="startDate" class="col-sm-3 text-md mt-sm">
 								Start Date
 							</label>
@@ -130,9 +126,8 @@
 					</div>
 
 					<!-- End Date -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+					<div class="form-horizontal col-sm-6" ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+						<div class="form-group">
 							<label for="endDate" class="col-sm-3 text-md mt-sm">
 								End Date
 							</label>
@@ -171,9 +166,8 @@
 				<div class="row">
 
 					<!-- Campaign filter -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="availableSettings.campaignFilter">
+					<div class="form-horizontal col-sm-6" ng-if="availableSettings.campaignFilter">
+						<div class="form-group">
 							<label for="campaignFilter" class="col-sm-3 text-md mt-sm">
 								Campaign
 							</label>
@@ -193,11 +187,10 @@
 					</div>
 
 					<!-- Site filter -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="availableSettings.siteFilter">
+					<div class="form-horizontal col-sm-6" ng-if="availableSettings.siteFilter">
+						<div class="form-group">
 							<label for="siteFilter"
-								class="col-sm-3 text-md mt-sm pl-xl">
+								class="col-sm-3 text-md mt-sm">
 								Site
 							</label>
 							<div class="col-sm-9">
@@ -214,17 +207,15 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
 
 				<div class="row">
 				
 					<!-- Country filter -->
-					<div class="form-horizontal col-sm-6">
-						<div class="form-group"
-							ng-if="availableSettings.countryFilter">
+					<div class="form-horizontal col-sm-6" ng-if="availableSettings.countryFilter">
+						<div class="form-group">
 							<label for="countryFilter"
-								class="col-sm-3 text-md mt-sm pl-xl">
+								class="col-sm-3 text-md mt-sm">
 								Country		
 							</label>
 							<div class="col-sm-9">
