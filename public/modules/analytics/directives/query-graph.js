@@ -28,10 +28,10 @@ angular.module('analytics').directive('queryGraph', [
 				scope.isCollapsed = false;	
 				scope.user = user;
 				scope.dateRanges = aggregationDateRanges(user.tz);
-				scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
+				scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
-					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
+					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 					scope.getGraphData(scope.queryParam);
 				});
 
@@ -56,7 +56,7 @@ angular.module('analytics').directive('queryGraph', [
 					scope.showPoints = scope.dateRanges[queryParam.dateRangeShortCode].showPoints;
 
 					// query aggregations api endpoint
-					scope.queryFunction(queryParam)
+					scope.queryFunction(queryParam, $rootScope.role)
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.graphQueryResults = response.data;

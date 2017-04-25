@@ -108,34 +108,31 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
             queryId: queryId
         });
     };
-    var queryFunction = function(queryType) {
+    /**
+     * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
+     */
+    var queryFunction = function(queryType, role) {
+        var collection;
         var queryFunction;
-        if (user) {
-            /**
-             * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
-             */
-            var effectiveOrgType = user.organization.effectiveOrgType;
-            if (queryType !== 'city' && queryType !== 'state' && queryType !== 'country') {
-                if (effectiveOrgType === 'networkAdmin') {
-                    queryFunction = HourlyAdStat.query;
-                } else if (effectiveOrgType === 'advertiser') {
-                    queryFunction = HourlyAdStat.advSummaryQuery;
-                } else if (effectiveOrgType === 'publisher') {
-                    queryFunction = HourlyAdStat.pubSummaryQuery;
-                }
-            } else {
-                if (effectiveOrgType === 'networkAdmin') {
-                    queryFunction = GeoAdStat.query;
-                } else if (effectiveOrgType === 'advertiser') {
-                    queryFunction = GeoAdStat.advSummaryQuery;
-                } else if (effectiveOrgType === 'publisher') {
-                    queryFunction = GeoAdStat.pubSummaryQuery;
-                }
-            }
+        if (queryType !== 'city' && queryType !== 'state' && queryType !== 'country') {
+            collection = HourlyAdStat;
+        } else {
+            collection = GeoAdStat;
+        }
+        switch (role){
+            case 'networkAdmin':
+                queryFunction = collection.query;
+                break;
+            case 'advertiser':
+                queryFunction = collection.advSummaryQuery;
+                break;
+            case 'publisher':
+                queryFunction = collection.pubSummaryQuery;
+                break;
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType, dateGroupBy, additionalHeaders) {
+    var getQueryTableHeaders = function(queryType, dateGroupBy, role, additionalHeaders) {
         var headers = [];
         if (queryType !== 'time') {
             headers = [{
@@ -150,12 +147,16 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
                 type: 'default'
             }];
         }
-        if (user.organization.organization_types.indexOf('advertiser') > -1) {
-            headers = headers.concat(TABLE_HEADERS.advertiser);
-        } else if (user.organization.organization_types.indexOf('publisher') > -1){
-            headers = headers.concat(TABLE_HEADERS.publisher);
-        } else {
-            headers = headers.concat(TABLE_HEADERS.networkAdmin);
+        switch (role){
+            case 'networkAdmin':
+                headers = headers.concat(TABLE_HEADERS.networkAdmin);
+                break;
+            case 'advertiser':
+                headers = headers.concat(TABLE_HEADERS.advertiser);
+                break;
+            case 'publisher':
+                headers = headers.concat(TABLE_HEADERS.publisher);
+                break;
         }
         if (additionalHeaders) {
             additionalHeaders.forEach(function(additionalHeader) {

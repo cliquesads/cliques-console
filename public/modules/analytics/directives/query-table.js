@@ -27,11 +27,11 @@ angular.module('analytics').directive('queryTable', [
 				// table collapse state
 				scope.isCollapsed = false;
 			    scope.user = user;
-			    scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
+			    scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 			    // Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
-					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
+					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 					scope.getTableData(scope.queryParam);
 				});
 				// Listen to broadcast message when query is saved to the backend
@@ -45,13 +45,13 @@ angular.module('analytics').directive('queryTable', [
 					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
 					// query aggregations endpoint
-					scope.queryFunction(queryParam)
+					scope.queryFunction(queryParam,$rootScope.role)
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.tableQueryResults = response.data;
 
 						// Decide default table headers and format/calculate values for each row
-						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.additionalHeaders);
+						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, $rootScope.role, scope.queryParam.additionalHeaders);
 
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
 					})

@@ -1,5 +1,10 @@
 <!--- Base abstract template for Analytics state --->
 <h3 class="custom-content-heading">
+    <div ng-switch on="authentication.user.organization.effectiveOrgType" class="pull-right">
+        <div ng-switch-when="networkAdmin">
+            <role-switcher></role-switcher>
+        </div>
+    </div>
     <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
 </h3>
 <div class="unwrap">

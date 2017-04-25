@@ -1,10 +1,10 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
-    function($scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
+    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
         // Depending on different organization type, quick query options may vary
-        $scope.quickQueries = QUICKQUERIES[user.organization.effectiveOrgType];
+        $scope.quickQueries = QUICKQUERIES[$rootScope.role];
         $scope.currentQueryType = $state.current.queryType;
 
         /********************** DEFAULT QUERY PARAM VALUES **********************/
@@ -81,12 +81,12 @@ angular.module('analytics').controller('AnalyticsController', ['$scope', '$state
 ]).controller('AnalyticsCustomizeController', [
     '$scope', '$rootScope', '$state', '$stateParams', 'ngDialog', 'Analytics', 'CUSTOMQUERY',
     function($scope, $rootScope, $state, $stateParams, ngDialog, Analytics, CUSTOMQUERY) {
-        $scope.availableSettings = CUSTOMQUERY[user.organization.effectiveOrgType].availableSettings;
+        $scope.availableSettings = CUSTOMQUERY[$rootScope.role].availableSettings;
         if ($stateParams.defaultQueryParam) {
             $scope.defaultQueryParam = $stateParams.defaultQueryParam;
         } else {
             // $state.go('app.analytics.customize');
-            $scope.defaultQueryParam = CUSTOMQUERY[user.organization.effectiveOrgType].defaultQueryParam;
+            $scope.defaultQueryParam = CUSTOMQUERY[$rootScope.role].defaultQueryParam;
         }
         /************************ CUSTOM QUERY & RESULTS ************************/
         $scope.showSaveQueryDialog = function() {
