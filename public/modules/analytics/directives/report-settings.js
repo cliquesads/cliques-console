@@ -23,6 +23,7 @@ angular.module('analytics').directive('reportSettings', [
             scope: {
                 allCampaigns: '=',
                 allSites: '=',
+                allCountries: '=',
                 selectedSettings: '=',
                 availableSettings: '='
             },
@@ -30,6 +31,12 @@ angular.module('analytics').directive('reportSettings', [
             link: function(scope, element, attrs) {
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
+
+                scope.countrySelected = function() {
+                    if (scope.selectedSettings.country) {
+                        $rootScope.$broadcast('countrySelected', {country: scope.selectedSettings.country});
+                    }
+                };
 
                 scope.showSaveQueryDialog = function() {
                     var parentScope = scope;

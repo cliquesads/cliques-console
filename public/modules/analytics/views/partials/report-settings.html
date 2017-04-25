@@ -26,190 +26,225 @@
 	<div class="panel-body pt0 pb0">
 		<div class="row">
 			<div class="col-sm-10">
-				<!-- Date range selection -->
-				<div class="form-horizontal col-sm-6"
-					ng-if="availableSettings.timePeriod">
-					<div class="form-group">
-						<label for="timePeriod" class="col-sm-3 text-md mt-sm">Time Period</label>
-						<div class="col-sm-9">
-							<select
-								name="timePeriod"
-								id="timePeriod"
-								class="form-control chosen-select"
-								ng-model="selectedSettings.dateRangeShortCode"
-								ng-change="timePeriodChanged()"
-								ng-options="key as value.label for (key, value) in dateRanges">
-								<option value="" selected>
-									Select time period
-								</option>
-							</select>
-						</div>
-					</div>
-				</div>
 
-				<!-- Time unit selection -->
-				<div class="form-horizontal col-sm-6"
-					ng-if="availableSettings.dateGroupBy">
-					<div class="form-group">
-						<label for="timeUnitSelection"
-							class="col-sm-3 text-md mt-sm pl-xl">
-							Group By
-						</label>
-						<div class="col-sm-9 btn-group">
-						    <button type="button"
-						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.dateGroupBy='hour'"
-						    	analytics-on="click"
-						    	analytics-event="Analytics_ChangeTimeUnitToHour"
-						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'hour'}">
-						    	Hour
-						    </button>
-						    <button type="button"
-						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.dateGroupBy='day'"
-						    	analytics-on="click"
-						    	analytics-event="Analytics_ChangeTimeUnitToDay"
-						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'day'}">
-						    	Day
-						    </button>
-						    <button type="button"
-						    	class="btn btn-default text-md"
-						    	ng-click="selectedSettings.dateGroupBy='month'"
-						    	analytics-on="click"
-						    	analytics-event="Analytics_ChangeTimeUnitToMonth"
-						    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'month'}">
-						    	Month
-						    </button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+				<div class="row">
 
-		<div class="row"
-			ng-if="selectedSettings.dateRangeShortCode === 'custom'">
-			<div class="col-sm-10">
-				<!-- Custom start date & end date -->
-				<!-- Start Date -->
-				<div class="form-horizontal col-sm-6">
-					<div class="form-group">
-						<label for="startDate" class="col-sm-3 text-md mt-sm">
-							Start Date
-						</label>
-						<div class="col-sm-9">
-							<div class="input-group">
-								<input
-									type="text"
-									name="startDate"
-									id="startDate"
-									data-ng-model="selectedSettings.startDate"
-									is-open="calendar.opened.startDate"
-									datepicker-popup="yyyy-MM-dd"
-									placeholder="yyyy-MM-dd"
-									datepicker-options="calendar.dateOptions"
-									class="form-control"
-									required="required"
-									close-text="Close"/>
-								<!--Button to enable popup Angular UI datepicker-->
-								<span class="input-group-btn">
-								     <button
-								     	type="button"
-								     	ng-click="calendar.open($event,'startDate')"
-								     	class="btn btn-default"
-								     	analytics-on="click"
-								     	analytics-event="ReportingSettings_OpenCalendarStartDate">
-										<em class="fa fa-calendar"></em>
-								     </button>
-								</span>
+					<!-- Date range selection -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.timePeriod">
+							<label for="timePeriod" class="col-sm-3 text-md mt-sm">Time Period</label>
+							<div class="col-sm-9">
+								<select
+									name="timePeriod"
+									id="timePeriod"
+									class="form-control chosen-select"
+									ng-model="selectedSettings.dateRangeShortCode"
+									ng-change="timePeriodChanged()"
+									ng-options="key as value.label for (key, value) in dateRanges">
+									<option value="" selected>
+										Select time period
+									</option>
+								</select>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<!-- End Date -->
-				<div class="form-horizontal col-sm-6">
-					<div class="form-group">
-						<label for="endDate" class="col-sm-3 text-md mt-sm">
-							End Date
-						</label>
-						<div class="col-sm-9">
-							<div class="input-group">
-								<input
-									type="text"
-									name="endDate"
-									id="endDate"
-									data-ng-model="selectedSettings.endDate"
-									min-date="startDate"
-									is-open="calendar.opened.endDate"
-									datepicker-popup="yyyy-MM-dd"
-									placeholder="yyyy-MM-dd"
-									datepicker-options="calendar.dateOptions"
-									class="form-control"
-									required="required"
-									close-text="Close"/>
-								<!--Button to enable popup Angular UI datepicker-->
-								<span class="input-group-btn">
-								     <button type="button"
-								     	ng-click="calendar.open($event,'endDate')"
-								     	class="btn btn-default"
-								     	analytics-on="click"
-								     	analytics-event="ReportSettings_OpenCalendarEndDate">
-										<em class="fa fa-calendar"></em>
-								     </button>
-								</span>
+					<!-- Time unit selection -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.dateGroupBy">
+							<label for="timeUnitSelection"
+								class="col-sm-3 text-md mt-sm pl-xl">
+								Group By
+							</label>
+							<div class="col-sm-9 btn-group">
+							    <button type="button"
+							    	class="btn btn-default text-md"
+							    	ng-click="selectedSettings.dateGroupBy='hour'"
+							    	analytics-on="click"
+							    	analytics-event="Analytics_ChangeTimeUnitToHour"
+							    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'hour'}">
+							    	Hour
+							    </button>
+							    <button type="button"
+							    	class="btn btn-default text-md"
+							    	ng-click="selectedSettings.dateGroupBy='day'"
+							    	analytics-on="click"
+							    	analytics-event="Analytics_ChangeTimeUnitToDay"
+							    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'day'}">
+							    	Day
+							    </button>
+							    <button type="button"
+							    	class="btn btn-default text-md"
+							    	ng-click="selectedSettings.dateGroupBy='month'"
+							    	analytics-on="click"
+							    	analytics-event="Analytics_ChangeTimeUnitToMonth"
+							    	ng-class="{'selected-time-unit': selectedSettings.dateGroupBy === 'month'}">
+							    	Month
+							    </button>
 							</div>
 						</div>
 					</div>
-				</div>	
-			</div>
-		</div>
 
-		<div class="row">
-			<div class="col-sm-10">
-				<!-- Campaign filter -->
-				<div class="form-horizontal col-sm-6"
-					ng-if="availableSettings.campaignFilter">
-					<div class="form-group">
-						<label for="campaignFilter" class="col-sm-3 text-md mt-sm">
-							Campaign
-						</label>
-						<div class="col-sm-9">
-							<select
-								name="campaignFilter"
-								id="campaignFilter"
-								class="form-control chosen-select"
-								ng-model="selectedSettings.campaign"
-								ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
-								<option value="" selected>
-									Select campaign to filter
-								</option>
-							</select>
-						</div>
-					</div>
 				</div>
 
-				<!-- Site filter -->
-				<div class="form-horizontal col-sm-6"
-					ng-if="availableSettings.siteFilter">
-					<div class="form-group">
-						<label for="siteFilter"
-							class="col-sm-3 text-md mt-sm pl-xl">
-							Site
-						</label>
-						<div class="col-sm-9">
-							<select
-								name="siteFilter"
-								id="siteFilter"
-								class="form-control chosen-select"
-								ng-model="selectedSettings.site"
-								ng-options="site._id as site.name for site in allSites track by site._id">
-								<option value="" selected>
-									Select site to filter
-								</option>
-							</select>
+				<div class="row">
+				
+					<!-- Custom start date & end date -->
+					<!-- Start Date -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+							<label for="startDate" class="col-sm-3 text-md mt-sm">
+								Start Date
+							</label>
+							<div class="col-sm-9">
+								<div class="input-group">
+									<input
+										type="text"
+										name="startDate"
+										id="startDate"
+										data-ng-model="selectedSettings.startDate"
+										is-open="calendar.opened.startDate"
+										datepicker-popup="yyyy-MM-dd"
+										placeholder="yyyy-MM-dd"
+										datepicker-options="calendar.dateOptions"
+										class="form-control"
+										required="required"
+										close-text="Close"/>
+									<!--Button to enable popup Angular UI datepicker-->
+									<span class="input-group-btn">
+									     <button
+									     	type="button"
+									     	ng-click="calendar.open($event,'startDate')"
+									     	class="btn btn-default"
+									     	analytics-on="click"
+									     	analytics-event="ReportingSettings_OpenCalendarStartDate">
+											<em class="fa fa-calendar"></em>
+									     </button>
+									</span>
+								</div>
+							</div>
 						</div>
 					</div>
+
+					<!-- End Date -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="selectedSettings.dateRangeShortCode === 'custom'">
+							<label for="endDate" class="col-sm-3 text-md mt-sm">
+								End Date
+							</label>
+							<div class="col-sm-9">
+								<div class="input-group">
+									<input
+										type="text"
+										name="endDate"
+										id="endDate"
+										data-ng-model="selectedSettings.endDate"
+										min-date="startDate"
+										is-open="calendar.opened.endDate"
+										datepicker-popup="yyyy-MM-dd"
+										placeholder="yyyy-MM-dd"
+										datepicker-options="calendar.dateOptions"
+										class="form-control"
+										required="required"
+										close-text="Close"/>
+									<!--Button to enable popup Angular UI datepicker-->
+									<span class="input-group-btn">
+									     <button type="button"
+									     	ng-click="calendar.open($event,'endDate')"
+									     	class="btn btn-default"
+									     	analytics-on="click"
+									     	analytics-event="ReportSettings_OpenCalendarEndDate">
+											<em class="fa fa-calendar"></em>
+									     </button>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>	
+
 				</div>
+
+				<div class="row">
+
+					<!-- Campaign filter -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.campaignFilter">
+							<label for="campaignFilter" class="col-sm-3 text-md mt-sm">
+								Campaign
+							</label>
+							<div class="col-sm-9">
+								<select
+									name="campaignFilter"
+									id="campaignFilter"
+									class="form-control chosen-select"
+									ng-model="selectedSettings.campaign"
+									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
+									<option value="" selected>
+										Select campaign to filter
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- Site filter -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.siteFilter">
+							<label for="siteFilter"
+								class="col-sm-3 text-md mt-sm pl-xl">
+								Site
+							</label>
+							<div class="col-sm-9">
+								<select
+									name="siteFilter"
+									id="siteFilter"
+									class="form-control chosen-select"
+									ng-model="selectedSettings.site"
+									ng-options="site._id as site.name for site in allSites track by site._id">
+									<option value="" selected>
+										Select site to filter
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="row">
+				
+					<!-- Country filter -->
+					<div class="form-horizontal col-sm-6">
+						<div class="form-group"
+							ng-if="availableSettings.countryFilter">
+							<label for="countryFilter"
+								class="col-sm-3 text-md mt-sm pl-xl">
+								Country		
+							</label>
+							<div class="col-sm-9">
+								<select
+									name="countryFilter"
+									id="countryFilter"
+									class="form-control chosen-select"
+									ng-model="selectedSettings.country"
+									ng-change="countrySelected()"
+									ng-options="country._id as country.name for country in allCountries track by country._id">
+									<option value="" selected>
+										Select country to filter
+									</option>	
+								</select>
+							</div>
+						</div>	
+					</div>
+
+				</div>
+
 			</div>
 			<!-- Refresh button -->
 			<div class="col-sm-2">

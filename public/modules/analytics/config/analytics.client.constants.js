@@ -198,6 +198,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    stateMap: true,
                     hasGraph: false,
                     hasTable: true
                 }
@@ -219,6 +220,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    countryFilter: true,
                     hasGraph: false,
                     hasTable: true
                 }
@@ -326,6 +328,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: false,
+                    stateMap: true,
                     hasGraph: false,
                     hasTable: true
                 }
@@ -347,6 +350,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: false,
+                    countryFilter: true,
                     hasGraph: false,
                     hasTable: true
                 }
@@ -454,6 +458,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: false,
                     siteFilter: true,
+                    stateMap: true,
                     hasGraph: false,
                     hasTable: true
                 }
@@ -475,6 +480,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: false,
                     siteFilter: true,
+                    countryFilter: true,
                     hasGraph: false,
                     hasTable: true
                 }

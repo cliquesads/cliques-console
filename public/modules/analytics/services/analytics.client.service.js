@@ -9,6 +9,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
     var myQueries_path = base_path + '/myQueries';
     var getAllSites_path = base_path + '/getAllSites';
     var getAllCampaigns_path = base_path + '/getAllCampaigns';
+    var getAllCountries_path = base_path + '/getAllCountries';
     var saveQuery_path = base_path + '/save';
     var saveHeader_path = base_path + '/saveAdditionalSelectedHeaders';
 
@@ -94,6 +95,9 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
     };
     var getAllCampaigns = function() {
         return $http.get(getAllCampaigns_path);
+    };
+    var getAllCountries = function() {
+        return $http.get(getAllCountries_path);
     };
     var saveQuery = function(queryParam) {
         return $http.post(saveQuery_path, {queryParam: queryParam});
@@ -236,6 +240,7 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         saveAdditionalSelectedHeaders: saveAdditionalSelectedHeaders,
         getAllSites: getAllSites,
         getAllCampaigns: getAllCampaigns,
+        getAllCountries: getAllCountries,
         queryFunction: queryFunction,
         getQueryTableHeaders: getQueryTableHeaders, 
         formatQueryTable: formatQueryTable 

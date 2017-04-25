@@ -70,6 +70,21 @@ module.exports = function(db, routers) {
 		 */
 		.get(analytics.getAllCampaigns);
 
+	router.route('/analytics/getAllCountries')
+		/**
+		 * @api {get} /analytics/getAllCountries get all countries from database
+		 * @apiName getCountries
+		 * @apiGroup -
+		 * @apiDescription get all countries from database
+		 * @apiVersion 0.1.0
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiSuccess [Object] country objects
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.get(analytics.getAllCountries);
+
 	router.route('/analytics/save')
 		/**
 		 * @api {get} /analytics/save save query in database

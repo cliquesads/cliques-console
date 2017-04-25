@@ -27,6 +27,7 @@ var validateScheduleString = function(scheduleString) {
 module.exports = function(db) {
 	var advertiserModels = new models.AdvertiserModels(db);
 	var publisherModels = new models.PublisherModels(db);
+	var geoModels = new models.GeoModels(db);
 	advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
 	publisherModels.Publisher.promisifiedFind = promise.promisify(publisherModels.Publisher.find);
 
@@ -241,6 +242,20 @@ module.exports = function(db) {
 				return res.status(400).send({
 					message: 'Error getting advertisers'
 				});
+			});
+		},
+		/**
+		 * Get all countries from database
+		 */
+		getAllCountries: function(req, res) {
+			geoModels.Country.find({}, function(err, countries) {
+				if (err) {
+					return res.status(400).send({
+						message: 'Error getting countries'
+					});
+				} else {
+					return res.json(countries);
+				}
 			});
 		}
 	};

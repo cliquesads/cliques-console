@@ -13,9 +13,15 @@
 <report-settings
     all-campaigns="allCampaigns"
     all-sites="allSites"
+    all-countries="allCountries"
 	selected-settings="defaultQueryParam"
 	available-settings="availableSettings">
 </report-settings>
+
+<!-- Query Geo -->
+<query-geo
+    ng-if="availableSettings.stateMap">
+</query-geo>
 
 <!-- Query Graph -->
 <query-graph
