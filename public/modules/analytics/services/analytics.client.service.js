@@ -206,9 +206,9 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
     var _getRowLogo = function(row, queryType, dateGroupBy, groupBy){
         // Logo for each row
         if (queryType === 'campaign' || queryType === 'creative') {
-            row.logo = row._id.advertiser ? row._id.advertiser.logo_secure_url : null;
+            row.logo = row._id.advertiser;
         } else if (queryType === 'site' || queryType ==='placement') {
-            row.logo = row._id.publisher ? row._id.publisher.logo_secure_url: null;
+            row.logo = row._id.publisher;
         }
     };
 

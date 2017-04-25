@@ -52,7 +52,9 @@
 				<table class="table table-striped table-hover mb0">
 				    <thead>
 				        <tr>
-				        	<th ng-if="queryParam.type !== 'time'">Logo</th>
+				        	<th ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region'">
+								Logo
+							</th>
 				        	<th class="clickable"
 				        		ng-class="{
 				        			'current-sorting': currentSorting.orderBy === header.name
@@ -75,8 +77,8 @@
 				    </thead>
 				    <tbody>
 					    <tr ng-repeat="row in tableQueryResults">
-					    	<td ng-if="queryParam.type !== 'time'">
-					    		<img ng-src="{{ row.logo }}" class="client-logo-xs">
+					    	<td ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region'">
+					    		<img ng-src="{{ row.logo ? row.logo.logo_secure_url : null }}" class="client-logo-xs" tooltip="{{ row.logo ? row.logo.name : null }}" tooltip-placement="right">
 					    	</td>
 						    <td ng-repeat="header in headers"
 						    	ng-if="header.type === 'default' || header.selected === true">
