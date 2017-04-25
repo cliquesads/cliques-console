@@ -134,16 +134,16 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
     };
     var getQueryTableHeaders = function(queryType, dateGroupBy, role, additionalHeaders) {
         var headers = [];
-        if (queryType !== 'time') {
+        if (queryType === 'time'){
             headers = [{
                 index: 0,
-                name: queryType,
+                name: _.capitalize(dateGroupBy),
                 type: 'default'
             }];
         } else {
             headers = [{
                 index: 0,
-                name: dateGroupBy.charAt(0).toUpperCase() + dateGroupBy.slice(1), // make the 1st character uppercase for dateGroupBy name
+                name: _.capitalize(queryType),
                 type: 'default'
             }];
         }
@@ -169,41 +169,57 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         }
         return headers;
     };
+
+    var _getRowTitle = function(row, queryType, dateGroupBy, groupBy){
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        if (queryType === 'time') {
+            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            if (dateGroupBy === 'hour') {
+                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
+            } else if (dateGroupBy === 'day') {
+                row.Day = row[queryType];
+            } else {
+                // date group by month
+                row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
+            }
+        } else if (queryType === 'custom') {
+            // TO-DO:::ycx should fill in row[custom] for customized query
+        } else {
+            var queryTypeHeader = _.capitalize(queryType);
+            var val = row._id[queryType];
+            if (val){
+                // city doesn't get populated, so _id.city == city name
+                if (queryType !== 'city'){
+                    // otherwise, get name of populated object
+                    val = row._id[queryType].name;
+                }
+            } else {
+                // fill blank values
+                val = "<No " + queryTypeHeader + " Provided>";
+            }
+            row[queryTypeHeader] = val;
+        }
+    };
+
+    var _getRowLogo = function(row, queryType, dateGroupBy, groupBy){
+        // Logo for each row
+        if (queryType === 'campaign' || queryType === 'creative') {
+            row.logo = row._id.advertiser ? row._id.advertiser.logo_secure_url : null;
+        } else if (queryType === 'site' || queryType ==='placement') {
+            row.logo = row._id.publisher ? row._id.publisher.logo_secure_url: null;
+        }
+    };
+
     /**
      * Decide default query table headers based on user/organization type,
      * and also calculate field values for each table row
      */
     var formatQueryTable = function(rows, queryType, dateGroupBy, groupBy) {
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ];
         rows.forEach(function(row) {
-            if (queryType === 'time') {
-                row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-                if (dateGroupBy === 'hour') {
-                    row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
-                } else if (dateGroupBy === 'day') {
-                    row.Day = row[queryType];
-                } else {
-                    // date group by month
-                    row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
-                }
-            } else if (queryType === 'custom') {
-                // TO-DO:::ycx should fill in row[custom] for customized query
-            } else {
-                if (row._id[queryType]) {
-                    row[queryType] = row._id[queryType].name;
-                }
-            }
-            // Logo for each row
-            if (queryType !== 'time') {
-                if (row._id.advertiser) {
-                    row.logo = row._id.advertiser.logo_secure_url;
-                } else if (row._id.publisher) {
-                    row.logo = row._id.publisher.logo_secure_url;
-                }
-            }
-
+            _getRowTitle(row, queryType, dateGroupBy, groupBy);
+            _getRowLogo(row, queryType, dateGroupBy, groupBy);
             row.Impressions = $filter('number')(row.imps);
             row.Spend = $filter('currency')(row.spend, '$', 2);
             row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';

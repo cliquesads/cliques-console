@@ -126,8 +126,8 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,creative',
-                    populate: 'publisher,creative'
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -148,8 +148,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,placement',
-                    populate: 'advertiser,placement'
+                    groupBy: 'publisher,placement',
+                    populate: 'publisher,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -169,8 +169,7 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher',
-                    populate: 'advertiser,publisher'
+                    groupBy: 'city'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -182,16 +181,16 @@ angular.module('analytics')
                 }
             },
             state: {
-                name: 'States',
+                name: 'Regions/States',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level',
                 route: 'app.analytics.quickQueries.state',
                 defaultQueryParam: {
-                    name: 'States',
+                    name: 'Regions/States',
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher',
-                    populate: 'advertiser,publisher'
+                    groupBy: 'region',
+                    populate: 'region'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -212,8 +211,8 @@ angular.module('analytics')
                     type: 'country',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,publisher,country',
-                    populate: 'advertiser,publisher,country'
+                    groupBy: 'country',
+                    populate: 'country'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -278,8 +277,30 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,creative',
-                    populate: 'publisher,creative'
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
+                    campaignFilter: true,
+                    siteFilter: false,
+                    hasGraph: false,
+                    hasTable: true
+                }
+            },
+            placement: {
+                name: 'Placements',
+                description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
+                + '& which ones aren\'t.',
+                route: 'app.analytics.quickQueries.placement',
+                defaultQueryParam: {
+                    name: 'Placements',
+                    type: 'placement',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'publisher,placement',
+                    populate: 'publisher,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -299,8 +320,7 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher',
-                    populate: 'publisher'
+                    groupBy: 'city'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -320,8 +340,8 @@ angular.module('analytics')
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher',
-                    populate: 'publisher'
+                    groupBy: 'region',
+                    populate: 'region'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -342,8 +362,8 @@ angular.module('analytics')
                     type: 'country',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,country',
-                    populate: 'publisher,country'
+                    groupBy: 'country',
+                    populate: 'country'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -408,8 +428,30 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,placement',
-                    populate: 'advertiser,placement'
+                    groupBy: 'publisher,placement',
+                    populate: 'publisher,placement'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
+                    campaignFilter: false,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true
+                }
+            },
+            creative: {
+                name: 'Creatives',
+                description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
+                + '& which ones aren\'t.',
+                route: 'app.analytics.quickQueries.creative',
+                defaultQueryParam: {
+                    name: 'Creatives',
+                    type: 'creative',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -429,8 +471,7 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser',
-                    populate: 'advertiser'
+                    groupBy: 'city'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -450,8 +491,8 @@ angular.module('analytics')
                     type: 'state',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser',
-                    populate: 'advertiser'
+                    groupBy: 'region',
+                    populate: 'region'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -472,8 +513,8 @@ angular.module('analytics')
                     type: 'country',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,country',
-                    populate: 'advertiser,country'
+                    groupBy: 'country',
+                    populate: 'country'
                 },
                 availableSettings: {
                     timePeriod: true,
