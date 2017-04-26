@@ -5,16 +5,12 @@
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
-						<div class="col-sm-5">
-							{{ humanizedDateRange }} - Table
-							<small>
-								<em class="text-muted">
-									Reporting Timezone: {{ user.tz }}
-								</em>
-							</small>
+						<div class="col-sm-6">
+							<strong>{{ queryParam.name }} Table:</strong>
+							<query-title query-param="queryParam" humanized-date-range="humanizedDateRange" tz="{{ user.tz }}"></query-title>
 						</div>
 						<!-- More data fields dropdown -->
-						<div class="col-sm-5 col-sm-offset-2 text-right">
+						<div class="col-sm-6 text-right">
 
 							<button class="btn btn-primary"
 								type="button"
@@ -58,7 +54,7 @@
 				        			'current-sorting': currentSorting.orderBy === 'logo.name'
 				        		}"
 								ng-click="sortTableBy('logo.name')">
-								{{ tableQueryResults[0].logo.type }}
+								{{ tableQueryResults[0]._logo_type }}
 								<span class="pull-right">
 				        			<i class="fa"
 									   ng-class="{

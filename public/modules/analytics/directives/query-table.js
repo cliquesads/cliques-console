@@ -134,9 +134,9 @@ angular.module('analytics').directive('queryTable', [
 
 						var numberSort = function(a, b, order){
 							if (order === 'asc'){
-								return aValue - bValue;
-							} else {
 								return bValue - aValue;
+							} else {
+								return aValue - bValue;
 							}
 						};
 

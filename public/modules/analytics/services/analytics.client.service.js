@@ -211,10 +211,10 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         // Logo for each row
         if (queryType === 'campaign' || queryType === 'creative') {
             row.logo = row._id.advertiser;
-            row.logo.type = 'Advertiser';
+            row._logo_type = 'Advertiser';
         } else if (queryType === 'site' || queryType ==='placement') {
             row.logo = row._id.publisher;
-            row.logo.type = 'Publisher';
+            row._logo_type = 'Publisher';
         }
     };
 
