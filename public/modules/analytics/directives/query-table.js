@@ -45,7 +45,7 @@ angular.module('analytics').directive('queryTable', [
 					scope.isLoading = true;
 					scope.humanizedDateRange = queryParam.humanizedDateRange;
 					// query aggregations endpoint
-					scope.queryFunction(queryParam,$rootScope.role)
+					scope.queryFunction(queryParam)
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.tableQueryResults = response.data;

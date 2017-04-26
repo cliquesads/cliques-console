@@ -23,7 +23,6 @@ angular.module('analytics').directive('reportSettings', [
             scope: {
                 allCampaigns: '=',
                 allSites: '=',
-                allCountries: '=',
                 selectedSettings: '=',
                 availableSettings: '='
             },
@@ -31,7 +30,6 @@ angular.module('analytics').directive('reportSettings', [
             link: function(scope, element, attrs) {
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
-
                 scope.countrySelected = function() {
                     if (scope.selectedSettings.country) {
                         // Country selected, get its regions
@@ -46,6 +44,45 @@ angular.module('analytics').directive('reportSettings', [
                             });
                     }
                 };
+
+                if (scope.availableSettings.countryFilter) {
+                    // has country filter, should get all countries for current user
+                    Analytics.getAllCountries()
+                    .success(function(data) {
+                        scope.allCountries = data;
+                        scope.allCountries.forEach(function(country) {
+                            if (country._id === user.organization.country || 
+                                country.name === user.organization.country) {
+                                // setup default selected country based on user country
+                                scope.selectedSettings.country = country;
+                            }
+                        });
+                    })
+                    .error(function(error) {
+                        Notify.alert(error.message, {
+                            status: 'danger'
+                        });
+                    });
+                }
+
+                // Fetch regions for country in which user locates,
+                // and then setup default selected region on user region
+                if (scope.availableSettings.regionFilter) {
+                    Analytics.getRegions(user.organization.country)
+                    .success(function(data) {
+                        scope.regions = data;
+                        for (var i = 0; i < scope.regions.length; i ++) {
+                            if (user.organization.state === scope.regions[i].name) {
+                                scope.selectedSettings.region = scope.regions[i];
+                            }
+                        }
+                    })
+                    .error(function(error) {
+                        Notify.alert(error.message, {
+                            status: 'danger'
+                        });
+                    });
+                }
 
                 scope.showSaveQueryDialog = function() {
                     var parentScope = scope;

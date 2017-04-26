@@ -3,6 +3,8 @@
 
 angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
     function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
+        $scope.user = user;
+
         // Depending on different organization type, quick query options may vary
         $scope.quickQueries = QUICKQUERIES[$rootScope.role];
         $scope.currentQueryType = $state.current.queryType;
@@ -54,18 +56,6 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
                 Analytics.getAllSites()
                     .success(function(data) {
                         $scope.allSites = data;
-                    })
-                    .error(function(error) {
-                        Notify.alert(error.message, {
-                            status: 'danger'
-                        });
-                    });
-            }
-            if ($scope.availableSettings.countryFilter) {
-                // has country filter, should get all countries for current user
-                Analytics.getAllCountries()
-                    .success(function(data) {
-                        $scope.allCountries = data;
                     })
                     .error(function(error) {
                         Notify.alert(error.message, {

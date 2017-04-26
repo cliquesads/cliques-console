@@ -1,22 +1,54 @@
 <div class="row">
 	<div class="col-sm-12">
 		<div class="panel panel-default mt">
+			<!-- Heading & buttons -->
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
-						<div class="col-sm-12">
-							Select Region
+						<!-- Date range title -->
+						<div class="col-sm-5">
+							{{ humanizedDateRange }} - Map
+							<small>
+								<em class="text-muted">
+									Reporting Timezone: {{ user.tz }}
+								</em>
+							</small>
 						</div>
+
+						<!-- collapse button -->
+						<div class="col-sm-5 col-sm-offset-2 text-right">
+							<a ng-click="isCollapsed=!isCollapsed"
+								tooltip="Expand/Collapse Panel"
+								tooltip-placement="left">
+								<i class="fa"
+									ng-class="{
+										'fa-minus': !isCollapsed,
+										'fa-plus': isCollapsed
+									}">
+								</i>	
+							</a>
+						</div>
+
 					</div>
 				</div>
 			</div>
-			<div class="panel-body pt0">
+
+			<!-- Geo map -->
+			<div class="panel-body pt0"
+				ng-if="!isCollapsed && !isLoading">
 				<hr class="m0">
 
 				<datamap
+					class="pb0"
 					map="mapObject"
 					on-click="stateClicked">
 				</datamap>
+			</div>
+
+			<!-- Spin Loader -->
+			<div class="panel-body pt0"
+				ng-if="isLoading">
+				<spin-loader></spin-loader>
 			</div>
 		</div>
 	</div>
