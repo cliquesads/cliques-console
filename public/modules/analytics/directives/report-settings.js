@@ -35,7 +35,6 @@ angular.module('analytics').directive('reportSettings', [
                 scope.countrySelected = function() {
                     if (scope.selectedSettings.country) {
                         // Country selected, get its regions
-                        console.log('country selected: ' + scope.selectedSettings.country);
                         Analytics.getRegions(scope.selectedSettings.country)
                             .success(function(data) {
                                 scope.regions = data;

@@ -8,15 +8,9 @@
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<button ng-click="showSaveQueryDialog()" ng-disabled="selectedSettings.isSaved"
-						class="btn btn-sm mt-sm" ng-class="selectedSettings.isSaved ? 'btn-default' : 'btn-primary'">
-					<span ng-switch="selectedSettings.isSaved">
-						<span ng-switch-when="true">
-							<i class="fa fa-check"></i> Saved
-						</span>
-						<span ng-switch-default>
-							<i class="fa fa-floppy-o"></i> Save / Schedule
-						</span>
+				<button ng-click="showSaveQueryDialog()" class="btn btn-sm btn-primary mt-sm">
+					<span>
+						<i class="fa fa-floppy-o"></i> Save / Schedule
 					</span>
 				</button>
 			</div>
