@@ -142,13 +142,13 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
             headers = [{
                 index: 0,
                 name: _.capitalize(dateGroupBy),
-                type: 'default'
+                type: 'attribute'
             }];
         } else {
             headers = [{
                 index: 0,
                 name: _.capitalize(queryType),
-                type: 'default'
+                type: 'attribute'
             }];
         }
         switch (role){

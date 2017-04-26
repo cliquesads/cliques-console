@@ -5,12 +5,11 @@
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
-						<div class="col-sm-6">
-							<strong>{{ queryParam.name }} Table:</strong>
+						<div class="col-sm-7">
 							<query-title query-param="queryParam" humanized-date-range="humanizedDateRange" tz="{{ user.tz }}"></query-title>
 						</div>
 						<!-- More data fields dropdown -->
-						<div class="col-sm-6 text-right">
+						<div class="col-sm-5 text-right">
 
 							<button class="btn btn-primary"
 								type="button"
@@ -71,7 +70,7 @@
 				        		}"
 				        		ng-click="sortTableBy(header.name)"
 				        		ng-repeat="header in headers"
-				        		ng-if="header.type === 'default' || header.selected === true">
+				        		ng-if="header.type === 'attribute' || header.selected === true">
 				        		{{ header.name }}
 				        		<span class="pull-right">
 				        			<i class="fa"
@@ -91,7 +90,7 @@
 					    		<img ng-src="{{ row.logo ? row.logo.logo_secure_url : null }}" class="client-logo-xs" tooltip="{{ row.logo ? row.logo.name : null }}" tooltip-placement="right">
 					    	</td>
 						    <td ng-repeat="header in headers"
-						    	ng-if="header.type === 'default' || header.selected === true">
+						    	ng-if="header.type === 'attribute' || header.selected === true">
 						    	{{ row[header.name] }}
 						    </td>
 					    </tr>

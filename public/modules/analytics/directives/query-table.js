@@ -183,7 +183,7 @@ angular.module('analytics').directive('queryTable', [
 
 				    var csvHeaders = [];
 				    scope.headers.forEach(function(header) {
-						if (header.type === 'default' || header.selected === true) {
+						if (header.type === 'attribute' || header.selected === true) {
 							csvHeaders.push(header.name);
 						}
 				    });
