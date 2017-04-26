@@ -73,7 +73,7 @@ module.exports = function(db, routers) {
 	router.route('/analytics/getAllCountries')
 		/**
 		 * @api {get} /analytics/getAllCountries get all countries from database
-		 * @apiName getCountries
+		 * @apiName getAllCountries
 		 * @apiGroup -
 		 * @apiDescription get all countries from database
 		 * @apiVersion 0.1.0
@@ -84,6 +84,22 @@ module.exports = function(db, routers) {
 		 *
 		 */
 		.get(analytics.getAllCountries);
+
+	router.route('/analytics/getRegions')
+		/**
+		 * @api {get} /analytics/getRegions get regions for specific country from database
+		 * @apiName getRegions
+		 * @apiGroup -
+		 * @apiDescription get regions for specific country from database
+		 * @apiPermission networkAdmin/advertiser/publisher
+		 *
+		 * @apiParam (Path Parameters){String} country name
+		 * @apiVersion 0.1.0
+		 * @apiSuccess [Object] region objects
+		 * @apiError (400 Bad Request) {String} error message
+		 *
+		 */
+		.get(analytics.getRegions);
 
 	router.route('/analytics/save')
 		/**

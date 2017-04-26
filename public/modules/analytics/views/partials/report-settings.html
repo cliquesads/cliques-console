@@ -234,6 +234,30 @@
 						</div>	
 					</div>
 
+					<!-- Region/state filter -->
+					<div class="form-horizontal col-sm-6"
+						ng-if="availableSettings.regionFilter">
+						<div class="form-group">
+							<label for="regionFilter"
+								class="col-sm-3 text-md mt-sm">
+								Region
+							</label>
+							<div class="col-sm-9">
+								<select
+									name="regionFilter"
+									id="regionFilter"
+									class="form-control chosen-select"
+									ng-disabled="!regions"
+									ng-model="selectedSettings.region"
+									ng-options="region._id as region.name for region in regions track by region._id">
+									<option value="" selected>
+										Select region to filter
+									</option>	
+								</select>
+							</div>
+						</div>	
+					</div>
+
 				</div>
 
 			</div>

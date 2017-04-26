@@ -49,11 +49,6 @@ angular.module('analytics').directive('queryGeo', [
 						*/
 					};
 				}
-				scope.$on('countrySelected', function(event, args) {
-					var selectedCountry = args.country.toLowerCase();
-					console.log('selected country: ' + selectedCountry);
-					scope.mapObject.scope = selectedCountry;
-				});
 				scope.stateClicked = function(geography) {
 					scope.selectedState = {
 						name: geography.properties.name,

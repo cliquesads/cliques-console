@@ -257,6 +257,23 @@ module.exports = function(db) {
 					return res.json(countries);
 				}
 			});
+		},
+		/**
+		 * Get regions for specific country
+		 */
+		getRegions: function(req, res) {
+			var country = req.param('country');
+			geoModels.Region.find({
+				country: country
+			}, function(err, regions) {
+				if (err) {
+					return res.status(400).send({
+						message: 'Error getting region for country ' + country
+					});
+				} else {
+					return res.json(regions);
+				}
+			});
 		}
 	};
 };
