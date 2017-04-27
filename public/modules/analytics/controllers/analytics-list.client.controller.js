@@ -1,11 +1,12 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsListController', ['$scope', 'Analytics', 'Notify', '$state', '$window',
-	function($scope, Analytics, Notify, $state, $window) {
+angular.module('analytics').controller('AnalyticsListController', ['$scope', 'Analytics', 'Query', 'Notify', '$state', '$window',
+	function($scope, Analytics, Query, Notify, $state, $window) {
 		$scope.queries = [];
 		$scope.total = 0;
 		$scope.currentPage = 1;
+		$scope.itemsPerPage = 25;
 		$scope.isLoading = false;
 		$scope.hasMore = false;
 
@@ -24,50 +25,27 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		};
 
 		$scope.loadRelatedQueries = function() {
-			switch ($state.current.name) {
-				case 'app.analytics.recentQueriesList':
-					$scope.isLoading = true;
-					// Fetch recent queries from backend
-					Analytics.getRecentQueries($scope.currentPage)
-						.success(function(data) {
-							$scope.isLoading = false;
-							data.queries = $scope.handleQueryResults(data.queries);
-							$scope.total = data.total;
-							$scope.queries = $scope.queries.concat(data.queries);
-							if ($scope.total > $scope.queries.length) {
-								$scope.hasMore = true;
-							} else {
-								$scope.hasMore = false;
-							}
-						})
-						.error(function(error) {
-							$scope.isLoading = false;
-							Notify.alert('Error fetching recent queries: ' + error.message);
-						});
-					break;
-				case 'app.analytics.myQueriesList':
-					$scope.isLoading = true;
-					// Fetch my/custom queries from backend
-					Analytics.getMyQueries($scope.currentPage)
-						.success(function(data) {
-							$scope.isLoading = false;
-							data.queries = $scope.handleQueryResults(data.queries);
-							$scope.total = data.total;
-							$scope.queries = $scope.queries.concat(data.queries);
-							if ($scope.total > $scope.queries.length) {
-								$scope.hasMore = true;
-							} else {
-								$scope.hasMore = false;
-							}
-						})
-						.error(function(error) {
-							$scope.isLoading = false;
-							Notify.alert('Error fetching recent queries: ' + error.message);
-						});
-					break;
-				default:
-					break;
+
+			$scope.isLoading = true;
+			// Fetch recent queries from backend
+			var queryParams = {
+				page: $scope.currentPage,
+				per_page: $scope.itemsPerPage,
+				sort_by: "createdAt,desc"
+			};
+			if ($state.current.name === 'app.analytics.myQueriesList'){
+				queryParams.isSaved = true;
 			}
+			Query.query(queryParams).$promise.then(function(data) {
+				$scope.isLoading = false;
+				data = $scope.handleQueryResults(data);
+				$scope.total += data.length;
+				$scope.queries = $scope.queries.concat(data);
+				$scope.hasMore = (data.length === $scope.itemsPerPage);
+			}, function(error) {
+				$scope.isLoading = false;
+				Notify.alert('Error fetching queries: ' + error.message);
+			});
 		};
 		$scope.loadRelatedQueries();
 

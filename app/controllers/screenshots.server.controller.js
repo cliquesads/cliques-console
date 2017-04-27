@@ -234,6 +234,8 @@ module.exports = function(db) {
 				if (filterSiteId) {
 					queryParams.site = filterSiteId;
 				}
+
+				// TODO: Standardize how pagination is handled across API
 				screenshotModels.Screenshot.find(queryParams)
 				.sort({tstamp: -1})
 				.skip((page - 1) * itemsPerPage)

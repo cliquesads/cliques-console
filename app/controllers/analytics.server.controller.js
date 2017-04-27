@@ -129,26 +129,16 @@ module.exports = function(db) {
 			 * Get recent quick queries for current user
 			 */
 			getMany: function (req, res) {
-                req.query.user = req.user._id;
-                req.query.itemsPerPage = ITEMS_PER_PAGE;
+                req.query.user = req.user.id;
+                req.query.per_page = req.query.per_page || String(ITEMS_PER_PAGE);
 				Query.apiQuery(req.query, function(err, queries) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     }
-                    Query.count(req.query)
-                        .exec(function(err, total) {
-                            if (err) {
-                                return res.status(400).send({
-                                    message: errorHandler.getAndLogErrorMessage(err)
-                                });
-                            }
-                            return res.json({
-                                total: total,
-                                queries: queries
-                            });
-                        });
+                    // TODO: Standardize how pagination is handled across API
+                    return res.json(queries);
                 });
 			},
 
