@@ -22,7 +22,8 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             delete $scope.defaultQueryParam.updatedAt;
             delete $scope.defaultQueryParam.nextRun;
         } else if ($scope.currentQueryType) {
-            $scope.defaultQueryParam = $scope.quickQueries[$scope.currentQueryType].defaultQueryParam;
+            // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
+            $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[$scope.currentQueryType].defaultQueryParam));
         }
 
         if ($scope.defaultQueryParam) {

@@ -19,10 +19,6 @@ angular.module('analytics').factory('Analytics', [
     function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
 
     var base_path = '/console/analytics';
-    var recentQueries_path = base_path + '/recentQueries';
-    var myQueries_path = base_path + '/myQueries';
-    var getRegions_path = base_path + '/getRegions';
-    var saveQuery_path = base_path + '/save';
     var saveHeader_path = base_path + '/saveAdditionalSelectedHeaders';
 
 	var getCSVFileName = function(queryName) {
@@ -95,9 +91,6 @@ angular.module('analytics').factory('Analytics', [
     };
     var getRegions = function(country) {
         return $http.get('/console/region', {params: {country: country}});
-    };
-    var saveQuery = function(queryParam) {
-        return $http.post(saveQuery_path, {queryParam: queryParam});
     };
     var saveAdditionalSelectedHeaders = function(selectedAdditionalHeaders, queryId) {
         return $http.post(saveHeader_path, {
@@ -250,7 +243,6 @@ angular.module('analytics').factory('Analytics', [
         getCSVFileName: getCSVFileName,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
-        saveQuery: saveQuery,
         saveAdditionalSelectedHeaders: saveAdditionalSelectedHeaders,
         getAllCountries: getAllCountries,
         getRegions: getRegions,
