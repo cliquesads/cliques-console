@@ -53,38 +53,4 @@ module.exports = function(db, routers) {
          * @apiError (400 Bad Request) {String} error message
          */
         .patch(analytics.query.update);
-
-
-	router.route('/query/myQueries')
-		/**
-		 * @api {get} /analytics/myQueries Get queries saved by current logged in user
-		 * @apiName GetMyQueries
-		 * @apiGroup -
-		 * @apiDescription Get queries saved by current logged in user
-		 *
-		 * @apiVersion 0.1.0
-		 * @apiPermission networkAdmin/advertiser/publisher
-		 *
-		 * @apiParam -
-		 * @apiSuccess {Object[]} ::Query:: Array of query objects that current user saved 
-		 * @apiError (400 Bad Request) {String} error message
-		 * 
-		 */
-		.get(analytics.query.getMyQueries);
-
-	router.route('/analytics/getRegions')
-		/**
-		 * @api {get} /analytics/getRegions get regions for specific country from database
-		 * @apiName getRegions
-		 * @apiGroup -
-		 * @apiDescription get regions for specific country from database
-		 * @apiPermission networkAdmin/advertiser/publisher
-		 *
-		 * @apiParam (Path Parameters){String} country name
-		 * @apiVersion 0.1.0
-		 * @apiSuccess [Object] region objects
-		 * @apiError (400 Bad Request) {String} error message
-		 *
-		 */
-		.get(analytics.getRegions);
 };

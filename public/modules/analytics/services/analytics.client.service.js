@@ -57,18 +57,6 @@ angular.module('analytics').factory('Analytics', [
         }
         return csvString;
     };
-    var getRecentQueries = function(currentPage) {
-        if (!currentPage) {
-            currentPage = 1;
-        }
-        return $http.get(recentQueries_path, {params: {currentPage: currentPage}});
-    };
-    var getMyQueries = function(currentPage) {
-        if (!currentPage) {
-            currentPage = 1;
-        }
-        return $http.get(myQueries_path, {params: {currentPage: currentPage}});
-    };
     var formatDatetimeString = function(datetimeString) {
         var dateMoment = moment(datetimeString);
         return dateMoment.format('MMM DD YYYY h:mmA ') + dateMoment.tz(user.tz).format('z');
@@ -106,7 +94,7 @@ angular.module('analytics').factory('Analytics', [
         return $http.get('/console/country');
     };
     var getRegions = function(country) {
-        return $http.get(getRegions_path, {params: {country: country}});
+        return $http.get('/console/region', {params: {country: country}});
     };
     var saveQuery = function(queryParam) {
         return $http.post(saveQuery_path, {queryParam: queryParam});
@@ -260,8 +248,6 @@ angular.module('analytics').factory('Analytics', [
     return {
         generateCSVData: generateCSVData,
         getCSVFileName: getCSVFileName,
-        getRecentQueries: getRecentQueries,
-        getMyQueries: getMyQueries,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
         saveQuery: saveQuery,
