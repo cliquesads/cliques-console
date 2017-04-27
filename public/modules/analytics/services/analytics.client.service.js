@@ -9,7 +9,6 @@ angular.module('analytics').factory('Analytics', [
     var base_path = '/console/analytics';
     var recentQueries_path = base_path + '/recentQueries';
     var myQueries_path = base_path + '/myQueries';
-    var getAllCountries_path = base_path + '/getAllCountries';
     var getRegions_path = base_path + '/getRegions';
     var saveQuery_path = base_path + '/save';
     var saveHeader_path = base_path + '/saveAdditionalSelectedHeaders';
@@ -92,7 +91,7 @@ angular.module('analytics').factory('Analytics', [
         return cronString;
     };
     var getAllCountries = function() {
-        return $http.get(getAllCountries_path);
+        return $http.get('/console/country');
     };
     var getRegions = function(country) {
         return $http.get(getRegions_path, {params: {country: country}});

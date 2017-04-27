@@ -38,21 +38,6 @@ module.exports = function(db, routers) {
 		 */
 		.get(analytics.getMyQueries);
 
-	router.route('/analytics/getAllCountries')
-		/**
-		 * @api {get} /analytics/getAllCountries get all countries from database
-		 * @apiName getAllCountries
-		 * @apiGroup -
-		 * @apiDescription get all countries from database
-		 * @apiVersion 0.1.0
-		 * @apiPermission networkAdmin/advertiser/publisher
-		 *
-		 * @apiSuccess [Object] country objects
-		 * @apiError (400 Bad Request) {String} error message
-		 *
-		 */
-		.get(analytics.getAllCountries);
-
 	router.route('/analytics/getRegions')
 		/**
 		 * @api {get} /analytics/getRegions get regions for specific country from database

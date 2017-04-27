@@ -183,20 +183,6 @@ module.exports = function(db) {
 			});
 		},
 		/**
-		 * Get all countries from database
-		 */
-		getAllCountries: function(req, res) {
-			geoModels.Country.find({}, function(err, countries) {
-				if (err) {
-					return res.status(400).send({
-						message: 'Error getting countries'
-					});
-				} else {
-					return res.json(countries);
-				}
-			});
-		},
-		/**
 		 * Get regions for specific country
 		 */
 		getRegions: function(req, res) {
