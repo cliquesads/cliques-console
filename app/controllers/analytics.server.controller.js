@@ -140,42 +140,6 @@ module.exports = function(db) {
                     // TODO: Standardize how pagination is handled across API
                     return res.json(queries);
                 });
-			},
-
-			/**
-			 * Get recent queries saved by current user
-			 */
-			getMyQueries: function (req, res) {
-				var currentPage = req.query.currentPage;
-				var queryParam = {
-					user: req.user._id,
-					isSaved: true
-				};
-				Query.find(queryParam)
-					.sort({
-						createdAt: -1
-					})
-					.skip((currentPage - 1) * ITEMS_PER_PAGE)
-					.limit(itemsPerPage)
-					.exec(function(err, queries) {
-						if (err) {
-							return res.status(400).send({
-								message: errorHandler.getAndLogErrorMessage(err)
-							});
-						}
-						Query.count(queryParam)
-							.exec(function(err, total) {
-								if (err) {
-									return res.status(400).send({
-										message: errorHandler.getAndLogErrorMessage(err)
-									});
-								}
-								return res.json({
-									total: total,
-									queries: queries
-								});
-							});
-					});
 			}
 		},
 		/**
