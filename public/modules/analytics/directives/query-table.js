@@ -7,12 +7,14 @@ angular.module('analytics').directive('queryTable', [
 	'Notify',
 	'aggregationDateRanges',
 	'Analytics',
+	'Query',
     'ngDialog',
 	function(
 		$rootScope,
 		Notify,
 		aggregationDateRanges,
 		Analytics,
+		Query,
 		ngDialog
 	) {
 		'use strict';
@@ -52,13 +54,12 @@ angular.module('analytics').directive('queryTable', [
 
 						// Decide default table headers and format/calculate values for each row
 						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, $rootScope.role, scope.queryParam.additionalHeaders);
-
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
 					})
 					.then(function() {
 						if (!queryParam.isSaved) {
 							// save this query in backend database if hasn't already saved
-							return Analytics.saveQuery(queryParam);
+							return new Query(queryParam).$create();
 						} else {
 							return;
 						}

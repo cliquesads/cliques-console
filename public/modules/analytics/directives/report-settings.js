@@ -88,7 +88,7 @@ angular.module('analytics').directive('reportSettings', [
                     var parentScope = scope;
                     ngDialog.open({
                         template: 'modules/analytics/views/partials/save-query-dialog.html',
-                        controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', function($scope, CRONTAB_DAY_OPTIONS, Notify) {
+                        controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', 'Query',function($scope, CRONTAB_DAY_OPTIONS, Notify, Query) {
                             $scope.selectedSettings = parentScope.selectedSettings;
                             $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
                             $scope.isScheduled = false;
@@ -109,7 +109,7 @@ angular.module('analytics').directive('reportSettings', [
                                 }
                                 // Post query param to backend
                                 scope.selectedSettings.isSaved = true;
-                                Analytics.saveQuery($scope.selectedSettings)
+                                new Query($scope.selectedSettings).$create().$promise
                                 .then(function(response) {
                                     // Notify that this query has been saved and inform other directives the saved query id
                                     $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
