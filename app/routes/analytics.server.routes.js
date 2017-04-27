@@ -37,38 +37,6 @@ module.exports = function(db, routers) {
 		 * 
 		 */
 		.get(analytics.getMyQueries);
-		
-	router.route('/analytics/getAllSites')
-		/**
-		 * @api {get} /analytics/getAllSites Get all sites for current user's organization
-		 * @apiName GetAllSites
-		 * @apiGroup - 
-		 * @apiDescription Get all sites for current user's organization
-		 * @apiVersion 0.1.0
-		 * @apiPermission networkAdmin/advertiser/publisher
-		 *
-		 * @apiParam -
-		 * @apiSuccess {Object[]} ::Creative:: Array of sites that belong to current user's organization
-		 * @apiError (400 Bad Request) {String} error message
-		 *
-		 */
-		.get(analytics.getAllSites);
-
-	router.route('/analytics/getAllCampaigns')
-		/**
-		 * @api {get} /analytics/getAllCampaigns Get all campaigns for current user's organization
-		 * @apiName GetAllCampaigns
-		 * @apiGroup - 
-		 * @apiDescription Get all campaigns for current user's organization
-		 * @apiVersion 0.1.0
-		 * @apiPermission networkAdmin/advertiser/publisher
-		 *
-		 * @apiParam -
-		 * @apiSuccess {Object[]} ::Campaign:: Array of campaigns that belong to current user's organization
-		 * @apiError (400 Bad Request) {String} error message
-		 *
-		 */
-		.get(analytics.getAllCampaigns);
 
 	router.route('/analytics/getAllCountries')
 		/**

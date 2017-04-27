@@ -2,13 +2,13 @@
 'use strict';
 
 // Export csv transforms object/array to csv data blob
-angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS', function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
+angular.module('analytics').factory('Analytics', [
+    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS',
+    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
 
     var base_path = '/console/analytics';
     var recentQueries_path = base_path + '/recentQueries';
     var myQueries_path = base_path + '/myQueries';
-    var getAllSites_path = base_path + '/getAllSites';
-    var getAllCampaigns_path = base_path + '/getAllCampaigns';
     var getAllCountries_path = base_path + '/getAllCountries';
     var getRegions_path = base_path + '/getRegions';
     var saveQuery_path = base_path + '/save';
@@ -90,12 +90,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         }
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
-    };
-    var getAllSites = function() {
-        return $http.get(getAllSites_path);
-    };
-    var getAllCampaigns = function() {
-        return $http.get(getAllCampaigns_path);
     };
     var getAllCountries = function() {
         return $http.get(getAllCountries_path);
@@ -259,8 +253,6 @@ angular.module('analytics').factory('Analytics', ['$http', 'HourlyAdStat', 'GeoA
         formCronTaskString: formCronTaskString,
         saveQuery: saveQuery,
         saveAdditionalSelectedHeaders: saveAdditionalSelectedHeaders,
-        getAllSites: getAllSites,
-        getAllCampaigns: getAllCampaigns,
         getAllCountries: getAllCountries,
         getRegions: getRegions,
         queryFunction: queryFunction,

@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
-    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify', 'Advertiser', 'Publisher',
+    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify, Advertiser, Publisher) {
         $scope.user = user;
 
         // Depending on different organization type, quick query options may vary
@@ -41,27 +41,23 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             $scope.availableSettings = $scope.quickQueries[$scope.currentQueryType].availableSettings;
             if ($scope.availableSettings.campaignFilter) {
                 // has campaign fileter, should get all campaigns for current user
-                Analytics.getAllCampaigns()
-                    .success(function(data) {
-                        $scope.allCampaigns = data;
-                    })
-                    .error(function(error) {
-                        Notify.alert(error.message, {
-                            status: 'danger'
-                        });
+                var allCampaigns = [];
+                Advertiser.query(function(advertisers) {
+                    advertisers.forEach(function(advertiser) {
+                        allCampaigns = allCampaigns.concat(advertiser.campaigns);
                     });
+                    $scope.allCampaigns = allCampaigns;
+                });
             }
             if ($scope.availableSettings.siteFilter) {
                 // has site filter, should get all sites for current user   
-                Analytics.getAllSites()
-                    .success(function(data) {
-                        $scope.allSites = data;
-                    })
-                    .error(function(error) {
-                        Notify.alert(error.message, {
-                            status: 'danger'
-                        });
+                var allSites = [];
+                Publisher.query(function(publishers) {
+                    publishers.forEach(function(publisher) {
+                        allSites = allSites.concat(publisher.sites);
                     });
+                    $scope.allSites = allSites;
+                });
             }
         }
         $scope.goToQuerySection = function(queryRoute) {
