@@ -2,9 +2,8 @@
 
 var mongoose = require('mongoose'),
     _ = require('lodash'),
+    mongooseApiQuery = require('mongoose-api-query'),
     Schema = mongoose.Schema;
-
-
 
 /**
  * Abstraction of specific billing terms for special advertisers.
@@ -14,7 +13,7 @@ var QuerySchema = exports.Query = new Schema({
     groupBy: { type: String },
     dateGroupBy: { type: String },
     filters: [{ type: String }],
-    additionalHeaders: [{type: String}],
+    dataHeaders: [{type: String}],
     dateRangeShortCode: { type: String },
     humanizedDateRange: { type: String },
     isSaved: { type: Boolean, required: true, default: false },
@@ -31,4 +30,5 @@ var QuerySchema = exports.Query = new Schema({
     timestamps: true
 });
 
+QuerySchema.plugin(mongooseApiQuery, {});
 var Query = mongoose.model('Query', QuerySchema);

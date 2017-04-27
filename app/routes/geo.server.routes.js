@@ -61,7 +61,7 @@ module.exports = function(db, routers){
     /* ---- Country API Routes ---- */
     router.route('/country')
         /**
-         * @api {get} /dma Get All Countries
+         * @api {get} /country Get All Countries
          * @apiName GetAllCountries
          * @apiGroup Geo.Country
          * @apiDescription Gets all available Countries.
@@ -104,7 +104,7 @@ module.exports = function(db, routers){
     /* ---- Region API Routes ---- */
     router.route('/region')
         /**
-         * @api {get} /dma Get All Regions
+         * @api {get} /region Get All Regions
          * @apiName GetAllRegions
          * @apiGroup Geo.Region
          * @apiDescription Gets all available Regions.
@@ -121,7 +121,7 @@ module.exports = function(db, routers){
 
     router.route('/region/:regionId')
         /**
-         * @api {get} /country/:countryId Get Region
+         * @api {get} /region/:regionId Get Region
          * @apiName Region
          * @apiGroup Geo.Region
          * @apiDescription Gets a single Region object, which is a first-level subdivision of a country, i.e.

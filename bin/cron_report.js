@@ -111,18 +111,18 @@ require('./_main')(function(GLOBALS) {
         };
     };
 
-    var getCSVHeaders = function(query, organizationType) {
-        var headers = [query.type];
-        if (organizationType === 'networkAdmin' || organizationType === 'advertiser') {
-            headers = headers.concat(['Impressions', 'Spend', 'CPM', 'Clicks', 'CPC', 'CTR', 'Total Actions']);
-        } else if (organizationType === 'publisher') {
-            headers = headers.concat(['Impressions', 'Revenue', 'RPM', 'Defaults', 'Fill Rate', 'Clicks', 'RPC', 'CTR', 'Total Actions']);
-        }
-        if (query.additionalHeaders && query.additionalHeaders.length > 0) {
-            headers = headers.concat(query.additionalHeaders);
-        }
-        return headers;
-    };
+    // var getCSVHeaders = function(query, organizationType) {
+    //     var headers = [query.type];
+    //     if (organizationType === 'networkAdmin' || organizationType === 'advertiser') {
+    //         headers = headers.concat(['Impressions', 'Spend', 'CPM', 'Clicks', 'CPC', 'CTR', 'Total Actions']);
+    //     } else if (organizationType === 'publisher') {
+    //         headers = headers.concat(['Impressions', 'Revenue', 'RPM', 'Defaults', 'Fill Rate', 'Clicks', 'RPC', 'CTR', 'Total Actions']);
+    //     }
+    //     if (query.dataHeaders && query.dataHeaders.length > 0) {
+    //         headers = headers.concat(query.additionalHeaders);
+    //     }
+    //     return headers;
+    // };
 
     var formatRow = function(row, queryType, groupBy) {
         if (row._id) {
@@ -297,7 +297,7 @@ require('./_main')(function(GLOBALS) {
                             'Cliques Periodic Report',
                             toEmail,
                             'cron-report-email.server.view.html',
-                            getCSVHeaders(query, orgType),
+                            query.dataHeaders,
                             asOfDate,
                             organizationWebsite,
                             query
