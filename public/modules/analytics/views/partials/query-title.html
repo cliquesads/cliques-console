@@ -1,0 +1,9 @@
+Ad Stats by
+{{ queryParam.dateGroupBy ? (queryParam.dateGroupBy | capitalize) + (queryParam.groupBy ? ' / ': '') : '' }}
+<span ng-repeat="grouping in queryParam.groupBy.split(',')">{{ grouping | capitalize }}{{ $last ? '' : ' / '}}</span>
+- {{ humanizedDateRange }}
+<small>
+    <em class="text-muted">
+        Reporting Timezone: {{ tz }}
+    </em>
+</small>

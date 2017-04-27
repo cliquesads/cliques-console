@@ -4,7 +4,7 @@
 			<div class="col-sm-5">
 				<h4>
 					<i class="fa fa-cog"></i>
-					Report Settings
+					Query Settings
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
@@ -20,9 +20,7 @@
 	<div class="panel-body pt0 pb0">
 		<div class="row">
 			<div class="col-sm-10">
-
 				<div class="row">
-
 					<!-- Date range selection -->
 					<div class="form-horizontal col-sm-6" ng-if="availableSettings.timePeriod">
 						<div class="form-group">
@@ -173,7 +171,7 @@
 									ng-model="selectedSettings.campaign"
 									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
 									<option value="" selected>
-										Select campaign to filter
+										All Campaigns
 									</option>
 								</select>
 							</div>
@@ -195,7 +193,7 @@
 									ng-model="selectedSettings.site"
 									ng-options="site._id as site.name for site in allSites track by site._id">
 									<option value="" selected>
-										Select site to filter
+										All Sites
 									</option>
 								</select>
 							</div>
@@ -255,17 +253,21 @@
 				</div>
 
 			</div>
-			<!-- Refresh button -->
-			<div class="col-sm-2">
-				<button
-						class="btn btn-success btn-block text-md"
-						ng-disabled="!selectedSettings.dateRangeShortCode"
-						ng-click="launchQuery($event)">
-					<i class="fa fa-refresh"></i>
-					Refresh
-				</button>
-			</div>
 		</div>
 
+	</div>
+	<div class="panel-footer">
+		<!-- Refresh button -->
+		<div class="row">
+		<div class="col-sm-2 col-sm-offset-5">
+			<button
+					class="btn btn-success btn-block text-md"
+					ng-disabled="!selectedSettings.dateRangeShortCode"
+					ng-click="launchQuery($event)">
+				<i class="fa fa-refresh"></i>
+				Refresh
+			</button>
+		</div>
+		</div>
 	</div>
 </div>

@@ -135,13 +135,13 @@ angular.module('analytics').factory('Analytics', [
             headers = [{
                 index: 0,
                 name: _.capitalize(dateGroupBy),
-                type: 'default'
+                type: 'attribute'
             }];
         } else {
             headers = [{
                 index: 0,
                 name: _.capitalize(queryType),
-                type: 'default'
+                type: 'attribute'
             }];
         }
         switch (role){
@@ -204,8 +204,10 @@ angular.module('analytics').factory('Analytics', [
         // Logo for each row
         if (queryType === 'campaign' || queryType === 'creative') {
             row.logo = row._id.advertiser;
+            row._logo_type = 'Advertiser';
         } else if (queryType === 'site' || queryType ==='placement') {
             row.logo = row._id.publisher;
+            row._logo_type = 'Publisher';
         }
     };
 

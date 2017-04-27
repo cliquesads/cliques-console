@@ -6,7 +6,7 @@
 		<ul class="list-group">
 			<li class="list-group-item table-field-list-item"
 				ng-repeat="header in headers track by header.index"
-				ng-if="header.type === 'additional'"
+				ng-if="header.type === 'data'"
 				ng-click="toggleAdditionalHeader(header)">
 				<span>{{ header.name }}</span>
 				<span class="pull-right"

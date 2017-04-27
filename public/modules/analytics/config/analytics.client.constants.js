@@ -561,78 +561,85 @@ angular.module('analytics')
             {
                 index: 1,
                 name: 'Impressions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 2,
                 name: 'Spend',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             { 
                 index: 3,
                 name: 'CPM',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 4,
                 name: 'Clicks',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 5,
                 name: 'CPC',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 6,
                 name: 'CTR',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 7,
                 name: 'Total Actions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 8,
                 name: 'Bids',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 9,
                 name: 'Win Rate',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 10,
                 name: 'View-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 11,
                 name: 'Click-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 12,
                 name: 'CPAV',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 13,
                 name: 'CPAC',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 14,
                 name: 'CPA',
-                type: 'additional',
+                type: 'data',
                 selected: false
             }
         ],
@@ -640,88 +647,97 @@ angular.module('analytics')
             {
                 index: 1,
                 name: 'Impressions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 2,
                 name: 'Spend',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             { 
                 index: 3,
                 name: 'CPM',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 4,
                 name: 'Clicks',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 5,
                 name: 'CPC',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 6,
                 name: 'CTR',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 7,
                 name: 'Total Actions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 8,
                 name: 'Defaults',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 9,
                 name: 'Fill Rate',
-                type: 'default'
+                type: 'data',
+                selected: true
             }, 
             {
                 index: 10,
                 name: 'Bids',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 11,
                 name: 'Win Rate',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 12,
                 name: 'View-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 13,
                 name: 'Click-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 14,
                 name: 'CPAV',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 15,
                 name: 'CPAC',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 16,
                 name: 'CPA',
-                type: 'additional',
+                type: 'data',
                 selected: false
             }
         ],
@@ -729,76 +745,85 @@ angular.module('analytics')
             {
                 index: 1,
                 name: 'Impressions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 2,
                 name: 'Revenue',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 3,
                 name: 'RPM',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 4,
                 name: 'Defaults',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 5,
                 name: 'Fill Rate',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 6,
                 name: 'Clicks',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 7,
                 name: 'RPC',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 8,
                 name: 'CTR',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 9,
                 name: 'Total Actions',
-                type: 'default'
+                type: 'data',
+                selected: true
             },
             {
                 index: 10,
                 name: 'View-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 11,
                 name: 'Click-Through Actions',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 12,
                 name: 'RPAV',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 13,
                 name: 'RPAC',
-                type: 'additional',
+                type: 'data',
                 selected: false
             },
             {
                 index: 14,
                 name: 'RPA',
-                type: 'additional',
+                type: 'data',
                 selected: false
             }
         ]

@@ -70,6 +70,7 @@ angular.module('analytics').directive('queryTable', [
 				};
 				/**
 				 * Sort table by specific column
+				 * TODO: bll Should really just handle sorting with lodash `sortBy` function
 				 */
 				scope.sortTableBy = function(headerName) {
 					if (!scope.currentSorting) {
@@ -92,8 +93,9 @@ angular.module('analytics').directive('queryTable', [
 						}
 					}
 					var sortByValue = function(a, b) {
-						var aValue = a[headerName];
-						var bValue = b[headerName];
+						// use _.get to allow headerName to be nested property path
+						var aValue = _.get(a, headerName);
+						var bValue = _.get(b, headerName);
 
 						if (typeof aValue === 'string' && typeof bValue === 'string') {
 							// Remove format characters and convert string to number so as to compare
@@ -105,14 +107,40 @@ angular.module('analytics').directive('queryTable', [
 							bValue = bValue.replace('%', '');
 							bValue = bValue.replace(',', '');
 
-							aValue = Number(aValue);
-							bValue = Number(bValue);
+							// don't coerce to number if string can't be,
+							// will just sort alphabetically if still strings
+							// TODO: Don't like this, could break any number of ways, not the least of which being
+							// TODO: if there are numerical values contained in a string field. Need to refactor
+							// TODO: table design to use more robust & canonical table header spec that includes data
+							// TODO: types to allow for easier sorting & data manipulation.
+							if (!isNaN(Number(aValue)) && !isNaN(Number(bValue))){
+								aValue = Number(aValue);
+								bValue = Number(bValue);
+							}
 						}
-						if (scope.currentSorting.order === 'asc') {
-							return aValue - bValue;
-						} else {
-							return bValue - aValue;
-						}
+
+						var stringSort = function(a, b, order){
+							a = a.toUpperCase();
+							b = b.toUpperCase();
+							var sign = order === 'asc' ? 1: -1;
+							if (a < b){
+								return sign;
+							} else if (a > b){
+								return sign * -1;
+							} else {
+								return 0;
+							}
+						};
+
+						var numberSort = function(a, b, order){
+							if (order === 'asc'){
+								return bValue - aValue;
+							} else {
+								return aValue - bValue;
+							}
+						};
+
+						return typeof aValue === 'number' ? numberSort(aValue, bValue, scope.currentSorting.order) : stringSort(aValue, bValue, scope.currentSorting.order);
 					};
 					var sortByDate = function(a, b) {
 						var aDate, bDate;
@@ -155,7 +183,7 @@ angular.module('analytics').directive('queryTable', [
 
 				    var csvHeaders = [];
 				    scope.headers.forEach(function(header) {
-						if (header.type === 'default' || header.selected === true) {
+						if (header.type === 'attribute' || header.selected === true) {
 							csvHeaders.push(header.name);
 						}
 				    });

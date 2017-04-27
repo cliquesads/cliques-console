@@ -4,15 +4,11 @@
 			<div class="panel-heading">
 				<div class="panel-title">
 					<div class="row">
-						<div class="col-sm-6">
-							{{ humanizedDateRange }} - Graph
-							<small>
-								<em class="text-muted">
-									Reporting Timezone: {{ user.tz }}
-								</em>
-							</small>	
+						<div class="col-sm-8">
+							<strong>{{ queryParam.name }} Graph:</strong>
+							<query-title query-param="queryParam" humanized-date-range="humanizedDateRange" tz="{{ user.tz }}"></query-title>
 						</div>
-						<div class="col-sm-2 col-sm-offset-4 text-right">
+						<div class="col-sm-2 col-sm-offset-2 text-right">
 							<a ng-click="isCollapsed=!isCollapsed" tooltip="Expand/Collapse Panel"
 							   tooltip-placement="left">
 								<i class="fa"
