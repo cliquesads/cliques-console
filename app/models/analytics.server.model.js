@@ -17,10 +17,10 @@ var QuerySchema = exports.Query = new Schema({
     dateRangeShortCode: { type: String },
     humanizedDateRange: { type: String },
     isSaved: { type: Boolean, required: true, default: false },
-    name: { type: String, require: true },
+    name: { type: String, required: true },
     // Allowed type values are::: 
     // Time, Sites, Campaigns, Creatives, Placements, Cities, States, Countries and Custom
-    type: { type: String, require: true },
+    type: { type: String, required: true },
     // cron syntax
     //TODO: add validator function using cron-parser
     schedule: { type: String },

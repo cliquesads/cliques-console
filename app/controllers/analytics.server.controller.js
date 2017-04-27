@@ -54,7 +54,7 @@ module.exports = function(db) {
 			 * Create new query
 			 */
 			create: function(req, res) {
-				var newQuery = new Query(req.body.queryParam);
+				var newQuery = new Query(req.body);
 				var scheduleString = newQuery.schedule;
 				var nextRun;
 				if (scheduleString) {
