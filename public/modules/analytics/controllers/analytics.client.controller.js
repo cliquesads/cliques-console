@@ -65,8 +65,8 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         };
     }
 ]).controller('AnalyticsCustomizeController', [
-    '$scope', '$rootScope', '$state', '$stateParams', 'ngDialog', 'Analytics', 'CUSTOMQUERY',
-    function($scope, $rootScope, $state, $stateParams, ngDialog, Analytics, CUSTOMQUERY) {
+    '$scope', '$rootScope', '$state', '$stateParams', 'ngDialog', 'Analytics', 'CUSTOMQUERY','Query',
+    function($scope, $rootScope, $state, $stateParams, ngDialog, Analytics, CUSTOMQUERY, Query) {
         $scope.availableSettings = CUSTOMQUERY[$rootScope.role].availableSettings;
         if ($stateParams.defaultQueryParam) {
             $scope.defaultQueryParam = $stateParams.defaultQueryParam;
@@ -93,8 +93,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
                             $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
                         }
                         // Post query param to backend
-                        Analytics.saveQuery($scope.selectedSettings)
-                        .then(function(response) {
+                        new Query($scope.selectedSettings).$create(function(response) {
                             // Notify that this query has been saved and inform other directives the saved query id
                             $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
                             $scope.closeThisDialog(0);

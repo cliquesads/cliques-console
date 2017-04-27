@@ -1,6 +1,18 @@
 /* global _, angular, user */
 'use strict';
 
+//Articles service used for communicating with the articles REST endpoints
+angular.module('analytics').factory('Query', ['$resource',
+    function($resource) {
+        return $resource('console/query/:queryId', { queryId: '@_id'},
+            {
+                update: { method: 'PATCH'},
+                create: { method: 'POST'}
+            }
+        );
+    }
+]);
+
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
     '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS',
