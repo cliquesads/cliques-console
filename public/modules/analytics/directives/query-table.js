@@ -38,7 +38,7 @@ angular.module('analytics').directive('queryTable', [
 				});
 				// Listen to broadcast message when query is saved to the backend
 				scope.$on('querySaved', function(event, args) {
-					scope.queryParam.savedQueryId = args.savedQueryId;
+					scope.queryParam._id = args.savedQueryId;
 				});
 				/**
 				 * Make query and display query results
@@ -57,10 +57,14 @@ angular.module('analytics').directive('queryTable', [
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
 					})
 					.then(function() {
-						return new Query(queryParam).$create();
-					})
-					.then(function(response) {
-						$rootScope.$broadcast('querySaved', {savedQueryId: response.id});
+						if (!queryParam._id) {
+							return new Query(queryParam).$create()
+							.then(function(response) {
+								$rootScope.$broadcast('querySaved', {savedQueryId: response.id});
+							});
+						} else {
+							return new Query(queryParam).$update();
+						}
 					})
 					.catch(function(error) {
 						scope.isLoading = false;
@@ -204,19 +208,21 @@ angular.module('analytics').directive('queryTable', [
 						controller: ['$scope', function($scope) {
 							$scope.headers = scope.headers;
 							var parentScope = scope;
-							$scope.toggleAdditionalHeader = function(header) {
+							$scope.toggleDataHeader = function(header) {
 								header.selected = !header.selected;
 							};
-							$scope.finishedSelectingAdditionalHeaders = function() {
-								if (parentScope.queryParam.savedQueryId) {
+							$scope.updateDataHeaders = function() {
+								if (parentScope.queryParam._id) {
 									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
-									var selectedAdditionalHeaders = [];
+									var selectedDataHeaders = [];
 									$scope.headers.forEach(function(header) {
 										if (header.selected === true) {
-											selectedAdditionalHeaders.push(header.name);
+											selectedDataHeaders.push(header.name);
 										}
 									});
-									Analytics.saveAdditionalSelectedHeaders(selectedAdditionalHeaders, parentScope.queryParam.savedQueryId);
+									// update related query with updated table data headers
+									parentScope.queryParam.dataHeaders = selectedDataHeaders;
+									new Query(parentScope.queryParam).$update();
 								}
 								$scope.closeThisDialog(0);	
 							};

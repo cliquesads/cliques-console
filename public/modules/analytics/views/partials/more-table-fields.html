@@ -7,7 +7,7 @@
 			<li class="list-group-item table-field-list-item"
 				ng-repeat="header in headers track by header.index"
 				ng-if="header.type === 'data'"
-				ng-click="toggleAdditionalHeader(header)">
+				ng-click="toggleDataHeader(header)">
 				<span>{{ header.name }}</span>
 				<span class="pull-right"
 					ng-if="header.selected === true">
@@ -20,7 +20,7 @@
 	<!-- Add button -->
 	<div class="text-right">
 		<button class="btn btn-primary text-md"
-			ng-click="finishedSelectingAdditionalHeaders()">
+			ng-click="updateDataHeaders()">
 			Ok	
 		</button>	
 	</div>

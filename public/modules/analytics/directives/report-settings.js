@@ -110,9 +110,8 @@ angular.module('analytics').directive('reportSettings', [
                                 // Post query param to backend
                                 scope.selectedSettings.isSaved = true;
 
-                                new Query($scope.selectedSettings).$create(function(response) {
-                                    // Notify that this query has been saved and inform other directives the saved query id
-                                    $rootScope.$broadcast('querySaved', {savedQueryId: response.id});
+                                // update this query by setting `isSaved` to true and also `schedule` field if any
+                                new Query($scope.selectedSettings).$update(function(response) {
                                     Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
                                         status: 'success'
                                     });

@@ -8,7 +8,8 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 	Query = mongoose.model('Query'),
 	errorHandler = require('./errors.server.controller'),
 	moment = require('moment-timezone'),
-	promise = require('bluebird');
+	promise = require('bluebird'),
+	_ = require('lodash');
 
 var ITEMS_PER_PAGE = 25;
 
@@ -119,7 +120,7 @@ module.exports = function(db) {
 			update: function(req, res) {
                 var query = req.query;
                 query = _.extend(query, req.body);
-				Query.save(function(err) {
+				query.save(function(err) {
 					if (err) {
 						return res.status(400).send({ message: err });
 					}

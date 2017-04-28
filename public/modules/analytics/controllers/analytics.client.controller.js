@@ -15,17 +15,27 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             // History query entered from sidebar or history query list
             $scope.defaultQueryParam = $stateParams.query;
             $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
-            $scope.defaultQueryParam.savedQueryId = $scope.defaultQueryParam._id;
-            $scope.defaultQueryParam._id = undefined;
             // delete date related
             delete $scope.defaultQueryParam.createdAt;
             delete $scope.defaultQueryParam.updatedAt;
             delete $scope.defaultQueryParam.nextRun;
         } else if ($scope.currentQueryType) {
             // new query
-
             // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
             $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[$scope.currentQueryType].defaultQueryParam));
+            // Prepare dataHeaders for this new query
+            $scope.defaultQueryParam.dataHeaders = [];
+            var tableHeaders = Analytics.getQueryTableHeaders(
+                $scope.defaultQueryParam.type,
+                $scope.defaultQueryParam.dateGroupBy,
+                $rootScope.role,
+                null
+            );
+            tableHeaders.forEach(function(header) {
+                if (header.selected) {
+                    $scope.defaultQueryParam.dataHeaders.push(header.name);
+                }
+            });
         }
 
         if ($scope.defaultQueryParam) {

@@ -18,9 +18,6 @@ angular.module('analytics').factory('Analytics', [
     '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS',
     function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
 
-    var base_path = '/console/analytics';
-    var saveHeader_path = base_path + '/saveAdditionalSelectedHeaders';
-
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
         return queryName + '_' + asOfDate.substring(0, 10) + '_report.csv';
@@ -91,12 +88,6 @@ angular.module('analytics').factory('Analytics', [
     };
     var getRegions = function(country) {
         return $http.get('/console/region', {params: {country: country}});
-    };
-    var saveAdditionalSelectedHeaders = function(selectedAdditionalHeaders, queryId) {
-        return $http.post(saveHeader_path, {
-            selectedAdditionalHeaders: selectedAdditionalHeaders,
-            queryId: queryId
-        });
     };
     /**
      * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
@@ -243,7 +234,6 @@ angular.module('analytics').factory('Analytics', [
         getCSVFileName: getCSVFileName,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
-        saveAdditionalSelectedHeaders: saveAdditionalSelectedHeaders,
         getAllCountries: getAllCountries,
         getRegions: getRegions,
         queryFunction: queryFunction,
