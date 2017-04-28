@@ -57,29 +57,6 @@ module.exports = function(db) {
 			create: function(req, res) {
 				var newQuery = new Query(req.body);
 				newQuery.user = req.user._id;
-
-				// ycx!!!!!!
-				/*
-				var scheduleString = newQuery.schedule;
-				var nextRun;
-				if (scheduleString) {
-					// validate schedule string
-					if (!validateScheduleString(scheduleString)) {
-						return res.status(400).send({
-							message: 'Illegal schedule string'
-						});
-					}
-					var parser = require('cron-parser');
-					var interval = parser.parseExpression(scheduleString);
-					nextRun = new Date(interval.next().toString());
-				}
-				if (nextRun) {
-					// Save the next datetime this periodic query will be run
-					newQuery.nextRun = nextRun;
-				}
-				*/
-
-
 				// If user is NOT networkAdmin, this query should be filtered by the user's advertisers/publishers
 				if (!newQuery.filters) {
 					newQuery.filters = [];
