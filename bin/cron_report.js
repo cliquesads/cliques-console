@@ -1,17 +1,15 @@
 'use strict';
 var init = require('../config/init')();
 var request = require('request');
-var util = require('util');
 var parser = require('cron-parser');
 var querystring = require('querystring');
 var moment = require('moment-timezone');
 var csvWriter = require('csv-write-stream');
 var mail = require('../app/controllers/mailer.server.controller');
 var _ = require('lodash');
-var cliques_mongo = require('@cliques/cliques-node-utils').mongodb;
-var models = require('@cliques/cliques-node-utils').mongodb.models;
 
 require('../app/models/analytics.server.model');
+
 var promise = require('bluebird');
 
 var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com" });
@@ -137,19 +135,6 @@ require('./_main')(function(GLOBALS) {
         };
     };
 
-    // var getCSVHeaders = function(query, organizationType) {
-    //     var headers = [query.type];
-    //     if (organizationType === 'networkAdmin' || organizationType === 'advertiser') {
-    //         headers = headers.concat(['Impressions', 'Spend', 'CPM', 'Clicks', 'CPC', 'CTR', 'Total Actions']);
-    //     } else if (organizationType === 'publisher') {
-    //         headers = headers.concat(['Impressions', 'Revenue', 'RPM', 'Defaults', 'Fill Rate', 'Clicks', 'RPC', 'CTR', 'Total Actions']);
-    //     }
-    //     if (query.dataHeaders && query.dataHeaders.length > 0) {
-    //         headers = headers.concat(query.additionalHeaders);
-    //     }
-    //     return headers;
-    // };
-
     var formatRow = function(row, queryType, groupBy) {
         if (row._id) {
             if (queryType === 'time') {
@@ -273,9 +258,14 @@ require('./_main')(function(GLOBALS) {
     var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
     Query.promisifiedFind = promise.promisify(Query.find);
     // Find all queries from database and check if any of them are saved as periodic queries and are due at the moment
-    return Query.promisifiedFind({})
-    .then(function(allQueries) {
-        return promise.each(allQueries, function(query) {
+    return Query.promisifiedFind({
+        schedule: {
+            $exists: true,
+            $ne: null
+        }
+    })
+    .then(function(scheduledQueries) {
+        return promise.each(scheduledQueries, function(query) {
             if (query.schedule) {
                 // This query is saved as a periodic query
                 var now = new Date();
@@ -286,7 +276,6 @@ require('./_main')(function(GLOBALS) {
                 if (nextRunForQuery < now) {
                     var User = mongoose.model('User');
                     var Organization = mongoose.model('Organization');
-
                     // The next execution time for this query is overdue
                     // 1. Update the `nextRun` field for this query in database
                     // 2. Run this query and generate csv report
