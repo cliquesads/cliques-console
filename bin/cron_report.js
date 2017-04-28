@@ -17,7 +17,9 @@ var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
     var mongoose = GLOBALS.mongoose,
-        Query = mongoose.model('Query');
+        Query = mongoose.model('Query'),
+        User = mongoose.model('User'),
+        Organization = mongoose.model('Organization');
 
     var getUrl = function(path, params) {
         params = params || {};
@@ -274,8 +276,6 @@ require('./_main')(function(GLOBALS) {
                 var toEmail;
                 
                 if (nextRunForQuery < now) {
-                    var User = mongoose.model('User');
-                    var Organization = mongoose.model('Organization');
                     // The next execution time for this query is overdue
                     // 1. Update the `nextRun` field for this query in database
                     // 2. Run this query and generate csv report
