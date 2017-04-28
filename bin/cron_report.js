@@ -18,12 +18,8 @@ var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com" });
 var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
-    var config = GLOBALS.cliques_config,
-        mongoose = GLOBALS.mongoose,
-        users = require('../app/models/user.server.model.js'),
-        Query = mongoose.model('Query'),
-        User = mongoose.model('User'),
-        Organization = mongoose.model('Organization');
+    var mongoose = GLOBALS.mongoose,
+        Query = mongoose.model('Query');
 
     var getUrl = function(path, params) {
         params = params || {};
@@ -96,11 +92,41 @@ require('./_main')(function(GLOBALS) {
             startDate: dateRanges.startDate,
             endDate: dateRanges.endDate,
             groupBy: query.groupBy,
-            filters: query.filters
         };
+
+        var advertiserIds = [],
+        publisherIds = [];
+        
+        query.filters.forEach(function(filterString) {
+            if (filterString.startsWith('advertiser')) {
+                advertiserIds.push(filterString.replace('advertiser'));
+            } else if (filterString.startsWith('publisher')) {
+                publisherIds.push(filterString.replace('publisher'));
+            } else if (filterString.startsWith('campaign')) {
+                queryParam.campaign = filterString.replace('campaign', '');
+            } else if (filterString.startsWith('site')) {
+                queryParam.campaign = filterString.replace('site', '');
+            }
+        });
+        if (advertiserIds.length >= 1) {
+            if (advertiserIds.length === 1) {
+                queryParam.advertiser = advertiserIds[0];
+            } else {
+                queryParam.advertiser = '{in}' + advertiserIds.join(',');
+            }
+        }
+        if (publisherIds.length >= 1) {
+            if (publisherIds.length === 1) {
+                queryParam.publisher = publisherIds[0];
+            } else {
+                queryParam.publisher = '{in}' + publisherIds.join(',');
+            }
+        }
+
         if (query.type !== 'time') {
             queryParam.populate = query.type;
         }
+
         return {
             auth: {
                 user: GLOBALS.args.username,
@@ -256,8 +282,11 @@ require('./_main')(function(GLOBALS) {
                 var nextRunForQuery = new Date(query.nextRun);
 
                 var toEmail;
-
+                
                 if (nextRunForQuery < now) {
+                    var User = mongoose.model('User');
+                    var Organization = mongoose.model('Organization');
+
                     // The next execution time for this query is overdue
                     // 1. Update the `nextRun` field for this query in database
                     // 2. Run this query and generate csv report
