@@ -108,7 +108,10 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
                         // Post query param to backend
                         new Query($scope.selectedSettings).$create(function(response) {
                             // Notify that this query has been saved and inform other directives the saved query id
-                            $rootScope.$broadcast('querySaved', {savedQueryId: response.id});
+                            $rootScope.$broadcast('querySaved', {
+                                savedQueryId: response.id,
+                                filters: response.filters
+                            });
                             $scope.closeThisDialog(0);
                         }, function(error) {
                             Notify.alert(error.message, {

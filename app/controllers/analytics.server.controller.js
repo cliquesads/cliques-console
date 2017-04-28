@@ -107,7 +107,8 @@ module.exports = function(db) {
 						return newQuery.promisifiedSave();
 					}).then(function() {
 						return res.json({
-							id: newQuery._id
+							id: newQuery._id,
+							filters: newQuery.filters
 						});
 					})
 					.catch(function(err) {

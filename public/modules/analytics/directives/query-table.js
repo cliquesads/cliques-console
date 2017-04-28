@@ -39,6 +39,7 @@ angular.module('analytics').directive('queryTable', [
 				// Listen to broadcast message when query is saved to the backend
 				scope.$on('querySaved', function(event, args) {
 					scope.queryParam._id = args.savedQueryId;
+					scope.queryParam.filters = args.filters;
 				});
 				/**
 				 * Make query and display query results
@@ -60,7 +61,10 @@ angular.module('analytics').directive('queryTable', [
 						if (!queryParam._id) {
 							return new Query(queryParam).$create()
 							.then(function(response) {
-								$rootScope.$broadcast('querySaved', {savedQueryId: response.id});
+								$rootScope.$broadcast('querySaved', {
+									savedQueryId: response.id,
+									filters: response.filters
+								});
 							});
 						} else {
 							return new Query(queryParam).$update();

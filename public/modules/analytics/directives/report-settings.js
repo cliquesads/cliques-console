@@ -30,6 +30,73 @@ angular.module('analytics').directive('reportSettings', [
             link: function(scope, element, attrs) {
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
+
+                scope.campaignFilterSelected = function() {
+                    var i;
+                    if (scope.selectedSettings.campaign) {
+                        // add or update campaign filter string in filters array
+                        var campaignFilterString = 'campaign' + scope.selectedSettings.campaign;
+                        if (!scope.selectedSettings.filters) {
+                            scope.selectedSettings.filters = [campaignFilterString];
+                        } else {
+                            for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                                if (scope.selectedSettings.filters[i].startsWith('campaign')) {
+                                    scope.selectedSettings.filters[i] = campaignFilterString;
+                                    break;
+                                }
+                            }
+                            if (scope.selectedSettings.filters.indexOf(campaignFilterString) === -1) {
+                                scope.selectedSettings.filters.push(campaignFilterString);
+                            }
+                        }
+                    } else {
+                        // remove campaign filter string in filters array
+                        var campaignFilterIndex;
+                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                            if (scope.selectedSettings.filters[i].startsWith('campaign')) {
+                                campaignFilterIndex = i;
+                                break;
+                            }
+                        }
+                        if (campaignFilterIndex) {
+                            scope.selectedSettings.filters.splice(campaignFilterIndex, 1);
+                        }
+                    }
+                };
+
+                scope.siteFilterSelected = function() {
+                    var i;
+                    if (scope.selectedSettings.site) {
+                        // add or update site filter string in filters array
+                        var siteFilterString = 'site' + scope.selectedSettings.site;
+                        if (!scope.selectedSettings.filters) {
+                            scope.selectedSettings.filters = [siteFilterString]; 
+                        } else {
+                            for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                                if (scope.selectedSettings.filters[i].startsWith('site')) {
+                                    scope.selectedSettings.filters[i] = siteFilterString;
+                                    break;
+                                }
+                            }
+                            if (scope.selectedSettings.filters.indexOf(siteFilterString) === -1) {
+                                scope.selectedSettings.filters.push(siteFilterString);
+                            }
+                        }
+                    } else {
+                        // remove site filter string in filters array
+                        var siteFilterIndex;
+                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                            if (scope.selectedSettings.filters[i].startsWith('site')) {
+                                siteFilterIndex = i;
+                                break;
+                            }
+                        }
+                        if (siteFilterIndex) {
+                            scope.selectedSettings.filters.splice(siteFilterIndex, 1);
+                        }
+                    }
+                };
+
                 scope.countrySelected = function() {
                     if (scope.selectedSettings.country) {
                         // Country selected, get its regions

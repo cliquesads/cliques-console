@@ -169,6 +169,7 @@
 									id="campaignFilter"
 									class="form-control chosen-select"
 									ng-model="selectedSettings.campaign"
+									ng-change="campaignFilterSelected()"
 									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
 									<option value="" selected>
 										All Campaigns
@@ -191,6 +192,7 @@
 									id="siteFilter"
 									class="form-control chosen-select"
 									ng-model="selectedSettings.site"
+									ng-change="siteFilterSelected()"
 									ng-options="site._id as site.name for site in allSites track by site._id">
 									<option value="" selected>
 										All Sites
