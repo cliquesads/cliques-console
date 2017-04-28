@@ -19,10 +19,11 @@ module.exports = function(db, routers){
     /* ---- DMA API Routes ---- */
     router.route('/dma')
         /**
-         * @api {get} /dma Get All DMAs
+         * @api {get} /dma Get All DMAs (apiQuery)
          * @apiName GetAllDMAs
          * @apiGroup Geo.DMA
-         * @apiDescription Gets all available DMAs.
+         * @apiDescription Gets all available DMAs. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
@@ -61,10 +62,11 @@ module.exports = function(db, routers){
     /* ---- Country API Routes ---- */
     router.route('/country')
         /**
-         * @api {get} /country Get All Countries
+         * @api {get} /country Get All Countries (apiQuery)
          * @apiName GetAllCountries
          * @apiGroup Geo.Country
-         * @apiDescription Gets all available Countries.
+         * @apiDescription Gets all available Countries. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
@@ -104,10 +106,11 @@ module.exports = function(db, routers){
     /* ---- Region API Routes ---- */
     router.route('/region')
         /**
-         * @api {get} /region Get All Regions
+         * @api {get} /region Get All Regions (apiQuery)
          * @apiName GetAllRegions
          * @apiGroup Geo.Region
-         * @apiDescription Gets all available Regions.
+         * @apiDescription Gets all available Regions. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
