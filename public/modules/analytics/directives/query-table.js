@@ -57,12 +57,10 @@ angular.module('analytics').directive('queryTable', [
 						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
 					})
 					.then(function() {
-						if (!queryParam.isSaved) {
-							// save this query in backend database if hasn't already saved
-							return new Query(queryParam).$create();
-						} else {
-							return;
-						}
+						return new Query(queryParam).$create();
+					})
+					.then(function(response) {
+						$rootScope.$broadcast('querySaved', {savedQueryId: response.id});
 					})
 					.catch(function(error) {
 						scope.isLoading = false;

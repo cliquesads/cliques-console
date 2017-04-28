@@ -105,7 +105,9 @@ module.exports = function(db) {
 						newQuery.promisifiedSave = promise.promisify(newQuery.save);
 						return newQuery.promisifiedSave();
 					}).then(function() {
-						return res.send(newQuery._id);
+						return res.json({
+							id: newQuery._id
+						});
 					})
 					.catch(function(err) {
 						return res.status(400).send({ message: err });

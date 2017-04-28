@@ -12,7 +12,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         /********************** DEFAULT QUERY PARAM VALUES **********************/
         $scope.dateRanges = aggregationDateRanges(user.tz);
         if ($stateParams.query) {
-            // History query entered from sidebar
+            // History query entered from sidebar or history query list
             $scope.defaultQueryParam = $stateParams.query;
             $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
             $scope.defaultQueryParam.savedQueryId = $scope.defaultQueryParam._id;
@@ -22,6 +22,8 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             delete $scope.defaultQueryParam.updatedAt;
             delete $scope.defaultQueryParam.nextRun;
         } else if ($scope.currentQueryType) {
+            // new query
+
             // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
             $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[$scope.currentQueryType].defaultQueryParam));
         }
@@ -96,7 +98,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
                         // Post query param to backend
                         new Query($scope.selectedSettings).$create(function(response) {
                             // Notify that this query has been saved and inform other directives the saved query id
-                            $rootScope.$broadcast('querySaved', {savedQueryId: response.data});
+                            $rootScope.$broadcast('querySaved', {savedQueryId: response.id});
                             $scope.closeThisDialog(0);
                         }, function(error) {
                             Notify.alert(error.message, {
