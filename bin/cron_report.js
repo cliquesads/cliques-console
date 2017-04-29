@@ -8,18 +8,20 @@ var csvWriter = require('csv-write-stream');
 var mail = require('../app/controllers/mailer.server.controller');
 var _ = require('lodash');
 
-require('../app/models/analytics.server.model');
-
 var promise = require('bluebird');
 
 var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com" });
 var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
-    var mongoose = GLOBALS.mongoose,
-        Query = mongoose.model('Query'),
-        User = mongoose.model('User'),
-        Organization = mongoose.model('Organization');
+    var mongoose = GLOBALS.mongoose;
+
+    require('../app/models/analytics.server.model');
+    require('../app/models/organization.server.model');
+
+    var Query = mongoose.model('Query'),
+        Organization = mongoose.model('Organization'),
+        User = mongoose.model('User');
 
     var getUrl = function(path, params) {
         params = params || {};
@@ -99,9 +101,9 @@ require('./_main')(function(GLOBALS) {
         
         query.filters.forEach(function(filterString) {
             if (filterString.startsWith('advertiser')) {
-                advertiserIds.push(filterString.replace('advertiser'));
+                advertiserIds.push(filterString.replace('advertiser', ''));
             } else if (filterString.startsWith('publisher')) {
-                publisherIds.push(filterString.replace('publisher'));
+                publisherIds.push(filterString.replace('publisher', ''));
             } else if (filterString.startsWith('campaign')) {
                 queryParam.campaign = filterString.replace('campaign', '');
             } else if (filterString.startsWith('site')) {
@@ -124,7 +126,7 @@ require('./_main')(function(GLOBALS) {
         }
 
         if (query.type !== 'time') {
-            queryParam.populate = query.type;
+            queryParam.populate = query.groupBy;
         }
 
         return {
@@ -172,13 +174,18 @@ require('./_main')(function(GLOBALS) {
     };
 
     var sortByDate = function(a, b) {
-        if (a._id && b._id) {
-            var aDate = new Date(a._id.date.year, a._id.date.month - 1, a._id.date.day);
-            var bDate = new Date(b._id.date.year, b._id.date.month - 1, b._id.date.day);
-            return aDate - bDate;
+        var aDate, bDate;
+        if (a._id.date.day && a._id.date.hour) {
+            aDate = new Date(a._id.date.year, a._id.date.month-1, a._id.date.day, a._id.date.hour, 0, 0);
+            bDate = new Date(b._id.date.year, b._id.date.month-1, b._id.date.day, b._id.date.hour, 0, 0);
+        } else if (a._id.date.day) {
+            aDate = new Date(a._id.date.year, a._id.date.month-1, a._id.date.day);
+            bDate = new Date(b._id.date.year, b._id.date.month-1, b._id.date.day);
         } else {
-            return;
+            aDate = new Date(a._id.date.year, a._id.date.month-1);
+            bDate = new Date(b._id.date.year, b._id.date.month-1);
         }
+        return aDate - bDate;
     };
 
     var generateReport = function(
@@ -199,8 +206,12 @@ require('./_main')(function(GLOBALS) {
         .then(function(response) {
             var rows = JSON.parse(response.body);
 
-            // sort rows by date
-            rows = rows.sort(sortByDate);
+            if (rows.length > 0) {
+                if (rows[0]._id.date) {
+                    // sort rows by date
+                    rows = rows.sort(sortByDate);
+                }
+            }
 
             // calculate totals, store in separate object
             var totals = {
@@ -272,9 +283,7 @@ require('./_main')(function(GLOBALS) {
                 // This query is saved as a periodic query
                 var now = new Date();
                 var nextRunForQuery = new Date(query.nextRun);
-
                 var toEmail;
-                
                 if (nextRunForQuery < now) {
                     // The next execution time for this query is overdue
                     // 1. Update the `nextRun` field for this query in database
