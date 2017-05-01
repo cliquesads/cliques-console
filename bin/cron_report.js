@@ -81,13 +81,22 @@ require('./_main')(function(GLOBALS) {
 
     var getRequestParams = function(query, organizationType) {
         var queryAPIUrl;
-        if (organizationType === 'networkAdmin') {
-            queryAPIUrl = '/api/hourlyadstat';
-        } else if (organizationType === 'advertiser') {
-            queryAPIUrl = '/api/hourlyadstat/advSummary';
-        } else if (organizationType === 'publisher') {
-            queryAPIUrl = '/api/hourlyadstat/pubSummary';
+        if (query.type !== 'city' && query.type !== 'state' && query.type !== 'country') {
+            queryAPIUrl = '/api/hourlyadstat'; 
+        } else {
+            queryAPIUrl = '/api/geoadstat';
         }
+        switch (organizationType) {
+            case 'advertiser':
+                queryAPIUrl += '/advSummary';
+                break;
+            case 'publisher':
+                queryAPIUrl += '/pubSummary';
+                break;
+            default:
+                break;
+        }
+
         var dateRanges = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
         var queryParam = {
             dateGroupBy: query.dateGroupBy,
@@ -205,7 +214,6 @@ require('./_main')(function(GLOBALS) {
         return request.promisifiedGet(queryOpts)
         .then(function(response) {
             var rows = JSON.parse(response.body);
-
             if (rows.length > 0) {
                 if (rows[0]._id.date) {
                     // sort rows by date
@@ -283,6 +291,7 @@ require('./_main')(function(GLOBALS) {
                 // This query is saved as a periodic query
                 var now = new Date();
                 var nextRunForQuery = new Date(query.nextRun);
+
                 var toEmail;
                 if (nextRunForQuery < now) {
                     // The next execution time for this query is overdue
