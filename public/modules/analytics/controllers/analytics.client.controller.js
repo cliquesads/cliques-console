@@ -38,17 +38,6 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             });
         }
 
-        if ($scope.defaultQueryParam) {
-            if ($scope.defaultQueryParam.dateRangeShortCode !== 'custom') {
-                $scope.defaultQueryParam.startDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].startDate;
-                $scope.defaultQueryParam.endDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].endDate;
-            } else {
-                var dateArr = $scope.defaultQueryParam.humanizedDateRange.split(' - ');
-                $scope.defaultQueryParam.startDate = dateArr[0];
-                $scope.defaultQueryParam.endDate = dateArr[1];
-            }
-        }
-
         /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
         if ($scope.currentQueryType) {
             $scope.availableSettings = $scope.quickQueries[$scope.currentQueryType].availableSettings;

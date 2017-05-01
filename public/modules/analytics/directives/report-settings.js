@@ -177,6 +177,16 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 }
 
+                // Decide start date and end date for query params
+                if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
+                    scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
+                    scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
+                } else {
+                    var dateArr = scope.selectedSettings.humanizedDateRange.split(' - ');
+                    scope.selectedSettings.startDate = dateArr[0];
+                    scope.selectedSettings.endDate = dateArr[1];
+                }
+
                 scope.showSaveQueryDialog = function() {
                     var parentScope = scope;
                     ngDialog.open({
