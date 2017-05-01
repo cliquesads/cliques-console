@@ -120,6 +120,10 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
         "merge_language": "handlebars"
     };
 
+    if (mailOptions.attachments){
+        message.attachments = mailOptions.attachments;
+    }
+
     // Convert mailOptions.data to format required by mandrill API
     var merge_vars = [];
     _.forOwn(mailOptions.data, function(val, key){
