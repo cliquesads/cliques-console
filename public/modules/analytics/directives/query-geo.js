@@ -6,10 +6,12 @@ angular.module('analytics').directive('queryGeo', [
 	'Analytics',
 	'Notify',
 	'$rootScope',
+	'$filter',
 	function(
 		Analytics,
 		Notify,
-		$rootScope
+		$rootScope,
+		$filter
 	) {
 		'use strict';
 		return {
@@ -26,7 +28,7 @@ angular.module('analytics').directive('queryGeo', [
 				// Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
-					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type);
+					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 					scope.getGeoData(scope.queryParam);
 				});
 
@@ -47,30 +49,24 @@ angular.module('analytics').directive('queryGeo', [
 					},
 					geographyConfig: {
 						highlighBorderColor: '#EAA9A8',
-						highlighBorderWidth: 2
-					},
-					fills: {
-						'HIGH': '#CC4731',
-						'MEDIUM': '#306596',
-						'LOW': '#667FAF',
-						'defaultFill': '#DDDDDD'
-					},
-					/*
-					data: {
-						"AZ": {
-							"fillKey": "MEDIUM",
-						},
-						"CO": {
-							"fillKey": "HIGH",
-						},
-						"DE": {
-							"fillKey": "LOW",
-						},
-						"GA": {
-							"fillKey": "MEDIUM",
+						highlighBorderWidth: 2,
+						popupTemplate: function(geo, data) {
+							var CTR = data.imps ? $filter('percentage')(data.clicks / data.imps, 2): '0';
+							return ['<div class="hoverinfo">',
+									'Country: ' + geo.properties.name + '<br>',
+									'<strong>Impressions: ' + data.imps + '</strong><br>',
+									'<strong>CTR: ' + CTR + '</strong>',
+									'</div>'].join('');
 						}
 					},
-					*/
+					fills: {
+						'EXTREME': '#CC4731',
+						'HIGH': '#9764BC',
+						'MEDIUM': '#306596',
+						'LOW': '#667FAF',
+						'LESSER': '#A5DEA5',
+						'defaultFill': '#DDDDDD'
+					}
 				};
 				scope.getGeoData = function(queryParam) {
 					scope.isLoading = true;
@@ -80,6 +76,39 @@ angular.module('analytics').directive('queryGeo', [
 					.then(function(response) {
 						scope.isLoading = false;
 						scope.geoQueryResults = response.data;
+
+						var mapData = {};
+						var highestImpressions = 0;
+						// get highest impressions;
+						scope.geoQueryResults.forEach(function(row) {
+							if (row.imps > highestImpressions) {
+								highestImpressions = row.imps;
+							}
+						});
+						// get map color and data for each country
+						scope.geoQueryResults.forEach(function(row) {
+							if (row._id.country) {
+								var countryMapColor;
+								if (row.imps < (highestImpressions / 5)) {
+									countryMapColor = 'LESSER';	
+								} else if (row.imps < 2 * (highestImpressions / 5)) {
+									countryMapColor = 'LOW';	
+								} else if (row.imps < 3 * (highestImpressions / 5)) {
+									countryMapColor = 'MEDIUM';
+								} else if (row.imps < 4 * (highestImpressions / 5)) {
+									countryMapColor = 'HIGH';
+								} else {
+									countryMapColor = 'EXTREME';
+								}
+								mapData[row._id.country._id] = {
+									fillKey: countryMapColor,
+									imps: row.imps,
+									clicks: row.clicks
+								}
+							}
+						});
+						// update map data
+						scope.mapObject.data = mapData;
 					})
 					.catch(function(error) {
 						scope.isLoading = false;
