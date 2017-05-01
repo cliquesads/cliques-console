@@ -18,18 +18,13 @@
 <!-- Query Geo -->
 <query-geo
     ng-if="availableSettings.hasMap"
-    default-query-param="defaultQueryParam"
     query-type="currentQueryType">
 </query-geo>
 
 <!-- Query Graph -->
-<query-graph
-    ng-if="availableSettings.hasGraph"
-    default-query-param="defaultQueryParam">
+<query-graph ng-if="availableSettings.hasGraph">
 </query-graph>
 
 <!-- Query Table -->
-<query-table
-    ng-if="availableSettings.hasTable"
-    default-query-param="defaultQueryParam">
+<query-table ng-if="availableSettings.hasTable">
 </query-table>

@@ -18,17 +18,13 @@ angular.module('analytics').directive('queryGraph', [
 		'use strict';
 		return {
 			restrict: 'E',
-			scope: {
-				defaultQueryParam: '='
-			},
+			scope: {},
 			templateUrl: 'modules/analytics/views/partials/query-graph.html',
 			link: function(scope, element, attrs) {
-				scope.queryParam = scope.defaultQueryParam;
 				// table collapse state
 				scope.isCollapsed = false;	
 				scope.user = user;
 				scope.dateRanges = aggregationDateRanges(user.tz);
-				scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
 					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
@@ -74,8 +70,6 @@ angular.module('analytics').directive('queryGraph', [
 						Notify.alert('Error on query for graph data.');
 					});
 				};
-				// Initial query when loading
-				scope.getGraphData(scope.queryParam);
 			}
 		};
 	}

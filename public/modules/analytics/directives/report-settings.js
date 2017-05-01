@@ -33,95 +33,72 @@ angular.module('analytics').directive('reportSettings', [
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
-                scope.campaignFilterSelected = function() {
-                    var i;
-                    if (scope.selectedSettings.campaign) {
-                        // add or update campaign filter string in filters array
-                        var campaignFilterString = 'campaign' + scope.selectedSettings.campaign;
-                        if (!scope.selectedSettings.filters) {
-                            scope.selectedSettings.filters = [campaignFilterString];
-                        } else {
-                            for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                                if (scope.selectedSettings.filters[i].startsWith('campaign')) {
-                                    scope.selectedSettings.filters[i] = campaignFilterString;
-                                    break;
-                                }
-                            }
-                            if (scope.selectedSettings.filters.indexOf(campaignFilterString) === -1) {
-                                scope.selectedSettings.filters.push(campaignFilterString);
-                            }
-                        }
-                    } else {
-                        // remove campaign filter string in filters array
-                        var campaignFilterIndex;
-                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                            if (scope.selectedSettings.filters[i].startsWith('campaign')) {
-                                campaignFilterIndex = i;
-                                break;
-                            }
-                        }
-                        if (campaignFilterIndex) {
-                            scope.selectedSettings.filters.splice(campaignFilterIndex, 1);
-                        }
+                // Decide initial start date and end date for query params
+                if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
+                    scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
+                    scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
+                } else {
+                    var dateArr = scope.selectedSettings.humanizedDateRange.split(' - ');
+                    scope.selectedSettings.startDate = dateArr[0];
+                    scope.selectedSettings.endDate = dateArr[1];
+                }
+
+                // Decide filters array in query param
+                if (!scope.selectedSettings.filters) {
+                    scope.selectedSettings.filters = [];
+                }
+                // setup initial site/campaign/country/region value in query param based on filters array
+                scope.selectedSettings.filters.forEach(function(filterString) {
+                    if (filterString.startsWith('site')) {
+                        scope.selectedSettings.site = filterString.replace('site', ''); 
+                    } else if (filterString.startsWith('campaign')) {
+                        scope.selectedSettings.campaign = filterString.replace('campaign', ''); 
+                    } else if (filterString.startsWith('country')) {
+                        scope.selectedSettings.country = filterString.replace('country', ''); 
+                    } else if (filterString.startsWith('region')) {
+                        scope.selectedSettings.region = filterString.replace('region', ''); 
+                    }
+                });
+
+                scope.launchQuery = function() {
+                    // Send broadcast message to notify query graph/table directive to launch query
+                    $rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
+                };
+
+                scope.shouldLaunchQuery = function(numberOfFiltersToFetch) {
+                    if (numberOfFiltersToFetch === 0) {
+                        // No filter to fetch from backend, launch query immediately
+                        scope.launchQuery();
                     }
                 };
 
-                scope.siteFilterSelected = function() {
-                    var i;
-                    if (scope.selectedSettings.site) {
-                        // add or update site filter string in filters array
-                        var siteFilterString = 'site' + scope.selectedSettings.site;
-                        if (!scope.selectedSettings.filters) {
-                            scope.selectedSettings.filters = [siteFilterString]; 
-                        } else {
-                            for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                                if (scope.selectedSettings.filters[i].startsWith('site')) {
-                                    scope.selectedSettings.filters[i] = siteFilterString;
-                                    break;
-                                }
-                            }
-                            if (scope.selectedSettings.filters.indexOf(siteFilterString) === -1) {
-                                scope.selectedSettings.filters.push(siteFilterString);
-                            }
-                        }
-                    } else {
-                        // remove site filter string in filters array
-                        var siteFilterIndex;
-                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                            if (scope.selectedSettings.filters[i].startsWith('site')) {
-                                siteFilterIndex = i;
-                                break;
-                            }
-                        }
-                        if (siteFilterIndex) {
-                            scope.selectedSettings.filters.splice(siteFilterIndex, 1);
-                        }
-                    }
-                };
-
-                scope.countrySelected = function() {
-                    if (scope.selectedSettings.country) {
-                        // Country selected, get its regions
-                        Analytics.getRegions(scope.selectedSettings.country)
-                            .success(function(data) {
-                                scope.regions = data;
-                            })
-                            .error(function(error) {
-                                Notify.alert(error.message, {
-                                    status: 'danger'
-                                });
-                            });
-                    }
-                };
+                // Counter to record number of kinds of filters that should be fetched from backend, initial query should be launched only AFTER all filters data are fetched from backend
+                var numberOfFiltersToFetch = 0;
+                if (scope.availableSettings.campaignFilter) {
+                    numberOfFiltersToFetch ++; 
+                }
+                if (scope.availableSettings.siteFilter) {
+                    numberOfFiltersToFetch ++;
+                }
+                if (scope.availableSettings.countryFilter) {
+                    numberOfFiltersToFetch ++;
+                }
+                if (scope.availableSettings.regionFilter) {
+                    numberOfFiltersToFetch ++;
+                }
+                scope.shouldLaunchQuery(numberOfFiltersToFetch);
 
                 if (scope.availableSettings.campaignFilter) {
-                    // has campaign fileter, should get all campaigns for current user
+                    // has campaign filter, should get all campaigns for current user
                     var allCampaigns = [];
                     Advertiser.query(function(advertisers) {
                         advertisers.forEach(function(advertiser) {
                             allCampaigns = allCampaigns.concat(advertiser.campaigns);
                         });
                         scope.allCampaigns = allCampaigns;
+                        numberOfFiltersToFetch --;
+                        // check if no more filters to fetch, if so launch initial query
+                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
                     });
                 }
 
@@ -133,6 +110,9 @@ angular.module('analytics').directive('reportSettings', [
                             allSites = allSites.concat(publisher.sites);
                         });
                         scope.allSites = allSites;
+                        numberOfFiltersToFetch --;
+                        // check if no more filters to fetch, if so launch initial query
+                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
                     });
                 }
 
@@ -145,10 +125,15 @@ angular.module('analytics').directive('reportSettings', [
                         for (var i = 0; i < scope.allCountries.length; i ++) {
                             if (scope.allCountries[i]._id === user.organization.country ||
                                 scope.allCountries[i].name === user.organization.country) {
-                                scope.selectedSettings.country = scope.allCountries[i];
+                                scope.geo.countryObject = scope.allCountries[i];
+                                scope.selectedSettings.country = scope.geo.countryObject._id;
+                                scope.updateFiltersArray('country', scope.selectedSettings.country); 
                                 break;
                             }
                         }
+                        numberOfFiltersToFetch --;
+                        // check if no more filters to fetch, if so launch initial query
+                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
                     })
                     .error(function(error) {
                         Notify.alert(error.message, {
@@ -165,10 +150,15 @@ angular.module('analytics').directive('reportSettings', [
                         // setup default selected region based on user's region
                         for (var i = 0; i < scope.regions.length; i ++) {
                             if (user.organization.state === scope.regions[i].name) {
-                                scope.selectedSettings.region = scope.regions[i];
+                                scope.geo.regionObject = scope.regions[i];
+                                scope.selectedSettings.region = scope.geo.regionObject._id;
+                                scope.updateFiltersArray('region', scope.selectedSettings.region);
                                 break;
                             }
                         }
+                        numberOfFiltersToFetch --;
+                        // check if no more filters to fetch, if so launch initial query
+                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
                     })
                     .error(function(error) {
                         Notify.alert(error.message, {
@@ -177,15 +167,75 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 }
 
-                // Decide start date and end date for query params
-                if (scope.selectedSettings.dateRangeShortCode !== 'custom') {
-                    scope.selectedSettings.startDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].startDate;
-                    scope.selectedSettings.endDate = scope.dateRanges[scope.selectedSettings.dateRangeShortCode].endDate;
-                } else {
-                    var dateArr = scope.selectedSettings.humanizedDateRange.split(' - ');
-                    scope.selectedSettings.startDate = dateArr[0];
-                    scope.selectedSettings.endDate = dateArr[1];
-                }
+                scope.updateFiltersArray = function(filterType, filterId) {
+                    var i;
+                    if (scope.selectedSettings[filterType]) {
+                        // add or update filter string in filters array
+                        var filterString = filterType + filterId;
+                        var updated = false;
+                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                            if (scope.selectedSettings.filters[i].startsWith(filterType)) {
+                                scope.selectedSettings.filters[i] = filterString;
+                                updated = true;
+                                break;
+                            }
+                        }
+                        if (!updated) {
+                            scope.selectedSettings.filters.push(filterString);
+                        }
+                    } else {
+                        // remove filter string in filters array
+                        var filterIndex;
+                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
+                            if (scope.selectedSettings.filters[i].startsWith(filterType)) {
+                                filterIndex = i;
+                                break;
+                            }
+                        }
+                        if (filterIndex >= 0) {
+                            scope.selectedSettings.filters.splice(filterIndex, 1);
+                        }
+                    }
+                };
+
+                scope.geo = {};
+                scope.countrySelected = function() {
+                    if (scope.geo.countryObject) {
+                        scope.selectedSettings.country = scope.geo.countryObject._id;
+                        // Country selected, get its regions
+                        Analytics.getRegions(scope.selectedSettings.country)
+                            .success(function(data) {
+                                // reset region
+                                scope.regions = data;
+                                scope.geo.regionObject = undefined;
+                                scope.selectedSettings.region = undefined;
+                                scope.updateFiltersArray('region', undefined);
+                            })
+                            .error(function(error) {
+                                Notify.alert(error.message, {
+                                    status: 'danger'
+                                });
+                            });
+                    } else {
+                        scope.selectedSettings.country = undefined;
+                        scope.regions = undefined;
+                        scope.geo.regionObject = undefined;
+                        scope.selectedSettings.region = undefined;
+                        scope.updateFiltersArray('region', undefined);
+                    }
+                    // update country filter in filters array
+                    scope.updateFiltersArray('country', scope.selectedSettings.country);
+                };
+
+                scope.regionSelected = function() {
+                    if (scope.geo.regionObject) {
+                        scope.selectedSettings.region = scope.geo.regionObject._id;
+                    } else {
+                        scope.selectedSettings.region = undefined;
+                    }
+                    // update region filter in filters array
+                    scope.updateFiltersArray('region', scope.selectedSettings.region);
+                };
 
                 scope.showSaveQueryDialog = function() {
                     var parentScope = scope;
@@ -247,12 +297,6 @@ angular.module('analytics').directive('reportSettings', [
                         }
                         scope.selectedSettings.humanizedDateRange = scope.humanizedDateRange;
                     }
-                };
-
-                scope.launchQuery = function(event) {
-                    event.preventDefault();
-					// Send broadcast message to notify query graph/table directive to launch query
-					$rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
                 };
             }
         };

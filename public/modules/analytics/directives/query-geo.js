@@ -17,14 +17,11 @@ angular.module('analytics').directive('queryGeo', [
 		return {
 			restrict: 'E',
 			scope: {
-				defaultQueryParam: '=',
 				queryType: '='
 			},
 			templateUrl: 'modules/analytics/views/partials/query-geo.html',
 			link: function(scope, element, attrs) {
-				scope.queryParam = scope.defaultQueryParam;
 				scope.user = user;
-				scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 				// Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
@@ -104,7 +101,7 @@ angular.module('analytics').directive('queryGeo', [
 									fillKey: countryMapColor,
 									imps: row.imps,
 									clicks: row.clicks
-								}
+								};
 							}
 						});
 						// update map data
@@ -121,9 +118,6 @@ angular.module('analytics').directive('queryGeo', [
 						code: geography.id
 					};
 				};
-
-				// Initial query when loading
-				scope.getGeoData(scope.queryParam);
 			}
 		};
 	}

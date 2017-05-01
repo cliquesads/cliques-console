@@ -169,7 +169,7 @@
 									id="campaignFilter"
 									class="form-control chosen-select"
 									ng-model="selectedSettings.campaign"
-									ng-change="campaignFilterSelected()"
+									ng-change="updateFiltersArray('campaign', selectedSettings.campaign)"
 									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
 									<option value="" selected>
 										All Campaigns
@@ -192,7 +192,7 @@
 									id="siteFilter"
 									class="form-control chosen-select"
 									ng-model="selectedSettings.site"
-									ng-change="siteFilterSelected()"
+									ng-change="updateFiltersArray('site', selectedSettings.site)"
 									ng-options="site._id as site.name for site in allSites track by site._id">
 									<option value="" selected>
 										All Sites
@@ -217,9 +217,9 @@
 									name="countryFilter"
 									id="countryFilter"
 									class="form-control chosen-select"
-									ng-model="selectedSettings.country"
+									ng-model="geo.countryObject"
 									ng-change="countrySelected()"
-									ng-options="country._id as country.name for country in allCountries track by country._id">
+									ng-options="country.name for country in allCountries track by country._id">
 									<option value="" selected>
 										Select country to filter
 									</option>	
@@ -242,8 +242,9 @@
 									id="regionFilter"
 									class="form-control chosen-select"
 									ng-disabled="!regions"
-									ng-model="selectedSettings.region"
-									ng-options="region._id as region.name for region in regions track by region._id">
+									ng-model="geo.regionObject"
+									ng-change="regionSelected()"
+									ng-options="region.name for region in regions track by region._id">
 									<option value="" selected>
 										Select region to filter
 									</option>	
@@ -265,7 +266,7 @@
 			<button
 					class="btn btn-success btn-block text-md"
 					ng-disabled="!selectedSettings.dateRangeShortCode"
-					ng-click="launchQuery($event)">
+					ng-click="launchQuery()">
 				<i class="fa fa-refresh"></i>
 				Refresh
 			</button>

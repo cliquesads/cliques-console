@@ -20,16 +20,12 @@ angular.module('analytics').directive('queryTable', [
 		'use strict';
 		return {
 			restrict: 'E',
-			scope: {
-				defaultQueryParam: '='
-			},
+			scope: {},
 			templateUrl: 'modules/analytics/views/partials/query-table.html',
 			link: function(scope, element, attrs) {
-				scope.queryParam = scope.defaultQueryParam;
 				// table collapse state
 				scope.isCollapsed = false;
 			    scope.user = user;
-			    scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
 			    // Listen to broadcast to launchQuery
 				scope.$on('launchQuery', function(event, args) {
 					scope.queryParam = args.queryParam;
@@ -59,6 +55,7 @@ angular.module('analytics').directive('queryTable', [
 					})
 					.then(function() {
 						if (!queryParam._id) {
+							// This query has NOT been saved yet, save it to backend database
 							return new Query(queryParam).$create()
 							.then(function(response) {
 								$rootScope.$broadcast('querySaved', {
@@ -67,6 +64,7 @@ angular.module('analytics').directive('queryTable', [
 								});
 							});
 						} else {
+							// This query is already saved, update it in backend database
 							return new Query(queryParam).$update();
 						}
 					})
@@ -233,9 +231,6 @@ angular.module('analytics').directive('queryTable', [
 						}]
 					});
 				};
-
-				// Initial query when loading
-				scope.getTableData(scope.queryParam);
 			}
 		};
 	}
