@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify', 'Advertiser', 'Publisher',
-    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify, Advertiser, Publisher) {
+angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
+    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
         $scope.user = user;
 
         // Depending on different organization type, quick query options may vary
@@ -52,26 +52,6 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
         if ($scope.currentQueryType) {
             $scope.availableSettings = $scope.quickQueries[$scope.currentQueryType].availableSettings;
-            if ($scope.availableSettings.campaignFilter) {
-                // has campaign fileter, should get all campaigns for current user
-                var allCampaigns = [];
-                Advertiser.query(function(advertisers) {
-                    advertisers.forEach(function(advertiser) {
-                        allCampaigns = allCampaigns.concat(advertiser.campaigns);
-                    });
-                    $scope.allCampaigns = allCampaigns;
-                });
-            }
-            if ($scope.availableSettings.siteFilter) {
-                // has site filter, should get all sites for current user   
-                var allSites = [];
-                Publisher.query(function(publishers) {
-                    publishers.forEach(function(publisher) {
-                        allSites = allSites.concat(publisher.sites);
-                    });
-                    $scope.allSites = allSites;
-                });
-            }
         }
         $scope.goToQuerySection = function(queryRoute) {
             $state.go(queryRoute);

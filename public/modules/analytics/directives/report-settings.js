@@ -7,6 +7,8 @@ angular.module('analytics').directive('reportSettings', [
     'aggregationDateRanges',
     'DatepickerService',
     'Analytics',
+    'Advertiser',
+    'Publisher',
     'Notify',
     'ngDialog',
     function(
@@ -14,6 +16,8 @@ angular.module('analytics').directive('reportSettings', [
         aggregationDateRanges,
         DatepickerService,
         Analytics,
+        Advertiser,
+        Publisher,
         Notify,
         ngDialog
     ) {
@@ -21,8 +25,6 @@ angular.module('analytics').directive('reportSettings', [
         return {
             restrict: 'E',
             scope: {
-                allCampaigns: '=',
-                allSites: '=',
                 selectedSettings: '=',
                 availableSettings: '='
             },
@@ -112,18 +114,41 @@ angular.module('analytics').directive('reportSettings', [
                     }
                 };
 
+                if (scope.availableSettings.campaignFilter) {
+                    // has campaign fileter, should get all campaigns for current user
+                    var allCampaigns = [];
+                    Advertiser.query(function(advertisers) {
+                        advertisers.forEach(function(advertiser) {
+                            allCampaigns = allCampaigns.concat(advertiser.campaigns);
+                        });
+                        scope.allCampaigns = allCampaigns;
+                    });
+                }
+
+                if (scope.availableSettings.siteFilter) {
+                    // has site filter, should get all sites for current user   
+                    var allSites = [];
+                    Publisher.query(function(publishers) {
+                        publishers.forEach(function(publisher) {
+                            allSites = allSites.concat(publisher.sites);
+                        });
+                        scope.allSites = allSites;
+                    });
+                }
+
                 if (scope.availableSettings.countryFilter) {
                     // has country filter, should get all countries for current user
                     Analytics.getAllCountries()
                     .success(function(data) {
                         scope.allCountries = data;
-                        scope.allCountries.forEach(function(country) {
-                            if (country._id === user.organization.country || 
-                                country.name === user.organization.country) {
-                                // setup default selected country based on user country
-                                scope.selectedSettings.country = country;
+                        // setup default selected country based on user country
+                        for (var i = 0; i < scope.allCountries.length; i ++) {
+                            if (scope.allCountries[i]._id === user.organization.country ||
+                                scope.allCountries[i].name === user.organization.country) {
+                                scope.selectedSettings.country = scope.allCountries[i];
+                                break;
                             }
-                        });
+                        }
                     })
                     .error(function(error) {
                         Notify.alert(error.message, {
@@ -132,15 +157,16 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 }
 
-                // Fetch regions for country in which user locates,
-                // and then setup default selected region on user region
                 if (scope.availableSettings.regionFilter) {
+                    // has region filter, should get all regions for the user's country
                     Analytics.getRegions(user.organization.country)
                     .success(function(data) {
                         scope.regions = data;
+                        // setup default selected region based on user's region
                         for (var i = 0; i < scope.regions.length; i ++) {
                             if (user.organization.state === scope.regions[i].name) {
                                 scope.selectedSettings.region = scope.regions[i];
+                                break;
                             }
                         }
                     })
