@@ -5,13 +5,37 @@ angular.module('analytics').config(['$stateProvider',
 	function($stateProvider) {
 		// Advertiser state routing
 		$stateProvider.
-        state('app.analytics', {
-            title: 'Analytics',
+        /*************************************************
+         * BASE ANALYTICS ROUTES (ABSTRACT & NON-ABSTRACT)
+         *************************************************/
+        state('app._analytics', {
+            title: '_Analytics',
             abstract: true,
             templateUrl: 'modules/analytics/views/analytics-layout.client.view.html'
         }).
-		state('app.analytics.quickQueries', {
+        state('app._analytics.analytics', {
+            title: 'Analytics',
             url: '/analytics',
+            resolve: {
+                $title: function(){ return 'Analytics'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/analytics.client.view.html',
+                    controller: 'AnalyticsController'
+                },
+                'sideBar': {
+                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
+                    controller: 'AnalyticsSidebarController'
+                }
+            }
+        }).
+
+        /*********************************
+         ***** QUICK QUERIES ROUTES ******
+         *********************************/
+        state('app._analytics.analytics.quickQueries', {
+            url: '/quick-queries',
             resolve: {
                 $title: function(){ return 'Quick Queries'; }
             },
@@ -26,7 +50,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
 		}).
-        state('app.analytics.quickQueries.time', {
+        state('app._analytics.analytics.quickQueries.time', {
             url: '/time',
             queryType: 'time',
             params: {
@@ -42,7 +66,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.site', {
+        state('app._analytics.analytics.quickQueries.site', {
             url: '/site',
             queryType: 'site',
             params: {
@@ -58,7 +82,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.campaign', {
+        state('app._analytics.analytics.quickQueries.campaign', {
             url: '/campaign',
             queryType: 'campaign',
             params: {
@@ -74,7 +98,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.creative', {
+        state('app._analytics.analytics.quickQueries.creative', {
             url: '/creative',
             queryType: 'creative',
             params: {
@@ -90,7 +114,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.placement', {
+        state('app._analytics.analytics.quickQueries.placement', {
             url: '/placement',
             queryType: 'placement',
             params: {
@@ -106,7 +130,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.state', {
+        state('app._analytics.analytics.quickQueries.state', {
             url: '/state',
             queryType: 'state',
             params: {
@@ -122,7 +146,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.city', {
+        state('app._analytics.analytics.quickQueries.city', {
             url: '/city',
             queryType: 'city',
             params: {
@@ -138,7 +162,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.quickQueries.country', {
+        state('app._analytics.analytics.quickQueries.country', {
             url: '/country',
             queryType: 'country',
             params: {
@@ -154,8 +178,12 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.recentQueriesList', {
-            url: '/analytics/recentQueriesList',
+
+        /**********************************
+         ***** RECENT QUERIES ROUTES ******
+         **********************************/
+        state('app._analytics.analytics.recentQueriesList', {
+            url: '/recent-queries',
             resolve: {
                 $title: function(){ return 'Recent Queries'; }
             },
@@ -170,8 +198,12 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.myQueriesList', {
-            url: '/analytics/myQueriesList',
+
+        /*********************************
+         ***** MY QUERIES ROUTES *********
+         *********************************/
+        state('app._analytics.analytics.myQueriesList', {
+            url: '/my-queries',
             resolve: {
                 $title: function(){ return 'My Queries'; }
             },
@@ -186,11 +218,15 @@ angular.module('analytics').config(['$stateProvider',
                 }                
             }
         }).
-        state('app.analytics.customize', {
-            url: '/analytics/customize',
+
+        /**********************************
+         ***** CUSTOM QUERIES ROUTES ******
+         **********************************/
+        state('app._analytics.analytics.customQuery', {
+            url: '/custom-query',
             title: 'Analytics',
             resolve: {
-                $title: function(){ return 'Customize Query'; }
+                $title: function(){ return 'Custom Query'; }
             },
             views: {
                 'main': {
@@ -203,7 +239,7 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
-        state('app.analytics.customize.result', {
+        state('app._analytics.analytics.customQuery.result', {
             url: '/result',
             params: {
                 defaultQueryParam: null

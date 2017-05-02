@@ -57,7 +57,7 @@ angular.module('analytics')
             time: {
                 name: 'Time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
-                route: 'app.analytics.quickQueries.time',
+                route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
                     name: 'Time',
                     type: 'time',
@@ -77,7 +77,7 @@ angular.module('analytics')
             site: {
                 name: 'Sites',
                 description: 'See all sites you\'ve served impressions on and how well each site has performed.',
-                route: 'app.analytics.quickQueries.site',
+                route: 'app._analytics.analytics.quickQueries.site',
                 defaultQueryParam: {
                     name: 'Sites',
                     type: 'site',
@@ -98,7 +98,7 @@ angular.module('analytics')
             campaign: {
                 name: 'Campaigns',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.',
-                route: 'app.analytics.quickQueries.campaign',
+                route: 'app._analytics.analytics.quickQueries.campaign',
                 defaultQueryParam: {
                     name: 'Campaigns',
                     type: 'campaign',
@@ -120,7 +120,7 @@ angular.module('analytics')
                 name: 'Creatives',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.creative',
+                route: 'app._analytics.analytics.quickQueries.creative',
                 defaultQueryParam: {
                     name: 'Creatives',
                     type: 'creative',
@@ -142,7 +142,7 @@ angular.module('analytics')
                 name: 'Placements',
                 description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.placement',
+                route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
                     type: 'placement',
@@ -163,7 +163,7 @@ angular.module('analytics')
             city: {
                 name: 'Cities',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
-                route: 'app.analytics.quickQueries.city',
+                route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
                     name: 'Cities',
                     type: 'city',
@@ -186,7 +186,7 @@ angular.module('analytics')
             state: {
                 name: 'Regions/States',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level',
-                route: 'app.analytics.quickQueries.state',
+                route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'Regions/States',
                     type: 'state',
@@ -209,7 +209,7 @@ angular.module('analytics')
             country: {
                 name: 'Countries',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
-                route: 'app.analytics.quickQueries.country',
+                route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
                     name: 'Countries',
                     type: 'country',
@@ -233,7 +233,7 @@ angular.module('analytics')
             time: {
                 name: 'Time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
-                route: 'app.analytics.quickQueries.time',
+                route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
                     name: 'Time',
                     type: 'time',
@@ -253,7 +253,7 @@ angular.module('analytics')
             site: {
                 name: 'Sites',
                 description: 'See all sites you\'ve served impressions on and how well each site has performed.',
-                route: 'app.analytics.quickQueries.site',
+                route: 'app._analytics.analytics.quickQueries.site',
                 defaultQueryParam: {
                     name: 'Sites',
                     type: 'site',
@@ -275,7 +275,7 @@ angular.module('analytics')
                 name: 'Creatives',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.creative',
+                route: 'app._analytics.analytics.quickQueries.creative',
                 defaultQueryParam: {
                     name: 'Creatives',
                     type: 'creative',
@@ -297,7 +297,7 @@ angular.module('analytics')
                 name: 'Placements',
                 description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.placement',
+                route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
                     type: 'placement',
@@ -318,7 +318,7 @@ angular.module('analytics')
             city: {
                 name: 'Cities',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
-                route: 'app.analytics.quickQueries.city',
+                route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
                     name: 'Cities',
                     type: 'city',
@@ -341,7 +341,7 @@ angular.module('analytics')
             state: {
                 name: 'States',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level',
-                route: 'app.analytics.quickQueries.state',
+                route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'States',
                     type: 'state',
@@ -364,7 +364,7 @@ angular.module('analytics')
             country: {
                 name: 'Countries',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
-                route: 'app.analytics.quickQueries.country',
+                route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
                     name: 'Countries',
                     type: 'country',
@@ -388,7 +388,7 @@ angular.module('analytics')
             time: {
                 name: 'Time',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
-                route: 'app.analytics.quickQueries.time',
+                route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
                     name: 'Time',
                     type: 'time',
@@ -408,7 +408,7 @@ angular.module('analytics')
             campaign: {
                 name: 'Campaigns',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.',
-                route: 'app.analytics.quickQueries.campaign',
+                route: 'app._analytics.analytics.quickQueries.campaign',
                 defaultQueryParam: {
                     name: 'Campaigns',
                     type: 'campaign',
@@ -430,7 +430,7 @@ angular.module('analytics')
                 name: 'Placements',
                 description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.placement',
+                route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
                     type: 'placement',
@@ -452,7 +452,7 @@ angular.module('analytics')
                 name: 'Creatives',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
-                route: 'app.analytics.quickQueries.creative',
+                route: 'app._analytics.analytics.quickQueries.creative',
                 defaultQueryParam: {
                     name: 'Creatives',
                     type: 'creative',
@@ -473,7 +473,7 @@ angular.module('analytics')
             city: {
                 name: 'Cities',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
-                route: 'app.analytics.quickQueries.city',
+                route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
                     name: 'Cities',
                     type: 'city',
@@ -496,7 +496,7 @@ angular.module('analytics')
             state: {
                 name: 'States',
                 description: 'Check on performance by state/region to see what\'s happening at a regional level',
-                route: 'app.analytics.quickQueries.state',
+                route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'States',
                     type: 'state',
@@ -519,7 +519,7 @@ angular.module('analytics')
             country: {
                 name: 'Countries',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
-                route: 'app.analytics.quickQueries.country',
+                route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
                     name: 'Countries',
                     type: 'country',

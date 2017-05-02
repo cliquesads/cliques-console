@@ -3,7 +3,7 @@
     causes it to render twice-->
 <div class="quick-query-container mt-sm"
 	ng-switch="$state.$current.name">
-    <div ng-switch-when="app._analytics.analytics.quickQueries">
+    <div ng-switch-when="app._analytics.analytics">
         <section ng-include="'/modules/analytics/views/partials/quick-queries-list.html'"></section>
     </div>
     <div ng-switch-default>

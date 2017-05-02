@@ -53,7 +53,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         if ($stateParams.defaultQueryParam) {
             $scope.defaultQueryParam = $stateParams.defaultQueryParam;
         } else {
-            // $state.go('app.analytics.customize');
+            // $state.go('app._analytics.analytics.customize');
             $scope.defaultQueryParam = CUSTOMQUERY[$rootScope.role].defaultQueryParam;
         }
         /************************ CUSTOM QUERY & RESULTS ************************/
@@ -111,7 +111,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             }
         };
         $scope.showCustomizedQueryResult = function() {
-            $state.go('app.analytics.customize.result', {defaultQueryParam: $scope.defaultQueryParam});
+            $state.go('app._analytics.analytics.customize.result', {defaultQueryParam: $scope.defaultQueryParam});
         };
     }
 ]);

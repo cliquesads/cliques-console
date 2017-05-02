@@ -10,10 +10,10 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.isLoading = false;
 		$scope.hasMore = false;
 
-		if ($state.current.name === 'app.analytics.recentQueriesList') {
+		if ($state.current.name === 'app._analytics.analytics.recentQueriesList') {
 			$scope.queriesListTitle = 'Recent Queries';
 		} else {
-			$scope.queriesListTitle = 'Custom Queries';
+			$scope.queriesListTitle = 'My Queries';
 		}
 
 		// Make query results human readable
@@ -33,7 +33,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 				per_page: $scope.itemsPerPage,
 				sort_by: "createdAt,desc"
 			};
-			if ($state.current.name === 'app.analytics.myQueriesList'){
+			if ($state.current.name === 'app._analytics.analytics.myQueriesList'){
 				queryParams.isSaved = true;
 			}
 			Query.query(queryParams).$promise.then(function(data) {
@@ -51,15 +51,15 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 
 		$scope.goToQuerySection = function(query) {
 			if (query.type !== 'custom') {
-				$state.go('app.analytics.quickQueries.' + query.type, {query: query});
+				$state.go('app._analytics.analytics.quickQueries.' + query.type, {query: query});
 			} else {
-				$state.go('app.analytics.customize.result', {query: query});
+				$state.go('app._analytics.analytics.customize.result', {query: query});
 			}
 		};
 
 		$scope.reachedQueryListBottom = function() {
-			if ($state.current.name === 'app.analytics.recentQueriesList' ||
-				$state.current.name === 'app.analytics.myQueriesList') {
+			if ($state.current.name === 'app._analytics.analytics.recentQueriesList' ||
+				$state.current.name === 'app._analytics.analytics.myQueriesList') {
 				if ($scope.hasMore) {
 					$scope.currentPage ++;
 					$scope.loadRelatedQueries();
