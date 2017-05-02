@@ -10,7 +10,7 @@ var _ = require('lodash');
 
 var promise = require('bluebird');
 
-var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com" });
+var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com", mailerType: "mandrill"});
 var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
@@ -102,7 +102,7 @@ require('./_main')(function(GLOBALS) {
             dateGroupBy: query.dateGroupBy,
             startDate: dateRanges.startDate,
             endDate: dateRanges.endDate,
-            groupBy: query.groupBy,
+            groupBy: query.groupBy
         };
 
         var advertiserIds = [],
@@ -158,26 +158,26 @@ require('./_main')(function(GLOBALS) {
         }
         row.Impressions = row.imps;
         row.Spend = '$' + row.spend.toFixed(2);
-        row.CPM = row.imps ? ('$' + ((row.spend / row.imps) * 1000).toFixed(2)) : 'NaN';
-        row.CTR = row.imps ? (((row.clicks / row.imps) * 100).toFixed(3) + '%') : 'NaN';
-        row['Fill Rate'] = (row.imps + row.defaults) ? (((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%') : 'NaN';
+        row.CPM = row.imps ? ('$' + ((row.spend / row.imps) * 1000).toFixed(2)) : '0';
+        row.CTR = row.imps ? (((row.clicks / row.imps) * 100).toFixed(3) + '%') : '0';
+        row['Fill Rate'] = (row.imps + row.defaults) ? (((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%') : '0';
         row['Total Actions'] = row.view_convs + row.click_convs;
         row.Clicks = row.clicks;
-        row.CPC = row.clicks ? (row.spend / row.clicks, '$', 2) : 'NaN';
+        row.CPC = row.clicks ? (row.spend / row.clicks, '$', 2) : '0';
         row.Bids = row.bids;
         row.Uniques = row.uniques;
         row['View-Through Actions'] = row.view_convs;
         row['Click-Through Actions'] = row.click_convs;
-        row.CPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : 'NaN';
-        row.CPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : 'NaN';
-        row.CPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
-        row.RPM = row.imps ? row.spend / row.imps * 1000 : 'NaN';
+        row.CPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : '0';
+        row.CPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : '0';
+        row.CPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
+        row.RPM = row.imps ? row.spend / row.imps * 1000 : '0';
         row.Defaults = row.defaults;
-        row.RPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : 'NaN';
-        row.RPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : 'NaN';
-        row.RPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : 'NaN';
-        row['Fill Rate'] = row.defaults ? row.imps / row.defaults : 'NaN';
-        row.RPC = row.clicks ? (row.spend / row.clicks, '$', 2) : 'NaN';
+        row.RPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : '0';
+        row.RPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : '0';
+        row.RPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
+        row['Fill Rate'] = row.defaults ? row.imps / (row.defaults + row.imps) : '0';
+        row.RPC = row.clicks ? (row.spend / row.clicks, '$', 2) : '0';
 
         return row;
     };
@@ -204,8 +204,8 @@ require('./_main')(function(GLOBALS) {
         emailTemplate,
         headers,
         asOfDate,
-        organizationWebsite,
-        query
+        query,
+        tz
     ) {
         // create csv write stream
         var csv = csvWriter({ headers: headers });
@@ -251,6 +251,14 @@ require('./_main')(function(GLOBALS) {
             csv.end();
             var csvName = query.name + '_' + asOfDate.substring(0, 10) + '_report.csv';
 
+            var timePeriod = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
+            // reformat timezone-aware dates to be user-friendly in the email
+            function formatTzDate(isoString){
+                return moment.tz(isoString, tz).format('MMMM D, YYYY h:mmA z');
+            }
+            var startDate = formatTzDate(timePeriod.startDate);
+            var endDate = formatTzDate(timePeriod.endDate);
+
             // now send mail
             mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
             return mailer.promisifiedSendMail({
@@ -258,16 +266,16 @@ require('./_main')(function(GLOBALS) {
                 templateName: emailTemplate,
                 to: toEmail,
                 attachments: [{
+                    type: 'text/csv',
                     filename: csvName,
                     content: csv
                 }],
                 data: {
-                    placementData: rows,
-                    totals: totals,
                     asOfDate: asOfDate,
-                    organizationWebsite: organizationWebsite,
                     dateRange: query.humanizedDateRange,
-                    tableHeaders: headers
+                    queryName: query.name,
+                    startDate: startDate,
+                    endDate: endDate
                 }
             });
         })
@@ -276,7 +284,7 @@ require('./_main')(function(GLOBALS) {
         });
     };
 
-    var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
+    var asOfDate = moment().startOf('day').subtract(1, 'days').toISOString();
     Query.promisifiedFind = promise.promisify(Query.find);
     // Find all queries from database and check if any of them are saved as periodic queries and are due at the moment
     return Query.promisifiedFind({
@@ -293,6 +301,7 @@ require('./_main')(function(GLOBALS) {
                 var nextRunForQuery = new Date(query.nextRun);
 
                 var toEmail;
+                var tz;
                 if (nextRunForQuery < now) {
                     // The next execution time for this query is overdue
                     // 1. Update the `nextRun` field for this query in database
@@ -313,6 +322,7 @@ require('./_main')(function(GLOBALS) {
                     })
                     .then(function(user) {
                         toEmail = user.email;
+                        tz = user.tz;
                         Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
                         return Organization.promisifiedFindOne({
                             _id: user.organization
@@ -327,16 +337,16 @@ require('./_main')(function(GLOBALS) {
                         } else if (organization.organization_types.indexOf('publisher') > -1) {
                             orgType = 'publisher';
                         }
-                        var organizationWebsite = organization.website;
+                        var subject = "Cliques Query Results - " + query.name + " - " + moment(asOfDate).format('MMMM D, YYYY');
                         return generateReport(
                             getRequestParams(query, orgType),
-                            'Cliques Periodic Report',
+                            subject,
                             toEmail,
-                            'cron-report-email.server.view.html',
+                            'scheduled-query',
                             query.dataHeaders,
                             asOfDate,
-                            organizationWebsite,
-                            query
+                            query,
+                            tz
                         );
                     })
                     .catch(function(err) {

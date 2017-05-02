@@ -31,4 +31,4 @@ var QuerySchema = exports.Query = new Schema({
 });
 
 QuerySchema.plugin(mongooseApiQuery, {});
-var Query = mongoose.model('Query', QuerySchema);
+var Query = exports.Query = mongoose.model('Query', QuerySchema);
