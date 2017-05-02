@@ -11,7 +11,7 @@
         <li ng-if="myQueries.length === 0">No Custom Queries</li>
     </ul>
     <a class="indent" href="#!/analytics/my-queries" ng-if="myQueries.length < totalMyQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreMyQueries">
-        <em>View All</em>
+        <em>View All...</em>
     </a>
 
     <br/><br/>
@@ -28,6 +28,6 @@
         <li ng-if="recentQueries.length === 0">No Recent Queries</li>
     </ul>
     <a class="indent" href="#!/analytics/recent-queries" ng-if="recentQueries.length < totalRecentQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreRecentQueries">
-        <em>View All</em>
+        <em>View All...</em>
     </a>
 </div>

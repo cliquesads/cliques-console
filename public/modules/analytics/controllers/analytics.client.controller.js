@@ -1,8 +1,8 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES', 'Notify',
-    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES, Notify) {
+angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES',
+    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES) {
         $scope.user = user;
 
         // Depending on different organization type, quick query options may vary

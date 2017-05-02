@@ -1,7 +1,7 @@
 <!--Only show quick-query container when parent state is active, since quick-query is currently
     the default view on Analytics and showing this also on app._analytics.analytics.quickQuery
     causes it to render twice-->
-<div class="quick-query-container mt-sm"
+<div class="quick-query-container mt-sm mh"
 	ng-switch="$state.$current.name">
     <div ng-switch-when="app._analytics.analytics">
         <section ng-include="'/modules/analytics/views/partials/quick-queries-list.html'"></section>

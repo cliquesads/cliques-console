@@ -191,10 +191,23 @@ angular.module('analytics').config(['$stateProvider',
                 'main': {
                     templateUrl: 'modules/analytics/views/partials/queries-list.client.view.html',
                     controller: 'AnalyticsListController'
+                }
+            }
+        }).
+        state('app._analytics.analytics.recentQueriesList.recentQuery', {
+            url: '/:queryId',
+            resolve: {
+                query: function($stateParams, Query){
+                    return Query.get({ queryId: $stateParams.queryId}).$promise;
                 },
-                'sideBar': {
-                    templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
-                    controller: 'AnalyticsSidebarController'
+                $title: function(query){
+                    return query.name;
+                }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController'
                 }
             }
         }).
@@ -216,6 +229,23 @@ angular.module('analytics').config(['$stateProvider',
                     templateUrl: 'modules/analytics/views/partials/sidebar.client.view.html',
                     controller: 'AnalyticsSidebarController'
                 }                
+            }
+        }).
+        state('app._analytics.analytics.myQueriesList.myQuery', {
+            url: '/:queryId',
+            resolve: {
+                query: function($stateParams, Query){
+                    return Query.get({ queryId: $stateParams.queryId }).$promise;
+                },
+                $title: function(query){
+                    return query.name;
+                }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
             }
         }).
 
