@@ -7,10 +7,11 @@ var moment = require('moment-timezone');
 var csvWriter = require('csv-write-stream');
 var mail = require('../app/controllers/mailer.server.controller');
 var _ = require('lodash');
+var base64 = require('base64-stream');
 
 var promise = require('bluebird');
 
-var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com", mailerType: "mandrill"});
+var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com", templatePath: '../app/views/templates' });
 var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
@@ -270,8 +271,8 @@ require('./_main')(function(GLOBALS) {
                     filename: csvName,
                     content: csv
                 }],
+                // TODO: Populate queryUrl in data w/ URL of query, when UI routing refactor is finished
                 data: {
-                    asOfDate: asOfDate,
                     dateRange: query.humanizedDateRange,
                     queryName: query.name,
                     startDate: startDate,
@@ -342,7 +343,7 @@ require('./_main')(function(GLOBALS) {
                             getRequestParams(query, orgType),
                             subject,
                             toEmail,
-                            'scheduled-query',
+                            'cron-report-email.server.view.html',
                             query.dataHeaders,
                             asOfDate,
                             query,
@@ -358,10 +359,12 @@ require('./_main')(function(GLOBALS) {
     })
     .then(function() {
         mongoose.disconnect();
+        process.exit(0);
     })
     .catch(function(err) {
         mongoose.disconnect();
         console.error(err);
+        process.exit(1);
     });
 }, [
     [

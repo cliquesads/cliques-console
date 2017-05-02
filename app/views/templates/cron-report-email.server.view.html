@@ -1,32 +1,12 @@
 {% extends 'base-external-email.server.view.html' %}
 
 {% block content %}
-<span class="h4" style="text-align: center">Custom {{ organizationWebsite }} Report</span>
-<p style="text-align: center">Statistics for the {{ dateRange }} (as of {{ asOfDate|date('F jS\, Y') }}, US/Pacific Time)</p>
-<table>
-    <thead>
-        {% for header in tableHeaders %}
-        <th>{{ header }}</th>
-        {% endfor %}
-    </thead>
-    <tbody>
-        {% for row in placementData %}
-        <tr>
-            {% for header in tableHeaders %}
-            <td>{{ row[header] }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-        <tr>
-            <td></td>
-            <td><strong>Total</strong></td>
-            <td><strong>{{ totals.spend }}</strong></td>
-            <td><strong>{{ totals.imps }}</strong></td>
-            <td><strong>{{ totals.clicks }}</strong></td>
-            <td><strong>{{ totals.fillRate }}</strong></td>
-            <td><strong>{{ totals.CTR }}</strong></td>
-            <td><strong>{{ totals.CPM }}</strong></td>
-        </tr>
-    </tbody>
-</table>
+<span class="h1">Your Query Results Are Ready!</span>
+<p>Attached are the results for your custom Cliques query: <b>{{ queryName }}</b></p>
+<span class="h4">Query Details</span>
+<p>
+    <b>Start Date:</b> {{ startDate }} <br/>
+    <b>End Date:</b> {{ endDate }} <br/>
+</p>
+<p>If you'd like to modify this query, or change when it runs, you can do that <a href="{{ queryUrl }}">here.</a></p>
 {% endblock %}
