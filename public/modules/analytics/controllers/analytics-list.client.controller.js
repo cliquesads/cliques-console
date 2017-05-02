@@ -53,7 +53,7 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 			if (query.type !== 'custom') {
 				$state.go('app._analytics.analytics.quickQueries.' + query.type, {query: query});
 			} else {
-				$state.go('app._analytics.analytics.customize.result', {query: query});
+				$state.go('app._analytics.analytics.customQuery.result', {query: query});
 			}
 		};
 
