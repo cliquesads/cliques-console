@@ -43,23 +43,6 @@ angular.module('analytics').directive('reportSettings', [
                     scope.selectedSettings.endDate = dateArr[1];
                 }
 
-                // Decide filters array in query param
-                if (!scope.selectedSettings.filters) {
-                    scope.selectedSettings.filters = [];
-                }
-                // setup initial site/campaign/country/region value in query param based on filters array
-                scope.selectedSettings.filters.forEach(function(filterString) {
-                    if (filterString.startsWith('site')) {
-                        scope.selectedSettings.site = filterString.replace('site', ''); 
-                    } else if (filterString.startsWith('campaign')) {
-                        scope.selectedSettings.campaign = filterString.replace('campaign', ''); 
-                    } else if (filterString.startsWith('country')) {
-                        scope.selectedSettings.country = filterString.replace('country', ''); 
-                    } else if (filterString.startsWith('region')) {
-                        scope.selectedSettings.region = filterString.replace('region', ''); 
-                    }
-                });
-
                 scope.launchQuery = function() {
                     // Send broadcast message to notify query graph/table directive to launch query
                     $rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
@@ -127,7 +110,6 @@ angular.module('analytics').directive('reportSettings', [
                                 scope.allCountries[i].name === user.organization.country) {
                                 scope.geo.countryObject = scope.allCountries[i];
                                 scope.selectedSettings.country = scope.geo.countryObject._id;
-                                scope.updateFiltersArray('country', scope.selectedSettings.country); 
                                 break;
                             }
                         }
@@ -152,7 +134,6 @@ angular.module('analytics').directive('reportSettings', [
                             if (user.organization.state === scope.regions[i].name) {
                                 scope.geo.regionObject = scope.regions[i];
                                 scope.selectedSettings.region = scope.geo.regionObject._id;
-                                scope.updateFiltersArray('region', scope.selectedSettings.region);
                                 break;
                             }
                         }
@@ -167,37 +148,6 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 }
 
-                scope.updateFiltersArray = function(filterType, filterId) {
-                    var i;
-                    if (scope.selectedSettings[filterType]) {
-                        // add or update filter string in filters array
-                        var filterString = filterType + filterId;
-                        var updated = false;
-                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                            if (scope.selectedSettings.filters[i].startsWith(filterType)) {
-                                scope.selectedSettings.filters[i] = filterString;
-                                updated = true;
-                                break;
-                            }
-                        }
-                        if (!updated) {
-                            scope.selectedSettings.filters.push(filterString);
-                        }
-                    } else {
-                        // remove filter string in filters array
-                        var filterIndex;
-                        for (i = 0; i < scope.selectedSettings.filters.length; i ++) {
-                            if (scope.selectedSettings.filters[i].startsWith(filterType)) {
-                                filterIndex = i;
-                                break;
-                            }
-                        }
-                        if (filterIndex >= 0) {
-                            scope.selectedSettings.filters.splice(filterIndex, 1);
-                        }
-                    }
-                };
-
                 scope.geo = {};
                 scope.countrySelected = function() {
                     if (scope.geo.countryObject) {
@@ -208,8 +158,7 @@ angular.module('analytics').directive('reportSettings', [
                                 // reset region
                                 scope.regions = data;
                                 scope.geo.regionObject = undefined;
-                                scope.selectedSettings.region = undefined;
-                                scope.updateFiltersArray('region', undefined);
+                                scope.selectedSettings.region = '';
                             })
                             .error(function(error) {
                                 Notify.alert(error.message, {
@@ -217,24 +166,19 @@ angular.module('analytics').directive('reportSettings', [
                                 });
                             });
                     } else {
-                        scope.selectedSettings.country = undefined;
                         scope.regions = undefined;
                         scope.geo.regionObject = undefined;
-                        scope.selectedSettings.region = undefined;
-                        scope.updateFiltersArray('region', undefined);
+                        scope.selectedSettings.country = '';
+                        scope.selectedSettings.region = '';
                     }
-                    // update country filter in filters array
-                    scope.updateFiltersArray('country', scope.selectedSettings.country);
                 };
 
                 scope.regionSelected = function() {
                     if (scope.geo.regionObject) {
                         scope.selectedSettings.region = scope.geo.regionObject._id;
                     } else {
-                        scope.selectedSettings.region = undefined;
+                        scope.selectedSettings.region = '';
                     }
-                    // update region filter in filters array
-                    scope.updateFiltersArray('region', scope.selectedSettings.region);
                 };
 
                 scope.showSaveQueryDialog = function() {

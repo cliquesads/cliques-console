@@ -67,20 +67,36 @@ module.exports = function(db) {
 							return advertiserModels.Advertiser.promisifiedFind({
 								organization: req.user.organization.id
 							})
-								.then(function(advertisers) {
+							.then(function(advertisers) {
+								if (advertisers.length === 1) {
+									newQuery.advertiser = advertisers[0]._id;
+								} else {
+									var advertiserIds = [];
 									advertisers.forEach(function(advertiser) {
-										newQuery.filters.push('advertiser' + advertiser._id);
+										advertiserIds.push(advertiser._id);
 									});
-								});
+									if (advertiserIds.length > 0) {
+										newQuery.advertiser = '{in}' + advertiserIds.join(',');
+									}
+								}
+							});
 						} else if (req.user.organization.organization_types.indexOf('publisher') !== -1) {
 							return publisherModels.Publisher.promisifiedFind({
 								organization: req.user.organization.id
 							})
-								.then(function(publishers) {
+							.then(function(publishers) {
+								if (publishers.length === 1) {
+									newQuery.publisher = publishers[0]._id;
+								} else {
+									var publisherIds = [];
 									publishers.forEach(function(publisher) {
-										newQuery.filters.push('publisher' + publisher._id);
+										publisherIds.push(publisher._id);
 									});
-								});
+									if (publisherIds.length > 0) {
+										newQuery.publisher = '{in}' + publisherIds.join(',');
+									}
+								}
+							});
 						} else {
 							return promise.resolve();
 						}
@@ -89,10 +105,7 @@ module.exports = function(db) {
 						newQuery.promisifiedSave = promise.promisify(newQuery.save);
 						return newQuery.promisifiedSave();
 					}).then(function() {
-						return res.json({
-							id: newQuery._id,
-							filters: newQuery.filters
-						});
+						return res.json({id: newQuery._id});
 					})
 					.catch(function(err) {
 						return res.status(400).send({ message: err });

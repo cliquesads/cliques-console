@@ -105,36 +105,7 @@ require('./_main')(function(GLOBALS) {
             endDate: dateRanges.endDate,
             groupBy: query.groupBy
         };
-
-        var advertiserIds = [],
-        publisherIds = [];
         
-        query.filters.forEach(function(filterString) {
-            if (filterString.startsWith('advertiser')) {
-                advertiserIds.push(filterString.replace('advertiser', ''));
-            } else if (filterString.startsWith('publisher')) {
-                publisherIds.push(filterString.replace('publisher', ''));
-            } else if (filterString.startsWith('campaign')) {
-                queryParam.campaign = filterString.replace('campaign', '');
-            } else if (filterString.startsWith('site')) {
-                queryParam.campaign = filterString.replace('site', '');
-            }
-        });
-        if (advertiserIds.length >= 1) {
-            if (advertiserIds.length === 1) {
-                queryParam.advertiser = advertiserIds[0];
-            } else {
-                queryParam.advertiser = '{in}' + advertiserIds.join(',');
-            }
-        }
-        if (publisherIds.length >= 1) {
-            if (publisherIds.length === 1) {
-                queryParam.publisher = publisherIds[0];
-            } else {
-                queryParam.publisher = '{in}' + publisherIds.join(',');
-            }
-        }
-
         if (query.type !== 'time') {
             queryParam.populate = query.groupBy;
         }
