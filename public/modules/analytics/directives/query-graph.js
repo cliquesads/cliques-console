@@ -6,7 +6,7 @@ angular.module('analytics').directive('queryGraph', [
 	'$rootScope',
 	'Analytics',
 	'aggregationDateRanges',
-	'MongoTimeSeries'
+	'MongoTimeSeries',
 	function(
 		$rootScope,
 		Analytics,

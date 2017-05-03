@@ -33,53 +33,6 @@ require('./_main')(function(GLOBALS) {
         return url;
     };
 
-    var getTimePeriod = function(dateRangeShortCode, humanizedDateRange) {
-        var timezone = 'America/Los_Angeles';
-        var startDate, endDate;
-        switch (dateRangeShortCode) {
-            case "7d":
-                startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(6, 'days').toISOString();
-                endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
-                break;
-            case "30d":
-                startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(29, 'days').toISOString();
-                endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
-                break;
-            case "90d":
-                startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(89, 'days').toISOString();
-                endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
-                break;
-            case "lastMonth":
-                startDate = moment().tz(timezone).subtract(1, 'months').startOf('month').toISOString();
-                endDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
-                break;
-            case "mtd":
-                startDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
-                endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
-                break;
-            case "yesterday":
-                startDate = moment().tz(timezone).subtract(1, 'days').startOf('day').toISOString();
-                endDate = moment().tz(timezone).startOf('day').toISOString();
-                break;
-            case "today":
-                startDate = moment().tz(timezone).startOf('day').toISOString();
-                endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
-                break;
-            case "custom":
-                var dates = humanizedDateRange.split(' - ');
-                startDate = dates[0];
-                endDate = dates[1];
-                break;
-            default:
-                break;
-
-        }
-        return {
-            startDate: startDate,
-            endDate: endDate
-        };
-    };
-
     var getRequestParams = function(query, organizationType) {
         var queryAPIUrl;
         if (query.type !== 'city' && query.type !== 'state' && query.type !== 'country') {
@@ -98,11 +51,8 @@ require('./_main')(function(GLOBALS) {
                 break;
         }
 
-        var dateRanges = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
         var queryParam = {
             dateGroupBy: query.dateGroupBy,
-            startDate: dateRanges.startDate,
-            endDate: dateRanges.endDate,
             groupBy: query.groupBy
         };
         
@@ -223,7 +173,9 @@ require('./_main')(function(GLOBALS) {
             csv.end();
             var csvName = query.name + '_' + asOfDate.substring(0, 10) + '_report.csv';
 
-            var timePeriod = getTimePeriod(query.dateRangeShortCode, query.humanizedDateRange);
+            var queryModel = new Query(query);
+            var timePeriod = queryModel.getDatetimeRange(tz);
+
             // reformat timezone-aware dates to be user-friendly in the email
             function formatTzDate(isoString){
                 return moment.tz(isoString, tz).format('MMMM D, YYYY h:mmA z');
@@ -294,6 +246,7 @@ require('./_main')(function(GLOBALS) {
                     })
                     .then(function(user) {
                         toEmail = user.email;
+ 
                         tz = user.tz;
                         Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
                         return Organization.promisifiedFindOne({
