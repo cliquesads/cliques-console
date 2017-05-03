@@ -1,7 +1,7 @@
 /* global _, angular, moment */
 'use strict';
 
-angular.module('advertiser').factory('AdvertiserUtils',function() {
+angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http) {
     return {
         /**
          * Maps successfully uploaded items in uploader queue to array of
@@ -17,6 +17,7 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
                         click_url: fileItem.click_url,
                         w: fileItem.width,
                         h: fileItem.height,
+                        type: 'display',
                         retina: fileItem.retina,
                         url: fileItem.url
                     });
@@ -25,7 +26,81 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             return creatives;
         },
         /**
-         * Helper function to group creatives by size and create creative groups for each
+         * Maps successfully uploaded items in uploader queue to array of
+         * creative objects to push to API
+         * @returns {Array}
+         */
+        getCreativesFromNativeUploadQueue: function (uploader, advertiser) {
+            // first get logo & logo dimensions, if available
+            // $http.get({
+            //     method: 'GET',
+            //     url: advertiser.logo_url
+            // }).then(function(response){
+            //     // check added image dimensions, and remove item from queue if
+            //     // dimensions not supported
+            //     var reader = new FileReader();
+            //     var image = new Image();
+            //     // Have to use onload callbacks for both FileReader & Image objects,
+            //     // then load data to each
+            //     reader.onload = function(_file){
+            //         image.onload = function(){
+            //             var self = this;
+            //             var creatives = [];
+            //             uploader.queue.forEach(function (fileItem) {
+            //                 if (fileItem.isSuccess) {
+            //                     creatives.push({
+            //                         name: fileItem.file.name,
+            //                         click_url: fileItem.click_url,
+            //                         type: 'native',
+            //                         native: {
+            //                             rawImageUrl: fileItem.rawImageUrl,
+            //                             rawImageW: fileItem.rawImageW,
+            //                             rawImageH: fileItem.rawImageH,
+            //                             copyLong: fileItem.copyLong,
+            //                             copyShort: fileItem.copyShort,
+            //                             logoUrl: advertiser.logo_url,
+            //                             logoH: self.height,
+            //                             logoW: self.width
+            //                         }
+            //                     });
+            //                 }
+            //             });
+            //             return callback(null, creatives);
+            //         };
+            //         // now set image source
+            //         image.src = _file.target.result;
+            //     };
+            //     // load file
+            //     reader.readAsBinaryString(response.body);
+            // }, function(errorResponse){
+            //     return callback(errorResponse);
+            // });
+            var creatives = [];
+            uploader.queue.forEach(function (fileItem) {
+                if (fileItem.isSuccess) {
+                    creatives.push({
+                        name: fileItem.file.name,
+                        click_url: fileItem.click_url,
+                        type: 'native',
+                        native: {
+                            rawImageUrl: fileItem.rawImageUrl,
+                            rawImageW: fileItem.rawImageW,
+                            rawImageH: fileItem.rawImageH,
+                            copyLong: fileItem.copyLong,
+                            copyShort: fileItem.copyShort,
+                            logoUrl: advertiser.logo_url,
+                            logoH: 20, // TODO: Update w/ real number
+                            logoW: 20 // TODO: Update w/ real number
+                        }
+                    });
+                }
+            });
+            return creatives;
+        },
+        /**
+         * Helper function to group creatives by size and create creative groups for each.
+         * 
+         * Pushes creative.type === 'native' creatives into their own group
          * @param creatives
          * @param groupname_prefix
          * @returns {Array}
@@ -33,7 +108,12 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
         groupCreatives: function (creatives, groupname_prefix) {
             var creativegroups_obj = {};
             creatives.forEach(function (creative) {
-                var key = creative.w + 'x' + creative.h;
+                var key;
+                if (creative.type === 'native'){
+                    key = 'native';
+                } else {
+                    key = creative.w + 'x' + creative.h;
+                }
                 if (creativegroups_obj.hasOwnProperty(key)) {
                     creativegroups_obj[key].push(creative);
                 } else {
@@ -43,12 +123,21 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             var creativegroups = [];
             for (var size in creativegroups_obj) {
                 if (creativegroups_obj.hasOwnProperty(size)) {
-                    creativegroups.push({
-                        name: groupname_prefix + '_' + size,
-                        h: Number(size.split('x')[1]),
-                        w: Number(size.split('x')[0]),
-                        creatives: creativegroups_obj[size]
-                    });
+                    if (size === 'native') {
+                        creativegroups.push({
+                            name: groupname_prefix + '_' + size,
+                            type: 'native',
+                            creatives: creativegroups_obj[size]
+                        });
+                    } else {
+                        creativegroups.push({
+                            name: groupname_prefix + '_' + size,
+                            type: 'display',
+                            h: Number(size.split('x')[1]),
+                            w: Number(size.split('x')[0]),
+                            creatives: creativegroups_obj[size]
+                        });
+                    }
                 }
             }
             return creativegroups;
@@ -56,8 +145,14 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
 
         updateCreativeGroups: function(newCreativeGroups, campaign){
             newCreativeGroups.forEach(function (crg) {
+                // find like sized creative group and append to it, or find native creative group and append to
+                // that one
                 var ind = _.findIndex(campaign.creativegroups, function (cg) {
-                    return cg.w === crg.w && cg.h === crg.h;
+                    if (crg.type === 'native'){
+                        return cg.type === 'native';
+                    } else {
+                        return cg.w === crg.w && cg.h === crg.h;    
+                    }
                 });
                 // if creativegroup of same size exists, add to this creative group
                 if (ind > -1) {
@@ -97,4 +192,4 @@ angular.module('advertiser').factory('AdvertiserUtils',function() {
             return campaign;
         }
     };
-});
+}]);

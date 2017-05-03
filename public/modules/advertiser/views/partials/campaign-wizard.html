@@ -2,7 +2,7 @@
     <button type="button" class="btn btn-primary" ng-click="saveDraft()" analytics-on="click" analytics-event="CampaignWizard_SaveDraft"><i class="fa fa-floppy-o"></i> Save Draft</button>
 </div>
 <form name="campaignForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="5">
-    <div class="form-wizard wizard-vertical">
+    <div class="form-wizard wizard-vertical alt-width">
         <!-- START wizard steps indicator-->
         <ol>
             <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
@@ -169,11 +169,11 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="creative in campaign.creatives">
-                                <td><img ng-src="{{ creative.url }}" class="smallthumbnail"/></td>
+                                <td><img ng-src="{{ creative.type === 'native' ? creative.rawImageUrl : creative.url }}" class="smallthumbnail"/></td>
                                 <td>
                                     <input type="text" name="creative.name" data-ng-model="creative.name" data-parsley-group="step4" required="required" class="form-control" />
                                 </td>
-                                <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                                <td><p class="form-control-static">{{ creative.type === 'native' ? "Native" : creative.w + "x" + creative.h }}</td>
                                 <td>
                                     <input ng-show="creative.type != 'doubleclick'" type="url" data-parsley-type="url" name="creative.click_url" data-ng-model="creative.click_url" data-parsley-group="step4" required="required" class="form-control" />
                                     <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
@@ -184,12 +184,20 @@
                         </table>
                     </div>
                 </tab>
-                <tab heading="Cliques Hosted">
-                    <div class="row" id="creativeUploader">
-                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                <tab ng-if="campaign.type === 'native'">
+                    <tab-heading>
+                        Native <span class="label label-info">Beta</span>
+                    </tab-heading>
+                    <div class="row" id="nativeUploader">
+                        <native-creative-uploader wizardstep="step4" uploader="nativeUploader" onuploadall="nativeValidateAndUpload(wizard.validateStep(4))" width="12"> </native-creative-uploader>
                     </div>
                 </tab>
-                <tab heading="DoubleClick">
+                <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+                    <div class="row" id="creativeUploader">
+                        <creative-uploader wizardstep="step4" uploader="displayUploader" onuploadall="displayValidateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                    </div>
+                </tab>
+                <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
                     <div class="row" id="dcmUploader">
                         <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
                     </div>
@@ -233,8 +241,8 @@
                 <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="creative in campaign.creatives">
                     <div class="col-sm-4 text-center">
-                        <div class="col-sm-12"><em>{{ creative.name }}</em></div>
-                        <img ng-src="{{ creative.url }}" class="smallthumbnail">
+                        <div class="col-sm-12"><em>{{ creative.name }}{{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
+                        <img ng-src="{{ creative.type === 'native' ? creative.native.rawImageUrl : creative.url }}" class="smallthumbnail">
                     </div>
                 </div>
             </fieldset>

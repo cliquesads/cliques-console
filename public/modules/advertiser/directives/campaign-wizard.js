@@ -120,10 +120,22 @@ angular.module('advertiser').directive('campaignWizard', [
                 //######### FILE UPLOADER #########//
                 //#################################//
 
-                var uploader = scope.uploader = new FileUploader({
+                var displayUploader = scope.displayUploader = new FileUploader({
                     url: 'console/creativeassets'
                 });
-                scope.uploader.onCompleteAll = function(){
+                scope.displayUploader.onCompleteAll = function(){
+                    scope.uploads_completed = true;
+                };
+
+                //########################################//
+                //######### NATIVE FILE UPLOADER #########//
+                //########################################//
+
+                var nativeUploader = scope.nativeUploader = new FileUploader({
+                    url: 'console/native-images'
+                });
+
+                scope.nativeUploader.onCompleteAll = function(){
                     scope.uploads_completed = true;
                 };
 
@@ -134,11 +146,26 @@ angular.module('advertiser').directive('campaignWizard', [
                  * @param validateFunc
                  * @param funcArg
                  */
-                scope.validateAndUpload = function(validateFunc){
+                scope.displayValidateAndUpload = function(validateFunc){
                     // pre_callback should be validation step for other various
                     // form elements, and return true if validation passes
                     if (validateFunc){
-                        uploader.uploadAll();
+                        displayUploader.uploadAll();
+                    }
+                };
+
+                /**
+                 * Wrapper for uploader.uploadAll() which allows form to pass
+                 * validation function to call first.
+                 *
+                 * @param validateFunc
+                 * @param funcArg
+                 */
+                scope.nativeValidateAndUpload = function(validateFunc){
+                    // pre_callback should be validation step for other various
+                    // form elements, and return true if validation passes
+                    if (validateFunc){
+                        nativeUploader.uploadAll();
                     }
                 };
 
@@ -149,9 +176,13 @@ angular.module('advertiser').directive('campaignWizard', [
 
                 // Loads creatives from all sources into campaign.creatives
                 scope.ingestCreatives = function(callback, callbackArg){
-                    scope.campaign.ingestCreativeUploader(uploader);
+                    scope.campaign.ingestCreativeUploader(displayUploader);
                     // now clear uploader queue
-                    uploader.clearQueue();
+                    displayUploader.clearQueue();
+                    // ingest native creatives
+                    scope.campaign.ingestNativeCreativeUploader(nativeUploader, scope.advertiser);
+                    // now clear uploader queue
+                    nativeUploader.clearQueue();
                     // ingest DoubleClick creatives and reset scope var
                     scope.campaign.ingestDCMCreatives(scope.dcm_creatives);
                     scope.dcm_creatives = null;
