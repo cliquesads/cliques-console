@@ -5,11 +5,11 @@
  */
 var models = require('@cliques/cliques-node-utils').mongodb.models,
     mongoose = require('mongoose'),
+    Query = mongoose.model('Query'),
     errorHandler = require('../../errors.server.controller'),
     _ = require('lodash'),
     async = require('async'),
     moment = require('moment-timezone');
-
 
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
@@ -53,6 +53,7 @@ var HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVarBu
     this.queryParamOperators = ['in','nin','ne'];
     this.tzOffset = null;
 };
+
 
 /**
  * Handles parsing of operator & comma-separated query values
@@ -360,6 +361,12 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
 AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregationModel){
     var self = this;
     return function (req, res) {
+        if (!req.query.startDate && !req.query.endDate) {
+            var analyticsQuery = new Query(req.query);
+            var dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
+            req.query.startDate = dateRange.startDate;
+            req.query.endDate = dateRange.endDate;
+        }
         var group;
         try {
             group = pipelineBuilder.getGroup(req);

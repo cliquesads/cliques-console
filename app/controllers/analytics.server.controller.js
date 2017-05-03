@@ -105,7 +105,11 @@ module.exports = function(db) {
 						newQuery.promisifiedSave = promise.promisify(newQuery.save);
 						return newQuery.promisifiedSave();
 					}).then(function() {
-						return res.json({id: newQuery._id});
+						var dateRange = newQuery.getDatetimeRange(req.user.tz);
+						return res.json({
+							id: newQuery._id,
+							dateRange: dateRange
+						});
 					})
 					.catch(function(err) {
 						return res.status(400).send({ message: err });

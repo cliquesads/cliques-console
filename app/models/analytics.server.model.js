@@ -3,6 +3,7 @@
 var mongoose = require('mongoose'),
     _ = require('lodash'),
     mongooseApiQuery = require('mongoose-api-query'),
+    moment = require('moment-timezone'),
     Schema = mongoose.Schema;
 
 /**
@@ -35,6 +36,56 @@ var QuerySchema = exports.Query = new Schema({
 }, {
     timestamps: true
 });
+
+/**
+ * Get star & end date for query request
+ */
+QuerySchema.methods.getDatetimeRange = function(timezone) {
+    var startDate, endDate;
+    var dateRangeShortCode = this.dateRangeShortCode;
+    var humanizedDateRange = this.humanizedDateRange;
+    switch (dateRangeShortCode) {
+        case "7d":
+            startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(6, 'days').toISOString();
+            endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+            break;
+        case "30d":
+            startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(29, 'days').toISOString();
+            endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+            break;
+        case "90d":
+            startDate = moment().tz(timezone).add(1, 'days').startOf('day').subtract(89, 'days').toISOString();
+            endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+            break;
+        case "lastMonth":
+            startDate = moment().tz(timezone).subtract(1, 'months').startOf('month').toISOString();
+            endDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
+            break;
+        case "mtd":
+            startDate = moment().tz(timezone).startOf('month').startOf('day').toISOString();
+            endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+            break;
+        case "yesterday":
+            startDate = moment().tz(timezone).subtract(1, 'days').startOf('day').toISOString();
+            endDate = moment().tz(timezone).startOf('day').toISOString();
+            break;
+        case "today":
+            startDate = moment().tz(timezone).startOf('day').toISOString();
+            endDate = moment().tz(timezone).add(1, 'days').startOf('day').toISOString();
+            break;
+        case "custom":
+            var dates = humanizedDateRange.split(' - ');
+            startDate = dates[0];
+            endDate = dates[1];
+            break;
+        default:
+            break;
+    }
+    return {
+        startDate: startDate,
+        endDate: endDate
+    };
+};
 
 QuerySchema.plugin(mongooseApiQuery, {});
 var Query = exports.Query = mongoose.model('Query', QuerySchema);
