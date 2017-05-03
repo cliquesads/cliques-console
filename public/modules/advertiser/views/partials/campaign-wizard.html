@@ -30,7 +30,7 @@
 
         <!-- START CAMPAIGN inputs -->
         <div id="step1" ng-show="wizard.active(1)">
-            <legend>New Campaign</legend>
+            <legend>New {{ campaignType | capitalize }} Campaign</legend>
             <fieldset>
                 <div class="form-group">
                     <label>Name *</label>
@@ -241,7 +241,7 @@
                 <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="creative in campaign.creatives">
                     <div class="col-sm-4 text-center">
-                        <div class="col-sm-12"><em>{{ creative.name }}{{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
+                        <div class="col-sm-12"><em>{{ creative.name }} {{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
                         <img ng-src="{{ creative.type === 'native' ? creative.native.rawImageUrl : creative.url }}" class="smallthumbnail">
                     </div>
                 </div>

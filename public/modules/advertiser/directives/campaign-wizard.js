@@ -25,7 +25,8 @@ angular.module('advertiser').directive('campaignWizard', [
                 onPrevious : '&',
                 onSubmit: '&',
                 onDraftSaveSuccess: '&',
-                onDraftSaveError: '&'
+                onDraftSaveError: '&',
+                campaignType: '@'
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
@@ -41,6 +42,7 @@ angular.module('advertiser').directive('campaignWizard', [
                 // Init new ClientSideCampaign, which handles all necessary duplication &
                 // pre-save prep logic
                 scope.campaign = new ClientSideCampaign(scope.existingCampaign, { useSuffix: scope.useSuffix });
+                scope.campaign.type = scope.campaignType;
 
                 // Populate tree data for tree visualization
                 scope.cliques = [];
