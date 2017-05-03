@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
     _ = require('lodash'),
     mongooseApiQuery = require('mongoose-api-query'),
     moment = require('moment-timezone'),
+    querystring = require('querystring'),
     Schema = mongoose.Schema;
 
 /**
@@ -12,6 +13,7 @@ var mongoose = require('mongoose'),
 var QuerySchema = exports.Query = new Schema({
     user: { type: Schema.ObjectId, required: true, ref: 'User' },
     groupBy: { type: String },
+    populate: { type: String },
     dateGroupBy: { type: String },
     // filter values
     advertiser: { type: String },
@@ -85,6 +87,34 @@ QuerySchema.methods.getDatetimeRange = function(timezone) {
         startDate: startDate,
         endDate: endDate
     };
+};
+
+QuerySchema.methods.getUrl = function(organizationType) {
+    var queryAPIUrl;
+    if (this.type !== 'city' && this.type !== 'state' && this.type !== 'country') {
+        queryAPIUrl = '/api/hourlyadstat';
+    } else {
+        queryAPIUrl = '/api/geoadstat';
+    }
+    switch (organizationType) {
+        case 'advertiser':
+            queryAPIUrl += '/advSummary';
+            break;
+        case 'publisher':
+            queryAPIUrl += '/pubSummary';
+            break;
+        default:
+            break;
+    }
+    var copiedQuery = JSON.parse(JSON.stringify(this));
+
+    delete copiedQuery.dataHeaders;
+    delete copiedQuery.createdAt;
+    delete copiedQuery.updatedAt;
+    delete copiedQuery._id;
+    delete copiedQuery.nextRun;
+
+    return queryAPIUrl + '?' + querystring.stringify(copiedQuery); 
 };
 
 QuerySchema.plugin(mongooseApiQuery, {});

@@ -2,7 +2,6 @@
 var init = require('../config/init')();
 var request = require('request');
 var parser = require('cron-parser');
-var querystring = require('querystring');
 var moment = require('moment-timezone');
 var csvWriter = require('csv-write-stream');
 var mail = require('../app/controllers/mailer.server.controller');
@@ -23,52 +22,6 @@ require('./_main')(function(GLOBALS) {
     var Query = mongoose.model('Query'),
         Organization = mongoose.model('Organization'),
         User = mongoose.model('User');
-
-    var getUrl = function(path, params) {
-        params = params || {};
-        var url = BASE_URL + path;
-        if (params !== {}) {
-            url = url + '?' + querystring.stringify(params);
-        }
-        return url;
-    };
-
-    var getRequestParams = function(query, organizationType) {
-        var queryAPIUrl;
-        if (query.type !== 'city' && query.type !== 'state' && query.type !== 'country') {
-            queryAPIUrl = '/api/hourlyadstat'; 
-        } else {
-            queryAPIUrl = '/api/geoadstat';
-        }
-        switch (organizationType) {
-            case 'advertiser':
-                queryAPIUrl += '/advSummary';
-                break;
-            case 'publisher':
-                queryAPIUrl += '/pubSummary';
-                break;
-            default:
-                break;
-        }
-
-        var queryParam = {
-            dateGroupBy: query.dateGroupBy,
-            groupBy: query.groupBy
-        };
-        
-        if (query.type !== 'time') {
-            queryParam.populate = query.groupBy;
-        }
-
-        return {
-            auth: {
-                user: GLOBALS.args.username,
-                pass: GLOBALS.args.password
-            },
-            url: getUrl(queryAPIUrl, queryParam),
-            jar: false // to enable sessions
-        };
-    };
 
     var formatRow = function(row, queryType, groupBy) {
         if (row._id) {
@@ -263,8 +216,18 @@ require('./_main')(function(GLOBALS) {
                             orgType = 'publisher';
                         }
                         var subject = "Cliques Query Results - " + query.name + " - " + moment(asOfDate).format('MMMM D, YYYY');
+
+                        var queryModel = new Query(query);
+
                         return generateReport(
-                            getRequestParams(query, orgType),
+                            {
+                                auth: {
+                                    user: GLOBALS.args.username,
+                                    pass: GLOBALS.args.password
+                                },
+                                url: BASE_URL + queryModel.getUrl(orgType),
+                                jar: false // to enable sessions
+                            },
                             subject,
                             toEmail,
                             'cron-report-email.server.view.html',
