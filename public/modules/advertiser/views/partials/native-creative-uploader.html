@@ -6,8 +6,9 @@
                 <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
                     <h4>Drag Your Native Ad Images Here</h4>
                     <p>Each image will be automatically cropped & resized to fit each Site's native placement.</p>
-                    <p><small class="text-muted">Supported types:<em>.png .jpeg</em></small></p>
-                    <p><small class="text-muted">Maximum dimensions:<em> {{ NATIVE_SPECS.image.maxHeightPx }}x{{ NATIVE_SPECS.image.maxWidthPx }}</em></small></p>
+                    <p><small class="text-muted">Supported File Types: <em>.png .jpeg</em></small></p>
+                    <p><small class="text-muted">Minimum Dimensions:<em> {{ NATIVE_SPECS.image.minHeightPx }}x{{ NATIVE_SPECS.image.minWidthPx }}</em></small></p>
+                    <p><small class="text-muted">Maximum Dimensions:<em> {{ NATIVE_SPECS.image.maxHeightPx }}x{{ NATIVE_SPECS.image.maxWidthPx }}</em></small></p>
                     <p><small class="text-muted">Max File Size:<em> {{ NATIVE_SPECS.image.maxSizeKb }} KB</em></small></p>
                 </div>
             </div>
@@ -19,14 +20,14 @@
         <form action="#" name="nativeCreativeUploadQueue" id="nativeCreativeUploadQueue" validate-form="" novalidate="">
             <p ng-if="uploader.queue.length" class="pull-right label label-info">Queue length: {{ uploader.queue.length }}</p>
             <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
-            <div ng-if="uploader.queue.length">
+            <span ng-if="uploader.queue.length">
                 <table ng-if="uploader.queue.length" class="table">
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Click URL</th>
-                        <th>Ad Title</th>
-                        <th>Full Ad Copy</th>
+                        <th>Name*</th>
+                        <th>Click URL*</th>
+                        <th>Ad Title*</th>
+                        <th>Full Ad Copy*</th>
                         <th>Actions</th>
                         <th ng-show="uploader.isHTML5">Progress</th>
                         <th>Status</th>
@@ -48,8 +49,16 @@
                             <!--<input name="copyLong" type="text" data-parsley-type="text" data-ng-model="item.native.copyLong" id="{{ item.file.name }}_copyLong" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="Min 100 characters, Max 170." required="required">-->
                         </td>
                         <td nowrap="">
-                            <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove">
-                                <span class="icon-trash mr"></span>Remove</button>
+                            <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove" tooltip="Remove">
+                                <span class="icon-trash"></span></button>
+                            <button type="button" ng-click="openTrackerDialog(item)" class="btn btn-primary btn-xs" analytics-on="click" analytics-event="CreativeUploader_AddTrackers"
+                                tooltip="Add/manage 3rd party tracking pixels.">
+                                <span class="fa fa-tags"></span>
+                                &nbsp;
+                                <span ng-if="item.impTracker || item.clickTracker">
+                                    {{ item.impTracker && item.clickTracker ? "2" : "1"}}
+                                </span>
+                            </button>
                         </td>
                         <td ng-show="uploader.isHTML5">
                             <div style="margin-bottom: 0;" class="progress progress-xs">

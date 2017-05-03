@@ -82,6 +82,8 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         name: fileItem.file.name,
                         click_url: fileItem.click_url,
                         type: 'native',
+                        impTracker: fileItem.impTracker,
+                        clickTracker: fileItem.clickTracker,
                         native: {
                             rawImageUrl: fileItem.rawImageUrl,
                             rawImageW: fileItem.rawImageW,

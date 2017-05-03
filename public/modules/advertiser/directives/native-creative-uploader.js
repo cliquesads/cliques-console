@@ -1,7 +1,7 @@
 
 angular.module('advertiser').directive('nativeCreativeUploader', [
-    'NATIVE_SPECS',
-    function(NATIVE_SPECS){
+    'NATIVE_SPECS','ngDialog',
+    function(NATIVE_SPECS, ngDialog){
         'use strict';
         return {
             restrict: 'E',
@@ -106,6 +106,22 @@ angular.module('advertiser').directive('nativeCreativeUploader', [
                 scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
                     // Add Google Cloud URL to fileitem when it successfully uploads
                     fileItem.rawImageUrl = response.url;
+                };
+
+                scope.openTrackerDialog = function(creative){
+                    ngDialog.open({
+                        className: 'ngdialog-theme-default dialogwidth400',
+                        template: 'modules/advertiser/views/partials/add-trackers-dialog.html',
+                        controller: ['$scope',function($scope){
+                            $scope.creative = $scope.ngDialogData.creative;
+                            $scope.submit = function(){
+                                if ($scope.trackersForm.$valid){
+                                    $scope.closeThisDialog(true);
+                                }
+                            };
+                        }],
+                        data: {creative: creative }
+                    });
                 };
             }
         };

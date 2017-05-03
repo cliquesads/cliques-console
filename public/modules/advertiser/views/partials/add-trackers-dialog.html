@@ -1,0 +1,23 @@
+<h4>Add 1x1 Tracking Pixels</h4>
+<p>Use the form below to add any <strong>3rd-party 1x1 tracking pixels</strong>, e.g. DoubleClick impression or click trackers</p>
+<form name="trackersForm" id="trackersForm" data-ng-submit="submit()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="impTracker">Impression Pixel</label>
+                <input name="impTracker" id="impTracker" type="url" data-ng-model="creative.impTracker" class="form-control" placeholder="http://www.example.com">
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="impTracker">Click Pixel</label>
+                <input name="clickTracker" id="clickTracker" type="url" data-ng-model="creative.clickTracker" class="form-control" placeholder="http://www.example.com">
+            </div>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary">OK</button>
+        </div>
+    </div>
+</form>
