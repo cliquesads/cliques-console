@@ -151,84 +151,6 @@ angular.module('analytics').factory('Analytics', [
         return headers;
     };
 
-    var _getRowTitle = function(row, queryType, dateGroupBy, groupBy){
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        if (queryType === 'time') {
-            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            if (dateGroupBy === 'hour') {
-                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
-            } else if (dateGroupBy === 'day') {
-                row.Day = row[queryType];
-            } else {
-                // date group by month
-                row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
-            }
-        } else if (queryType === 'custom') {
-            // TO-DO:::ycx should fill in row[custom] for customized query
-        } else {
-            var queryTypeHeader = _.capitalize(queryType);
-            var val = row._id[queryType];
-            if (val){
-                // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city'){
-                    // otherwise, get name of populated object
-                    val = row._id[queryType].name;
-                }
-            } else {
-                // fill blank values
-                val = "<No " + queryTypeHeader + " Provided>";
-            }
-            row[queryTypeHeader] = val;
-        }
-    };
-
-    var _getRowLogo = function(row, queryType, dateGroupBy, groupBy){
-        // Logo for each row
-        if (queryType === 'campaign' || queryType === 'creative') {
-            row.logo = row._id.advertiser;
-            row._logo_type = 'Advertiser';
-        } else if (queryType === 'site' || queryType ==='placement') {
-            row.logo = row._id.publisher;
-            row._logo_type = 'Publisher';
-        }
-    };
-
-    /**
-     * Decide default query table headers based on user/organization type,
-     * and also calculate field values for each table row
-     */
-    var formatQueryTable = function(rows, queryType, dateGroupBy, groupBy) {
-        rows.forEach(function(row) {
-            _getRowTitle(row, queryType, dateGroupBy, groupBy);
-            _getRowLogo(row, queryType, dateGroupBy, groupBy);
-            row.Impressions = $filter('number')(row.imps);
-            row.Spend = $filter('currency')(row.spend, '$', 2);
-            row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
-            row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): '0';
-            row['Total Actions'] = row.view_convs + row.click_convs;
-            row.Clicks = $filter('number')(row.imps);
-            row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
-            row.Bids = $filter('number')(row.imps);
-            row.Revenue = $filter('currency')(row.spend, '$', 2);
-            row['View-Through Actions'] = row.view_convs;
-            row['Click-Through Actions'] = row.click_convs;
-            row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
-            row.CPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
-            row.CPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row.RPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
-            row.Defaults = $filter('number')(row.defaults);
-            row.RPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
-            row.RPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
-            row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row['Fill Rate'] = row.defaults ? $filter('percentage')(row.imps / (row.imps + row.defaults), 2) : '0';
-            row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
-            row['Win Rate'] = row.bids ? $filter('percentage')(row.imps / row.bids, 2) : '0';
-        });
-        return rows;
-    };
-
     return {
         generateCSVData: generateCSVData,
         getCSVFileName: getCSVFileName,
@@ -237,7 +159,6 @@ angular.module('analytics').factory('Analytics', [
         getAllCountries: getAllCountries,
         getRegions: getRegions,
         queryFunction: queryFunction,
-        getQueryTableHeaders: getQueryTableHeaders, 
-        formatQueryTable: formatQueryTable 
+        getQueryTableHeaders: getQueryTableHeaders,
     };
 }]);

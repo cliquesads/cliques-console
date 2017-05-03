@@ -11,6 +11,93 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
     async = require('async'),
     moment = require('moment-timezone');
 
+var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSection) {
+    if (lengthOfSection === undefined) {
+        lengthOfSection = 3; 
+    }
+    if (lengthOfDecimal === undefined) {
+        lengthOfDecimal = 2;
+    }
+    if (!prefix) {
+        prefix = '';
+    }
+    if (!suffix) {
+        suffix = '';
+    }
+    var re = '\\d(?=(\\d{' + (lengthOfSection || 3) + '})+' + (lengthOfDecimal > 0 ? '\\.' : '$') + ')';
+    return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
+};
+
+var formatQueryResults = function(rows, queryType, dateGroupBy) {
+    var monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    rows.forEach(function(row) {
+        // get row title
+        if (queryType === 'time') {
+            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            if (dateGroupBy === 'hour') {
+                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
+            } else if (dateGroupBy === 'day') {
+                row.Day = row[queryType];
+            } else {
+                // date group by month
+                row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
+            }
+        } else {
+            var queryTypeHeader = _.capitalize(queryType);
+            var val = row._id[queryType];
+            if (val){
+                // city doesn't get populated, so _id.city == city name
+                if (queryType !== 'city'){
+                    // otherwise, get name of populated object
+                    val = row._id[queryType].name;
+                }
+            } else {
+                // fill blank values
+                val = "<No " + queryTypeHeader + " Provided>";
+            }
+            row[queryTypeHeader] = val;
+        }
+
+        // get row logo
+        if (queryType === 'campaign' || queryType === 'creative') {
+            row.logo = row._id.advertiser;
+            row._logo_type = 'Advertiser';
+        } else if (queryType === 'site' || queryType ==='placement') {
+            row.logo = row._id.publisher;
+            row._logo_type = 'Publisher';
+        }
+
+        row.Impressions = filterNumber(row.imps, '', '', 0);
+        row.Spend = filterNumber(row.spend, '$', '');
+        row.CPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$', '') : '0';
+        row.CTR = row.imps ? filterNumber(row.clicks / row.imps, '', '%'): '0';
+        row['Fill Rate'] = row.defaults ? filterNumber(row.imps / (row.imps + row.defaults), '', '%') : '0';
+        row['Total Actions'] = row.view_convs + row.click_convs;
+        row.Clicks = filterNumber(row.imps, '', '', 0);
+        row.CPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '0';
+        row.Bids = filterNumber(row.imps, '', '', 0);
+        row.Uniques = row.uniques;
+        row['View-Through Actions'] = row.view_convs;
+        row['Click-Through Actions'] = row.click_convs;
+        row.CPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '0';
+        row.CPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '0';
+        row.CPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '0';
+        row.RPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$') : '0';
+        row.Defaults = filterNumber(row.defaults, '', '', 0);
+        row.RPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '0';
+        row.RPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '0';
+        row.RPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '0';
+        row.RPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '0';
+        row['Win Rate'] = row.bids ? filterNumber(row.imps / row.bids, '', '%') : '0';
+        row.Revenue = filterNumber(row.spend, '$');
+
+    });
+    return rows;
+};
+
 /**
  * Constructor for PipelineVarsBuilder object, which translates API request
  * path params into MongoDB Aggregation Pipeline-compatible objects.
@@ -420,9 +507,11 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         if (err) {
                             return res.status(400).send({ message: err });
                         }
+                        results = formatQueryResults(results, req.query.type, req.query.dateGroupBy);
                         res.json(results);
                     });
                 } else {
+                    adStats = formatQueryResults(adStats, req.query.type, req.query.dateGroupBy);
                     res.json(adStats);
                 }
             }

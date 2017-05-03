@@ -23,40 +23,6 @@ require('./_main')(function(GLOBALS) {
         Organization = mongoose.model('Organization'),
         User = mongoose.model('User');
 
-    var formatRow = function(row, queryType, groupBy) {
-        if (row._id) {
-            if (queryType === 'time') {
-                row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            } else {
-                row[queryType] = row._id[queryType].name;
-            }
-        }
-        row.Impressions = row.imps;
-        row.Spend = '$' + row.spend.toFixed(2);
-        row.CPM = row.imps ? ('$' + ((row.spend / row.imps) * 1000).toFixed(2)) : '0';
-        row.CTR = row.imps ? (((row.clicks / row.imps) * 100).toFixed(3) + '%') : '0';
-        row['Fill Rate'] = (row.imps + row.defaults) ? (((row.imps / (row.imps + row.defaults)) * 100).toFixed(1) + '%') : '0';
-        row['Total Actions'] = row.view_convs + row.click_convs;
-        row.Clicks = row.clicks;
-        row.CPC = row.clicks ? (row.spend / row.clicks, '$', 2) : '0';
-        row.Bids = row.bids;
-        row.Uniques = row.uniques;
-        row['View-Through Actions'] = row.view_convs;
-        row['Click-Through Actions'] = row.click_convs;
-        row.CPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : '0';
-        row.CPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : '0';
-        row.CPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-        row.RPM = row.imps ? row.spend / row.imps * 1000 : '0';
-        row.Defaults = row.defaults;
-        row.RPAV = row.view_convs ? (row.spend / row.view_convs, '$', 2) : '0';
-        row.RPAC = row.click_convs ? (row.spend / row.click_convs, '$', 2) : '0';
-        row.RPA = (row.view_convs + row.click_convs) ? (row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-        row['Fill Rate'] = row.defaults ? row.imps / (row.defaults + row.imps) : '0';
-        row.RPC = row.clicks ? (row.spend / row.clicks, '$', 2) : '0';
-
-        return row;
-    };
-
     var sortByDate = function(a, b) {
         var aDate, bDate;
         if (a._id.date.day && a._id.date.hour) {
@@ -96,29 +62,8 @@ require('./_main')(function(GLOBALS) {
                 }
             }
 
-            // calculate totals, store in separate object
-            var totals = {
-                imps: _.sumBy(rows, function(r) {
-                    return r.imps;
-                }),
-                defaults: _.sumBy(rows, function(r) {
-                    return r.defaults;
-                }),
-                spend: _.sumBy(rows, function(r) {
-                    return r.spend;
-                }),
-                clicks: _.sumBy(rows, function(r) {
-                    return r.clicks;
-                })
-            };
-            totals = formatRow(totals, query.type, query.groupBy);
-
-            // Now calculate derived fields and format (template engine
-            // doesn't handle formatting filters)
-
             rows.forEach(function(row) {
-                row = formatRow(row, query.type, query.groupBy);
-                // write to csv as well, only picking headers passed in
+                // write each row to csv, only picking headers passed in
                 csv.write(_.pick(row, headers));
             });
 
