@@ -57,11 +57,6 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
             campaignType: 'display'
         };
 
-        // Set metaStep to 'campaignWizard' if there are no campaigns in advertiser
-        if (!$scope.initCampaigns || $scope.initCampaigns.length === 0){
-            $scope.stepControl.metaStep = 'campaign-wizard';
-        }
-
         // Success handler
         $scope.updateAdvertiser = function(campaign){
             $scope.loading = true;
