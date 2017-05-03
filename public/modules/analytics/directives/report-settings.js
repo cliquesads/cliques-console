@@ -257,13 +257,64 @@ angular.module('analytics').directive('reportSettings', [
                                         $scope.crontabHour += 12;
                                     }
                                 }
-                                if ($scope.isScheduled){
+                                if ($scope.isScheduled) {
+                                    var nowInUserTimzone = moment.tz(user.tz);
+                                    var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
+
+                                    var scheduledTime = moment.tz(user.tz);
+                                    scheduledTime.minute($scope.crontabMinute);
+                                    scheduledTime.hour($scope.crontabHour);
+
+                                    var tempDate = scheduledTime.day();
+
+                                    scheduledTime.add(timezoneOffsetInMinute, 'minutes');
+
+                                    var dayOffset = scheduledTime.day() - tempDate;
+                                    if (dayOffset !== 0) {
+                                        switch ($scope.crontabDay) {
+                                            case CRONTAB_DAY_OPTIONS['Every week day']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 2-6' : ' * * 0-4');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['The 1st of each month']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' 2 * *' : ' 28 * *');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['The last day of each month']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' 1 * *' : ' 27 * *');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Monday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 2' : ' * * 7');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Tuesday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 3' : ' * * 1');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Wednesday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 4' : ' * * 2');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Thursday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 5' : ' * * 3');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Friday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 6' : ' * * 4');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Saturday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 7' : ' * * 5');
+                                                break;
+                                            case CRONTAB_DAY_OPTIONS['Every Sunday']:
+                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 1' : ' * * 6');
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    $scope.crontabHour = scheduledTime.hour();
+                                    $scope.crontabMinute = scheduledTime.minute();
+
                                     $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
                                 }
-                                // Post query param to backend
-                                scope.selectedSettings.isSaved = true;
 
                                 // update this query by setting `isSaved` to true and also `schedule` field if any
+                                // Post query param to backend
+                                $scope.selectedSettings.isSaved = true;
                                 new Query($scope.selectedSettings).$update(function(response) {
                                     Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
                                         status: 'success'

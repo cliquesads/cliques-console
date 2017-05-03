@@ -21,7 +21,7 @@ var ITEMS_PER_PAGE = 25;
  * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
  */
 var validateScheduleString = function(scheduleString) {
-    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5)$/;
+    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5|2-6|0-4)$/;
     return re.test(scheduleString);
 };
 
