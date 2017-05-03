@@ -104,7 +104,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         };
         $scope.editCreatives = function(){
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
+                className: 'ngdialog-theme-default dialogwidth1000',
                 template: 'modules/advertiser/views/partials/edit-creatives.html',
                 controller: 'editCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
