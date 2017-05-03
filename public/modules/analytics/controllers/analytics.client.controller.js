@@ -47,71 +47,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         };
     }
 ]).controller('AnalyticsCustomizeController', [
-    '$scope', '$rootScope', '$state', '$stateParams', 'ngDialog', 'Analytics', 'CUSTOMQUERY','Query',
-    function($scope, $rootScope, $state, $stateParams, ngDialog, Analytics, CUSTOMQUERY, Query) {
-        $scope.availableSettings = CUSTOMQUERY[$rootScope.role].availableSettings;
-        if ($stateParams.defaultQueryParam) {
-            $scope.defaultQueryParam = $stateParams.defaultQueryParam;
-        } else {
-            // $state.go('app._analytics.analytics.customQuery');
-            $scope.defaultQueryParam = CUSTOMQUERY[$rootScope.role].defaultQueryParam;
-        }
-        /************************ CUSTOM QUERY & RESULTS ************************/
-        $scope.showSaveQueryDialog = function() {
-            $scope.defaultQueryParam.isSaved = true;
-            var parentScope = $scope;
-            ngDialog.open({
-                template: 'modules/analytics/views/partials/save-query-dialog.html',
-                controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', function($scope, CRONTAB_DAY_OPTIONS, Notify) {
-                    $scope.selectedSettings = parentScope.defaultQueryParam;
-                    $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
-                    $scope.isScheduled = false;
-
-                    $scope.saveQuery = function() {
-                        if ($scope.crontabAmPm === 'PM'){
-                            $scope.crontabHour += 12;
-                        }
-                        if ($scope.isScheduled){
-                            $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
-                        }
-                        // Post query param to backend
-                        new Query($scope.selectedSettings).$create(function(response) {
-                            // Notify that this query has been saved and inform other directives the saved query id
-                            $rootScope.$broadcast('querySaved', {
-                                savedQueryId: response.id,
-                                filters: response.filters
-                            });
-                            $scope.closeThisDialog(0);
-                        }, function(error) {
-                            Notify.alert(error.message, {
-                                status: 'danger'
-                            });
-                            $scope.closeThisDialog(1);
-                        });
-                    };
-                }]
-            });
-        };
-
-        $scope.timePeriodChanged = function() {
-            if ($scope.defaultQueryParam.dateRangeShortCode) {
-                // set up start date and end date if not designated as custom dates by user already, also setup date range title for displaying and humanizedDateRange so as to save in database in case needed
-                if ($scope.defaultQueryParam.dateRangeShortCode !== 'custom') {
-                    $scope.defaultQueryParam.startDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].startDate;
-                    $scope.defaultQueryParam.endDate = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].endDate;
-                    // humanizedDateRange setup for selected date short code
-                    $scope.defaultQueryParam.humanizedDateRange = $scope.dateRanges[$scope.defaultQueryParam.dateRangeShortCode].label;
-                } else {
-                    // humanizedDateRange setup for custom selected start/end date
-                    var momentStartDate = moment($scope.defaultQueryParam.startDate);
-                    var momentEndDate = moment($scope.defaultQueryParam.endDate);
-
-                    $scope.defaultQueryParam.humanizedDateRange = momentStartDate.format('YYYY-MM-DD') + ' - ' + momentEndDate.format('YYYY-MM-DD');
-                }
-            }
-        };
-        $scope.showCustomizedQueryResult = function() {
-            $state.go('app._analytics.analytics.customQuery.result', {defaultQueryParam: $scope.defaultQueryParam});
-        };
+    '$scope',
+    function($scope) {
     }
 ]);

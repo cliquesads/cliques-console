@@ -108,7 +108,7 @@ module.exports = function(db) {
 						var dateRange = newQuery.getDatetimeRange(req.user.tz);
 						return res.json({
 							id: newQuery._id,
-							dateRange: dateRange
+							dateRange: newQuery.getDatetimeRange(req.user.tz)
 						});
 					})
 					.catch(function(err) {
@@ -144,7 +144,10 @@ module.exports = function(db) {
 					if (err) {
 						return res.status(400).send({ message: err });
 					}
-					res.json(query);
+					return res.json({
+						id: query._id,
+						dateRange: query.getDatetimeRange(req.user.tz)
+					});
 				});
 			},
 

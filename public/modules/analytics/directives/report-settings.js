@@ -11,6 +11,7 @@ angular.module('analytics').directive('reportSettings', [
     'Publisher',
     'Notify',
     'ngDialog',
+    'Query',
     function(
         $rootScope,
         aggregationDateRanges,
@@ -19,7 +20,8 @@ angular.module('analytics').directive('reportSettings', [
         Advertiser,
         Publisher,
         Notify,
-        ngDialog
+        ngDialog,
+        Query
     ) {
         'use strict';
         return {
@@ -34,8 +36,35 @@ angular.module('analytics').directive('reportSettings', [
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
                 scope.launchQuery = function() {
-                    // Send broadcast message to notify query graph/table directive to launch query
-                    $rootScope.$broadcast('launchQuery', {queryParam: scope.selectedSettings});
+                    $rootScope.$broadcast('queryStarted');
+
+                    var queryResults;
+                    Analytics.queryFunction(scope.selectedSettings.type, $rootScope.role)(scope.selectedSettings)
+                    .then(function(response) {
+                        queryResults = response.data;
+                        if (!scope.selectedSettings._id) {
+                            // This query has NOT been saved yet, save it to backend database
+                            return new Query(scope.selectedSettings).$create();
+                        } else {
+                            // This query is already saved, update it in backend database
+                            return new Query(scope.selectedSettings).$update();
+                        }
+                    })
+                    .then(function(response) {
+                        var savedOrUpdatedQuery = response.data;
+
+                        scope.selectedSettings._id = response.id;
+                        scope.selectedSettings.dateRange = response.dateRange;
+
+                        $rootScope.$broadcast('queryEnded', {
+                            queryParam: scope.selectedSettings,
+                            results: queryResults
+                        });
+                    })
+                    .catch(function(error) {
+                        Notify.alert('Error on query'); 
+                        $rootScope.$broadcast('queryError');
+                    });
                 };
 
                 scope.shouldLaunchQuery = function(numberOfFiltersToFetch) {

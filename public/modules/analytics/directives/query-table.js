@@ -26,51 +26,26 @@ angular.module('analytics').directive('queryTable', [
 				// table collapse state
 				scope.isCollapsed = false;
 			    scope.user = user;
-			    // Listen to broadcast to launchQuery
-				scope.$on('launchQuery', function(event, args) {
-					scope.queryParam = args.queryParam;
-					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
-					scope.getTableData(scope.queryParam);
-				});
-				// Listen to broadcast message when query is saved to the backend
-				scope.$on('querySaved', function(event, args) {
-					scope.queryParam._id = args.savedQueryId;
-				});
-				/**
-				 * Make query and display query results
-				 */
-				scope.getTableData = function(queryParam) {
-					scope.isLoading = true;
-					scope.humanizedDateRange = queryParam.humanizedDateRange;
-					// query aggregations endpoint
-					scope.queryFunction(queryParam)
-					.then(function(response) {
-						scope.isLoading = false;
-						scope.tableQueryResults = response.data;
+			    scope.isLoading = true;
 
-						// Decide default table headers and format/calculate values for each row
-						scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, $rootScope.role, scope.queryParam.additionalHeaders);
-						scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
-					})
-					.then(function() {
-						if (!queryParam._id) {
-							// This query has NOT been saved yet, save it to backend database
-							return new Query(queryParam).$create()
-							.then(function(response) {
-								$rootScope.$broadcast('querySaved', {
-									savedQueryId: response.id,
-								});
-							});
-						} else {
-							// This query is already saved, update it in backend database
-							return new Query(queryParam).$update();
-						}
-					})
-					.catch(function(error) {
-						scope.isLoading = false;
-						Notify.alert('Error on query for table data.');
-					});
-				};
+				scope.$on('queryStarted', function(event, args) {
+					scope.isLoading = true;
+				});
+				scope.$on('queryError', function(event, args) {
+					scope.isLoading = false;
+				});
+				scope.$on('queryEnded', function(event, args) {
+					scope.isLoading = false;
+					scope.queryParam = args.queryParam;
+					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
+
+					scope.tableQueryResults = args.results;
+
+					// Decide default table headers and format/calculate values for each row
+					scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, $rootScope.role, scope.queryParam.additionalHeaders);
+					scope.tableQueryResults = Analytics.formatQueryTable(scope.tableQueryResults, scope.queryParam.type, scope.queryParam.dateGroupBy, scope.queryParam.groupBy);
+				});
+
 				/**
 				 * Sort table by specific column
 				 * TODO: bll Should really just handle sorting with lodash `sortBy` function
