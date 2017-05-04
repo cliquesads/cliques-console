@@ -14,9 +14,7 @@ angular.module('analytics').directive('queryGeo', [
 		'use strict';
 		return {
 			restrict: 'E',
-			scope: {
-				queryType: '='
-			},
+			scope: {},
 			templateUrl: 'modules/analytics/views/partials/query-geo.html',
 			link: function(scope, element, attrs) {
 				scope.user = user;
