@@ -268,21 +268,6 @@ angular.module('analytics').config(['$stateProvider',
                     controller: 'AnalyticsSidebarController'
                 }
             }
-        }).
-        state('app._analytics.analytics.customQuery.result', {
-            url: '/result',
-            params: {
-                defaultQueryParam: null
-            },
-            resolve: {
-                $title: function(){ return 'Query Result'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/analytics/views/partials/custom-query-result.client.view.html',
-                    controller: 'AnalyticsCustomizeController'
-                }
-            }
         });
 	}
 ]);
