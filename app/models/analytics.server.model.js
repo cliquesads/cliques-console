@@ -107,13 +107,6 @@ QuerySchema.methods.getUrl = function(organizationType) {
             break;
     }
     var copiedQuery = JSON.parse(JSON.stringify(this));
-
-    delete copiedQuery.dataHeaders;
-    delete copiedQuery.createdAt;
-    delete copiedQuery.updatedAt;
-    delete copiedQuery._id;
-    delete copiedQuery.nextRun;
-
     return queryAPIUrl + '?' + querystring.stringify(copiedQuery); 
 };
 

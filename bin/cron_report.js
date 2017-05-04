@@ -7,7 +7,6 @@ var csvWriter = require('csv-write-stream');
 var mail = require('../app/controllers/mailer.server.controller');
 var _ = require('lodash');
 var base64 = require('base64-stream');
-
 var promise = require('bluebird');
 
 var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com", templatePath: '../app/views/templates' });
@@ -15,13 +14,9 @@ var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
     var mongoose = GLOBALS.mongoose;
-
     require('../app/models/analytics.server.model');
     require('../app/models/organization.server.model');
-
-    var Query = mongoose.model('Query'),
-        Organization = mongoose.model('Organization'),
-        User = mongoose.model('User');
+    var Query = mongoose.model('Query');
 
     var sortByDate = function(a, b) {
         var aDate, bDate;
@@ -107,85 +102,64 @@ require('./_main')(function(GLOBALS) {
     };
 
     var asOfDate = moment().startOf('day').subtract(1, 'days').toISOString();
-    Query.promisifiedFind = promise.promisify(Query.find);
-    // Find all queries from database and check if any of them are saved as periodic queries and are due at the moment
-    return Query.promisifiedFind({
+    // Find all queries with schedule, populate user and organization as well and check if any of them are due for the nextRun at the time being
+    return Query.find({
         schedule: {
             $exists: true,
             $ne: null
         }
     })
+    .populate({
+        path: 'user',
+        populate: {
+            path: 'organization'
+        }
+    })
     .then(function(scheduledQueries) {
         return promise.each(scheduledQueries, function(query) {
-            if (query.schedule) {
-                // This query is saved as a periodic query
-                var now = new Date();
-                var nextRunForQuery = new Date(query.nextRun);
+            // This query is saved as a periodic query
+            var now = new Date();
+            var nextRunForQuery = new Date(query.nextRun);
 
-                var toEmail;
-                var tz;
-                if (nextRunForQuery < now) {
-                    // The next execution time for this query is overdue
-                    // 1. Update the `nextRun` field for this query in database
-                    // 2. Run this query and generate csv report
-                    var interval = parser.parseExpression(query.schedule);
-                    var nextRun = new Date(interval.next().toString());
-                    while (nextRun < now) {
-                        nextRun = new Date(interval.next().toString());
-                    }
-                    query.nextRun = nextRun;
-                    query.promisifiedSave = promise.promisify(query.save);
-                    return query.promisifiedSave()
-                    .then(function() {
-                        User.promisifiedFindOne = promise.promisify(User.findOne);
-                        return User.promisifiedFindOne({
-                            _id: query.user
-                        });
-                    })
-                    .then(function(user) {
-                        toEmail = user.email;
- 
-                        tz = user.tz;
-                        Organization.promisifiedFindOne = promise.promisify(Organization.findOne);
-                        return Organization.promisifiedFindOne({
-                            _id: user.organization
-                        });
-                    })
-                    .then(function(organization) {
-                        var orgType;
-                        if (organization.organization_types.indexOf('networkAdmin') > -1) {
-                            orgType = 'networkAdmin';
-                        } else if (organization.organization_types.indexOf('advertiser') > -1) {
-                            orgType = 'advertiser';
-                        } else if (organization.organization_types.indexOf('publisher') > -1) {
-                            orgType = 'publisher';
-                        }
-                        var subject = "Cliques Query Results - " + query.name + " - " + moment(asOfDate).format('MMMM D, YYYY');
+            if (nextRunForQuery < now) {
+                var toEmail = query.user.email;
+                var tz = query.user.tz;
 
-                        var queryModel = new Query(query);
-
-                        return generateReport(
-                            {
-                                auth: {
-                                    user: GLOBALS.args.username,
-                                    pass: GLOBALS.args.password
-                                },
-                                url: BASE_URL + queryModel.getUrl(orgType),
-                                jar: false // to enable sessions
-                            },
-                            subject,
-                            toEmail,
-                            'cron-report-email.server.view.html',
-                            query.dataHeaders,
-                            asOfDate,
-                            query,
-                            tz
-                        );
-                    })
-                    .catch(function(err) {
-                        console.error(err);
-                    });
+                // The next execution time for this query is overdue
+                // 1. Update the `nextRun` field for this query in database
+                // 2. Run this query and generate csv report
+                var interval = parser.parseExpression(query.schedule);
+                var nextRun = new Date(interval.next().toString());
+                while (nextRun < now) {
+                    nextRun = new Date(interval.next().toString());
                 }
+                query.nextRun = nextRun;
+                return query.save()
+                .then(function() {
+                    var orgType = query.user.organization.effectiveOrgType;
+                    var subject = "Cliques Query Results - " + query.name + " - " + moment(asOfDate).format('MMMM D, YYYY');
+                    var queryModel = new Query(query);
+                    return generateReport(
+                        {
+                            auth: {
+                                user: GLOBALS.args.username,
+                                pass: GLOBALS.args.password
+                            },
+                            url: BASE_URL + queryModel.getUrl(orgType),
+                            jar: false // to enable sessions
+                        },
+                        subject,
+                        toEmail,
+                        'cron-report-email.server.view.html',
+                        query.dataHeaders,
+                        asOfDate,
+                        query,
+                        tz
+                    );
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
             }
         });
     })
