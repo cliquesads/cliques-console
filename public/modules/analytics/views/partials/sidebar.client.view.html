@@ -5,7 +5,11 @@
     </a>
     <ul>
         <li ng-repeat="query in myQueries">
-            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckMyQuery">{{ query.name }}</a><br/>
+            <a ui-sref="app._analytics.analytics.myQueriesList.myQuery({ queryId: query._id, query: query })"
+                analytics-on="click"
+                analytics-event="AnalyticsSidebar_CheckMyQuery">
+                {{ query.name }}
+            </a><br/>
             <small>{{ query.createdAt }}</small>
         </li>
         <li ng-if="myQueries.length === 0">No Custom Queries</li>
@@ -22,7 +26,11 @@
     </a>
     <ul>
         <li ng-repeat="query in recentQueries">
-            <a href="" ng-click="goToQuerySection(query)" analytics-on="click" analytics-event="AnalyticsSidebar_CheckRecentQuery">{{ query.name }}</a><br/>
+            <a ui-sref="app._analytics.analytics.recentQueriesList.recentQuery({ queryId: query._id })"
+                analytics-on="click"
+                analytics-event="AnalyticsSidebar_CheckRecentQuery">
+                {{ query.name }}
+            </a><br/>
             <small>{{ query.createdAt }}</small>
         </li>
         <li ng-if="recentQueries.length === 0">No Recent Queries</li>

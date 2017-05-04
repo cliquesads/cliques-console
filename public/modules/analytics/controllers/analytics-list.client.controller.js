@@ -50,10 +50,10 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.loadRelatedQueries();
 
 		$scope.goToQuerySection = function(query) {
-			if (query.type !== 'custom') {
-				$state.go('app._analytics.analytics.quickQueries.' + query.type, {query: query});
+			if (query.isSaved) {
+				$state.go('app._analytics.analytics.myQueriesList.myQuery', {queryId: query._id});
 			} else {
-				$state.go('app._analytics.analytics.customQuery.result', {query: query});
+				$state.go('app._analytics.analytics.recentQueriesList.recentQuery', {queryId: query._id});
 			}
 		};
 

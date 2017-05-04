@@ -1,28 +1,18 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$stateParams', 'aggregationDateRanges', '$state', 'Analytics', 'QUICKQUERIES',
-    function($rootScope, $scope, $stateParams, aggregationDateRanges, $state, Analytics, QUICKQUERIES) {
-        $scope.user = user;
+angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$state', 'Analytics', 'QUICKQUERIES',
+    function($rootScope, $scope, $state, Analytics, QUICKQUERIES) {
 
         // Depending on different organization type, quick query options may vary
         $scope.quickQueries = QUICKQUERIES[$rootScope.role];
-        $scope.currentQueryType = $state.current.queryType;
+        var currentQueryType = $state.current.queryType;
 
         /********************** DEFAULT QUERY PARAM VALUES **********************/
-        $scope.dateRanges = aggregationDateRanges(user.tz);
-        if ($stateParams.query) {
-            // History query entered from sidebar or history query list
-            $scope.defaultQueryParam = $stateParams.query;
-            $scope.defaultQueryParam.populate = $scope.defaultQueryParam.groupBy;
-            // delete date related
-            delete $scope.defaultQueryParam.createdAt;
-            delete $scope.defaultQueryParam.updatedAt;
-            delete $scope.defaultQueryParam.nextRun;
-        } else if ($scope.currentQueryType) {
+        if (currentQueryType) {
             // new query
             // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
-            $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[$scope.currentQueryType].defaultQueryParam));
+            $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[currentQueryType].defaultQueryParam));
             // Prepare dataHeaders for this new query
             $scope.defaultQueryParam.dataHeaders = [];
             var tableHeaders = Analytics.getQueryTableHeaders(
@@ -39,12 +29,18 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
         }
 
         /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
-        if ($scope.currentQueryType) {
-            $scope.availableSettings = $scope.quickQueries[$scope.currentQueryType].availableSettings;
+        if (currentQueryType) {
+            $scope.availableSettings = $scope.quickQueries[currentQueryType].availableSettings;
         }
-        $scope.goToQuerySection = function(queryRoute) {
-            $state.go(queryRoute);
-        };
+    }
+]).controller('HistoryAnalyticsController', [
+    '$rootScope', '$scope', 'query', 'QUICKQUERIES',
+    function($rootScope, $scope, query, QUICKQUERIES) {
+        // History query entered from sidebar or history query list
+        $scope.defaultQueryParam = query;
+
+        $scope.quickQueries = QUICKQUERIES[$rootScope.role];
+        $scope.availableSettings = $scope.quickQueries[query.type].availableSettings;
     }
 ]).controller('AnalyticsCustomizeController', [
     '$scope',

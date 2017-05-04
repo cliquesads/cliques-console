@@ -1,7 +1,7 @@
 <div class="col-sm-4"
      ng-repeat="(key, query) in quickQueries">
     <div class="query-block"
-         ng-click="goToQuerySection(query.route)"
+         ng-click="$state.go(query.route)"
          analytics-on="click"
          analytics-event="QuickQueries_{{ query.name }}">
         <h3>{{ query.name }}</h3>
