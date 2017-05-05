@@ -8,9 +8,26 @@
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<button ng-click="showSaveQueryDialog()" class="btn btn-sm btn-primary mt-sm">
+				<!-- Button to edit schedule if query already scheduled -->
+				<button
+					ng-click="showSaveOrScheduleQueryDialog('schedule')"
+					class="btn btn-sm btn-primary mt-sm"
+					ng-if="selectedSettings.schedule">
 					<span>
+						<i class="fa fa-floppy-o"></i> Edit Schedule
+					</span>
+				</button>
+
+				<!-- Button to save / schedule query -->
+				<button
+					ng-click="showSaveOrScheduleQueryDialog()"
+					class="btn btn-sm btn-primary mt-sm"
+					ng-if="!queryParamSaved">
+					<span ng-if="!selectedSettings.schedule">
 						<i class="fa fa-floppy-o"></i> Save / Schedule
+					</span>
+					<span ng-if="selectedSettings.schedule">
+						<i class="fa fa-floppy-o"></i> Save
 					</span>
 				</button>
 			</div>

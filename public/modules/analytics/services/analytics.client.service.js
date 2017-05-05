@@ -15,8 +15,8 @@ angular.module('analytics').factory('Query', ['$resource',
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
-    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS',
-    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
+    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
+    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
 
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
@@ -150,6 +150,156 @@ angular.module('analytics').factory('Analytics', [
         }
         return headers;
     };
+    /**
+     * Given user timezone and user input/selection for crontab day, crontab hour, crontab minute and crontab ampm, this function returns the corresponding UTC based crontab string
+     */
+    var adjustCrontabStringForTimezone = function(crontabDay, crontabHour, crontabMinute, crontabAmPm) {
+        if (crontabHour === 12){
+            if (crontabAmPm === 'AM'){
+                crontabHour = 0;
+            }
+        } else {
+            if (crontabAmPm === 'PM'){
+                crontabHour += 12;
+            }
+        }
+        var nowInUserTimzone = moment.tz(user.tz);
+        var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
+
+        var scheduledTime = moment.tz(user.tz);
+        scheduledTime.minute(crontabMinute);
+        scheduledTime.hour(crontabHour);
+
+        var tempDate = scheduledTime.day();
+
+        scheduledTime.add(timezoneOffsetInMinute, 'minutes');
+
+        crontabHour = scheduledTime.hour();
+        crontabMinute = scheduledTime.minute();
+
+        var dayOffset = scheduledTime.day() - tempDate;
+        if (dayOffset !== 0) {
+            switch (crontabDay) {
+                case CRONTAB_DAY_OPTIONS['Every week day']:
+                    crontabDay = (dayOffset === 1 ? ' * * 2-6' : ' * * 0-4');
+                    break;
+                case CRONTAB_DAY_OPTIONS['The 1st of each month']:
+                    crontabDay = (dayOffset === 1 ? ' 2 * *' : ' 28 * *');
+                    break;
+                case CRONTAB_DAY_OPTIONS['The last day of each month']:
+                    crontabDay = (dayOffset === 1 ? ' 1 * *' : ' 27 * *');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Monday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 2' : ' * * 7');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Tuesday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 3' : ' * * 1');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Wednesday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 4' : ' * * 2');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Thursday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 5' : ' * * 3');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Friday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 6' : ' * * 4');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Saturday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 7' : ' * * 5');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Sunday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 1' : ' * * 6');
+                    break;
+                default:
+                    break;
+            }
+        }
+        return crontabMinute + ' ' + crontabHour + crontabDay;
+    };
+
+    /**
+     * Given an UTC based crontab string, this function extracts the crontab day option, hour, minute, ampm value by adding/subtracting the user timezone offset
+     */
+    var translateCrontabString = function(crontabString) {
+        var crontabHour, crontabDay, crontabMinute;
+        var crontabAmPm = 'AM';
+        var arr = crontabString.split(' '); 
+        crontabMinute = arr[0];
+        crontabHour = arr[1];
+        crontabDay = ' ' + arr[2] + ' ' + arr[3] + ' ' + arr[4];
+
+        var nowInUserTimzone = moment.tz(user.tz);
+        var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
+
+        var scheduledTime = moment.tz(user.tz);
+        scheduledTime.minute(crontabMinute);
+        scheduledTime.hour(crontabHour);
+
+        var tempDate = scheduledTime.day();
+
+        scheduledTime.subtract(timezoneOffsetInMinute, 'minutes');
+
+        crontabHour = scheduledTime.hour();
+        crontabMinute = scheduledTime.minute();
+
+        var dayOffset = tempDate - scheduledTime.day();
+        if (dayOffset !== 0) {
+            switch (crontabDay) {
+                case ' * * 2-6':
+                case ' * * 0-4':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every week day'];
+                    break;
+                case ' 2 * *':
+                case ' 28 * *':
+                    crontabDay = CRONTAB_DAY_OPTIONS['The 1st of each month'];
+                    break;
+                case ' 1 * *':
+                case ' 27 * *':
+                    crontabDay = CRONTAB_DAY_OPTIONS['The last day of each month'];
+                    break;
+                case ' * * 2':
+                case ' * * 7':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Monday'];
+                    break;
+                case ' * * 3':
+                case ' * * 1':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Tuesday'];
+                    break;
+                case ' * * 4':
+                case ' * * 2':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Wednesday'];
+                    break;
+                case ' * * 5':
+                case ' * * 3':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Thursday'];
+                    break;
+                case ' * * 6':
+                case ' * * 4':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Friday'];
+                    break;
+                case ' * * 7':
+                case ' * * 5':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Saturday'];
+                    break;
+                case ' * * 1':
+                case ' * * 6':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Sunday'];
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (crontabHour > 12) {
+            crontabHour -= 12;
+            crontabAmPm = 'PM';
+        }
+        return {
+            crontabHour: crontabHour,
+            crontabMinute: crontabMinute,
+            crontabAmPm: crontabAmPm,
+            crontabDay: crontabDay
+        };
+    };
 
     return {
         generateCSVData: generateCSVData,
@@ -160,5 +310,7 @@ angular.module('analytics').factory('Analytics', [
         getRegions: getRegions,
         queryFunction: queryFunction,
         getQueryTableHeaders: getQueryTableHeaders,
+        adjustCrontabStringForTimezone: adjustCrontabStringForTimezone,
+        translateCrontabString: translateCrontabString
     };
 }]);

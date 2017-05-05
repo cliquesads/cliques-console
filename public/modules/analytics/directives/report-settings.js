@@ -35,6 +35,19 @@ angular.module('analytics').directive('reportSettings', [
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
+                scope.queryParamSaved = scope.selectedSettings.isSaved;
+
+                // Watching for selectedSettings changes
+                scope._selectedSettingsInit = angular.copy(scope.selectedSettings);
+                scope.$watch('selectedSettings', function(newVal, oldVal) {
+                    if (newVal !== oldVal) {
+                        if (!angular.equals(newVal, scope._selectedSettingsInit)) {
+                            scope.queryParamSaved = false;
+                            scope.dirty = true;
+                        }
+                    }
+                }, true);
+
                 scope.launchQuery = function() {
                     $rootScope.$broadcast('queryStarted');
 
@@ -51,8 +64,6 @@ angular.module('analytics').directive('reportSettings', [
                         }
                     })
                     .then(function(response) {
-                        var savedOrUpdatedQuery = response.data;
-
                         scope.selectedSettings._id = response.id;
                         scope.selectedSettings.dateRange = response.dateRange;
 
@@ -200,95 +211,68 @@ angular.module('analytics').directive('reportSettings', [
                     }
                 };
 
-                scope.showSaveQueryDialog = function() {
+                scope.showSaveOrScheduleQueryDialog = function(state) {
                     var parentScope = scope;
+
+                    // Decide the purpose of this dialog so as to decide which template to load, purpose could be
+                    // a. save query
+                    // b. schedule query or
+                    // c. save & schedule query
+                    var template = 'modules/analytics/views/partials/edit-schedule.html';
+                    if (!state) {
+                        if (!parentScope.selectedSettings.schedule) {
+                            template = 'modules/analytics/views/partials/save-schedule-query.html';
+                        } else {
+                            template = 'modules/analytics/views/partials/save-query.html';
+                        }
+                    }
                     ngDialog.open({
-                        template: 'modules/analytics/views/partials/save-query-dialog.html',
+                        template: template,
                         controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', 'Query',function($scope, CRONTAB_DAY_OPTIONS, Notify, Query) {
+
                             $scope.selectedSettings = parentScope.selectedSettings;
                             $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
                             $scope.isScheduled = false;
                             $scope.crontabAmPm = 'AM';
 
+                            if (state === 'schedule') {
+                                // currently editing existing schedule
+                                var crontabInfo = Analytics.translateCrontabString($scope.selectedSettings.schedule);
+                                $scope.crontabDay = crontabInfo.crontabDay;
+
+                                $scope.crontabHour = crontabInfo.crontabHour;
+                                $scope.crontabMinute = crontabInfo.crontabMinute;
+                                $scope.crontabAmPm = crontabInfo.crontabAmPm;
+                            }
+                            
+                            $scope.editSchedule = function() {
+                                $scope.selectedSettings.schedule = Analytics.adjustCrontabStringForTimezone($scope.crontabDay, $scope.crontabHour, $scope.crontabMinute, $scope.crontabAmPm);
+                                $scope.closeThisDialog(0);
+                            };
+
                             $scope.saveQuery = function() {
-                                if ($scope.crontabHour === 12){
-                                    if ($scope.crontabAmPm === 'AM'){
-                                        $scope.crontabHour = 0;
-                                    }
-                                } else {
-                                    if ($scope.crontabAmPm === 'PM'){
-                                        $scope.crontabHour += 12;
-                                    }
-                                }
-                                if ($scope.isScheduled) {
-                                    var nowInUserTimzone = moment.tz(user.tz);
-                                    var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
-
-                                    var scheduledTime = moment.tz(user.tz);
-                                    scheduledTime.minute($scope.crontabMinute);
-                                    scheduledTime.hour($scope.crontabHour);
-
-                                    var tempDate = scheduledTime.day();
-
-                                    scheduledTime.add(timezoneOffsetInMinute, 'minutes');
-
-                                    var dayOffset = scheduledTime.day() - tempDate;
-                                    if (dayOffset !== 0) {
-                                        switch ($scope.crontabDay) {
-                                            case CRONTAB_DAY_OPTIONS['Every week day']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 2-6' : ' * * 0-4');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['The 1st of each month']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' 2 * *' : ' 28 * *');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['The last day of each month']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' 1 * *' : ' 27 * *');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Monday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 2' : ' * * 7');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Tuesday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 3' : ' * * 1');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Wednesday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 4' : ' * * 2');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Thursday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 5' : ' * * 3');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Friday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 6' : ' * * 4');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Saturday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 7' : ' * * 5');
-                                                break;
-                                            case CRONTAB_DAY_OPTIONS['Every Sunday']:
-                                                $scope.crontabDay = (dayOffset === 1 ? ' * * 1' : ' * * 6');
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                    $scope.crontabHour = scheduledTime.hour();
-                                    $scope.crontabMinute = scheduledTime.minute();
-
-                                    $scope.selectedSettings.schedule = $scope.crontabMinute + ' ' + $scope.crontabHour + $scope.crontabDay;
-                                }
-
-                                // update this query by setting `isSaved` to true and also `schedule` field if any
-                                // Post query param to backend
+                                // update this query by setting `isSaved` to true and also `schedule` field if any by posting query param to backend
                                 $scope.selectedSettings.isSaved = true;
                                 new Query($scope.selectedSettings).$update(function(response) {
                                     Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
                                         status: 'success'
                                     });
                                     $scope.closeThisDialog(0);
+                                    // update client side query save flag
+                                    parentScope.queryParamSaved = true;
                                 }, function(error) {
                                     Notify.alert(error.message, {
                                         status: 'danger'
                                     });
                                     $scope.closeThisDialog(1);
                                 });
+                            };
+
+                            $scope.saveAndScheduleQuery = function() {
+                                if ($scope.isScheduled) {
+                                    $scope.editSchedule();
+                                }
+                                $scope.saveQuery();
                             };
                         }]
                     });

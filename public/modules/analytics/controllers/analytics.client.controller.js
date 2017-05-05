@@ -3,16 +3,15 @@
 
 angular.module('analytics').controller('AnalyticsController', ['$rootScope','$scope', '$state', 'Analytics', 'QUICKQUERIES',
     function($rootScope, $scope, $state, Analytics, QUICKQUERIES) {
-
         // Depending on different organization type, quick query options may vary
         $scope.quickQueries = QUICKQUERIES[$rootScope.role];
         var currentQueryType = $state.current.queryType;
 
-        /********************** DEFAULT QUERY PARAM VALUES **********************/
         if (currentQueryType) {
+            /********************** DEFAULT QUERY PARAM VALUES **********************/
             // new query
             // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
-            $scope.defaultQueryParam = JSON.parse(JSON.stringify($scope.quickQueries[currentQueryType].defaultQueryParam));
+            $scope.defaultQueryParam = angular.copy($scope.quickQueries[currentQueryType].defaultQueryParam);
             // Prepare dataHeaders for this new query
             $scope.defaultQueryParam.dataHeaders = [];
             var tableHeaders = Analytics.getQueryTableHeaders(
@@ -26,10 +25,8 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
                     $scope.defaultQueryParam.dataHeaders.push(header.name);
                 }
             });
-        }
 
-        /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
-        if (currentQueryType) {
+            /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
             $scope.availableSettings = $scope.quickQueries[currentQueryType].availableSettings;
         }
     }
