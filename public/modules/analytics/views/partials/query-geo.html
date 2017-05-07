@@ -39,9 +39,18 @@
 				<hr class="m0">
 
 				<datamap
+					ng-if="mapScope"
 					class="pb0"
 					map="mapObject">
 				</datamap>
+
+				<!-- Placeholder for non-USA users -->
+				<div ng-if="!mapScope"
+					class="text-center">
+					<h3><i class="fa fa-lg fa-globe"></i> No map for non-USA so far</h3>	
+					<p class="mb-lg">Stay tuned for updates!</p>
+					<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>
+				</div>
 			</div>
 
 			<!-- Spin Loader -->

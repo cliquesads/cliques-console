@@ -64,17 +64,16 @@ angular.module('analytics').directive('queryGeo', [
 						}
 					});
 					// prepare for mapObject
-					var mapScope;
 					if (scope.queryParam.type === 'country') {
-						mapScope = 'world';
+						scope.mapScope = 'world';
 					} else if (scope.queryParam.type === 'state' || scope.queryParam.type === 'city') {
 						if (user.organization.country === 'USA') {
-							mapScope = 'usa';
+							scope.mapScope = 'usa';
 						}
 					}
 
 					scope.mapObject = {
-						scope: mapScope,
+						scope: scope.mapScope,
 						options: {
 							width: 1110,
 							legendHeight: 60 // optionally set the padding for the legend
