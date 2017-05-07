@@ -20,6 +20,21 @@ angular.module('analytics').directive('queryGeo', [
 				scope.user = user;
 				scope.isLoading = true;
 
+				var assignColorCode = function(impsValue, highestImps) {
+					var mapColorCode;
+					if (impsValue < (highestImps / 5)) {
+						mapColorCode = 'LESSER';	
+					} else if (impsValue < 2 * (highestImps / 5)) {
+						mapColorCode = 'LOW';	
+					} else if (impsValue < 3 * (highestImps / 5)) {
+						mapColorCode = 'MEDIUM';
+					} else if (impsValue < 4 * (highestImps / 5)) {
+						mapColorCode = 'HIGH';
+					} else {
+						mapColorCode = 'EXTREME';
+					}
+					return mapColorCode;
+				};
 				scope.$on('queryStarted', function(event, args) {
 					scope.isLoading = true;
 				});
@@ -30,7 +45,6 @@ angular.module('analytics').directive('queryGeo', [
 					scope.isLoading = false;
 					scope.queryParam = args.queryParam;
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
-
 					scope.geoQueryResults = args.results;
 
 					var mapData = {};
@@ -44,20 +58,14 @@ angular.module('analytics').directive('queryGeo', [
 					// get map color and data for each country
 					scope.geoQueryResults.forEach(function(row) {
 						if (row._id.country) {
-							var countryMapColor;
-							if (row.imps < (highestImpressions / 5)) {
-								countryMapColor = 'LESSER';	
-							} else if (row.imps < 2 * (highestImpressions / 5)) {
-								countryMapColor = 'LOW';	
-							} else if (row.imps < 3 * (highestImpressions / 5)) {
-								countryMapColor = 'MEDIUM';
-							} else if (row.imps < 4 * (highestImpressions / 5)) {
-								countryMapColor = 'HIGH';
-							} else {
-								countryMapColor = 'EXTREME';
-							}
 							mapData[row._id.country._id] = {
-								fillKey: countryMapColor,
+								fillKey: assignColorCode(row.imps, highestImpressions),
+								imps: row.imps,
+								clicks: row.clicks
+							};
+						} else if (row._id.region) {
+							mapData[row._id.region.code] = {
+								fillKey: assignColorCode(row.imps, highestImpressions),
 								imps: row.imps,
 								clicks: row.clicks
 							};
@@ -84,7 +92,7 @@ angular.module('analytics').directive('queryGeo', [
 							popupTemplate: function(geo, data) {
 								var CTR = data.imps ? $filter('percentage')(data.clicks / data.imps, 2): '0';
 								return ['<div class="hoverinfo">',
-										'Country: ' + geo.properties.name + '<br>',
+										_.capitalize(scope.queryParam.type) + ': ' + geo.properties.name + '<br>',
 										'<strong>Impressions: ' + data.imps + '</strong><br>',
 										'<strong>CTR: ' + CTR + '</strong>',
 										'</div>'].join('');
