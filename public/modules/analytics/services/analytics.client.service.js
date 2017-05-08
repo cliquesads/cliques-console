@@ -83,12 +83,6 @@ angular.module('analytics').factory('Analytics', [
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
     };
-    var getAllCountries = function() {
-        return $http.get('/console/country');
-    };
-    var getRegions = function(country) {
-        return $http.get('/console/region', {params: {country: country}});
-    };
     /**
      * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
      */
@@ -306,8 +300,6 @@ angular.module('analytics').factory('Analytics', [
         getCSVFileName: getCSVFileName,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
-        getAllCountries: getAllCountries,
-        getRegions: getRegions,
         queryFunction: queryFunction,
         getQueryTableHeaders: getQueryTableHeaders,
         adjustCrontabStringForTimezone: adjustCrontabStringForTimezone,

@@ -149,4 +149,23 @@ module.exports = function(db, routers){
         .get(geo.region.readRegion);
 
     router.param('regionId', geo.region.regionByID);
+
+    /* ---- City API Routes ---- */
+    router.route('/city')
+        /**
+         * @api {get} /city Get cities based on given city names
+         * @apiName GetCities
+         * @apiGroup Geo.CITY
+         * @apiDescription Gets cities based on given city names. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam ([String]) ::city names:: required city names
+         * @apiSuccess {Object[]} ::cities:: Array of cities objects as response `body` (see [above](#api-CITY)
+         *  for all fields).
+         */
+        .get(geo.city.getManyCities);
 };

@@ -39,15 +39,17 @@
 				<hr class="m0">
 
 				<datamap
-					ng-if="mapScope"
+					ng-if="mapAvailable"
 					class="pb0"
-					map="mapObject">
+					map="mapObject"
+					plugins="mapPlugins"
+					plugin-data="mapPluginData">
 				</datamap>
 
 				<!-- Placeholder for non-USA users -->
-				<div ng-if="!mapScope"
+				<div ng-if="!mapAvailable"
 					class="text-center">
-					<h3><i class="fa fa-lg fa-globe"></i> No map for non-USA so far</h3>	
+					<h3><i class="fa fa-lg fa-globe"></i> States map only available for United States</h3>	
 					<p class="mb-lg">Stay tuned for updates!</p>
 					<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>
 				</div>

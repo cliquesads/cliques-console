@@ -12,6 +12,8 @@ angular.module('analytics').directive('reportSettings', [
     'Notify',
     'ngDialog',
     'Query',
+    'Region',
+    'Country',
     function(
         $rootScope,
         aggregationDateRanges,
@@ -21,7 +23,9 @@ angular.module('analytics').directive('reportSettings', [
         Publisher,
         Notify,
         ngDialog,
-        Query
+        Query,
+        Region,
+        Country
     ) {
         'use strict';
         return {
@@ -131,9 +135,10 @@ angular.module('analytics').directive('reportSettings', [
 
                 if (scope.availableSettings.countryFilter) {
                     // has country filter, should get all countries for current user
-                    Analytics.getAllCountries()
-                    .success(function(data) {
-                        scope.allCountries = data;
+
+                    Country.query().$promise
+                    .then(function(response) {
+                        scope.allCountries = response;
                         // setup default selected country based on user country
                         for (var i = 0; i < scope.allCountries.length; i ++) {
                             if (scope.allCountries[i]._id === user.organization.country ||
@@ -146,8 +151,7 @@ angular.module('analytics').directive('reportSettings', [
                         numberOfFiltersToFetch --;
                         // check if no more filters to fetch, if so launch initial query
                         scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    })
-                    .error(function(error) {
+                    }, function(error) {
                         Notify.alert(error.message, {
                             status: 'danger'
                         });
@@ -156,9 +160,10 @@ angular.module('analytics').directive('reportSettings', [
 
                 if (scope.availableSettings.regionFilter) {
                     // has region filter, should get all regions for the user's country
-                    Analytics.getRegions(user.organization.country)
-                    .success(function(data) {
-                        scope.regions = data;
+                    Region.query({
+                        country: user.organization.country
+                    }).$promise.then(function(response) {
+                        scope.regions = response;
                         // setup default selected region based on user's region
                         for (var i = 0; i < scope.regions.length; i ++) {
                             if (user.organization.state === scope.regions[i].name) {
@@ -170,8 +175,7 @@ angular.module('analytics').directive('reportSettings', [
                         numberOfFiltersToFetch --;
                         // check if no more filters to fetch, if so launch initial query
                         scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    })
-                    .error(function(error) {
+                    }, function(error) {
                         Notify.alert(error.message, {
                             status: 'danger'
                         });
@@ -183,18 +187,18 @@ angular.module('analytics').directive('reportSettings', [
                     if (scope.geo.countryObject) {
                         scope.selectedSettings.country = scope.geo.countryObject._id;
                         // Country selected, get its regions
-                        Analytics.getRegions(scope.selectedSettings.country)
-                            .success(function(data) {
-                                // reset region
-                                scope.regions = data;
-                                scope.geo.regionObject = undefined;
-                                scope.selectedSettings.region = '';
-                            })
-                            .error(function(error) {
-                                Notify.alert(error.message, {
-                                    status: 'danger'
-                                });
+                        Region.query({
+                            country: scope.selectedSettings.country
+                        }).$promise.then(function(response) {
+                            // reset region
+                            scope.regions = response;
+                            scope.geo.regionObject = undefined;
+                            scope.selectedSettings.region = '';
+                        }, function(error) {
+                            Notify.alert(error.message, {
+                                status: 'danger'
                             });
+                        });
                     } else {
                         scope.regions = undefined;
                         scope.geo.regionObject = undefined;

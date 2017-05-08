@@ -106,6 +106,23 @@ module.exports = function(db) {
                     next();
                 });
             }
+        },
+        city: {
+            /**
+             * Gets many cities with given city names as request parameter
+             */
+            getManyCities: function (req, res) {
+                req.query.per_page = "1000000";
+                geoModels.City.apiQuery(req.query, function (err, cities) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        res.json(cities);
+                    }
+                });
+            }
         }
     };
 };
