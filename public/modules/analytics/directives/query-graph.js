@@ -35,6 +35,7 @@ angular.module('analytics').directive('queryGraph', [
 				scope.$on('queryEnded', function(event, args) {
 					scope.isLoading = false;
 					scope.queryParam = args.queryParam;
+					scope.dateRange = args.dateRange;
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
 
 					// Pass "show-points" to graph directive to toggle line points
@@ -45,8 +46,8 @@ angular.module('analytics').directive('queryGraph', [
 
 					scope.timeSeries = new MongoTimeSeries(
 						args.results,
-						scope.queryParam.dateRange.startDate,
-						scope.queryParam.dateRange.endDate,
+						scope.dateRange.startDate,
+						scope.dateRange.endDate,
 						user.tz,
 						scope.queryParam.dateGroupBy,
 						{fields: fields}

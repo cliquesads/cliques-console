@@ -4,32 +4,42 @@
 			<div class="col-sm-5">
 				<h4>
 					<i class="fa fa-cog"></i>
+					<span ng-if="queryParamSaved">
+						<span editable-text="selectedSettings.name" e-name="name" e-required onaftersave="update()" tooltip="Click to Edit Query Name">{{ selectedSettings.name }}</span> -
+					</span>
 					Query Settings
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<!-- Button to edit schedule if query already scheduled -->
-				<button
-					ng-click="showSaveOrScheduleQueryDialog('schedule')"
-					class="btn btn-sm btn-primary mt-sm"
-					ng-if="selectedSettings.schedule">
-					<span>
-						<i class="fa fa-floppy-o"></i> Edit Schedule
-					</span>
-				</button>
-
-				<!-- Button to save / schedule query -->
-				<button
-					ng-click="showSaveOrScheduleQueryDialog()"
-					class="btn btn-sm btn-primary mt-sm"
-					ng-if="!queryParamSaved">
-					<span ng-if="!selectedSettings.schedule">
-						<i class="fa fa-floppy-o"></i> Save / Schedule
-					</span>
-					<span ng-if="selectedSettings.schedule">
-						<i class="fa fa-floppy-o"></i> Save
-					</span>
-				</button>
+                <span ng-switch="queryParamSaved">
+                    <span ng-switch-when="true">
+                        <!-- Button to edit schedule -->
+                        <button
+                                ng-click="showEditScheduleDialog()"
+                                class="btn btn-sm btn-primary mt-sm">
+                            <span>
+                                <i class="fa fa-clock-o"></i>
+                                <span ng-if="selectedSettings.schedule"> Edit Schedule</span>
+                                <span ng-if="!selectedSettings.schedule"> Schedule This Query...</span>
+                            </span>
+                        </button>
+                        <button
+                                ng-click="update()"
+                                class="btn btn-sm btn-primary mt-sm"
+                                ng-if="dirty">
+                                <i class="fa fa-floppy-o"></i> Save
+                        </button>
+                    </span>
+                    <span ng-switch-default>
+                        <button
+                                ng-click="showSaveOrScheduleQueryDialog()"
+                                class="btn btn-sm btn-primary mt-sm">
+                            <span>
+                                <i class="fa fa-floppy-o"></i> Save / Schedule
+                            </span>
+				        </button>
+                    </span>
+                </span>
 			</div>
 		</div>
 		<hr class="m0">
