@@ -176,9 +176,11 @@ angular.module('analytics').directive('queryGeo', [
 									var cities = response;
 									scope.bombs = [];
 									cities.forEach(function(city) {
-										scope.bombs.push(getBubbleData(city, cityStats[city.name], highestImpressions));
-										// remove this city from cityStats since it's been used
-										delete cityStats[city.name];
+										if (cityStats[city.name]){
+											scope.bombs.push(getBubbleData(city, cityStats[city.name], highestImpressions));
+											// remove this city from cityStats since it's been used
+											delete cityStats[city.name];
+										}
 									});
 
 									// Now cityStats ONLY contains cities that haven't stored in server side database yet, need to create and store these cities
