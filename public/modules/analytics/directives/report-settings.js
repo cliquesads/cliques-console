@@ -46,7 +46,7 @@ angular.module('analytics').directive('reportSettings', [
                 scope.$watch('selectedSettings', function(newVal, oldVal) {
                     if (newVal !== oldVal) {
                         if (!angular.equals(newVal, scope._selectedSettingsInit)) {
-                            scope.queryParamSaved = false;
+                            // scope.queryParamSaved = false;
                             scope.dirty = true;
                         }
                     }
@@ -56,7 +56,15 @@ angular.module('analytics').directive('reportSettings', [
                     $rootScope.$broadcast('queryStarted');
 
                     var queryResults;
-                    Analytics.queryFunction(scope.selectedSettings.type, $rootScope.role)(scope.selectedSettings)
+                    var args;
+                    // only pass JSON of object to query function, not whole resource if
+                    // object is a resource
+                    try {
+                        args = scope.selectedSettings.toJSON();
+                    } catch (e) {
+                        args = scope.selectedSettings;
+                    }
+                    Analytics.queryFunction(scope.selectedSettings.type, $rootScope.role)(args)
                     .then(function(response) {
                         queryResults = response.data;
                         if (!scope.selectedSettings._id) {
@@ -69,10 +77,11 @@ angular.module('analytics').directive('reportSettings', [
                     })
                     .then(function(response) {
                         scope.selectedSettings._id = response.id;
-                        scope.selectedSettings.dateRange = response.dateRange;
+                        scope.selectedDateRange = response.dateRange;
 
                         $rootScope.$broadcast('queryEnded', {
                             queryParam: scope.selectedSettings,
+                            dateRange: scope.selectedDateRange,
                             results: queryResults
                         });
                     })
@@ -215,6 +224,21 @@ angular.module('analytics').directive('reportSettings', [
                     }
                 };
 
+                scope.update = function(){
+                    new Query(scope.selectedSettings).$update(function(response) {
+                        Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
+                            status: 'success'
+                        });
+                        scope._selectedSettingsInit = angular.copy(scope.selectedSettings);
+                        // scope.queryParamSaved = true;
+                        scope.dirty = false;
+                    }, function(error) {
+                        Notify.alert(error.message, {
+                            status: 'danger'
+                        });
+                    });
+                };
+
                 scope.showSaveOrScheduleQueryDialog = function(state) {
                     var parentScope = scope;
 
@@ -232,7 +256,7 @@ angular.module('analytics').directive('reportSettings', [
                     }
                     ngDialog.open({
                         template: template,
-                        controller: ['$scope', 'CRONTAB_DAY_OPTIONS', 'Notify', 'Query',function($scope, CRONTAB_DAY_OPTIONS, Notify, Query) {
+                        controller: ['$scope', '$state', 'CRONTAB_DAY_OPTIONS', 'Notify', 'Query',function($scope, $state, CRONTAB_DAY_OPTIONS, Notify, Query) {
 
                             $scope.selectedSettings = parentScope.selectedSettings;
                             $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
@@ -256,14 +280,21 @@ angular.module('analytics').directive('reportSettings', [
 
                             $scope.saveQuery = function() {
                                 // update this query by setting `isSaved` to true and also `schedule` field if any by posting query param to backend
+                                var wasSaved = angular.copy($scope.selectedSettings.isSaved);
                                 $scope.selectedSettings.isSaved = true;
                                 new Query($scope.selectedSettings).$update(function(response) {
                                     Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
                                         status: 'success'
                                     });
-                                    $scope.closeThisDialog(0);
-                                    // update client side query save flag
-                                    parentScope.queryParamSaved = true;
+                                    if (!wasSaved){
+                                        $scope.closeThisDialog(0);
+                                        parentScope.queryParamSaved = true;
+                                        $state.go('app._analytics.analytics.myQueriesList.myQuery', { queryId: response.id });
+                                    } else {
+                                        $scope.closeThisDialog(0);
+                                        // update client side query save flag
+                                        parentScope.queryParamSaved = true;
+                                    }
                                 }, function(error) {
                                     Notify.alert(error.message, {
                                         status: 'danger'
