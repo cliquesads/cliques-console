@@ -56,6 +56,7 @@ angular.module('analytics')
         'networkAdmin': {
             time: {
                 name: 'Time',
+                iconClass: 'fa fa-clock-o',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
                 route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
@@ -76,7 +77,8 @@ angular.module('analytics')
             },
             site: {
                 name: 'Sites',
-                description: 'See all sites you\'ve served impressions on and how well each site has performed.',
+                iconClass: "icon-book-open",
+                description: 'See all Sites you\'ve served impressions on and how well each site has performed.',
                 route: 'app._analytics.analytics.quickQueries.site',
                 defaultQueryParam: {
                     name: 'Sites',
@@ -97,6 +99,7 @@ angular.module('analytics')
             },
             campaign: {
                 name: 'Campaigns',
+                iconClass: 'fa fa-bullhorn',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.',
                 route: 'app._analytics.analytics.quickQueries.campaign',
                 defaultQueryParam: {
@@ -118,6 +121,7 @@ angular.module('analytics')
             },
             creative: {
                 name: 'Creatives',
+                iconClass: 'fa fa-image',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
                 route: 'app._analytics.analytics.quickQueries.creative',
@@ -140,8 +144,9 @@ angular.module('analytics')
             },
             placement: {
                 name: 'Placements',
-                description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
-                + '& which ones aren\'t.',
+                iconClass: 'fa fa-newspaper-o',
+                description: 'Placements are the individual ad units that a Publisher makes available for purchase. See how' +
+                    'each individual placement is performing for your campaigns.',
                 route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
@@ -162,6 +167,7 @@ angular.module('analytics')
             },
             city: {
                 name: 'Cities',
+                iconClass: 'fa fa-map-marker',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
                 route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
@@ -185,7 +191,8 @@ angular.module('analytics')
             },
             state: {
                 name: 'Regions/States',
-                description: 'Check on performance by state/region to see what\'s happening at a regional level',
+                iconClass: 'fa fa-map',
+                description: 'Check on performance by state/region to see what\'s happening at a regional level (US Only).',
                 route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'Regions/States',
@@ -208,6 +215,7 @@ angular.module('analytics')
             },
             country: {
                 name: 'Countries',
+                iconClass: 'fa fa-globe',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
                 route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
@@ -232,6 +240,7 @@ angular.module('analytics')
         'advertiser': {
             time: {
                 name: 'Time',
+                iconClass: 'fa fa-clock-o',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
                 route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
@@ -252,7 +261,8 @@ angular.module('analytics')
             },
             site: {
                 name: 'Sites',
-                description: 'See all sites you\'ve served impressions on and how well each site has performed.',
+                iconClass: "icon-book-open",
+                description: 'See all Sites you\'ve served impressions on and how well each site has performed.',
                 route: 'app._analytics.analytics.quickQueries.site',
                 defaultQueryParam: {
                     name: 'Sites',
@@ -273,6 +283,7 @@ angular.module('analytics')
             },
             creative: {
                 name: 'Creatives',
+                iconClass: 'fa fa-image',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
                 route: 'app._analytics.analytics.quickQueries.creative',
@@ -295,8 +306,9 @@ angular.module('analytics')
             },
             placement: {
                 name: 'Placements',
-                description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
-                + '& which ones aren\'t.',
+                iconClass: 'fa fa-newspaper-o',
+                description: 'Placements are the individual ad units that a Publisher makes available for purchase. See how' +
+                ' each individual Placement is performing for your Campaigns.',
                 route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
@@ -317,6 +329,7 @@ angular.module('analytics')
             },
             city: {
                 name: 'Cities',
+                iconClass: 'fa fa-map-marker',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
                 route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
@@ -340,7 +353,8 @@ angular.module('analytics')
             },
             state: {
                 name: 'States',
-                description: 'Check on performance by state/region to see what\'s happening at a regional level',
+                iconClass: 'fa fa-map',
+                description: 'Check on performance by state/region to see what\'s happening at a regional level (US Only).',
                 route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'States',
@@ -363,6 +377,7 @@ angular.module('analytics')
             },
             country: {
                 name: 'Countries',
+                iconClass: 'fa fa-globe',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
                 route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
@@ -387,6 +402,7 @@ angular.module('analytics')
         'publisher': {
             time: {
                 name: 'Time',
+                iconClass: 'fa fa-clock-o',
                 description: 'View vital stats by hour, day & month. Spot hourly performance trends to help you bid smarter.',
                 route: 'app._analytics.analytics.quickQueries.time',
                 defaultQueryParam: {
@@ -407,6 +423,7 @@ angular.module('analytics')
             },
             campaign: {
                 name: 'Campaigns',
+                iconClass: 'fa fa-bullhorn',
                 description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.',
                 route: 'app._analytics.analytics.quickQueries.campaign',
                 defaultQueryParam: {
@@ -428,8 +445,8 @@ angular.module('analytics')
             },
             placement: {
                 name: 'Placements',
-                description: 'The best way to tell what brand messaging is resonating. See which placements are performing well '
-                + '& which ones aren\'t.',
+                description: 'See which of your Placements are making you the most money.',
+                iconClass: 'fa fa-newspaper-o',
                 route: 'app._analytics.analytics.quickQueries.placement',
                 defaultQueryParam: {
                     name: 'Placements',
@@ -450,6 +467,7 @@ angular.module('analytics')
             },
             creative: {
                 name: 'Creatives',
+                iconClass: 'fa fa-image',
                 description: 'The best way to tell what brand messaging is resonating. See which creatives are performing well '
                 + '& which ones aren\'t.',
                 route: 'app._analytics.analytics.quickQueries.creative',
@@ -472,6 +490,7 @@ angular.module('analytics')
             },
             city: {
                 name: 'Cities',
+                iconClass: 'fa fa-map-marker',
                 description: 'Drill down to the city level to spot any hyper-regional trends.',
                 route: 'app._analytics.analytics.quickQueries.city',
                 defaultQueryParam: {
@@ -495,7 +514,8 @@ angular.module('analytics')
             },
             state: {
                 name: 'States',
-                description: 'Check on performance by state/region to see what\'s happening at a regional level',
+                iconClass: 'fa fa-map',
+                description: 'Check on performance by state/region to see what\'s happening at a regional level (US Only).',
                 route: 'app._analytics.analytics.quickQueries.state',
                 defaultQueryParam: {
                     name: 'States',
@@ -518,6 +538,7 @@ angular.module('analytics')
             },
             country: {
                 name: 'Countries',
+                iconClass: 'fa fa-globe',
                 description: 'Zoom way out and see if there are any interesting trends at the country level for your campaigns.',
                 route: 'app._analytics.analytics.quickQueries.country',
                 defaultQueryParam: {
