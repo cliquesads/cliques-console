@@ -51,7 +51,7 @@ require('./_main')(function(GLOBALS) {
 		return promise.each(citiesInGeoAdstats, function(cityGeo) {
 			// query Google Geocode API to get the latitude/longitude coordinates for this city
 			var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-			    address: cityGeo._id + ',' + cityGeo.country,
+			    address: cityGeo._id + ',' + cityGeo.region + ',' + cityGeo.country,
 			    key: GOOGLE_GEOCODE_API_KEY
 			});
 			return request.promisifiedGet(queryUrl)
