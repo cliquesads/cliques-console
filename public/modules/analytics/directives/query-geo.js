@@ -53,20 +53,30 @@ angular.module('analytics').directive('queryGeo', [
 					}
 					return mapColorCode;
 				};
-				var assignBubbleRadius = function(impsValue, highestImps) {
+				var getBubbleData = function(city, data, highestImps) {
 					var bubbleRadius;
-					if (impsValue < (highestImps / 5)) {
+					if (data.imps < (highestImps / 5)) {
 						bubbleRadius = 5;	
-					} else if (impsValue < 2 * (highestImps / 5)) {
+					} else if (data.imps < 2 * (highestImps / 5)) {
 						bubbleRadius = 10;	
-					} else if (impsValue < 3 * (highestImps / 5)) {
+					} else if (data.imps < 3 * (highestImps / 5)) {
 						bubbleRadius = 15;
-					} else if (impsValue < 4 * (highestImps / 5)) {
+					} else if (data.imps < 4 * (highestImps / 5)) {
 						bubbleRadius = 20;
 					} else {
 						bubbleRadius = 25;
 					}
-					return bubbleRadius;
+					return {
+						name: city.name,
+						radius: bubbleRadius,
+						yield: 400,
+						imps: data.imps,
+						clicks: data.clicks,
+						country: 'USA',
+						fillKey: assignColorCode(data.imps, highestImps),
+						latitude: city.latitude,
+						longitude: city.longitude
+					};
 				};
 
 				scope.$on('queryStarted', function(event, args) {
@@ -117,7 +127,6 @@ angular.module('analytics').directive('queryGeo', [
 							};
 						}
 					});
-
 					// prepare for mapObject
 					scope.mapObject = {
 						options: {
@@ -165,22 +174,38 @@ angular.module('analytics').directive('queryGeo', [
 									region: scope.queryParam.region
 								}).$promise.then(function(response) {
 									var cities = response;
-									var bombs = [];
+									scope.bombs = [];
 									cities.forEach(function(city) {
-										var data = cityStats[city.name];
-										bombs.push({
-											name: city.name,
-											radius: assignBubbleRadius(data.imps, highestImpressions),
-											yield: 400,
-											imps: data.imps,
-											clicks: data.clicks,
-											country: 'USA',
-											fillKey: assignColorCode(cityStats.imps, highestImpressions),
-											latitude: city.latitude,
-											longitude: city.longitude
+										scope.bombs.push(getBubbleData(city, cityStats[city.name], highestImpressions));
+										// remove this city from cityStats since it's been used
+										delete cityStats[city.name];
+									});
+
+									// Now cityStats ONLY contains cities that haven't stored in server side database yet, need to create and store these cities
+									var notStoredCities = [];
+									angular.forEach(cityStats, function(data, cityName) {
+										notStoredCities.push({
+											name: cityName,
+											country: scope.queryParam.country,
+											region: scope.queryParam.region
 										});
 									});
-									//draw bubbles for bombs
+									if (notStoredCities.length > 0) {
+										// Batch create these missing cities
+										City.create(notStoredCities)
+										.$promise.then(function(response) {
+											var newCities = response;
+											angular.forEach(newCities, function(newCity, key) {
+												scope.bombs.push(
+													newCity,
+													cityStats[newCity.name],
+													highestImpressions
+												);
+											});
+										});
+									}
+
+									//draw bubbles for scope.bombs
 									scope.mapPlugins = {
 										bubbles: null,
 										customLegend: function(layer, data, options) {
@@ -191,7 +216,7 @@ angular.module('analytics').directive('queryGeo', [
 											.html(html.join(''));
 										}
 									};
-									scope.mapPluginData = {bubbles: bombs};
+									scope.mapPluginData = {bubbles: scope.bombs};
 									scope.isLoading = false;
 								});
 							} else {

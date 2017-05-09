@@ -5,7 +5,13 @@
  */
 var models = require('@cliques/cliques-node-utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
+    promise = require('bluebird'),
+    request = require('request'),
+    querystring = require('querystring'),
 	_ = require('lodash');
+
+var GOOGLE_GEOCODE_API_KEY = 'AIzaSyDKFINMOSHXRJzRVy4ZufnSpGvFiXeaz1c';
+var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 module.exports = function(db) {
     var geoModels = new models.GeoModels(db);
@@ -121,6 +127,59 @@ module.exports = function(db) {
                     } else {
                         res.json(cities);
                     }
+                });
+            },
+            /**
+             * Create new city(cities) by querying Geocode api service to get city(cities) coordinates
+             */
+            create: function (req, res) {
+                var cities;
+                var savedCities = [];
+                if (req.body.length >= 1) {
+                    // batch cities creation
+                    cities = req.body;
+                } else {
+                    // single city creation
+                    cities = [req.body];
+                }
+                request.promisifiedGet = promise.promisify(request.get);
+                return promise.each(cities, function(cityInfo) {
+                    var city = new geoModels.City(cityInfo);
+                    // query Google Geocode API to get the latitude/longitude coordinates for this city
+                    var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                        address: city.name + ',' + city.region + ',' + city.country,
+                        key: GOOGLE_GEOCODE_API_KEY
+                    });
+                    return request.promisifiedGet(queryUrl)
+                    .then(function(response) {
+                        var coordinates;
+                        var geoInfo = JSON.parse(response.body);
+
+                        if (geoInfo.error_message) {
+                            return promise.reject(geoInfo.error_message);
+                        }
+
+                        if (geoInfo.results.length > 0) {
+                            if (geoInfo.results[0].geometry) {
+                                coordinates = geoInfo.results[0].geometry.location;
+                            }
+                        }
+                        if (coordinates) {
+                            // save this city with result coordinates in database
+                            city.latitude = coordinates.lat;
+                            city.longitude = coordinates.lng;
+                            return city.save();
+                        }
+                    })
+                    .then(function(savedCity) {
+                        savedCities.push(savedCity);
+                    });
+                })
+                .then(function() {
+                    return res.json(savedCities);
+                })
+                .catch(function(err) {
+                    return res.status(400).send(err);
                 });
             }
         }
