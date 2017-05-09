@@ -197,9 +197,9 @@
 									name="campaignFilter"
 									id="campaignFilter"
 									class="form-control chosen-select"
-									ng-model="selectedSettings.campaign"
-									ng-change="updateFiltersArray('campaign', selectedSettings.campaign)"
-									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
+									ng-model="filters.campaignObject"
+									ng-change="campaignSelected()"
+									ng-options="campaign.name for campaign in allCampaigns track by campaign._id">
 									<option value="" selected>
 										All Campaigns
 									</option>
@@ -220,9 +220,9 @@
 									name="siteFilter"
 									id="siteFilter"
 									class="form-control chosen-select"
-									ng-model="selectedSettings.site"
-									ng-change="updateFiltersArray('site', selectedSettings.site)"
-									ng-options="site._id as site.name for site in allSites track by site._id">
+									ng-model="filters.siteObject"
+									ng-change="siteSelected()"
+									ng-options="site.name for site in allSites track by site._id">
 									<option value="" selected>
 										All Sites
 									</option>

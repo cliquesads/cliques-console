@@ -36,6 +36,8 @@ angular.module('analytics').directive('reportSettings', [
             },
             templateUrl: 'modules/analytics/views/partials/report-settings.html',
             link: function(scope, element, attrs) {
+                scope.filters = {};
+
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
 
@@ -122,6 +124,14 @@ angular.module('analytics').directive('reportSettings', [
                             allCampaigns = allCampaigns.concat(advertiser.campaigns);
                         });
                         scope.allCampaigns = allCampaigns;
+                        // setup default selected campaign filter
+                        if (scope.selectedSettings.campaign) {
+                            for (var i = 0; i < scope.allCampaigns.length; i ++) {
+                                if (scope.allCampaigns[i]._id === scope.selectedSettings.campaign) {
+                                    scope.filters.campaignObject = scope.allCampaigns[i];
+                                }     
+                            }
+                        }
                         numberOfFiltersToFetch --;
                         // check if no more filters to fetch, if so launch initial query
                         scope.shouldLaunchQuery(numberOfFiltersToFetch);
@@ -136,6 +146,14 @@ angular.module('analytics').directive('reportSettings', [
                             allSites = allSites.concat(publisher.sites);
                         });
                         scope.allSites = allSites;
+                        // setup default selected site filter
+                        if (scope.selectedSettings.site) {
+                            for (var i = 0; i < scope.allSites.length; i ++) {
+                                if (scope.allSites[i]._id === scope.selectedSettings.site) {
+                                    scope.filters.siteObject = scope.allSites[i];
+                                }
+                            }
+                        }
                         numberOfFiltersToFetch --;
                         // check if no more filters to fetch, if so launch initial query
                         scope.shouldLaunchQuery(numberOfFiltersToFetch);
@@ -144,7 +162,6 @@ angular.module('analytics').directive('reportSettings', [
 
                 if (scope.availableSettings.countryFilter) {
                     // has country filter, should get all countries for current user
-
                     Country.query().$promise
                     .then(function(response) {
                         scope.allCountries = response;
@@ -190,6 +207,22 @@ angular.module('analytics').directive('reportSettings', [
                         });
                     });
                 }
+
+                scope.campaignSelected = function() {
+                    if (scope.filters.campaignObject) {
+                        scope.selectedSettings.campaign = scope.filters.campaignObject._id;
+                    } else {
+                        scope.selectedSettings.campaign = '';
+                    }
+                };
+
+                scope.siteSelected = function() {
+                    if (scope.filters.siteObject) {
+                        scope.selectedSettings.site = scope.filters.siteObject._id;
+                    } else {
+                        scope.selectedSettings.site = '';
+                    }
+                };
 
                 scope.geo = {};
                 scope.countrySelected = function() {
