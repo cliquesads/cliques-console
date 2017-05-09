@@ -92,6 +92,7 @@ require('./_main')(function(GLOBALS) {
                     dateRange: query.humanizedDateRange,
                     queryName: query.name,
                     startDate: startDate,
+                    queryUrl: BASE_URL + "#!/analytics/my-queries/" + query.id,
                     endDate: endDate
                 }
             });
