@@ -4,13 +4,13 @@ var promise = require('bluebird'),
 	querystring = require('querystring'),
 	models = require('@cliques/cliques-node-utils').mongodb.models;
 
-var GOOGLE_GEOCODE_API_KEY = 'AIzaSyAHdHwBq171vkQsdDqeX9lyCkkF8rj8Qj4';
 var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 require('./_main')(function(GLOBALS) {
-	var mongoose = GLOBALS.mongoose;
-	var geoModels = new models.GeoModels(GLOBALS.db);
-	var GeoAdStat = mongoose.model('GeoAdStat');
+	var mongoose = GLOBALS.mongoose,
+		geoModels = new models.GeoModels(GLOBALS.db),
+		GeoAdStat = mongoose.model('GeoAdStat'),
+		GOOGLE_GEOCODE_API_KEY = GLOBALS.cliques_config.get('Google.apiKey');
 
 	request.promisifiedGet = promise.promisify(request.get);
 
@@ -49,16 +49,21 @@ require('./_main')(function(GLOBALS) {
 
 		// now citiesInGeoAdstats contains ONLY cities that are not yet saved in database 
 		return promise.each(citiesInGeoAdstats, function(cityGeo) {
-			// query Google Geocode API to get the latitude/longitude coordinates for this city
-			var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-			    address: cityGeo._id + ',' + cityGeo.region + ',' + cityGeo.country,
-			    key: GOOGLE_GEOCODE_API_KEY
-			});
-			return request.promisifiedGet(queryUrl)
+			return geoModels.Region.findOne({
+				_id: cityGeo.region
+			})
+			.then(function(region) {
+				// query Google Geocode API to get the latitude/longitude coordinates for this city
+				var regionName = region ? region.name : '';
+				var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+				    address: cityGeo._id + ',' + regionName + ',' + cityGeo.country,
+				    key: GOOGLE_GEOCODE_API_KEY
+				});
+				return request.promisifiedGet(queryUrl);
+			})
 			.then(function(response) {
 				var coordinates;
 				var geoInfo = JSON.parse(response.body);
-
 				if (geoInfo.error_message) {
 					// promise reject since error occurs
 					return promise.reject(geoInfo.error_message);

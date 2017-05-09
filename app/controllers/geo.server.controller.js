@@ -4,13 +4,14 @@
  * Module dependencies.
  */
 var models = require('@cliques/cliques-node-utils').mongodb.models,
+    config = require('config'),
 	errorHandler = require('./errors.server.controller'),
     promise = require('bluebird'),
     request = require('request'),
     querystring = require('querystring'),
 	_ = require('lodash');
 
-var GOOGLE_GEOCODE_API_KEY = 'AIzaSyDKFINMOSHXRJzRVy4ZufnSpGvFiXeaz1c';
+var GOOGLE_GEOCODE_API_KEY = config.get('Google.apiKey');
 var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 module.exports = function(db) {
@@ -145,12 +146,19 @@ module.exports = function(db) {
                 request.promisifiedGet = promise.promisify(request.get);
                 return promise.each(cities, function(cityInfo) {
                     var city = new geoModels.City(cityInfo);
-                    // query Google Geocode API to get the latitude/longitude coordinates for this city
-                    var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-                        address: city.name + ',' + city.region + ',' + city.country,
-                        key: GOOGLE_GEOCODE_API_KEY
-                    });
-                    return request.promisifiedGet(queryUrl)
+
+                    return geoModels.Region.findOne({
+                        _id: cityInfo.region
+                    })
+                    .then(function(region) {
+                        var regionName = region ? region.name : '';
+                        // query Google Geocode API to get the latitude/longitude coordinates for this city
+                        var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                            address: city.name + ',' + regionName + ',' + city.country,
+                            key: GOOGLE_GEOCODE_API_KEY
+                        });
+                        return request.promisifiedGet(queryUrl);
+                    })
                     .then(function(response) {
                         var coordinates;
                         var geoInfo = JSON.parse(response.body);
