@@ -58,6 +58,9 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
                 // fill blank values
                 val = "<No " + queryTypeHeader + " Provided>";
             }
+            if (queryType === 'state' && row._id.region) {
+                val = row._id.region.name;
+            }
             row[queryTypeHeader] = val;
         }
 
