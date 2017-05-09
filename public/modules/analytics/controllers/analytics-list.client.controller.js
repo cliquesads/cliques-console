@@ -57,6 +57,20 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 			}
 		};
 
+		$scope.delete = function(query) {
+			new Query(query).$delete(function(response) {
+				for (var i = 0; i < $scope.queries.length; i ++) {
+					if ($scope.queries[i]._id === response._id) {
+						$scope.queries.splice(i, 1);
+						break;
+					}
+				}
+				Notify.alert('Query deleted successfully.', {
+					status: 'success'
+				});
+			});
+		};
+
 		$scope.reachedQueryListBottom = function() {
 			if ($state.current.name === 'app._analytics.analytics.recentQueriesList' ||
 				$state.current.name === 'app._analytics.analytics.myQueriesList') {

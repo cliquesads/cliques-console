@@ -7,7 +7,8 @@ angular.module('analytics').factory('Query', ['$resource',
         return $resource('console/query/:queryId', { queryId: '@_id'},
             {
                 update: { method: 'PATCH'},
-                create: { method: 'POST'}
+                create: { method: 'POST'},
+                delete: { method: 'DELETE'}
             }
         );
     }

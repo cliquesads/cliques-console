@@ -33,6 +33,14 @@
 							analytics-event="QueriesList_CheckQuery">
 							<i class="fa fa-eye"></i>	
 						</a>
+						<a href=""
+							class="ml"
+							ng-click="delete(query)"
+							ng-if="$state.$current.name === 'app._analytics.analytics.myQueriesList'"
+							analytics-on="click"
+							analytics-event="QueriesList_DeleteQuery">
+							<i class="fa fa-trash"></i>	
+						</a>
 					</td>	
 				</tr>
 			</tbody>

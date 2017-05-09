@@ -51,6 +51,19 @@ module.exports = function(db) {
                 return res.json(req.query);
             },
 
+            delete: function(req, res) {
+				var query = new Query(req.query);
+				query.remove(function(err, removed) {
+					if (err) {
+						return res.status(400).send({
+						    message: errorHandler.getAndLogErrorMessage(err)
+						});	
+					} else {
+						return res.json(removed);
+					}
+				});
+            },
+
 			/**
 			 * Create new query
 			 */
