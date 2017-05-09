@@ -226,7 +226,7 @@ angular.module('analytics').directive('reportSettings', [
 
                 scope.update = function(){
                     new Query(scope.selectedSettings).$update(function(response) {
-                        Notify.alert("Query saved successfully! You can now view this query under My Queries.", {
+                        Notify.alert("Query updated successfully!", {
                             status: 'success'
                         });
                         scope._selectedSettingsInit = angular.copy(scope.selectedSettings);
@@ -239,20 +239,45 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 };
 
-                scope.showSaveOrScheduleQueryDialog = function(state) {
+                scope.showEditScheduleDialog = function(){
+                    var parentScope = scope;
+                    ngDialog.open({
+                        template: 'modules/analytics/views/partials/edit-schedule.html',
+                        controller: ['$scope', '$state', 'CRONTAB_DAY_OPTIONS', 'Notify', 'Query',function($scope, $state, CRONTAB_DAY_OPTIONS, Notify, Query) {
+
+                            $scope.selectedSettings = parentScope.selectedSettings;
+                            $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
+                            $scope.isScheduled = false;
+                            $scope.crontabAmPm = 'AM';
+
+                            // currently editing existing schedule
+                            if ($scope.selectedSettings.schedule){
+                                var crontabInfo = Analytics.translateCrontabString($scope.selectedSettings.schedule);
+                                $scope.crontabDay = crontabInfo.crontabDay;
+                                $scope.crontabHour = crontabInfo.crontabHour;
+                                $scope.crontabMinute = crontabInfo.crontabMinute;
+                                $scope.crontabAmPm = crontabInfo.crontabAmPm;
+                            }
+
+                            $scope.editSchedule = function() {
+                                $scope.selectedSettings.schedule = Analytics.adjustCrontabStringForTimezone($scope.crontabDay, $scope.crontabHour, $scope.crontabMinute, $scope.crontabAmPm);
+                                $scope.closeThisDialog(0);
+                                parentScope.update();
+                            };
+                        }]
+                    });
+                };
+                scope.showSaveOrScheduleQueryDialog = function() {
                     var parentScope = scope;
 
                     // Decide the purpose of this dialog so as to decide which template to load, purpose could be
-                    // a. save query
-                    // b. schedule query or
-                    // c. save & schedule query
-                    var template = 'modules/analytics/views/partials/edit-schedule.html';
-                    if (!state) {
-                        if (!parentScope.selectedSettings.schedule) {
-                            template = 'modules/analytics/views/partials/save-schedule-query.html';
-                        } else {
-                            template = 'modules/analytics/views/partials/save-query.html';
-                        }
+                    // a. save query or
+                    // b. save & schedule query
+                    var template;
+                    if (!parentScope.selectedSettings.schedule) {
+                        template = 'modules/analytics/views/partials/save-schedule-query.html';
+                    } else {
+                        template = 'modules/analytics/views/partials/save-query.html';
                     }
                     ngDialog.open({
                         template: template,
@@ -262,16 +287,6 @@ angular.module('analytics').directive('reportSettings', [
                             $scope.crontabDayOptions = CRONTAB_DAY_OPTIONS;
                             $scope.isScheduled = false;
                             $scope.crontabAmPm = 'AM';
-
-                            if (state === 'schedule') {
-                                // currently editing existing schedule
-                                var crontabInfo = Analytics.translateCrontabString($scope.selectedSettings.schedule);
-                                $scope.crontabDay = crontabInfo.crontabDay;
-
-                                $scope.crontabHour = crontabInfo.crontabHour;
-                                $scope.crontabMinute = crontabInfo.crontabMinute;
-                                $scope.crontabAmPm = crontabInfo.crontabAmPm;
-                            }
                             
                             $scope.editSchedule = function() {
                                 $scope.selectedSettings.schedule = Analytics.adjustCrontabStringForTimezone($scope.crontabDay, $scope.crontabHour, $scope.crontabMinute, $scope.crontabAmPm);
