@@ -11,7 +11,7 @@ angular.module('geo')
 	);
 }])
 .factory('Country', ['$resource', function($resource) {
-	return $resource('/console/country', {}, {});
+	return $resource('/console/country/:countryId', { countryId: '@_id' }, {});
 }])
 .factory('Region', ['$resource', function($resource) {
 	return $resource('/console/region/:regionId', { regionId: '@_id' }, 

@@ -10,12 +10,6 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.isLoading = false;
 		$scope.hasMore = false;
 
-		if ($state.current.name === 'app._analytics.analytics.recentQueriesList') {
-			$scope.queriesListTitle = 'Recent Queries';
-		} else {
-			$scope.queriesListTitle = 'My Queries';
-		}
-
 		// Make query results human readable
 		$scope.handleQueryResults = function(queries) {
 			for (var i = 0; i < queries.length; i ++) {

@@ -116,7 +116,7 @@ angular.module('analytics').config(['$stateProvider',
             }
         }).
         state('app._analytics.analytics.quickQueries.state', {
-            url: '/state',
+            url: '/state/:countryId',
             queryType: 'state',
             resolve: {
                 $title: function(){ return 'States Query'; }
@@ -129,7 +129,7 @@ angular.module('analytics').config(['$stateProvider',
             }
         }).
         state('app._analytics.analytics.quickQueries.city', {
-            url: '/city',
+            url: '/city/:regionId',
             queryType: 'city',
             resolve: {
                 $title: function(){ return 'Cities Query'; }

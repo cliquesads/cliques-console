@@ -4,6 +4,7 @@
 /* global _, angular, user */
 angular.module('analytics').directive('reportSettings', [
     '$rootScope',
+    '$stateParams',
     'aggregationDateRanges',
     'DatepickerService',
     'Analytics',
@@ -16,6 +17,7 @@ angular.module('analytics').directive('reportSettings', [
     'Country',
     function(
         $rootScope,
+        $stateParams,
         aggregationDateRanges,
         DatepickerService,
         Analytics,
@@ -164,14 +166,14 @@ angular.module('analytics').directive('reportSettings', [
                 }
 
                 if (scope.availableSettings.countryFilter) {
+                    scope.selectedCountryId = $stateParams.countryId ? $stateParams.countryId : user.organization.country;
                     // has country filter, should get all countries for current user
                     Country.query().$promise
                     .then(function(response) {
                         scope.allCountries = response;
                         // setup default selected country based on user country
                         for (var i = 0; i < scope.allCountries.length; i ++) {
-                            if (scope.allCountries[i]._id === user.organization.country ||
-                                scope.allCountries[i].name === user.organization.country) {
+                            if (scope.allCountries[i]._id === scope.selectedCountryId) {
                                 scope.geo.countryObject = scope.allCountries[i];
                                 scope.selectedSettings.country = scope.geo.countryObject._id;
                                 break;
@@ -188,14 +190,16 @@ angular.module('analytics').directive('reportSettings', [
                 }
 
                 if (scope.availableSettings.regionFilter) {
+                    scope.selectedRegionIdOrName = $stateParams.regionId ? (scope.selectedCountryId + '-' + $stateParams.regionId) : user.organization.state;
                     // has region filter, should get all regions for the user's country
                     Region.query({
-                        country: user.organization.country
+                        country: scope.selectedCountryId
                     }).$promise.then(function(response) {
                         scope.regions = response;
                         // setup default selected region based on user's region
                         for (var i = 0; i < scope.regions.length; i ++) {
-                            if (user.organization.state === scope.regions[i].name) {
+                            if (scope.selectedRegionIdOrName === scope.regions[i].name ||
+                                scope.selectedRegionIdOrName === scope.regions[i]._id) {
                                 scope.geo.regionObject = scope.regions[i];
                                 scope.selectedSettings.region = scope.geo.regionObject._id;
                                 break;

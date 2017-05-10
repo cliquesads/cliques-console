@@ -6,12 +6,14 @@ angular.module('analytics').directive('queryGeo', [
 	'Analytics',
 	'$rootScope',
 	'$filter',
+	'$state',
 	'Region',
 	'City',
 	function(
 		Analytics,
 		$rootScope,
 		$filter,
+		$state,
 		Region,
 		City
 	) {
@@ -84,11 +86,32 @@ angular.module('analytics').directive('queryGeo', [
 					scope.mapObject.setProjection = function(element) {
 						var projection = d3.geo.equirectangular()
 							.center(centerCoordinates)
-							.scale(8000)
+							.scale(6000)
 							.translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 						var path = d3.geo.path().projection(projection);
 						return {path: path, projection: projection};
 					};
+				};
+
+				scope.mapClicked = function(geography) {
+					if (scope.queryParam.type === 'country') {
+						// country clicked, should go to region query
+						$state.go('app._analytics.analytics.quickQueries.state', {
+							countryId: geography.id
+						});
+					} else if (scope.queryParam.type === 'state') {
+						// region clicked, should go to city query
+						$state.go('app._analytics.analytics.quickQueries.city', {
+							regionId: geography.id
+						});
+					} else if (scope.queryParam.type === 'city') {
+						// if another region clicked, should go to city query with the clicked region
+						if (scope.currentCountry._id + '-' + scope.currentRegion._id !== geography.id) {
+							$state.go('app._analytics.analytics.quickQueries.city', {
+								regionId: geography.id
+							});
+						}
+					}
 				};
 
 				scope.$on('queryStarted', function(event, args) {
