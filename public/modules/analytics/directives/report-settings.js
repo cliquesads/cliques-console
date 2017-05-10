@@ -166,7 +166,13 @@ angular.module('analytics').directive('reportSettings', [
                 }
 
                 if (scope.availableSettings.countryFilter) {
-                    scope.selectedCountryId = $stateParams.countryId ? $stateParams.countryId : user.organization.country;
+                    if (scope.selectedSettings.country) {
+                        scope.selectedCountryId = scope.selectedSettings.country;
+                    } else if ($stateParams.countryId) {
+                        scope.selectedCountryId = $stateParams.countryId;
+                    } else {
+                        scope.selectedCountryId = user.organization.country;
+                    }
                     // has country filter, should get all countries for current user
                     Country.query().$promise
                     .then(function(response) {
@@ -190,7 +196,13 @@ angular.module('analytics').directive('reportSettings', [
                 }
 
                 if (scope.availableSettings.regionFilter) {
-                    scope.selectedRegionIdOrName = $stateParams.regionId ? (scope.selectedCountryId + '-' + $stateParams.regionId) : user.organization.state;
+                    if (scope.selectedSettings.region) {
+                        scope.selectedRegionIdOrName = scope.selectedSettings.region;
+                    } else if ($stateParams.regionId) {
+                        scope.selectedRegionIdOrName = scope.selectedCountryId + '-' + $stateParams.regionId;
+                    } else {
+                        scope.selectedRegionIdOrName = user.organization.state;
+                    }
                     // has region filter, should get all regions for the user's country
                     Region.query({
                         country: scope.selectedCountryId
