@@ -4,6 +4,7 @@
 /* global _, angular, user */
 angular.module('analytics').directive('reportSettings', [
     '$rootScope',
+    '$q',
     '$stateParams',
     'aggregationDateRanges',
     'DatepickerService',
@@ -17,6 +18,7 @@ angular.module('analytics').directive('reportSettings', [
     'Country',
     function(
         $rootScope,
+        $q,
         $stateParams,
         aggregationDateRanges,
         DatepickerService,
@@ -39,10 +41,8 @@ angular.module('analytics').directive('reportSettings', [
             templateUrl: 'modules/analytics/views/partials/report-settings.html',
             link: function(scope, element, attrs) {
                 scope.filters = {};
-
                 scope.calendar = DatepickerService;
                 scope.dateRanges = aggregationDateRanges(user.tz);
-
                 scope.queryParamSaved = scope.selectedSettings.isSaved;
 
                 // Watching for selectedSettings changes
@@ -55,6 +55,113 @@ angular.module('analytics').directive('reportSettings', [
                         }
                     }
                 }, true);
+
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+
+                /**
+                 * Use promise to get all filter options(campaigns, sites, countries & regions),
+                 * after all needed filter options are fetched, then launch the query
+                 */
+                promise
+                .then(function() {
+                    if (scope.availableSettings.campaignFilter) {
+                        // has campaign filter, should get all campaigns for current user
+                        scope.allCampaigns = [];
+                        return Advertiser.query(function(advertisers) {
+                            advertisers.forEach(function(advertiser) {
+                                scope.allCampaigns = scope.allCampaigns.concat(advertiser.campaigns);
+                            });
+                            // setup default selected campaign filter
+                            if (scope.selectedSettings.campaign) {
+                                for (var i = 0; i < scope.allCampaigns.length; i ++) {
+                                    if (scope.allCampaigns[i]._id === scope.selectedSettings.campaign) {
+                                        scope.filters.campaignObject = scope.allCampaigns[i];
+                                    }     
+                                }
+                            }
+                        });
+                    }
+                })
+                .then(function() {
+                    if (scope.availableSettings.siteFilter) {
+                        // has site filter, should get all sites for current user   
+                        scope.allSites = [];
+                        return Publisher.query(function(publishers) {
+                            publishers.forEach(function(publisher) {
+                                scope.allSites = scope.allSites.concat(publisher.sites);
+                            });
+                            // setup default selected site filter
+                            if (scope.selectedSettings.site) {
+                                for (var i = 0; i < scope.allSites.length; i ++) {
+                                    if (scope.allSites[i]._id === scope.selectedSettings.site) {
+                                        scope.filters.siteObject = scope.allSites[i];
+                                    }
+                                }
+                            }
+                        });
+                    }
+                })
+                .then(function() {
+                    if (scope.availableSettings.countryFilter) {
+                        if (scope.selectedSettings.country) {
+                            scope.selectedCountryId = scope.selectedSettings.country;
+                        } else if ($stateParams.countryId) {
+                            scope.selectedCountryId = $stateParams.countryId;
+                        } else {
+                            scope.selectedCountryId = user.organization.country;
+                        }
+                        // has country filter, should get all countries for current user
+                        return Country.query().$promise
+                        .then(function(response) {
+                            scope.allCountries = response;
+                            // setup default selected country based on user country
+                            for (var i = 0; i < scope.allCountries.length; i ++) {
+                                if (scope.allCountries[i]._id === scope.selectedCountryId) {
+                                    scope.geo.countryObject = scope.allCountries[i];
+                                    scope.selectedSettings.country = scope.geo.countryObject._id;
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                })
+                .then(function() {
+                    if (scope.availableSettings.regionFilter) {
+                        if (scope.selectedSettings.region) {
+                            scope.selectedRegionIdOrName = scope.selectedSettings.region;
+                        } else if ($stateParams.regionId) {
+                            scope.selectedRegionIdOrName = scope.selectedCountryId + '-' + $stateParams.regionId;
+                        } else {
+                            scope.selectedRegionIdOrName = user.organization.state;
+                        }
+                        // has region filter, should get all regions for the user's country
+                        return Region.query({
+                            country: scope.selectedCountryId
+                        }).$promise.then(function(response) {
+                            scope.regions = response;
+                            // setup default selected region based on user's region
+                            for (var i = 0; i < scope.regions.length; i ++) {
+                                if (scope.selectedRegionIdOrName === scope.regions[i].name ||
+                                    scope.selectedRegionIdOrName === scope.regions[i]._id) {
+                                    scope.geo.regionObject = scope.regions[i];
+                                    scope.selectedSettings.region = scope.geo.regionObject._id;
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                })
+                .then(function() {
+                    scope.launchQuery();
+                })
+                .catch(function(error) {
+                    Notify.alert(error.message, {
+                        status: 'danger'
+                    });
+                });
+
+                deferred.resolve();
 
                 scope.launchQuery = function() {
                     $rootScope.$broadcast('queryStarted');
@@ -97,135 +204,6 @@ angular.module('analytics').directive('reportSettings', [
                         $rootScope.$broadcast('queryError');
                     });
                 };
-
-                scope.shouldLaunchQuery = function(numberOfFiltersToFetch) {
-                    if (numberOfFiltersToFetch === 0) {
-                        // No filter to fetch from backend, launch query immediately
-                        scope.launchQuery();
-                    }
-                };
-
-                // Counter to record number of kinds of filters that should be fetched from backend, initial query should be launched only AFTER all filters data are fetched from backend
-                var numberOfFiltersToFetch = 0;
-                if (scope.availableSettings.campaignFilter) {
-                    numberOfFiltersToFetch ++; 
-                }
-                if (scope.availableSettings.siteFilter) {
-                    numberOfFiltersToFetch ++;
-                }
-                if (scope.availableSettings.countryFilter) {
-                    numberOfFiltersToFetch ++;
-                }
-                if (scope.availableSettings.regionFilter) {
-                    numberOfFiltersToFetch ++;
-                }
-                scope.shouldLaunchQuery(numberOfFiltersToFetch);
-
-                if (scope.availableSettings.campaignFilter) {
-                    // has campaign filter, should get all campaigns for current user
-                    var allCampaigns = [];
-                    Advertiser.query(function(advertisers) {
-                        advertisers.forEach(function(advertiser) {
-                            allCampaigns = allCampaigns.concat(advertiser.campaigns);
-                        });
-                        scope.allCampaigns = allCampaigns;
-                        // setup default selected campaign filter
-                        if (scope.selectedSettings.campaign) {
-                            for (var i = 0; i < scope.allCampaigns.length; i ++) {
-                                if (scope.allCampaigns[i]._id === scope.selectedSettings.campaign) {
-                                    scope.filters.campaignObject = scope.allCampaigns[i];
-                                }     
-                            }
-                        }
-                        numberOfFiltersToFetch --;
-                        // check if no more filters to fetch, if so launch initial query
-                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    });
-                }
-
-                if (scope.availableSettings.siteFilter) {
-                    // has site filter, should get all sites for current user   
-                    var allSites = [];
-                    Publisher.query(function(publishers) {
-                        publishers.forEach(function(publisher) {
-                            allSites = allSites.concat(publisher.sites);
-                        });
-                        scope.allSites = allSites;
-                        // setup default selected site filter
-                        if (scope.selectedSettings.site) {
-                            for (var i = 0; i < scope.allSites.length; i ++) {
-                                if (scope.allSites[i]._id === scope.selectedSettings.site) {
-                                    scope.filters.siteObject = scope.allSites[i];
-                                }
-                            }
-                        }
-                        numberOfFiltersToFetch --;
-                        // check if no more filters to fetch, if so launch initial query
-                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    });
-                }
-
-                if (scope.availableSettings.countryFilter) {
-                    if (scope.selectedSettings.country) {
-                        scope.selectedCountryId = scope.selectedSettings.country;
-                    } else if ($stateParams.countryId) {
-                        scope.selectedCountryId = $stateParams.countryId;
-                    } else {
-                        scope.selectedCountryId = user.organization.country;
-                    }
-                    // has country filter, should get all countries for current user
-                    Country.query().$promise
-                    .then(function(response) {
-                        scope.allCountries = response;
-                        // setup default selected country based on user country
-                        for (var i = 0; i < scope.allCountries.length; i ++) {
-                            if (scope.allCountries[i]._id === scope.selectedCountryId) {
-                                scope.geo.countryObject = scope.allCountries[i];
-                                scope.selectedSettings.country = scope.geo.countryObject._id;
-                                break;
-                            }
-                        }
-                        numberOfFiltersToFetch --;
-                        // check if no more filters to fetch, if so launch initial query
-                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    }, function(error) {
-                        Notify.alert(error.message, {
-                            status: 'danger'
-                        });
-                    });
-                }
-
-                if (scope.availableSettings.regionFilter) {
-                    if (scope.selectedSettings.region) {
-                        scope.selectedRegionIdOrName = scope.selectedSettings.region;
-                    } else if ($stateParams.regionId) {
-                        scope.selectedRegionIdOrName = scope.selectedCountryId + '-' + $stateParams.regionId;
-                    } else {
-                        scope.selectedRegionIdOrName = user.organization.state;
-                    }
-                    // has region filter, should get all regions for the user's country
-                    Region.query({
-                        country: scope.selectedCountryId
-                    }).$promise.then(function(response) {
-                        scope.regions = response;
-                        // setup default selected region based on user's region
-                        for (var i = 0; i < scope.regions.length; i ++) {
-                            if (scope.selectedRegionIdOrName === scope.regions[i].name ||
-                                scope.selectedRegionIdOrName === scope.regions[i]._id) {
-                                scope.geo.regionObject = scope.regions[i];
-                                scope.selectedSettings.region = scope.geo.regionObject._id;
-                                break;
-                            }
-                        }
-                        numberOfFiltersToFetch --;
-                        // check if no more filters to fetch, if so launch initial query
-                        scope.shouldLaunchQuery(numberOfFiltersToFetch);
-                    }, function(error) {
-                        Notify.alert(error.message, {
-                            status: 'danger'
-                        });
-                    });
-                }
 
                 scope.campaignSelected = function() {
                     if (scope.filters.campaignObject) {
