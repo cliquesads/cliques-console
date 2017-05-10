@@ -103,5 +103,5 @@ module.exports = function(db, routers) {
          *  [Query Schema](#api-Query)
          * @apiError (400 Bad Request) {String} error message
          */
-        .delete(analytics.query.delete)
+        .delete(analytics.query.delete);
 };

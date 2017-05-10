@@ -6,11 +6,13 @@ angular.module('analytics').directive('queryGeo', [
 	'Analytics',
 	'$rootScope',
 	'$filter',
+	'Region',
 	'City',
 	function(
 		Analytics,
 		$rootScope,
 		$filter,
+		Region,
 		City
 	) {
 		'use strict';
@@ -78,6 +80,16 @@ angular.module('analytics').directive('queryGeo', [
 						longitude: city.longitude
 					};
 				};
+				var constructSetProjectionFunc = function(centerCoordinates) {
+					scope.mapObject.setProjection = function(element) {
+						var projection = d3.geo.equirectangular()
+							.center(centerCoordinates)
+							.scale(8000)
+							.translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+						var path = d3.geo.path().projection(projection);
+						return {path: path, projection: projection};
+					};
+				};
 
 				scope.$on('queryStarted', function(event, args) {
 					scope.isLoading = true;
@@ -86,6 +98,9 @@ angular.module('analytics').directive('queryGeo', [
 					scope.isLoading = false;
 				});
 				scope.$on('queryEnded', function(event, args) {
+					scope.currentCountry = args.country;
+					scope.currentRegion = args.region;
+
 					scope.queryParam = args.queryParam;
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
 					scope.geoQueryResults = args.results;
@@ -143,7 +158,7 @@ angular.module('analytics').directive('queryGeo', [
 						},
 						fills: mapFillColors
 					};
-					switch(scope.queryParam.type) {
+					switch (scope.queryParam.type) {
 						case 'country':
 							scope.mapObject.scope = 'world';
 							scope.mapAvailable = true;
@@ -219,7 +234,30 @@ angular.module('analytics').directive('queryGeo', [
 										}
 									};
 									scope.mapPluginData = {bubbles: scope.bombs};
-									scope.isLoading = false;
+
+									// zoom in map to show current region
+									var zoomInCenterCoords;
+									if (scope.currentRegion.latitude && scope.currentRegion.longitude) {
+										zoomInCenterCoords = [
+											scope.currentRegion.longitude,	
+											scope.currentRegion.latitude
+										];
+										constructSetProjectionFunc(zoomInCenterCoords);
+										scope.isLoading = false;
+									} else {
+										// current region doesn't have geo coordinates yet, need to update
+										new Region(scope.currentRegion).$update()
+										.then(function(response) {
+											if (response.latitude && response.longitude) {
+												zoomInCenterCoords = [
+													response.longitude,
+													response.latitude
+												];
+												constructSetProjectionFunc(zoomInCenterCoords);
+											}
+											scope.isLoading = false;
+										});
+									}
 								});
 							} else {
 								// map only available for world map and USA map

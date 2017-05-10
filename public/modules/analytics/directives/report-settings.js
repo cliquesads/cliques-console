@@ -84,7 +84,10 @@ angular.module('analytics').directive('reportSettings', [
                         $rootScope.$broadcast('queryEnded', {
                             queryParam: scope.selectedSettings,
                             dateRange: scope.selectedDateRange,
-                            results: queryResults
+                            results: queryResults,
+                            // for geo query only
+                            country: scope.geo.countryObject,
+                            region: scope.geo.regionObject
                         });
                     })
                     .catch(function(error) {

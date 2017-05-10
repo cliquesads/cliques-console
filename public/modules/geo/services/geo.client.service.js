@@ -14,5 +14,9 @@ angular.module('geo')
 	return $resource('/console/country', {}, {});
 }])
 .factory('Region', ['$resource', function($resource) {
-	return $resource('/console/region', {}, {})	;
+	return $resource('/console/region/:regionId', { regionId: '@_id' }, 
+		{
+			update: { method: 'PATCH' }
+		}
+	);
 }]);

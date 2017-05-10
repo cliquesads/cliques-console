@@ -146,7 +146,24 @@ module.exports = function(db, routers){
          * @apiSuccess (Body){String} country ISO-3166 Alpha-3 code of country the region belongs to (FK to Country)
          * @apiSuccess (Body){String} code Maxmind region code
          */
-        .get(geo.region.readRegion);
+        .get(geo.region.readRegion)
+        /**
+         * @api {patch} /region Update geo-coordinates for region (apiQuery)
+         * @apiName updateRegion
+         * @apiGroup Geo.Region
+         * @apiDescription Update geo-coordinates for region. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam ({Object}) ::region:: region object
+         * @apiSuccess {Object} ::region:: saved region object
+         *  for all fields).
+         */
+        .patch(geo.region.update);
 
     router.param('regionId', geo.region.regionByID);
 

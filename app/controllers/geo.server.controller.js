@@ -16,6 +16,7 @@ var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 module.exports = function(db) {
     var geoModels = new models.GeoModels(db);
+    request.promisifiedGet = promise.promisify(request.get);
 
     return {
         dma: {
@@ -112,6 +113,46 @@ module.exports = function(db) {
                     req.region = region;
                     next();
                 });
+            },
+            /**
+             * For an existed region, update its geo-coordinates
+             */
+            update: function (req, res) {
+                var region = req.region;
+                region = _.extend(region, req.body);
+
+                // query Google Geocode API to get the latitude/longitude coordinates for this region
+                var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                    address: region.name + ',' + region.country,
+                    key: GOOGLE_GEOCODE_API_KEY
+                });
+                return request.promisifiedGet(queryUrl)
+                .then(function(response) {
+                    var coordinates;
+                    var geoInfo = JSON.parse(response.body);
+
+                    if (geoInfo.error_message) {
+                        return promise.reject(geoInfo.error_message);
+                    }
+
+                    if (geoInfo.results.length > 0) {
+                        if (geoInfo.results[0].geometry) {
+                            coordinates = geoInfo.results[0].geometry.location;
+                        }
+                    }
+                    if (coordinates) {
+                        // save this region with result coordinates in database
+                        region.latitude = coordinates.lat;
+                        region.longitude = coordinates.lng;
+                        return region.save();
+                    }
+                })
+                .then(function(savedRegion) {
+                    return res.json(savedRegion);
+                })
+                .catch(function(err) {
+                    return res.status(400).send(err);
+                });
             }
         },
         city: {
@@ -143,7 +184,6 @@ module.exports = function(db) {
                     // single city creation
                     cities = [req.body];
                 }
-                request.promisifiedGet = promise.promisify(request.get);
                 return promise.each(cities, function(cityInfo) {
                     var city = new geoModels.City(cityInfo);
 
