@@ -188,6 +188,7 @@ angular.module('analytics').directive('queryGeo', [
 							// update map data
 							scope.mapObject.data = mapData;
 							scope.isLoading = false;
+							scope.postTitle = "World";
 							break;
 						case 'state':
 							if (scope.queryParam.country === 'USA') {
@@ -200,11 +201,13 @@ angular.module('analytics').directive('queryGeo', [
 								scope.mapAvailable = false;
 							}
 							scope.isLoading = false;
+							scope.postTitle = scope.currentCountry.name + " State";
 							break;
 						case 'city':
 							if (scope.queryParam.country === 'USA') {
 								scope.mapObject.scope = 'usa';
 								scope.mapAvailable = true;
+								scope.postTitle = scope.currentCountry.name + " > " + scope.currentRegion.name;
 
 								City.query({
 									name: '{in}' + cityNames.join(','),
