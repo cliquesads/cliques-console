@@ -82,6 +82,32 @@ angular.module('analytics').directive('queryGeo', [
 						longitude: city.longitude
 					};
 				};
+				var translateFillKeys = function(fillKey) {
+					var impsExtentString;
+					switch (fillKey) {
+						case 'EXTREME':
+							impsExtentString = 'Most imps'
+							break;
+						case 'HIGH':
+							impsExtentString = 'High imps'
+							break;
+						case 'MEDIUM':
+							impsExtentString = 'Medium imps'
+							break;
+						case 'LOW':
+							impsExtentString = 'Low imps'
+							break;
+						case 'LESSER':
+							impsExtentString = 'Lesser imps'
+							break;
+						case 'defaultFill':
+							impsExtentString = 'No imps'
+							break;
+						default:
+							break;
+					}
+					return impsExtentString;
+				};
 				var constructSetProjectionFunc = function(centerCoordinates) {
 					scope.mapObject.setProjection = function(element) {
 						var projection = d3.geo.equirectangular()
@@ -181,6 +207,23 @@ angular.module('analytics').directive('queryGeo', [
 						},
 						fills: mapFillColors
 					};
+					// map plugins - legend & bubbles
+					scope.mapPlugins = {
+						customLegend: function(layer, data, options) {
+							var html = ['<ul class="list-inline">'],
+							label = '';
+							for (var fillKey in this.options.fills) {
+								html.push('<li class="key" ',
+								'style="border-top: 10px solid ' + this.options.fills[fillKey] + '">',
+								translateFillKeys(fillKey),
+								'</li>');
+							}
+							html.push('</ul>');
+							d3.select(this.options.element).append('div')
+							.attr('class', 'datamaps-legend')
+							.html(html.join(''));
+						}
+					};
 					switch (scope.queryParam.type) {
 						case 'country':
 							scope.mapObject.scope = 'world';
@@ -247,18 +290,8 @@ angular.module('analytics').directive('queryGeo', [
 											});
 										});
 									}
-
 									//draw bubbles for scope.bombs
-									scope.mapPlugins = {
-										bubbles: null,
-										customLegend: function(layer, data, options) {
-											var html = ['<ul class="list-inline">'];
-											html.push('</ul>');
-											d3.select(this.options.element).append('div')
-											.attr('class', 'datamaps-legend')
-											.html(html.join(''));
-										}
-									};
+									scope.mapPlugins.bubbles = null;
 									scope.mapPluginData = {bubbles: scope.bombs};
 
 									// zoom in map to show current region
