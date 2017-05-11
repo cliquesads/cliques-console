@@ -86,22 +86,22 @@ angular.module('analytics').directive('queryGeo', [
 					var impsExtentString;
 					switch (fillKey) {
 						case 'EXTREME':
-							impsExtentString = 'Most imps';
+							impsExtentString = 'Most impressions';
 							break;
 						case 'HIGH':
-							impsExtentString = 'High imps';
+							impsExtentString = 'High impressions';
 							break;
 						case 'MEDIUM':
-							impsExtentString = 'Medium imps';
+							impsExtentString = 'Some impressions';
 							break;
 						case 'LOW':
-							impsExtentString = 'Low imps';
+							impsExtentString = 'Low impressions';
 							break;
 						case 'LESSER':
-							impsExtentString = 'Lesser imps';
+							impsExtentString = 'Very low impressions';
 							break;
 						case 'defaultFill':
-							impsExtentString = 'No imps';
+							impsExtentString = 'No impressions';
 							break;
 						default:
 							break;
