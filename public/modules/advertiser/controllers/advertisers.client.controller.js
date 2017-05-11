@@ -115,15 +115,18 @@ controller('AdvertiserController', ['$scope', '$stateParams', '$location',
             $scope.advertiserBasics = function(){
                 ngDialog.open({
                     template: 'modules/advertiser/views/partials/advertiser-inline.html',
-                    controller: ['$scope',function($scope){
+                    controller: ['$scope','$location','Notify', function($scope, $location, Notify){
                         $scope.advertiser = $scope.ngDialogData.advertiser;
                         $scope.update = function() {
-                            var advertiser = $scope.advertiser;
-                            advertiser.$update(function() {
-                                $location.path('advertiser/' + advertiser._id);
-                            }, function(errorResponse) {
-                                $scope.error = errorResponse.data.message;
-                            });
+                            if ($scope.advertiserBasicsForm.$valid){
+                                var advertiser = $scope.advertiser;
+                                advertiser.$update(function() {
+                                    Notify.alert('Advertiser details successfully updated', {status: 'success'});
+                                    $scope.closeThisDialog(0);
+                                }, function(errorResponse) {
+                                    Notify.alert('Error saving advertiser: ' + errorResponse.message, {status: 'danger'});
+                                });
+                            }
                         };
                     }],
                     data: {advertiser: $scope.advertiser}
