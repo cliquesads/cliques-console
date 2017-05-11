@@ -14,6 +14,10 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 var GOOGLE_GEOCODE_API_KEY = config.get('Google.apiKey');
 var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
+// Constants to calculate zoomRatio for region
+var baseFactor = 3.5;
+var baseZoomRatio = 8000;
+
 module.exports = function(db) {
     var geoModels = new models.GeoModels(db);
     request.promisifiedGet = promise.promisify(request.get);
@@ -121,38 +125,55 @@ module.exports = function(db) {
                 var region = req.region;
                 region = _.extend(region, req.body);
 
-                // query Google Geocode API to get the latitude/longitude coordinates for this region
-                var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-                    address: region.name + ',' + region.country,
-                    key: GOOGLE_GEOCODE_API_KEY
-                });
-                return request.promisifiedGet(queryUrl)
-                .then(function(response) {
-                    var coordinates;
-                    var geoInfo = JSON.parse(response.body);
+                if (!region.latitude || !region.longitude || !region.zoomRatio) {
+                    // geo coords / map zoom ratio missing
+                    // query Google Geocode API to get the latitude/longitude coordinates for this region
+                    var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                        address: region.name + ',' + region.country,
+                        key: GOOGLE_GEOCODE_API_KEY
+                    });
+                    return request.promisifiedGet(queryUrl)
+                    .then(function(response) {
+                        var coordinates;
+                        var geoInfo = JSON.parse(response.body);
 
-                    if (geoInfo.error_message) {
-                        return promise.reject(geoInfo.error_message);
-                    }
-
-                    if (geoInfo.results.length > 0) {
-                        if (geoInfo.results[0].geometry) {
-                            coordinates = geoInfo.results[0].geometry.location;
+                        if (geoInfo.error_message) {
+                            return promise.reject(geoInfo.error_message);
                         }
-                    }
-                    if (coordinates) {
-                        // save this region with result coordinates in database
-                        region.latitude = coordinates.lat;
-                        region.longitude = coordinates.lng;
-                        return region.save();
-                    }
-                })
-                .then(function(savedRegion) {
-                    return res.json(savedRegion);
-                })
-                .catch(function(err) {
-                    return res.status(400).send(err);
-                });
+
+                        if (geoInfo.results.length > 0) {
+                            if (geoInfo.results[0].geometry) {
+                                coordinates = geoInfo.results[0].geometry.location;
+                                var viewport = geoInfo.results[0].geometry.viewport;
+                                if (viewport) {
+                                    // calculate the length of diagonal for the region from northeast to southwest
+                                    var diagonal = Math.sqrt(Math.pow(viewport.northeast.lat - viewport.southwest.lat, 2) + Math.pow(viewport.northeast.lng - viewport.southwest.lng, 2));
+                                    region.zoomRatio = baseZoomRatio * baseFactor / diagonal;
+                                }
+                            }
+                        }
+                        if (coordinates) {
+                            // save this region with result coordinates in database
+                            region.latitude = coordinates.lat;
+                            region.longitude = coordinates.lng;
+                            return region.save();
+                        }
+                    })
+                    .then(function(savedRegion) {
+                        return res.json(savedRegion);
+                    })
+                    .catch(function(err) {
+                        return res.status(400).send(err);
+                    });
+                } else {
+                    return region.save()
+                    .then(function(savedRegion) {
+                        return res.json(savedRegion);
+                    })
+                    .catch(function(err) {
+                        return res.status(400).send(err);
+                    });
+                }
             }
         },
         city: {

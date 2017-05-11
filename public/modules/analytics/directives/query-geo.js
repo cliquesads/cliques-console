@@ -86,33 +86,33 @@ angular.module('analytics').directive('queryGeo', [
 					var impsExtentString;
 					switch (fillKey) {
 						case 'EXTREME':
-							impsExtentString = 'Most imps'
+							impsExtentString = 'Most imps';
 							break;
 						case 'HIGH':
-							impsExtentString = 'High imps'
+							impsExtentString = 'High imps';
 							break;
 						case 'MEDIUM':
-							impsExtentString = 'Medium imps'
+							impsExtentString = 'Medium imps';
 							break;
 						case 'LOW':
-							impsExtentString = 'Low imps'
+							impsExtentString = 'Low imps';
 							break;
 						case 'LESSER':
-							impsExtentString = 'Lesser imps'
+							impsExtentString = 'Lesser imps';
 							break;
 						case 'defaultFill':
-							impsExtentString = 'No imps'
+							impsExtentString = 'No imps';
 							break;
 						default:
 							break;
 					}
 					return impsExtentString;
 				};
-				var constructSetProjectionFunc = function(centerCoordinates) {
+				var constructSetProjectionFunc = function(centerCoordinates, zoomRatio) {
 					scope.mapObject.setProjection = function(element) {
 						var projection = d3.geo.equirectangular()
 							.center(centerCoordinates)
-							.scale(6000)
+							.scale(zoomRatio)
 							.translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 						var path = d3.geo.path().projection(projection);
 						return {path: path, projection: projection};
@@ -296,12 +296,14 @@ angular.module('analytics').directive('queryGeo', [
 
 									// zoom in map to show current region
 									var zoomInCenterCoords;
-									if (scope.currentRegion.latitude && scope.currentRegion.longitude) {
+									if (scope.currentRegion.latitude &&
+										scope.currentRegion.longitude &&
+										scope.currentRegion.zoomRatio) {
 										zoomInCenterCoords = [
 											scope.currentRegion.longitude,	
 											scope.currentRegion.latitude
 										];
-										constructSetProjectionFunc(zoomInCenterCoords);
+										constructSetProjectionFunc(zoomInCenterCoords, scope.currentRegion.zoomRatio);
 										scope.isLoading = false;
 									} else {
 										// current region doesn't have geo coordinates yet, need to update
@@ -312,7 +314,11 @@ angular.module('analytics').directive('queryGeo', [
 													response.longitude,
 													response.latitude
 												];
-												constructSetProjectionFunc(zoomInCenterCoords);
+												if (!response.zoomRatio) {
+													// If region zoomRatio doesn't get updated, set to a default value
+													response.zoomRatio = 6000;
+												}
+												constructSetProjectionFunc(zoomInCenterCoords, response.zoomRatio);
 											}
 											scope.isLoading = false;
 										});
