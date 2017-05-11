@@ -56,6 +56,23 @@ angular.module('payments').directive('accountnumber', function(){
                 account_holder_type: 'company'
             };
 
+            // TODO: Add all world currencies, this list was selected almost entirely randomly
+            scope.currencies = [
+                "AUD",
+                "CAD",
+                "CNY",
+                "EUR",
+                "GBP",
+                "HKD",
+                "JPY",
+                "MXN",
+                "NZD",
+                "RUB",
+                "SEK",
+                "SGD",
+                "USD"
+            ];
+
             // get string form of regex, as actual regex literals don't pass through
             // to template properly I have no idea why
             // scope.dateRegex = REGEXES.datePattern;
