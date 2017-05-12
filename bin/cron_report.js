@@ -9,7 +9,10 @@ var _ = require('lodash');
 var base64 = require('base64-stream');
 var promise = require('bluebird');
 
-var mailer = new mail.Mailer({ fromAddress: "no-reply@cliquesads.com", templatePath: '../app/views/templates' });
+var mailer = new mail.Mailer({
+    fromAddress: "no-reply@cliquesads.com",
+    templatePath: __dirname + '/../app/views/templates'
+});
 var BASE_URL = "https://console.cliquesads.com";
 
 require('./_main')(function(GLOBALS) {
@@ -129,7 +132,7 @@ require('./_main')(function(GLOBALS) {
                 // The next execution time for this query is overdue
                 // 1. Update the `nextRun` field for this query in database
                 // 2. Run this query and generate csv report
-                var interval = parser.parseExpression(query.schedule);
+                var interval = parser.parseExpression(query.schedule, {utc: true});
                 var nextRun = new Date(interval.next().toString());
                 while (nextRun < now) {
                     nextRun = new Date(interval.next().toString());

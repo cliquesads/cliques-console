@@ -145,7 +145,7 @@ module.exports = function(db) {
                 		});
                 	}
                 	var parser = require('cron-parser');
-                	var interval = parser.parseExpression(scheduleString);
+                	var interval = parser.parseExpression(scheduleString, {utc: true});
                 	nextRun = new Date(interval.next().toString());
                 }
                 if (nextRun) {
