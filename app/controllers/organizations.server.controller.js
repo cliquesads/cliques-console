@@ -51,7 +51,7 @@ var lookupCountryCode = function(countryName){
         // if that fails just return countryName
         return mapping[countryName] || countryName;
     } else {
-        return lookupVals[0];
+        return lookupVals[0].alpha2;
     }
 };
 
