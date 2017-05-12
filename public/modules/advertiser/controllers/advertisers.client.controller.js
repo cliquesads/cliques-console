@@ -29,9 +29,9 @@ angular.module('advertiser').controller('ListAdvertisersController', ['$scope', 
          * user checks checkbox, and redirect to appropriate view
          * @type {boolean}
          */
-        $scope.rememberMySelection = true;
+        $scope.defaults = { rememberMySelection: true };
         $scope.selectAdvertiser = function(advertiser) {
-            $rootScope.advertiser = $scope.rememberMySelection ? advertiser : null;
+            $rootScope.advertiser = $scope.defaults.rememberMySelection ? advertiser : null;
             var nextState = $stateParams.next ? $stateParams.next : '.viewAdvertiser';
             event.preventDefault();
             $state.go(nextState, {
