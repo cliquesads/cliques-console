@@ -48,8 +48,12 @@ angular.module('users').factory('Users', ['$resource',
             background: [30,165,98,1],
             size: 100
         };
-        var identicon = new Identicon(Authentication.user._id, options).toString();
-        // Include image prefix for rendering in template, could make this optional
-        return 'data:image/png;base64,' + identicon;
+        if (Authentication.user){
+            var identicon = new Identicon(Authentication.user._id, options).toString();
+            // Include image prefix for rendering in template, could make this optional
+            return 'data:image/png;base64,' + identicon;
+        } else {
+            return null;
+        }
     }
 ]);
