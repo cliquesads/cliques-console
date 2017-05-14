@@ -84,6 +84,8 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         type: 'native',
                         impTracker: fileItem.impTracker,
                         clickTracker: fileItem.clickTracker,
+                        h: 1,
+                        w: 1,
                         native: {
                             rawImageUrl: fileItem.rawImageUrl,
                             rawImageW: fileItem.rawImageW,
@@ -129,6 +131,8 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         creativegroups.push({
                             name: groupname_prefix + '_' + size,
                             type: 'native',
+                            h: 1,
+                            w: 1,
                             creatives: creativegroups_obj[size]
                         });
                     } else {
