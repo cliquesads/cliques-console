@@ -52,33 +52,22 @@ require('./_main')(function(GLOBALS) {
         request.promisifiedGet = promise.promisify(request.get);
         return request.promisifiedGet(queryOpts)
         .then(function(response) {
-
-            console.log('============= response body: ');
-            console.log(response.body);
-
             var rows = JSON.parse(response.body);
-
-            console.log('1');
             if (rows.length > 0) {
                 if (rows[0]._id.date) {
                     // sort rows by date
                     rows = rows.sort(sortByDate);
                 }
             }
-            console.log('2');
 
             rows.forEach(function(row) {
                 // write each row to csv, only picking headers passed in
                 csv.write(_.pick(row, headers));
             });
 
-            console.log('3');
-
             // end csv stream
             csv.end();
             var csvName = query.name + '_' + asOfDate.substring(0, 10) + '_report.csv';
-
-            console.log('4');
 
             var queryModel = new Query(query);
             var timePeriod = queryModel.getDatetimeRange(tz);
@@ -92,9 +81,6 @@ require('./_main')(function(GLOBALS) {
 
             // now send mail
             mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
-
-            console.log('5');
-
             return mailer.promisifiedSendMail({
                 subject: emailSubject,
                 templateName: emailTemplate,
@@ -115,9 +101,6 @@ require('./_main')(function(GLOBALS) {
             });
         })
         .catch(function(err) {
-            console.log('===================== 3. err: ');
-            console.log(err);
-
             console.error(err);
         });
     };
@@ -160,8 +143,6 @@ require('./_main')(function(GLOBALS) {
                     var orgType = query.user.organization.effectiveOrgType;
                     var subject = "Cliques Query Results - " + query.name + " - " + moment(asOfDate).format('MMMM D, YYYY');
                     var queryModel = new Query(query);
-                    console.log('x');
-
                     return generateReport(
                         {
                             auth: {
@@ -181,9 +162,6 @@ require('./_main')(function(GLOBALS) {
                     );
                 })
                 .catch(function(err) {
-                    console.log('============== 1. err: ');
-                    console.log(err);
-
                     console.error(err);
                 });
             }
@@ -194,10 +172,6 @@ require('./_main')(function(GLOBALS) {
         process.exit(0);
     })
     .catch(function(err) {
-        console.log('============== 2. err: ');
-        console.log(err);
-
-
         mongoose.disconnect();
         console.error(err);
         process.exit(1);
