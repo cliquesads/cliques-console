@@ -7,13 +7,11 @@ angular.module('analytics').directive('queryGraph', [
 	'Analytics',
 	'aggregationDateRanges',
 	'MongoTimeSeries',
-	'Notify',
 	function(
 		$rootScope,
 		Analytics,
 		aggregationDateRanges,
-		MongoTimeSeries,
-		Notify
+		MongoTimeSeries
 	) {
 		'use strict';
 		return {
@@ -24,11 +22,36 @@ angular.module('analytics').directive('queryGraph', [
 				// table collapse state
 				scope.isCollapsed = false;	
 				scope.user = user;
+				scope.isLoading = true;
+
 				scope.dateRanges = aggregationDateRanges(user.tz);
-				scope.$on('launchQuery', function(event, args) {
+
+				scope.$on('queryStarted', function(event, args) {
+					scope.isLoading = true;
+				});
+				scope.$on('queryError', function(event, args) {
+					scope.isLoading = false;
+				});
+				scope.$on('queryEnded', function(event, args) {
+					scope.isLoading = false;
 					scope.queryParam = args.queryParam;
-					scope.queryFunction = Analytics.queryFunction(scope.queryParam.type, $rootScope.role);
-					scope.getGraphData(scope.queryParam);
+					scope.dateRange = args.dateRange;
+					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
+
+					// Pass "show-points" to graph directive to toggle line points
+					// Only have this so points won't show for lines with tons of data
+					scope.showPoints = scope.dateRanges[scope.queryParam.dateRangeShortCode].showPoints;
+
+					scope.graphQueryResults = args.results;
+
+					scope.timeSeries = new MongoTimeSeries(
+						args.results,
+						scope.dateRange.startDate,
+						scope.dateRange.endDate,
+						user.tz,
+						scope.queryParam.dateGroupBy,
+						{fields: fields}
+					);
 				});
 
 				var fields = [
@@ -43,33 +66,6 @@ angular.module('analytics').directive('queryGraph', [
 				if (user.organization.organization_types.indexOf('publisher') > -1) {
 					fields = ['imps', 'defaults', 'clicks', 'spend'];
 				}
-				scope.getGraphData = function(queryParam) {
-					scope.isLoading = true;
-					scope.humanizedDateRange = queryParam.humanizedDateRange;
-
-					// Pass "show-points" to graph directive to toggle line points
-					// Only have this so points won't show for lines with tons of data
-					scope.showPoints = scope.dateRanges[queryParam.dateRangeShortCode].showPoints;
-
-					// query aggregations api endpoint
-					scope.queryFunction(queryParam, $rootScope.role)
-					.then(function(response) {
-						scope.isLoading = false;
-						scope.graphQueryResults = response.data;
-
-						scope.timeSeries = new MongoTimeSeries(
-							response.data,
-							queryParam.startDate,
-							queryParam.endDate,
-							user.tz,
-							queryParam.dateGroupBy,
-							{fields: fields}
-						);
-					}).catch(function(error) {
-						scope.isLoading = false;
-						Notify.alert('Error on query for graph data.');
-					});
-				};
 			}
 		};
 	}

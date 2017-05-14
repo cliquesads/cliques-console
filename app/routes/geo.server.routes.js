@@ -146,7 +146,59 @@ module.exports = function(db, routers){
          * @apiSuccess (Body){String} country ISO-3166 Alpha-3 code of country the region belongs to (FK to Country)
          * @apiSuccess (Body){String} code Maxmind region code
          */
-        .get(geo.region.readRegion);
+        .get(geo.region.readRegion)
+        /**
+         * @api {patch} /region Update geo-coordinates for region (apiQuery)
+         * @apiName updateRegion
+         * @apiGroup Geo.Region
+         * @apiDescription Update geo-coordinates for region. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam ({Object}) ::region:: region object
+         * @apiSuccess {Object} ::region:: saved region object
+         *  for all fields).
+         */
+        .patch(geo.region.update);
 
     router.param('regionId', geo.region.regionByID);
+
+    /* ---- City API Routes ---- */
+    router.route('/city')
+        /**
+         * @api {get} /city Get cities based on given city names
+         * @apiName GetCities
+         * @apiGroup Geo.CITY
+         * @apiDescription Gets cities based on given city names. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam ([String]) ::city names:: required city names
+         * @apiSuccess {Object[]} ::cities:: Array of cities objects as response `body` (see [above](#api-CITY)
+         *  for all fields).
+         */
+        .get(geo.city.getManyCities)
+        /**
+         * @api {post} /city Create new city/cities by given city name(s), country/region(countries/regions) and queried geo coordinates
+         * @apiName createCity
+         * @apiGroup Geo.CITY
+         * @apiDescription Receives city name, country and region from client, then query geocode API to get geo-coordinates for the city, then save the city model in database. Allows batch city creation
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam ({Object} or Object[]) ::city name/country/region:: city name, country and region info
+         * @apiSuccess {Object} or Object[] ::city:: the successfully saved city model that contains its geo coordinates
+         */
+        .post(geo.city.create);
+
 };

@@ -3,7 +3,7 @@
         <!-- View hook for child views -->
         <section data-ui-view="titleBar"></section>
     </div>
-    <div ng-switch-when="app.publisher.viewPublisher">
+    <div ng-switch-when="app.publisher.allPublishers.viewPublisher">
         <section data-ng-init="findOne()">
             <div class="pull-right">
                 <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>

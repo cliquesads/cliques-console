@@ -1,4 +1,8 @@
 <div class="panel panel-default m p"
+	ng-if="
+		$state.$current.name === 'app._analytics.analytics.myQueriesList' ||
+		$state.$current.name === 'app._analytics.analytics.recentQueriesList'
+	"
 	scroll-to-bottom="reachedQueryListBottom()">
 	<div class="panel-body table-responsive">
 		<h4 class="mt0 text-center">{{ queriesListTitle }}</h4>
@@ -29,6 +33,14 @@
 							analytics-event="QueriesList_CheckQuery">
 							<i class="fa fa-eye"></i>	
 						</a>
+						<a href=""
+							class="ml"
+							ng-click="delete(query)"
+							ng-if="$state.$current.name === 'app._analytics.analytics.myQueriesList'"
+							analytics-on="click"
+							analytics-event="QueriesList_DeleteQuery">
+							<i class="fa fa-trash"></i>	
+						</a>
 					</td>	
 				</tr>
 			</tbody>
@@ -39,4 +51,9 @@
 			<spin-loader></spin-loader>	
 		</div>
 	</div>	
+</div>
+
+<div ng-if="$state.$current.name === 'app._analytics.analytics.myQueriesList.myQuery' ||
+		$state.$current.name === 'app._analytics.analytics.recentQueriesList.recentQuery'"
+	ui-view="history">
 </div>

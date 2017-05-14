@@ -6,17 +6,12 @@
 				<div class="panel-title">
 					<div class="row">
 						<!-- Date range title -->
-						<div class="col-sm-5">
-							{{ humanizedDateRange }} - Map
-							<small>
-								<em class="text-muted">
-									Reporting Timezone: {{ user.tz }}
-								</em>
-							</small>
+						<div class="col-sm-10">
+							<query-title query-param="queryParam" post-title="{{ postTitle }} Map" humanized-date-range="humanizedDateRange" tz="{{ user.tz }}"></query-title>
 						</div>
 
 						<!-- collapse button -->
-						<div class="col-sm-5 col-sm-offset-2 text-right">
+						<div class="col-sm-2 text-right">
 							<a ng-click="isCollapsed=!isCollapsed"
 								tooltip="Expand/Collapse Panel"
 								tooltip-placement="left">
@@ -34,15 +29,26 @@
 			</div>
 
 			<!-- Geo map -->
-			<div class="panel-body pt0"
+			<div class="panel-body pt0 pb-xl"
 				ng-if="!isCollapsed && !isLoading">
 				<hr class="m0">
 
 				<datamap
+					ng-if="mapAvailable"
 					class="pb0"
+					on-click="mapClicked"
 					map="mapObject"
-					on-click="stateClicked">
+					plugins="mapPlugins"
+					plugin-data="mapPluginData">
 				</datamap>
+
+				<!-- Placeholder for non-USA users -->
+				<div ng-if="!mapAvailable"
+					class="text-center">
+					<h3><i class="fa fa-lg fa-globe"></i> States map only available for United States</h3>	
+					<p class="mb-lg">Stay tuned for updates!</p>
+					<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>
+				</div>
 			</div>
 
 			<!-- Spin Loader -->

@@ -4,15 +4,42 @@
 			<div class="col-sm-5">
 				<h4>
 					<i class="fa fa-cog"></i>
+					<span ng-if="queryParamSaved">
+						<span editable-text="selectedSettings.name" e-name="name" e-required onaftersave="update()" tooltip="Click to Edit Query Name">{{ selectedSettings.name }}</span> -
+					</span>
 					Query Settings
 				</h4>
 			</div>
 			<div class="col-sm-offset-4 col-sm-3 text-right">
-				<button ng-click="showSaveQueryDialog()" class="btn btn-sm btn-primary mt-sm">
-					<span>
-						<i class="fa fa-floppy-o"></i> Save / Schedule
-					</span>
-				</button>
+                <span ng-switch="queryParamSaved">
+                    <span ng-switch-when="true">
+                        <!-- Button to edit schedule -->
+                        <button
+                                ng-click="showEditScheduleDialog()"
+                                class="btn btn-sm btn-primary mt-sm">
+                            <span>
+                                <i class="fa fa-clock-o"></i>
+                                <span ng-if="selectedSettings.schedule"> Edit Schedule</span>
+                                <span ng-if="!selectedSettings.schedule"> Schedule This Query...</span>
+                            </span>
+                        </button>
+                        <button
+                                ng-click="update()"
+                                class="btn btn-sm btn-primary mt-sm"
+                                ng-if="dirty">
+                                <i class="fa fa-floppy-o"></i> Save
+                        </button>
+                    </span>
+                    <span ng-switch-default>
+                        <button
+                                ng-click="showSaveOrScheduleQueryDialog()"
+                                class="btn btn-sm btn-primary mt-sm">
+                            <span>
+                                <i class="fa fa-floppy-o"></i> Save / Schedule
+                            </span>
+				        </button>
+                    </span>
+                </span>
 			</div>
 		</div>
 		<hr class="m0">
@@ -95,6 +122,7 @@
 										id="startDate"
 										data-ng-model="selectedSettings.startDate"
 										is-open="calendar.opened.startDate"
+										ng-change="getCustomHumanizedDateRange()"
 										datepicker-popup="yyyy-MM-dd"
 										placeholder="yyyy-MM-dd"
 										datepicker-options="calendar.dateOptions"
@@ -132,6 +160,7 @@
 										data-ng-model="selectedSettings.endDate"
 										min-date="startDate"
 										is-open="calendar.opened.endDate"
+										ng-change="getCustomHumanizedDateRange()"
 										datepicker-popup="yyyy-MM-dd"
 										placeholder="yyyy-MM-dd"
 										datepicker-options="calendar.dateOptions"
@@ -168,9 +197,9 @@
 									name="campaignFilter"
 									id="campaignFilter"
 									class="form-control chosen-select"
-									ng-model="selectedSettings.campaign"
-									ng-change="updateFiltersArray('campaign', selectedSettings.campaign)"
-									ng-options="campaign._id as campaign.name for campaign in allCampaigns track by campaign._id">
+									ng-model="filters.campaignObject"
+									ng-change="campaignSelected()"
+									ng-options="campaign.name for campaign in allCampaigns track by campaign._id">
 									<option value="" selected>
 										All Campaigns
 									</option>
@@ -191,9 +220,9 @@
 									name="siteFilter"
 									id="siteFilter"
 									class="form-control chosen-select"
-									ng-model="selectedSettings.site"
-									ng-change="updateFiltersArray('site', selectedSettings.site)"
-									ng-options="site._id as site.name for site in allSites track by site._id">
+									ng-model="filters.siteObject"
+									ng-change="siteSelected()"
+									ng-options="site.name for site in allSites track by site._id">
 									<option value="" selected>
 										All Sites
 									</option>

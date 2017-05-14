@@ -70,7 +70,7 @@ module.exports = function(db, routers) {
         .get(analytics.query.read)
         /**
          * @api {patch} /query/:queryId Update query
-         * @apiName saveAdditionalSelectedHeaders
+         * @apiName updateQuery
          * @apiGroup Query
          * @apiDescription Update query object, passing new query object params as request body.
          * @apiVersion 0.1.0
@@ -85,5 +85,23 @@ module.exports = function(db, routers) {
          *  [Query Schema](#api-Query)
          * @apiError (400 Bad Request) {String} error message
          */
-        .patch(analytics.query.update);
+        .patch(analytics.query.update)
+        /**
+         * @api {delete} /query/:queryId Delete query
+         * @apiName deleteQuery
+         * @apiGroup Query
+         * @apiDescription Delete query object, passing query to delete object params as request body.
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam (Path Parameters){String} queryId ObjectID of query to be deleted
+         * @apiParam (Body (Query Schema)) {Object} ::query:: Query object as request `body` (see [above](#api-Query) for all fields).
+         *
+         * @apiSuccess {Object} ::query:: Deleted query object as response body, see
+         *  [Query Schema](#api-Query)
+         * @apiError (400 Bad Request) {String} error message
+         */
+        .delete(analytics.query.delete);
 };

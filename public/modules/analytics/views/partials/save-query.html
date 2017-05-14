@@ -1,0 +1,36 @@
+<h4><i class="fa fa-floppy-o"></i> Save Query </h4>
+<p>
+	Save this query to easily run later from <strong>My Queries</strong>
+</p>
+<!-- Query name -->
+<form
+	name="updateQueryForm"
+	id="updateQueryForm"
+	data-ng-submit="saveQuery()">
+	<div class="row pl pr">
+		<div class="form-horizontal">
+			<div class="form-group">
+				<label for="name"
+					class="col-sm-3 text-md mt-sm">
+					Query Name	
+				</label>
+				<div class="col-sm-9">
+					<input type="text"
+						name="name"
+						id="name"
+						ng-model="selectedSettings.name"
+						required="required"
+						class="form-control" />
+				</div>
+			</div>
+		</div>
+	</div>	
+
+	<!-- Update button -->
+	<div class="text-center">
+		<button class="btn btn-primary text-md mt"
+			type="submit">
+			Update
+		</button>
+	</div>
+</form>

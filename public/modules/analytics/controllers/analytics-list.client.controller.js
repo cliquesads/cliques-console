@@ -10,12 +10,6 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.isLoading = false;
 		$scope.hasMore = false;
 
-		if ($state.current.name === 'app._analytics.analytics.recentQueriesList') {
-			$scope.queriesListTitle = 'Recent Queries';
-		} else {
-			$scope.queriesListTitle = 'My Queries';
-		}
-
 		// Make query results human readable
 		$scope.handleQueryResults = function(queries) {
 			for (var i = 0; i < queries.length; i ++) {
@@ -50,11 +44,25 @@ angular.module('analytics').controller('AnalyticsListController', ['$scope', 'An
 		$scope.loadRelatedQueries();
 
 		$scope.goToQuerySection = function(query) {
-			if (query.type !== 'custom') {
-				$state.go('app._analytics.analytics.quickQueries.' + query.type, {query: query});
+			if (query.isSaved) {
+				$state.go('app._analytics.analytics.myQueriesList.myQuery', {queryId: query._id});
 			} else {
-				$state.go('app._analytics.analytics.customQuery.result', {query: query});
+				$state.go('app._analytics.analytics.recentQueriesList.recentQuery', {queryId: query._id});
 			}
+		};
+
+		$scope.delete = function(query) {
+			new Query(query).$delete(function(response) {
+				for (var i = 0; i < $scope.queries.length; i ++) {
+					if ($scope.queries[i]._id === response._id) {
+						$scope.queries.splice(i, 1);
+						break;
+					}
+				}
+				Notify.alert('Query deleted successfully.', {
+					status: 'success'
+				});
+			});
 		};
 
 		$scope.reachedQueryListBottom = function() {

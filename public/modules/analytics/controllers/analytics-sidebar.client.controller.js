@@ -32,7 +32,7 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
             Notify.alert('Error fetching recent queries: ' + error.message);
         });
 
-        // Fetch custom queries from backend
+        // Fetch my queries from backend
         Query.query({
             page: 1,
             per_page: $scope.ITEMS_PER_PAGE,
@@ -47,20 +47,12 @@ angular.module('analytics').controller('AnalyticsSidebarController', ['$scope', 
             // just need to know if first page length is greater than 5
             // for purposes of showing viewAll. Don't need to know full length.
             $scope.totalMyQueries = data.length;
-            // format creation datetime for each custom query
+            // format creation datetime for each my query
             for (i = 0; i < $scope.myQueries.length; i ++) {
                 $scope.myQueries[i].createdAt = Analytics.formatDatetimeString($scope.myQueries[i].createdAt);
             }
         }, function(error) {
             Notify.alert('Error fetching my queries: ' + error.message);
         });
-
-		$scope.goToQuerySection = function(query) {
-            if (query.type !== 'custom') {
-                $state.go('app._analytics.analytics.quickQueries.' + query.type, {query: query});
-            } else {
-                $state.go('app._analytics.analytics.customQuery.result', {query: query});
-            }
-		};
     }
 ]);

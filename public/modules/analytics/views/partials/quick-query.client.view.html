@@ -1,14 +1,3 @@
-<!--<div class="row mt">-->
-    <!--&lt;!&ndash; Back to quick queries button &ndash;&gt;-->
-    <!--<div class="col-sm-3">-->
-        <!--<a ui-sref="app._analytics.analytics.quickQueries"-->
-            <!--class="btn btn-default btn-block text-md">-->
-            <!--<i class="fa fa-angle-double-left"></i>-->
-            <!--Back to Quick Queries-->
-        <!--</a> -->
-    <!--</div>-->
-<!--</div>-->
-
 <!-- Report Settings -->
 <report-settings
 	selected-settings="defaultQueryParam"
@@ -17,8 +6,7 @@
 
 <!-- Query Geo -->
 <query-geo
-    ng-if="availableSettings.hasMap"
-    query-type="currentQueryType">
+    ng-if="availableSettings.hasMap">
 </query-geo>
 
 <!-- Query Graph -->

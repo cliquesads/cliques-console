@@ -7,7 +7,8 @@ angular.module('analytics').factory('Query', ['$resource',
         return $resource('console/query/:queryId', { queryId: '@_id'},
             {
                 update: { method: 'PATCH'},
-                create: { method: 'POST'}
+                create: { method: 'POST'},
+                delete: { method: 'DELETE'}
             }
         );
     }
@@ -15,8 +16,8 @@ angular.module('analytics').factory('Query', ['$resource',
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
-    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS',
-    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS) {
+    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
+    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
 
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
@@ -83,12 +84,6 @@ angular.module('analytics').factory('Analytics', [
         var cronString = '' + secondPos + ' ' + minutePos + ' ' + hourPos + ' ' + datePos + ' ' + monthPos + ' ' + weekdayPos;
         return cronString;
     };
-    var getAllCountries = function() {
-        return $http.get('/console/country');
-    };
-    var getRegions = function(country) {
-        return $http.get('/console/region', {params: {country: country}});
-    };
     /**
      * Depending on queryType and different user types(advertiser, publisher or networkAdmin), the query function can be different
      */
@@ -150,83 +145,155 @@ angular.module('analytics').factory('Analytics', [
         }
         return headers;
     };
-
-    var _getRowTitle = function(row, queryType, dateGroupBy, groupBy){
-        var monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        if (queryType === 'time') {
-            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            if (dateGroupBy === 'hour') {
-                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
-            } else if (dateGroupBy === 'day') {
-                row.Day = row[queryType];
-            } else {
-                // date group by month
-                row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
+    /**
+     * Given user timezone and user input/selection for crontab day, crontab hour, crontab minute and crontab ampm, this function returns the corresponding UTC based crontab string
+     */
+    var adjustCrontabStringForTimezone = function(crontabDay, crontabHour, crontabMinute, crontabAmPm) {
+        if (crontabHour === 12){
+            if (crontabAmPm === 'AM'){
+                crontabHour = 0;
             }
-        } else if (queryType === 'custom') {
-            // TO-DO:::ycx should fill in row[custom] for customized query
         } else {
-            var queryTypeHeader = _.capitalize(queryType);
-            var val = row._id[queryType];
-            if (val){
-                // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city'){
-                    // otherwise, get name of populated object
-                    val = row._id[queryType].name;
-                }
-            } else {
-                // fill blank values
-                val = "<No " + queryTypeHeader + " Provided>";
+            if (crontabAmPm === 'PM'){
+                crontabHour += 12;
             }
-            row[queryTypeHeader] = val;
         }
-    };
+        var nowInUserTimzone = moment.tz(user.tz);
+        var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
 
-    var _getRowLogo = function(row, queryType, dateGroupBy, groupBy){
-        // Logo for each row
-        if (queryType === 'campaign' || queryType === 'creative') {
-            row.logo = row._id.advertiser;
-            row._logo_type = 'Advertiser';
-        } else if (queryType === 'site' || queryType ==='placement') {
-            row.logo = row._id.publisher;
-            row._logo_type = 'Publisher';
+        var scheduledTime = moment.tz(user.tz);
+        scheduledTime.minute(crontabMinute);
+        scheduledTime.hour(crontabHour);
+
+        var tempDate = scheduledTime.day();
+
+        scheduledTime.add(timezoneOffsetInMinute, 'minutes');
+
+        crontabHour = scheduledTime.hour();
+        crontabMinute = scheduledTime.minute();
+
+        var dayOffset = scheduledTime.day() - tempDate;
+        if (dayOffset !== 0) {
+            switch (crontabDay) {
+                case CRONTAB_DAY_OPTIONS['Every week day']:
+                    crontabDay = (dayOffset === 1 ? ' * * 2-6' : ' * * 0-4');
+                    break;
+                case CRONTAB_DAY_OPTIONS['The 1st of each month']:
+                    crontabDay = (dayOffset === 1 ? ' 2 * *' : ' 28 * *');
+                    break;
+                case CRONTAB_DAY_OPTIONS['The last day of each month']:
+                    crontabDay = (dayOffset === 1 ? ' 1 * *' : ' 27 * *');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Monday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 2' : ' * * 7');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Tuesday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 3' : ' * * 1');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Wednesday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 4' : ' * * 2');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Thursday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 5' : ' * * 3');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Friday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 6' : ' * * 4');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Saturday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 7' : ' * * 5');
+                    break;
+                case CRONTAB_DAY_OPTIONS['Every Sunday']:
+                    crontabDay = (dayOffset === 1 ? ' * * 1' : ' * * 6');
+                    break;
+                default:
+                    break;
+            }
         }
+        return crontabMinute + ' ' + crontabHour + crontabDay;
     };
 
     /**
-     * Decide default query table headers based on user/organization type,
-     * and also calculate field values for each table row
+     * Given an UTC based crontab string, this function extracts the crontab day option, hour, minute, ampm value by adding/subtracting the user timezone offset
      */
-    var formatQueryTable = function(rows, queryType, dateGroupBy, groupBy) {
-        rows.forEach(function(row) {
-            _getRowTitle(row, queryType, dateGroupBy, groupBy);
-            _getRowLogo(row, queryType, dateGroupBy, groupBy);
-            row.Impressions = $filter('number')(row.imps);
-            row.Spend = $filter('currency')(row.spend, '$', 2);
-            row.CPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
-            row.CTR = row.imps ? $filter('percentage')(row.clicks / row.imps, 2): '0';
-            row['Total Actions'] = row.view_convs + row.click_convs;
-            row.Clicks = $filter('number')(row.imps);
-            row.CPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
-            row.Bids = $filter('number')(row.imps);
-            row.Revenue = $filter('currency')(row.spend, '$', 2);
-            row['View-Through Actions'] = row.view_convs;
-            row['Click-Through Actions'] = row.click_convs;
-            row.CPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
-            row.CPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
-            row.CPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row.RPM = row.imps ? $filter('currency')(row.spend / row.imps * 1000, '$', 2) : '0';
-            row.Defaults = $filter('number')(row.defaults);
-            row.RPAV = row.view_convs ? $filter('currency')(row.spend / row.view_convs, '$', 2) : '0';
-            row.RPAC = row.click_convs ? $filter('currency')(row.spend / row.click_convs, '$', 2) : '0';
-            row.RPA = (row.view_convs + row.click_convs) ? $filter('currency')(row.spend / (row.view_convs + row.click_convs), '$', 2) : '0';
-            row['Fill Rate'] = row.defaults ? $filter('percentage')(row.imps / (row.imps + row.defaults), 2) : '0';
-            row.RPC = row.clicks ? $filter('currency')(row.spend / row.clicks, '$', 2) : '0';
-            row['Win Rate'] = row.bids ? $filter('percentage')(row.imps / row.bids, 2) : '0';
-        });
-        return rows;
+    var translateCrontabString = function(crontabString) {
+        var crontabHour, crontabDay, crontabMinute;
+        var crontabAmPm = 'AM';
+        var arr = crontabString.split(' '); 
+        crontabMinute = arr[0];
+        crontabHour = arr[1];
+        crontabDay = ' ' + arr[2] + ' ' + arr[3] + ' ' + arr[4];
+
+        var nowInUserTimzone = moment.tz(user.tz);
+        var timezoneOffsetInMinute = moment.tz.zone(user.tz).offset(nowInUserTimzone);
+
+        var scheduledTime = moment.tz(user.tz);
+        scheduledTime.minute(crontabMinute);
+        scheduledTime.hour(crontabHour);
+
+        var tempDate = scheduledTime.day();
+
+        scheduledTime.subtract(timezoneOffsetInMinute, 'minutes');
+
+        crontabHour = scheduledTime.hour();
+        crontabMinute = scheduledTime.minute();
+
+        var dayOffset = tempDate - scheduledTime.day();
+        if (dayOffset !== 0) {
+            switch (crontabDay) {
+                case ' * * 2-6':
+                case ' * * 0-4':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every week day'];
+                    break;
+                case ' 2 * *':
+                case ' 28 * *':
+                    crontabDay = CRONTAB_DAY_OPTIONS['The 1st of each month'];
+                    break;
+                case ' 1 * *':
+                case ' 27 * *':
+                    crontabDay = CRONTAB_DAY_OPTIONS['The last day of each month'];
+                    break;
+                case ' * * 2':
+                case ' * * 7':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Monday'];
+                    break;
+                case ' * * 3':
+                case ' * * 1':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Tuesday'];
+                    break;
+                case ' * * 4':
+                case ' * * 2':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Wednesday'];
+                    break;
+                case ' * * 5':
+                case ' * * 3':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Thursday'];
+                    break;
+                case ' * * 6':
+                case ' * * 4':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Friday'];
+                    break;
+                case ' * * 7':
+                case ' * * 5':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Saturday'];
+                    break;
+                case ' * * 1':
+                case ' * * 6':
+                    crontabDay = CRONTAB_DAY_OPTIONS['Every Sunday'];
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (crontabHour > 12) {
+            crontabHour -= 12;
+            crontabAmPm = 'PM';
+        }
+        return {
+            crontabHour: crontabHour,
+            crontabMinute: crontabMinute,
+            crontabAmPm: crontabAmPm,
+            crontabDay: crontabDay
+        };
     };
 
     return {
@@ -234,10 +301,9 @@ angular.module('analytics').factory('Analytics', [
         getCSVFileName: getCSVFileName,
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
-        getAllCountries: getAllCountries,
-        getRegions: getRegions,
         queryFunction: queryFunction,
-        getQueryTableHeaders: getQueryTableHeaders, 
-        formatQueryTable: formatQueryTable 
+        getQueryTableHeaders: getQueryTableHeaders,
+        adjustCrontabStringForTimezone: adjustCrontabStringForTimezone,
+        translateCrontabString: translateCrontabString
     };
 }]);
