@@ -23,6 +23,25 @@ angular.module('publisher')
                 'require about 2KB of additional bandwidth per page-load.'
         }
     })
+    .constant('PLACEMENT_TYPES',{
+        display: {
+            displayName: 'Display',
+            description: 'Standard IAB Banner ads. Choose from a list of supported dimensions to create a placement with a fixed height & width. ' +
+                'In general, display ads yield lower CPM\'s, but are easier to implement.'
+        },
+        native: {
+            displayName : 'Native',
+            description: 'Ads that are custom-styled to resemble a piece of content on your site. No fixed dimensions & styling is totally custom. ' +
+                'Higher CPM\'s but slightly more integration work.'
+        }
+    })
+    .constant('NATIVE_POSITIONS', [
+        // TODO: Replace w/ IAB codes if there are any
+        {name: "In-Stream", code: 99},
+        {name: "Sidebar", code: 100},
+        {name: "Beneath Content", code: 101},
+        {name: "Above Content", code: 102}
+    ])
     .constant('DEFAULT_TYPES',{
         passback: {
             name: 'Passback Tag',

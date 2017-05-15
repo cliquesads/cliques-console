@@ -1,0 +1,5 @@
+<h4>More On Placement Types</h4>
+<div class="row ph0 mh-sm" ng-repeat="(type, typeMeta) in PLACEMENT_TYPES">
+    <p><strong>{{ typeMeta.displayName }} <span ng-if="type === 'native'" class="label label-info">Beta</span></strong></p>
+    <p>{{ typeMeta.description }}</p>
+</div>
