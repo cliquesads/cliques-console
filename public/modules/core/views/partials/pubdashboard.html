@@ -59,7 +59,8 @@
                         <p class="campaign-list-item-text">{{ site.clique }}</p>
                     </div>
                     <div class="col-sm-2">
-                        <radial percent="site.percent_spent" size="sm"></radial>
+                        <h4 class="campaign-list-item-heading">{{ (site.rpm||0) | percentage: "2" }}</h4>
+                        <p class="campaign-list-item-text">RPM</p>
                     </div>
 
                     <div class="col-sm-2">

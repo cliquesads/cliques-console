@@ -59,8 +59,8 @@ angular.module('core').controller('PublisherDashboardController',
                             site.defaults = data.Defaults;
                             site.fillRate = data['Fill Rate'];
                             site.revenue = data.Revenue;
-                            site.RPM = data.RPM;
-                            site.CTR = data.CTR;
+                            site.rpm = data.RPM;
+                            site.ctr = data.CTR;
                         }
 
                         // finally, push to allSites array
@@ -103,7 +103,7 @@ angular.module('core').controller('PublisherDashboardController',
                 endDate: endDate
             }).then(function (response) {
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                    {fields: ['imps', 'defaults', 'fillRate', 'clicks', 'spend', 'RPM', 'CTR']});
+                    {fields: ['imps', 'defaults', 'fillRate', 'clicks', 'spend', 'RPM', {'CTR': function(row){return row.clicks / row.imps}}]});
                 $scope.impressions = _.sumBy($scope.timeSeries.imps, function(item){ return item[1];});
                 $scope.clicks = _.sumBy($scope.timeSeries.clicks, function(item){ return item[1];});
                 $scope.defaults = _.sumBy($scope.timeSeries.defaults, function(item){ return item[1];});
