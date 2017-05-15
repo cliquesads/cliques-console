@@ -30,7 +30,7 @@
                     </select>
                 </td>
                 <td>
-                    <select ng-disabled="placement.type === 'native'" name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                    <select ng-disabled="placement.type === 'native'" name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="{{ wizardstep }}" ng-required="placement.type === 'display' || !placement.type" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
                         <option value=""></option>
                     </select>
                 </td>
