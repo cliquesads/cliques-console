@@ -148,6 +148,30 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 
+        $scope.editNativeSpecs = function(placement){
+            var initNative = placement.native;
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/publisher/views/partials/edit-native-specs.html',
+                controller: 'NativeDetailsController',
+                scope: $scope,
+                data: { placement: placement, publisher: $scope.publisher },
+                preCloseCallback: function(value){
+                    if (value !== 'Success'){
+                        var placement_ind = _.findIndex($scope.page.placements, function(pl){
+                            return pl._id === placement._id;
+                        });
+                        $scope.$apply(function(){
+                            $scope.page.placements[placement_ind].native = initNative;
+                        });
+                        return true;
+                    } else {
+                        setPage();
+                    }
+                }
+            });
+        };
+
         $scope.editDefaultCondition = function(placement){
             var initDefaultType = placement.defaultType;
             var initPassbackTag = placement.passbackTag;

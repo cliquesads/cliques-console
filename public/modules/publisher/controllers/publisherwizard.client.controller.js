@@ -126,7 +126,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     $scope.website = '';
                     //On success, redirect to publisher detail page
                     var publisherId = response._id;
-                    $location.url('/publisher/' + publisherId);
+                    $location.url('/publisher/' + publisherId + '?newModal=true');
                 }, function (errorResponse) {
                     $scope.loading = false;
                     $scope.creation_error = errorResponse.data.message;

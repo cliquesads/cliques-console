@@ -27,13 +27,29 @@ angular.module('publisher')
         display: {
             displayName: 'Display',
             description: 'Standard IAB Banner ads. Choose from a list of supported dimensions to create a placement with a fixed height & width. ' +
-                'In general, display ads yield lower CPM\'s, but are easier to implement.'
+                'In general, display ads yield lower CPM\'s, but are easier to implement.',
+            tagTypes: ['javascript', 'iframe']
         },
         native: {
             displayName : 'Native',
             description: 'Ads that are custom-styled to resemble a piece of content on your site. No fixed dimensions & styling is totally custom. ' +
-                'Higher CPM\'s but slightly more integration work.'
+                'Higher CPM\'s but slightly more integration work.',
+            tagTypes: ['javascript']
         }
+    })
+    .constant('NATIVE_TEMPLATE_TYPES',{
+        mobile: {
+            displayName: 'Mobile',
+            icon: 'fa fa-mobile'
+        },
+        tablet: {
+            displayName: 'Tablet',
+            icon: 'fa fa-tablet'
+        },
+        tablet: {
+            displayName: 'Tablet',
+            icon: 'fa fa-tablet'
+        },
     })
     .constant('NATIVE_POSITIONS', [
         // TODO: Replace w/ IAB codes if there are any

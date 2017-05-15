@@ -35,14 +35,12 @@
                     </select>
                 </td>
                 <td>
-                    <span ng-switch="placement.type">
-                        <select ng-switch-when="placement.type === 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
-                            <option value=""></option>
-                        </select>
-                        <select ng-switch-default name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
-                            <option value=""></option>
-                        </select>
-                    </span>
+                    <select ng-if="placement.type === 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
+                        <option value=""></option>
+                    </select>
+                    <select ng-if="placement.type !== 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                        <option value=""></option>
+                    </select>
                 </td>
                 <td>
                     <button type="button" ng-click="removePlacement(placement)" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="PlacementsForm_RemovePlacement"><span class="icon-trash mr"></span>Remove</button>
