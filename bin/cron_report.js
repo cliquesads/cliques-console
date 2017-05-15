@@ -88,7 +88,6 @@ require('./_main')(function(GLOBALS) {
 
             // now send mail
             mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
-            /*
             return mailer.promisifiedSendMail({
                 subject: emailSubject,
                 templateName: emailTemplate,
@@ -107,7 +106,6 @@ require('./_main')(function(GLOBALS) {
                     endDate: endDate
                 }
             });
-            */
         })
         .catch(function(err) {
             console.error(err);
