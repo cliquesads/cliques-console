@@ -109,7 +109,7 @@ angular.module('core').controller('PublisherDashboardController',
                 $scope.defaults = _.sumBy($scope.timeSeries.defaults, function(item){ return item[1];});
                 $scope.revenue = _.sumBy($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.fillRate = $scope.impressions / ($scope.impressions + $scope.defaults);
-                $scope.RPM = $scope.revenue / ($scope.impressions * 1000);
+                $scope.RPM = $scope.revenue / ($scope.impressions) * 1000;
                 $scope.CTR = $scope.clicks / $scope.impressions;
             });
             // TODO: Need to provide error callback for query promise as well
