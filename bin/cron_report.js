@@ -13,9 +13,16 @@ var mailer = new mail.Mailer({
     fromAddress: "no-reply@cliquesads.com",
     templatePath: __dirname + '/../app/views/templates'
 });
-var BASE_URL = "https://console.cliquesads.com";
+var BASE_URL;
 
 require('./_main')(function(GLOBALS) {
+    var config = GLOBALS.cliques_config;
+    if (process.env.NODE_ENV === 'local-test') {
+        BASE_URL = 'http://' + config.get('Console.http.external.hostname') + ':' + config.get('Console.http.external.port');
+    } else {
+        BASE_URL = 'https://' + config.get('Console.https.external.hostname');
+    }
+
     var mongoose = GLOBALS.mongoose;
     require('../app/models/analytics.server.model');
     require('../app/models/organization.server.model');
@@ -81,6 +88,7 @@ require('./_main')(function(GLOBALS) {
 
             // now send mail
             mailer.promisifiedSendMail = promise.promisify(mailer.sendMail);
+            /*
             return mailer.promisifiedSendMail({
                 subject: emailSubject,
                 templateName: emailTemplate,
@@ -99,6 +107,7 @@ require('./_main')(function(GLOBALS) {
                     endDate: endDate
                 }
             });
+            */
         })
         .catch(function(err) {
             console.error(err);
