@@ -42,25 +42,10 @@
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td>
-                            <span class="col-sm-12"><textarea ng-model="item.copyShort" id="{{ item.file.name }}_copyShort" ng-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" data-parsley-group="{{ wizardstep }}" rows="4" required="true" placeholder="Min {{ NATIVE_SPECS.copyShort.minChars }} characters, Max {{ NATIVE_SPECS.copyShort.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyShort"></textarea></span>
-                            <span class="col-sm-12">
-                                <small ng-class="NATIVE_SPECS.copyShort.minChars <= nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length
-                                    && nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length <= NATIVE_SPECS.copyShort.maxChars ?
-                                    'text-success' : 'text-danger'">
-                                    Current length: <strong>{{ nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length || 0 }}</strong>
-                                </small>
-                                <!--<span ng-show="validateInput(item.file.name + '_copyShort', 'minlength')" class="text-danger" style="">Must be at least {{ NATIVE_SPECS.copyShort.minChars }} characters.</span>-->
-                                <!--<span ng-show="validateInput(item.file.name + '_copyShort', 'maxlength')" class="text-danger" style="">Must be at most {{ NATIVE_SPECS.copyShort.maxChars }} characters.</span>-->
-                            </span>
+                            <native-copy-short ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-short>
                         </td>
                         <td>
-                            <span class="col-sm-12"><textarea ng-model="item.copyLong" id="{{ item.file.name }}_copyLong" ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" data-parsley-group="{{ wizardstep }}" rows="6" required="true" placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyLong"></textarea></span>
-                            <span class="col-sm-12"><small ng-class="NATIVE_SPECS.copyLong.minChars <= nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length
-                                    && nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length <= NATIVE_SPECS.copyLong.maxChars ?
-                                    'text-success' : 'text-danger'">
-                                    Current length: <strong>{{ nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length || 0 }}</strong>
-                            </small>
-                            </span>
+                            <native-copy-long ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-long>
                         </td>
                         <td nowrap="">
                             <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove" tooltip="Remove">
