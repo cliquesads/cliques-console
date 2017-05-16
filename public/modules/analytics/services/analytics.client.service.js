@@ -127,13 +127,13 @@ angular.module('analytics').factory('Analytics', [
         }
         switch (role){
             case 'networkAdmin':
-                headers = headers.concat(TABLE_HEADERS.networkAdmin);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.networkAdmin));
                 break;
             case 'advertiser':
-                headers = headers.concat(TABLE_HEADERS.advertiser);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.advertiser));
                 break;
             case 'publisher':
-                headers = headers.concat(TABLE_HEADERS.publisher);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.publisher));
                 break;
         }
         return headers;
