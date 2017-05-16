@@ -6,10 +6,14 @@
 'use strict';
 
 angular.module('core').controller('PublisherDashboardController',
-    ['$scope','$location','$window','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication','Screenshot','Notify',
-    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, Screenshot, Notify) {
+    ['$scope','$location','$window','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries',
+        'aggregationDateRanges','Authentication','Screenshot','Notify','LOGO',
+    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries,
+             aggregationDateRanges, Authentication, Screenshot, Notify, LOGO) {
         
         $scope.isShowingAllStats = false;
+
+        $scope.default_logo_url = LOGO.default_secure_url;
 
         /**
          * BEGIN MY SITE PANEL STUFF
