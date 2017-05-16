@@ -14,7 +14,7 @@ angular.module('advertiser').directive('nativeCopyShort', ['NATIVE_SPECS', funct
             scope.NATIVE_SPECS = NATIVE_SPECS;
             scope.rows = scope.rows || 6;
             scope.inputId = scope.index + '_copyShort';
-            scope.copyShortModel = scope.ngModel.file ? scope.ngModel.copyShort : scope.ngModel.native.copyShort;
+            scope.nativeModel = scope.ngModel.file ? scope.ngModel : scope.ngModel.native;
         }
     };
 }]);

@@ -50,6 +50,7 @@
                     </td>
                     <td ng-if="creative.type === 'native'"><p class="form-control-static">
                         <a href="#" editable-textarea="creative.native.copyLong" e-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" e-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" e-rows="8" onaftersave="update()" e-required>{{ creative.native.copyLong }}</a>
+                        <!--<native-copy-long ng-model="creative" index="{{ $index }}"></native-copy-long>-->
                     </td>
                     <td style="max-width: 300px;">
                         <p class="form-control-static" style="overflow-wrap: break-word;">
