@@ -17,8 +17,7 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             var tableHeaders = Analytics.getQueryTableHeaders(
                 $scope.defaultQueryParam.type,
                 $scope.defaultQueryParam.dateGroupBy,
-                $rootScope.role,
-                null
+                $rootScope.role
             );
             tableHeaders.forEach(function(header) {
                 if (header.selected) {

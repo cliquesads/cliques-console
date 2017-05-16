@@ -42,7 +42,11 @@ angular.module('analytics').directive('queryTable', [
 					scope.tableQueryResults = args.results;
 
 					// Decide default table headers and format/calculate values for each row
-					scope.headers = Analytics.getQueryTableHeaders(scope.queryParam.type, scope.queryParam.dateGroupBy, $rootScope.role, scope.queryParam.additionalHeaders);
+					scope.headers = Analytics.getQueryTableHeaders(
+						scope.queryParam.type,
+						scope.queryParam.dateGroupBy,
+						$rootScope.role
+					);
 				});
 
 				/**

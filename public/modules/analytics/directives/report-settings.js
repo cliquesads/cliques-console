@@ -208,7 +208,11 @@ angular.module('analytics').directive('reportSettings', [
                 scope.dateGroupByChanged = function(dateGroupBy) {
                     scope.selectedSettings.dateGroupBy = dateGroupBy;
                     // date group by changed, dataHeaders need to be updated as well
-                    var headers = Analytics.getQueryTableHeaders(scope.selectedSettings.type, scope.selectedSettings.dateGroupBy, $rootScope.role);
+                    var headers = Analytics.getQueryTableHeaders(
+                        scope.selectedSettings.type,
+                        scope.selectedSettings.dateGroupBy,
+                        $rootScope.role
+                    );
                     var selectedDataHeaders = [];
                     headers.forEach(function(header) {
                         if (header.selected === true) {

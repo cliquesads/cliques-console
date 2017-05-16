@@ -108,7 +108,7 @@ angular.module('analytics').factory('Analytics', [
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType, dateGroupBy, role, additionalHeaders) {
+    var getQueryTableHeaders = function(queryType, dateGroupBy, role) {
         var headers = [];
         if (queryType === 'time'){
             headers = [{
@@ -135,15 +135,6 @@ angular.module('analytics').factory('Analytics', [
             case 'publisher':
                 headers = headers.concat(TABLE_HEADERS.publisher);
                 break;
-        }
-        if (additionalHeaders) {
-            additionalHeaders.forEach(function(additionalHeader) {
-                for (var i = 0; i < headers.length; i ++) {
-                    if (headers[i].name === additionalHeader) {
-                        headers[i].selected = true;
-                    }
-                }
-            });
         }
         return headers;
     };
