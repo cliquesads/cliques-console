@@ -46,10 +46,10 @@ angular.module('publisher')
             displayName: 'Tablet',
             icon: 'fa fa-tablet'
         },
-        tablet: {
-            displayName: 'Tablet',
-            icon: 'fa fa-tablet'
-        },
+        desktop: {
+            displayName: 'Desktop',
+            icon: 'fa fa-desktop'
+        }
     })
     .constant('NATIVE_POSITIONS', [
         // TODO: Replace w/ IAB codes if there are any

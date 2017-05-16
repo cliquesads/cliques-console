@@ -57,6 +57,8 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                             scope.placement.w = Number(dims[0]);
                             scope.placement.h = Number(dims[1]);
                         } else {
+                            scope.placement.defaultType = 'hide';
+                            scope.placement.native = {};
                             scope.placement.w = 1;
                             scope.placement.h = 1;
                         }

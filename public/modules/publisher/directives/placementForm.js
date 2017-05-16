@@ -28,6 +28,10 @@ angular.module('publisher').directive('placementForm', [
                     if (newPage){
                         if (scope.page.placements){
                             scope.page.placements.forEach(function(placement){
+                                if (placement.type === 'native'){
+                                    placement.defaultType = 'hide';
+                                    placement.native = {};
+                                }
                                 placement.dimensions = placement.w + 'x' + placement.h;
                             });
                         }
