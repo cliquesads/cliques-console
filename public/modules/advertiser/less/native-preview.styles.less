@@ -1,0 +1,57 @@
+.native-preview {
+  border-color: @text-color;
+  border-style: dotted;
+  border-width: 1px;
+  max-width: 362px;
+  padding: 5px;
+  position: relative;
+
+  .native-image {
+    max-width: 350px;
+    max-height: 350px;
+  }
+
+  p, h4, .brand-disclosure {
+    padding-left: 2px;
+    padding-right: 2px;
+    overflow-wrap: break-word;
+  }
+
+  h4 {
+    margin-bottom: 2px;
+    padding-bottom: 0px;
+  }
+
+  .brand-disclosure {
+    text-decoration: underline;
+  }
+
+  a:link {
+    color: @text-color
+  }
+
+  a:visited {
+    color: @text-color
+  }
+
+  a:hover {
+    color: @link-color
+  }
+
+  .advertisement-disclosure {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    color: @label-color;
+    background-color: @brand-green-dark;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+  }
+}

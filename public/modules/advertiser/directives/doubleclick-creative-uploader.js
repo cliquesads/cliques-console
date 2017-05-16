@@ -49,7 +49,7 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                                 name: scope.creative_name,
                                 w: js_tag.w,
                                 h: js_tag.h,
-                                type: 'doubleclick',
+                                hostingType: 'doubleclick',
                                 tag: scope.dfa_tag,
                                 click_url: '<doubleclick>',
                                 url: js_tag.img_src

@@ -68,10 +68,11 @@
 	<!--<div class="bg-image"></div>-->
 	{% block content %}{% endblock %}
 
-	<!--Embedding The User Object & version number-->
+	<!--Embedding variables shared by server & client-->
 	<script type="text/javascript">
 		var user = {{ user | json | safe }};
-        var consoleVersion = "{{ consoleVersion }}";
+		var nativeSpecs = {{ nativeSpecs | json | safe }};
+		var consoleVersion = "{{ consoleVersion }}";
         var latestHour = new Date("{{ latestHour }}");
         latestHour = Date.UTC(
                 latestHour.getUTCFullYear(),

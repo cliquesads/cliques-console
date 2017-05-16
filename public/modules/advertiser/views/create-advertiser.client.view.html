@@ -99,12 +99,33 @@
                         <a href="#" ng-click="stepControl.goToStep('advertiser-info')" analytics-on="click" analytics-event="CreateAdvertiser_AdvertiserInfo"><span>&larr; Previous</span></a>
                     </li>
                     <li class="next">
-                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="CreateAdvertiser_CampaignWizard">Got it &nbsp;<span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToStep('campaign-type')" analytics-on="click" analytics-event="CreateAdvertiser_CampaignType">Got it &nbsp;<span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-switch-when="campaign-type">
+                <h4>Campaign Type</h4>
+                <p class="text-muted">Please tell us what kind of campaign you'd like to run.</p>
+                <div class="box-form">
+                    <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                        <li ng-class="{'active': stepControl.campaignType === 'display'}" ng-click="stepControl.campaignType = 'display'" class="col-sm-6">
+                            <h4>Display</h4>
+                            <p>Traditional display (a.k.a. banner) ads look the same on all sites & placements, and are typically less expensive.</p>
+                        </li>
+                        <li ng-class="{'active': stepControl.campaignType === 'native'}" ng-click="stepControl.campaignType = 'native'" class="col-sm-6">
+                            <h4><span class="label label-primary">Beta</span> Native</h4>
+                            <p>Native ads dynamically resize & restyle for each individual site on our exchange to match the style of the site. They are typically more engaging, and also more expensive.</p>
+                        </li>
+                    </ol>
+                </div>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="CreateAdvertiser_CampaignWizard">Next <span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>
             <div ng-switch-when="campaign-wizard">
-                <campaign-wizard on-previous="stepControl.goToStepPriorToWizard()" advertiser="advertiser" on-submit="createCampaign(campaign)"></campaign-wizard>
+                <campaign-wizard on-previous="stepControl.goToStepPriorToWizard()" advertiser="advertiser" campaign-type="{{ stepControl.campaignType }}" campaignon-submit="createCampaign(campaign)"></campaign-wizard>
             </div>
         </div>
         <!-- END Advertiser Step inputs -->

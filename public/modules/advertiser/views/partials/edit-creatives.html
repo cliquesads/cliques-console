@@ -8,12 +8,20 @@
 </p>
 <fieldset ng-show="formVisible">
     <tabset>
-        <tab heading="Cliques Hosted">
+        <tab ng-if="campaign.type === 'native'">
+            <tab-heading>
+                Native <span class="label label-primary">Beta</span>
+            </tab-heading>
+            <div class="row" id="nativeUploader">
+                <native-creative-uploader uploader="nativeUploader" onuploadall="nativeValidateAndUpload(validateNativeQueue())" width="12"> </native-creative-uploader>
+            </div>
+        </tab>
+        <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
             <div class="row">
                 <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
             </div>
         </tab>
-        <tab heading="DoubleClick">
+        <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
             <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
         </tab>
     </tabset>
@@ -25,16 +33,25 @@
                 <tr>
                     <th>Preview</th>
                     <th>Name</th>
-                    <th>Dimensions</th>
+                    <th ng-if="campaign.type === 'display' || !campaign.type">Dimensions</th>
+                    <th ng-if="campaign.type === 'native'">Ad Title</th>
+                    <th ng-if="campaign.type === 'native'">Full Ad Copy</th>
                     <th>Click URL</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody ng-repeat="creativegroup in campaign.creativegroups">
                 <tr ng-repeat="creative in creativegroup.creatives">
-                    <td><img ng-src="{{ creative.secureUrl }}" class="smallthumbnail"/></td>
+                    <td><img ng-src="{{ creative.type === 'native' ? creative.native.secureRawImageUrl : creative.secureUrl }}" class="smallthumbnail"/></td>
                     <td><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required analytics-on="click" analytics-event="EditCreatives_Update">{{ creative.name }}</a></p></td>
-                    <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                    <td ng-if="creative.type === 'display' || !creative.type"><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                    <td ng-if="creative.type === 'native'"><p class="form-control-static">
+                        <a href="#" editable-textarea="creative.native.copyShort" e-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" e-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" e-rows="2" onaftersave="update()" e-required>{{ creative.native.copyShort }}</a>
+                    </td>
+                    <td ng-if="creative.type === 'native'"><p class="form-control-static">
+                        <a href="#" editable-textarea="creative.native.copyLong" e-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" e-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" e-rows="8" onaftersave="update()" e-required>{{ creative.native.copyLong }}</a>
+                        <!--<native-copy-long ng-model="creative" index="{{ $index }}"></native-copy-long>-->
+                    </td>
                     <td style="max-width: 300px;">
                         <p class="form-control-static" style="overflow-wrap: break-word;">
                             <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required>{{ creative.click_url }}</a>

@@ -3,10 +3,28 @@
 
 angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$state', '$location',
     'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-	function($rootScope, $scope, $stateParams, $state, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
+    'REVIEW_TIME',
+	function($rootScope, $scope, $stateParams, $state, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries,
+             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
+
+        /**
+         * Overlap publisher helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
 
         /**
          * Factory for filter function used in publisher list view

@@ -2,11 +2,27 @@
 'use strict';
 
 angular.module('publisher').controller('SiteController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Publisher','DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS','Notify',
-	function($scope, $stateParams, $location, Authentication, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS, Notify) {
+    'Authentication', 'Publisher','DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS','Notify','REVIEW_TIME',
+	function($scope, $stateParams, $location, Authentication, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS, Notify,REVIEW_TIME) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
+
+        /**
+         * Overlap publisher helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
 
 		$scope.update = function() {
 			$scope.publisher.$update(function(){

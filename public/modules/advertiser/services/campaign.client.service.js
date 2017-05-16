@@ -151,6 +151,18 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
     };
 
     /**
+     * Ingest creatives from FileUploader object
+     * @param uploader
+     * @param advertiser
+     */
+    ClientSideCampaign.prototype.ingestNativeCreativeUploader = function(uploader, advertiser){
+        if (uploader){
+            var creatives = AdvertiserUtils.getCreativesFromNativeUploadQueue(uploader, advertiser);
+            this._ingestCreatives(creatives);
+        }
+    };
+
+    /**
      * Ingest Doubleclick Tag creatives
      *
      * @param dcmCreatives
