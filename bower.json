@@ -1,10 +1,10 @@
 {
   "name": "Cliques Console",
-  "version": "0.6.64",
+  "version": "1.0.0",
   "authors": [
     "Ben Liang"
   ],
-  "description": "Cliques UI -- MEAN.js + Bootstrap Angular",
+  "description": "Dashboard to create, control & analyze all Cliques campaigns & sites.",
   "main": "index.html",
   "keywords": [
     "bootstrap",

@@ -1,7 +1,7 @@
 {
   "name": "cliques-console",
-  "description": "Cliques UI -- MEAN.js + Bootstrap Angular",
-  "version": "0.6.64",
+  "description": "Dashboard to create, control & analyze all Cliques campaigns & sites.",
+  "version": "1.0.0",
   "author": "Cliques Labs Inc.",
   "engines": {
     "node": "5.5.x",
@@ -17,7 +17,7 @@
     "postinstall": "bower install --config.interactive=false"
   },
   "dependencies": {
-    "@cliques/cliques-node-utils": "git@github.com:cliquesads/cliques-node-utils.git#feature/native",
+    "@cliques/cliques-node-utils": "^0.3.0",
     "argparse": "^1.0.7",
     "async": "^1.5.2",
     "base64-stream": "^0.1.3",
