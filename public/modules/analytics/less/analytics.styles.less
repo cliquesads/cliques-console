@@ -28,10 +28,11 @@
 .sidebar-container {
   background-color: @two-thirds-white;
   border: 1px solid @panel-default-border;
-  margin: 25px 0px 0px 10px;
+  margin: 30px 0px 0px 5px;
   padding: 15px;
   ul {
     li {
+      margin-left: -15px;
       margin-bottom: 10px;
     }
   }
@@ -42,6 +43,28 @@
     font-size: 10px;
   }
   .indent {
-    padding-left: 40px;
+    padding-left: 20px;
   }
+}
+.selected-time-unit {
+  background-color: @body-bg;
+}
+.table-field-list-item {
+  cursor: pointer;
+  i {
+    color: @brand-success-light;
+  }
+  &:hover {
+    color: white;
+    background-color: @brand-primary-light;
+    i {
+      color: white;
+    }
+  }
+}
+.current-sorting {
+  color: @brand-primary-light;
+}
+.clickable {
+  cursor: pointer;
 }

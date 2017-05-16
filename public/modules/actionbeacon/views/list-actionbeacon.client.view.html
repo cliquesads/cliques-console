@@ -19,7 +19,7 @@
 	</div>
 	<!-- Placeholder if there is no action beacons yet -->
 	<div class="box-placeholder text-center mv-lg pv-xl" data-ng-if="advertiser.actionbeacons.length === 0">
-		<h4>No Action Beacons yet, why don't you <a ng-click="showCreateNewActionBeaconDialog()">create one</a>?</h4>	
+		<h4>No Action Beacons yet, why don't you <a ng-click="showCreateNewActionBeaconDialog()" analytics-on="click" analytics-event="ListActionBeaon_CreateActionBeacon">create one</a>?</h4>	
 	</div>
 
 	<!-- Existing action beacon list -->
@@ -31,7 +31,7 @@
 			</div>
 
 			<div class="primary-text">
-				<a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required>{{ actionbeacon.name }}</a>
+				<a href="#" editable-text="actionbeacon.name" onaftersave="update()" e-required analytics-on="click" analytics-event="ListActionBeaon_EditActionBeacon">{{ actionbeacon.name }}</a>
 			</div>
 
 			<div>
@@ -45,11 +45,11 @@
 			</div>
 
 			<div>
-				<button class="btn btn-danger" ng-click="showDeleteActionBeaconDialog(actionbeacon)">
+				<button class="btn btn-danger" ng-click="showDeleteActionBeaconDialog(actionbeacon)" analytics-on="click" analytics-event="ListActionBeaon_DeleteActionBeacon">
 					<i class="fa fa-trash-o"></i>
 					Remove
 				</button>
-				<button class="btn btn-primary" ng-click="showActionBeaconTagDialog(actionbeacon)">
+				<button class="btn btn-primary" ng-click="showActionBeaconTagDialog(actionbeacon)" analytics-on="click" analytics-event="ListActionBeaon_GetBeaconCode">
 					<i class="fa fa-code"></i>
 					Get Code
 				</button>

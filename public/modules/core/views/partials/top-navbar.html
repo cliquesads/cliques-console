@@ -4,10 +4,10 @@
     <div class="navbar-header">
         <!--The ng-show here is a hack, if you can figure out a way to secure home link (i.e. have it pass through app controller) then this isn't necessary-->
         <!-- Button to show/hide the sidebar on mobile. Visible on mobile only.-->
-        <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle">
+        <a href="#" ng-click="app.asideToggled = !app.asideToggled" class="visible-xs sidebar-toggle" analytics-on="click" analytics-event="TopNavBar_ToggleAside">
             <em class="fa fa-2x fa-navicon"></em>
         </a>
-        <a href="#/" ng-show="authentication.user" class="navbar-brand">
+        <a href="#/" ng-show="authentication.user" class="navbar-brand" analytics-on="click" analytics-event="TopNavBar_ClickBrand">
             <div class="brand-logo">
                 <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive"/>
             </div>
@@ -31,27 +31,27 @@
         <ul class="nav navbar-nav">
             <li ng-show="authentication.user">
                 <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
-                <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs">
+                <a ng-click="app.layout.isCollapsed = !app.layout.isCollapsed" class="hidden-xs" analytics-on="click" analytics-event="TopNavBar_ToggleLeftSidebar">
                     <em class="fa fa-navicon"></em>
                 </a>
-                <a href="#" class="visible-xs settings-toggle" ng-click="settingsCollapsed = !settingsCollapsed">
+                <a href="#" class="visible-xs settings-toggle" ng-click="settingsCollapsed = !settingsCollapsed" analytics-on="click" analytics-event="TopNavBar_ToggleSettings">
                     <em class="fa fa-2x fa-cog"></em>
                 </a>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right" ng-class="settingsCollapsed ? 'hidden-xs' : ''" ng-show="authentication.user">
             <li class="dropdown" dropdown>
-                <a href class="dropdown-toggle" dropdown-toggle>
+                <a href class="dropdown-toggle" dropdown-toggle analytics-on="click" analytics-event="TopNavBar_ToggleSupportDropdown">
                     <span class="fa fa-lg fa-question-circle"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="http://support.cliquesads.com" target="_blank">Support Center</a>
+                        <a href="http://support.cliquesads.com" target="_blank" analytics-on="click" analytics-event="TopNavBar_SupportCenter">Support Center</a>
                     </li>
                 </ul>
             </li>
             <li class="dropdown dropdown-list" dropdown>
-                <a href class="dropdown-toggle" dropdown-toggle>
+                <a href class="dropdown-toggle" dropdown-toggle analytics-on="click" analytics-event="TopNavBar_ToggleBillingDropdown">
                     <i class="fa fa-lg fa-credit-card"></i> Billing
                     <div ng-show="payments.length" class="label label-danger">{{ payments.length }}</div>
                 </a>
@@ -61,7 +61,7 @@
                             <div class="list-group-item" ng-show="payments.length">
                                 <small>The follow statements are available:</small>
                             </div>
-                            <a href="/#!/settings/billing" class="list-group-item" ng-repeat="p in payments">
+                            <a href="/#!/settings/billing" class="list-group-item" ng-repeat="p in payments" analytics-on="click" analytics-event="TopNavBar_SelectBilling">
                                 <div class="media-box">
                                     <div class="pull-left">
                                         <payment-status-label ng-model="p"></payment-status-label>
@@ -82,7 +82,7 @@
                                     <small><em class="text-muted">No statements currently pending.</em></small>
                                 </p>
                             </div>
-                            <a class="list-group-item" href="/#!/settings/billing">
+                            <a class="list-group-item" href="/#!/settings/billing" analytics-on="click" analytics-event="TopNavBar_GoToBillingCenter">
                                 Go to Billing Center <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -90,12 +90,12 @@
                 </ul>
             </li>
             <li class="dropdown" dropdown>
-                <a href="/#!/settings/profile" class="m0 p0">
+                <a href="/#!/settings/profile" class="m0 p0" analytics-on="click" analytics-event="TopNavBar_Profile">
                     <img src="{{ authentication.user.secureAvatarUrl ||  userIdenticon }}" alt="Profile Image" class="img-thumbnail avatar avatar-sm mt-sm"/>
                 </a>
             </li>
             <li class="dropdown" dropdown>
-                <a href class="dropdown-toggle pb-sm pt-sm" dropdown-toggle>
+                <a href class="dropdown-toggle pb-sm pt-sm" dropdown-toggle analytics-on="click" analytics-event="TopNavBar_ToggleUserDropdown">
                     <span data-ng-bind="authentication.user.displayName"></span>
                     <b class="caret"></b>
                     <br/>
@@ -103,7 +103,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="/#!/settings/profile"><i class="fa fa-lg fa-cog"></i> Settings</a>
+                        <a href="/#!/settings/profile" analytics-on="click" analytics-event="TopNavBar_Profile"><i class="fa fa-lg fa-cog"></i> Settings</a>
                     </li>
                     <!--<li>-->
                     <!--<a href="/#!/settings/accounts">Manage Social Accounts</a>-->
@@ -113,7 +113,7 @@
                     <!--</li>-->
                     <li class="divider"></li>
                     <li>
-                        <a href="/auth/signout"><i class="fa fa-lg fa-sign-out"></i> Signout</a>
+                        <a href="/auth/signout" analytics-on="click" analytics-event="TopNavBar_Signout"><i class="fa fa-lg fa-sign-out"></i> Signout</a>
                     </li>
                 </ul>
             </li>
@@ -124,11 +124,11 @@
             <!--</li>-->
             <li class="divider-vertical"></li>
             <li ui-route="/beta-access" ng-class="{active: $uiRoute}">
-                <a href="/#!/beta-access">Beta Access</a>
+                <a href="/#!/beta-access" analytics-on="click" analytics-event="TopNavBar_BetaAccess">Beta Access</a>
             </li>
             <li class="divider-vertical"></li>
             <li ui-route="/signin" ng-class="{active: $uiRoute}">
-                <a href="/#!/signin">Sign In</a>
+                <a href="/#!/signin" analytics-on="click" analytics-event="TopNavBar_Signin">Sign In</a>
             </li>
         </ul>
         <!-- END Right Navbar-->

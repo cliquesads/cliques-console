@@ -70,5 +70,9 @@ module.exports = [
     'public/lib/angular-country-picker/country-picker.min.js',
     'public/lib/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js',
     'public/lib/angular-filter/dist/angular-filter.min.js',
-    'public/lib/angular-ui-router-title/angular-ui-router-title.js'
+    'public/lib/angular-ui-router-title/angular-ui-router-title.js',
+    'public/lib/d3/d3.min.js',
+    'public/lib/topojson/topojson.min.js',
+    'public/lib/datamaps/dist/datamaps.all.min.js',
+    'public/lib/angular-datamaps/dist/angular-datamaps.min.js'
 ];

@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-1">
-                                <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible">
+                                <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible" analytics-on="click" analytics-event="ViewPage_ShowPageForm">
                                     <span class="fa fa-edit"></span>
                                 </a>
                             </div>
@@ -67,10 +67,10 @@
                 <div class="list-group-item" ng-show="pageForm.$visible">
                     <div class="text-center">
                         <!-- buttons to submit / cancel form -->
-                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting">
+                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="pageForm.$waiting" analytics-on="click" analytics-event="ViewPage_SaveForm">
                             Save
                         </button>
-                        <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()">
+                        <button type="button" class="btn btn-xs btn-default" ng-disabled="pageForm.$waiting" ng-click="pageForm.$cancel()" analytics-on="click" analytics-event="ViewPage_CancelForm">
                             Cancel
                         </button>
                     </div>
@@ -89,9 +89,9 @@
                         {{ dateRanges[dateRangeSelection].label }}
                     </small>
                     <span class="pull-right">
-                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('7d')">7d</button>
-                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('30d')">30d</button>
-                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('90d')">90d</button>
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('7d')" analytics-on="click" analytics-event="ViewPage_GetQuickStats7d">7d</button>
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('30d')" analytics-on="click" analytics-event="ViewPage_GetQuickStats30d">30d</button>
+                        <button class="btn btn-xs btn-default" ng-click="getQuickStats('90d')" analytics-on="click" analytics-event="ViewPage_GetQuickStats90d">90d</button>
                     </span>
                 </div>
                 <div class="row row-table text-center">
@@ -125,7 +125,7 @@
         <div class="list-group">
             <div class="list-group-item">
                 <i class="fa fa-tags"></i>&nbsp;
-                <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPlacement()">
+                <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPlacement()" analytics-on="click" analytics-event="ViewPage_NewPlacement">
                     <span class="btn-label"><i class="fa fa-plus"></i></span>New Placement
                 </button>
                 <span class="panel-title">
@@ -150,14 +150,14 @@
                                     <div class="label" ng-class="placement.active ? 'label-success':'label-default'">{{ placement.active ? "Active":"Inactive"}}</div>
                                 </td>
                                 <td class="col-sm-4 edit-inline hover-visible" ng-click="editPlacementBasics(placement)">
-                                    <a href="#" class="hover-hidden pull-right">
+                                    <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditPlacmentBasics">
                                         <span class="fa fa-edit"></span>
                                     </a>
                                     <h4 class="list-group-item-heading">{{ placement.name }}</h4>
                                     <p class="list-group-item-text">{{ placement.w }}x{{ placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
                                 </td>
                                 <td class="col-sm-5 edit-inline hover-visible" ng-click="editDefaultCondition(placement)">
-                                    <a href="#" class="hover-hidden pull-right">
+                                    <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditDefaultCondition">
                                         <span class="fa fa-edit"></span>
                                     </a>
                                     <p class="m0">
@@ -168,8 +168,8 @@
                                 </td>
                                 <td class="col-sm-2">
                                     <span>
-                                        <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs"><span class="fa fa-code mr"></span>Please Save</button>
-                                        <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs"><span class="fa fa-code mr"></span>Get Ad Tag</button>
+                                        <button type="button" data-ng-show="!placement._id" class="btn btn-default btn-xs" analytics-on="click" analytics-event="ViewPage_SavePlacementId"><span class="fa fa-code mr"></span>Please Save</button>
+                                        <button type="button" data-ng-show="placement._id" ng-click="getPlacementTag(placement)" class="btn btn-primary btn-xs" analytics-on="click" analytics-event="ViewPage_GetPlacementTag"><span class="fa fa-code mr"></span>Get Ad Tag</button>
                                     </span>
                                 </td>
                             </tr>

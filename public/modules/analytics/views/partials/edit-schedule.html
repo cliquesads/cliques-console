@@ -1,0 +1,83 @@
+<h4><i class="fa fa-calendar-check-o"></i> Edit Schedule </h4>
+<p>
+	Edit query schedules to be emailed to periodically.
+</p>
+<form
+	name="editScheduleForm"
+	id="editScheduleForm"
+	data-ng-submit="editSchedule()">
+	<div class="row pl pr">
+		<div class="form-horizontal">
+			<div class="form-group">
+				<!-- Crontab day selection -->
+				<label for="crontabDay" class="col-sm-3 text-md mt-sm">
+					Repeat
+				</label>
+				<div class="col-sm-9">
+					<select name="crontabDay"
+							id="crontabDay"
+							class="form-control chosen-select"
+							ng-model="crontabDay"
+							ng-required="true"
+							ng-options="key for (key, value) in crontabDayOptions">
+						<option value="" selected>
+							Every...
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<!-- Crontab hour/minute -->
+				<label for="crontabHour"
+					   class="col-sm-3 text-md mt-sm">
+					at
+				</label>
+				<div class="col-sm-3">
+					<input type="number"
+						   placeholder="Hour"
+						   min="0"
+						   max="12"
+						   name="crontabHour"
+						   id="crontabHour"
+						   ng-model="crontabHour"
+						   ng-required="true"
+						   class="form-control">
+				</div>
+				<label for="crontabMinute"
+					   class="col-sm-1 text-md mt-sm text-center">
+					:
+				</label>
+				<div class="col-sm-3">
+					<input type="number"
+						   placeholder="Minute"
+						   min="0"
+						   max="60"
+						   name="crontabMinute"
+						   id="crontabMinute"
+						   ng-model="crontabMinute"
+						   ng-required="true"
+						   class="form-control">
+				</div>
+				<div class="col-sm-2">
+					<select name="crontabAmPm"
+						id="crontabAmPm"
+						ng-model="crontabAmPm"
+						ng-required="true"
+						class="form-control chosen-select">
+						<option value="AM" selected>AM</option>
+						<option value="PM">PM</option>
+					</select>
+				</div>
+			</div>
+
+		</div>
+		<!-- Submit edition button -->
+		<div class="text-center">
+			<button
+				class="btn btn-primary text-md mt"
+				type="submit">
+				Submit	
+			</button>
+		</div>
+	</div>	
+</form>

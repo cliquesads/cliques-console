@@ -4,7 +4,7 @@
         <span ng-show="$state.current.name === 'app.home'">Better ads start here.</span>
     </li>
     <li ng-show="$state.current.name != 'app.home'" ng-repeat="crumb in $breadcrumbs" ng-class="{ 'active' : $last }">
-        <a ng-if="!$last" href="{{$state.href(crumb.state, crumb.stateParams)}}">{{crumb.title}}</a>
+        <a ng-if="!$last" href="{{$state.href(crumb.state, crumb.stateParams)}}" analytics-on="click" analytics-event="Breadcrumb_LastState">{{crumb.title}}</a>
         <strong><span ng-if="$last">{{ crumb.title }}</span></strong>
     </li>
 </ul>

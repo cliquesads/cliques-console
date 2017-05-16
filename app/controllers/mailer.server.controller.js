@@ -6,6 +6,10 @@ var mongoose = require('mongoose'),
     nodemailer = require('nodemailer'),
     EmailTemplates = require('swig-email-templates'),
     mandrill = require('mandrill-api'),
+    base64 = require('base64-stream'),
+    stream = require('stream'),
+    async = require('async'),
+    streamToString = require('stream-to-string'),
     _ = require('lodash');
 
 var mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"));
@@ -88,6 +92,38 @@ Mailer.prototype.sendMail = function(mailOptions, callback){
 };
 
 /**
+ * Mandrill attachment contents must be base64 strings, whereas
+ * mailer accepts any node.js readable stream as an attachment and handles
+ * the rest. So this function converts all attachment streams to base64 strings
+ * that can be passed to the Mandrill API.
+ *
+ * @param attachments
+ * @param cb
+ * @private
+ */
+var _mandrillizeAttachments = function(attachments, cb){
+    if (attachments){
+        async.each(attachments, function(attachmentObj, callback){
+            if (attachmentObj.content && attachmentObj.content instanceof stream.Stream){
+                streamToString(attachmentObj.content.pipe(base64.encode()),
+                    function(err, str){
+                        if (err) return callback(err);
+                        attachmentObj.content = str;
+                        callback();
+                    }
+                );
+            } else {
+                return callback();
+            }
+        }, function(err){
+            cb(err, attachments);
+        });
+    } else {
+        cb(null, null);
+    }
+};
+
+/**
  * Private sub-function to send email through Mandrill
  * @param mailOptions
  * @param callback
@@ -135,22 +171,26 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
         _.assignIn(message, mailOptions.mandrillOptions);
     }
 
-    self.mandrillClient.messages.sendTemplate({
-            "template_name": mailOptions.templateName,
-            "template_content": [{}],
-            "message": message
-        },
-        function(result){
-            if (result[0].status === 'sent'){
-                callback(null, result);
-            } else {
-                callback(result[0].reject_reason, null);
+    _mandrillizeAttachments(mailOptions.attachments, function(err, attachments){
+        if (err) return callback(err);
+        if (attachments) message.attachments = attachments;
+        self.mandrillClient.messages.sendTemplate({
+                "template_name": mailOptions.templateName,
+                "template_content": [{}],
+                "message": message
+            },
+            function(result){
+                if (result[0].status === 'sent'){
+                    callback(null, result);
+                } else {
+                    callback(result[0].reject_reason, null);
+                }
+            },
+            function(err) {
+                callback(err);
             }
-        },
-        function(err) {
-            callback(err);
-        }
-    );
+        );
+    });
 };
 
 /**

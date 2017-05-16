@@ -16,8 +16,8 @@ adding hook in parent template ---->
                         <p class="list-group-item-text"> Last Modified: {{ draft.tstamp | date: 'medium' }}</p>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-primary btn-xs" ng-click="edit(draft)"><i class="fa fa-edit"></i> Continue Editing</button>
-                        <button class="btn btn-danger btn-xs" ng-click="remove(draft)"><i class="fa fa-trash"></i> Delete</button>
+                        <button class="btn btn-primary btn-xs" ng-click="edit(draft)" analytics-on="click" analytics-event="ListCampaignDrafts_Edit"><i class="fa fa-edit"></i> Continue Editing</button>
+                        <button class="btn btn-danger btn-xs" ng-click="remove(draft)" analytics-on="click" analytics-event="ListCampaignDrafts_Remove"><i class="fa fa-trash"></i> Delete</button>
                     </div>
                 </div>
             </div>

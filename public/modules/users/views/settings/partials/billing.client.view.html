@@ -24,7 +24,7 @@
                     <tbody>
                     <tr ng-repeat="p in payments">
                         <td>
-                            <a href="#" ng-if="p.status != 'Needs Approval'" ng-click="showInvoice(p)" target="_blank">
+                            <a href="#" ng-if="p.status != 'Needs Approval'" ng-click="showInvoice(p)" target="_blank" analytics-on="click" analytics-event="Billing_ShowInvoice">
                                 {{ p.tstamp | date : "longDate" : "UTC" }}
                             </a>
                             <span ng-if="p.status === 'Needs Approval'">{{ p.tstamp | date : "longDate" : "UTC" }}</span>
@@ -47,7 +47,7 @@
         <div class="panel-heading">
             <div class="panel-title">
                 <span class="h4"><strong>Preferences</strong></span>
-                <span class="pull-right"><a href="#" ng-click="openFaqs()"><i class="fa fa-question-circle"></i> Billing FAQs</a></span>
+                <span class="pull-right"><a href="#" ng-click="openFaqs()" analytics-on="click" analytics-event="Billing_OpenFaqs"><i class="fa fa-question-circle"></i> Billing FAQs</a></span>
             </div>
         </div>
         <tabset>
@@ -82,7 +82,7 @@
                                         <span ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">************{{ defaultSource.last4 }}, Exp. {{ defaultSource.exp_month }}/{{ defaultSource.exp_year }}</span>
                                         <span ng-show="organization.effectiveOrgType ==='publisher'">*******{{ defaultSource.last4 }}</span>
                                         &nbsp;&nbsp;
-                                        <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                        <button type="button" ng-show="organization.billingPreference === 'Stripe'" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;" analytics-on="click" analytics-event="Billing_ToggleStripForm">
                                             <span class="btn-label">
                                                 <i ng-hide="showStripeForm" class="fa fa-pencil"></i>
                                                 <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
@@ -99,7 +99,7 @@
                                         <em ng-show="organization.effectiveOrgType ==='advertiser' || organization.effectiveOrgType ==='networkAdmin'">No cards saved.</em>
                                         <em ng-show="organization.effectiveOrgType ==='publisher'">No accounts saved.</em>
                                         &nbsp;&nbsp;
-                                        <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;">
+                                        <button type="button" class="btn btn-labeled btn-default btn-sm" ng-click="showStripeForm = !showStripeForm; overrideSave = showStripeForm;" analytics-on="click" analytics-event="Billing_ToggleStripForm">
                                             <span class="btn-label">
                                                 <i ng-hide="showStripeForm" class="fa fa-plus"></i>
                                                 <i ng-show="showStripeForm" class="fa fa-minus-square"></i>
@@ -141,8 +141,8 @@
                     </div>
                     <div class="row p-lg" ng-show="allowSave && !overrideSave">
                         <div class="col-sm-12 text-center">
-                            <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()">Save</button>
-                            <button type="button" class="btn btn-default btn-large" ng-click="reset()">Cancel</button>
+                            <button type="button" class="btn btn-primary btn-large" ng-click="updateOrganization()" analytics-on="click" analytics-event="Billing_UpdateOrg">Save</button>
+                            <button type="button" class="btn btn-default btn-large" ng-click="reset()" analytics-on="click" analytics-event="Billing_Cancel">Cancel</button>
                         </div>
                     </div>
                     <div class="col-sm-12 text-center">
@@ -179,7 +179,7 @@
                         </fieldset>
                         <div class="row p-lg" ng-show="deliverySettingsForm.$dirty">
                             <div class="col-sm-12 text-center">
-                                <button type="submit" class="btn btn-primary btn-large">Save</button>
+                                <button type="submit" class="btn btn-primary btn-large" analytics-on="click" analytics-event="Billing_Save">Save</button>
                             </div>
                         </div>
                     </form>

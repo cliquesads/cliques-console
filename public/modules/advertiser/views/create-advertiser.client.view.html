@@ -65,7 +65,7 @@
                     <div class="alert alert-danger" ng-show="creation_error">{{ creation_error }}</div>
                     <ul class="pager">
                         <li class="previous">
-                            <a href="#" ng-click="stepControl.goToStep('init')"><span>&larr; Previous</span></a>
+                            <a href="#" ng-click="stepControl.goToStep('init')" analytics-on="click" analytics-event="CreateAdvertiser_Init"><span>&larr; Previous</span></a>
                         </li>
                         <li ng-show="loading">
                             <div class="ball-pulse">
@@ -92,14 +92,14 @@
                 <br/>
                 <div class="bs-callout bs-callout-primary">
                     <h4>Don't worry</h4>
-                    <p>If you need to stop & want to save your progress, you can always click the <button class="btn btn-primary btn-xs"><i class="fa fa-file-o"></i> Save Draft</button> button in the upper right corner.</p>
+                    <p>If you need to stop & want to save your progress, you can always click the <button class="btn btn-primary btn-xs" analytics-on="click" analytics-event="CreateAdvertiser_SaveDraft"><i class="fa fa-file-o"></i> Save Draft</button> button in the upper right corner.</p>
                 </div>
                 <ul class="pager">
                     <li class="previous">
-                        <a href="#" ng-click="stepControl.goToStep('advertiser-info')"><span>&larr; Previous</span></a>
+                        <a href="#" ng-click="stepControl.goToStep('advertiser-info')" analytics-on="click" analytics-event="CreateAdvertiser_AdvertiserInfo"><span>&larr; Previous</span></a>
                     </li>
                     <li class="next">
-                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')">Got it &nbsp;<span>&rarr;</span></a>
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="CreateAdvertiser_CampaignWizard">Got it &nbsp;<span>&rarr;</span></a>
                     </li>
                 </ul>
             </div>

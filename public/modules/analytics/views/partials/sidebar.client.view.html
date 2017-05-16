@@ -1,39 +1,41 @@
 <div class="sidebar-container">
-    <i class="fa fa-clock-o"></i><strong> Recent Queries</strong>
+    <i class="fa fa-floppy-o"></i>
+    <a href="#!/analytics/my-queries">
+        <strong> My Queries</strong>
+    </a>
     <ul>
-        <li>
-            <a href="">Custom Report</a><br/>
-            <small>Jan 6 2017 3:30PM EST</small>
+        <li ng-repeat="query in myQueries">
+            <a ui-sref="app._analytics.analytics.myQueriesList.myQuery({ queryId: query._id, query: query })"
+                analytics-on="click"
+                analytics-event="AnalyticsSidebar_CheckMyQuery">
+                {{ query.name }}
+            </a><br/>
+            <small>{{ query.createdAt }}</small>
         </li>
-        <li>
-            <a href="">Sites</a><br/>
-            <small>Jan 6 2017 3:28PM EST</small>
-        </li>
-        <li>
-            <a href="">Creatives</a><br/>
-            <small>Jan 6 2017 3:15PM EST</small>
-        </li>
+        <li ng-if="myQueries.length === 0">No Custom Queries</li>
     </ul>
-    <a class="indent" href=""><em>View more...</em></a>
+    <a class="indent" href="#!/analytics/my-queries" ng-if="myQueries.length < totalMyQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreMyQueries">
+        <em>View All...</em>
+    </a>
+
     <br/><br/>
-    <i class="fa fa-folder"></i><strong> My Queries</strong>
+
+    <i class="fa fa-clock-o"></i>
+    <a href="#!/analytics/recent-queries">
+        <strong> Recent Queries</strong>
+    </a>
     <ul>
-        <li>
-            <a href="">Sweet Report</a><br/>
-            <small>Jan 6 2017 2:30PM EST</small>
+        <li ng-repeat="query in recentQueries">
+            <a ui-sref="app._analytics.analytics.recentQueriesList.recentQuery({ queryId: query._id })"
+                analytics-on="click"
+                analytics-event="AnalyticsSidebar_CheckRecentQuery">
+                {{ query.name }}
+            </a><br/>
+            <small>{{ query.createdAt }}</small>
         </li>
-        <li>
-            <a href="">Daily Stats</a><br/>
-            <small>Jan 4 2017 1:28PM EST</small>
-        </li>
-        <li>
-            <a href="">Geo Insights</a><br/>
-            <small>Jan 3 2017 12:15PM EST</small>
-        </li>
-        <li>
-            <a href="">Conversions by..</a><br/>
-            <small>Jan 1 2017 3:12PM EST</small>
-        </li>
+        <li ng-if="recentQueries.length === 0">No Recent Queries</li>
     </ul>
-    <a class="indent" href=""><em>View more...</em></a>
+    <a class="indent" href="#!/analytics/recent-queries" ng-if="recentQueries.length < totalRecentQueries" analytics-on="click" analytics-event="AnalyticsSidebar_ShowMoreRecentQueries">
+        <em>View All...</em>
+    </a>
 </div>

@@ -1,0 +1,18 @@
+<!-- Report Settings -->
+<report-settings
+	selected-settings="defaultQueryParam"
+	available-settings="availableSettings">
+</report-settings>
+
+<!-- Query Geo -->
+<query-geo
+    ng-if="availableSettings.hasMap">
+</query-geo>
+
+<!-- Query Graph -->
+<query-graph ng-if="availableSettings.hasGraph">
+</query-graph>
+
+<!-- Query Table -->
+<query-table ng-if="availableSettings.hasTable">
+</query-table>

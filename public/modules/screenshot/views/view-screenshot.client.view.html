@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h4><i class="fa fa-info-circle"></i> Screenshot Info
             <div class="pull-right">
-                <a href="#" tooltip="Report this screenshot" ng-click="reportScreenshotDialog(screenshot)"><i class="fa fa-exclamation-triangle"></i></a>
+                <a href="#" tooltip="Report this screenshot" ng-click="reportScreenshotDialog(screenshot)" analytics-on="click" analytics-event="ViewScreenshot_ReportScreenshotDialog"><i class="fa fa-exclamation-triangle"></i></a>
             </div>
         </h4>
         <hr class="pt0 pb0 mt0 mb0"/>
@@ -19,8 +19,8 @@
                     <pre class="p-sm" id="url"><small>{{ screenshot.url }}</small></pre>
                 </div>
                 <div class="col-sm-2 text-center">
-                    <a class="btn btn-primary btn-xs pb-sm pt-sm mr-sm" target="_blank" href="{{ screenshot.url }}" tooltip="Go to URL"><i class="fa fa-lg fa-external-link"></i></a>
-                    <a class="btn btn-primary btn-xs pb-sm pt-sm" ngclipboard data-clipboard-target="#url" ngclipboard-success="copySuccess(e)" href="#" tooltip="Copy URL to Clipboard"><i class="fa fa-lg fa-clipboard"></i></a>
+                    <a class="btn btn-primary btn-xs pb-sm pt-sm mr-sm" target="_blank" href="{{ screenshot.url }}" tooltip="Go to URL" analytics-on="click" analytics-event="ViewScreenshot_GoToURL"><i class="fa fa-lg fa-external-link"></i></a>
+                    <a class="btn btn-primary btn-xs pb-sm pt-sm" ngclipboard data-clipboard-target="#url" ngclipboard-success="copySuccess(e)" href="#" tooltip="Copy URL to Clipboard" analytics-on="click" analytics-event="ViewScreenshot_CopyURLToClipboard"><i class="fa fa-lg fa-clipboard"></i></a>
                 </div>
             </div>
         </div>
@@ -36,10 +36,10 @@
                             <!--Switch link destination depending on user.effectiveOrgType-->
                             <span ng-switch="user.organization.effectiveOrgType">
                                 <span ng-switch-when="publisher">
-                                    <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}">{{ site.name }}</a>
+                                    <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitPublisherSite">{{ site.name }}</a>
                                 </span>
                                 <span ng-switch-default>
-                                    <a href="/#!/browse-sites?siteId={{ site._id }}">{{ site.name }}</a>
+                                    <a href="/#!/browse-sites/{{ site._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitSite">{{ site.name }}</a>
                                 </span>
                             </span>
                         </strong>
@@ -50,7 +50,7 @@
                             <p class="mb0">
                                 <span ng-switch="user.organization.effectiveOrgType">
                                     <span ng-switch-when="publisher">
-                                        <a href="/#!/publisher/{{ publisher._id }}">{{ publisher.name }}</a>
+                                        <a href="/#!/publisher/{{ publisher._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitPublisher">{{ publisher.name }}</a>
                                     </span>
                                     <span ng-switch-default>
                                         {{ publisher.name }}
@@ -61,10 +61,10 @@
                             <p class="mb0">
                                 <span ng-switch="user.organization.effectiveOrgType">
                                     <span ng-switch-when="publisher">
-                                        <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}">{{ site.name }}</a>
+                                        <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitPublisherSite">{{ site.name }}</a>
                                     </span>
                                     <span ng-switch-default>
-                                        <a href="/#!/browse-sites?siteId={{ site._id }}">{{ site.name }}</a>
+                                        <a href="/#!/browse-sites/{{ site._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitSite">{{ site.name }}</a>
                                     </span>
                                 </span>
                             </p>
@@ -72,7 +72,7 @@
                             <p class="mb0">
                                 <span ng-switch="user.organization.effectiveOrgType">
                                     <span ng-switch-when="publisher">
-                                        <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}/page/{{ page._id }}">{{ page.name }}</a>
+                                        <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}/page/{{ page._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitPublisherPage">{{ page.name }}</a>
                                     </span>
                                     <span ng-switch-default>
                                         {{ page.name }}
@@ -99,7 +99,7 @@
                                     {{ advertiser.name }}
                                 </span>
                                 <span ng-switch-default>
-                                    <a href="/#!/advertiser/{{ advertiser._id }}">{{ advertiser.name }} </a>
+                                    <a href="/#!/advertiser/{{ advertiser._id }}" analytics-on="click" analytics-event="ViewScreenshot_CheckAdvertiser">{{ advertiser.name }} </a>
                                 </span>
                             </span>
                         </strong>
@@ -113,7 +113,7 @@
                                         {{ advertiser.name }}
                                     </span>
                                     <span ng-switch-default>
-                                        <a href="/#!/advertiser/{{ advertiser._id }}">{{ advertiser.name }} </a>
+                                        <a href="/#!/advertiser/{{ advertiser._id }}" analytics-on="click" analytics-event="ViewScreenshot_CheckAdvertiser">{{ advertiser.name }} </a>
                                     </span>
                                 </span>
                             </p>
@@ -124,7 +124,7 @@
                                         {{ campaign.name }}
                                     </span>
                                     <span ng-switch-default>
-                                        <a href="/#!/advertiser/{{ advertiser._id }}/campaign/{{ campaign._id }}">{{ campaign.name }} </a>
+                                        <a href="/#!/advertiser/{{ advertiser._id }}/campaign/{{ campaign._id }}" analytics-on="click" analytics-event="ViewScreenshot_CheckCampaign">{{ campaign.name }} </a>
                                     </span>
                                 </span>
                             </p>

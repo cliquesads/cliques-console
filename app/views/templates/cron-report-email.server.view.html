@@ -1,0 +1,12 @@
+{% extends 'base-external-email.server.view.html' %}
+
+{% block content %}
+<span class="h1">Your Query Results Are Ready!</span>
+<p>Attached are the results for your custom Cliques query: <b>{{ queryName }}</b></p>
+<span class="h4">Query Details</span>
+<p>
+    <b>Start Date:</b> {{ startDate }} <br/>
+    <b>End Date:</b> {{ endDate }} <br/>
+</p>
+<p>If you'd like to modify this query, or change when it runs, you can do that <a href="{{ queryUrl }}">here.</a></p>
+{% endblock %}

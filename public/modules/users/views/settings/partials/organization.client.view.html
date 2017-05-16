@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="text-center form-group mt">
-                    <button type="submit" class="btn btn-large btn-primary">Save Organization</button>
+                    <button type="submit" class="btn btn-large btn-primary" analytics-on="click" analytics-event="Organization_SaveOrg">Save Organization</button>
                 </div>
             </form>
         </div>
@@ -87,7 +87,7 @@
         <div class="panel-body">
             <div class="text-center">
                 <h4 class="mt0"><i class="fa fa-users"></i> Team</h4>
-                <a href="#" ng-click="inviteUser()"><i class="fa fa-envelope"></i> Invite New Users</a>
+                <a href="#" ng-click="inviteUser()" analytics-on="click" analytics-event="Organization_InviteUser"><i class="fa fa-envelope"></i> Invite New Users</a>
             </div>
             <hr/>
             <div class="table-responsive">

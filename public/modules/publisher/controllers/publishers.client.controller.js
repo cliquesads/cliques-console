@@ -1,47 +1,41 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$location',
+angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$state', '$location',
     'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-	function($rootScope, $scope, $stateParams, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
+	function($rootScope, $scope, $stateParams, $state, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS) {
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
         $scope.publishers = Publisher.query();
 
-        $scope.selectPublisher = function(force){
-            function openDialog(){
-                ngDialog.open({
-                    className: 'ngdialog-theme-default dialogwidth600',
-                    template: 'modules/publisher/views/partials/list-publisher.html',
-                    controller: ['$scope', function ($scope) {
-                        $scope.publishers = $scope.ngDialogData.publishers;
-                        $scope.rememberSelection = true;
-                        $scope.selectAndClose = function(publisher){
-                            $scope.closeThisDialog('Success');
-                            $location.url('/publisher/' + publisher.id);
-                            // Set publisher to rootScope if rememberSelection is true,
-                            // otherwise clear rootScope publisher var
-                            if ($scope.rememberSelection){
-                                $rootScope.publisher = publisher;
-                            } else {
-                                $rootScope.publisher = null;
-                            }
+        /**
+         * Factory for filter function used in publisher list view
+         */
+        $scope.hasActiveSites = function (bool) {
+            return function(publisher, index, arr) {
+                var hasBoolSites = publisher.sites.filter(function(site) {
+                    return site.active === bool;
+                }).length > 0;
+                if (!bool) {
+                    hasBoolSites = hasBoolSites || publisher.sites.length === 0;
+                }
+                return hasBoolSites;
+            };
+        };
 
-                        };
-                        $scope.createPublisher = function(){
-                            $scope.closeThisDialog('Success');
-                            $location.url('/publisher/create');
-                        };
-                    }],
-                    data: { publishers: $scope.publishers }
-                });
-            }
-
-            if ($rootScope.publisher && !force){
-                $location.url('/publisher/' + $scope.publisher.id);
-            } else {
-                openDialog();
-            }
+        /**
+         * Set $rootScope.publisher var to remember publisher selection if
+         * user checks checkbox, and redirect to appropriate view
+         * @type {boolean}
+         */
+        $scope.defaults = { rememberMySelection: true };
+        $scope.selectPublisher = function(publisher) {
+            $rootScope.publisher = $scope.defaults.rememberMySelection ? publisher : null;
+            var nextState = $stateParams.next ? $stateParams.next : '.viewPublisher';
+            event.preventDefault();
+            $state.go(nextState, {
+                publisherId: publisher._id
+            });
         };
 
         $scope.update = function() {

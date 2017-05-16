@@ -38,21 +38,21 @@
                 <input name="acceptedTerms" type="checkbox" ng-model="acceptedTerms" analytics-on="click" analytics-event="AuthorizeCardTerms" required="required">
                 <span class="fa fa-check"></span>
                 I authorize Cliques Labs Inc. to charge the card above each month for any Total
-                Media Cost & Cliques Fees (as defined in the <a href="#!/terms-and-conditions">Terms & Conditions</a>) due.
+                Media Cost & Cliques Fees (as defined in the <a href="#!/terms-and-conditions" analytics-on="click" analytics-event="StripCreditCardForm_TermsAndConditions">Terms & Conditions</a>) due.
             </label>
         </div>
     </div>
     <div class="row p-lg">
         <div class="col-sm-12 text-center">
             <button type="submit" class="btn btn-primary btn-large" analytics-on="click"
-                    analytics-event="BillingSettings_SubmitCardForToken">Save</button>
+                    analytics-event="BillingSettings_SubmitCardForToken" analytics-on="click" analytics-event="StripCreditCardForm_Save">Save</button>
         </div>
     </div>
 </form>
 <div class="panel-footer text-center">
     <small class="text-muted">
         <i class="fa fa-lock"></i> Your credit card information will be <strong>securely</strong> transmitted to
-        <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your credit card information
+        <a href="https://stripe.com/about" analytics-on="click" analytics-event="StripCreditCardForm_StripAbout">Stripe</a>. Cliques does not store your credit card information
         on its own servers.
     </small>
 </div>

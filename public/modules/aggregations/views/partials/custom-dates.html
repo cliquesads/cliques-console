@@ -5,7 +5,7 @@
         <input type="text" name="start_date" id="start_date" data-ng-model="startdatemodel" is-open="calendar.opened.start_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="{{ wizardstep }}" placeholder="yyyy-MM-dd" datepicker-options="calendar.dateOptions" class="form-control" required="required" close-text="Close"/>
         <!--Button to enable popup Angular UI datepicker-->
         <span class="input-group-btn">
-             <button type="button" ng-click="calendar.open($event,'start_date')" class="btn btn-default">
+             <button type="button" ng-click="calendar.open($event,'start_date')" class="btn btn-default" analytics-on="click" analytics-event="CustomDates_OpenCalendarStartDate">
                  <em class="fa fa-calendar"></em>
              </button>
         </span>
@@ -18,7 +18,7 @@
         <input type="text" name="end_date" id="end_date" data-ng-model="enddatemodel" is-open="calendar.opened.end_date" datepicker-popup="yyyy-MM-dd" data-parsley-group="{{ wizardstep }}" min-date="startdatemodel" placeholder="yyyy-MM-dd" datepicker-options="dateOptions" class="form-control" required="required" close-text="Close"/>
         <!--Button to enable popup Angular UI datepicker-->
         <span class="input-group-btn">
-            <button type="button" ng-click="calendar.open($event, 'end_date')" class="btn btn-default">
+            <button type="button" ng-click="calendar.open($event, 'end_date')" class="btn btn-default" analytics-on="click" analytics-event="CustomDates_OpenCalendarEndDate">
                 <em class="fa fa-calendar"></em>
             </button>
         </span>

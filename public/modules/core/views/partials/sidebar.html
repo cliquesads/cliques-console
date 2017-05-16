@@ -1,7 +1,7 @@
 <!-- Inline template with sidebar items markup and ng-directives-->
 <script type="text/ng-template" id="sidebar-renderer.html">
   <span ng-if="item.heading">{{(item.translate | translate) || item.title}}</span>
-  <a href="/#!/{{item.link}}" ng-href="/#!/{{item.link}}" title="{{item.title}}">
+  <a href="/#!/{{item.link}}" ng-href="/#!/{{item.link}}" title="{{item.title}}" analytics-on="click" analytics-event="Sidebar_ClickTitle">
     <em ng-hide="inSubmenu" class="{{item.iconClass}}"></em>
     <div ng-if="item.alert" ng-class="item.label || 'label label-success'" class="pull-right">{{item.alert}}</div>
     <i ng-if="inSubmenu" class="{{item.iconClass}}"></i><span class="ml-sm">{{(item.translate | translate) || item.title}}</span>
@@ -64,7 +64,6 @@
                         </li>
                     </ul>
                 </div>
-
                 <div class="margin-top-16">
                     <strong>Data Last Updated</strong>
                     <p>

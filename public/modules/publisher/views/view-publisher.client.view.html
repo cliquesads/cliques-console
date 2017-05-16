@@ -8,7 +8,7 @@ adding hook in parent template ---->
         <!-- View hook for child views -->
         <section data-ui-view="main"></section>
     </div>
-    <div ng-switch-when="app.publisher.viewPublisher">
+    <div ng-switch-when="app.publisher.allPublishers.viewPublisher">
         <!-------------------------------------->
         <!--- BEGIN ViewPublisher Template ----->
         <!-------------------------------------->
@@ -30,14 +30,14 @@ adding hook in parent template ---->
                 <!--BEGIN SITE PANEL-->
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newSite()">
+                        <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newSite()" analytics-on="click" analytics-event="ViewPublisher_NewSite">
                             <span class="btn-label"><i class="fa fa-plus"></i></span>New Site
                         </button>
                         <span class="panel-title">
                             <i class="fa fa-desktop"></i>&nbsp;&nbsp;Sites
                         </span>
                     </li>
-                    <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item">
+                    <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item" analytics-on="click" analytics-event="ViewPublisher_SelectSite">
                         <div class="row row-table">
                             <div class="col-sm-2">
                                 <status-label model="site"></status-label>
@@ -66,9 +66,9 @@ adding hook in parent template ---->
                                 </em>
                             </small>
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('90d')">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('7d')" analytics-on="click" analytics-event="ViewPublisher_GetPublisherGraph7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('30d')" analytics-on="click" analytics-event="ViewPublisher_GetPublisherGraph30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getPublisherGraph('90d')" analytics-on="click" analytics-event="ViewPublisher_GetPublisherGraph90d">90d</button>
                             </span>
                         </div>
                     </div>

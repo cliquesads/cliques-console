@@ -16,13 +16,8 @@ angular.module('core').controller('AppController',
             $scope.consoleVersion = consoleVersion;
 
             if (user) {
-                if (user.organization.organization_types.indexOf('networkAdmin') > -1) {
-                    $scope.role = 'networkAdmin';
-                } else if (user.organization.organization_types.indexOf('advertiser') > -1) {
-                    $scope.role = 'advertiser';
-                } else if (user.organization.organization_types.indexOf('publisher') > -1) {
-                    $scope.role = 'publisher';
-                }
+                $rootScope.role = $scope.role = user.organization.effectiveOrgType;
+
                 // Now set MixPanel user properties
                 $analytics.setUsername(user.username);
                 $analytics.setAlias(user.displayName);

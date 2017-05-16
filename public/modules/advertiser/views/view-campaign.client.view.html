@@ -48,7 +48,7 @@ adding hook in parent template ---->
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <a href="#" class="pull-right" ng-click="campaignBasicsInline.$show()" ng-show="!campaignBasicsInline.$visible">
+                                                    <a href="#" class="pull-right" ng-click="campaignBasicsInline.$show()" ng-show="!campaignBasicsInline.$visible" analytics-on="click" analytics-event="ViewCampaign_ShowBasics">
                                                         <span class="fa fa-edit"></span>
                                                     </a>
                                                 </div>
@@ -73,10 +73,10 @@ adding hook in parent template ---->
                                         <div class="pull-right">
                                             <!-- buttons to submit / cancel form -->
                                             <span ng-show="campaignBasicsInline.$visible">
-                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="campaignBasicsInline.$waiting">
+                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="campaignBasicsInline.$waiting" analytics-on="click" analytics-event="ViewCampaign_SaveCampaign">
                                                     Save
                                                 </button>
-                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="campaignBasicsInline.$waiting" ng-click="campaignBasicsInline.$cancel()">
+                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="campaignBasicsInline.$waiting" ng-click="campaignBasicsInline.$cancel()" analytics-on="click" analytics-event="ViewCampaign_CancelSaving">
                                                     Cancel
                                                 </button>
                                             </span>
@@ -97,7 +97,7 @@ adding hook in parent template ---->
                                                         <p class="form-control-static">{{ campaign.start_date | date:'MM/dd/yyyy' }}</p>
                                                     </div>
                                                     <div class="col-sm-2">
-                                                        <a href="#" class="pull-right" ng-click="flightDates.$show()" ng-show="!flightDates.$visible">
+                                                        <a href="#" class="pull-right" ng-click="flightDates.$show()" ng-show="!flightDates.$visible" analytics-on="click" analytics-event="ViewCampaign_ShowFlightDates">
                                                             <span class="fa fa-edit"></span>
                                                         </a>
                                                     </div>
@@ -114,10 +114,10 @@ adding hook in parent template ---->
                                             <!-- buttons to submit / cancel form -->
                                             <span ng-show="flightDates.$visible">
                                                 <br/>
-                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="flightDates.$waiting">
+                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="flightDates.$waiting" analytics-on="click" analytics-event="ViewCampaign_SaveFlightDates">
                                                     Save
                                                 </button>
-                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="flightDates.$waiting" ng-click="flightDates.$cancel()">
+                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="flightDates.$waiting" ng-click="flightDates.$cancel()" analytics-on="click" analytics-event="ViewCampaign_CancelSaveFlightDates">
                                                     Cancel
                                                 </button>
                                             </span>
@@ -139,7 +139,7 @@ adding hook in parent template ---->
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <a href="#" class="pull-right" ng-click="bidsInline.$show()" ng-show="!bidsInline.$visible">
+                                                    <a href="#" class="pull-right" ng-click="bidsInline.$show()" ng-show="!bidsInline.$visible" analytics-on="click" analytics-event="ViewCampaign_ShowBids">
                                                         <span class="fa fa-edit"></span>
                                                     </a>
                                                 </div>
@@ -156,10 +156,10 @@ adding hook in parent template ---->
                                         <div class="pull-right">
                                             <!-- buttons to submit / cancel form -->
                                             <span ng-show="bidsInline.$visible">
-                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="bidsInline.$waiting">
+                                                <button type="submit" class="btn btn-xs btn-primary" ng-disabled="bidsInline.$waiting" analytics-on="click" analytics-event="ViewCampaign_SaveBids">
                                                     Save
                                                 </button>
-                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="bidsInline.$waiting" ng-click="bidsInline.$cancel()">
+                                                <button type="button" class="btn btn-xs btn-default" ng-disabled="bidsInline.$waiting" ng-click="bidsInline.$cancel()" analytics-on="click" analytics-event="ViewCampaign_CancelSaveBids">
                                                     Cancel
                                                 </button>
                                             </span>
@@ -190,7 +190,7 @@ adding hook in parent template ---->
                                         <div class="col-sm-8">
                                             <p class="form-control-static">
                                                 <strong>
-                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/placement-targets"><span class="fa fa-sliders"></span>  {{ campaign.inventory_targets.length + campaign.blocked_inventory.length || 0 }} Inventory Targets Set</a>
+                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/placement-targets" analytics-on="click" analytics-event="ViewCampaign_PlacementTargets"><span class="fa fa-sliders"></span>  {{ campaign.inventory_targets.length + campaign.blocked_inventory.length || 0 }} Inventory Targets Set</a>
                                                 </strong>
                                             </p>
                                         </div>
@@ -203,7 +203,7 @@ adding hook in parent template ---->
                                         <div class="col-sm-8">
                                             <p class="form-control-static">
                                                 <strong>
-                                                    <a href="#" ng-click="editDMATargets()"><span class="fa fa-sliders"></span>  {{ campaign.dma_targets.length || 0 }} DMA Targets Set</a>
+                                                    <a href="#" ng-click="editDMATargets()" analytics-on="click" analytics-event="ViewCampaign_EditDMATargets"><span class="fa fa-sliders"></span>  {{ campaign.dma_targets.length || 0 }} DMA Targets Set</a>
                                                 </strong>
                                             </p>
                                         </div>
@@ -213,7 +213,7 @@ adding hook in parent template ---->
                         </tab>
                         <tab heading="Creatives">
                             <div class="panel-body">
-                                <a href="#" class="pull-right" ng-click="editCreatives()">
+                                <a href="#" class="pull-right" ng-click="editCreatives()" analytics-on="click" analytics-event="ViewCampaign_EditCreatives">
                                     <span class="fa fa-edit"></span>
                                 </a>
                                 <div class="box-placeholder" ng-show="!campaign.creativegroups.length">
@@ -245,7 +245,7 @@ adding hook in parent template ---->
                     <span>Advertiser QuickStats</span>
                     <span class="pull-right">
                         Want to see more data? &nbsp;
-                        <a href="/#!/analytics" class=" text-underline"><i class="fa fa-signal"></i> Go to Analytics</a>
+                        <a href="/#!/analytics" class=" text-underline" analytics-on="click" analytics-event="ViewCampaign_Analytics"><i class="fa fa-signal"></i> Go to Analytics</a>
                     </span>
                 </div>
                 <div id="campaignGraphPanel" class="panel panel-default ml-xl mt-sm" data-ng-init="getTabData(dateRangeSelection)">
@@ -259,9 +259,9 @@ adding hook in parent template ---->
                                 </em>
                             </small>
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')" analytics-on="click" analytics-event="ViewCampaign_Query7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')" analytics-on="click" analytics-event="ViewCampaign_Query30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')" analytics-on="click" analytics-event="VIewCampaign_Query90d">90d</button>
                             </span>
                         </div>
                     </div>

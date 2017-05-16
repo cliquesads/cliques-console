@@ -5,10 +5,23 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
         scope: {
             showPoints: '=',
             timeSeries: '=',
+            timeUnit: '=',
             height: '@'
         },
         template: '<flot dataset="dataSet" options="graphOptions" callback="callback" height="{{ height }}"></flot>',
         link: function(scope, element, attribute){
+            var timeformat, minTickSize;
+            // Decide the x-axis time scale depending on differe time unit passed in
+            if (!scope.timeUnit || scope.timeUnit === 'day') {
+                timeformat = '%m/%d/%y';
+                minTickSize = [1, 'day'];
+            } else if (scope.timeUnit === 'hour') {
+                timeformat = '%m/%d/%y %h:00';
+                minTickSize = [1, 'hour'];
+            } else if (scope.timeUnit === 'month') {
+                timeformat = '%Y/%m';
+                minTickSize = [1, 'month'];
+            }
             scope.graphOptions = {
                 grid: {
                     borderColor: '#eee',
@@ -20,7 +33,26 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                 tooltipOpts: {
                     content: function (label, x, y) {
                         var date = new Date(x);
-                        var str = (date.getUTCMonth() + 1).toString() + '/' + date.getUTCDate().toString();
+                        var str;
+
+                        var month = date.getUTCMonth() + 1;
+                        var day = date.getUTCDate();
+                        var hour = date.getUTCHours();
+
+                        var yearStr = date.getUTCFullYear().toString();
+                        var monthStr = (month >= 10) ? month.toString() : ('0' + month.toString());
+                        var dayStr = (day >= 10) ? day.toString() : ('0' + day.toString());
+                        var hourStr = (hour >= 10) ? hour.toString() : ('0' + hour.toString());
+
+                        if (scope.timeUnit === 'hour') {
+                            str = monthStr + '/' + dayStr + ' ' + hourStr + ':00';
+                        } else if (scope.timeUnit === 'month') {
+                            str = yearStr + '/' + monthStr;
+                        } else {
+                            // timeUnit is day or undefined
+                            str = monthStr + '/' + dayStr;
+                        }
+
                         if (label === 'Impressions'){
                             y = y.toLocaleString();
                         } else if (label === 'CTR'){
@@ -33,8 +65,8 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                     tickColor: '#fcfcfc',
                     mode: 'time',
                     timezone: 'UTC',
-                    timeformat: '%m/%d/%y',
-                    minTickSize: [1, 'day'],
+                    timeformat: timeformat,
+                    minTickSize: minTickSize,
                     axisLabelPadding: 5
                 },
                 yaxes: [
@@ -81,7 +113,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                             show: true,
                             align: "center",
                             fill: true,
-                            barWidth: 24 * 60 * 60 * 600,
+                            barWidth: scope.timeUnit === 'hour' ? 60 * 60 * 600 : 24 * 60 * 60 * 600,
                             lineWidth: 0.4
                         },
                         color: "#768294",
@@ -95,7 +127,7 @@ angular.module('aggregations').directive('dailyAdStatsGraph', ['$timeout',functi
                             show: true,
                             align: "center",
                             fill: true,
-                            barWidth: 24 * 60 * 60 * 600,
+                            barWidth: scope.timeUnit === 'hour' ? 60 * 60 * 600 : 24 * 60 * 60 * 600,
                             lineWidth: 0.4
                         },
                         color: "#9BE3BF",
