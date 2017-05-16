@@ -1,11 +1,21 @@
 <div id="wrapper">
     <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
-    <div class="{{ creative.w < 350 ? 'col-sm-5': 'col-sm-12'}}">
+    <div class="{{ creative.w < 350 ? 'col-sm-6': 'col-sm-12'}}">
         <h4>Creative Preview</h4>
         <p><small><em class="text-muted">Click to test landing page</em></small></p>
-        <iframe id="creativePreview" ng-src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
+        <span ng-switch="creative.type">
+            <span ng-switch-when="native">
+                <native-preview advertiser="advertiser" creative="creative"></native-preview>
+                <div class="alert alert-info mr-lg"><i class="fa fa-warning"></i> This <strong>preview</strong> of your native
+                    ad is for demonstrative purposes only. The final appearance of your native ad <strong>will vary by
+                    site & placement.</strong></div>
+            </span>
+            <span ng-switch-default>
+                <iframe id="creativePreview" ng-src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
+            </span>
+        </span>
     </div>
-    <div class="col-sm-7">
+    <div class="col-sm-6">
         <fieldset>
             <h4>Creative Details</h4>
             <div class="form-horizontal well well-sm">
@@ -27,7 +37,7 @@
                         <div class="label" ng-class="creative.active ? 'label-success':'label-default'">{{ creative.active ? "Active":"Inactive"}}</div>
                     </div>
                 </div>
-                <div class="form-group m0">
+                <div class="form-group m0" ng-show="creative.type === 'display' || !creative.type">
                     <label class="col-sm-3 control-label">Dimensions</label>
                     <div class="col-sm-9">
                         <p class="form-control-static">
@@ -39,7 +49,15 @@
                     <label class="col-sm-3 control-label">Type</label>
                     <div class="col-sm-9">
                         <p class="form-control-static">
-                            {{ creative.type ? creative.type : 'hosted' }}
+                            {{ creative.type ? (creative.type | capitalize) : 'Display' }}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
+                    <label class="col-sm-3 control-label">Hosting Type</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{ creative.hostingType ? (creative.hostingType | capitalize) : 'Hosted' }}
                         </p>
                     </div>
                 </div>
@@ -49,6 +67,22 @@
                         <p class="form-control-static">
                             <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick'" e-required analytics-on="click" analytics-event="CreativePreview_UpdateClickUrl">{{ creative.click_url }}</a>
                             <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0" style="overflow-wrap: break-word;">
+                    <label class="col-sm-3 control-label">Headline</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <a href="#" editable-textarea="creative.native.copyShort" e-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" e-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" e-rows="2" onaftersave="update()" e-required>{{ creative.native.copyShort }}</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0" style="overflow-wrap: break-word;">
+                    <label class="col-sm-3 control-label">Description</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            <a href="#" editable-textarea="creative.native.copyLong" e-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" e-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" e-rows="2" onaftersave="update()" e-required>{{ creative.native.copyLong }}</a>
                         </p>
                     </div>
                 </div>

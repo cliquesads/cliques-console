@@ -2,7 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('creativePreviewController', ['$scope', 'Advertiser', 'Notify','CreativeActivator',
-    function($scope, Advertiser, Notify, CreativeActivator){
+    'NATIVE_SPECS',
+    function($scope, Advertiser, Notify, CreativeActivator, NATIVE_SPECS){
         $scope.advertiser = $scope.ngDialogData.advertiser;
         function setCreative(){
             var camp_index = _.findIndex($scope.advertiser.campaigns, function(campaign){

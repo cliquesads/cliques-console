@@ -8,9 +8,11 @@ angular.module('advertiser').controller('editCreativesController', [
     'FileUploader',
     'ngDialog',
     'Notify',
-    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify){
+    'NATIVE_SPECS',
+    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify, NATIVE_SPECS){
         // Set form hidden by default
         $scope.formVisible = false;
+        $scope.NATIVE_SPECS = NATIVE_SPECS;
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){

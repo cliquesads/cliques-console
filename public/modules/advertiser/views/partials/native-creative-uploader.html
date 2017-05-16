@@ -26,8 +26,8 @@
                     <tr>
                         <th>Name*</th>
                         <th>Click URL*</th>
-                        <th>Ad Title*</th>
-                        <th>Full Ad Copy*</th>
+                        <th>Ad Headline*</th>
+                        <th>Description*</th>
                         <th>Actions</th>
                         <th ng-show="uploader.isHTML5">Progress</th>
                         <th>Status</th>
@@ -42,10 +42,10 @@
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td>
-                            <textarea ng-model="item.copyShort" id="{{ item.file.name }}_copyShort" ng-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" data-parsley-group="{{ wizardstep }}" rows="2" required="true" placeholder="Min 20 characters, Max 50." class="note-editor" name="{{ item.file.name }}_copyShort"></textarea>
+                            <textarea ng-model="item.copyShort" id="{{ item.file.name }}_copyShort" ng-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" data-parsley-group="{{ wizardstep }}" rows="2" required="true" placeholder="Min {{ NATIVE_SPECS.copyShort.minChars }} characters, Max {{ NATIVE_SPECS.copyShort.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyShort"></textarea>
                         </td>
                         <td>
-                            <textarea ng-model="item.copyLong" id="{{ item.file.name }}_copyLong" ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" data-parsley-group="{{ wizardstep }}" rows="6" required="true" placeholder="Min 100 characters, Max 170." class="note-editor" name="{{ item.file.name }}_copyLong"></textarea>
+                            <textarea ng-model="item.copyLong" id="{{ item.file.name }}_copyLong" ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" data-parsley-group="{{ wizardstep }}" rows="6" required="true" placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyLong"></textarea>
                             <!--<input name="copyLong" type="text" data-parsley-type="text" data-ng-model="item.native.copyLong" id="{{ item.file.name }}_copyLong" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="Min 100 characters, Max 170." required="required">-->
                         </td>
                         <td nowrap="">
