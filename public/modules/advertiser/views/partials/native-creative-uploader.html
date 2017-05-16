@@ -17,7 +17,7 @@
     </div>
     <br/>
     <div class="row" data-ng-show="uploader.queue.length">
-        <form action="#" name="nativeCreativeUploadQueue" id="nativeCreativeUploadQueue" validate-form="" novalidate="">
+        <form action="#" name="nativeCreativeUploadQueue" id="nativeCreativeUploadQueue" ng-submit="" novalidate="">
             <p ng-if="uploader.queue.length" class="pull-right label label-primary">Queue length: {{ uploader.queue.length }}</p>
             <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
             <span ng-if="uploader.queue.length">
@@ -42,11 +42,25 @@
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td>
-                            <textarea ng-model="item.copyShort" id="{{ item.file.name }}_copyShort" ng-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" data-parsley-group="{{ wizardstep }}" rows="2" required="true" placeholder="Min {{ NATIVE_SPECS.copyShort.minChars }} characters, Max {{ NATIVE_SPECS.copyShort.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyShort"></textarea>
+                            <span class="col-sm-12"><textarea ng-model="item.copyShort" id="{{ item.file.name }}_copyShort" ng-maxlength="{{ NATIVE_SPECS.copyShort.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyShort.minChars }}" data-parsley-group="{{ wizardstep }}" rows="4" required="true" placeholder="Min {{ NATIVE_SPECS.copyShort.minChars }} characters, Max {{ NATIVE_SPECS.copyShort.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyShort"></textarea></span>
+                            <span class="col-sm-12">
+                                <small ng-class="NATIVE_SPECS.copyShort.minChars <= nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length
+                                    && nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length <= NATIVE_SPECS.copyShort.maxChars ?
+                                    'text-success' : 'text-danger'">
+                                    Current length: <strong>{{ nativeCreativeUploadQueue[item.file.name + '_copyShort'].$viewValue.length || 0 }}</strong>
+                                </small>
+                                <!--<span ng-show="validateInput(item.file.name + '_copyShort', 'minlength')" class="text-danger" style="">Must be at least {{ NATIVE_SPECS.copyShort.minChars }} characters.</span>-->
+                                <!--<span ng-show="validateInput(item.file.name + '_copyShort', 'maxlength')" class="text-danger" style="">Must be at most {{ NATIVE_SPECS.copyShort.maxChars }} characters.</span>-->
+                            </span>
                         </td>
                         <td>
-                            <textarea ng-model="item.copyLong" id="{{ item.file.name }}_copyLong" ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" data-parsley-group="{{ wizardstep }}" rows="6" required="true" placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyLong"></textarea>
-                            <!--<input name="copyLong" type="text" data-parsley-type="text" data-ng-model="item.native.copyLong" id="{{ item.file.name }}_copyLong" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="Min 100 characters, Max 170." required="required">-->
+                            <span class="col-sm-12"><textarea ng-model="item.copyLong" id="{{ item.file.name }}_copyLong" ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}" ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}" data-parsley-group="{{ wizardstep }}" rows="6" required="true" placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}." class="note-editor" name="{{ item.file.name }}_copyLong"></textarea></span>
+                            <span class="col-sm-12"><small ng-class="NATIVE_SPECS.copyLong.minChars <= nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length
+                                    && nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length <= NATIVE_SPECS.copyLong.maxChars ?
+                                    'text-success' : 'text-danger'">
+                                    Current length: <strong>{{ nativeCreativeUploadQueue[item.file.name + '_copyLong'].$viewValue.length || 0 }}</strong>
+                            </small>
+                            </span>
                         </td>
                         <td nowrap="">
                             <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove" tooltip="Remove">
@@ -73,14 +87,14 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </span>
             <div data-ng-show="uploader.progress">
                 <p>Upload Progress:</p>
                 <div style="" class="progress progress-xs">
                     <div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>
                 </div>
             </div>
-            <button type="button" ng-click="onuploadall()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s" analytics-on="click" analytics-event="CreativeUploader_UploadAll">
+            <button type="button" ng-click="uploadAllWrapper()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s" analytics-on="click" analytics-event="CreativeUploader_UploadAll">
                 <span class="icon-cloud-upload mr"></span>Upload all</button>
             <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s" analytics-on="click" analytics-event="CreativeUploader_CancelAll">
                 <span class="icon-close mr"></span>Cancel all</button>

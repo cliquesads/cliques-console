@@ -124,7 +124,7 @@ angular.module('advertiser').controller('editCreativesController', [
         var nativeUploader = $scope.nativeUploader = new FileUploader({
             url: 'console/native-images'
         });
-        $scope.uploader.onCompleteAll = function(){
+        $scope.nativeUploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
             var creatives = AdvertiserUtils.getCreativesFromNativeUploadQueue($scope.nativeUploader, $scope.advertiser);
             var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);

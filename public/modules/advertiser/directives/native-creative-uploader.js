@@ -108,6 +108,18 @@ angular.module('advertiser').directive('nativeCreativeUploader', [
                     fileItem.rawImageUrl = response.url;
                 };
 
+                scope.uploadAllWrapper = function(){
+                    // validate form before calling upload all callback
+                    if (scope.nativeCreativeUploadQueue.$valid){
+                        return scope.onuploadall();
+                    }
+                };
+
+                scope.validateInput = function(name, type) {
+                    var input = this.nativeCreativeUploadQueue[name];
+                    return (input.$dirty || scope.submitted) && input.$error[type];
+                };
+
                 scope.openTrackerDialog = function(creative){
                     ngDialog.open({
                         className: 'ngdialog-theme-default dialogwidth400',
