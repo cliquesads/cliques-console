@@ -205,6 +205,19 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 };
 
+                scope.dateGroupByChanged = function(dateGroupBy) {
+                    scope.selectedSettings.dateGroupBy = dateGroupBy;
+                    // date group by changed, dataHeaders need to be updated as well
+                    var headers = Analytics.getQueryTableHeaders(scope.selectedSettings.type, scope.selectedSettings.dateGroupBy, $rootScope.role);
+                    var selectedDataHeaders = [];
+                    headers.forEach(function(header) {
+                        if (header.selected === true) {
+                            selectedDataHeaders.push(header.name);
+                        }
+                    });
+                    scope.selectedSettings.dataHeaders = selectedDataHeaders;
+                };
+
                 scope.campaignSelected = function() {
                     if (scope.filters.campaignObject) {
                         scope.selectedSettings.campaign = scope.filters.campaignObject._id;

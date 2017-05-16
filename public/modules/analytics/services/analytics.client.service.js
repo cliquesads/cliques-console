@@ -114,13 +114,15 @@ angular.module('analytics').factory('Analytics', [
             headers = [{
                 index: 0,
                 name: _.capitalize(dateGroupBy),
-                type: 'attribute'
+                type: 'attribute',
+                selected: true
             }];
         } else {
             headers = [{
                 index: 0,
                 name: _.capitalize(queryType),
-                type: 'attribute'
+                type: 'attribute',
+                selected: true
             }];
         }
         switch (role){
