@@ -18,7 +18,7 @@
     <br/>
     <div class="row" data-ng-show="uploader.queue.length">
         <form action="#" name="nativeCreativeUploadQueue" id="nativeCreativeUploadQueue" validate-form="" novalidate="">
-            <p ng-if="uploader.queue.length" class="pull-right label label-info">Queue length: {{ uploader.queue.length }}</p>
+            <p ng-if="uploader.queue.length" class="pull-right label label-primary">Queue length: {{ uploader.queue.length }}</p>
             <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
             <span ng-if="uploader.queue.length">
                 <table ng-if="uploader.queue.length" class="table">

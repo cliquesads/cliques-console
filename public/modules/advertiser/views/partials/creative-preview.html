@@ -2,22 +2,22 @@
     <div class="col-md-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
     <div class="{{ creative.w < 350 ? 'col-sm-6': 'col-sm-12'}}">
         <h4>Creative Preview</h4>
-        <p><small><em class="text-muted">Click to test landing page</em></small></p>
         <span ng-switch="creative.type">
             <span ng-switch-when="native">
-                <native-preview advertiser="advertiser" creative="creative"></native-preview>
                 <div class="alert alert-info mr-lg"><i class="fa fa-warning"></i> This <strong>preview</strong> of your native
                     ad is for demonstrative purposes only. The final appearance of your native ad <strong>will vary by
                     site & placement.</strong></div>
+                <native-preview advertiser="advertiser" creative="creative"></native-preview>
             </span>
             <span ng-switch-default>
+                <p><small><em class="text-muted">Click to test landing page</em></small></p>
                 <iframe id="creativePreview" ng-src="{{ src }}" width="{{ creative.w }}" height="{{ creative.h }}" frameborder='0' scrolling='no'></iframe>
             </span>
         </span>
     </div>
     <div class="col-sm-6">
         <fieldset>
-            <h4>Creative Details</h4>
+            <h4>Creative Settings</h4>
             <div class="form-horizontal well well-sm">
                 <div class="form-group m0">
                     <label class="col-sm-3 control-label">Name</label>
