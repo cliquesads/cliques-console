@@ -6,7 +6,7 @@
         <br>
         <div class="row">
             <p class="lead">
-                It looks like you haven't set up a Site yet.  <strong>Let's change that now.</strong>
+                It looks like you haven't set up a Publisher yet.  <strong>Let's change that now.</strong>
             </p>
         </div>
         <div class="row" ng-show="publishers.length == 0">
@@ -59,7 +59,8 @@
                         <p class="campaign-list-item-text">{{ site.clique }}</p>
                     </div>
                     <div class="col-sm-2">
-                        <radial percent="site.percent_spent" size="sm"></radial>
+                        <h4 class="campaign-list-item-heading">{{ (site.rpm||0) }}</h4>
+                        <p class="campaign-list-item-text">RPM</p>
                     </div>
 
                     <div class="col-sm-2">
@@ -124,7 +125,7 @@
                                 <small class="text-muted">Revenue</small>
                             </div>
                             <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ RPM | currency:"$":"0" }}</div>
+                                <div class="h3 mt-sm mb0">{{ RPM | currency:"$":"2" }}</div>
                                 <small class="text-muted">RPM</small>
                             </div>
                             <div class="col-sm-2 col-xs-6 text-center">
@@ -139,12 +140,6 @@
         </div>
         <!-- End of Year-To-Date Stats Section -->
     </div>
-
-
-
-
-
-
 
     <!-- Screenshots -->
     <div class="row">

@@ -108,40 +108,33 @@ angular.module('analytics').factory('Analytics', [
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType, dateGroupBy, role, additionalHeaders) {
+    var getDefaultDataHeaders = function(queryType, dateGroupBy, role) {
         var headers = [];
         if (queryType === 'time'){
             headers = [{
                 index: 0,
                 name: _.capitalize(dateGroupBy),
-                type: 'attribute'
+                type: 'attribute',
+                selected: true
             }];
         } else {
             headers = [{
                 index: 0,
                 name: _.capitalize(queryType),
-                type: 'attribute'
+                type: 'attribute',
+                selected: true
             }];
         }
         switch (role){
             case 'networkAdmin':
-                headers = headers.concat(TABLE_HEADERS.networkAdmin);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.networkAdmin));
                 break;
             case 'advertiser':
-                headers = headers.concat(TABLE_HEADERS.advertiser);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.advertiser));
                 break;
             case 'publisher':
-                headers = headers.concat(TABLE_HEADERS.publisher);
+                headers = headers.concat(angular.copy(TABLE_HEADERS.publisher));
                 break;
-        }
-        if (additionalHeaders) {
-            additionalHeaders.forEach(function(additionalHeader) {
-                for (var i = 0; i < headers.length; i ++) {
-                    if (headers[i].name === additionalHeader) {
-                        headers[i].selected = true;
-                    }
-                }
-            });
         }
         return headers;
     };
@@ -302,7 +295,7 @@ angular.module('analytics').factory('Analytics', [
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
         queryFunction: queryFunction,
-        getQueryTableHeaders: getQueryTableHeaders,
+        getDefaultDataHeaders: getDefaultDataHeaders,
         adjustCrontabStringForTimezone: adjustCrontabStringForTimezone,
         translateCrontabString: translateCrontabString
     };

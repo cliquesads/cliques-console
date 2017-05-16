@@ -59,8 +59,8 @@ angular.module('core').controller('PublisherDashboardController',
                             site.defaults = data.Defaults;
                             site.fillRate = data['Fill Rate'];
                             site.revenue = data.Revenue;
-                            site.RPM = data.RPM;
-                            site.CTR = data.CTR;
+                            site.rpm = data.RPM;
+                            site.ctr = data.CTR;
                         }
 
                         // finally, push to allSites array
@@ -103,13 +103,13 @@ angular.module('core').controller('PublisherDashboardController',
                 endDate: endDate
             }).then(function (response) {
                 $scope.timeSeries = new MongoTimeSeries(response.data, startDate, endDate, user.tz, timeUnit,
-                    {fields: ['imps', 'defaults', 'fillRate', 'clicks', 'spend', 'RPM', 'CTR']});
+                    {fields: ['imps', 'defaults', 'fillRate', 'clicks', 'spend', 'RPM', {'CTR': function(row){return row.clicks / row.imps;}}]});
                 $scope.impressions = _.sumBy($scope.timeSeries.imps, function(item){ return item[1];});
                 $scope.clicks = _.sumBy($scope.timeSeries.clicks, function(item){ return item[1];});
                 $scope.defaults = _.sumBy($scope.timeSeries.defaults, function(item){ return item[1];});
                 $scope.revenue = _.sumBy($scope.timeSeries.spend, function(item){ return item[1];});
                 $scope.fillRate = $scope.impressions / ($scope.impressions + $scope.defaults);
-                $scope.RPM = $scope.revenue / ($scope.impressions * 1000);
+                $scope.RPM = $scope.revenue / ($scope.impressions) * 1000;
                 $scope.CTR = $scope.clicks / $scope.impressions;
             });
             // TODO: Need to provide error callback for query promise as well
