@@ -57,6 +57,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                             if (data){
                                 camp.percent_spent = (data.spend / camp.budget).toFixed(4);
                                 camp.ctr = (data.clicks / data.imps).toFixed(4);
+                                camp.imps = data.imps;
                             }
 
                             // finally, push to allCampaigns array
@@ -65,7 +66,7 @@ angular.module('core').controller('AdvertiserDashboardController',
                     });
 
                     // Sort all campaigns array
-                    $scope.allCampaigns = _.orderBy($scope.allCampaigns, ['active','tstamp'],['desc','desc']);
+                    $scope.allCampaigns = _.orderBy($scope.allCampaigns, ['active','imps','tstamp'],['desc','desc']);
 
                     // Now set current campaign view
                     $scope.currentlyShowingCampaigns = _.slice($scope.allCampaigns, 0, $scope.CAMPAIGNS_TO_SHOW);
