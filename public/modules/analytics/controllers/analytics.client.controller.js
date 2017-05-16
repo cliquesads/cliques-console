@@ -12,18 +12,6 @@ angular.module('analytics').controller('AnalyticsController', ['$rootScope','$sc
             // new query
             // Copy the relative defaultQueryParam to a new object, so any changes to $scope.defaultQueryParam doesn't alter the values in the original object
             $scope.defaultQueryParam = angular.copy($scope.quickQueries[currentQueryType].defaultQueryParam);
-            // Prepare dataHeaders for this new query
-            $scope.defaultQueryParam.dataHeaders = [];
-            var tableHeaders = Analytics.getQueryTableHeaders(
-                $scope.defaultQueryParam.type,
-                $scope.defaultQueryParam.dateGroupBy,
-                $rootScope.role
-            );
-            tableHeaders.forEach(function(header) {
-                if (header.selected) {
-                    $scope.defaultQueryParam.dataHeaders.push(header.name);
-                }
-            });
 
             /************** AVAILABLE SETTINGS FOR QUERY ENTRIES/SECTIONS **************/
             $scope.availableSettings = $scope.quickQueries[currentQueryType].availableSettings;

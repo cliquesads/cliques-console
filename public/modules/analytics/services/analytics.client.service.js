@@ -108,7 +108,7 @@ angular.module('analytics').factory('Analytics', [
         }
         return queryFunction;
     };
-    var getQueryTableHeaders = function(queryType, dateGroupBy, role) {
+    var getDefaultDataHeaders = function(queryType, dateGroupBy, role) {
         var headers = [];
         if (queryType === 'time'){
             headers = [{
@@ -295,7 +295,7 @@ angular.module('analytics').factory('Analytics', [
         formatDatetimeString: formatDatetimeString,
         formCronTaskString: formCronTaskString,
         queryFunction: queryFunction,
-        getQueryTableHeaders: getQueryTableHeaders,
+        getDefaultDataHeaders: getDefaultDataHeaders,
         adjustCrontabStringForTimezone: adjustCrontabStringForTimezone,
         translateCrontabString: translateCrontabString
     };

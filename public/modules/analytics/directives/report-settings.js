@@ -45,6 +45,21 @@ angular.module('analytics').directive('reportSettings', [
                 scope.dateRanges = aggregationDateRanges(user.tz);
                 scope.queryParamSaved = scope.selectedSettings.isSaved;
 
+                if (!scope.selectedSettings.dataHeaders) {
+                    // Prepare dataHeaders for this new query
+                    scope.selectedSettings.dataHeaders = [];
+                    var tableHeaders = Analytics.getDefaultDataHeaders(
+                        scope.selectedSettings.type,
+                        scope.selectedSettings.dateGroupBy,
+                        $rootScope.role
+                    );
+                    tableHeaders.forEach(function(header) {
+                        if (header.selected) {
+                            scope.selectedSettings.dataHeaders.push(header.name);
+                        }
+                    });
+                }
+
                 // Watching for selectedSettings changes
                 scope._selectedSettingsInit = angular.copy(scope.selectedSettings);
                 scope.$watch('selectedSettings', function(newVal, oldVal) {
@@ -208,7 +223,7 @@ angular.module('analytics').directive('reportSettings', [
                 scope.dateGroupByChanged = function(dateGroupBy) {
                     scope.selectedSettings.dateGroupBy = dateGroupBy;
                     // date group by changed, dataHeaders need to be updated as well
-                    var headers = Analytics.getQueryTableHeaders(
+                    var headers = Analytics.getDefaultDataHeaders(
                         scope.selectedSettings.type,
                         scope.selectedSettings.dateGroupBy,
                         $rootScope.role
