@@ -155,7 +155,7 @@
                                         <span class="fa fa-edit"></span>
                                     </a>
                                     <h4 class="list-group-item-heading">{{ placement.name }}</h4>
-                                    <p class="list-group-item-text">{{ placement.type === 'native' ? 'Native' : placement.w + 'x' + placement.h }} - {{ getPositionByCode(placement.pos).name }}</p>
+                                    <p class="list-group-item-text">{{ placement.type === 'native' ? 'Native' : placement.w + 'x' + placement.h }} - {{ getPositionByCode(placement.pos, placement).name }}</p>
                                 </td>
                                 <td class="col-sm-3 edit-inline hover-visible" ng-click="editDefaultCondition(placement)">
                                     <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditDefaultCondition">

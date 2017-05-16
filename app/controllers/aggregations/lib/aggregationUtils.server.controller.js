@@ -24,6 +24,9 @@ var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSec
     if (!suffix) {
         suffix = '';
     }
+    if (suffix === '%'){
+        number = number * 100;
+    }
     var re = '\\d(?=(\\d{' + (lengthOfSection || 3) + '})+' + (lengthOfDecimal > 0 ? '\\.' : '$') + ')';
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
@@ -75,26 +78,26 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
 
         row.Impressions = filterNumber(row.imps, '', '', 0);
         row.Spend = filterNumber(row.spend, '$', '');
-        row.CPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$', '') : '0';
-        row.CTR = row.imps ? filterNumber(row.clicks / row.imps, '', '%'): '0';
-        row['Fill Rate'] = row.defaults ? filterNumber(row.imps / (row.imps + row.defaults), '', '%') : '0';
+        row.CPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$', '') : '$0.00';
+        row.CTR = row.imps ? filterNumber(row.clicks / row.imps, '', '%'): '0.00%';
+        row['Fill Rate'] = row.defaults ? filterNumber(row.imps / (row.imps + row.defaults), '', '%') : '0.00%';
         row['Total Actions'] = row.view_convs + row.click_convs;
         row.Clicks = filterNumber(row.clicks, '', '', 0);
-        row.CPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '0';
+        row.CPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '$0.00';
         row.Bids = filterNumber(row.imps, '', '', 0);
         row.Uniques = row.uniques;
         row['View-Through Actions'] = row.view_convs;
         row['Click-Through Actions'] = row.click_convs;
-        row.CPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '0';
-        row.CPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '0';
-        row.CPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '0';
-        row.RPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$') : '0';
+        row.CPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '$0.00';
+        row.CPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '$0.00';
+        row.CPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '$0.00';
+        row.RPM = row.imps ? filterNumber(row.spend / row.imps * 1000, '$') : '$0.00';
         row.Defaults = filterNumber(row.defaults, '', '', 0);
-        row.RPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '0';
-        row.RPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '0';
-        row.RPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '0';
-        row.RPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '0';
-        row['Win Rate'] = row.bids ? filterNumber(row.imps / row.bids, '', '%') : '0';
+        row.RPAV = row.view_convs ? filterNumber(row.spend / row.view_convs, '$') : '$0.00';
+        row.RPAC = row.click_convs ? filterNumber(row.spend / row.click_convs, '$') : '$0.00';
+        row.RPA = (row.view_convs + row.click_convs) ? filterNumber(row.spend / (row.view_convs + row.click_convs), '$') : '$0.00';
+        row.RPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '$0.00';
+        row['Win Rate'] = row.bids ? filterNumber(row.imps / row.bids, '', '%') : '0.00%';
         row.Revenue = filterNumber(row.spend, '$');
 
     });

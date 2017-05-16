@@ -2,14 +2,18 @@
 'use strict';
 
 angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher',
-    'PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','DEFAULT_TYPES',
+    'PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','DEFAULT_TYPES','NATIVE_POSITIONS',
     'HourlyAdStat','aggregationDateRanges','Authentication','Notify','ngDialog',
 	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES,
-             DEFAULT_TYPES, HourlyAdStat, aggregationDateRanges, Authentication, Notify, ngDialog){
+             DEFAULT_TYPES, NATIVE_POSITIONS, HourlyAdStat, aggregationDateRanges, Authentication, Notify, ngDialog){
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
-        $scope.getPositionByCode = function(code){
-            return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
+        $scope.getPositionByCode = function(code, placement){
+            if (placement.type === 'native'){
+                return NATIVE_POSITIONS.filter(function(pos){ return pos.code === code; })[0];
+            } else {
+                return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
+            }
         };
 
         function setPage(){
@@ -173,31 +177,33 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
         };
 
         $scope.editDefaultCondition = function(placement){
-            var initDefaultType = placement.defaultType;
-            var initPassbackTag = placement.passbackTag;
-            var initHostedCreatives = placement.hostedCreatives;
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/edit-default-condition.html',
-                controller: 'DefaultConditionController',
-                scope: $scope,
-                data: { placement: placement },
-                preCloseCallback: function(value){
-                    if (value !== 'Success'){
-                        var placement_ind = _.findIndex($scope.page.placements, function(pl){
-                            return pl._id === placement._id;
-                        });
-                        $scope.$apply(function(){
-                            $scope.page.placements[placement_ind].defaultType = initDefaultType;
-                            $scope.page.placements[placement_ind].passbackTag = initPassbackTag;
-                            $scope.page.placements[placement_ind].hostedCreatives = initHostedCreatives;
-                        });
-                        return true;
-                    } else {
-                        setPage();
+            if (placement.type !== 'native'){
+                var initDefaultType = placement.defaultType;
+                var initPassbackTag = placement.passbackTag;
+                var initHostedCreatives = placement.hostedCreatives;
+                ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth800',
+                    template: 'modules/publisher/views/partials/edit-default-condition.html',
+                    controller: 'DefaultConditionController',
+                    scope: $scope,
+                    data: { placement: placement },
+                    preCloseCallback: function(value){
+                        if (value !== 'Success'){
+                            var placement_ind = _.findIndex($scope.page.placements, function(pl){
+                                return pl._id === placement._id;
+                            });
+                            $scope.$apply(function(){
+                                $scope.page.placements[placement_ind].defaultType = initDefaultType;
+                                $scope.page.placements[placement_ind].passbackTag = initPassbackTag;
+                                $scope.page.placements[placement_ind].hostedCreatives = initHostedCreatives;
+                            });
+                            return true;
+                        } else {
+                            setPage();
+                        }
                     }
-                }
-            });
+                });
+            }
         };
 
         /**

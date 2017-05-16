@@ -20,9 +20,9 @@
         <!-- My Sites Section -->
         <div class="col-lg-6 col-sm-12">
             <div class="width-90">
-                <span class="custom-section-title no-font-style mb"><i class="fa fa-bullhorn"></i> My Sites</span>
+                <span class="custom-section-title no-font-style mb"><i class="fa fa-bookmark-o"></i> My Sites</span>
                 <span class="pull-right">
-                    <a href="/#!/all-sites" analytics-on="click" analytics-event="PubDashboard_AllSites"><i class="fa fa-bullhorn"></i> All Sites</a>
+                    <a href="/#!/all-sites" analytics-on="click" analytics-event="PubDashboard_AllSites"><i class="fa fa-bookmark-o"></i> All Sites</a>
                 </span>
             </div>
             <!-- Begin Loader-->
@@ -52,19 +52,19 @@
                         <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
                     </div>
                     <div class="col-sm-2">
-                        <img src="{{ site.pub_logo_url }}" alt="Pub Logo" class="client-logo-md-lg">
+                        <img src="{{ site.pub_logo_url || default_logo_url }}" alt="Pub Logo" class="client-logo-md-lg">
                     </div>
                     <div class="col-sm-5">
                         <h4 class="campaign-list-item-heading mb-sm">{{ site.name | limitTo: 27 }}{{site.name.length > 27 ? '...' : ''}}</h4>
                         <p class="campaign-list-item-text">{{ site.clique }}</p>
                     </div>
                     <div class="col-sm-2">
-                        <h4 class="campaign-list-item-heading">{{ (site.rpm||0) }}</h4>
+                        <h4 class="campaign-list-item-heading">{{ site.rpm || "$0.00" }}</h4>
                         <p class="campaign-list-item-text">RPM</p>
                     </div>
 
                     <div class="col-sm-2">
-                        <h4 class="campaign-list-item-heading">{{ (site.ctr||0) | percentage:"2" }}</h4>
+                        <h4 class="campaign-list-item-heading">{{ site.ctr || "0.00%" }}</h4>
                         <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>

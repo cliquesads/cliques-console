@@ -6,10 +6,14 @@
 'use strict';
 
 angular.module('core').controller('PublisherDashboardController',
-    ['$scope','$location','$window','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication','Screenshot','Notify',
-    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication, Screenshot, Notify) {
+    ['$scope','$location','$window','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries',
+        'aggregationDateRanges','Authentication','Screenshot','Notify','LOGO',
+    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries,
+             aggregationDateRanges, Authentication, Screenshot, Notify, LOGO) {
         
         $scope.isShowingAllStats = false;
+
+        $scope.default_logo_url = LOGO.default_secure_url;
 
         /**
          * BEGIN MY SITE PANEL STUFF
@@ -49,6 +53,7 @@ angular.module('core').controller('PublisherDashboardController',
                         site.pub_logo_url = pub.logo_url;
                         site.tstamp = pub.tstamp;
                         site.parentPublisherId = pub._id;
+                        site.imps = 0;
 
                         // Bind hourlyAdStat data to site object
                         var data = _.find(response.data, function(d) {
@@ -56,6 +61,7 @@ angular.module('core').controller('PublisherDashboardController',
                         });
                         if (data) {
                             site.impressions = data.Impressions;
+                            site.imps = data.imps;
                             site.defaults = data.Defaults;
                             site.fillRate = data['Fill Rate'];
                             site.revenue = data.Revenue;
@@ -69,7 +75,7 @@ angular.module('core').controller('PublisherDashboardController',
                 });
 
                 // Sort all sites array
-                $scope.allSites = _.orderBy($scope.allSites, ['active','tstamp'],['desc','desc']);
+                $scope.allSites = _.orderBy($scope.allSites, ['active','imps'],['desc','desc']);
 
                 // Now set current site view
                 $scope.currentlyShowingSites = _.slice($scope.allSites, 0, $scope.SITES_TO_SHOW);

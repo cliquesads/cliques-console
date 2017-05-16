@@ -85,6 +85,7 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
                         // set placeholder values here on creation for native placements
                         p.w = 1;
                         p.h = 1;
+                        p.native = {};
                     } else {
                         var dims = p.dimensions.split('x');
                         p.w = Number(dims[0]);
