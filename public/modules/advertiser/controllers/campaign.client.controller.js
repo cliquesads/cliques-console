@@ -2,8 +2,17 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','Campaign','CampaignActivator','Notify', 'DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog', 'REVIEW_TIME',
-	function($scope, $stateParams, $location, Authentication, Advertiser, Campaign, CampaignActivator, Notify, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog, REVIEW_TIME) {
+    'Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
+    'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
+    'REVIEW_TIME',
+	function($scope, $stateParams, $location, Authentication, Advertiser, campaign, CampaignActivator, Notify,
+             DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
+             REVIEW_TIME) {
+
+        $scope.advertiser = campaign.advertiser;
+        $scope.campaignIndex = campaign.index;
+        $scope.campaign = campaign.campaign;
+        
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -52,16 +61,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
-        $scope.advertisers = Advertiser.query();
-
-		$scope.findOne = function() {
-            Campaign.fromStateParams($stateParams, function(err, advertiser, campaignIndex) {
-                $scope.advertiser = advertiser;
-                $scope.campaignIndex = campaignIndex;
-                $scope.campaign = $scope.advertiser.campaigns[campaignIndex];
-            });
-		};
-
         $scope.update = function() {
             $scope.advertiser.$update(function(){
                 $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
@@ -105,7 +104,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         };
         $scope.editCreatives = function(){
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
+                className: 'ngdialog-theme-default dialogwidth1000',
                 template: 'modules/advertiser/views/partials/edit-creatives.html',
                 controller: 'editCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}

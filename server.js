@@ -19,7 +19,6 @@ var swig = require('swig');
 require('swig-filters')(swig);
 require('./config/swig')(swig);
 
-
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
@@ -60,7 +59,7 @@ mongoose.connect(exchangeMongoURI, exchangeMongoOptions, function(err, logstring
 var app = require('./config/express')(db);
 
 // Bootstrap passport config
-require('./config/passport')();
+require('./config/passport')(db);
 
 // Start the app by listening on <port>
 app.listen(config.port);

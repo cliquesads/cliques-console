@@ -1,0 +1,59 @@
+<div class="panel panel-default m p"
+	ng-if="
+		$state.$current.name === 'app._analytics.analytics.myQueriesList' ||
+		$state.$current.name === 'app._analytics.analytics.recentQueriesList'
+	"
+	scroll-to-bottom="reachedQueryListBottom()">
+	<div class="panel-body table-responsive">
+		<h4 class="mt0 text-center">{{ queriesListTitle }}</h4>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Created At</th>
+					<th>Date Group By</th>
+					<th>Group By</th>
+					<th>Date Range</th>
+					<th>Actions</th>
+				</tr>
+			</thead>	
+			<tbody>
+				<tr ng-repeat="query in queries">
+					<td>{{ $index + 1 }}</td>
+					<td>{{ query.name }}</td>
+					<td>{{ query.createdAt }}</td>
+					<td>{{ query.dateGroupBy }}</td>
+					<td>{{ query.groupBy }}</td>
+					<td>{{ query.humanizedDateRange }}</td>
+					<td>
+						<a href=""
+							ng-click="goToQuerySection(query)"
+							analytics-on="click"
+							analytics-event="QueriesList_CheckQuery">
+							<i class="fa fa-eye"></i>	
+						</a>
+						<a href=""
+							class="ml"
+							ng-click="delete(query)"
+							ng-if="$state.$current.name === 'app._analytics.analytics.myQueriesList'"
+							analytics-on="click"
+							analytics-event="QueriesList_DeleteQuery">
+							<i class="fa fa-trash"></i>	
+						</a>
+					</td>	
+				</tr>
+			</tbody>
+		</table>
+		<!-- Spin Loader -->
+ 		<div class="col-md-offset-4 col-md-4"
+			ng-if="isLoading">
+			<spin-loader></spin-loader>	
+		</div>
+	</div>	
+</div>
+
+<div ng-if="$state.$current.name === 'app._analytics.analytics.myQueriesList.myQuery' ||
+		$state.$current.name === 'app._analytics.analytics.recentQueriesList.recentQuery'"
+	ui-view="history">
+</div>

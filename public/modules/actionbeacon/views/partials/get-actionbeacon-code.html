@@ -1,0 +1,10 @@
+<section data-ng-init="getTag()">
+	<h4>Code for {{ actionbeacon.name }}</h4>
+	<div class="checkbox c-checkbox margin-top">
+		<label>
+			<input type="checkbox" ng-model="options.secure" ng-change="toggleSecureOption()">
+			<span class="fa fa-check"></span>Secure
+		</label>
+		<pre class="margin-top">{{ tag }}</pre>
+	</div>
+</section>

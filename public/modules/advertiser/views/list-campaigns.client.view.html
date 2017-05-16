@@ -8,7 +8,7 @@
     </select>
 </div>
 <div class="list-group">
-    <a data-ng-repeat="campaign in selectedAdvertiser.campaigns" data-ng-href="#!/advertiser/{{selectedAdvertiser._id}}/campaign/{{campaign._id}}" class="list-group-item">
+    <a data-ng-repeat="campaign in selectedAdvertiser.campaigns" data-ng-href="#!/advertiser/{{selectedAdvertiser._id}}/campaign/{{campaign._id}}" class="list-group-item" analytics-on="click" analytics-event="ListCampaign_SelectCampaign">
         <div class="row row-table">
             <div class="col-xs-2 col-sm-2 col-md-1">
                 <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>

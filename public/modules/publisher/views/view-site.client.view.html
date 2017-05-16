@@ -8,17 +8,18 @@ adding hook in parent template ---->
         <!-- View hook for child views -->
         <section data-ui-view="main"></section>
     </div>
-    <div ng-switch-when="app.publisher.viewPublisher.viewSite">
+    <div ng-switch-when="app.publisher.allPublishers.viewPublisher.viewSite">
         <!-------------------------------------->
         <!------- BEGIN ViewSite Template ------>
         <!-------------------------------------->
+        <section data-ng-init="showNewModal()"></section>
         <section data-ng-init="findOne()">
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <div class="col-md-5">
                 <!--BEGIN Pages list-->
                 <ul class="list-group" style="max-height: 400px; overflow-y: auto">
                     <li class="list-group-item">
-                        <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPage()">
+                        <button type="button" class="btn btn-labeled btn-primary btn-xs pull-right" ng-click="newPage()" analytics-on="click" analytics-event="ViewSite_NewPage">
                             <span class="btn-label"><i class="fa fa-plus"></i></span>New Page
                         </button>
                         <span class="panel-title">
@@ -116,10 +117,10 @@ adding hook in parent template ---->
                                 <div class="pull-right">
                                     <!-- buttons to submit / cancel form -->
                                     <span ng-show="siteBasicsInline.$visible">
-                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="siteBasicsInline.$waiting">
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="siteBasicsInline.$waiting" analytics-on="click" analytics-event="ViewSite_Save">
                                             Save
                                         </button>
-                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="siteBasicsInline.$waiting" ng-click="siteBasicsInline.$cancel()">
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="siteBasicsInline.$waiting" ng-click="siteBasicsInline.$cancel()" analytics-on="click" analytics-event="ViewSite_Cancel">
                                             Cancel
                                         </button>
                                     </span>
@@ -154,10 +155,10 @@ adding hook in parent template ---->
                                     <!-- buttons to submit / cancel form -->
                                     <span ng-show="blacklistForm.$visible">
                                         <br/>
-                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="blacklistForm.$waiting">
+                                        <button type="submit" class="btn btn-xs btn-primary" ng-disabled="blacklistForm.$waiting" analytics-on="click" analytics-event="ViewSite_SaveBlackList">
                                             Save
                                         </button>
-                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="blacklistForm.$waiting" ng-click="blacklistForm.$cancel()">
+                                        <button type="button" class="btn btn-xs btn-default" ng-disabled="blacklistForm.$waiting" ng-click="blacklistForm.$cancel()" analytics-on="click" analytics-event="ViewSite_CancelBlackListSaving">
                                             Cancel
                                         </button>
                                     </span>
@@ -178,9 +179,9 @@ adding hook in parent template ---->
                                 </em>
                             </small>
                             <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')" analytics-on="click" analytics-event="ViewSite_GetTabData7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')" analytics-on="click" analytics-event="ViewSite_GetTabData30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')" analytics-on="click" analytics-event="ViewSite_GetTabData90d">90d</button>
                             </span>
                         </div>
                     </div>

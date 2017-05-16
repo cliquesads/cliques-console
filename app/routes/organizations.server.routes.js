@@ -2,10 +2,9 @@
 'use strict';
 
 var organizations = require('../../app/controllers/organizations.server.controller');
-var users = require('../controllers/users.server.controller');
 
 module.exports = function(db, routers) {
-
+    var users = require('../controllers/users.server.controller')(db);
     /**
      * @apiDefine OrganizationSchema
      * @apiParam (Body (Organization Schema)) {ObjectId} [id]      Organization ID. Will be auto-generated for new organizations
@@ -138,10 +137,27 @@ module.exports = function(db, routers) {
      *  [Organization Schema](#api-Organization)
      */
 	routers.noAuthRouter.route('/organization/:organizationId').get(organizations.read);
+	
+	
 	routers.noAuthRouter.param('organizationId', organizations.organizationByID);
 
 	var router = routers.apiRouter;
 
+	routers.noAuthRouter.route('/organization').post(organizations.create);
+	/**
+	 * @api {get} /organization Get All Organizations
+	 * @apiName GetAllOrganizations
+	 * @apiGroup Organization
+	 * @apiDescription Get all Organizations
+	 *
+	 * @apiVersion 0.1.0
+	 * @apiPermission networkAdmin
+	 *
+	 * @apiSuccess {Object[]} ::organizations:: Array of Organization objects as response body, see
+	 *  [Organization Schema](#api-Organization)
+	 */
+	router.route('/organization').get(organizations.hasAuthorization, organizations.getMany);
+	
 	router.route('/organization/:organizationId')
         /**
          * @api {patch} /organization/:organizationId Update Organization

@@ -52,29 +52,29 @@
                                 <payment-status-label ng-model="p" admin="true"></payment-status-label>
                             </td>
                             <td>
-                                <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>">
+                                <a href="#" tooltip="Owner: {{ p.organization.owner.displayName }} <{{ p.organization.owner.email }}>" analytics-on="click" analytics-event="PaymentAdmin_OwnerTooltip">
                                     {{ p.organization.name }}
                                 </a>
                             </td>
                             <td ng-hide="invoicePreviewUrl">{{ p.totalUnits | number:"0" }}</td>
                             <td>{{ p.totalAmount | currency: "$" : 2 }} </td>
                             <td ng-hide="invoicePreviewUrl">
-                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement">
+                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="showPreview(p)" class="btn btn-primary btn-xs" tooltip="Preview Statement" analytics-on="click" analytics-event="PaymentAdmin_ShowPreview">
                                     <i class="fa fa-lg fa-eye"></i>
                                 </button>
-                                <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement">
+                                <button type="button" ng-show="p.status != 'Needs Approval'" ng-click="showStatement(p)" class="btn btn-primary btn-xs" tooltip="View Statement" analytics-on="click" analytics-event="PaymentAdmin_ShowStatement">
                                     <i class="fa fa-lg fa-file-pdf-o"></i>
                                 </button>
-                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
+                                <button type="button" ng-show="p.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(p)" class="btn btn-warning btn-xs" tooltip="Add Adjustments" analytics-on="click" analytics-event="PaymentAdmin_OpenAdjustmentsDialog">
                                     <i class="fa fa-lg fa-pencil"></i>
                                 </button>
-                                <button type="button" class="btn btn-default btn-xs"  ng-click="openStatusDialog(p)"  tooltip="Change Status">
+                                <button type="button" class="btn btn-default btn-xs"  ng-click="openStatusDialog(p)"  tooltip="Change Status" analytics-on="click" analytics-event="PaymentAdmin_OpenStatusDialog">
                                     <i class="fa fa-lg fa-exchange"></i>
                                 </button>
-                                <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send">
+                                <button type="button" ng-show="p.status === 'Needs Approval'"  ng-click="approveAndSend(p)" class="btn btn-success btn-xs" tooltip="Approve & Send" analytics-on="click" analytics-event="PaymentAdmin_ApproveAndSend">
                                     <i class="fa fa-lg fa-check-square"></i>
                                 </button>
-                                <button type="button" ng-show="p.status != 'Needs Approval' && p.status != 'Paid'"  ng-click="setPaid(p)" class="btn btn-success btn-xs" tooltip="Set to Paid">
+                                <button type="button" ng-show="p.status != 'Needs Approval' && p.status != 'Paid'"  ng-click="setPaid(p)" class="btn btn-success btn-xs" tooltip="Set to Paid" analytics-on="click" analytics-event="PaymentAdmin_SetPaid">
                                     <i class="fa fa-lg fa-check-square"></i>
                                 </button>
                             </td>
@@ -100,16 +100,16 @@
             <div class="panel-title">
                 <strong>{{ isPreview ? 'PREVIEW: ': ''}}</strong> {{ previewPayment.start_date | date : "MMMM yyyy" : "UTC" }} Statement for {{ previewPayment.organization.name }}
                 <span class="pull-right">
-                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(previewPayment)" class="btn btn-warning btn-xs" tooltip="Add Adjustments">
+                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'" ng-click="openAdjustmentsDialog(previewPayment)" class="btn btn-warning btn-xs" tooltip="Add Adjustments" analytics-on="click" analytics-event="PaymentAdmin_OpenAdjustmentsDialog">
                         <i class="fa fa-lg fa-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-default btn-xs" ng-click="openStatusDialog(previewPayment)" tooltip="Change Status">
+                    <button type="button" class="btn btn-default btn-xs" ng-click="openStatusDialog(previewPayment)" tooltip="Change Status" analytics-on="click" analytics-event="PaymentAdmin_OpenStatusDialog">
                         <i class="fa fa-lg fa-exchange"></i>
                     </button>
-                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'"  ng-click="approveAndSend(previewPayment)" class="btn btn-success btn-xs" tooltip="Approve & Send">
+                    <button type="button" ng-show="previewPayment.status === 'Needs Approval'"  ng-click="approveAndSend(previewPayment)" class="btn btn-success btn-xs" tooltip="Approve & Send" analytics-on="click" analytics-event="PaymentAdmin_ApproveAndSend">
                         <i class="fa fa-lg fa-check-square"></i>
                     </button>
-                    <button type="button" ng-click="closePreview()" class="btn btn-danger btn-xs" tooltip="Close Preview">
+                    <button type="button" ng-click="closePreview()" class="btn btn-danger btn-xs" tooltip="Close Preview" analytics-on="click" analytics-event="PaymentAdmin_ClosePreview">
                         <i class="fa fa-lg fa-times"></i>
                     </button>
                 </span>

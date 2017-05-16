@@ -1,10 +1,10 @@
 <section data-ng-controller="AdminDashboardController">
-    <em>Lifetime Stats</em>
+    <em class="custom-section-title">Year-To-Date Stats</em>
     <br/><br/>
     <div class="row">
         <div class="col-lg-3 col-sm-6">
             <!-- START widget-->
-            <a href="/#!/advertiser">
+            <a href="/#!/advertiser" analytics-on="click" analytics-event="AdminDashboard_Advertiser">
                 <div class="panel widget bg-primary">
                     <div class="row row-table">
                         <div class="col-xs-4 text-center bg-primary-dark pv-md">
@@ -20,7 +20,7 @@
         </div>
         <div class="col-lg-3 col-sm-6">
             <!-- START widget-->
-            <a href="/#!/publisher">
+            <a href="/#!/publisher" analytics-on="click" analytics-event="AdminDashboard_Publisher">
                 <div class="panel widget bg-green">
                     <div class="row row-table">
                         <div class="col-xs-4 text-center bg-green-dark pv-md">
@@ -78,9 +78,9 @@
                             </em>
                         </small>
                         <span class="pull-right">
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="AdminDashboard_Query7d">7d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="AdminDashboard_Query30d">30d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="AdminDashboard_Query90d">90d</button>
                         </span>
                     </div>
                 </div>
@@ -101,9 +101,9 @@
                             </em>
                         </small>
                         <span class="pull-right">
-                            <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getTabData('7d')" analytics-on="click" analytics-event="AdminDashboard_QueryTabData7d">7d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getTabData('30d')" analytics-on="click" analytics-event="AdminDashboard_QueryTabData30d">30d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getTabData('90d')" analytics-on="click" analytics-event="AdminDashboard_QueryTabData90d">90d</button>
                         </span>
                     </div>
                 </div>

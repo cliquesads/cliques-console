@@ -1,20 +1,10 @@
-<h3>
-   <!-- START Language list-->
-   <div class="pull-right">
-      <!--<div dropdown="" is-open="language.listIsOpen" class="btn-group">-->
-         <!--<button type="button" dropdown-toggle="" class="btn btn-default">{{language.selected}}-->
-            <!--<span class="caret"></span>-->
-         <!--</button>-->
-         <!--<ul role="menu" class="dropdown-menu dropdown-menu-right animated fadeInUpShort">-->
-            <!--<li ng-repeat="(localeId, langName) in language.available"><a ng-click="language.set(localeId, $event)">{{langName}}</a>-->
-            <!--</li>-->
-         <!--</ul>-->
-      <!--</div>-->
-   </div>
-   <!-- END Language list    -->
-   Home
-   <!--<small>{{ 'dashboard.WELCOME' | translate:{ appName: app.name } }} !</small>-->
-    <small>Welcome to the Cliques Console</small>
+<h3 class="custom-content-heading">
+    <div ng-switch on="authentication.user.organization.effectiveOrgType" class="pull-right">
+        <div ng-switch-when="networkAdmin">
+            <role-switcher></role-switcher>
+        </div>
+    </div>
+    <section ng-include="'/modules/core/views/partials/breadcrumbs.html'"></section>
 </h3>
 <section>
     <div ng-switch on="role">

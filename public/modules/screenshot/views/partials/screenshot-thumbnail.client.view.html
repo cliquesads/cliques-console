@@ -1,0 +1,23 @@
+<div class="panel panel-default screenshot-block">
+    <div class="panel-heading">
+        <a href="#" ng-click="!demo ? viewScreenshot(screenshot) : null" analytics-on="click" analytics-event="ScreenshotThumbnail_ViewScreenshot">
+            <strong>{{ screenshot.tstamp | date : "medium" : "UTC"}} </strong>
+        </a>
+    </div>
+    <div class="panel-body pt0 screenshot-wrapper" ng-click="!demo ? viewScreenshot(screenshot) : null">
+        <img src="{{ screenshot.image_url }}" alt="Screenshot">
+        <div ng-class="{'demoWrapper': demo }" ng-if="demo">
+            <strong>Screenshots for ads you've run will appear here once you've activated a campaign.</strong>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <hm-read-more
+                hm-text="{{ screenshot.url }}"
+                hm-limit="30"
+                hm-more-text="read more"
+                hm-less-text="read less"
+                hm-dots-class="dots"
+                hm-link-class="links">
+        </hm-read-more>
+    </div>
+</div>

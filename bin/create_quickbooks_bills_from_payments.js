@@ -13,7 +13,7 @@ require('./_main')(function(GLOBALS){
     var config = GLOBALS.cliques_config,
         mongoose = GLOBALS.mongoose,
         users = require('../app/models/user.server.model'),
-        Organization = mongoose.model('Organization'),
+        Organization = require('../app/models/organization.server.model').Organization,
         Payment = mongoose.model('Payment'),
         QBO_ACCOUNT_IDS = require('../app/models/billing.server.model').QBO_ACCOUNT_IDS;
 

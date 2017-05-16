@@ -106,9 +106,16 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
 
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
-                    var dims = p.dimensions.split('x');
-                    p.w = Number(dims[0]);
-                    p.h = Number(dims[1]);
+                    if (p.type === 'native') {
+                        // set placeholder values here on creation for native placements
+                        p.w = 1;
+                        p.h = 1;
+                        p.native = {};
+                    } else {
+                        var dims = p.dimensions.split('x');
+                        p.w = Number(dims[0]);
+                        p.h = Number(dims[1]);
+                    }
                 });
                 var publisher = new Publisher({
                     name:           this.publisher.name,
@@ -126,7 +133,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     $scope.website = '';
                     //On success, redirect to publisher detail page
                     var publisherId = response._id;
-                    $location.url('/publisher/' + publisherId);
+                    $location.url('/publisher/' + publisherId + '?newModal=true');
                 }, function (errorResponse) {
                     $scope.loading = false;
                     $scope.creation_error = errorResponse.data.message;

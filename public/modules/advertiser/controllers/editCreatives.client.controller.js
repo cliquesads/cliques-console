@@ -8,9 +8,11 @@ angular.module('advertiser').controller('editCreativesController', [
     'FileUploader',
     'ngDialog',
     'Notify',
-    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify){
+    'NATIVE_SPECS',
+    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify, NATIVE_SPECS){
         // Set form hidden by default
         $scope.formVisible = false;
+        $scope.NATIVE_SPECS = NATIVE_SPECS;
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
         var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
@@ -114,6 +116,63 @@ angular.module('advertiser').controller('editCreativesController', [
             //TODO: This is pretty janky
             return $('#creativeUploadQueue').parsley().validate();
         };
+
+        //#################################//
+        //######### FILE UPLOADER #########//
+        //#################################//
+
+        var nativeUploader = $scope.nativeUploader = new FileUploader({
+            url: 'console/native-images'
+        });
+        $scope.nativeUploader.onCompleteAll = function(){
+            // When all uploads are complete, modify advertiser object for new creatives and call $update
+            var creatives = AdvertiserUtils.getCreativesFromNativeUploadQueue($scope.nativeUploader, $scope.advertiser);
+            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
+            // have to merge new creativeGroups with any existing first
+            $scope.$apply(function() {
+                creativegroups.forEach(function (crg) {
+                    var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
+                        if (crg.type === 'native'){
+                            return cg.type === 'native';
+                        } else {
+                            return cg.w === crg.w && cg.h === crg.h;
+                        }
+                    });
+                    // if creativegroup of same size exists, add to this creative group
+                    if (ind > -1) {
+                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
+                    } else {
+                        $scope.campaign.creativegroups.push(crg);
+                    }
+                });
+                $scope.advertiser.$update(function(){
+                    $scope.nativeUploader.clearQueue();
+                }, function(errorResponse){
+                    $scope.saveerror = errorResponse.data.message;
+                });
+            });
+        };
+
+        /**
+         * Wrapper for uploader.uploadAll() which allows form to pass
+         * validation function to call first.
+         *
+         * @param validateFunc
+         */
+        $scope.nativeValidateAndUpload = function(validateFunc){
+            // pre_callback should be validation step for other various
+            // form elements, and return true if validation passes
+            if (validateFunc){
+                nativeUploader.uploadAll();
+            }
+        };
+
+        $scope.validateNativeQueue = function(){
+            //TODO: This is pretty janky
+            return $('#nativeCreativeUploadQueue').parsley().validate();
+        };
+
+
 
         $scope.updateAndClose = function(){
             this.advertiser.$update(function() {

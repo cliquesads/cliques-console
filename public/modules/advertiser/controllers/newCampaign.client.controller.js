@@ -1,9 +1,11 @@
 'use strict';
-angular.module('advertiser').controller('NewCampaignController', ['$scope','$location',
-    function($scope, $location){
-        // first get advertiser from ngDialogData
-        $scope.advertiser = $scope.ngDialogData.advertiser;
+angular.module('advertiser').controller('NewCampaignController', ['$scope','$location', 'advertiser',
+    function($scope, $location, advertiser){
+        // first get advertiser
+        $scope.advertiser = advertiser;
         $scope.initCampaigns = $scope.advertiser.campaigns;
+        $scope.initDisplayCampaigns = $scope.initCampaigns ? $scope.initCampaigns.filter(function(camp){ return camp.type === 'display' || !camp.type; }) : null;
+        $scope.initNativeCampaigns = $scope.initCampaigns ? $scope.initCampaigns.filter(function(camp){ return camp.type === 'native'; }) : null;
         $scope.campaign = null;
 
         $scope.rowTemplate = '<div class="col-sm-1"><div class="label" ng-class="option.active ? \'label-success\':\'label-default\'">{{ option.active ? "Active":"Inactive"}}</div></div>' +
@@ -14,14 +16,30 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
         $scope.stepControl = {
             useTemplate: false,
             // use named steps instead of numbered because of step conditionality:
-            // 'init': first step to choose New or Template
+            // 'init': select type of campaign
+            // 'new-or-template': first step to choose New or Template
             // 'select-campaign': choose a campaign to use as a template
             // 'campaign-wizard': campaign wizard step with either pre-populated data or blank
             metaStep: 'init',
             goToStep : function(step) {
                 this.metaStep = step;
             },
-            goToSecondStep : function(){
+            goToSecondStep: function(){
+                if (this.campaignType === 'native'){
+                    if ($scope.initNativeCampaigns && $scope.initNativeCampaigns.length > 0){
+                        this.metaStep = 'new-or-template';
+                    } else {
+                        this.metaStep = 'campaign-wizard';
+                    }
+                } else {
+                    if ($scope.initDisplayCampaigns && $scope.initDisplayCampaigns.length > 0){
+                        this.metaStep = 'new-or-template';
+                    } else {
+                        this.metaStep = 'campaign-wizard';
+                    }
+                }
+            },
+            goToThirdStep : function(){
                 if (this.useTemplate){
                     this.metaStep = 'select-campaign';
                 } else {
@@ -35,7 +53,8 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
                     this.metaStep = 'init';
                 }
             },
-            campaign: null
+            campaign: null,
+            campaignType: 'display'
         };
 
         // Success handler
@@ -44,7 +63,6 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
                 $scope.loading = false;
-                $scope.closeThisDialog('Success');
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign
                 // is the new one

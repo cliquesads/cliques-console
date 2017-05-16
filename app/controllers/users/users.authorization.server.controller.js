@@ -47,6 +47,10 @@ exports.basicAuth = function(req, res, next){
  * Require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
+	// Make an exception for uploading logos
+	if (req.url === '/logos') {
+		return next();
+	}
 	if (!req.isAuthenticated()) {
 		return res.status(401).send({
 			message: 'User is not logged in'

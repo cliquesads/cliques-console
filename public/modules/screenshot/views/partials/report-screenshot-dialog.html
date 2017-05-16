@@ -1,0 +1,25 @@
+<h4>Report This Screenshot </h4>
+<p>
+    Not sure why your ad showed up here? Not sure why this ad showed up on your site? Report the screenshot to the
+    Cliques team with a brief message and we'll look into it PDQ.
+</p>
+<form name="reportScreenshotForm" id="reportScreenshotForm" data-ng-submit="submit()" class="form-vertical" autocomplete="off">
+    <div class="col-sm-12">
+        <label for="comment">Why does this screenshot look off?</label>
+    </div>
+    <div class="col-sm-12">
+        <textarea ng-model="comment" id="comment" rows="8" required="true" class="note-editor" name="comment" style="width: 90%"></textarea>
+    </div>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary" analytics-on="click" analytics-event="ReportScreenshotDialog_Submit">Submit</button>
+        </div>
+        <div ng-show="loading">
+            <div class="ball-pulse">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</form>

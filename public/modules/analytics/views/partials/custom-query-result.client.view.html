@@ -1,0 +1,22 @@
+<div class="row">
+	<!-- Back to customized query builder button -->
+    <div class="col-sm-3">
+	    <a ui-sref="app._analytics.analytics.customQuery" class="btn btn-default btn-block text-md">
+            <i class="fa fa-angle-double-left"></i>
+            Back to Query Builder
+        </a> 
+    </div>
+</div>
+<div class="custom-query-container">
+
+	<!-- Query Graph -->
+	<query-graph
+		default-query-param="defaultQueryParam">
+	</query-graph>
+
+	<!-- Query Table -->
+	<query-table
+		default-query-param="defaultQueryParam">
+	</query-table>
+
+</div>

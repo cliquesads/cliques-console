@@ -26,7 +26,7 @@ module.exports = function(db, routers) {
      */
 
 	// User Routes
-	var users = require('../../app/controllers/users.server.controller');
+	var users = require('../../app/controllers/users.server.controller')(db);
 
 	/**
 	 * @apiDefine UserSchema

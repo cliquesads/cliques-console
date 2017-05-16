@@ -2,7 +2,7 @@
     <div class="well well-sm">
         <p><strong><span class="fa fa-question-circle fa-lg text-muted"></span>  DoubleClick Campaign Manager (DCM) Tags</strong></p>
         <p class="text-muted">We currently support Javascript tags exported from DoubleClick Campaign Manager (formerly known as DoubleClick for Advertisers, or DFA).</p>
-        <p class="text-muted">For instructions on how to export your DoubleClick tags, please refer to <a href="https://support.google.com/dcm/partner/answer/2826636?hl=en&ref_topic=3540316#supp">these</a> instructions</p>
+        <p class="text-muted">For instructions on how to export your DoubleClick tags, please refer to <a href="https://support.google.com/dcm/partner/answer/2826636?hl=en&ref_topic=3540316#supp" analytics-on="click" analytics-event="DoubleClickCreativeUploader_Instruction">these</a> instructions</p>
     </div>
     <fieldset>
         <div ng-show="upload_error" class="alert alert-danger">{{ upload_error }}</div>
@@ -26,7 +26,7 @@
         </form>
     </fieldset>
     <div class="row text-right">
-        <button ng-click="processTag()" class="btn btn-primary">
+        <button ng-click="processTag()" class="btn btn-primary" analytics-on="click" analytics-event="DoubleClickCreativeUploader_ProcessTag">
             Verify & Prepare for Upload
         </button>
     </div>
@@ -49,7 +49,7 @@
                     {{ item.w }}x{{ item.h }}
                 </td>
                 <td nowrap="">
-                    <button type="button" ng-click="removeFromQueue(item)" class="btn btn-danger btn-xs">
+                    <button type="button" ng-click="removeFromQueue(item)" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="DoubleClickCreativeUploader_RemoveFromQueue">
                         <span class="icon-trash mr"></span>Remove</button>
                 </td>
             </tr>
@@ -57,7 +57,7 @@
         </table>
     </div>
     <div class="row text-right">
-        <button ng-click="upload()" ng-show="creatives.length" class="btn btn-primary">
+        <button ng-click="upload()" ng-show="creatives.length" class="btn btn-primary" analytics-on="click" analytics-event="DoubleClickCreativeUploader_Upload">
             <span class="icon-cloud-upload mr"></span>
             Upload
         </button>

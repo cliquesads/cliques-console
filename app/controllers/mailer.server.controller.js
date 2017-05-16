@@ -2,9 +2,17 @@
 'use strict';
 var mongoose = require('mongoose'),
     config = require('../../config/config'),
+    cliquesConfig = require('config'),
     nodemailer = require('nodemailer'),
     EmailTemplates = require('swig-email-templates'),
+    mandrill = require('mandrill-api'),
+    base64 = require('base64-stream'),
+    stream = require('stream'),
+    async = require('async'),
+    streamToString = require('stream-to-string'),
     _ = require('lodash');
+
+var mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"));
 
 /**
  * Helper object to abstract away annoying low-level mail config duties
@@ -12,25 +20,33 @@ var mongoose = require('mongoose'),
  *
  * @type {Function}
  * @param {Object} [options]
+ * @param {String} [options.mailerType=local] Either `'local'` (i.e. nodeMailer) or `'mandrill'` (uses Mandrill API).
  * @param {String} [options.fromAddress] can either be straight email address (me@me.com) or of the format "Me <me@me.com>". Default is config.mailer.from
  * @param {Object} [options.templatePath] path to directory containing template files. Default is '../views'
- * @param {Object} [options.mailerOptions] options to pass to nodemailer.createTransport. Default is config.mailer.options
+ * @param {Object} [options.mailerOptions] options to pass to nodemailer.createTransport or to pass to Mandrill.message. Default is config.mailer.options
  */
 var Mailer = exports.Mailer = function(options){
     options             = options || {};
     this.fromAddress    = options.fromAddress || 'support@cliquesads.com';
+    this.mailerType     = options.mailerType || 'local';
     this.templatePath   = options.templatePath || config.templatePath;
-
-    // init email templates compiler, which uses Swig to compile templates
-    // and Juice to take care of inlining all CSS to be compatible with email clients
-    this.templateRenderer = new EmailTemplates({
-        root: this.templatePath
-    });
 
     //// Default to mailer options stored in environment config
     this.mailerOptions  = options.mailerOptions || config.mailer.options;
-    this.smtpTransport  = nodemailer.createTransport(this.mailerOptions);
-    //this.client = new postmark.Client(config.postmark.apiToken);
+
+    if (this.mailerType === 'local'){
+        // init email templates compiler, which uses Swig to compile templates
+        // and Juice to take care of inlining all CSS to be compatible with email clients
+        this.templateRenderer = new EmailTemplates({
+            root: this.templatePath
+        });
+        this.smtpTransport  = nodemailer.createTransport(this.mailerOptions);
+    } else if (this.mailerType === 'mandrill'){
+        this.mandrillClient = mandrillClient;
+    } else {
+        throw Error('options.mailerType must be either local or mandrill');
+    }
+
     this.defaults = {
         appName: config.app.title
     };
@@ -39,6 +55,9 @@ var Mailer = exports.Mailer = function(options){
 /**
  * Base method used to send mail.
  *
+ * Depending on `mailer.mailerType`, will either use mandrill email client or local nodeMailer SMTP transport
+ * to send email.
+ *
  * 'to' value is passed directly to mailOptions 'to', so must be string or array of strings.
  *
  * NOTE: will extend mailOptions.data with Mailer.defaults, and set a template variable 'subject'
@@ -46,11 +65,14 @@ var Mailer = exports.Mailer = function(options){
  *
  * @param {Object} mailOptions
  * @param {String} mailOptions.subject email subject
- * @param {String} mailOptions.templateName name of template file stored in self.templatePath
+ * @param {String} mailOptions.templateName name of template file stored in self.templatePath, or name of template in Mandrill
  * @param {String} mailOptions.to passed directly to sendEmail 'to', so must be string or array of strings.
  * @param {Object} [mailOptions.data] data passed to template to compile
  * @param {String} [mailOptions.fromAlias] Can't set 'from' header w/ Gmail, but this at least changes the display to "[fromAlias] <support@cliquesads.com>"
  * @param {String} [mailOptions.replyTo] replyTo field
+ * @param {Object} [mailOptions.mandrillOptions] Object with which mandrill `message` object is extended. Pass any
+ *     message options through this object, like `attachments` or `images`. Any keys in this object will overwrite default
+ *     `message` keys.
  * @param {Function} callback
  */
 Mailer.prototype.sendMail = function(mailOptions, callback){
@@ -62,6 +84,124 @@ Mailer.prototype.sendMail = function(mailOptions, callback){
     // NOTE: this will overwrite data.subject if it's passed in,
     // NOTE: probably not a good idea to set it anyway
     _.extend(mailOptions.data, { subject: mailOptions.subject});
+    if (self.mailerType === 'local'){
+        self._nodemailerSendMail(mailOptions, callback);
+    } else if (self.mailerType === 'mandrill'){
+        self._mandrillSendMail(mailOptions, callback);
+    }
+};
+
+/**
+ * Mandrill attachment contents must be base64 strings, whereas
+ * mailer accepts any node.js readable stream as an attachment and handles
+ * the rest. So this function converts all attachment streams to base64 strings
+ * that can be passed to the Mandrill API.
+ *
+ * @param attachments
+ * @param cb
+ * @private
+ */
+var _mandrillizeAttachments = function(attachments, cb){
+    if (attachments){
+        async.each(attachments, function(attachmentObj, callback){
+            if (attachmentObj.content && attachmentObj.content instanceof stream.Stream){
+                streamToString(attachmentObj.content.pipe(base64.encode()),
+                    function(err, str){
+                        if (err) return callback(err);
+                        attachmentObj.content = str;
+                        callback();
+                    }
+                );
+            } else {
+                return callback();
+            }
+        }, function(err){
+            cb(err, attachments);
+        });
+    } else {
+        cb(null, null);
+    }
+};
+
+/**
+ * Private sub-function to send email through Mandrill
+ * @param mailOptions
+ * @param callback
+ * @private
+ */
+Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
+    var self = this;
+    // set message default options here
+    var message = {
+        "subject": mailOptions.subject,
+        "from_email": mailOptions.from,
+        "from_name": mailOptions.fromAlias,
+        // TODO: Take advantage of the fact that you can send
+        // TODO: bulk emails in one request here
+        "to": [{
+            "email": mailOptions.to
+        }],
+        "headers": {
+            "Reply-To": mailOptions.replyTo
+        },
+        // Set GLOBAL global merge vars here
+        // For some fucked up reason, handlebars templates in Mandrill require that you
+        // set template variables as this parameter and NOT as template_content, no fucking idea why.
+        "global_merge_vars": [
+            {
+                "name": "CURRENT_YEAR",
+                "content": new Date().getFullYear()
+            }
+        ],
+        "merge_language": "handlebars"
+    };
+
+    // Convert mailOptions.data to format required by mandrill API
+    var merge_vars = [];
+    _.forOwn(mailOptions.data, function(val, key){
+        merge_vars.push({
+            "name": key,
+            "content": val
+        });
+    });
+    message.global_merge_vars = _.union(message.global_merge_vars, merge_vars);
+    
+    // Now extend message w/ options passed to mailOptions.mandrillOptions
+    if (mailOptions.mandrillOptions){
+        _.assignIn(message, mailOptions.mandrillOptions);
+    }
+
+    _mandrillizeAttachments(mailOptions.attachments, function(err, attachments){
+        if (err) return callback(err);
+        if (attachments) message.attachments = attachments;
+        self.mandrillClient.messages.sendTemplate({
+                "template_name": mailOptions.templateName,
+                "template_content": [{}],
+                "message": message
+            },
+            function(result){
+                if (result[0].status === 'sent'){
+                    callback(null, result);
+                } else {
+                    callback(result[0].reject_reason, null);
+                }
+            },
+            function(err) {
+                callback(err);
+            }
+        );
+    });
+};
+
+/**
+ * Sub-function which uses nodeMailer SMTP transport to send email.
+ *
+ * @param mailOptions
+ * @param callback
+ * @private
+ */
+Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
+    var self = this;
     mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
     self.templateRenderer.render(mailOptions.templateName, mailOptions.data, function(err, html, text){
         if (err){

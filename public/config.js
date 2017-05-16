@@ -41,7 +41,9 @@ var ApplicationConfiguration = (function() {
         'ui.identicon',
         'angularPayments',
         'puigcerber.countryPicker',
-        'angular.filter'
+        'angular.filter',
+        'ui.router.title',
+        'datamaps'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

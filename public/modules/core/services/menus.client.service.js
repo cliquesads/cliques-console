@@ -106,7 +106,8 @@ angular.module('core').service('Menus', [
 		};
 
 		// Add submenu item object
-		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemUIRoute, isPublic, roles, position) {
+		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemUIRoute, isPublic, roles, position,
+																				iconClass) {
 			// Validate that the menu exists
 			this.validateMenuExistance(menuId);
 
@@ -121,7 +122,8 @@ angular.module('core').service('Menus', [
 						isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].items[itemIndex].isPublic : isPublic),
 						roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].items[itemIndex].roles : roles),
 						position: position || 0,
-						shouldRender: shouldRender
+						shouldRender: shouldRender,
+						iconClass: iconClass || 'fa fa-file-o'
 					});
 				}
 			}

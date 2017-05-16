@@ -23,8 +23,8 @@ module.exports = [
     'public/lib/parsleyjs/dist/parsley.min.js',
     'public/lib/chosen/chosen.jquery.js',
     'public/lib/angular-chosen-localytics/dist/angular-chosen.min.js',
-    'public/lib/angular-bootstrap-slider/slider.js',
     'public/lib/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js',
+    'public/lib/angular-bootstrap-slider/slider.js',
     'public/lib/angular-file-upload/angular-file-upload.min.js',
     'public/lib/bootstrap-filestyle/src/bootstrap-filestyle.js',
     'public/lib/angular-xeditable/dist/js/xeditable.min.js',
@@ -69,5 +69,10 @@ module.exports = [
     'public/lib/angular-payments/lib/angular-payments.min.js',
     'public/lib/angular-country-picker/country-picker.min.js',
     'public/lib/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js',
-    'public/lib/angular-filter/dist/angular-filter.min.js'
+    'public/lib/angular-filter/dist/angular-filter.min.js',
+    'public/lib/angular-ui-router-title/angular-ui-router-title.js',
+    'public/lib/d3/d3.min.js',
+    'public/lib/topojson/topojson.min.js',
+    'public/lib/datamaps/dist/datamaps.all.min.js',
+    'public/lib/angular-datamaps/dist/angular-datamaps.min.js'
 ];

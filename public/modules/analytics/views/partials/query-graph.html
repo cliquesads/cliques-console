@@ -1,0 +1,41 @@
+<div class="row">
+	<div class="col-sm-12">
+		<div class="panel panel-default mt">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<div class="row">
+						<div class="col-sm-8">
+							<strong>{{ queryParam.name }} Graph:</strong>
+							<query-title query-param="queryParam" humanized-date-range="humanizedDateRange" tz="{{ user.tz }}"></query-title>
+						</div>
+						<div class="col-sm-2 col-sm-offset-2 text-right">
+							<a ng-click="isCollapsed=!isCollapsed" tooltip="Expand/Collapse Panel"
+							   tooltip-placement="left">
+								<i class="fa"
+									ng-class="{
+										'fa-minus': !isCollapsed,
+										'fa-plus': isCollapsed
+									}">
+								</i>	
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body pt0"
+				ng-if="!isCollapsed && !isLoading">
+				<hr class="m0">
+				<daily-ad-stats-graph time-series="timeSeries"
+					show-points="showPoints"
+					time-unit="queryParam.dateGroupBy"
+					height="250px">
+				</daily-ad-stats-graph>
+			</div>
+			<!-- Spin Loader -->
+			<div class="panel-body pt0"
+				ng-if="isLoading">
+				<spin-loader></spin-loader>	
+			</div>
+		</div>
+	</div>
+</div>

@@ -29,7 +29,7 @@
 
 @sidebar-bg:                      @aside-bg;
 
-@sidebar-item-color:              #e1e2e3;
+@sidebar-item-color:              #fafafa;
 @sidebar-item-color-active:       @nav-top-bg;
 @sidebar-item-bg-active:          darken(@sidebar-bg, 1%);
 
@@ -138,7 +138,10 @@ body,
  ========================================================================== */
 
 .sidebar {
-  background-color: @sidebar-bg; 
+  //background-color: @sidebar-bg;
+  background-image: url("https://storage.googleapis.com/cliquesads-images/sidebar-background-6.jpg");
+  -webkit-background-size: cover;
+  background-size: cover;
 
   .nav-heading {
     color: @sidebar-heading-color;

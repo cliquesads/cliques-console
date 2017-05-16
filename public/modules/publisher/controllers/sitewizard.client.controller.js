@@ -81,9 +81,16 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
                 this.page.url = 'http://' + this.page.url;
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
-                    var dims = p.dimensions.split('x');
-                    p.w = Number(dims[0]);
-                    p.h = Number(dims[1]);
+                    if (p.type === 'native'){
+                        // set placeholder values here on creation for native placements
+                        p.w = 1;
+                        p.h = 1;
+                        p.native = {};
+                    } else {
+                        var dims = p.dimensions.split('x');
+                        p.w = Number(dims[0]);
+                        p.h = Number(dims[1]);
+                    }
                 });
                 var publisher = $scope.ngDialogData.publisher;
                 publisher.sites.push(site);

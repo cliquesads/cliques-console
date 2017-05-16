@@ -13,6 +13,9 @@ angular.module('clique').config(['$stateProvider',
 		state('app.cliques.listCliques', {
 			url: '/clique',
 			title: 'List Cliques',
+            resolve: {
+                $title: function(){ return 'List Cliques'; }
+            },
             views: {
                 'titleBar': {
                     template: 'Cliques'
@@ -26,6 +29,9 @@ angular.module('clique').config(['$stateProvider',
         state('app.cliques.browseSites', {
             url: '/browse-sites',
             title: 'Browse All Sites',
+            resolve: {
+                $title: function(){ return 'Browse All Sites'; }
+            },
             views: {
                 'titleBar': {
                     template: 'Site Browser'

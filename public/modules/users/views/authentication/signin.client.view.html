@@ -11,13 +11,13 @@
                 <input type="password" id="password" name="password" class="form-control" data-ng-model="credentials.password" placeholder="Password">
             </div>
             <div class="text-center form-group mt">
-                <button type="submit" class="btn btn-green">Sign in</button>
+                <button type="submit" class="btn btn-green" analytics-on="click" analytics-event="Signin_Submit">Sign in</button>
             </div>
             <div data-ng-show="error" class="text-center text-danger">
                 <strong data-ng-bind="error"></strong>
             </div>
             <div class="forgot-password text-center mt">
-                <a href="/#!/password/forgot" class="text-white">Forgot your password?</a>
+                <a href="/#!/password/forgot" class="text-white" analytics-on="click" analytics-event="Signin_ForgotPassword">Forgot your password?</a>
             </div>
 		</form>
 	</div>

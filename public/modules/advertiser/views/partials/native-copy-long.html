@@ -1,0 +1,20 @@
+<span class="col-sm-12">
+    <textarea ng-model="nativeModel.copyLong"
+              id="{{ inputId }}"
+              name="{{ inputId }}"
+              ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}"
+              ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}"
+              data-parsley-group="{{ wizardstep }}"
+              rows="{{ rows }}"
+              required="true"
+              placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}."
+              class="note-editor" >
+    </textarea>
+</span>
+<span class="col-sm-12">
+    <small ng-class="NATIVE_SPECS.copyLong.minChars <= form[inputId].$viewValue.length
+                    && form[inputId].$viewValue.length <= NATIVE_SPECS.copyLong.maxChars ?
+                    'text-success' : 'text-danger'">
+        Current length: <strong>{{ form[inputId].$viewValue.length || 0 }}</strong>
+    </small>
+</span>

@@ -61,6 +61,7 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             // use named steps instead of numbered because of step conditionality:
             // 'init': first step to choose New or Template
             // 'advertiser-info': input advertiser info
+            // 'campaign-type': choose campaign type
             // 'campaign-wizard': campaign wizard step with either pre-populated data or blank
             metaStep: 'init',
             goToStep : function(step) {
@@ -75,8 +76,9 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
                 }
             },
             goToStepPriorToWizard : function(){
-                this.metaStep = 'advertiser-info';
-            }
+                this.metaStep = 'type';
+            },
+            campaignType: 'display'
         };
 
         $scope.validateInput = function(name, type) {

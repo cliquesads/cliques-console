@@ -3,13 +3,11 @@
         <!-- View hook for child views -->
         <section data-ui-view="titleBar"></section>
     </div>
-    <div ng-switch-when="app.advertiser.viewAdvertiser">
-        <section data-ng-init="findOne()">
-            <div class="pull-right">
-                <logo-widget model="advertiser" oncompleteall="update()"onremove="update()"></logo-widget>
-            </div>
-            {{advertiser.name}}&nbsp;&nbsp;&nbsp;
-            <a data-ng-click="advertiserBasics();" class="small"><i class="fa fa-edit"></i></a>
-        </section>
+    <div ng-switch-when="app.advertiser.allAdvertisers.viewAdvertiser">
+        <h3 class="ml-sm">
+            <logo-widget model="advertiser" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
+            {{ advertiser.name }}
+            <a href="#" ng-click="advertiserBasics()" tooltip="Edit Advertiser Details"><small><i class="fa fa-pencil-square-o"></i></small></a>
+        </h3>
     </div>
 </div>

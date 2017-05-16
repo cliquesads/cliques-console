@@ -4,7 +4,7 @@
     </select>
 </div>
 <div class="list-group">
-    <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item">
+    <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item" analytics-on="click" analytics-event="ListSites_SelectSite">
         <div class="row row-table">
             <div class="col-sm-1">
                 <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>

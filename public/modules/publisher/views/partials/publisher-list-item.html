@@ -1,0 +1,12 @@
+<div class="row row-table">
+    <div class="col-xs-5 col-sm-4 col-md-2">
+        <img ng-src="{{ publisher.logo_secure_url }}" class="client-logo-md"/>
+    </div>
+    <div class="col-xs-6 col-sm-7 col-md-9">
+        <h4 class="list-group-item-heading" data-ng-bind="publisher.name"></h4>
+        <p class="list-group-item-text"> Active Sites: {{ (publisher.sites | filter: {'active': "true"}).length }}, Inactive Sites: {{ (publisher.sites | filter: {'active': "false"}).length }}</p>
+    </div>
+    <div class="col-xs-1 col-sm-1 col-md-1 text-right">
+    	<a href="#" ng-click="publisherBasics(publisher)" tooltip="Edit Publisher Details"><i class="fa fa-pencil-square-o"></i></a>
+    </div>
+</div>

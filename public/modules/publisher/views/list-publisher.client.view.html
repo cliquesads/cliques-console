@@ -1,0 +1,51 @@
+<div ng-switch on="$state.$current.self.name">
+    <div ng-switch-default>
+        <!-- View hook for child views -->
+        <section data-ui-view="main"></section>
+    </div>
+    <div ng-switch-when="app.publisher.allPublishers">
+        <div class="row">
+            <div class="col-sm-offset-2 col-sm-8">
+                <div class="header-section">
+                    <div class="header-text">
+                        <strong>Please Select an Publisher to Continue</strong>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="defaults.rememberMySelection">Remember My Selection
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-sm-offset-2 col-sm-8 advertiser-list-container">
+                <div class="btn-third-white-horizontal" ng-click="$state.go('app.publisher.createPublisher')">
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;
+                    CREATE NEW PUBLISHER
+                </div>
+                <div ng-show="(publishers | filter:hasActiveSites(true)).length">
+                    <br/>
+                    <em class="custom-section-title">Active</em> 
+                    <div class="list-group">
+                        <a data-ng-repeat="publisher in publishers | filter:hasActiveSites(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectPublisher(publisher)" analytics-on="click" analytics-event="ListPublisher_SelectActivePublisher">
+                            <publisher-list-item publisher="publisher"></publisher-list-item>
+                        </a>
+                    </div>
+                </div>
+                <div ng-show="(publishers | filter:hasActiveSites(false)).length">
+                    <br/>
+                    <em class="custom-section-title">Inactive</em>
+                    <div class="list-group">
+                        <a data-ng-repeat="publisher in publishers | filter:hasActiveSites(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectPublisher(publisher)" analytics-on="click" analytics-event="ListPublisher_SelectInactivePublisher">
+                            <publisher-list-item publisher="publisher"></publisher-list-item>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" data-ng-if="publishers.$resolved && !publishers.length">
+            <h4 class="m0">No publishers yet, why don't you <a href="/#!/publisher/create" analytics-on="click" analytics-event="ListPublisher_Create">create one</a>?</h4>
+        </div>
+    </div>
+</div>

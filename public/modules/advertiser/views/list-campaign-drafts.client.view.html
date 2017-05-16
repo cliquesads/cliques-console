@@ -16,16 +16,22 @@ adding hook in parent template ---->
                         <p class="list-group-item-text"> Last Modified: {{ draft.tstamp | date: 'medium' }}</p>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-primary btn-xs" ng-click="edit(draft)"><i class="fa fa-edit"></i> Continue Editing</button>
-                        <button class="btn btn-danger btn-xs" ng-click="remove(draft)"><i class="fa fa-trash"></i> Delete</button>
+                        <button class="btn btn-primary btn-xs" ng-click="edit(draft)" analytics-on="click" analytics-event="ListCampaignDrafts_Edit"><i class="fa fa-edit"></i> Continue Editing</button>
+                        <button class="btn btn-danger btn-xs" ng-click="remove(draft)" analytics-on="click" analytics-event="ListCampaignDrafts_Remove"><i class="fa fa-trash"></i> Delete</button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-8">
-            <h4 class="alert alert-info text-center pv-lg" data-ng-if="drafts.$resolved && !drafts.length">
-                You don't have any working drafts
-            </h4>
+            <div class="box-placeholder text-center" data-ng-if="drafts.$resolved && !drafts.length">
+                <h4>
+                    <i class="fa fa-floppy-o"></i> You don't have any working drafts
+                </h4>
+                <p>
+                    When you set up a new campaign, drafts will be saved here if you decide to go take a coffee break
+                    (or a nap, naps are fine too) and want to come back and finish the setup process later.
+                </p>
+            </div>
         </div>
     </div>
 </div>

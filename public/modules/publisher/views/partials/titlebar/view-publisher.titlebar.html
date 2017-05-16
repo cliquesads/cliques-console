@@ -3,13 +3,13 @@
         <!-- View hook for child views -->
         <section data-ui-view="titleBar"></section>
     </div>
-    <div ng-switch-when="app.publisher.viewPublisher">
+    <div ng-switch-when="app.publisher.allPublishers.viewPublisher">
         <section data-ng-init="findOne()">
             <div class="pull-right">
                 <logo-widget model="publisher" oncompleteall="update()" onremove="update()"></logo-widget>
             </div>
-            <a ng-click="selectPublisher(true)" tooltip="Change Selected Publisher" tooltip-placement="bottom">{{publisher.name}}</a>&nbsp;
-            <a data-ng-click="publisherBasics();" class=""><i class="fa fa-cog" tooltip="Edit Publisher Settings" tooltip-placement="bottom-right"></i></a>
+            <a ng-click="selectPublisher(true)" tooltip="Change Selected Publisher" tooltip-placement="bottom" analytics-on="click" analytics-event="ViewPublisher_SelectPublisher">{{publisher.name}}</a>&nbsp;
+            <a data-ng-click="publisherBasics();" class="" analytics-on="click" analytics-event="ViewPublisher_PublisherBasics"><i class="fa fa-cog" tooltip="Edit Publisher Settings" tooltip-placement="bottom-right"></i></a>
         </section>
     </div>
 </div>

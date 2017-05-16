@@ -1,7 +1,8 @@
 /* jshint node: true */ 'use strict';
-var users = require('../controllers/users.server.controller');
 
 module.exports = function(db, routers){
+     var users = require('../controllers/users.server.controller')(db);
+
     var advertisers = require('../controllers/advertisers.server.controller')(db);
 
     var router = routers.apiRouter;

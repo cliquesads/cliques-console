@@ -95,18 +95,20 @@ module.exports = {
                     accessCode.redeemIssuerPromos(promoType,function(err, results){
                         if (err) console.error(err);
                         // results is array of { user: <User>, promo: <Promo> } objects
-                        results.forEach(function(userPromo){
-                            var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
-                                organization.name);
-                            if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
-                            mailer.sendMail({
-                                subject: subject,
-                                templateName: 'accesscode-redeemed-email.server.view.html',
-                                data: { organization: org, promo: userPromo.promo, accessCode: accessCode, promoType: promoType },
-                                to: userPromo.user.email,
-                                fromAlias: 'Cliques'
+                        if (process.env.NODE_ENV === 'production'){
+                            results.forEach(function(userPromo){
+                                var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
+                                    organization.name);
+                                if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                                mailer.sendMail({
+                                    subject: subject,
+                                    templateName: 'accesscode-redeemed-email.server.view.html',
+                                    data: { organization: org, promo: userPromo.promo, accessCode: accessCode, promoType: promoType },
+                                    to: userPromo.user.email,
+                                    fromAlias: 'Cliques'
+                                });
                             });
-                        });
+                        }
                     });
                 });
             }
@@ -137,6 +139,23 @@ module.exports = {
     },
 
     /**
+     * getMany organizations
+     * @param req
+     * @param res
+     */
+    getMany: function(req, res) {
+        Organization.find({}, function (err, organizations){
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                });
+            } else {
+                res.json(organizations);
+            }
+        });
+    },
+
+    /**
      * Delete an organization
      */
     remove: function (req, res) {
@@ -162,11 +181,19 @@ module.exports = {
      * @returns {*}
      */
     hasAuthorization: function (req, res, next) {
-        var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
-        if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
-            if (!user) {
+        if (req.organization){
+            var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
+                if (!user) {
+                    return res.status(403).send({
+                        message: 'User is not authorized to access this organization'
+                    });
+                }
+            }
+        } else {
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
                 return res.status(403).send({
-                    message: 'User is not authorized to access this organization'
+                    message: 'User is not authorized to access this endpoint'
                 });
             }
         }

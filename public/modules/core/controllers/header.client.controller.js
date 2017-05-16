@@ -1,9 +1,10 @@
 /* globals user */
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Organizations', 'Menus',
-	function($scope, Authentication, Organizations, Menus) {
+angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Organizations', 'Menus', 'userIdenticon',
+	function($scope, Authentication, Organizations, Menus, userIdenticon) {
 		$scope.authentication = Authentication;
+		$scope.userIdenticon = userIdenticon;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
 

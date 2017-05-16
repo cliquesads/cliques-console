@@ -1,5 +1,35 @@
 'use strict';
 
+/**
+ * Isolated logic behind site routes in which a user must be prompted
+ * to select an publisher first. Logical switch to direct user to appropriate
+ * view depending on if they have set up  publishers/sites already.
+ *
+ * Passes inferred publisherId, if one is found, to callback function, otherwise
+ * passes null.
+ */
+var getImpliedPublisherId = function($state, $rootScope, $location, Publisher, callback) {
+    if ($rootScope.publisher) {
+        return callback(null, $rootScope.publisher._id);
+    } else {
+        Publisher.query(function(publishers) {
+            // if user only has one publisher available, 
+            // just set that publisher as default in $rootScope 
+            // and go to that publisher's page
+            if (publishers.length === 1) {
+                $rootScope.publisher = publishers[0];
+                return callback(null, $rootScope.publisher._id);
+            } else {
+                // Otherwise, either user has NOT selected a publisher yet,
+                // or user doesn't have a publisher
+                return callback(null, null);
+            }
+        }, function(err) {
+            return callback(err); 
+        });
+    }
+};
+
 // Setting up route
 angular.module('publisher').config(['$stateProvider',
 	function($stateProvider) {
@@ -10,22 +40,11 @@ angular.module('publisher').config(['$stateProvider',
             abstract: true,
             templateUrl: 'modules/publisher/views/publisher-layout.client.view.html'
         }).
-		state('app.publisher.mySites', {
-			url: '/mysites',
-			title: 'My Sites',
-            views: {
-                'main': {
-                    templateUrl: 'modules/publisher/views/mysites.client.view.html',
-                    controller: 'PublisherController'
-                },
-                'titleBar': {
-                    template: 'Select a Publisher'
-                }
-            }
-		}).
-		state('app.publisher.createPublisher', {
-			url: '/publisher/create',
-			title: 'New Publisher',
+        state('app.publisher.createPublisher', {
+            url: '/publisher/create',
+            resolve: {
+                $title: function() { return 'New Publisher'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/create-publisher.client.view.html',
@@ -35,10 +54,51 @@ angular.module('publisher').config(['$stateProvider',
                     template: 'New Publisher'
                 }
             }
+        }).
+		state('app.publisher.allSites', {
+			url: '/all-sites',
+            resolve: {
+                redirect: function ($state, $rootScope, $location, Publisher) {
+                    getImpliedPublisherId($state, $rootScope, $location, Publisher, function(err, publisherId) {
+                        if (publisherId) {
+                            // TODO: State.go just hangs, have no idea why
+                            $location.path('/publisher/' + publisherId);
+                        } else {
+                            var nextState = '.viewPublisher';
+                            event.preventDefault();
+                            $state.go('app.publisher.allPublishers', {
+                                next: nextState
+                            });
+                            $state.go('app.publisher.allPublishers');
+                        }
+                    });
+                }
+            }
 		}).
-		state('app.publisher.viewPublisher', {
-			url: '/publisher/:publisherId',
-			title: 'View Publisher',
+
+        /**
+         * BEGIN publisher-specific states, starting at All Publishers
+         */
+        state('app.publisher.allPublishers', {
+            url: '/publisher?next',
+            resolve: {
+                $title: function() { return 'All publishers'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/publisher/views/list-publisher.client.view.html',
+                    controller: 'PublisherController'
+                },
+                'titleBar': {
+                    template: '<section data-ui-view="titleBar"></section>'
+                }
+            }
+        }).
+		state('app.publisher.allPublishers.viewPublisher', {
+			url: '/:publisherId',
+            resolve: {
+                $title: function() { return 'View Publisher'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/view-publisher.client.view.html',
@@ -50,9 +110,11 @@ angular.module('publisher').config(['$stateProvider',
                 }
             }
 		}).
-        state('app.publisher.viewPublisher.viewSite', {
+        state('app.publisher.allPublishers.viewPublisher.viewSite', {
             url: '/site/:siteId',
-            title: 'View Site',
+            resolve: {
+                $title: function() { return 'View Site'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/view-site.client.view.html',
@@ -64,9 +126,11 @@ angular.module('publisher').config(['$stateProvider',
                 }
             }
         }).
-        state('app.publisher.viewPublisher.viewSite.viewPage', {
+        state('app.publisher.allPublishers.viewPublisher.viewSite.viewPage', {
             url: '/page/:pageId',
-            title: 'Page Manager',
+            resolve: {
+                $title: function() { return 'Page Manager'; }
+            },
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/view-page.client.view.html',

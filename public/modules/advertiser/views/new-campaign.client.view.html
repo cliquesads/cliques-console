@@ -1,0 +1,79 @@
+<div class="custom-section-title no-font-style">Create a New Campaign</div>
+<div class="row mt-lg">
+    <div class="col-sm-12 panel panel-default p-lg">
+        <br/>
+        <div ng-switch on="stepControl.metaStep">
+            <!--BEGIN INIT STEP  to chooose campaign media type-->
+            <div ng-switch-when="init">
+                <h4>Campaign Type</h4>
+                <p class="text-muted">First, tell us what kind of campaign you'd like to run.</p>
+                <div class="box-form">
+                    <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                        <li ng-class="{'active': stepControl.campaignType === 'display'}" ng-click="stepControl.campaignType = 'display'" class="col-sm-6">
+                            <h4>Display</h4>
+                            <p>Traditional display (a.k.a. banner) ads look the same on all sites & placements, and are typically less expensive.</p>
+                        </li>
+                        <li ng-class="{'active': stepControl.campaignType === 'native'}" ng-click="stepControl.campaignType = 'native'" class="col-sm-6">
+                            <h4><span class="label label-primary">Beta</span> Native</h4>
+                            <p>Native ads dynamically resize & restyle for each individual site on our exchange to match the style of the site. They are typically more engaging, and also more expensive.</p>
+                        </li>
+                    </ol>
+                </div>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToSecondStep()" analytics-on="click" analytics-event="NewCampaign_SecondStep">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!--BEGIN INIT STEP  to chooose campaign type-->
+            <div ng-switch-when="new-or-template">
+                <h4>New or Template?</h4>
+                <p class="text-muted">Pick starting point for your new campaign.</p>
+                <div class="box-form">
+                    <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                        <li ng-class="{'active': !stepControl.useTemplate }" ng-click="stepControl.useTemplate = false" class="col-sm-6">
+                            <h4><i class="fa fa-asterisk"></i>&nbsp;Blank Campaign</h4>
+                            <p>Start a new campaign from scratch.</p>
+                        </li>
+                        <li ng-class="{'active': stepControl.useTemplate }" ng-click="stepControl.useTemplate = true" class="col-sm-6">
+                            <h4><i class="fa fa-files-o"></i>&nbsp;Use Existing Campaign as a Template</h4>
+                            <p>Use an existing campaign as a starting point.</p>
+                        </li>
+                    </ol>
+                </div>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" ng-click="stepControl.goToThirdStep()" analytics-on="click" analytics-event="NewCampaign_SecondStep">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <!--BEGIN Campaign Selection Step to chooose campaign type-->
+            <div ng-switch-when="select-campaign">
+                <h4>Choose an Existing Campaign to Start From</h4>
+                <p class="text-muted"> All of your old campaign settings will be copied into your new campaign, but you can still give everything a once-over on the next screen.</p>
+                <row-select base-model="stepControl.campaign" options="advertiser.campaigns" row-template="{{ rowTemplate }}"></row-select>
+                <ul class="pager">
+                    <li class="previous">
+                        <a href="#" ng-click="stepControl.goToStep('new-or-template')" analytics-on="click" analytics-event="NewCampaign_Init">
+                        <span>&larr; Previous</span>
+                        </a>
+                    </li>
+                    <li ng-show="stepControl.campaign" class="next">
+                        <a href="#" ng-click="stepControl.goToStep('campaign-wizard')" analytics-on="click" analytics-event="NewCampaign_CampaignWizard">Next <span>&rarr;</span></a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-switch-when="campaign-wizard">
+                <campaign-wizard
+                        advertiser="advertiser"
+                        campaign-type="{{ stepControl.campaignType }}"
+                        existing-campaign="stepControl.campaign"
+                        use-suffix="use-suffix"
+                        on-previous="stepControl.goToStepPriorToWizard()"
+                        on-submit="updateAdvertiser(campaign)"
+                        on-draft-save-success="closeOnDraftSuccess(draft)">
+                </campaign-wizard>
+            </div>
+        </div>
+    </div>
+</div>

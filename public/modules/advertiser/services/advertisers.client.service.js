@@ -26,21 +26,4 @@ angular.module('advertiser').factory('Advertiser', ['$resource',
             return activator;
         }
     ]
-)
-.factory('Campaign',['Advertiser',function(Advertiser){
-        return {
-            fromStateParams: function($stateParams, callback){
-                Advertiser.get({advertiserId: $stateParams.advertiserId})
-                    .$promise
-                    .then(function(advertiser){
-                        var i = _.findIndex(advertiser.campaigns, function(campaign){
-                            return campaign._id === $stateParams.campaignId;
-                        });
-                        //$scope.campaign as pointer to campaign in advertiser.campaigns array
-                        //this way, all Advertiser resource methods will work
-                        return callback(null, advertiser, i);
-                    });
-            }
-        };
-    }
-]);
+);

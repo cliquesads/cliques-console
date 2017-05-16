@@ -8,7 +8,7 @@
     <div class="row pt">
         <div class="col-sm-6">
             <label for="name">Account Holder Name</label>
-            <a href="#" tooltip="This should be the name of the business or individual that owns the account.">
+            <a href="#" tooltip="This should be the name of the business or individual that owns the account." analytics-on="click" analytics-event="StripBankAccountForm_TooltipForHolderName">
                 <em class="fa fa-question-circle"></em>
             </a>
             <input type="text" id="name" name="name" required="required" class="form-control" ng-model="account.account_holder_name"
@@ -16,7 +16,7 @@
         </div>
         <div class="col-sm-6">
             <label for="routing-number">Your Date of Birth</label>
-            <a href="#" tooltip="This is required for security purposes. It is used by Stripe to verify that the account you're providing is not fraudulent. We DO NOT store this on our servers.">
+            <a href="#" tooltip="This is required for security purposes. It is used by Stripe to verify that the account you're providing is not fraudulent. We DO NOT store this on our servers." analytics-on="click" analytics-event="StripBankAccountForm_TooltipForDateOfBirth">
                 <em class="fa fa-question-circle"></em>
             </a>
             <input id="dob" name="dob" required="required" type="text" masked="" data-inputmask="'mask': '99/99/9999'" placeholder="01/01/1990"
@@ -64,8 +64,8 @@
                        analytics-event="BillingSettings_AuthorizeBankAccountTerms" required="required">
                 <span class="fa fa-check"></span>
                 I authorize Cliques Labs Inc. to deposit my Net Advertising Sales Revenue (as defined in your
-                <a href="#!/terms-and-conditions">Terms & Conditions</a>) to this account, and I agree to the
-                <a href="https://stripe.com/us/connect/account-terms">Stripe Connected Account Agreement</a>.
+                <a href="#!/terms-and-conditions" analytics-on="click" analytics-event="StripBankAccountForm_TermsAndConditions">Terms & Conditions</a>) to this account, and I agree to the
+                <a href="https://stripe.com/us/connect/account-terms" analytics-on="click" analytics-event="StripBankAccountForm_StripConnectedAccountAgreement">Stripe Connected Account Agreement</a>.
             </label>
         </div>
     </div>
@@ -79,7 +79,7 @@
 <div class="panel-footer text-center">
     <small class="text-muted">
         <i class="fa fa-lock"></i> Your bank account information will be <strong>securely</strong> transmitted to
-        <a href="https://stripe.com/about">Stripe</a>. Cliques does not store your bank account information
+        <a href="https://stripe.com/about" analytics-on="click" analytics-event="StripBankAccountForm_StripAbout">Stripe</a>. Cliques does not store your bank account information
         on its own servers.
     </small>
 </div>

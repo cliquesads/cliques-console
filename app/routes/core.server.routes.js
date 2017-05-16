@@ -1,8 +1,9 @@
 /* jshint node: true */ 'use strict';
-var users = require('../controllers/users.server.controller');
 var passport = require('passport');
 
 module.exports = function(db, routers) {
+	var users = require('../controllers/users.server.controller')(db);
+
 	// Root routing
 	var core = require('../../app/controllers/core.server.controller')(db);
 

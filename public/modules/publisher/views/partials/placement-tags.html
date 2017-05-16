@@ -24,7 +24,7 @@
     <small class="text-muted">Paste this ad tag directly into your Page or 3rd-party ad-server</small>
     <pre id="adTag">{{ tag }}</pre>
     <div class="row mr0">
-        <button class="btn btn-primary btn-xs pull-right" ngclipboard data-clipboard-target="#adTag" ngclipboard-success="copySuccess(e)">
+        <button class="btn btn-primary btn-xs pull-right" ngclipboard data-clipboard-target="#adTag" ngclipboard-success="copySuccess(e)" analytics-on="click" analytics-event="PlacementTags_CopySuccess">
             <i class="fa fa-clipboard"></i>&nbsp;Copy to Clipboard
         </button>
     </div>

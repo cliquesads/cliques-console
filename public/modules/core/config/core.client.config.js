@@ -5,7 +5,7 @@ angular.module('core').run(['Menus',
   function(Menus) {
 
     // Add default menu entry
-    Menus.addMenuItem('sidebar', 'Home', 'home', null, 'home', false,  ['networkAdmin','advertiser','publisher'], null, 'icon-home');
+    Menus.addMenuItem('sidebar', 'Home', 'home', null, 'home', false,  ['networkAdmin','advertiser','publisher'], null, 'fa fa-home');
 
   }
 ]).config(['$ocLazyLoadProvider', 'APP_REQUIRES', function ($ocLazyLoadProvider, APP_REQUIRES) {

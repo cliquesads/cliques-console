@@ -6,200 +6,186 @@
         <br>
         <div class="row">
             <p class="lead">
-                It looks like you haven't set up a Site yet.  <strong>Let's change that now.</strong>
+                It looks like you haven't set up a Publisher yet.  <strong>Let's change that now.</strong>
             </p>
         </div>
         <div class="row" ng-show="publishers.length == 0">
             <p>
-                <a class="btn btn-primary btn-lg" href="#!/publisher/create">Get Started</a>
+                <a class="btn btn-primary btn-lg" href="#!/publisher/create" analytics-on="click" analytics-event="PubDashboard_Create">Get Started</a>
             </p>
         </div>
     </div>
-    <section ng-show="publishers.length > 0">
-        <em>Lifetime Stats</em>
-        <br/><br/>
-        <div class="row">
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <a href="/#!/publisher">
-                    <div class="panel widget bg-primary">
-                        <div class="row row-table">
-                            <div class="col-xs-4 text-center bg-primary-dark pv-md">
-                                <em class="icon-book-open fa-3x"></em>
-                            </div>
-                            <div class="col-xs-8 pv-md pt pb">
-                                <div class="h3 mt0">{{ publishers.length }}</div>
-                                <div class="text-uppercase">Publisher{{ publisher.length != 1 ? 's' : ''}}</div>
-                            </div>
-                        </div>
+
+    <div class="row" ng-show="publishers.$resolved && allSites.length > 0">
+        <!-- My Sites Section -->
+        <div class="col-lg-6 col-sm-12">
+            <div class="width-90">
+                <span class="custom-section-title no-font-style mb"><i class="fa fa-bookmark-o"></i> My Sites</span>
+                <span class="pull-right">
+                    <a href="/#!/all-sites" analytics-on="click" analytics-event="PubDashboard_AllSites"><i class="fa fa-bookmark-o"></i> All Sites</a>
+                </span>
+            </div>
+            <!-- Begin Loader-->
+            <section ng-show="allSites.length === 0">
+                <div class="panel panel-default width-90">
+                    <div class="panel-body text-center">
+                        <h4>Loading...</h4>
+                        <div class="ball-pulse"><div></div><div></div><div></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!--Begin site section contents -->
+            <section ng-show="allSites.length > 0">
+                <!-- scroll up sites button -->
+                <div ng-if="showingSiteEndIndex > SITES_TO_SHOW - 1">
+                    <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
+                        ng-click="scrollUpShowingSites()" analytics-on="click" analytics-event="PubDashboard_UpSites">
+                        <span>Up&nbsp;</span>
+                        <i class="fa fa-sort-asc fa-2x mb-lg-neg"></i>
+                    </button>
+                </div>
+                <a data-ng-repeat="site in currentlyShowingSites track by site._id"
+                    data-ng-href="#!/publisher/{{site.parentPublisherId}}/site/{{site._id}}"
+                    class="campaign-list-item" analytics-on="click" analytics-event="PubDashboard_GoToSite">
+                    <div class="col-sm-2">
+                        <div class="label" ng-class="site.active ? 'label-success':'label-default'">{{ site.active ? "Active":"Inactive"}}</div>
+                    </div>
+                    <div class="col-sm-2">
+                        <img src="{{ site.pub_logo_url || default_logo_url }}" alt="Pub Logo" class="client-logo-md-lg">
+                    </div>
+                    <div class="col-sm-5">
+                        <h4 class="campaign-list-item-heading mb-sm">{{ site.name | limitTo: 27 }}{{site.name.length > 27 ? '...' : ''}}</h4>
+                        <p class="campaign-list-item-text">{{ site.clique }}</p>
+                    </div>
+                    <div class="col-sm-2">
+                        <h4 class="campaign-list-item-heading">{{ site.rpm || "$0.00" }}</h4>
+                        <p class="campaign-list-item-text">RPM</p>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <h4 class="campaign-list-item-heading">{{ site.ctr || "0.00%" }}</h4>
+                        <p class="campaign-list-item-text">CTR</p>
                     </div>
                 </a>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-primary-light">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-primary pv-md">
-                            <em class="icon-graph fa-3x"></em>
-                        </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].imps | number:"0" }}</div>
-                            <div class="text-uppercase">Impressions</div>
-                        </div>
+                <!-- scroll down campaigns button -->
+                <div ng-if="showingSiteEndIndex < (allSites.length - 1)">
+                    <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
+                        ng-click="scrollDownShowingSites()" analytics-on="click" analytics-event="PubDashboard_MoreSites">
+                        More &nbsp;
+                        <i class="fa fa-sort-desc fa-2x mt-lg-neg"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+        <!-- End of My Campaigns Section -->
+
+        <!-- Year-To-Date Stats Section -->
+        <div class="col-lg-6 col-sm-12 pl">
+            <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
+            <span class="pull-right">
+                <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="PubDashboard_GoToAnalytics"></i> Go to Analytics</a>
+            </span>
+            <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
+                <div class="panel-heading">
+                    <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
+                        <span class="pull-right">
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="PubDashboard_StatsRange7d">7d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="PubDashboard_StatsRange30d">30d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="PubDashboard_StatsRange90d">90d</button>
+                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="PubDashboard_StatsRangeYTD">YTD</button>
+                        </span>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-green-light">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-green pv-md">
-                            <em class="icon-wallet fa-3x"></em>
+                <div class="panel-body pt-sm">
+                    <!-- BEGIN Loader-->
+                    <section ng-hide="timeSeries">
+                        <div class="text-center">
+                            <h4>Loading...</h4>
+                            <div class="ball-pulse"><div></div><div></div><div></div></div>
                         </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].spend | currency:"$":"0" }}</div>
-                            <div class="text-uppercase">Total Revenue</div>
+                    </section>
+                    <!-- BEGIN Actual Graph & Stats -->
+                    <section ng-show="timeSeries">
+                        <div class="row mb">
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
+                                <small class="text-muted">Impressions</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ defaults | number: 0 }}</div>
+                                <small class="text-muted">Defaults</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ fillRate | percentage: 2 }}</div>
+                                <small class="text-muted">Fill Rate</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ revenue | currency: "$":"0" }}</div>
+                                <small class="text-muted">Revenue</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ RPM | currency:"$":"2" }}</div>
+                                <small class="text-muted">RPM</small>
+                            </div>
+                            <div class="col-sm-2 col-xs-6 text-center">
+                                <div class="h3 mt-sm mb0">{{ CTR | percentage: 2 }}</div>
+                                <small class="text-muted">CTR</small>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <!-- START widget-->
-                <div class="panel widget bg-green">
-                    <div class="row row-table">
-                        <div class="col-xs-4 text-center bg-green-dark pv-md">
-                            <em class="icon-cursor fa-3x"></em>
-                        </div>
-                        <div class="col-xs-8 pv-md pt pb">
-                            <div class="h3 mt0">{{ adStats[0].clicks / adStats[0].imps | percentage : 2}}</div>
-                            <div class="text-uppercase">CTR</div>
-                        </div>
-                    </div>
+                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
+                    </section>
                 </div>
             </div>
         </div>
-        <hr/>
-        <em>Graphs & Stuff</em>
-        <br/><br/>
-        <div class="row">
-            <div class="col-md-6">
-                <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
-                    <div class="panel-heading">
-                        <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-                            &nbsp&nbsp&nbsp
-                            <small>
-                                <em class="text-muted">
-                                    Reporting Timezone: {{ authentication.user.tz }}
-                                </em>
-                            </small>
-                            <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')">90d</button>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="250px"></daily-ad-stats-graph>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            {{ dateRanges[dateRangeSelection].label }}
-                            &nbsp&nbsp&nbsp
-                            <small>
-                                <em class="text-muted">
-                                    Reporting Timezone: {{ authentication.user.tz }}
-                                </em>
-                            </small>
-                            <span class="pull-right">
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('7d')">7d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('30d')">30d</button>
-                                <button class="btn btn-sm btn-default" ng-click="getTabData('90d')">90d</button>
-                            </span>
-                        </div>
-                    </div>
-                    <tabset>
-                        <tab heading="Top Advertisers" select="getTabData(dateRangeSelection,'advertisers')">
-                            <table datatable="ng" dt-options="dtOptions_advs" dt-column-defs="dtColumnDefs_advs" class="row-border hover">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Advertiser</th>
-                                    <th>Impressions</th>
-                                    <th>Spend</th>
-                                    <th>Avg. CPM</th>
-                                    <th>CTR</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="row in advertiserData">
-                                    <td><img ng-src="{{ row._id.advertiser.logo_secure_url }}" class="client-logo-sm"/></td>
-                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
-                                    <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend | currency:"$":"0" }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                                    <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                                    <td>{{ row.view_convs + row.click_convs }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </tab>
-                        <tab heading="My Publishers" select="getTabData(dateRangeSelection,'publishers')">
-                            <table datatable="ng" dt-options="dtOptions_pubs" dt-column-defs="dtColumnDefs_pubs" class="row-border hover">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Publisher</th>
-                                    <th>Impressions</th>
-                                    <th>Spend</th>
-                                    <th>Avg. CPM</th>
-                                    <th>CTR</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="row in publisherData">
-                                    <td><img ng-src="{{ row._id.publisher.logo_secure_url }}" class="client-logo-sm"/></td>
-                                    <td style="max-width: 120px; word-wrap: break-word">{{ row._id.publisher.name }}<em ng-hide="row._id.publisher.name">Deleted Publisher!</em></td>
-                                    <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend | currency:"$":"0" }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                                    <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                                    <td>{{ row.view_convs + row.click_convs }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </tab>
-                    </tabset>
-                </div>
-            </div>
-        </div>
-    </section>
-    <hr/>
-    <em>Notes</em>
+        <!-- End of Year-To-Date Stats Section -->
+    </div>
+
+    <!-- Screenshots -->
     <div class="row">
-        <div class="col-md-4">
-            <h2>
-                <strong>P</strong>ublishers & Sites
-            </h2>
-            <p>A Publisher is a top-level entity, and can contain many Sites. For example, "Conde Nast" would be a Publisher, "GQ" would be a Site. Most of the settings that actually do anything (bid floors, blacklists, placements, etc.) are stored in Sites, and their child Pages. Use the menu items on the left to create, view & edit your Publisher & Site settings.</p>
-        </div>
-        <div class="col-md-4">
-            <h2>
-                <strong>F</strong>eedback
-            </h2>
-            <p>Cliques is built for you, and only you can help make it better! As a beta tester, we strongly encourage you to send us feedback on the platform. Please email <a href="mailto:bliang@cliquesads.com">bliang@cliquesads.com</a> with all feedback.</p>
-        </div>
-        <div class="col-md-4">
-            <h2>
-                <strong>R</strong>esources & Support
-            </h2>
-            <p>If you have any quick questions or issues, or want to learn more about our technology, please wander over to our <a target="_blank" href="http://support.cliquesads.com/">Support Center</a></p>
-        </div>
+        <span class="custom-section-title no-font-style"><i class="fa fa-camera-retro"></i> Recent Screenshots</span>
+        <span class="pull-right">
+            <a href="/#!/screenshots"><i class="fa fa-camera-retro" analytics-on="click" analytics-event="PubDashboard_GoToScreenshots"></i> View all Screenshots</a>
+        </span>
+        <br/>
+        <section ng-hide="screenshots" class="text-center">
+            <div class="col-sm-12 text-center">
+                <h4>Loading...</h4>
+                <div class="ball-pulse"><div></div><div></div><div></div></div>
+            </div>
+        </section>
+        <section ng-show="screenshots && screenshots.length > 0">
+            <div class="screenshots-showcase">
+                <!-- Last screenshot button -->
+                <div ng-if="showingScreenshotEndIndex > 2">
+                    <button class="btn btn-third-white-vertical"
+                            ng-click="showLastScreenshot()" analytics-on="click" analytics-event="PubDashboard_ScreenshotsScrollLeft">
+                        <i class="fa fa-chevron-left"></i>
+                    </button>
+                </div>
+                <!-- Screenshot images -->
+                <div class="screenshot"
+                     ng-repeat="screenshot in currentlyShowingScreenshots track by screenshot._id">
+                    <!--<img src="{{ screenshot.image_url }}" alt="Screenshot" ng-click="viewScreenshot(screenshot)">-->
+                    <screenshot-thumbnail screenshot="screenshot"></screenshot-thumbnail>
+                </div>
+
+                <!-- Next screenshot button -->
+                <div ng-if="showingScreenshotEndIndex < screenshots.length - 1">
+                    <button class="btn btn-third-white-vertical"
+                            ng-click="showNextScreenshot()" analytics-on="click" analytics-event="PubDashboard_ScreenshotsScrollRight">
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section ng-show="screenshots && screenshots.length === 0">
+            <div class="screenshots-showcase">
+                <div class="screenshot"
+                     ng-repeat="screenshot in demoScreenshots">
+                    <screenshot-thumbnail screenshot="screenshot" demo="true"></screenshot-thumbnail>
+                </div>
+            </div>
+        </section>
     </div>
 </section>

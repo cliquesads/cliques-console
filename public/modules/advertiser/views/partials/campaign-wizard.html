@@ -1,8 +1,8 @@
 <div class="pull-right">
-    <button type="button" class="btn btn-primary" ng-click="saveDraft()"><i class="fa fa-floppy-o"></i> Save Draft</button>
+    <button type="button" class="btn btn-primary" ng-click="saveDraft()" analytics-on="click" analytics-event="CampaignWizard_SaveDraft"><i class="fa fa-floppy-o"></i> Save Draft</button>
 </div>
 <form name="campaignForm" data-ng-submit="" form-wizard="" validate-steps="true" validate-form="" steps="5">
-    <div class="form-wizard wizard-vertical">
+    <div class="form-wizard wizard-vertical alt-width">
         <!-- START wizard steps indicator-->
         <ol>
             <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
@@ -30,7 +30,7 @@
 
         <!-- START CAMPAIGN inputs -->
         <div id="step1" ng-show="wizard.active(1)">
-            <legend>New Campaign</legend>
+            <legend>New {{ campaignType | capitalize }} Campaign</legend>
             <fieldset>
                 <div class="form-group">
                     <label>Name *</label>
@@ -43,7 +43,7 @@
             </fieldset>
             <fieldset>
                 <label>Budget *</label>
-                <a href="#" tooltip="{{ TOOLTIPS.budget }}">
+                <a href="#" tooltip="{{ TOOLTIPS.budget }}" analytics-on="click" analytics-event="CampaignWizard_TooltipBudget">
                     <em class="fa fa-question-circle"></em>
                 </a>
                 <div class="input-group">
@@ -61,7 +61,7 @@
             <small class="text-muted">* Required</small>
             <ul class="pager">
                 <li class="previous" ng-show="onPrevious">
-                    <a href="#" ng-click="onPrevious()">
+                    <a href="#" ng-click="onPrevious()" analytics-on="click" analytics-event="CampaignWizard_Previous">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -74,7 +74,7 @@
             <legend>Choose a Clique</legend>
             <p class="legend-help-text">
                 <em class="text-muted">
-                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank">here</a>
+                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank" analytics-on="click" analytics-event="CampaignWizard_CliquesDefinition">here</a>
                 </em>
             </p>
             <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
@@ -102,7 +102,7 @@
             </div>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(1)">
+                    <a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CampaignWizard_StepOne">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -120,7 +120,7 @@
             <fieldset>
                 <label>Base Bid (CPM) *</label>
                 &nbsp;&nbsp;&nbsp;
-                <a href="#" tooltip="{{ TOOLTIPS.base_bid }}">
+                <a href="#" tooltip="{{ TOOLTIPS.base_bid }}" analytics-on="click" analytics-event="CampaignWizard_TooltipBaseBid">
                     <em class="fa fa-question-circle"></em>
                 </a>
                 <div class="input-group">
@@ -130,7 +130,7 @@
                 <br/>
                 <label>Max Bid (CPM) *</label>
                 &nbsp;&nbsp;&nbsp;
-                <a href="#" tooltip="{{ TOOLTIPS.max_bid }}">
+                <a href="#" tooltip="{{ TOOLTIPS.max_bid }}" analytics-on="click" analytics-event="CampaignWizard_TooltipMaxBid">
                     <em class="fa fa-question-circle"></em>
                 </a>
                 <div class="input-group">
@@ -140,7 +140,7 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(2)">
+                    <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -169,27 +169,35 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="creative in campaign.creatives">
-                                <td><img ng-src="{{ creative.url }}" class="smallthumbnail"/></td>
+                                <td><img ng-src="{{ creative.type === 'native' ? creative.rawImageUrl : creative.url }}" class="smallthumbnail"/></td>
                                 <td>
                                     <input type="text" name="creative.name" data-ng-model="creative.name" data-parsley-group="step4" required="required" class="form-control" />
                                 </td>
-                                <td><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                                <td><p class="form-control-static">{{ creative.type === 'native' ? "Native" : creative.w + "x" + creative.h }}</td>
                                 <td>
                                     <input ng-show="creative.type != 'doubleclick'" type="url" data-parsley-type="url" name="creative.click_url" data-ng-model="creative.click_url" data-parsley-group="step4" required="required" class="form-control" />
                                     <em ng-show="creative.type === 'doubleclick'">Set by DoubleClick</em>
                                 </td>
-                                <td><button type="button" ng-click="campaign.removeCreative(creative)" class="btn btn-danger btn-xs"><span class="icon-trash mr"></span>Remove</button></td>
+                                <td><button type="button" ng-click="campaign.removeCreative(creative)" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CampaignWizard_RemoveCreative"><span class="icon-trash mr"></span>Remove</button></td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </tab>
-                <tab heading="Cliques Hosted">
-                    <div class="row" id="creativeUploader">
-                        <creative-uploader wizardstep="step4" uploader="uploader" onuploadall="validateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                <tab ng-if="campaign.type === 'native'">
+                    <tab-heading>
+                        Native <span class="label label-primary">Beta</span>
+                    </tab-heading>
+                    <div class="row" id="nativeUploader">
+                        <native-creative-uploader wizardstep="step4" uploader="nativeUploader" onuploadall="nativeValidateAndUpload(wizard.validateStep(4))" width="12"> </native-creative-uploader>
                     </div>
                 </tab>
-                <tab heading="DoubleClick">
+                <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+                    <div class="row" id="creativeUploader">
+                        <creative-uploader wizardstep="step4" uploader="displayUploader" onuploadall="displayValidateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
+                    </div>
+                </tab>
+                <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
                     <div class="row" id="dcmUploader">
                         <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
                     </div>
@@ -197,7 +205,7 @@
             </tabset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(3)">
+                    <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
@@ -213,7 +221,7 @@
             <legend>Review & Submit</legend>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <fieldset>
-                <h5>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)"><span class="fa fa-edit"></span></a></h5>
+                <h5>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CampaignWizard_StepOne"><span class="fa fa-edit"></span></a></h5>
                 <div class="col-sm-4"><b>Name</b></div><div class="col-sm-8">{{ campaign.name }}</div>
                 <div class="col-sm-4"><b>Description</b></div><div class="col-sm-8">{{ campaign.description || &apos;empty&apos; }}</div>
                 <div class="col-sm-4"><b>Budget</b></div><div class="col-sm-8">{{ campaign.budget | currency:"$":0 }}</div>
@@ -221,26 +229,26 @@
                 <div class="col-sm-4"><b>End Date</b></div><div class="col-sm-8">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
             </fieldset>
             <fieldset>
-                <h5>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)"><span class="fa fa-edit"></span></a></h5>
+                <h5>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo"><span class="fa fa-edit"></span></a></h5>
                 <div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>
             </fieldset>
             <fieldset>
-                <h5>Bid Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)"><span class="fa fa-edit"></span></a></h5>
+                <h5>Bid Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree"><span class="fa fa-edit"></span></a></h5>
                 <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
                 <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
             </fieldset>
             <fieldset>
-                <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)"><span class="fa fa-edit"></span></a></h5>
+                <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="creative in campaign.creatives">
                     <div class="col-sm-4 text-center">
-                        <div class="col-sm-12"><em>{{ creative.name }}</em></div>
-                        <img ng-src="{{ creative.url }}" class="smallthumbnail">
+                        <div class="col-sm-12"><em>{{ creative.name }} {{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
+                        <img ng-src="{{ creative.type === 'native' ? creative.native.rawImageUrl : creative.url }}" class="smallthumbnail">
                     </div>
                 </div>
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(4)">
+                    <a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour">
                         <span>&larr; Previous</span>
                     </a>
                 </li>

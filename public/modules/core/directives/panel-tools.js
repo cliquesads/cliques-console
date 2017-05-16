@@ -11,7 +11,7 @@
 angular.module('core').directive('paneltool', ["$compile", "$timeout", function($compile, $timeout){
   var templates = {
     /* jshint multistr: true */
-    collapse:"<a href='#' panel-collapse='' tooltip='Collapse Panel' ng-click='{{panelId}} = !{{panelId}}'> \
+    collapse:"<a href='#' panel-collapse='' tooltip='Show/Hide Details' ng-click='{{panelId}} = !{{panelId}}'> \
                 <em ng-show='{{panelId}}' class='fa fa-plus'></em> \
                 <em ng-show='!{{panelId}}' class='fa fa-minus'></em> \
               </a>",
@@ -80,10 +80,12 @@ angular.module('core').directive('paneltool', ["$compile", "$timeout", function(
 
         // Run the animation before destroy the panel
         function destroyMiddleware() {
-          if(Utils.support.animation) {
-            parent.animo({animation: 'bounceOut'}, destroyPanel);
-          }
-          else destroyPanel();
+          // disable animation, I don't think this is useful
+          // if(Utils.support.animation) {
+          //   parent.animo({animation: 'flash'}, destroyPanel);
+          // }
+          // else destroyPanel();
+          destroyPanel();
         }
 
         function destroyPanel() {

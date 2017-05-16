@@ -32,7 +32,7 @@
                         <div ng-switch-when="true">
                             <div class="col-md-12 text-center">
                                 <h4><i class="fa fa-2x fa-times-circle"></i>  Sorry, only admins have access to this page.</h4>.
-                                <p>Please contact your Organization's administrator, <a href="mailto:{{ organization.owner.email}}">{{ organization.owner.displayName }}</a></p>
+                                <p>Please contact your Organization's administrator, <a href="mailto:{{ organization.owner.email}}" analytics-on="click" analytics-event="Settings_ContactOrgAdmin">{{ organization.owner.displayName }}</a></p>
                             </div>
                         </div>
                         <div ng-switch-default>
