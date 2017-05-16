@@ -47,6 +47,11 @@ angular.module('analytics').directive('queryTable', [
 						scope.queryParam.dateGroupBy,
 						$rootScope.role
 					);
+					scope.headers.forEach(function(header) {
+						if (scope.queryParam.dataHeaders.indexOf(header.name) !== -1) {
+							header.selected = true;
+						}
+					});
 				});
 
 				/**
