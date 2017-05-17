@@ -32,7 +32,7 @@
     </fieldset>
     <fieldset>
         <div class="col-sm-4">
-            <h4><i class="fa fa-mobile"></i> Mobile</h4>
+            <h4><i class="fa fa-mobile"></i> Mobile / <i class="fa fa-tablet"></i> Tablet</h4>
         </div>
         <div class="col-sm-3">
             <div class="form-group form-control-static">
@@ -46,23 +46,6 @@
         <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
         <textarea ng-show="placement.native.mobile.active" ng-required="placement.native.mobile.active" ng-model="placement.native.mobile.template" id="mobileTemplate" rows=7 name="mobileTemplate" placeholder="<div>I am a mobile native template!</div>" class="form-control code-input"></textarea>
         <span ng-show="validateInput('mobileTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
-    </fieldset>
-    <fieldset>
-        <div class="col-sm-4">
-            <h4><i class="fa fa-tablet"></i> Tablet</h4>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group form-control-static">
-                <label class="switch">
-                    <input type="checkbox" checked="checked" ng-model="placement.native.tablet.active"/>
-                    <span></span>
-                </label>
-                <div class="label" ng-class="placement.native.tablet.active ? 'label-success':'label-default'">{{ placement.native.tablet.active ? "Active":"Inactive"}}</div>
-            </div>
-        </div>
-        <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
-        <textarea ng-show="placement.native.tablet.active" ng-required="placement.native.tablet.active" ng-model="placement.native.tablet.template" id="tabletTemplate" rows=7 name="tabletTemplate" placeholder="<div>I am a tablet native template!</div>" class="form-control code-input"></textarea>
-        <span ng-show="validateInput('tabletTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
     </fieldset>
     <br/>
     <div class="row text-center">
