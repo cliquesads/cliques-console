@@ -36,12 +36,14 @@ angular.module('core').controller('AdvertiserDashboardController',
             };
 
             $scope.advertiserIds = [];
+            $scope.loadingCampaigns = true;
             $scope.advertisers = Advertiser.query(function(advertisers){
                 // after getting all advertisers, kick off request to get hourlyAdStat data as well,
                 // which we will then bind to the appropriate Campaign
                 HourlyAdStat.advSummaryQuery({
                     groupBy: 'campaign'
                 }).then(function(response){
+                    // $scope.loadingCampaigns = true;
                     advertisers.forEach(function(adv){
                         $scope.advertiserIds.push(adv._id);
                         _.orderBy(adv.campaigns, ['active', '']);
@@ -67,6 +69,7 @@ angular.module('core').controller('AdvertiserDashboardController',
 
                     // Sort all campaigns array
                     $scope.allCampaigns = _.orderBy($scope.allCampaigns, ['active','imps','tstamp'],['desc','desc']);
+                    $scope.loadingCampaigns = false;
 
                     // Now set current campaign view
                     $scope.currentlyShowingCampaigns = _.slice($scope.allCampaigns, 0, $scope.CAMPAIGNS_TO_SHOW);
