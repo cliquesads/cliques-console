@@ -2,13 +2,21 @@
 <div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
 <form id="nativeSpecsForm" name="nativeSpecsForm" data-ng-submit="save()">
     <fieldset>
-        <label class="col-sm-3">Brand Disclosure *</label>
-        <div class="col-sm-4 form-group">
-            <input type="text" id="prefix" name="prefix" required="required" ng-model="placement.native.brandDisclosurePrefix"/>
+        <div class="row pb">
+            <label class="col-sm-3">Brand Disclosure Prefix*</label>
+            <div class="col-sm-4 form-group">
+                <input type="text" id="prefix" name="prefix" required="required" class="form-control" ng-model="placement.native.brandDisclosurePrefix"/>
+            </div>
+            <label class="col-sm-3" for="descriptionLength">Max Description Length *</label>
+            <div class="col-sm-2 form-group">
+                <input type="number" required="required" id="descriptionLength" name="descriptionLength" min="{{ NATIVE_SPECS.copyLong.minChars }}" max="{{ NATIVE_SPECS.copyLong.maxChars }}" class="form-control" data-ng-model="placement.native.copyLongMaxLength">
+            </div>
         </div>
-        <label class="col-sm-3" for="descriptionLength">Max Description Length *</label>
-        <div class="col-sm-2 form-group">
-            <input type="number" required="required" id="descriptionLength" name="descriptionLength" min="{{ NATIVE_SPECS.copyLong.minChars }}" max="{{ NATIVE_SPECS.copyLong.maxChars }}" class="form-control" data-ng-model="placement.native.copyLongMaxLength">
+        <div class="row">
+            <label class="col-sm-3">Advertisement Disclosure *</label>
+            <div class="col-sm-4 form-group">
+                <input type="text" id="adDisclosure" name="adDisclosure" required="required" class="form-control" ng-model="placement.native.advertisementDisclosure"/>
+            </div>
         </div>
     </fieldset>
     <fieldset>
