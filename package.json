@@ -1,7 +1,7 @@
 {
   "name": "cliques-console",
   "description": "Dashboard to create, control & analyze all Cliques campaigns & sites.",
-  "version": "1.0.1",
+  "version": "1.0.11",
   "author": "Cliques Labs Inc.",
   "engines": {
     "node": "5.5.x",
