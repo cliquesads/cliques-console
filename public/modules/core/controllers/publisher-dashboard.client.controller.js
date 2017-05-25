@@ -40,6 +40,7 @@ angular.module('core').controller('PublisherDashboardController',
         };
 
         $scope.publisherIds = [];
+        $scope.loadingSites = true;
         $scope.publishers = Publisher.query(function(publishers) {
             // after getting all publishers, kick off request to get hourlyAdStat data as well,
             // which we will then bind to the approriate Site
@@ -76,6 +77,7 @@ angular.module('core').controller('PublisherDashboardController',
 
                 // Sort all sites array
                 $scope.allSites = _.orderBy($scope.allSites, ['active','imps'],['desc','desc']);
+                $scope.loadingSites = false;
 
                 // Now set current site view
                 $scope.currentlyShowingSites = _.slice($scope.allSites, 0, $scope.SITES_TO_SHOW);

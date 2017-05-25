@@ -1,5 +1,5 @@
 <section data-ng-controller="AdvertiserDashboardController">
-    <div class="jumbotron text-center" ng-show="advertisers.$resolved && allCampaigns.length === 0">
+    <div class="jumbotron text-center" ng-show="advertisers.$resolved && !loadingCampaigns && allCampaigns.length === 0">
         <div class="text-center">
             Thanks for being a part of the Cliques Beta Program!
         </div>
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="row" ng-show="advertisers.$resolved && allCampaigns.length > 0">
+    <div class="row" ng-show="advertisers.$resolved">
         <!-- My Campaigns Section -->
         <div class="col-lg-6 col-sm-12">
             <div class="width-90">
@@ -26,7 +26,7 @@
                 </span>
             </div>
             <!-- Begin Loader-->
-            <section ng-show="allCampaigns.length === 0">
+            <section ng-show="loadingCampaigns">
                 <div class="panel panel-default width-90">
                     <div class="panel-body text-center">
                         <h4>Loading...</h4>
@@ -36,7 +36,7 @@
             </section>
 
             <!--Begin campaign section contents -->
-            <section ng-show="allCampaigns.length > 0">
+            <section ng-show="!loadingCampaigns">
                 <!-- scroll up campaigns button -->
                 <div ng-if="showingCampaignEndIndex > CAMPAIGNS_TO_SHOW - 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
