@@ -167,10 +167,10 @@
                                     </p>
                                     <small class="text-muted">{{ DEFAULT_TYPES[placement.defaultType].description }}</small>
                                 </td>
-                                <td class="col-sm-3 edit-inline hover-visible" ng-click="editNativeSpecs(placement)">
+                                <td class="col-sm-3 edit-inline hover-visible">
                                     <div ng-switch="placement.type">
-                                        <div ng-switch-when="native">
-                                            <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditDefaultCondition">
+                                        <div ng-switch-when="native" ng-click="editNativeSpecs(placement)">
+                                            <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditNativeSpecs">
                                                 <span class="fa fa-edit"></span>
                                             </a>
                                             <p ng-repeat="form in ['desktop','mobile','tablet']" class="list-group-item-text">
