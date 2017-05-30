@@ -114,7 +114,6 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                     $scope.onSaveSuccess = function(publisher) {
                         $scope.closeThisDialog('Success');
                         placementSaveCallback(publisher);
-
                     };
                 }],
                 data: { publisher: $scope.publisher, placement: placement, page: $scope.page }

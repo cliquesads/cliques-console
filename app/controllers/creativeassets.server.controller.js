@@ -19,11 +19,6 @@ var DISPLAY_BUCKET = 'cliquesads-creativeassets-us';
 // Use non-secure URL for now, secureURL is virtual field on creative model
 var DISPLAY_BASE_URL = 'http://storage.googleapis.com/'+DISPLAY_BUCKET+'/';
 
-// Bucket to store raw native ad images
-// var NATIVE_BUCKET = 'cliquesads-native-images-us';
-// Use non-secure URL for now, secureURL is virtual field on creative model
-// var NATIVE_BASE_URL = 'http://storage.googleapis.com/'+NATIVE_BUCKET+'/';
-
 module.exports = function(db) {
     return {
         display: {
@@ -74,12 +69,10 @@ module.exports = function(db) {
         },
         native: {
             /**
-             * Handles upload of creative asset to Google Cloud Storage.
-             *
-             * Uploads to gcloud storage, makes file public and then returns
-             * public URL.
+             * Handles upload of native image to Cloudinary, where it can be transformed on the fly via
+             * transformation URL's.
              */
-            uploadImage: function (req, res, next) {
+            uploadImage: function (req, res) {
                 cloudinary.v2.uploader.upload(req.file.path, {
                     use_filename: true
                 }, function(err, result){
