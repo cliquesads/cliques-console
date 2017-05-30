@@ -169,7 +169,7 @@
                             </thead>
                             <tbody>
                             <tr ng-repeat="creative in campaign.creatives">
-                                <td><img ng-src="{{ creative.type === 'native' ? creative.rawImageUrl : creative.url }}" class="smallthumbnail"/></td>
+                                <td><img ng-src="{{ creative.type === 'native' ? creative.imageUrl : creative.url }}" class="smallthumbnail"/></td>
                                 <td>
                                     <input type="text" name="creative.name" data-ng-model="creative.name" data-parsley-group="step4" required="required" class="form-control" />
                                 </td>
@@ -242,7 +242,7 @@
                 <div ng-repeat="creative in campaign.creatives">
                     <div class="col-sm-4 text-center">
                         <div class="col-sm-12"><em>{{ creative.name }} {{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
-                        <img ng-src="{{ creative.type === 'native' ? creative.native.rawImageUrl : creative.url }}" class="smallthumbnail">
+                        <img ng-src="{{ creative.type === 'native' ? creative.native.imageUrl : creative.url }}" class="smallthumbnail">
                     </div>
                 </div>
             </fieldset>
