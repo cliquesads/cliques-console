@@ -1,9 +1,9 @@
 <div id="nativeCreativePreview" class="native-preview">
     <a href="{{ creative.click_url }}">
         <div class="advertisement-disclosure">Advertisement</div>
-        <img src="{{ creative.native.secureRawImageUrl }}" class="native-image">
-        <h4>{{ creative.native.copyShort }}</h4>
+        <img src="{{ creative.native.secureImageUrl }}" class="native-image">
+        <h4>{{ creative.native.headline }}</h4>
         <small class="brand-disclosure"><em>Sponsored by <strong>{{ advertiser.name }}</strong></em></small>
-        <p>{{ creative.native.copyLong }}</p>
+        <p>{{ creative.native.description }}</p>
     </a>
 </div>
