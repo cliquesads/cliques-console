@@ -53,11 +53,11 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
             //                         click_url: fileItem.click_url,
             //                         type: 'native',
             //                         native: {
-            //                             rawImageUrl: fileItem.rawImageUrl,
+            //                             imageUrl: fileItem.imageUrl,
             //                             rawImageW: fileItem.rawImageW,
             //                             rawImageH: fileItem.rawImageH,
-            //                             copyLong: fileItem.copyLong,
-            //                             copyShort: fileItem.copyShort,
+            //                             description: fileItem.description,
+            //                             headline: fileItem.headline,
             //                             logoUrl: advertiser.logo_url,
             //                             logoH: self.height,
             //                             logoW: self.width
@@ -87,11 +87,11 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         h: 1,
                         w: 1,
                         native: {
-                            rawImageUrl: fileItem.rawImageUrl,
+                            imageUrl: fileItem.imageUrl,
                             rawImageW: fileItem.rawImageW,
                             rawImageH: fileItem.rawImageH,
-                            copyLong: fileItem.copyLong,
-                            copyShort: fileItem.copyShort,
+                            description: fileItem.description,
+                            headline: fileItem.headline,
                             logoUrl: advertiser.logo_url,
                             logoH: 20, // TODO: Update w/ real number
                             logoW: 20 // TODO: Update w/ real number

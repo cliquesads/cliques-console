@@ -105,7 +105,7 @@ angular.module('advertiser').directive('nativeCreativeUploader', [
                 };
                 scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
                     // Add Google Cloud URL to fileitem when it successfully uploads
-                    fileItem.rawImageUrl = response.url;
+                    fileItem.imageUrl = response.url;
                 };
 
                 scope.uploadAllWrapper = function(){

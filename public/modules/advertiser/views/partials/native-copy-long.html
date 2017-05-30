@@ -2,18 +2,18 @@
     <textarea ng-model="nativeModel.description"
               id="{{ inputId }}"
               name="{{ inputId }}"
-              ng-maxlength="{{ NATIVE_SPECS.copyLong.maxChars }}"
-              ng-minlength="{{ NATIVE_SPECS.copyLong.minChars }}"
+              ng-maxlength="{{ NATIVE_SPECS.description.maxChars }}"
+              ng-minlength="{{ NATIVE_SPECS.description.minChars }}"
               data-parsley-group="{{ wizardstep }}"
               rows="{{ rows }}"
               required="true"
-              placeholder="Min {{ NATIVE_SPECS.copyLong.minChars }} characters, Max {{ NATIVE_SPECS.copyLong.maxChars }}."
+              placeholder="Min {{ NATIVE_SPECS.description.minChars }} characters, Max {{ NATIVE_SPECS.description.maxChars }}."
               class="note-editor" >
     </textarea>
 </span>
 <span class="col-sm-12">
-    <small ng-class="NATIVE_SPECS.copyLong.minChars <= form[inputId].$viewValue.length
-                    && form[inputId].$viewValue.length <= NATIVE_SPECS.copyLong.maxChars ?
+    <small ng-class="NATIVE_SPECS.description.minChars <= form[inputId].$viewValue.length
+                    && form[inputId].$viewValue.length <= NATIVE_SPECS.description.maxChars ?
                     'text-success' : 'text-danger'">
         Current length: <strong>{{ form[inputId].$viewValue.length || 0 }}</strong>
     </small>
