@@ -1,0 +1,59 @@
+<div class="topsavebar bg-primary-light" ng-show="dirty">
+	<div class="text-center">
+		<button type="button"
+			class="btn btn-lg btn-default"
+			ng-click="save()"
+			analytics-on="click"
+			analytics-event="GeoTargeting_Save">
+			Save	
+		</button>
+		<button type="button"
+			class="btn btn-lg btn-default"
+			ng-click="initializeAllTrees()"
+			analytics-in="click"
+			analytics-event="GeoTargeting_Reset">
+			Reset	
+		</button>
+	</div>	
+</div>
+<div class="col-sm-12">
+	<div class="panel">
+		<div class="panel-heading">
+			<h4>
+				<i class="fa fa-sitemap"></i>&nbsp;&nbsp;Default Bidding
+				<a class="fa fa-lg fa-question-circle pull-right"
+					ng-click="getAllGeosHelp()"
+					analytics-on="click"
+					analytics-event="GeoTargeting_GetAllGeosHelp">
+				</a>
+			</h4>
+			<em class="text-muted">
+				Your base bide is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all geo targets in this list.
+			</em>
+		</div>
+		<div class="panel-body">
+			<!-- TO-DO:::ycx Geo map goes in here -->
+		</div>
+	</div>
+</div>
+
+<div class="col-sm-6">
+	<div class="panel">
+		<div class="panel-heading bg-success">
+			<h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
+		</div>
+		<div class="panel-body">
+			<!-- DND trees that contain geo targets goes in here -->
+		</div>
+	</div>	
+</div>
+<div class="col-sm-6">
+	<div class="panel">
+		<div class="panel-heading bg-danger">
+			<h4><i class="fa fa-ban"></i>  Blocked</h4>
+		</div>
+		<div class="panel-body">
+			<!-- DND trees that contain blocked geo targets goes in here -->
+		</div>
+	</div>	
+</div>
