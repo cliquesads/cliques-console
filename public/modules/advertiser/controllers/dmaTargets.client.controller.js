@@ -18,13 +18,16 @@ angular.module('advertiser').controller('dmaTargetsController', ['$scope','DMA',
         // TODO: THIS IS FUCKING HORRIBLE FIX THIS
         // Have to replace dma_targets w/ options from dmas list in order to properly populate directive
         var lambda = function(dmaObj){ return dmaObj._id === target.target;};
-        for (var j=0; j < $scope.campaign.dma_targets.length; j++){
-            var target = $scope.campaign.dma_targets[j];
-            $scope.campaign.dma_targets[j] = _.find($scope.dmas, lambda);
-            $scope.campaign.dma_targets[j].weight = target.weight;
-            // TODO: THIS IS A HACK, otherwise overwrite dma targets when dialog is closed * opened again
-            $scope.campaign.dma_targets[j].target = $scope.campaign.dma_targets[j]._id;
+        if ($scope.campaign.dma_targets) {
+            for (var j=0; j < $scope.campaign.dma_targets.length; j++){
+                var target = $scope.campaign.dma_targets[j];
+                $scope.campaign.dma_targets[j] = _.find($scope.dmas, lambda);
+                $scope.campaign.dma_targets[j].weight = target.weight;
+                // TODO: THIS IS A HACK, otherwise overwrite dma targets when dialog is closed * opened again
+                $scope.campaign.dma_targets[j].target = $scope.campaign.dma_targets[j]._id;
+            }
         }
+
     });
 
     $scope.updateAndClose = function(){

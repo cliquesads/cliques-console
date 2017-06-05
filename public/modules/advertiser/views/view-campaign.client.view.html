@@ -205,11 +205,18 @@ adding hook in parent template ---->
                                 <fieldset>
                                     <small><em class="text-muted">Geographical</em></small>
                                     <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">DMAs</label>
+                                        <label class="col-sm-4 control-label">Countries, Regions & Cities</label>
                                         <div class="col-sm-8">
                                             <p class="form-control-static">
                                                 <strong>
-                                                    <a href="#" ng-click="editDMATargets()" analytics-on="click" analytics-event="ViewCampaign_EditDMATargets"><span class="fa fa-sliders"></span>  {{ campaign.dma_targets.length || 0 }} DMA Targets Set</a>
+                                                    <a
+                                                        data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/geo-targets"
+                                                        analytics-on="click"
+                                                        analytics-event="ViewCampaign_GeoTargets">
+                                                        <span class="fa fa-sliders"></span>
+                                                        {{ campaign.geo_targets.length + campaign.blocked_geo.length || 0 }} Geo Targets Set
+                                                    </a>
+                                                    <!-- <a href="#" ng-click="editDMATargets()" analytics-on="click" analytics-event="ViewCampaign_EditDMATargets"><span class="fa fa-sliders"></span>  {{ campaign.dma_targets.length || 0 }} DMA Targets Set</a> -->
                                                 </strong>
                                             </p>
                                         </div>
