@@ -9,13 +9,15 @@ angular.module('analytics').directive('queryGeo', [
 	'$state',
 	'Region',
 	'City',
+	'$window',
 	function(
 		Analytics,
 		$rootScope,
 		$filter,
 		$state,
 		Region,
-		City
+		City,
+		$window
 	) {
 		'use strict';
 		return {
@@ -194,7 +196,8 @@ angular.module('analytics').directive('queryGeo', [
 					// prepare for mapObject
 					scope.mapObject = {
 						options: {
-							width: 1110,
+							// currenty window inner width minus the width of the sidebar
+							width: $window.innerWidth - 294,
 							legendHeight: 60 // optionally set the padding for the legend
 						},
 						geographyConfig: {
