@@ -14,7 +14,7 @@ require('./_main')(function(GLOBALS){
 
     require('moment-range');
 
-    var mailer = new mail.Mailer();
+    var mailer = new mail.Mailer({ templatePath: __dirname + '/../app/views/templates' });
 
     // Initialize all models needed
     var aggregationModels = new models.AggregationModels(db);
