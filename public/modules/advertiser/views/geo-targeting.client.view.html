@@ -16,6 +16,25 @@
 		</button>
 	</div>	
 </div>
+
+<!-- Action options to allow user to customize bidding for or block selected geo area -->
+<div class="topsavebar bg-primary-light"
+	ng-if="showingActionOptions">
+	<div class="text-center text-muted">
+		For <strong>{{ selectedGeoId }}</strong>, do you want to customize bidding or block? 
+		<button type="button"
+			class="btn btn-success btn-xs ml"
+			ng-click="customizeBidding()">
+			<i class="fa fa-sliders"></i>
+		</button>
+		<button type="button"
+			class="btn btn-danger btn-xs ml"
+			ng-click="block()">
+			<i class="fa fa-ban"></i>
+		</button>
+	</div>	
+</div>
+
 <div class="col-sm-12">
 	<div class="panel">
 		<div class="panel-heading">
@@ -28,11 +47,36 @@
 				</a>
 			</h4>
 			<em class="text-muted">
-				Your base bide is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all geo targets in this list.
+				Your base bide is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all geo targets in this map.
 			</em>
 		</div>
 		<div class="panel-body">
-			<!-- TO-DO:::ycx Geo map goes in here -->
+			<!-- Map -->
+			<datamap
+				data-ng-if="mapAvailable"
+				class="pb0"
+				on-click="mapClicked"
+				map="mapObject"
+				plugins="mapPlugins"
+				plugin-data="mapPluginData">
+			</datamap>	
+
+			<!-- Placeholder for non-USA users -->
+			<div ng-if="!mapAvailable"
+				class="text-center">
+				<h3><i class="fa fa-lg fa-globe"></i> States map only available for United States</h3>	
+				<p class="mb-lg">Stay tuned for updates!</p>
+				<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>
+			</div>
+
+			<!-- Button to reload world map -->
+			<div class="pull-right"
+				ng-if="mapObject.scope !== 'world'">
+				<button class="btn btn-default"
+					ng-click="reloadWorldMap()">
+					Back to world map
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
