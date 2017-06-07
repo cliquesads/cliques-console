@@ -1,7 +1,7 @@
 <div class="topsavebar bg-primary-light" ng-show="dirty">
 	<div class="text-center">
 		<button type="button"
-			class="btn btn-lg btn-default"
+			class="btn btn-lg btn-primary"
 			ng-click="save()"
 			analytics-on="click"
 			analytics-event="GeoTargeting_Save">
@@ -9,7 +9,7 @@
 		</button>
 		<button type="button"
 			class="btn btn-lg btn-default"
-			ng-click="initializeAllTrees()"
+			ng-click="reset()"
 			analytics-in="click"
 			analytics-event="GeoTargeting_Reset">
 			Reset	
@@ -21,15 +21,19 @@
 <div class="topsavebar bg-primary-light"
 	ng-if="showingActionOptions">
 	<div class="text-center text-muted">
-		For <strong>{{ selectedGeoId }}</strong>, do you want to customize bidding or block? 
+		For 
+		<strong>{{ selectedGeo.name }}</strong>
+		<span ng-if="selectedGeo.type === 'region'"> in 
+			<strong>{{selectedGeo.countryName}}</strong>
+		</span>, do you want to customize bidding or block? 
 		<button type="button"
 			class="btn btn-success btn-xs ml"
-			ng-click="customizeBidding()">
+			ng-click="customizeBiddingForGeo()">
 			<i class="fa fa-sliders"></i>
 		</button>
 		<button type="button"
 			class="btn btn-danger btn-xs ml"
-			ng-click="block()">
+			ng-click="blockGeo()">
 			<i class="fa fa-ban"></i>
 		</button>
 	</div>	
@@ -103,6 +107,44 @@
 						<th>Actions</th>
 					</tr>
 				</thead>	
+				<tbody>
+					<tr ng-repeat="node in geoTargets">
+						<th class="v-middle wd-md">{{ node.nodeName }}</th>	
+						<th>
+							<rzslider
+								rz-slider-model="node.weight"
+								rz-slider-options="{
+									floor: 0,
+									ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,
+									step: 0.0001,
+									precision: 4,
+									id: target,
+									showSelectionBar: true,
+									onStart: onStart,
+									hideLimitLabels: true
+								}">
+							</rzslider>
+						</th>
+						<th>
+							<span>
+		                        <strong>
+		                        	{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}
+		                        </strong>
+		                    </span>
+						</th>
+						<th>
+							<!-- TO-DO:::ycx add average CPM here -->
+						</th>
+						<th>
+							<button type="button"
+								class="btn btn-xs bg-gray-light"
+								ng-click="removeGeoTarget(node)"
+								tooltip="Clear Bids">
+								<i class="fa fa-lg fa-remove"></i>	
+							</button>
+						</th>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>	
@@ -120,6 +162,19 @@
 						<th>Actions</th>
 					</tr>
 				</thead>
+				<tbody>
+					<tr ng-repeat="node in blockedGeos">
+						<th>{{ node.nodeName }}</th>
+						<th>
+							<button type="button"
+								class="btn btn-xs bg-gray-light"
+								ng-click="removeBlockedGeo(node)"
+								tooltip="Unblock">
+								<i class="fa fa-lg fa-remove"></i>	
+							</button>
+						</th>	
+					</tr>
+				</tbody>
 			</table>
 		</div>
 	</div>	

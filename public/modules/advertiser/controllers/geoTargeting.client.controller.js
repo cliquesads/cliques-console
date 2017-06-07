@@ -2,8 +2,11 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope) {
+	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region',
+	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region) {
+
+		$scope.Math = Math;
+		$scope.dirty = false;
 
 		/**
 		 * Get Campaign from URL state params on load
@@ -12,15 +15,17 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.campaignIndex = campaign.index;
 		$scope.campaign = campaign.campaign;
 
+		// TO-DO:::ycx these 2 arrays should be initialized by the value in database
+		$scope.geoTargets = [];
+		$scope.blockedGeos = [];
+
 		var mapScope = 'world';
 		$scope.mapAvailable = true;
 		if ($rootScope.selectedGeo) {
 			$scope.selectedGeo = $rootScope.selectedGeo;
 			$scope.showingActionOptions = true;
-			if ($scope.selectedGeo.id === 'USA') {
-				mapScope = 'usa';
-			} else {
-				// so far only USA map is supported, more country maps will be added
+			mapScope = 'usa';
+			if ($scope.selectedGeo.type === 'country' && $scope.selectedGeo.id !== 'USA') {
 				mapScope = 'custom';
 				$scope.mapAvailable = false;
 			}
@@ -37,7 +42,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		var popupTemplate = function(geo, data) {
 			return [
 				'<div class="hoverinfo">',
-				data.name + '<br>',
+				geo.properties.name + '<br>',
 				'</div>'
 			].join('');
 		};
@@ -67,6 +72,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				selectedGeo.type = 'country';
 			} else {
 				selectedGeo.type = 'region';
+				selectedGeo.countryName = $rootScope.selectedGeo.name;
+				selectedGeo.countryId = $rootScope.selectedGeo.id;
 			}
 
 			$rootScope.selectedGeo = selectedGeo;
@@ -87,6 +94,76 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}],
 				data: {campaign: $scope.campaign}
 			});
+		};
+
+		var initializeGeoNode = function(nodeName, nodeType, nodeId) {
+			return {
+				nodeName: nodeName,
+				nodeType: nodeType,
+				target: nodeId,
+				weight: 1.0
+			};
+		};
+
+		$scope.customizeBiddingForGeo = function() {
+			$scope.showingActionOptions = false;
+			$scope.dirty = true;
+			if ($scope.selectedGeo.type === 'country') {
+				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
+				.then(function(response) {
+					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					$scope.geoTargets.push(newGeoNode);
+				});
+			} else {
+				var regionId = $scope.selectedGeo.countryId + '-' + $scope.selectedGeo.id;
+				Region.readOne({regionId: regionId}).$promise
+				.then(function(response) {
+					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Region', response._id);
+					$scope.geoTargets.push(newGeoNode);
+				});
+			}
+		};
+
+		$scope.blockGeo = function() {
+			$scope.showingActionOptions = false;
+			$scope.dirty = true;
+			if ($scope.selectedGeo.type === 'country') {
+				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
+				.then(function(response) {
+					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					$scope.blockedGeos.push(newBlockNode);
+				});
+			} else {
+				var regionId = $scope.selectedGeo.countryId + '-' + $scope.selectedGeo.id;
+				Region.readOne({regionId: regionId}).$promise
+				.then(function(response) {
+					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					$scope.blockedGeos.push(newBlockNode);
+				});
+			}
+		};
+
+		$scope.removeGeoTarget = function(node) {
+			var nodeIndex = $scope.geoTargets.indexOf(node);
+			$scope.geoTargets.splice(nodeIndex, 1);
+		};
+
+		$scope.removeBlockedGeo = function(node) {
+			var nodeIndex = $scope.blockedGeos.indexOf(node);
+			$scope.blockedGeos.splice(nodeIndex, 1);
+		};
+
+		/**
+		 * Save handler. Converts geo_targets to geoTargetSchema DB format,
+		 * and converts blocked_geos to DB format, updates advertiser.
+		 */
+		$scope.save = function() {
+			// TO-DO:::ycx	
+		};
+
+		// Undo all unsaved changes
+		$scope.reset = function() {
+			// TO-DO:::ycx
 		};
 	}
 ]);
