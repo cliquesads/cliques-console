@@ -14,10 +14,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		var mapScope = 'world';
 		$scope.mapAvailable = true;
-		if ($rootScope.selectedGeoId) {
-			$scope.selectedGeoId = $rootScope.selectedGeoId;
+		if ($rootScope.selectedGeo) {
+			$scope.selectedGeo = $rootScope.selectedGeo;
 			$scope.showingActionOptions = true;
-			if ($rootScope.selectedGeoId === 'USA') {
+			if ($scope.selectedGeo.id === 'USA') {
 				mapScope = 'usa';
 			} else {
 				// so far only USA map is supported, more country maps will be added
@@ -59,12 +59,22 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.mapClicked = function(geography) {
 			// Map clicked, should zoom into the clicked area, also show option to customize bidding or block the area
 			// Datamap doesn't allow dynamically changing map scope, so need to reload state with selected country/region as stateParam
-			$rootScope.selectedGeoId = geography.id;
+			var selectedGeo = {
+				id: geography.id,
+				name: geography.properties.name
+			};
+			if ($scope.mapObject.scope === 'world') {
+				selectedGeo.type = 'country';
+			} else {
+				selectedGeo.type = 'region';
+			}
+
+			$rootScope.selectedGeo = selectedGeo;
 			$state.reload();
 		};
 
 		$scope.reloadWorldMap = function() {
-			delete $rootScope.selectedGeoId;
+			delete $rootScope.selectedGeo;
 			$state.reload();
 		};
 
