@@ -24,7 +24,6 @@ function addInsClickAttribute(ins){
     ins.setAttribute("data-dcm-click-tracker","${CLICK_URL}");
 }
 
-//Articles service used for communicating with the articles REST endpoints
 angular.module('advertiser').factory('DoubleClickTag', [
     function() {
         var JavascriptTag = function(tag){
