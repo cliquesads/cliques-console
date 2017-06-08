@@ -232,7 +232,16 @@ adding hook in parent template ---->
                                                 <tbody>
                                                     <tr ng-repeat="creative in creativegroup.creatives" ng-click="creativePreview(creative)">
                                                         <td class="col-sm-1"><span class="label" ng-class="creative.active ? 'label-success':'label-default'">{{ creative.active ? "Active":"Inactive"}}</span></td>
-                                                        <td class="col-sm-3"><img ng-src="{{ creative.type === 'native' ? creative.native.secureImageUrl : creative.secureUrl }}" class="smallthumbnail"/></td>
+                                                        <td class="col-sm-3">
+                                                            <div ng-switch="creative.hostingType">
+                                                                <div ng-switch-when="doubleclick">
+                                                                    <em><i class="fa fa-image"></i> Click to Preview</em>
+                                                                </div>
+                                                                <div ng-switch-default>
+                                                                    <img ng-src="{{ creative.type === 'native' ? creative.native.secureImageUrl : creative.secureUrl }}" class="smallthumbnail"/>
+                                                                </div>
+                                                            </div>
+                                                        </td>
                                                         <td class="col-sm-6"><span ng-class="creative.active ? 'text-bold':'text-thin'">{{ creative.name }}</span></td>
                                                         <td class="col-sm-2">{{ creative.type === 'native' ? 'Native' : creativegroup.w + 'x' + creativegroup.h }}</td>
                                                     </tr>
