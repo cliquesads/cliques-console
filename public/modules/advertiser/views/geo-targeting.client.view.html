@@ -109,7 +109,11 @@
 				</thead>	
 				<tbody>
 					<tr ng-repeat="node in geoTargets">
-						<th class="v-middle wd-md">{{ node.nodeName }}</th>	
+						<th class="v-middle wd-md">
+							<a href="#" ng-click="expandGeoNode(node)">
+								{{ node.nodeName }}
+							</a>
+						</th>	
 						<th>
 							<rzslider
 								rz-slider-model="node.weight"

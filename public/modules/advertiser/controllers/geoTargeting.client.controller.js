@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region) {
+	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper',
+	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
@@ -19,6 +19,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.geoTargets = [];
 		$scope.blockedGeos = [];
 
+		//====================================================//
+		//================ BEGIN Map Settings ================//
+		//====================================================//
 		var mapScope = 'world';
 		$scope.mapAvailable = true;
 		if ($rootScope.selectedGeo) {
@@ -70,10 +73,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			};
 			if ($scope.mapObject.scope === 'world') {
 				selectedGeo.type = 'country';
+				selectedGeo.countryName = selectedGeo.name;
+				selectedGeo.countryId = selectedGeo.id;
 			} else {
 				selectedGeo.type = 'region';
-				selectedGeo.countryName = $rootScope.selectedGeo.name;
-				selectedGeo.countryId = $rootScope.selectedGeo.id;
+				selectedGeo.countryName = $scope.selectedGeo.countryName;
+				selectedGeo.countryId = $scope.selectedGeo.countryId;
 			}
 
 			$rootScope.selectedGeo = selectedGeo;
@@ -111,7 +116,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if ($scope.selectedGeo.type === 'country') {
 				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
 				.then(function(response) {
-					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Country', response._id);
 					$scope.geoTargets.push(newGeoNode);
 				});
 			} else {
@@ -130,14 +135,14 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if ($scope.selectedGeo.type === 'country') {
 				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
 				.then(function(response) {
-					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Country', response._id);
 					$scope.blockedGeos.push(newBlockNode);
 				});
 			} else {
 				var regionId = $scope.selectedGeo.countryId + '-' + $scope.selectedGeo.id;
 				Region.readOne({regionId: regionId}).$promise
 				.then(function(response) {
-					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Geo', response._id);
+					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Region', response._id);
 					$scope.blockedGeos.push(newBlockNode);
 				});
 			}
@@ -154,11 +159,68 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		/**
+		 * Show all sub-geo within the clicked geo node,
+		 * if clicked geo node is country, show all its regions,
+		 * if clicked geo node is region, show all its cities
+		 */
+		$scope.expandGeoNode = function(node) {
+			if (node.nodeType === 'Country') {
+				Region.query({country: node.target}).$promise.
+				then(function(response) {
+					$scope.countryNode = node;
+					if (response.length >= 1) {
+						$scope.geoTargets = [];
+						response.forEach(function(region) {
+							var newRegionNode = initializeGeoNode(region.name, 'Region', region._id);
+							$scope.geoTargets.push(newRegionNode);
+						});
+					}
+				});
+			} else if (node.nodeType === 'Region') {
+				City.query({region: node.target}).$promise.
+				then(function(response) {
+					$scope.regionNode = node;
+					if (response.length > 1) {
+						$scope.geoTargets = [];
+						response.forEach(function(city) {
+							var newCityNode = initializeGeoNode(city.name, 'City', city._id);
+							$scope.geoTargets.push(newCityNode);
+						});
+					}
+				});
+			}
+		};
+
+		/**
 		 * Save handler. Converts geo_targets to geoTargetSchema DB format,
 		 * and converts blocked_geos to DB format, updates advertiser.
 		 */
 		$scope.save = function() {
-			// TO-DO:::ycx	
+			// Convert geoTargets to DB format and send to backend
+			var geoTargetsSchema = [];
+			$scope.geoTargets.forEach(function(geoTarget) {
+				geoTargetsSchema.push({
+					weight: geoTarget.weight,
+					target: geoTarget.target
+				});
+			});
+			var blockedGeosSchema = [];
+			$scope.blockedGeos.forEach(function(blockedGeo) {
+				blockedGeosSchema.push({
+					weight: blockedGeo.weight,
+					target: blockedGeo.target
+				});
+			});
+			$scope.campaign.geo_targets = geoTargetsSchema;
+			$scope.campaign.blocked_geo = blockedGeosSchema;
+			$scope.advertiser.$update(function() {
+				$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+				$scope.dirty = false;
+				Notify.alert('Thanks! Your settings have been saved.', {});
+			}, function(errorResponse) {
+				$scope.dirty = false;
+				Notify.alert('Error saving settings: ' + errorResponse.message, {status: 'danger'});
+			});
 		};
 
 		// Undo all unsaved changes
