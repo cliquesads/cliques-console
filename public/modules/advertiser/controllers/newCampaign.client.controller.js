@@ -1,6 +1,6 @@
 'use strict';
-angular.module('advertiser').controller('NewCampaignController', ['$scope','$location', 'advertiser',
-    function($scope, $location, advertiser){
+angular.module('advertiser').controller('NewCampaignController', ['$scope','$location','$analytics','advertiser','ngDialog',
+    function($scope, $location, $analytics, advertiser, ngDialog){
         // first get advertiser
         $scope.advertiser = advertiser;
         $scope.initCampaigns = $scope.advertiser.campaigns;
@@ -60,9 +60,23 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
         // Success handler
         $scope.updateAdvertiser = function(campaign){
             $scope.loading = true;
+            var loadingDialog = ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth600',
+                template: '\
+                    <h4>Saving...</h4>\
+                    <div class="row text-center">\
+                        <div class="ball-pulse">\
+                            <div></div>\
+                            <div></div>\
+                            <div></div>\
+                        </div>\
+                    </div>',
+                plain: true
+            });
+
             $scope.advertiser.campaigns.push(campaign);
             $scope.advertiser.$update(function(){
-                $scope.loading = false;
+                loadingDialog.close(0);
                 var advertiserId = $scope.advertiser._id;
                 // Since directive just pushes campaign to campaigns array, assume the last campaign
                 // is the new one
@@ -71,15 +85,26 @@ angular.module('advertiser').controller('NewCampaignController', ['$scope','$loc
                 // Go to new campaign page, passing in newModal param, which shows helper modal popup
                 $location.url('/advertiser/' + advertiserId + '/campaign/' + campaignId + '?newModal=true');
             }, function (errorResponse){
-                $scope.loading = false;
-                $scope.creation_error = errorResponse.data.message;
+                $analytics.eventTrack('NewCampaign_SaveError');
+                loadingDialog.close(1);
                 // remove campaign from advertiser campaigns if error
                 _.remove($scope.advertiser.campaigns, campaign);
+                ngDialog.open({
+                    className: 'ngdialog-theme-default dialogwidth600',
+                    template: '<br>\
+                        <div class="alert alert-danger">\
+                            <p class="text-md"><strong><i class="fa fa-lg fa-exclamation-circle"></i> The following error occurred:</strong></p>\
+                            <pre>' + errorResponse.data.message + '</pre>\
+                            <p> We\'re sorry about this.  Please contact us at <a href="mailto:support@cliquesads.com">\
+                            support@cliquesads.com</a> and include a reference to the error above.</p>\
+                        </div>',
+                    plain: true
+                });
             });
         };
 
         $scope.closeOnDraftSuccess = function(draft){
-            return $scope.closeThisDialog('Success');
+            // return $scope.closeThisDialog('Success');
         };
     }
 ]);
