@@ -182,7 +182,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				});
 			});
 			$scope.campaign.geo_targets = geoTargetsSchema;
-			$scope.campaign.blocked_geo = blockedGeosSchema;
+			$scope.campaign.blocked_geos = blockedGeosSchema;
 			$scope.advertiser.$update(function() {
 				$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
 				$scope.dirty = false;
@@ -197,10 +197,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.reset = function() {
 			// TO-DO:::ycx
 		};
-
-		//====================================================//
-		//================ END of Map Settings ===============//
-		//====================================================//
 
 		/**
 		 * Adds custom methods & properties to tree node object.
@@ -229,7 +225,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			newNode.__lock__ = false;
 			newNode.weight = node.weight || 1.0;
 
-			// Properties used by blocked_geo settings
+			// Properties used by blocked_geos settings
 			newNode.explicit = false;
 
 			// Clear old children properties, since children will be repopulated
@@ -272,6 +268,33 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			DndTreeWrapper.call(this, treeData, control, expanding_property, columns);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
+
+		/**
+		 * Loads this.data for geo_targets or blocked_geos
+		 *
+		 * Basically flattens returned data, then passes to $TreeDnDConvert function
+		 * so it can be prepared for tree
+		 * @param geos can be geo_targets or blocked_geos from backend DB
+		 * @param callback
+		 */
+		GeoTree.prototype.fromGeosInCampaign = function(geos) {
+			var flattened = [];
+			if (!geos) return;
+			geos.forEach(function(country) {
+				var countryNode = _initializeGeoTreeNode(country, 'Country', null);
+				flattened.push(countryNode);
+				country.children.forEach(function(region) {
+					var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
+					flattened.push(regionNode);
+					region.children.forEach(function(city) {
+						var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
+						flattened.push(cityNode);
+					});
+				});
+			});
+			this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
+			return this.data;
+		};
 
 		/**
 		 * Show all sub-geo within the selected geo node,
@@ -600,5 +623,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				inner(geoTree);
 			});
 		};
+
+		/**
+		 * Wrapper to initialize geo targets tree and blocked geo tree
+		 * Basically what it does for each tree are
+		 * 1. set default expand level to 0, and
+		 * 2. get stats for tree data
+		 */
+		$scope.initializeBothTrees = function() {
+			// Initialization for geo_targets tree
+			$scope.geo_targets.fromGeosInCampaign($scope.campaign.geo_targets);
+			$scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
+			$scope.geo_targets.setExpandLevel(0);
+
+			// Initialization for blocked_geos tree
+			$scope.blocked_geos.fromGeosInCampaign($scope.campaign.blocked_geos);
+			$scope.blocked_geos.setExpandLevel(0);
+		};
+
+        //======================================================================//
+        //================= END Tree Initialization Handlers ===================//
+        //======================================================================//
+
+        // Initialize targeting tree and blocked tree objects
+		$scope.initializeBothTrees();
 	}
 ]);
