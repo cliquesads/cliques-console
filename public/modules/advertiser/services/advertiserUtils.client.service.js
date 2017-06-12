@@ -31,50 +31,6 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
          * @returns {Array}
          */
         getCreativesFromNativeUploadQueue: function (uploader, advertiser) {
-            // first get logo & logo dimensions, if available
-            // $http.get({
-            //     method: 'GET',
-            //     url: advertiser.logo_url
-            // }).then(function(response){
-            //     // check added image dimensions, and remove item from queue if
-            //     // dimensions not supported
-            //     var reader = new FileReader();
-            //     var image = new Image();
-            //     // Have to use onload callbacks for both FileReader & Image objects,
-            //     // then load data to each
-            //     reader.onload = function(_file){
-            //         image.onload = function(){
-            //             var self = this;
-            //             var creatives = [];
-            //             uploader.queue.forEach(function (fileItem) {
-            //                 if (fileItem.isSuccess) {
-            //                     creatives.push({
-            //                         name: fileItem.file.name,
-            //                         click_url: fileItem.click_url,
-            //                         type: 'native',
-            //                         native: {
-            //                             imageUrl: fileItem.imageUrl,
-            //                             rawImageW: fileItem.rawImageW,
-            //                             rawImageH: fileItem.rawImageH,
-            //                             description: fileItem.description,
-            //                             headline: fileItem.headline,
-            //                             logoUrl: advertiser.logo_url,
-            //                             logoH: self.height,
-            //                             logoW: self.width
-            //                         }
-            //                     });
-            //                 }
-            //             });
-            //             return callback(null, creatives);
-            //         };
-            //         // now set image source
-            //         image.src = _file.target.result;
-            //     };
-            //     // load file
-            //     reader.readAsBinaryString(response.body);
-            // }, function(errorResponse){
-            //     return callback(errorResponse);
-            // });
             var creatives = [];
             uploader.queue.forEach(function (fileItem) {
                 if (fileItem.isSuccess) {
@@ -88,8 +44,8 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         w: 1,
                         native: {
                             imageUrl: fileItem.imageUrl,
-                            rawImageW: fileItem.rawImageW,
-                            rawImageH: fileItem.rawImageH,
+                            imageW: fileItem.rawImageW,
+                            imageH: fileItem.rawImageH,
                             description: fileItem.description,
                             headline: fileItem.headline,
                             logoUrl: advertiser.logo_url,
