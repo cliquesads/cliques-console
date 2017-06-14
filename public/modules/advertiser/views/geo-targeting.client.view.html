@@ -9,7 +9,7 @@
 		</button>
 		<button type="button"
 			class="btn btn-lg btn-default"
-			ng-click="reset()"
+			ng-click="initializeBothTrees()"
 			analytics-in="click"
 			analytics-event="GeoTargeting_Reset">
 			Reset	
@@ -39,6 +39,7 @@
 	</div>	
 </div>
 
+<!-- World map or country map(Currently supports world & USA only) -->
 <div class="col-sm-12">
 	<div class="panel">
 		<div class="panel-heading">
@@ -84,102 +85,67 @@
 		</div>
 	</div>
 </div>
+<!-- End of map section -->
 
+<!-- Geo targets tree section -->
 <div class="col-sm-6">
 	<div class="panel">
 		<div class="panel-heading bg-success">
-			<h4><i class="fa fa-sliders"></i>  Custom Bidding</h4>
+			<h4>
+				<i class="fa fa-sliders"></i> Custom Bidding
+			</h4>
 		</div>
 		<div class="panel-body">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Weight</th>
-						<th>Bid</th>
-						<th>
-							<a href="#"
-								tooltip="Average CPM on the Cliques Exchange for the Last 30 Days">
-								<i class="fa fa-line-chart"></i>	
-								&nbsp;Avg.<br>&nbsp;&nbsp;CPM
-							</a>
-						</th>
-						<th>Actions</th>
-					</tr>
-				</thead>	
-				<tbody>
-					<tr ng-repeat="node in geoTargets">
-						<th class="v-middle wd-md">
-							<a href="#" ng-click="expandGeoNode(node)">
-								{{ node.nodeName }}
-							</a>
-						</th>	
-						<th>
-							<rzslider
-								rz-slider-model="node.weight"
-								rz-slider-options="{
-									floor: 0,
-									ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,
-									step: 0.0001,
-									precision: 4,
-									id: target,
-									showSelectionBar: true,
-									onStart: onStart,
-									hideLimitLabels: true
-								}">
-							</rzslider>
-						</th>
-						<th>
-							<span>
-		                        <strong>
-		                        	{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}
-		                        </strong>
-		                    </span>
-						</th>
-						<th>
-							<!-- TO-DO:::ycx add average CPM here -->
-						</th>
-						<th>
-							<button type="button"
-								class="btn btn-xs bg-gray-light"
-								ng-click="removeGeoTarget(node)"
-								tooltip="Clear Bids">
-								<i class="fa fa-lg fa-remove"></i>	
-							</button>
-						</th>
-					</tr>
-				</tbody>
-			</table>
+			<tree-expand-toggle-buttons control="geo_targets.control"
+				ng-show="geo_targets.data">
+			</tree-expand-toggle-buttons>
+			<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+				tree-data="geo_targets.data"
+				tree-control="geo_targets.control"
+				column-defs="geo_targets.columns"
+				expand-on="geo_targets.expanding_property"
+				primary-key="_id"
+				enable-drag="false"
+				enable-drop="true"
+				enable-move="false"
+				icon-leaf="fa fa-lg fa-tags"
+                icon-expand="fa fa-lg fa-minus"
+                icon-collapse="fa fa-lg fa-plus-circle"
+                data-indent="15"
+                data-indent-unit="px">
+			</tree-dnd>
 		</div>
-	</div>	
+	</div>
 </div>
+<!-- End of geo targets tree section -->
+
+<!-- Blocked geos tree section -->
 <div class="col-sm-6">
 	<div class="panel">
 		<div class="panel-heading bg-danger">
-			<h4><i class="fa fa-ban"></i>  Blocked</h4>
+			<h4><i class="fa fa-ban"></i> Blocked</h4>
 		</div>
 		<div class="panel-body">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr ng-repeat="node in blockedGeos">
-						<th>{{ node.nodeName }}</th>
-						<th>
-							<button type="button"
-								class="btn btn-xs bg-gray-light"
-								ng-click="removeBlockedGeo(node)"
-								tooltip="Unblock">
-								<i class="fa fa-lg fa-remove"></i>	
-							</button>
-						</th>	
-					</tr>
-				</tbody>
-			</table>
+			<tree-expand-toggle-buttons control="blocked_geos.control"
+				ng-show="blocked_geos.data">
+			</tree-expand-toggle-buttons>
+			<tree-dnd
+				template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+				tree-data="blocked_geos.data"
+				tree-control="blocked_geos.control"
+				column-defs="blocked_geos.columns"
+				expand-on="blocked_geos.expanding_property"
+				primary-key="_id"
+				enable-drag="false"
+				enable-drop="true"
+				enable-move="false"
+				icon-leaf="fa fa-lg fa-tags"
+                icon-expand="fa fa-lg fa-minus"
+                icon-collapse="fa fa-lg fa-plus-circle"
+                data-indent="15"
+                data-indent-unit="px">
+			</tree-dnd>
 		</div>
-	</div>	
+	</div>
 </div>
+<!-- End of blocked geos tree section -->

@@ -166,6 +166,23 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * and converts blocked_geos to DB format, updates advertiser.
 		 */
 		$scope.save = function() {
+			$scope.geo_targets.toGeoTargetsSchema(function(err, targetsArray) {
+				$scope.campaign.geo_targets = targetsArray;
+				$scope.blocked_geos.toBlockedGeosSchema(function(err, blockedArray) {
+					$scope.campaign.blocked_geos = blockedArray;
+					$scope.advertiser.$update(function() {
+						$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+						$scope.dirty = false;
+						Notify.alert('Thanks! Your settings have been saved.');
+					}, function(errorResponse) {
+						$scope.dirty = false;
+						Notify.alert('Error saving settings: ' + errorResponse.message, {
+							status: 'danger'
+						});
+					});
+				});
+			});
+			/* ycx!!!!!! Old version of save
 			// Convert geoTargets to DB format and send to backend
 			var geoTargetsSchema = [];
 			$scope.geoTargets.forEach(function(geoTarget) {
@@ -191,11 +208,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.dirty = false;
 				Notify.alert('Error saving settings: ' + errorResponse.message, {status: 'danger'});
 			});
-		};
-
-		// Undo all unsaved changes
-		$scope.reset = function() {
-			// TO-DO:::ycx
+			*/
 		};
 
 		/**
@@ -410,6 +423,121 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				});
 			}
 			return inner(masterTree.data, this.data);
+		};
+
+		/**
+		 * Helper function to prune any unnecessary children from client-side tree data
+		 * before persisting to DB. This is useful because of the "sparse tree" format
+		 * that targeting trees are stored in.
+		 *
+		 * Can't just ignore any overridden child since it may have grandchildren
+		 * that aren't overridden, so have to do another sweep of the tree to prune
+		 * any overridden branches
+		 *
+		 * @param targetsTree tree data
+		 * @param overrideFunction function which returns boolean indicating whether to throw
+		 * node out or not.
+		 * `true` means node will be discarded if its unnecessary,
+		 * `false` means keep it.
+		 */
+		function pruneOverriddenChildren(targetsTree, overrideFunction) {
+			for (var a = 0; a < targetsTree.length; a ++) {
+				var country = targetsTree[a];
+				if (country.children) {
+					for (var b = 0; b < country.children.length; b ++) {
+						var region = country.children[b];
+						if (region.children) {
+							for (var c = 0; c < region.children.length; c ++) {
+								var city = region.children[c];
+								if (overrideFunction(city)) {
+									region.children.splice(c, 1);
+									c = c - 1;
+								}
+							}
+							// Now work our way back up the tree to clean up
+							// any nodes without any children left
+							if (region.children.length === 0 && overrideFunction(region)) {
+								country.children.splice(b, 1);
+								b = b - 1;
+							}
+						}
+					}
+					if (country.children.length === 0 &&  overrideFunction(country)) {
+						targetsTree.splice(a, 1);
+						a = a - 1;
+					}
+				}
+			}	
+		}
+
+		/**
+		 * Converts treeData to Campaign.geo_targets schema format for saving.
+		 *
+		 * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
+		 * all overridden children.
+		 *
+		 * @return {*}
+		 */
+		GeoTree.prototype.toGeoTargetsSchema = function(callback) {
+			var self = this;
+			function inner(thisSubtree, targetsTree) {
+				targetsTree = targetsTree || [];
+				thisSubtree.forEach(function(node) {
+					var weight = node.__overridden__ ? null : node.weight;
+					var targetObj = {
+						target: node._id,
+						weight: weight,
+						children: null,
+						__overridden__: node.__overridden__
+					};
+					var children = self.control.get_children(node);
+					targetsTree.push(targetObj);
+					if (children.length > 0) {
+						targetObj.children = [];
+						inner(children, targetObj.children);
+					}
+				});
+				return targetsTree;
+			}
+			var targetsTree = inner(this.data);
+			targetsTree = pruneOverriddenChildren(targetsTree, function(obj) {
+				return obj.__overridden__;
+			});
+			return callback(null, targetsTree);
+		};
+
+		/**
+		 * Converts treeData to Campaign.blocked_geos schema format for saving.
+		 *
+		 * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
+		 * all overridden children.
+		 *
+		 * @return {*}	
+		 */
+		GeoTree.prototype.toBlockedGeosSchema = function(callback) {
+			var self = this;
+			function inner(thisSubtree, targetsTree) {
+				targetsTree = targetsTree || [];	
+				thisSubtree.forEach(function(node) {
+					var targetObj = {
+						target: node._id,
+						children: null,
+						explicit: node.explicit
+					};
+					var children = self.control.get_children(node);
+					targetsTree.push(targetObj);
+					if (children.length > 0) {
+						targetObj.children = [];
+						inner(children, targetObj.children);
+					}
+				});
+				return targetsTree;
+			}
+			var blockedTree = inner(this.data);
+			blockedTree = pruneOverriddenChildren(blockedTree, function(obj) {
+				return obj.explicit === false;
+			});
+			return callback(null, blockedTree);
 		};
 
 		//====================================================//
