@@ -309,6 +309,59 @@ module.exports = function(db) {
                     })
                     .then(function(cities) {
                         regionObj.cities = cities;
+                        // if current region belongs to the same country 
+                        // with another region, they should be in the same tree
+                        for (var i = 0; i < geoTrees.length; i ++) {
+                            if (countryObj._Id === geoTrees[i]._id) {
+                                geoTrees[i].regions.push(regionObj);
+                                return;
+                            }
+                        }
+                        // current region doesn't belong to any existing 
+                        // country in geoTrees
+                        tree = {
+                            _id: countryObj._id,
+                            name: countryObj.name,
+                            regions: [regionObj]
+                        };
+                        geoTrees.push(tree);
+                    });
+                })
+                .then(function() {
+                    res.json(geoTrees);
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                });
+            } else if (geoType === 'city') {
+                return promise.each(geoIds, function(cityId) {
+                    var tree, countryObj, regionObj, cityObj;
+                    return geoModels.City.findOne({_id: cityId})
+                    .then(function(city) {
+                        cityObj = city;
+                        return geoModels.Country.findOne({_id: city.country});
+                    })
+                    .then(function(country) {
+                        countryObj = country;
+                        return geoModels.Region.findOne({_id: cityObj.region});
+                    })
+                    .then(function(region) {
+                        regionObj = JSON.parse(JSON.stringify(region));
+                        regionObj.cities = [cityObj];
+                        // If current city belongs to the same region
+                        // with another city, they should be in the same tree
+                        for (var i = 0; i < geoTrees.length; i ++) {
+                            for (var j = 0; j < geoTrees[i].regions.length; j ++) {
+                                if (geoTrees[i].regions[j]._id === regionObj._id) {
+                                    geoTrees[i].regions[j].cities.push(cityObj);
+                                    return;
+                                }
+                            } 
+                        }
+                        // Current city doesn't belong to any existing
+                        // region in geoTrees
                         tree = {
                             _id: countryObj._id,
                             name: countryObj.name,
