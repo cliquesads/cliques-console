@@ -85,7 +85,7 @@ module.exports = function(db) {
                     req.country = country;
                     next();
                 });
-            }
+            },
         },
         region: {
             /**
@@ -250,6 +250,83 @@ module.exports = function(db) {
                 .catch(function(err) {
                     return res.status(400).send(err);
                 });
+            }
+        },
+
+        /**
+         * For a given geo id(s), get itself and all its children in a tree format
+         */
+        getGeoTrees: function(req, res) {
+            var geoIds = req.param('geoIds');
+            var geoType = req.param('geoType');
+            if (typeof geoIds === 'string') {
+                geoIds = [geoIds];
+            }
+            var geoTrees = [];
+
+            if (geoType === 'country') {
+                return promise.each(geoIds, function(countryId) {
+                    var tree, countryObj;
+                    return geoModels.Country.findOne({_id: countryId})
+                    .then(function(country) {
+                        if (!country) {
+                            return;
+                        }
+                        countryObj = country;
+                        return geoModels.Region.find({country: countryId})
+                        .then(function(regions) {
+                            tree = {
+                                _id: countryObj._id,
+                                name: countryObj.name,
+                                regions: regions
+                            };
+                            geoTrees.push(tree);
+                        });
+                    });
+                })
+                .then(function() {
+                    res.json(geoTrees);
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    })
+                });
+            } else if (geoType === 'region') {
+                return promise.each(geoIds, function(regionId) {
+                    var tree, countryObj, regionObj;
+                    return geoModels.Region.findOne({_id: regionId})
+                    .then(function(region) {
+                        regionObj = JSON.parse(JSON.stringify(region));
+                        return geoModels.Country.findOne({_id: region.country});
+                    })
+                    .then(function(country) {
+                        countryObj = country;
+                        return geoModels.City.find({
+                            country: country._id,
+                            region: regionId
+                        });
+                    })
+                    .then(function(cities) {
+                        regionObj.cities = cities;
+                        tree = {
+                            _id: countryObj._id,
+                            name: countryObj.name,
+                            regions: [regionObj]
+                        };
+                        geoTrees.push(tree);
+                    });
+                })
+                .then(function() {
+                    res.json(geoTrees);
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                });
+            } else {
+                res.json(geoTrees);
             }
         }
     };

@@ -101,6 +101,29 @@ module.exports = function(db, routers){
          */
         .get(geo.country.readCountry);
 
+    router.route('/getGeoTrees')
+        /**
+         * @api {get} /country/getGeoTrees For a given country id(s), get all its regions and cities in a tree format
+         * @apiName GetGeoTrees
+         * @apiGroup Geo
+         * @apiDescription For a given geo id(s),
+         *                  If it's country id(s), get the country itself and all its regions in a tree format with each root node representing the country, all its regions in this country as the leaves for the tree.
+         *                  If  it's region id(s), get the region itself, the country it belongs
+         * to, and all cities in this region in a tree format
+         *                  This api is meant to load all immediate children for one or more geo objects, so if user clicks a country in the geo_targets tree, this api loads all regions that belongs to that country, and if user clicks a region in the geo_targets tree, this api loads all cities in that region.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam {String[]} geoIds array of country ids ISO-3166 Alpha-3 Country Code as `_id`, or array of region/state ids
+         * @apiParam {String} geoType valid values are `country` and `region` indicating the type of the root node object in the result tree.
+         *
+         * @apiSuccess {Object[]} A tree array containing all required geo objects and its children.
+         */
+        .get(geo.getGeoTrees);
+
     router.param('countryId', geo.country.countryByID);
 
     /* ---- Region API Routes ---- */
