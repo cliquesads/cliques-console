@@ -103,7 +103,7 @@ module.exports = function(db, routers){
 
     router.route('/getGeoTrees')
         /**
-         * @api {get} /country/getGeoTrees For a given country id(s), get all its regions and cities in a tree format
+         * @api {get} /country/getGeoTrees For a given set of geos(each geo contains a geo id and geo type being whether is country, region or city), get each geo information in a tree format, that is country -> region -> city 
          * @apiName GetGeoTrees
          * @apiGroup Geo
          * @apiDescription For a given geo id(s),
@@ -118,7 +118,23 @@ module.exports = function(db, routers){
          * @apiPermission advertiser
          * @apiPermission publisher
          *
-         * @apiParam {String[]} geoIds array of country ids ISO-3166 Alpha-3 Country Code as `_id`, or array of region/state ids
+         * @apiParam {Object[]} geos array in such format:
+         *      [
+         *          {
+         *              id: 'USA',
+         *              type: 'country' 
+         *          },
+         *          {
+         *              id: 'USA-AL',
+         *              type: 'region'
+         *          },
+         *          {
+         *              id: '59113b2c45ad5993b9756695',
+         *              type: 'city'
+         *          }
+         *      ]
+         *      Note: To simplfy things, the order of geos array matters, all countries node *              must come before regions and cities,
+         *              all regions must come before cities.
          * @apiParam {String} geoType valid values are `country`, `region` or `city` indicating the type of the root node object in the result tree.
          *
          * @apiSuccess {Object[]} A tree array containing all required geo objects and its children.
