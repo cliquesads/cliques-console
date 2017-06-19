@@ -258,6 +258,9 @@ module.exports = function(db) {
          */
         getGeoTrees: function(req, res) {
             var geos = req.param('geos');
+            if (!geos) {
+                return res.json([]);
+            }
             if (typeof geos === 'string') {
                 geos = [geos];
             }

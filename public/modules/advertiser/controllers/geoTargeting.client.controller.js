@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'OPENRTB', 'aggregationDateRanges', 'GeoAdStat', '$timeout',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, OPENRTB, aggregationDateRanges, GeoAdStat, $timeout) {
+	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'OPENRTB', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo',
+	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, OPENRTB, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
@@ -182,33 +182,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					});
 				});
 			});
-			/* ycx!!!!!! Old version of save
-			// Convert geoTargets to DB format and send to backend
-			var geoTargetsSchema = [];
-			$scope.geoTargets.forEach(function(geoTarget) {
-				geoTargetsSchema.push({
-					weight: geoTarget.weight,
-					target: geoTarget.target
-				});
-			});
-			var blockedGeosSchema = [];
-			$scope.blockedGeos.forEach(function(blockedGeo) {
-				blockedGeosSchema.push({
-					weight: blockedGeo.weight,
-					target: blockedGeo.target
-				});
-			});
-			$scope.campaign.geo_targets = geoTargetsSchema;
-			$scope.campaign.blocked_geos = blockedGeosSchema;
-			$scope.advertiser.$update(function() {
-				$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-				$scope.dirty = false;
-				Notify.alert('Thanks! Your settings have been saved.', {});
-			}, function(errorResponse) {
-				$scope.dirty = false;
-				Notify.alert('Error saving settings: ' + errorResponse.message, {status: 'danger'});
-			});
-			*/
 		};
 
 		/**
@@ -291,22 +264,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param callback
 		 */
 		GeoTree.prototype.fromGeosInCampaign = function(geos) {
-			var flattened = [];
-			if (!geos) return;
-			geos.forEach(function(country) {
-				var countryNode = _initializeGeoTreeNode(country, 'Country', null);
-				flattened.push(countryNode);
-				country.children.forEach(function(region) {
-					var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
-					flattened.push(regionNode);
-					region.children.forEach(function(city) {
-						var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
-						flattened.push(cityNode);
+			var self = this;
+			return CampaignGeo.getGeoTrees(geos)
+			.then(function(response) {
+				var geos = response.data;
+				var flattened = [];
+				if (!geos) return;
+				geos.forEach(function(country) {
+					var countryNode = _initializeGeoTreeNode(country, 'Country', null);
+					flattened.push(countryNode);
+					country.regions.forEach(function(region) {
+						var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
+						flattened.push(regionNode);
+						if (region.cities) {
+							region.cities.forEach(function(city) {
+								var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
+								flattened.push(cityNode);
+							});
+						}
 					});
 				});
+				self.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
+				return self.data;
 			});
-			this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-			return this.data;
 		};
 
 		/**
@@ -767,6 +747,26 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// Initialization for blocked_geos tree
 			$scope.blocked_geos.fromGeosInCampaign($scope.campaign.blocked_geos);
 			$scope.blocked_geos.setExpandLevel(0);
+
+			// Add control.on_select for geo tree, so when clicking a node,
+			// the children(regions for a country node or cities for a region node)
+			// will be loaded dynamically from backend
+			$scope.geo_targets.control.on_select = function(node) {
+				var selectedNodeType = node.nodeType;
+				if (selectedNodeType === 'Region') {
+					// Get all cities for this region and load them in geo trees
+					CampaignGeo.getGeoNodeChildren(node)
+					.then(function(response) {
+						if (response.data) {
+							var cities = response.data[0].regions[0].cities;
+							// Should display the fetched cities in geo_targets tree 
+						}
+					});
+				}
+			};
+			$scope.blocked_geos.control.on_select = function(node) {
+
+			};
 		};
 
         //======================================================================//
