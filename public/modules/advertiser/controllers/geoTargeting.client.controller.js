@@ -267,26 +267,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			var self = this;
 			return CampaignGeo.getGeoTrees(geos)
 			.then(function(response) {
-				var geos = response.data;
-				var flattened = [];
-				if (!geos) return;
-				geos.forEach(function(country) {
-					var countryNode = _initializeGeoTreeNode(country, 'Country', null);
-					flattened.push(countryNode);
-					country.regions.forEach(function(region) {
-						var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
-						flattened.push(regionNode);
-						if (region.cities) {
-							region.cities.forEach(function(city) {
-								var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
-								flattened.push(cityNode);
-							});
-						}
-					});
-				});
-				self.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-				return self.data;
+				$scope.geoTargetsData = response.data;
+				self.data = translateGeoDataToDndTree($scope.geoTargetsData);
 			});
+		};
+
+		var translateGeoDataToDndTree = function(geoData) {
+			var flattened = [];
+			if (!geoData) return;
+			geoData.forEach(function(country) {
+				var countryNode = _initializeGeoTreeNode(country, 'Country', null);
+				flattened.push(countryNode);
+				country.regions.forEach(function(region) {
+					var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
+					flattened.push(regionNode);
+					if (region.cities) {
+						region.cities.forEach(function(city) {
+							var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
+							flattened.push(cityNode);
+						});
+					}
+				});
+			});
+			return $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
 		};
 
 		/**
@@ -759,7 +762,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					.then(function(response) {
 						if (response.data) {
 							var cities = response.data[0].regions[0].cities;
-							// Should display the fetched cities in geo_targets tree 
+							// Show cities in geo_targets tree under selected region node
+							cities.forEach(function(city) {
+								var isThisCityInRegionAlready = false;
+								for (var i = 0; i < node.__children__.length; i ++) {	
+									if (node.__children__[i]._id === city._id) {
+										isThisCityInRegionAlready = true;
+										break;
+									}
+								}
+								if (!isThisCityInRegionAlready) {
+									var cityNode = _initializeGeoTreeNode(cities[i], 'City', node._id);
+									node.__children__.push(cityNode);
+								}
+							});
+							// Find out which region is selected in $scope.geoTargetsData
+							for (var i = 0; i < $scope.geoTargetsData.length; i ++) {
+								for (var j = 0; j < $scope.geoTargetsData[i].regions.length; j ++) {
+									if (node._id === $scope.geoTargetsData[i].regions[j]._id) {
+										$scope.geoTargetsData[i].regions[j].cities = cities;
+										return;
+									}
+								}	
+							}
 						}
 					});
 				}
