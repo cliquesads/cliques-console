@@ -28,10 +28,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			$scope.selectedGeo = $rootScope.selectedGeo;
 			$scope.showingActionOptions = true;
 			mapScope = 'usa';
-			if ($scope.selectedGeo.type === 'country' && $scope.selectedGeo.id !== 'USA') {
+			if ($scope.selectedGeo.type === 'country' && $scope.selectedGeo._id !== 'USA') {
 				mapScope = 'custom';
 				$scope.mapAvailable = false;
 			}
+			delete $rootScope.selectedGeo;
 		}
 
 		var mapFillColors = {
@@ -67,22 +68,31 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.mapClicked = function(geography) {
 			// Map clicked, should zoom into the clicked area, also show option to customize bidding or block the area
 			// Datamap doesn't allow dynamically changing map scope, so need to reload state with selected country/region as stateParam
-			var selectedGeo = {
-				id: geography.id,
-				name: geography.properties.name
-			};
+			var selectedGeo;
 			if ($scope.mapObject.scope === 'world') {
-				selectedGeo.type = 'country';
-				selectedGeo.countryName = selectedGeo.name;
-				selectedGeo.countryId = selectedGeo.id;
+				Country.readOne({countryId: geography.id}).$promise
+				.then(function(country) {
+					selectedGeo = angular.copy(country);
+					selectedGeo.type = 'country';
+					$rootScope.selectedGeo = selectedGeo;
+					$state.reload();
+				});
 			} else {
-				selectedGeo.type = 'region';
-				selectedGeo.countryName = $scope.selectedGeo.countryName;
-				selectedGeo.countryId = $scope.selectedGeo.countryId;
+				var regionId;
+				if ($scope.selectedGeo.country) {
+					regionId = $scope.selectedGeo.country._id + '-' + geography.id;
+				} else {
+					regionId = $scope.selectedGeo._id + '-' + geography.id;
+				}
+				Region.readOne({regionId: regionId}).$promise
+				.then(function(region) {
+					selectedGeo = angular.copy(region);
+					selectedGeo.type = 'region';	
+					selectedGeo.country = $scope.selectedGeo;
+					$rootScope.selectedGeo = selectedGeo;
+					$state.reload();
+				});
 			}
-
-			$rootScope.selectedGeo = selectedGeo;
-			$state.reload();
 		};
 
 		$scope.reloadWorldMap = function() {
@@ -104,31 +114,14 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			});
 		};
 
-		var initializeGeoNode = function(nodeName, nodeType, nodeId) {
-			return {
-				nodeName: nodeName,
-				nodeType: nodeType,
-				target: nodeId,
-				weight: 1.0
-			};
-		};
-
 		$scope.customizeBiddingForGeo = function() {
 			$scope.showingActionOptions = false;
 			$scope.dirty = true;
 			if ($scope.selectedGeo.type === 'country') {
-				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
-				.then(function(response) {
-					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Country', response._id);
-					$scope.geoTargets.push(newGeoNode);
-				});
+				$scope.geo_targets.addCountryNode($scope.selectedGeo);
 			} else {
-				var regionId = $scope.selectedGeo.countryId + '-' + $scope.selectedGeo.id;
-				Region.readOne({regionId: regionId}).$promise
-				.then(function(response) {
-					var newGeoNode = initializeGeoNode($scope.selectedGeo.name, 'Region', response._id);
-					$scope.geoTargets.push(newGeoNode);
-				});
+				var countryNode = _initializeGeoTreeNode($scope.selectedGeo.country, 'Country', null);
+				$scope.geo_targets.addRegionNode($scope.selectedGeo, countryNode);
 			}
 		};
 
@@ -136,29 +129,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			$scope.showingActionOptions = false;
 			$scope.dirty = true;
 			if ($scope.selectedGeo.type === 'country') {
-				Country.readOne({countryId: $scope.selectedGeo.id}).$promise
-				.then(function(response) {
-					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Country', response._id);
-					$scope.blockedGeos.push(newBlockNode);
-				});
+				$scope.blocked_geos.addCountryNode($scope.selectedGeo);
 			} else {
-				var regionId = $scope.selectedGeo.countryId + '-' + $scope.selectedGeo.id;
-				Region.readOne({regionId: regionId}).$promise
-				.then(function(response) {
-					var newBlockNode = initializeGeoNode($scope.selectedGeo.name, 'Region', response._id);
-					$scope.blockedGeos.push(newBlockNode);
-				});
+				var countryNode = _initializeGeoTreeNode($scope.selectedGeo.country, 'Country', null);
+				$scope.blocked_geos.addRegionNode($scope.selectedGeo, countryNode);
 			}
-		};
-
-		$scope.removeGeoTarget = function(node) {
-			var nodeIndex = $scope.geoTargets.indexOf(node);
-			$scope.geoTargets.splice(nodeIndex, 1);
-		};
-
-		$scope.removeBlockedGeo = function(node) {
-			var nodeIndex = $scope.blockedGeos.indexOf(node);
-			$scope.blockedGeos.splice(nodeIndex, 1);
 		};
 
 		/**
@@ -225,13 +200,20 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// ========= BEGIN Node Instance Methods ======== //
 			newNode.overrideChildWeights = function() {
 				var self = this;
-				self.__children__.forEach(function(node) {
-					node.weight = self.weight;
-					node.__overridden__ = true;
+				if (self.__children__) {
 					if (self.nodeType === 'Country') {
-						node.overrideChildWeights();
+						self.__children__.forEach(function(node) {
+							node.weight = self.weight;
+							node.__overridden__ = true;
+							node.overrideChildWeights();
+						});
+					} else if (self.nodeType === 'Region') {
+						self.__children__.forEach(function(node) {
+							node.__overridden__ = true;
+							node.weight = self.weight;
+						});
 					}
-				});
+				}
 			};
 			return newNode;
 		};
@@ -251,9 +233,118 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @constructor
 		 */
 		var GeoTree = function(treeData, control, expanding_property, columns) {
+			var self = this;
+			// Add control.on_select for GeoTree, so when clicking a node,
+			// the children(regions for a country node or cities for a region node)
+			// will be loaded dynamically from backend
+			control.on_select = function(node) {
+				var selectedNodeType = node.nodeType;
+				if (selectedNodeType === 'Country') {
+					// Get all regions for this country and load them in tree
+					CampaignGeo.getGeoNodeChildren(node)
+					.then(function(response) {
+						if (response.data) {
+							var regions = response.data[0].regions;	
+							regions.forEach(function(region) {
+								self.addRegionNode(region, node);
+							});
+						}
+					});
+				} else if (selectedNodeType === 'Region') {
+					// Get all cities for this region and load them in tree
+					CampaignGeo.getGeoNodeChildren(node)
+					.then(function(response) {
+						if (response.data) {
+							var cities = response.data[0].regions[0].cities;	
+							cities.forEach(function(city) {
+								self.addCityNode(city, node);
+							});
+						}
+					});
+				}
+			};
 			DndTreeWrapper.call(this, treeData, control, expanding_property, columns);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
+
+		GeoTree.prototype.addCountryNode = function(countryObj) {
+			var countryExists = false;
+			// Need to make sure the country node is NOT YET in geotree
+			for (var i = 0; i < this.data.length; i ++) {
+				if (this.data[i]._id === countryObj._id) {
+					countryExists = true;
+					break;
+				}
+			}
+			if (!countryExists) {
+				var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null);
+				this.data.push(countryNode);
+			}
+		};
+
+		GeoTree.prototype.addRegionNode = function(regionObj, countryNode) {
+			// Need to find out whether the country of this region exists in geotree or not
+			var countryExists = false,
+				regionExists = false,
+				i = 0;
+			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country);
+			for (i = 0; i < this.data.length; i ++) {
+				if (this.data[i]._id.toString() === regionObj.country.toString()) {
+					countryExists = true;
+					break;
+				}
+			}
+			if (countryExists) {
+				// Need to make sure the region about to add is NOT YET in geotree
+				countryNode = this.data[i];
+				if (countryNode.__children__) {
+					for (i = 0; i < countryNode.__children__.length; i ++) {
+						if (countryNode.__children__[i]._id === regionObj._id) {
+							regionExists = true;
+							break;
+						}
+					}
+				}
+				if (!regionExists) {
+					if (!countryNode.__children__) {
+						countryNode.__children__ = [];
+					}
+					countryNode.__children__.push(regionNode);
+				}
+			} else {
+				if (!countryNode.__children__) {
+					countryNode.__children__ = [];
+				}
+				countryNode.__children__.push(regionNode);
+				this.data.push(countryNode);
+			}
+		};
+
+		GeoTree.prototype.addCityNode = function(cityObj, regionNode) {
+			// Make sure the city about to add is NOT YET in this region
+			var cityExists = false;
+			var i = 0;
+			if (regionNode.__children__) {
+				for (i = 0; i < regionNode.__children__.length; i ++) {
+					if (regionNode.__children__[i]._id === cityObj._id) {
+						cityExists = true;
+						break;
+					}
+				}
+			}
+			if (!cityExists) {
+				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id);
+				for (i = 0; i < this.data.length; i ++) {
+					if (this.data[i].__children__) {
+						for (var j = 0; j < this.data[i].__children__.length; j ++) {
+							if (this.data[i].__children__[j]._id === regionNode._id) {
+								this.data[i].__children__[j].__children__.push(cityNode);
+							}
+						}
+					}
+				}
+			}
+		};
 
 		/**
 		 * Loads this.data for geo_targets or blocked_geos
@@ -267,8 +358,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			var self = this;
 			return CampaignGeo.getGeoTrees(geos)
 			.then(function(response) {
-				$scope.geoTargetsData = response.data;
-				self.data = translateGeoDataToDndTree($scope.geoTargetsData);
+				self.data = translateGeoDataToDndTree(response.data);
 			});
 		};
 
@@ -290,39 +380,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				});
 			});
 			return $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-		};
-
-		/**
-		 * Show all sub-geo within the selected geo node,
-		 * if selected geo node is a country, show all its regions/states
-		 * if selected geo node is a region, show all its cities
-		 *
-		 * @param node
-		 * @param callback
-		 */
-		GeoTree.prototype.expandGeoNode = function(node, callback) {
-			var flattened = this.traverseTree();
-			if (node.nodeType === 'Country') {
-				// Load regions/states for selected country dynamically from DB
-				Region.query({country: node._id}).$promise
-				.then(function(regions) {
-					regions.forEach(function(region) {
-						var newRegionNode = _initializeGeoTreeNode(region, 'Region', node._id);
-						flattened.push(newRegionNode);
-					});
-				});
-			} else if (node.nodeType === 'Region') {
-				// Load cities for selected region dynamicaly from DB
-				City.query({region: node._id}).$promise
-				.then(function(cities) {
-					cities.forEach(function(city) {
-						var newCityNode = _initializeGeoTreeNode(city, 'City', node._id);
-						flattened.push(newCityNode);
-					});
-				});
-			}
-			this.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
-			callback(null, this.data);
 		};
 
 		/**
@@ -750,48 +807,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// Initialization for blocked_geos tree
 			$scope.blocked_geos.fromGeosInCampaign($scope.campaign.blocked_geos);
 			$scope.blocked_geos.setExpandLevel(0);
-
-			// Add control.on_select for geo tree, so when clicking a node,
-			// the children(regions for a country node or cities for a region node)
-			// will be loaded dynamically from backend
-			$scope.geo_targets.control.on_select = function(node) {
-				var selectedNodeType = node.nodeType;
-				if (selectedNodeType === 'Region') {
-					// Get all cities for this region and load them in geo trees
-					CampaignGeo.getGeoNodeChildren(node)
-					.then(function(response) {
-						if (response.data) {
-							var cities = response.data[0].regions[0].cities;
-							// Show cities in geo_targets tree under selected region node
-							cities.forEach(function(city) {
-								var isThisCityInRegionAlready = false;
-								for (var i = 0; i < node.__children__.length; i ++) {	
-									if (node.__children__[i]._id === city._id) {
-										isThisCityInRegionAlready = true;
-										break;
-									}
-								}
-								if (!isThisCityInRegionAlready) {
-									var cityNode = _initializeGeoTreeNode(cities[i], 'City', node._id);
-									node.__children__.push(cityNode);
-								}
-							});
-							// Find out which region is selected in $scope.geoTargetsData
-							for (var i = 0; i < $scope.geoTargetsData.length; i ++) {
-								for (var j = 0; j < $scope.geoTargetsData[i].regions.length; j ++) {
-									if (node._id === $scope.geoTargetsData[i].regions[j]._id) {
-										$scope.geoTargetsData[i].regions[j].cities = cities;
-										return;
-									}
-								}	
-							}
-						}
-					});
-				}
-			};
-			$scope.blocked_geos.control.on_select = function(node) {
-
-			};
 		};
 
         //======================================================================//
