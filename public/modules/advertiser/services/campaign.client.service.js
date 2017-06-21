@@ -200,52 +200,24 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
 ])
 .factory('CampaignGeo', ['$http',
     function($http) {
-        var getGeoTrees = function(geos) {
-            var flattenedGeos = [];
-            geos.forEach(function(country) {
-                flattenedGeos.push({
-                    id: country.target,
-                    type: 'country'
-                });
-                if (country.children) {
-                    country.children.forEach(function(region) {
-                        flattenedGeos.push({
-                            id: region.target,
-                            type: 'region'
-                        });
-                        if (region.children) {
-                            region.children.forEach(function(city) {
-                                flattenedGeos.push({
-                                    id: city.target,
-                                    type: 'city' 
-                                });
-                            });
-                        }
-                    });
-                }
-            });
-            return $http.get('/console/getGeoTrees', {
-                params: {
-                    geos: flattenedGeos
-                }
+        var getGeoTrees = function(advertiserId, campaignId, targetOrBlock) {
+            return $http.get('/console/advertiser/' + advertiserId + '/campaign/' + campaignId + '/getGeoTrees', {
+                params: { targetOrBlock: targetOrBlock }
             });
         };
-        var getGeoNodeChildren = function(geoNode) {
-            var flattenedGeos = [
-                {
-                    id: geoNode._id,
-                    type: _.toLower(geoNode.nodeType)
-                }
-            ];
-            return $http.get('/console/getGeoTrees', {
+        var getGeoChildren = function(geoNode) {
+            return $http.get('/console/getGeoChildren', {
                 params: {
-                    geos: flattenedGeos
+                    geo: {
+                        id: geoNode._id, 
+                        type: _.toLower(geoNode.nodeType)
+                    }
                 }
             });
         };
         return {
             getGeoTrees: getGeoTrees,
-            getGeoNodeChildren: getGeoNodeChildren
+            getGeoChildren: getGeoChildren
         };
     }
 ]);

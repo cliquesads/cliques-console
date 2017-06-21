@@ -254,153 +254,40 @@ module.exports = function(db) {
         },
 
         /**
-         * For a given geo id(s), get itself and all its children in a tree format
+         * For a given geo(country or region), get all its children, that is,
+         * for a country, get all its regions
+         * for a region, get all its cities
          */
-        getGeoTrees: function(req, res) {
-            var geos = req.param('geos');
-            if (!geos) {
-                return res.json([]);
-            }
-            if (typeof geos === 'string') {
-                geos = [geos];
-            }
-
-            var geoTrees = [];
-            return promise.each(geos, function(geoString) {
-                var geo = JSON.parse(geoString);
-                var tree, countryObj, regionObj, cityObj;
-                if (geo.type === 'country') {
-                    return geoModels.Country.findOne({_id: geo.id})
-                    .then(function(country) {
-                        if (!country) {
-                            return promise.reject(new Error('Country not found'));
-                        }
-                        countryObj = country;
-                        return geoModels.Region.find({country: countryObj._id})
-                        .then(function(regions) {
-                            tree = {
-                                _id: countryObj._id,
-                                name: countryObj.name,
-                                regions: JSON.parse(JSON.stringify(regions))
-                            };
-                            geoTrees.push(tree);
-                        });
-                    });
-                } else if (geo.type === 'region') {
-                    return geoModels.Region.findOne({_id: geo.id})
-                    .then(function(region) {
-                        if (!region) {
-                            return promise.reject(new Error('Region not found'));
-                        }
-                        regionObj = JSON.parse(JSON.stringify(region));
-                        return geoModels.Country.findOne({_id: region.country});
-                    })
-                    .then(function(country) {
-                        countryObj = country;
-                        return geoModels.City.find({
-                            country: country._id,
-                            region: regionObj._id
-                        });
-                    })
-                    .then(function(cities) {
-                        regionObj.cities = cities;
-                        // Check if such country node already exists in geoTrees
-                        var hasThisCountry = false;
-                        for (var i = 0; i < geoTrees.length; i ++) {
-                            if (geoTrees[i]._id === countryObj._id) {
-                                hasThisCountry = true;
-                                // Check if such region already exists in this country in geoTrees
-                                var hasThisRegion = false;
-                                for (var j = 0; j < geoTrees[i].regions.length; j ++) {
-                                    if (geoTrees[i].regions[j]._id === regionObj._id) {
-                                        geoTrees[i].regions[j] = regionObj;
-                                        hasThisRegion = true;
-                                        break;
-                                    }
-                                }
-                                if (!hasThisRegion) {
-                                    geoTrees[i].regions.push(regionObj);
-                                }
-                            }
-                        }
-                        if (!hasThisCountry) {
-                            tree = {
-                                _id: countryObj._id,
-                                name: countryObj.name,
-                                regions: [regionObj]
-                            };
-                            geoTrees.push(tree);
-                        }
-                    });
-                } else if (geo.type === 'city') {
-                    return geoModels.City.findOne({_id: geo.id})
-                    .then(function(city) {
-                        if (!city) {
-                            return promise.reject(new Error('City not found'));
-                        }
-                        cityObj = city;
-                        return geoModels.Region.findOne({_id: cityObj.region});
-                    })
-                    .then(function(region) {
-                        regionObj = JSON.parse(JSON.stringify(region));
-                        regionObj.cities = [cityObj];
-                        return geoModels.Country.findOne({_id: cityObj.country});
-                    })
-                    .then(function(country) {
-                        // Check if such country already exists in geoTrees
-                        var hasThisCountry = false;
-                        for (var i = 0; i < geoTrees.length; i ++) {
-                            if (country._id === geoTrees[i]._id) {
-                                hasThisCountry = true;
-                                // Check if such region already exists in geoTrees in this country
-                                var hasThisRegion = false;
-                                for (var j = 0; j < geoTrees[i].regions.length; j ++) {
-                                    if (regionObj._id === geoTrees[i].regions[j]._id) {
-                                        hasThisRegion = true;
-                                        // Check if such city already exists in geoTrees in this region
-                                        var hasThisCity = false;
-                                        if (geoTrees[i].regions[j].cities) {
-                                            for (var k = 0; k < geoTrees[i].regions[j].cities.length; k ++) {
-                                                if (geoTrees[i].regions[j].cities[k]._id.toString() === cityObj._id.toString()) {
-                                                    hasThisCity = true; 
-                                                    break;
-                                                } 
-                                            }
-                                        } else {
-                                            geoTrees[i].regions[j].cities = [cityObj];
-                                            hasThisCity = true;
-                                        }
-                                        if (!hasThisCity) {
-                                            geoTrees[i].regions[j].cities.push(cityObj);
-                                        }
-                                        break;
-                                    }
-                                }
-                                if (!hasThisRegion) {
-                                    geoTrees[i].regions.push(regionObj);
-                                }
-                                break;
-                            }
-                        }
-                        if (!hasThisCountry) {
-                            tree = {
-                                _id: country._id,
-                                name: country.name,
-                                regions: [regionObj]
-                            };
-                            geoTrees.push(tree);
-                        }
-                    });
-                }
-            })
-            .then(function() {
-                res.json(geoTrees);
-            })
-            .catch(function(err) {
+        getGeoChildren: function(req, res) {
+            var geo = req.param('geo');
+            try {
+                geo = JSON.parse(geo);
+            } catch(err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
-            });
+            }
+            if (geo.type === 'country') {
+                return geoModels.Region.find({country: geo.id})
+                .then(function(regions) {
+                    return res.json(regions); 
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                });
+            } else if (geo.type === 'region') {
+                return geoModels.City.find({region: geo.id})
+                .then(function(cities) {
+                    return res.json(cities);
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                });
+            }
         }
     };
 };

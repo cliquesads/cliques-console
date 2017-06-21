@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 var node_utils = require('@cliques/cliques-node-utils'),
+    promise = require('bluebird'),
     models = node_utils.mongodb.models,
     mongoose = require('mongoose'),
     tags = node_utils.tags,
@@ -107,6 +108,7 @@ var _firstCampaignPromoHook = function(req){
 
 module.exports = function(db) {
     var advertiserModels = new models.AdvertiserModels(db);
+    var geoModels = new models.GeoModels(db);
 
     return {
         /**
@@ -310,6 +312,71 @@ module.exports = function(db) {
         },
 
         campaign: {
+            getGeoTrees: function (req, res) {
+                var advertiser = req.advertiser;
+                var campaignId = req.param('campaignId');
+                var targetOrBlock = req.param('targetOrBlock');
+                var ind = _.findIndex(req.advertiser.campaigns, function(c) {
+                    return c._id.toString() === campaignId;
+                });
+                var campaign = advertiser.campaigns[ind];
+
+                var geoTrees = [];
+                var wantedGeos;
+                if (targetOrBlock === 'target') {
+                    wantedGeos = campaign.geo_targets;
+                } else if (targetOrBlock === 'block') {
+                    wantedGeos = campaign.blocked_geos;
+                }
+                return promise.each(wantedGeos, function(country) {
+                    var countryObj;
+                    return geoModels.Country.findOne({_id: country.target})
+                    .then(function(countryResult) {
+                        countryObj = JSON.parse(JSON.stringify(countryResult));
+                        countryObj.weight = country.weight;
+                        countryObj.explicit = country.explicit;
+                        if (country.children) {
+                            countryObj.regions = [];
+                            return promise.each(country.children, function(region) {
+                                var regionObj;
+                                return geoModels.Region.findOne({_id: region.target})
+                                .then(function(regionResult) {
+                                    regionObj = JSON.parse(JSON.stringify(regionResult));
+                                    regionObj.weight = region.weight;
+                                    regionObj.explicit = region.explicit;
+                                    if (region.children) {
+                                        regionObj.cities = [];
+                                        return promise.each(region.children, function(city) {
+                                            var cityObj;
+                                            return geoModels.City.findOne({_id: city.target})
+                                            .then(function(cityResult) {
+                                                cityObj = JSON.parse(JSON.stringify(cityResult));
+                                                cityObj.weight = city.weight;
+                                                cityObj.explicit = city.explicit;
+                                                regionObj.cities.push(cityObj);
+                                            });
+                                        });
+                                    }
+                                })
+                                .then(function() {
+                                    countryObj.regions.push(regionObj);
+                                });
+                            });
+                        }
+                    })
+                    .then(function() {
+                        geoTrees.push(countryObj);
+                    });
+                })
+                .then(function() {
+                    return res.json(geoTrees);
+                })
+                .catch(function(err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                });
+            },
             //TODO: Campaign controllers here
             getCampaignsInClique: function (req, res) {
                 var camps = [];

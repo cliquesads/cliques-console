@@ -608,4 +608,25 @@ module.exports = function(db, routers){
         .get(advertisers.campaign.draft.getForAdvertiser);
 
     router.param('advertiserId', advertisers.advertiserByID);
+
+     
+    // route to get geo targets for designated campaign
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/getGeoTrees')
+        /**
+         * @api {get} /advertiser/:advertiserId/campaign/:campaignId/getGeoTrees Get geo targets or blocked geos for designated campaign in tree format, each tree node contains the complete country/region/city object with weight/explicit
+         * @apiName GetGeoTrees
+         * @apiGroup Advertiser
+         * @apiDescription Get geo targets or blocked geos for designated campaign in tree format, each tree node contains the complete country/region/city object with weight/explicit
+         * 
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         * 
+         * @apiParam (Path Parameters) {String} targetOrBlock whether the wanted geo tree is geo_targets or blocked_geos
+         *
+         * @apiSuccess {Object[]} ::geo trees:: geo_targets or blocked_geos in tree format
+         */
+        .get(advertisers.campaign.getGeoTrees);
+
 };

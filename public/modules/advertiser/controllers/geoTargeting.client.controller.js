@@ -15,10 +15,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.campaignIndex = campaign.index;
 		$scope.campaign = campaign.campaign;
 
-		// TO-DO:::ycx these 2 arrays should be initialized by the value in database
-		$scope.geoTargets = [];
-		$scope.blockedGeos = [];
-
 		//====================================================//
 		//================ BEGIN Map Settings ================//
 		//====================================================//
@@ -134,6 +130,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				var countryNode = _initializeGeoTreeNode($scope.selectedGeo.country, 'Country', null);
 				$scope.blocked_geos.addRegionNode($scope.selectedGeo, countryNode);
 			}
+			console.log('================ in blockGeo: ');
+			console.log($scope.blocked_geos.data);
 		};
 
 		/**
@@ -185,6 +183,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			newNode.__overridden__ = true;
 			newNode.__lock__ = false;
 			newNode.weight = node.weight || 1.0;
+			// __fetched__ means whether the node's children geos have been fetched from backend or not
+			newNode.__fetched__ = false;
 
 			// Properties used by blocked_geos settings
 			newNode.explicit = false;
@@ -238,13 +238,17 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// the children(regions for a country node or cities for a region node)
 			// will be loaded dynamically from backend
 			control.on_select = function(node) {
+				if (node.__fetched__) {
+					return;
+				}
 				var selectedNodeType = node.nodeType;
 				if (selectedNodeType === 'Country') {
 					// Get all regions for this country and load them in tree
-					CampaignGeo.getGeoNodeChildren(node)
+					CampaignGeo.getGeoChildren(node)
 					.then(function(response) {
+						node.__fetched__ = true;
 						if (response.data) {
-							var regions = response.data[0].regions;	
+							var regions = response.data;	
 							regions.forEach(function(region) {
 								self.addRegionNode(region, node);
 							});
@@ -252,10 +256,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					});
 				} else if (selectedNodeType === 'Region') {
 					// Get all cities for this region and load them in tree
-					CampaignGeo.getGeoNodeChildren(node)
+					CampaignGeo.getGeoChildren(node)
 					.then(function(response) {
+						node.__fetched__ = true;
 						if (response.data) {
-							var cities = response.data[0].regions[0].cities;	
+							var cities = response.data;	
 							cities.forEach(function(city) {
 								self.addCityNode(city, node);
 							});
@@ -354,9 +359,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param geos can be geo_targets or blocked_geos from backend DB
 		 * @param callback
 		 */
-		GeoTree.prototype.fromGeosInCampaign = function(geos) {
+		GeoTree.prototype.fromGeosInCampaign = function(advertiserId, campaignId, targetOrBlock) {
 			var self = this;
-			return CampaignGeo.getGeoTrees(geos)
+			return CampaignGeo.getGeoTrees(advertiserId, campaignId, targetOrBlock) 
 			.then(function(response) {
 				self.data = translateGeoDataToDndTree(response.data);
 			});
@@ -368,16 +373,18 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			geoData.forEach(function(country) {
 				var countryNode = _initializeGeoTreeNode(country, 'Country', null);
 				flattened.push(countryNode);
-				country.regions.forEach(function(region) {
-					var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
-					flattened.push(regionNode);
-					if (region.cities) {
-						region.cities.forEach(function(city) {
-							var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
-							flattened.push(cityNode);
-						});
-					}
-				});
+				if (country.regions) {
+					country.regions.forEach(function(region) {
+						var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
+						flattened.push(regionNode);
+						if (region.cities) {
+							region.cities.forEach(function(city) {
+								var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
+								flattened.push(cityNode);
+							});
+						}
+					});	
+				}
 			});
 			return $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
 		};
@@ -507,7 +514,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						a = a - 1;
 					}
 				}
-			}	
+			}
+			return targetsTree;
 		}
 
 		/**
@@ -577,6 +585,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			blockedTree = pruneOverriddenChildren(blockedTree, function(obj) {
 				return obj.explicit === false;
 			});
+			console.log('=============== after toBlockedGeosSchema: ');
+			console.log(blockedTree);
 			return callback(null, blockedTree);
 		};
 
@@ -630,8 +640,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.geo_targets = new GeoTree([], 
 			{
 				remove: function(node) {
-					// Add whole ancestor branch to new tree, as necessary
-					GeoTree.prototype.moveNode($scope.geo_targets, null, node);
+					$scope.geo_targets.control.remove_node(node);
 					$scope.dirty = true;
 				}
 			},
@@ -662,7 +671,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    displayName:  'Actions',
 				    titleClass:   'wd-xxs text-center',
 				    cellClass:    'wd-xxs text-center',
-				    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="target_sites.control.remove(node)" tooltip="Clear Bids">' +
+				    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="geo_targets.control.remove(node)" tooltip="Clear Bids">' +
 				    '<i class="fa fa-lg fa-remove"></i></button>'
 				}
 			]
@@ -674,7 +683,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.blocked_geos = new GeoTree([],
 			{
 				remove: function(node) {
-					GeoTree.prototype.moveNode($scope.blocked_geos, null, node);
+					$scope.blocked_geos.control.remove_node(node);
 					$scope.dirty = true;
 				}
 			},
@@ -685,7 +694,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			},
 			[{
 			    displayName:  'Actions',
-			    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="blocked_sites.control.remove(node)" tooltip="Unblock">' +
+			    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="blocked_geos.control.remove(node)" tooltip="Unblock">' +
 			    '<i class="fa fa-lg fa-remove"></i></button>'
 			}]
 		);
@@ -800,13 +809,17 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 */
 		$scope.initializeBothTrees = function() {
 			// Initialization for geo_targets tree
-			$scope.geo_targets.fromGeosInCampaign($scope.campaign.geo_targets);
-			$scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
-			$scope.geo_targets.setExpandLevel(0);
+			$scope.geo_targets.clearTreeData(function(err) {
+				$scope.geo_targets.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'target');
+				$scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
+				$scope.geo_targets.setExpandLevel(0);
+			});
 
 			// Initialization for blocked_geos tree
-			$scope.blocked_geos.fromGeosInCampaign($scope.campaign.blocked_geos);
-			$scope.blocked_geos.setExpandLevel(0);
+			$scope.blocked_geos.clearTreeData(function(err) {
+				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'block');
+				$scope.blocked_geos.setExpandLevel(0);
+			});
 		};
 
         //======================================================================//
