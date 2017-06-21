@@ -21,11 +21,12 @@
 <div class="topsavebar bg-primary-light"
 	ng-if="showingActionOptions">
 	<div class="text-center text-muted">
-		For 
-		<strong>{{ selectedGeo.name }}</strong>
-		<span ng-if="selectedGeo.type === 'region'"> in 
-			<strong>{{selectedGeo.country.name}}</strong>
-		</span>, do you want to customize bidding or block? 
+		<span ng-if="selectedGeo.type === 'country'">
+			For <strong>{{ selectedGeo.name }}</strong>, do you want to customize bidding or block?
+		</span>
+		<span ng-if="selectedGeo.type === 'region'">
+			For <strong>{{ selectedGeo.name }}</strong> in <strong>{{selectedCountry.name}}</strong>, do you want to customize bidding or block?
+		</span>
 		<button type="button"
 			class="btn btn-success btn-xs ml"
 			ng-click="customizeBiddingForGeo()">
