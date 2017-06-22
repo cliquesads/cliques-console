@@ -18,8 +18,7 @@
 		<tr tree-dnd-node="node"
 			ng-repeat="node in tree_nodes track by node.__hashKey__"
 			ng-show="enabledFilter ? node.__filtered_visible__ === true && node.__visible__ : node.__visible__"
-			ng-class="enabledFilter ? (node.__filtered__ === true? 'success': '') : (node.__selected__ ? ' active' : '')"
-			ng-click="onSelect(node)">
+			ng-class="enabledFilter ? (node.__filtered__ === true? 'success': '') : (node.__selected__ ? ' active' : '')">
 			<td tree-dnd-node-handle
 				ng-style="expandingProperty.cellStyle ? expandingProperty.cellStyle : {'padding-left': $callbacks.calsIndent(node.__level__)}"
 				ng-class="expandingProperty.cellClass">
@@ -40,12 +39,14 @@
 									ng-click="toggleExpand(node)"
 									class="tree-icon">
 								</i>
-							</a> {{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
+							</a> <span ng-click="onSelect(node)">{{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})</span>
 						</h4>	
 					</span>	
 					<span ng-switch-when="Region">
 						<strong>
-							{{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length}} City{{node.__children__.length != 1 ? 's':null}})
+							<span ng-click="onSelect(node)">
+								{{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length}} City{{node.__children__.length != 1 ? 's':null}})
+							</span>
 						</strong>
 					</span>
 					<span ng-switch-when="City">
