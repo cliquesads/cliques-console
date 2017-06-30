@@ -531,6 +531,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						children: null,
 						__overridden__: node.__overridden__
 					};
+					if (node.nodeType === 'City') {
+						targetObj.name = node.name;
+					}
 					var children = self.control.get_children(node);
 					targetsTree.push(targetObj);
 					if (children.length > 0) {
@@ -565,6 +568,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						children: null,
 						explicit: node.explicit
 					};
+					if (node.nodeType === 'City') {
+						targetObj.name = node.name;
+					}
 					var children = self.control.get_children(node);
 					targetsTree.push(targetObj);
 					if (children.length > 0) {
