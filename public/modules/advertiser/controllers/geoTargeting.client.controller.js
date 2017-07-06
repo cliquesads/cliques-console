@@ -175,7 +175,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// when slider is engaged by user
 			newNode.__overridden__ = true;
 			newNode.__lock__ = false;
-			newNode.weight = node.weight || 1.0;
+			if (node.weight === 0) {
+				newNode.weight = 0;
+			} else {
+				newNode.weight = node.weight || 1.0;
+			}
 			// __fetched__ means whether the node's children geos have been fetched from backend or not
 			newNode.__fetched__ = false;
 
@@ -499,6 +503,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							// Now work our way back up the tree to clean up
 							// any nodes without any children left
 							if (region.children.length === 0 && overrideFunction(region)) {
+								country.children.splice(b, 1);
+								b = b - 1;
+							}
+						} else {
+							if (overrideFunction(region)) {
 								country.children.splice(b, 1);
 								b = b - 1;
 							}
