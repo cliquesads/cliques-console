@@ -285,6 +285,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			var countryExists = false,
 				regionExists = false,
 				i = 0;
+			regionObj.weight = countryNode.weight;
 			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country);
 			for (i = 0; i < this.data.length; i ++) {
 				if (this.data[i]._id.toString() === regionObj.country.toString()) {
@@ -331,6 +332,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 			if (!cityExists) {
+				cityObj.weight = regionNode.weight;
 				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id);
 				for (i = 0; i < this.data.length; i ++) {
 					if (this.data[i].__children__) {
