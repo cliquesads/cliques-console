@@ -7,7 +7,9 @@ angular.module('publisher').factory('PlacementTag', ['$http',
             var path = '/console/publisher/'+params.publisherId+'/placement/'+params.placementId;
             var queryParams = {
                 secure: params.secure || false,
-                type: params.type || 'javascript'
+                type: params.type || 'javascript',
+                targetId: params.targetId,
+                targetChildIndex: params.targetChildIndex
             };
             return $http.get(path, {params: queryParams});
         };

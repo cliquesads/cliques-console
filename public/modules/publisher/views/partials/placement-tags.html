@@ -1,25 +1,48 @@
 <section data-ng-init="getPlacementTag()">
     <h4>Tag for {{placement.name}}</h4>
     <form name="tagOptions">
-        <table class="col-sm-12">
-            <thead>
-                <th>Secure</th>
-                <th>Tag Type</th>
-            </thead>
-            <tbody>
+        <fieldset class="pb0">
+            <table class="col-sm-12">
+                <thead>
+                    <th>Secure</th>
+                    <th>Tag Type</th>
+                </thead>
+                <tbody>
+                    <tr class="align-top">
+                        <td class="col-sm-4">
+                            <div class="checkbox c-checkbox">
+                                <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>
+                            </div>
+                        </td>
+                        <td class="col-sm-8">
+                            <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="javascript" model="options.type"></tag-type-input>
+                            <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="iframe" model="options.type"></tag-type-input>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+        <div class="pl-sm checkbox c-checkbox">
+            <label><input type="checkbox" ng-model="options.dynamicInsertion"/><span class="fa fa-check"></span>Dynamic Insertion</label>
+        </div>
+        <fieldset class="pb0 mb0">
+            <table class="col-sm-12" ng-show="options.dynamicInsertion">
+                <thead>
+                    <th>Target ID</th>
+                    <th>Target Child Index</th>
+                </thead>
+                <tbody>
                 <tr class="align-top">
-                    <td class="col-sm-4">
-                        <div class="checkbox c-checkbox">
-                            <label><input type="checkbox" ng-model="options.secure"/><span class="fa fa-check"></span>Secure</label>
-                        </div>
+                    <td class="col-sm-6">
+                        <input type="text" data-ng-model="options.targetId" placeholder="cssId" id="targetId" class="form-control">
                     </td>
-                    <td class="col-sm-8">
-                        <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="javascript" model="options.type"></tag-type-input>
-                        <tag-type-input class="col-sm-6" default-type="{{ placement.defaultType }}" tag-type="iframe" model="options.type"></tag-type-input>
+                    <td class="col-sm-6">
+                        <input type="number" data-ng-model="options.targetChildIndex" id="targetChildIndex" class="form-control">
                     </td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </fieldset>
     </form>
     <small class="text-muted">Paste this ad tag directly into your Page or 3rd-party ad-server</small>
     <pre id="adTag">{{ tag }}</pre>

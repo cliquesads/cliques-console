@@ -221,8 +221,11 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
 
                     // Default tag options
                     $scope.options = {
+                        dynamicInsertion: false,
                         secure: false,
-                        type: defaultTagType
+                        type: defaultTagType,
+                        targetId: null,
+                        targetChildIndex: null
                     };
 
                     $scope.copySuccess = function(e){
@@ -234,12 +237,14 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             publisherId: $scope.publisher._id,
                             placementId: $scope.placement._id,
                             secure: $scope.options.secure,
-                            type: $scope.options.type
+                            type: $scope.options.type,
+                            targetId: $scope.options.targetId,
+                            targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watchGroup(['options.secure', 'options.type'], function(){
+                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex'], function(){
                         $scope.getPlacementTag();
                     });
                 }],

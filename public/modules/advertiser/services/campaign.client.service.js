@@ -20,7 +20,7 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
             if (obj.hasOwnProperty(key)){
                 if (typeof obj[key] === 'object' && obj[key] !== null){
                     if (obj[key].length === undefined){
-                        stripIds(obj);
+                        stripIds(obj[key]);
                     } else {
                         obj[key].forEach(function(subObj){
                             stripIds(subObj);

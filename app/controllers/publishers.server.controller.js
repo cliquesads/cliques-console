@@ -268,7 +268,9 @@ module.exports = function(db) {
                     port: exchangePort,
                     secure: secure,
                     cloaderURL: cloaderURL,
-                    tag_type: req.query.type
+                    tag_type: req.query.type,
+                    targetId: req.query.targetId,
+                    targetChildIndex: req.query.targetChildIndex
                 });
                 publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', function(err, placement){
                     if (err){

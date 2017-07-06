@@ -52,7 +52,7 @@ angular.module('advertiser').directive('doubleclickCreativeUploader', [
                                 hostingType: 'doubleclick',
                                 tag: scope.dfa_tag,
                                 click_url: '<doubleclick>',
-                                url: js_tag.img_src
+                                url: js_tag.img_src || '<doubleclick>'
                             };
                             scope.creatives.push(creative);
 
