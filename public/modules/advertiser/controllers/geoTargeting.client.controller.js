@@ -170,7 +170,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// Add custom node properties
 			newNode.parentId = parentId; // Needed for conversion to Geo Treen DND format
 			newNode.nodeType = nodeType;
-			newNode.__hideSlider__ = false;
+			// Hide slider for city node for performance tuning
+			if (nodeType !== 'City') {
+				newNode.__hideSlider__ = false;
+			} else {
+				newNode.__hideSlider__ = true;
+			}
 			// Set initial state as overridden so that it only can be set false
 			// when slider is engaged by user
 			newNode.__overridden__ = true;
@@ -664,7 +669,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    titleClass:  'text-center',
 				    displayName: "Weight",
 				    cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
-				    '<div class="text-muted" ng-show="node.__hideSlider__ && !node.__expanded__"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>'
+				    // text hint for country and region nodes
+				    '<div class="text-muted" ng-if="node.__hideSlider__ && !node.__expanded__ && node.nodeType !== \'City\'"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>' +
+				    // button for city node to show/hide sliders
+				    '<button ng-if="node.nodeType === \'City\'" type="button" class="btn btn-success btn-xs ml" ng-click="node.__hideSlider__ = !node.__hideSlider__"><i class="fa fa-sliders"></i></button>'
 				},
 				{
 				    field: 'bid',
