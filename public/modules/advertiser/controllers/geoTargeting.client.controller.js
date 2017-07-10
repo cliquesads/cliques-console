@@ -286,6 +286,21 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if (!countryExists) {
 				var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null);
 				this.data.push(countryNode);
+				if (countryNode._id !== 'USA') {
+					var self = this;
+					// For non-USA countries, load regions together with country node
+					// Get all regions for this country and load them in tree
+					CampaignGeo.getGeoChildren(countryNode)
+					.then(function(response) {
+						countryNode.__fetched__ = true;
+						if (response.data) {
+							var regions = response.data;	
+							regions.forEach(function(region) {
+								self.addRegionNode(region, countryNode);
+							});
+						}
+					});
+				}
 			}
 		};
 
