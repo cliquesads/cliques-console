@@ -16,9 +16,10 @@
 	</thead>
 	<tbody tree-dnd-nodes>
 		<tr tree-dnd-node="node"
+			id="anchor-{{node._id}}"
 			ng-repeat="node in tree_nodes track by node.__hashKey__"
 			ng-show="enabledFilter ? node.__filtered_visible__ === true && node.__visible__ : node.__visible__"
-			ng-class="enabledFilter ? (node.__filtered__ === true? 'success': '') : (node.__selected__ ? ' active' : '')">
+			ng-class="[enabledFilter ? (node.__filtered__ === true? 'success': '') : (node.__selected__ ? ' active' : ''), node.__isSearchResult__ ? 'bg-success' : '']">
 			<td tree-dnd-node-handle
 				ng-style="expandingProperty.cellStyle ? expandingProperty.cellStyle : {'padding-left': $callbacks.calsIndent(node.__level__)}"
 				ng-class="expandingProperty.cellClass">

@@ -100,6 +100,16 @@
 			<tree-expand-toggle-buttons control="geo_targets.control"
 				ng-show="geo_targets.data">
 			</tree-expand-toggle-buttons>
+			<!-- Search box -->
+			<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
+			<div class="input-group mt">
+				<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="geoTreeSearchKeyword">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button" ng-click="searchGeoTree()" ng-disabled="!geoTreeSearchKeyword">
+						<i class="fa fa-search"></i>
+					</button>
+				</span>
+			</div>
 			<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
 				tree-data="geo_targets.data"
 				tree-control="geo_targets.control"

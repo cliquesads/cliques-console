@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'OPENRTB', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, OPENRTB, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo) {
+	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'OPENRTB', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo', '$location', '$anchorScroll',
+	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, OPENRTB, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo, $location, $anchorScroll) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
@@ -185,6 +185,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			} else {
 				newNode.weight = node.weight || 1.0;
 			}
+			// search result flag to show the node background with a different color
+			node.__isSearchResult__ = false;
 			// __fetched__ means whether the node's children geos have been fetched from backend or not
 			newNode.__fetched__ = false;
 
@@ -369,6 +371,56 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 		};
+
+		GeoTree.prototype.searchNode = function(nodeName) {
+			nodeName = _.toLower(nodeName);
+			for (var i = 0; i < this.data.length; i ++) {
+				if (_.toLower(this.data[i].name) === nodeName) {
+					this.data[i].__isSearchResult__ = true;
+					return this.data[i];
+				} else if (this.data[i].__children__) {
+					for (var j = 0; j < this.data[i].__children__.length; j ++) {
+						if (_.toLower(this.data[i].__children__[j].name) === nodeName) {
+							this.data[i].__children__[j].__isSearchResult__ = true;	
+							return this.data[i].__children__[j];
+						} else if (this.data[i].__children__[j].__children__) {
+							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
+								if (_.toLower(this.data[i].__children__[j].__children__[k].name) === nodeName) {
+									this.data[i].__children__[j].__children__[k].__isSearchResult__ = true;	
+									return this.data[i].__children__[j].__children__[k];
+								}
+							}
+						}
+					}
+				}
+			}
+			// Search not found
+			return null;
+		};
+
+		GeoTree.prototype.clearSearchResult = function() {
+			for (var i = 0; i < this.data.length; i ++) {
+				if (this.data[i].__isSearchResult__ === true) {
+					this.data[i].__isSearchResult__ = false;
+					return;
+				} else if (this.data[i].__children__) {
+					for (var j = 0; j < this.data[i].__children__.length; j ++) {
+						if (this.data[i].__children__[j].__isSearchResult__ === true) {
+							this.data[i].__children__[j].__isSearchResult__ = false;	
+							return;
+						} else if (this.data[i].__children__[j].__children__) {
+							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
+								if (this.data[i].__children__[j].__children__[k].__isSearchResult__ === true) {
+									this.data[i].__children__[j].__children__[k].__isSearchResult__ = false;	
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+
 
 		/**
 		 * Loads this.data for geo_targets or blocked_geos
@@ -859,5 +911,20 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
         // Initialize targeting tree and blocked tree objects
 		$scope.initializeBothTrees();
+
+		$scope.scrollToAnchor = function(id) {
+			var newHash = 'anchor-' + id;
+			if ($location.hash() !== newHash) {
+				$location.hash(newHash);
+			} else {
+				$anchorScroll();
+			}
+		};
+
+		$scope.searchGeoTree = function() {
+			$scope.geo_targets.clearSearchResult();
+			var searchResultNode = $scope.geo_targets.searchNode($scope.geoTreeSearchKeyword);
+			$scope.scrollToAnchor(searchResultNode._id);
+		};
 	}
 ]);
