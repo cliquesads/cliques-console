@@ -105,7 +105,7 @@
 			<div class="input-group mt">
 				<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="geoTreeSearchKeyword">
 				<span class="input-group-btn">
-					<button class="btn btn-default" type="button" ng-click="searchGeoTree()" ng-disabled="!geoTreeSearchKeyword">
+					<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="!geoTreeSearchKeyword">
 						<i class="fa fa-search"></i>
 					</button>
 				</span>
@@ -140,6 +140,15 @@
 			<tree-expand-toggle-buttons control="blocked_geos.control"
 				ng-show="blocked_geos.data">
 			</tree-expand-toggle-buttons>
+			<!-- Search box for blocked geo tree -->
+			<div class="input-group mt">
+				<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="blockedTreeSearchKeyword">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="!blockedTreeSearchKeyword">
+						<i class="fa fa-search"></i>
+					</button>
+				</span>
+			</div>
 			<tree-dnd
 				template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
 				tree-data="blocked_geos.data"

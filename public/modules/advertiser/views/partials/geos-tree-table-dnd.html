@@ -16,7 +16,7 @@
 	</thead>
 	<tbody tree-dnd-nodes>
 		<tr tree-dnd-node="node"
-			id="anchor-{{node._id}}"
+			id="anchor-{{node.__treeType__}}-{{node._id}}"
 			ng-repeat="node in tree_nodes track by node.__hashKey__"
 			ng-show="enabledFilter ? node.__filtered_visible__ === true && node.__visible__ : node.__visible__"
 			ng-class="[enabledFilter ? (node.__filtered__ === true? 'success': '') : (node.__selected__ ? ' active' : ''), node.__isSearchResult__ ? 'bg-success' : '']">

@@ -111,7 +111,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if ($scope.selectedGeo.type === 'country') {
 				$scope.geo_targets.addCountryNode($scope.selectedGeo);
 			} else {
-				var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null);
+				var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null, $scope.geo_targets.treeType);
 				$scope.geo_targets.addRegionNode($scope.selectedGeo, countryNode);
 			}
 		};
@@ -122,7 +122,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if ($scope.selectedGeo.type === 'country') {
 				$scope.blocked_geos.addCountryNode($scope.selectedGeo);
 			} else {
-				var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null);
+				var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null, $scope.blocked_geos.treeType);
 				$scope.blocked_geos.addRegionNode($scope.selectedGeo, countryNode);
 			}
 		};
@@ -163,7 +163,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param parentId
 		 * @returns {node}
 		 */
-		var _initializeGeoTreeNode = function(node, nodeType, parentId) {
+		var _initializeGeoTreeNode = function(node, nodeType, parentId, treeType) {
 			// Create node clone
 			var newNode = _.clone(node);
 
@@ -186,7 +186,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				newNode.weight = node.weight || 1.0;
 			}
 			// search result flag to show the node background with a different color
-			node.__isSearchResult__ = false;
+			newNode.__isSearchResult__ = false;
+			newNode.__treeType__ = treeType;
 			// __fetched__ means whether the node's children geos have been fetched from backend or not
 			newNode.__fetched__ = false;
 
@@ -236,12 +237,13 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param columns tree-dnd column model
 		 * @constructor
 		 */
-		var GeoTree = function(treeData, control, expanding_property, columns) {
+		var GeoTree = function(treeData, control, expanding_property, columns, treeType) {
 			var self = this;
 			// Add control.on_select for GeoTree, so when clicking a node,
 			// the children(regions for a country node or cities for a region node)
 			// will be loaded dynamically from backend
 			control.on_select = function(node) {
+				self.clearSearchResult();
 				if (node.__fetched__) {
 					return;
 				}
@@ -272,6 +274,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					});
 				}
 			};
+			this.treeType = treeType;
 			DndTreeWrapper.call(this, treeData, control, expanding_property, columns);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
@@ -286,7 +289,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 			if (!countryExists) {
-				var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null);
+				var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
 				this.data.push(countryNode);
 				if (countryNode._id !== 'USA') {
 					var self = this;
@@ -312,7 +315,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				regionExists = false,
 				i = 0;
 			regionObj.weight = countryNode.weight;
-			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country);
+			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType);
 			for (i = 0; i < this.data.length; i ++) {
 				if (this.data[i]._id.toString() === regionObj.country.toString()) {
 					countryExists = true;
@@ -359,7 +362,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 			if (!cityExists) {
 				cityObj.weight = regionNode.weight;
-				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id);
+				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType);
 				for (i = 0; i < this.data.length; i ++) {
 					if (this.data[i].__children__) {
 						for (var j = 0; j < this.data[i].__children__.length; j ++) {
@@ -434,30 +437,27 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			var self = this;
 			return CampaignGeo.getGeoTrees(advertiserId, campaignId, targetOrBlock) 
 			.then(function(response) {
-				self.data = translateGeoDataToDndTree(response.data);
+				var geoData = response.data;
+				var flattened = [];
+				if (!geoData) return;
+				geoData.forEach(function(country) {
+					var countryNode = _initializeGeoTreeNode(country, 'Country', null, self.treeType);
+					flattened.push(countryNode);
+					if (country.regions) {
+						country.regions.forEach(function(region) {
+							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, self.treeType);
+							flattened.push(regionNode);
+							if (region.cities) {
+								region.cities.forEach(function(city) {
+									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, self.treeType);
+									flattened.push(cityNode);
+								});
+							}
+						});	
+					}
+				});
+				self.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
 			});
-		};
-
-		var translateGeoDataToDndTree = function(geoData) {
-			var flattened = [];
-			if (!geoData) return;
-			geoData.forEach(function(country) {
-				var countryNode = _initializeGeoTreeNode(country, 'Country', null);
-				flattened.push(countryNode);
-				if (country.regions) {
-					country.regions.forEach(function(region) {
-						var regionNode = _initializeGeoTreeNode(region, 'Region', country._id);
-						flattened.push(regionNode);
-						if (region.cities) {
-							region.cities.forEach(function(city) {
-								var cityNode = _initializeGeoTreeNode(city, 'City', region._id);
-								flattened.push(cityNode);
-							});
-						}
-					});	
-				}
-			});
-			return $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
 		};
 
 		/**
@@ -757,7 +757,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="geo_targets.control.remove(node)" tooltip="Clear Bids">' +
 				    '<i class="fa fa-lg fa-remove"></i></button>'
 				}
-			]
+			],
+			'geo_targets'
 		);
 
 		/**
@@ -779,7 +780,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			    displayName:  'Actions',
 			    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="blocked_geos.control.remove(node)" tooltip="Unblock">' +
 			    '<i class="fa fa-lg fa-remove"></i></button>'
-			}]
+			}],
+			'blocked_geos'
 		);
 
 		//==========================================================//
@@ -912,8 +914,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
         // Initialize targeting tree and blocked tree objects
 		$scope.initializeBothTrees();
 
-		$scope.scrollToAnchor = function(id) {
-			var newHash = 'anchor-' + id;
+		$scope.scrollToAnchor = function(id, treeType) {
+			// yOffset set to the height of topbar, sorry had to hard code it
+			$anchorScroll.yOffset = 55;
+			var newHash = 'anchor-' + treeType + '-' + id;
 			if ($location.hash() !== newHash) {
 				$location.hash(newHash);
 			} else {
@@ -921,10 +925,20 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 		};
 
-		$scope.searchGeoTree = function() {
+		$scope.searchTargetsTree = function() {
 			$scope.geo_targets.clearSearchResult();
 			var searchResultNode = $scope.geo_targets.searchNode($scope.geoTreeSearchKeyword);
-			$scope.scrollToAnchor(searchResultNode._id);
+			if (searchResultNode) {
+				$scope.scrollToAnchor(searchResultNode._id, $scope.geo_targets.treeType);
+			}
 		};
+
+		$scope.searchBlockedTree = function() {
+			$scope.blocked_geos.clearSearchResult();
+			var searchResultNode = $scope.blocked_geos.searchNode($scope.blockedTreeSearchKeyword);
+			if (searchResultNode) {
+				$scope.scrollToAnchor(searchResultNode._id, $scope.blocked_geos.treeType);
+			}
+		}
 	}
 ]);
