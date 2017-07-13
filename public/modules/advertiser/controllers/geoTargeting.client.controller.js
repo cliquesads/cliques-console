@@ -163,7 +163,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param parentId
 		 * @returns {node}
 		 */
-		var _initializeGeoTreeNode = function(node, nodeType, parentId, treeType) {
+		var _initializeGeoTreeNode = function(node, nodeType, parentId, treeType, parentNodeWeight) {
 			// Create node clone
 			var newNode = _.clone(node);
 
@@ -179,6 +179,15 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// Set initial state as overridden so that it only can be set false
 			// when slider is engaged by user
 			newNode.__overridden__ = true;
+			if (nodeType === 'Country') {
+				if (node.weight !== 1.0) {
+					newNode.__overridden__ = false;
+				}
+			} else {
+				if (node.weight !== parentNodeWeight) {
+					newNode.__overridden__ = false;
+				}
+			}
 			newNode.__lock__ = false;
 			if (node.weight === 0) {
 				newNode.weight = 0;
@@ -315,7 +324,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				regionExists = false,
 				i = 0;
 			regionObj.weight = countryNode.weight;
-			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType);
+			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType, countryNode.weight);
 			for (i = 0; i < this.data.length; i ++) {
 				if (this.data[i]._id.toString() === regionObj.country.toString()) {
 					countryExists = true;
@@ -362,7 +371,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 			if (!cityExists) {
 				cityObj.weight = regionNode.weight;
-				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType);
+				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
 				for (i = 0; i < this.data.length; i ++) {
 					if (this.data[i].__children__) {
 						for (var j = 0; j < this.data[i].__children__.length; j ++) {
@@ -445,11 +454,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					flattened.push(countryNode);
 					if (country.regions) {
 						country.regions.forEach(function(region) {
-							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, self.treeType);
+							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, self.treeType, countryNode.weight);
 							flattened.push(regionNode);
 							if (region.cities) {
 								region.cities.forEach(function(city) {
-									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, self.treeType);
+									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, self.treeType, regionNode.weight);
 									flattened.push(cityNode);
 								});
 							}
