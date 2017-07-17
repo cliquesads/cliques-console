@@ -673,6 +673,28 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				return targetsTree;
 			}
 			var blockedTree = inner(this.data);
+			// iterate each blocked node in blockedTree, 
+			// if the node is a leaf node,  i.e. a node with no children, 
+			// then set node.explicit to true,
+			// otherwise set node.explicit to false
+			blockedTree.forEach(function(countryNode) {
+				if (countryNode.children && countryNode.children.length > 0) {
+					countryNode.explicit = false;
+					countryNode.children.forEach(function(regionNode) {
+						if (regionNode.children && regionNode.children.length > 0) {
+							regionNode.explicit = false;
+							regionNode.children.forEach(function(cityNode) {
+								cityNode.explicit = true;
+							});
+						} else {
+							regionNode.explicit = true;
+						}
+					});
+				} else {
+					countryNode.explicit = true;
+				}
+			});
+
 			blockedTree = pruneOverriddenChildren(blockedTree, function(obj) {
 				return obj.explicit === false;
 			});
