@@ -31,7 +31,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				controller: ['$scope', '$rootScope', function($scope, $rootScope) {
 					$scope.selectedGeo = $scope.ngDialogData.selectedGeo;
 					$scope.customizeBiddingForGeo = function() {
-						parentScope.showingActionOptions = false;
 						parentScope.dirty = true;
 						if (parentScope.selectedGeo.type === 'country') {
 							parentScope.geo_targets.addCountryNode(parentScope.selectedGeo);
@@ -43,7 +42,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					};
 
 					$scope.blockGeo = function() {
-						parentScope.showingActionOptions = false;
 						parentScope.dirty = true;
 						if (parentScope.selectedGeo.type === 'country') {
 							parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
