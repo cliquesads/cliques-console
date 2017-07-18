@@ -7,6 +7,18 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		$scope.Math = Math;
 		$scope.dirty = false;
+		$scope.layout = 'horizontal';
+
+		$scope.switchLayout = function() {
+			// Change page layout 
+			if ($scope.layout === 'horizontal') {
+				$scope.layout = 'vertical';
+				$scope.mapObject.options.width = $window.innerWidth - 294;
+			} else {
+				$scope.layout = 'horizontal';
+				$scope.mapObject.options.width = ($window.innerWidth - 320) * 7 / 12;
+			}
+		};
 
 		/**
 		 * Get Campaign from URL state params on load
@@ -52,7 +64,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			scope: mapScope,
 			options: {
 				// current window inner width minus the width of the sidebar
-				width: $window.innerWidth - 294,
+				width: ($window.innerWidth - 320) * 7 / 12,
 				legendHeight: 60 	// optionally set the padding of the legend
 			},
 			geographyConfig: {
