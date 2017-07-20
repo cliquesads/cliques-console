@@ -118,6 +118,44 @@ module.exports = function(db) {
                     next();
                 });
             },
+            updateRegionId: function (req, res) {
+                geoModels.Region.find({
+                    country: 'AUS'
+                }, function(err, regions) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        regions.forEach(function(region) {
+                            // Add a padding '0' in front of region index
+                            var regionIndex = region._id.substring('AUS-'.length);
+                            if (regionIndex.length === 1) {
+                                var copiedRegionObject = JSON.parse(JSON.stringify(region));
+                                copiedRegionObject._id = 'AUS-0' + copiedRegionObject._id.substring(4);
+                                // Cannot update _id field to a document, have to create a 
+                                // new document and then delete the old one
+                                var updatedRegion = new geoModels.Region(copiedRegionObject);
+                                updatedRegion.save(function(err, updatedRegion) {
+                                    if (err) {
+                                        return res.status(400).send({
+                                            message: errorHandler.getAndLogErrorMessage(err)
+                                        });
+                                    }
+                                });
+                                region.remove(function(err) {
+                                    if (err) {
+                                        return res.status(400).send({
+                                            message: errorHandler.getAndLogErrorMessage(err)
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                        return res.status(200).send();
+                    }
+                });
+            },
             /**
              * For an existed region, update its geo-coordinates
              */

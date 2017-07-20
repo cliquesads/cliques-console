@@ -148,6 +148,13 @@ module.exports = function(db, routers){
          */
         .get(geo.region.getManyRegions);
 
+    router.route('/region/updateRegionId')
+        /**
+         * This is a one time thing, its function is to update region ids for `Australia` so that region ids in regions collection are consistent to those in city collections for Australia
+         * Currently in database, the region ids in region collection are `AUS-1`, `AUS-2 and etc, yet region ids in city collection are `AUS-01`, `AUS-02`...
+         */
+        .get(geo.region.updateRegionId);
+
     router.route('/region/:regionId')
         /**
          * @api {get} /region/:regionId Get Region
