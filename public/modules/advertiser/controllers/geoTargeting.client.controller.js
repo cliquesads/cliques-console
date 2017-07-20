@@ -222,8 +222,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// search result flag to show the node background with a different color
 			newNode.__isSearchResult__ = false;
 			newNode.__treeType__ = treeType;
-			// __fetched__ means whether the node's children geos have been fetched from backend or not
-			newNode.__fetched__ = false;
 
 			// Properties used by blocked_geos settings
 			newNode.explicit = false;
@@ -272,42 +270,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @constructor
 		 */
 		var GeoTree = function(treeData, control, expanding_property, columns, treeType) {
-			var self = this;
-			// Add control.on_select for GeoTree, so when clicking a node,
-			// the children(regions for a country node or cities for a region node)
-			// will be loaded dynamically from backend
-			control.on_select = function(node) {
-				self.clearSearchResult();
-				if (node.__fetched__) {
-					return;
-				}
-				var selectedNodeType = node.nodeType;
-				if (selectedNodeType === 'Country') {
-					// Get all regions for this country and load them in tree
-					CampaignGeo.getGeoChildren(node)
-					.then(function(response) {
-						node.__fetched__ = true;
-						if (response.data) {
-							var regions = response.data;	
-							regions.forEach(function(region) {
-								self.addRegionNode(region, node);
-							});
-						}
-					});
-				} else if (selectedNodeType === 'Region') {
-					// Get all cities for this region and load them in tree
-					CampaignGeo.getGeoChildren(node)
-					.then(function(response) {
-						node.__fetched__ = true;
-						if (response.data) {
-							var cities = response.data;	
-							cities.forEach(function(city) {
-								self.addCityNode(city, node);
-							});
-						}
-					});
-				}
-			};
 			this.treeType = treeType;
 			DndTreeWrapper.call(this, treeData, control, expanding_property, columns);	
 		};
@@ -331,7 +293,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					// Get all regions for this country and load them in tree
 					CampaignGeo.getGeoChildren(countryNode)
 					.then(function(response) {
-						countryNode.__fetched__ = true;
 						if (response.data) {
 							var regions = response.data;	
 							regions.forEach(function(region) {
