@@ -86,6 +86,32 @@ module.exports = function(db) {
                     next();
                 });
             },
+            /**
+             * For a given country, get all its children, that is,
+             * get all its cities populating the region field
+             */
+            getGeoChildren: function(req, res) {
+                var geo = req.param('geo');
+                try {
+                    geo = JSON.parse(geo);
+                } catch (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                }
+                // Finding all geo children for a country, i.e. all cities with regions populated in this country
+                return geoModels.City
+                .find({country: geo.id})
+                .populate('region')
+                .exec(function(err, cities) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    }
+                    return res.json(cities);
+                });
+            },
         },
         region: {
             /**
@@ -290,42 +316,5 @@ module.exports = function(db) {
                 });
             }
         },
-
-        /**
-         * For a given geo(country or region), get all its children, that is,
-         * for a country, get all its regions
-         * for a region, get all its cities
-         */
-        getGeoChildren: function(req, res) {
-            var geo = req.param('geo');
-            try {
-                geo = JSON.parse(geo);
-            } catch(err) {
-                return res.status(400).send({
-                    message: errorHandler.getAndLogErrorMessage(err)
-                });
-            }
-            if (geo.type === 'country') {
-                return geoModels.Region.find({country: geo.id})
-                .then(function(regions) {
-                    return res.json(regions); 
-                })
-                .catch(function(err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                });
-            } else if (geo.type === 'region') {
-                return geoModels.City.find({region: geo.id})
-                .then(function(cities) {
-                    return res.json(cities);
-                })
-                .catch(function(err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                });
-            }
-        }
     };
 };

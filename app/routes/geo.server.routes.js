@@ -103,10 +103,10 @@ module.exports = function(db, routers){
 
     router.route('/getGeoChildren')
         /**
-         * @api {get} /getGeoChildren For a given geo(country or region), get all its children(regions for country, or cities for region)
+         * @api {get} /getGeoChildren For a given country, get all its cities populating the region field
          * @apiName GetGeoChildren
          * @apiGroup Geo
-         * @apiDescription For a given geo(country or region), get all its children(regions for country, or cities for region)
+         * @apiDescription For a given country, get all its cities populating the region field
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin
@@ -116,16 +116,11 @@ module.exports = function(db, routers){
          * @apiParam {Object} geo object with the following format:
          * {
          *    id: 'USA',
-         *    type: 'country'
          * }
-         * or
-         * {
-         *    id: 'USA-AL',
-         *    type: 'region'
-         * }
-         * @apiSuccess {Object[]} an array containing all regions in this country, or all cities in this region
+         *
+         * @apiSuccess {Object[]} an array containing all cities with regions populated in this country
          */
-        .get(geo.getGeoChildren);
+        .get(geo.country.getGeoChildren);
 
     router.param('countryId', geo.country.countryByID);
 

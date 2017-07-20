@@ -210,7 +210,6 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
                 params: {
                     geo: {
                         id: geoNode._id, 
-                        type: _.toLower(geoNode.nodeType)
                     }
                 }
             });
