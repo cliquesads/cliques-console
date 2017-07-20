@@ -276,98 +276,68 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
 
 		GeoTree.prototype.addCountryNode = function(countryObj) {
-			var countryExists = false;
 			// Need to make sure the country node is NOT YET in geotree
 			for (var i = 0; i < this.data.length; i ++) {
 				if (this.data[i]._id === countryObj._id) {
-					countryExists = true;
-					break;
+					return this.data[i];
 				}
 			}
-			if (!countryExists) {
-				var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
-				this.data.push(countryNode);
-				if (countryNode._id !== 'USA') {
-					var self = this;
-					// For non-USA countries, load regions together with country node
-					// Get all regions for this country and load them in tree
-					CampaignGeo.getGeoChildren(countryNode)
-					.then(function(response) {
-						if (response.data) {
-							var regions = response.data;	
-							regions.forEach(function(region) {
-								self.addRegionNode(region, countryNode);
-							});
-						}
-					});
-				}
+			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
+			this.data.push(countryNode);
+			if (countryNode._id !== 'USA') {
+				var self = this;
+				// For non-USA countries, load regions together with country node
+				// Get all regions for this country and load them in tree
+				CampaignGeo.getGeoChildren(countryNode)
+				.then(function(response) {
+					if (response.data) {
+						var regions = response.data;	
+						regions.forEach(function(region) {
+							self.addRegionNode(region, countryNode);
+						});
+					}
+				});
 			}
+			return countryNode;
 		};
 
 		GeoTree.prototype.addRegionNode = function(regionObj, countryNode) {
-			// Need to find out whether the country of this region exists in geotree or not
-			var countryExists = false,
-				regionExists = false,
-				i = 0;
+			var i = 0;
+			if (countryNode.__children__) {
+				for (i = 0; i < countryNode.__children__.length; i ++) {
+					if (countryNode.__children__[i]._id === regionObj._id) {
+						// Such region node already exists in tree data, return this existed region node
+						return countryNode.__children__[i];
+					}	
+				}
+			}
 			regionObj.weight = countryNode.weight;
 			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType, countryNode.weight);
-			for (i = 0; i < this.data.length; i ++) {
-				if (this.data[i]._id.toString() === regionObj.country.toString()) {
-					countryExists = true;
-					break;
-				}
+			if (!countryNode.__children__) {
+				countryNode.__children__ = [];
 			}
-			if (countryExists) {
-				// Need to make sure the region about to add is NOT YET in geotree
-				countryNode = this.data[i];
-				if (countryNode.__children__) {
-					for (i = 0; i < countryNode.__children__.length; i ++) {
-						if (countryNode.__children__[i]._id === regionObj._id) {
-							regionExists = true;
-							break;
-						}
-					}
-				}
-				if (!regionExists) {
-					if (!countryNode.__children__) {
-						countryNode.__children__ = [];
-					}
-					countryNode.__children__.push(regionNode);
-				}
-			} else {
-				if (!countryNode.__children__) {
-					countryNode.__children__ = [];
-				}
-				countryNode.__children__.push(regionNode);
-				this.data.push(countryNode);
-			}
+			countryNode.__children__.push(regionNode);
+			return regionNode;
 		};
 
 		GeoTree.prototype.addCityNode = function(cityObj, regionNode) {
 			// Make sure the city about to add is NOT YET in this region
-			var cityExists = false;
 			var i = 0;
 			if (regionNode.__children__) {
 				for (i = 0; i < regionNode.__children__.length; i ++) {
 					if (regionNode.__children__[i]._id === cityObj._id) {
-						cityExists = true;
-						break;
+						// Such city node already exists in tree data, return this existed city node
+						return regionNode.__children__[i];
 					}
 				}
 			}
-			if (!cityExists) {
-				cityObj.weight = regionNode.weight;
-				var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
-				for (i = 0; i < this.data.length; i ++) {
-					if (this.data[i].__children__) {
-						for (var j = 0; j < this.data[i].__children__.length; j ++) {
-							if (this.data[i].__children__[j]._id === regionNode._id) {
-								this.data[i].__children__[j].__children__.push(cityNode);
-							}
-						}
-					}
-				}
+			cityObj.weight = regionNode.weight;
+			var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
+			if (!regionNode.__children__) {
+				regionNode.__children__ = [];
 			}
+			regionNode.__children__.push(cityNode);
+			return cityNode;
 		};
 
 		GeoTree.prototype.searchNode = function(nodeName) {
