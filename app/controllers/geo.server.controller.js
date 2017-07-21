@@ -144,6 +144,21 @@ module.exports = function(db) {
                     next();
                 });
             },
+            getCities: function (req, res) {
+                var regionId = req.param('regionId');
+                geoModels.City.find({
+                    region: regionId 
+                }, function(err, cities) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        return res.json(cities);
+                    }
+                });
+
+            },
             updateRegionId: function (req, res) {
                 geoModels.Region.find({
                     country: 'AUS'

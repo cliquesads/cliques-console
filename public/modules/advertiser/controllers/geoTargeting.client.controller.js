@@ -34,11 +34,18 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						parentScope.dirty = true;
 						var countryNode;
 						if (parentScope.selectedGeo.type === 'country') {
+							// A country is selected to customize,
+							// load the whole country and all its regions/cities
 							countryNode = parentScope.geo_targets.addCountryNode(parentScope.selectedGeo);
+							parentScope.geo_targets.loadCountryGeoChildren(countryNode);
 						} else {
+							// A region is selected to customize,
+							// should load just that region and its cities
 							countryNode = parentScope.geo_targets.addCountryNode($rootScope.selectedCountry);
+							var regionNode = parentScope.geo_targets.addRegionNode($scope.selectedGeo, countryNode);
+							regionNode.__expanded__ = false;
+							parentScope.geo_targets.loadRegionGeoChildren(regionNode);
 						}
-						parentScope.geo_targets.loadCountryGeoChildren(countryNode);
 						$scope.closeThisDialog('success');
 					};
 
@@ -46,11 +53,18 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						parentScope.dirty = true;
 						var countryNode;
 						if (parentScope.selectedGeo.type === 'country') {
+							// A country is selected to block,
+							// load the whole country and all its regions/cities
 							countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
+							parentScope.blocked_geos.loadCountryGeoChildren(countryNode);
 						} else {
+							// A region is selected to customize,
+							// should load just that region and its cities
 							countryNode = parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
+							var regionNode = parentScope.blocked_geos.addRegionNode($scope.selectedGeo, countryNode);
+							regionNode.__expanded__ = false;
+							parentScope.blocked_geos.loadRegionGeoChildren(regionNode);
 						}
-						parentScope.blocked_geos.loadCountryGeoChildren(countryNode);
 						$scope.closeThisDialog('success');
 					};
 				}]
@@ -72,10 +86,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		if ($rootScope.selectedCountry) {
 			$scope.selectedGeo = $rootScope.selectedCountry;
 			$scope.selectedCountry = $rootScope.selectedCountry;
-			$scope.showActionsDialog();
 			mapScope = 'usa';
 			if ($rootScope.selectedCountry._id !== 'USA') {
 				mapScope = 'custom';
+				$scope.showActionsDialog();
 				$scope.mapAvailable = false;
 			}
 		}
@@ -328,9 +342,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			return cityNode;
 		};
 
+		GeoTree.prototype.loadRegionGeoChildren = function(regionNode) {
+			var self = this;
+			if (self.treeType === 'geo_targets') {
+				$scope.loadingTargetTree = true;
+			} else {
+				$scope.loadingBlockTree = true;
+			}
+			CampaignGeo.getRegionCities(regionNode._id)
+			.then(function(response) {
+				var cities = response.data;
+				cities.forEach(function(city) {
+					self.addCityNode(city, regionNode);
+				});
+				if (self.treeType === 'geo_targets') {
+					$scope.loadingTargetTree = false;
+				} else {
+					$scope.loadingBlockTree = false;
+				}
+			});
+		};
+
 		GeoTree.prototype.loadCountryGeoChildren = function(countryNode) {
 			var self = this;
-			// For non-USA countries, load regions together with country node
 			// Get all regions for this country and load them in tree
 			if (self.treeType === 'geo_targets') {
 				$scope.loadingTargetTree = true;

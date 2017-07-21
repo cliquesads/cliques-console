@@ -206,7 +206,7 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
             });
         };
         var getGeoChildren = function(geoNode) {
-            return $http.get('/console/getGeoChildren', {
+            return $http.get('/console/country/getGeoChildren', {
                 params: {
                     geo: {
                         id: geoNode._id, 
@@ -214,9 +214,17 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
                 }
             });
         };
+        var getRegionCities = function(regionId) {
+            return $http.get('/console/region/getCities', {
+                params: {
+                    regionId: regionId
+                }
+            });
+        };
         return {
             getGeoTrees: getGeoTrees,
-            getGeoChildren: getGeoChildren
+            getGeoChildren: getGeoChildren,
+            getRegionCities: getRegionCities
         };
     }
 ]);

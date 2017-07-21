@@ -78,6 +78,27 @@ module.exports = function(db, routers){
          */
         .get(geo.country.getManyCountries);
 
+    router.route('/country/getGeoChildren')
+        /**
+         * @api {get} /getGeoChildren For a given country, get all its cities populating the region field
+         * @apiName GetGeoChildren
+         * @apiGroup Geo
+         * @apiDescription For a given country, get all its cities populating the region field
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiParam {Object} geo object with the following format:
+         * {
+         *    id: 'USA',
+         * }
+         *
+         * @apiSuccess {Object[]} an array containing all cities with regions populated in this country
+         */
+        .get(geo.country.getGeoChildren);
+
     router.route('/country/:countryId')
         /**
          * @api {get} /country/:countryId Get Country
@@ -101,27 +122,6 @@ module.exports = function(db, routers){
          */
         .get(geo.country.readCountry);
 
-    router.route('/getGeoChildren')
-        /**
-         * @api {get} /getGeoChildren For a given country, get all its cities populating the region field
-         * @apiName GetGeoChildren
-         * @apiGroup Geo
-         * @apiDescription For a given country, get all its cities populating the region field
-         *
-         * @apiVersion 0.1.0
-         * @apiPermission networkAdmin
-         * @apiPermission advertiser
-         * @apiPermission publisher
-         *
-         * @apiParam {Object} geo object with the following format:
-         * {
-         *    id: 'USA',
-         * }
-         *
-         * @apiSuccess {Object[]} an array containing all cities with regions populated in this country
-         */
-        .get(geo.country.getGeoChildren);
-
     router.param('countryId', geo.country.countryByID);
 
     /* ---- Region API Routes ---- */
@@ -142,6 +142,24 @@ module.exports = function(db, routers){
          *  for all fields).
          */
         .get(geo.region.getManyRegions);
+
+    router.route('/region/getCities')
+        /**
+         * @api {get} /region/getCities Get All cities for given region (apiQuery)
+         * @apiName GetRegionCities
+         * @apiGroup Geo.Region
+         * @apiDescription Gets all available cities for given region. Supports all [apiQuery](https://github.com/ajb/mongoose-api-query)
+         * parameters & filters, including pagination.
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiSuccess {Object[]} ::cities:: Array of all City objects as response `body` (see [above](#api-Region)
+         *  for all fields).
+         */
+        .get(geo.region.getCities);
 
     router.route('/region/updateRegionId')
         /**
