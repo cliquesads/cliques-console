@@ -32,21 +32,25 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.selectedGeo = $scope.ngDialogData.selectedGeo;
 					$scope.customizeBiddingForGeo = function() {
 						parentScope.dirty = true;
+						var countryNode;
 						if (parentScope.selectedGeo.type === 'country') {
-							parentScope.geo_targets.addCountryNode(parentScope.selectedGeo);
+							countryNode = parentScope.geo_targets.addCountryNode(parentScope.selectedGeo);
 						} else {
-							parentScope.geo_targets.addCountryNode($rootScope.selectedCountry);
+							countryNode = parentScope.geo_targets.addCountryNode($rootScope.selectedCountry);
 						}
+						parentScope.geo_targets.loadCountryGeoChildren(countryNode);
 						$scope.closeThisDialog('success');
 					};
 
 					$scope.blockGeo = function() {
 						parentScope.dirty = true;
+						var countryNode;
 						if (parentScope.selectedGeo.type === 'country') {
-							parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
+							countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
 						} else {
-							parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
+							countryNode = parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
 						}
+						parentScope.blocked_geos.loadCountryGeoChildren(countryNode);
 						$scope.closeThisDialog('success');
 					};
 				}]
@@ -282,6 +286,49 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
 			this.data.push(countryNode);
+			return countryNode;
+		};
+
+		GeoTree.prototype.addRegionNode = function(regionObj, countryNode) {
+			var i = 0;
+			if (countryNode.__children__) {
+				for (i = 0; i < countryNode.__children__.length; i ++) {
+					if (countryNode.__children__[i]._id === regionObj._id) {
+						// Such region node already exists in tree data, return this existed region node
+						return countryNode.__children__[i];
+					}	
+				}
+			}
+			regionObj.weight = countryNode.weight;
+			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType, countryNode.weight);
+			if (!countryNode.__children__) {
+				countryNode.__children__ = [];
+			}
+			countryNode.__children__.push(regionNode);
+			return regionNode;
+		};
+
+		GeoTree.prototype.addCityNode = function(cityObj, regionNode) {
+			// Make sure the city about to add is NOT YET in this region
+			var i = 0;
+			if (regionNode.__children__) {
+				for (i = 0; i < regionNode.__children__.length; i ++) {
+					if (regionNode.__children__[i]._id === cityObj._id) {
+						// Such city node already exists in tree data, return this existed city node
+						return regionNode.__children__[i];
+					}
+				}
+			}
+			cityObj.weight = regionNode.weight;
+			var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
+			if (!regionNode.__children__) {
+				regionNode.__children__ = [];
+			}
+			regionNode.__children__.push(cityNode);
+			return cityNode;
+		};
+
+		GeoTree.prototype.loadCountryGeoChildren = function(countryNode) {
 			var self = this;
 			// For non-USA countries, load regions together with country node
 			// Get all regions for this country and load them in tree
@@ -323,46 +370,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.loadingBlockTree = false;
 				}
 			});
-			return countryNode;
-		};
-
-		GeoTree.prototype.addRegionNode = function(regionObj, countryNode) {
-			var i = 0;
-			if (countryNode.__children__) {
-				for (i = 0; i < countryNode.__children__.length; i ++) {
-					if (countryNode.__children__[i]._id === regionObj._id) {
-						// Such region node already exists in tree data, return this existed region node
-						return countryNode.__children__[i];
-					}	
-				}
-			}
-			regionObj.weight = countryNode.weight;
-			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType, countryNode.weight);
-			if (!countryNode.__children__) {
-				countryNode.__children__ = [];
-			}
-			countryNode.__children__.push(regionNode);
-			return regionNode;
-		};
-
-		GeoTree.prototype.addCityNode = function(cityObj, regionNode) {
-			// Make sure the city about to add is NOT YET in this region
-			var i = 0;
-			if (regionNode.__children__) {
-				for (i = 0; i < regionNode.__children__.length; i ++) {
-					if (regionNode.__children__[i]._id === cityObj._id) {
-						// Such city node already exists in tree data, return this existed city node
-						return regionNode.__children__[i];
-					}
-				}
-			}
-			cityObj.weight = regionNode.weight;
-			var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
-			if (!regionNode.__children__) {
-				regionNode.__children__ = [];
-			}
-			regionNode.__children__.push(cityNode);
-			return cityNode;
 		};
 
 		GeoTree.prototype.searchNode = function(nodeName) {
