@@ -418,6 +418,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						// Search for region
 						if (_.toLower(this.data[i].__children__[j].name) === nodeName) {
 							this.data[i].__children__[j].__isSearchResult__ = true;	
+							// Found region, should expand its parent country
+							this.data[i].__expanded__ = true;
 							return this.data[i].__children__[j];
 						} else if (this.data[i].__children__[j].__children__) {
 							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
