@@ -285,6 +285,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			var self = this;
 			// For non-USA countries, load regions together with country node
 			// Get all regions for this country and load them in tree
+			if (self.treeType === 'geo_targets') {
+				$scope.loadingTargetTree = true;
+			} else {
+				$scope.loadingBlockTree = true;
+			}
 			CampaignGeo.getGeoChildren(countryNode)
 			.then(function(response) {
 				var cities = response.data;
@@ -312,6 +317,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						}
 					}
 				});
+				if (self.treeType === 'geo_targets') {
+					$scope.loadingTargetTree = false;
+				} else {
+					$scope.loadingBlockTree = false;
+				}
 			});
 			return countryNode;
 		};

@@ -99,31 +99,41 @@
 				<tree-expand-toggle-buttons control="geo_targets.control"
 					ng-show="geo_targets.data">
 				</tree-expand-toggle-buttons>
-				<!-- Search box -->
-				<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
-				<div class="input-group mt">
-					<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="geoTreeSearchKeyword">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="!geoTreeSearchKeyword">
-							<i class="fa fa-search"></i>
-						</button>
-					</span>
+				<div class="text-center mt-xl"
+					ng-if="loadingTargetTree">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>	
+					</div>
+					<h4>Loading regions and cities...</h4>
 				</div>
-				<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
-					tree-data="geo_targets.data"
-					tree-control="geo_targets.control"
-					column-defs="geo_targets.columns"
-					expand-on="geo_targets.expanding_property"
-					primary-key="_id"
-					enable-drag="false"
-					enable-drop="true"
-					enable-move="false"
-					icon-leaf="fa fa-lg fa-tags"
-	                icon-expand="fa fa-lg fa-minus"
-	                icon-collapse="fa fa-lg fa-plus-circle"
-	                data-indent="15"
-	                data-indent-unit="px">
-				</tree-dnd>
+				<div ng-if="!loadingTargetTree">
+					<!-- Search box -->
+					<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
+					<div class="input-group mt">
+						<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="geoTreeSearchKeyword">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="!geoTreeSearchKeyword">
+								<i class="fa fa-search"></i>
+							</button>
+						</span>
+					</div>
+					<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+						tree-data="geo_targets.data"
+						tree-control="geo_targets.control"
+						column-defs="geo_targets.columns"
+						expand-on="geo_targets.expanding_property"
+						primary-key="_id"
+						enable-drag="false"
+						enable-drop="true"
+						enable-move="false"
+						icon-leaf="fa fa-lg fa-tags"
+		                icon-expand="fa fa-lg fa-minus"
+		                icon-collapse="fa fa-lg fa-plus-circle"
+		                data-indent="15"
+		                data-indent-unit="px">
+					</tree-dnd>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -142,31 +152,41 @@
 				<tree-expand-toggle-buttons control="blocked_geos.control"
 					ng-show="blocked_geos.data">
 				</tree-expand-toggle-buttons>
-				<!-- Search box for blocked geo tree -->
-				<div class="input-group mt">
-					<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="blockedTreeSearchKeyword">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="!blockedTreeSearchKeyword">
-							<i class="fa fa-search"></i>
-						</button>
-					</span>
+				<div class="text-center mt-xl"
+					ng-if="loadingBlockTree">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>	
+					</div>
+					<h4>Loading regions and cities...</h4>
 				</div>
-				<tree-dnd
-					template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
-					tree-data="blocked_geos.data"
-					tree-control="blocked_geos.control"
-					column-defs="blocked_geos.columns"
-					expand-on="blocked_geos.expanding_property"
-					primary-key="_id"
-					enable-drag="false"
-					enable-drop="true"
-					enable-move="false"
-					icon-leaf="fa fa-lg fa-tags"
-	                icon-expand="fa fa-lg fa-minus"
-	                icon-collapse="fa fa-lg fa-plus-circle"
-	                data-indent="15"
-	                data-indent-unit="px">
-				</tree-dnd>
+				<div ng-if="!loadingBlockTree">
+					<!-- Search box for blocked geo tree -->
+					<div class="input-group mt">
+						<input type="text" class="form-control" placeholder="Search for Country/Region/City" ng-model="blockedTreeSearchKeyword">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="!blockedTreeSearchKeyword">
+								<i class="fa fa-search"></i>
+							</button>
+						</span>
+					</div>
+					<tree-dnd
+						template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+						tree-data="blocked_geos.data"
+						tree-control="blocked_geos.control"
+						column-defs="blocked_geos.columns"
+						expand-on="blocked_geos.expanding_property"
+						primary-key="_id"
+						enable-drag="false"
+						enable-drop="true"
+						enable-move="false"
+						icon-leaf="fa fa-lg fa-tags"
+		                icon-expand="fa fa-lg fa-minus"
+		                icon-collapse="fa fa-lg fa-plus-circle"
+		                data-indent="15"
+		                data-indent-unit="px">
+					</tree-dnd>
+				</div>
 			</div>
 		</div>
 	</div>
