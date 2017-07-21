@@ -409,18 +409,24 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		GeoTree.prototype.searchNode = function(nodeName) {
 			nodeName = _.toLower(nodeName);
 			for (var i = 0; i < this.data.length; i ++) {
+				// Search for country
 				if (_.toLower(this.data[i].name) === nodeName) {
 					this.data[i].__isSearchResult__ = true;
 					return this.data[i];
 				} else if (this.data[i].__children__) {
 					for (var j = 0; j < this.data[i].__children__.length; j ++) {
+						// Search for region
 						if (_.toLower(this.data[i].__children__[j].name) === nodeName) {
 							this.data[i].__children__[j].__isSearchResult__ = true;	
 							return this.data[i].__children__[j];
 						} else if (this.data[i].__children__[j].__children__) {
 							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
+								// Search for city
 								if (_.toLower(this.data[i].__children__[j].__children__[k].name) === nodeName) {
 									this.data[i].__children__[j].__children__[k].__isSearchResult__ = true;	
+									// Found city with name that matches the search keyword, should expand its parent country and parent region
+									this.data[i].__expanded__ = true;
+									this.data[i].__children__[j].__expanded__ = true;
 									return this.data[i].__children__[j].__children__[k];
 								}
 							}
@@ -983,9 +989,13 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 		};
 
+		$scope.searchKeywords = {
+			targetTree: '',
+			blockedTree: '',
+		};
 		$scope.searchTargetsTree = function() {
 			$scope.geo_targets.clearSearchResult();
-			var searchResultNode = $scope.geo_targets.searchNode($scope.geoTreeSearchKeyword);
+			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
 			if (searchResultNode) {
 				$scope.scrollToAnchor(searchResultNode._id, $scope.geo_targets.treeType);
 			}
@@ -993,7 +1003,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		$scope.searchBlockedTree = function() {
 			$scope.blocked_geos.clearSearchResult();
-			var searchResultNode = $scope.blocked_geos.searchNode($scope.blockedTreeSearchKeyword);
+			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
 			if (searchResultNode) {
 				$scope.scrollToAnchor(searchResultNode._id, $scope.blocked_geos.treeType);
 			}
