@@ -35,8 +35,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						if (parentScope.selectedGeo.type === 'country') {
 							parentScope.geo_targets.addCountryNode(parentScope.selectedGeo);
 						} else {
-							var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null, parentScope.geo_targets.treeType);
-							parentScope.geo_targets.addRegionNode(parentScope.selectedGeo, countryNode);
+							parentScope.geo_targets.addCountryNode($rootScope.selectedCountry);
 						}
 						$scope.closeThisDialog('success');
 					};
@@ -46,8 +45,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						if (parentScope.selectedGeo.type === 'country') {
 							parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
 						} else {
-							var countryNode = _initializeGeoTreeNode($rootScope.selectedCountry, 'Country', null, parentScope.blocked_geos.treeType);
-							parentScope.blocked_geos.addRegionNode(parentScope.selectedGeo, countryNode);
+							parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
 						}
 						$scope.closeThisDialog('success');
 					};
@@ -284,20 +282,37 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
 			this.data.push(countryNode);
-			if (countryNode._id !== 'USA') {
-				var self = this;
-				// For non-USA countries, load regions together with country node
-				// Get all regions for this country and load them in tree
-				CampaignGeo.getGeoChildren(countryNode)
-				.then(function(response) {
-					if (response.data) {
-						var regions = response.data;	
-						regions.forEach(function(region) {
-							self.addRegionNode(region, countryNode);
-						});
+			var self = this;
+			// For non-USA countries, load regions together with country node
+			// Get all regions for this country and load them in tree
+			CampaignGeo.getGeoChildren(countryNode)
+			.then(function(response) {
+				var cities = response.data;
+				var regionIds = [];
+				cities.forEach(function(city) {
+					// First of all, have to check if city has region field 
+					// because there're cities that doesn't belong to a region
+					if (city.region) {
+						var clonedCity = _.clone(city);
+						clonedCity.region = city.region._id;
+						if (regionIds.indexOf(city.region._id) === -1) {
+							// Region of this city hasn't been added to tree data yet, add it now
+							var regionNode = self.addRegionNode(city.region, countryNode);
+							// Set region node default to be collapsed
+							regionNode.__expanded__ = false;
+							regionIds.push(regionNode._id);
+						} 
+						// Found out the country and region that this city belongs to in tree data
+						var countryNodeIndex = self.data.length - 1;
+						for (var j = 0; j < self.data[countryNodeIndex].__children__.length; j ++) {
+							if (clonedCity.region === self.data[countryNodeIndex].__children__[j]._id) {
+								self.addCityNode(clonedCity, self.data[countryNodeIndex].__children__[j]);
+								break;
+							}
+						}
 					}
 				});
-			}
+			});
 			return countryNode;
 		};
 
@@ -439,7 +454,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				if (newGeoTree) {
 					for (var i = 0; i < newGeoTree.length; i ++) {
 						var newNode = newGeoTree[i];
-						var oldNode = oldGeoTree.length > 0 ? oldGeoTree[i] : {};
+						var oldNode;
+						if (!oldGeoTree || oldGeoTree.length === 0) {
+							oldNode = {};
+						} else {
+							oldNode = oldGeoTree[i];
+						}
 						if (newNode && oldNode) {
 							if (newNode.weight !== oldNode.weight) {
 								newNode.overrideChildWeights();
