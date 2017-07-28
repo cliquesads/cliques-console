@@ -46,7 +46,7 @@
 					<span ng-switch-when="Region">
 						<strong>
 							<span ng-click="onSelect(node)">
-								{{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length}} City{{node.__children__.length != 1 ? 's':null}})
+								{{node[expandingProperty.field] || node[expandingProperty]}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
 							</span>
 						</strong>
 					</span>
