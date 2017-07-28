@@ -352,7 +352,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			CampaignGeo.getRegionCities(regionNode._id)
 			.then(function(response) {
 				var cities = response.data;
-				cities.forEach(function(city) {
+				var sortedCities = _.orderBy(cities, 'name', 'asc');
+				sortedCities.forEach(function(city) {
 					self.addCityNode(city, regionNode);
 				});
 				if (self.treeType === 'geo_targets') {
@@ -374,30 +375,24 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			CampaignGeo.getGeoChildren(countryNode)
 			.then(function(response) {
 				var cities = response.data;
-				var regionIds = [];
-				cities.forEach(function(city) {
-					// First of all, have to check if city has region field 
-					// because there're cities that doesn't belong to a region
-					if (city.region) {
-						var clonedCity = _.clone(city);
-						clonedCity.region = city.region._id;
-						if (regionIds.indexOf(city.region._id) === -1) {
-							// Region of this city hasn't been added to tree data yet, add it now
-							var regionNode = self.addRegionNode(city.region, countryNode);
-							// Set region node default to be collapsed
-							regionNode.__expanded__ = false;
-							regionIds.push(regionNode._id);
-						} 
-						// Found out the country and region that this city belongs to in tree data
-						var countryNodeIndex = self.data.length - 1;
-						for (var j = 0; j < self.data[countryNodeIndex].__children__.length; j ++) {
-							if (clonedCity.region === self.data[countryNodeIndex].__children__[j]._id) {
-								self.addCityNode(clonedCity, self.data[countryNodeIndex].__children__[j]);
-								break;
-							}
+				// Group cities by region id
+				var groupedCities = _.groupBy(cities, 'region._id');
+				for (var regionId in groupedCities) {
+					// For data inconsistencies, some cities don't belong to 
+					// any region, get rid of those cities
+					if (groupedCities.hasOwnProperty(regionId) && regionId !== 'undefined') {
+						var regionNode = self.addRegionNode(groupedCities[regionId][0].region, countryNode);
+						// Sort cities alphabetically by their name
+						var sortedCities = _.orderBy(groupedCities[regionId], 'name', 'asc');
+						for (var i = 0; i < sortedCities.length; i ++) {
+							var clonedCity = _.clone(sortedCities[i]);
+							clonedCity.region = clonedCity.region._id;
+							self.addCityNode(clonedCity, regionNode);
 						}
+						// default collapse region node
+						regionNode.__expanded__ = false;
 					}
-				});
+				}
 				if (self.treeType === 'geo_targets') {
 					$scope.loadingTargetTree = false;
 				} else {
