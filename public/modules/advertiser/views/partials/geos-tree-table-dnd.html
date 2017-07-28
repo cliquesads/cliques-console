@@ -51,7 +51,7 @@
 						</strong>
 					</span>
 					<span ng-switch-when="City">
-						<i class="fa fa-map-maker"></i> {{node[expandingProperty.field] || node[expandingProperty]}}
+						{{node[expandingProperty.field] || node[expandingProperty]}}
 						<p>
 							<em class="text-muted">
 								{{ positions(node.pos).name }}
