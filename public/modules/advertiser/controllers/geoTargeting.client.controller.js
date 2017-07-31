@@ -993,16 +993,16 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.searchTargetsTree = function() {
 			$scope.geo_targets.clearSearchResult();
 			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
+			$scope.searchingStatus.geo_targets = true;
 			if (searchResultNode) {
-				$scope.searchingStatus.geo_targets = true;
 				$scope.scrollToAnchor(searchResultNode._id, $scope.geo_targets.treeType);
 			}
 		};
 		$scope.searchBlockedTree = function() {
 			$scope.blocked_geos.clearSearchResult();
 			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
+			$scope.searchingStatus.blocked_geos = true;
 			if (searchResultNode) {
-				$scope.searchingStatus.blocked_geos = true;
 				$scope.scrollToAnchor(searchResultNode._id, $scope.blocked_geos.treeType);
 			}
 		};

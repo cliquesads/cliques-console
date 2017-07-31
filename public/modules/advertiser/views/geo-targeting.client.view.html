@@ -117,7 +117,7 @@
 							</button>
 						</span>
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('geo_targets')" ng-disabled="!searchingStatus.geo_targets">
+							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('geo_targets')" ng-disabled="searchKeywords.targetTree === ''">
 								<i class="fa fa-times"></i>
 							</button>
 						</span>
@@ -176,7 +176,7 @@
 							</button>
 						</span>
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('blocked_geos')" ng-disabled="!searchingStatus.blocked_geos">
+							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('blocked_geos')" ng-disabled="searchKeywords.blockedTree === ''">
 								<i class="fa fa-times"></i>
 							</button>
 						</span>
