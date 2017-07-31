@@ -181,6 +181,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * and converts blocked_geos to DB format, updates advertiser.
 		 */
 		$scope.save = function() {
+			// clear search result and search status
+			$scope.geo_targets.clearSearchResult();
+			$scope.searchingStatus.geo_targets = false;
+			$scope.blocked_geos.clearSearchResult();
+			$scope.searchingStatus.blocked_geos = false;
+
 			$scope.geo_targets.toGeoTargetsSchema(function(err, targetsArray) {
 				$scope.campaign.geo_targets = targetsArray;
 				$scope.blocked_geos.toBlockedGeosSchema(function(err, blockedArray) {
@@ -244,6 +250,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				newNode.weight = node.weight || 1.0;
 			}
 			// search result flag to show the node background with a different color
+			newNode.__isAncestorOfSearchResult__ = false;
 			newNode.__isSearchResult__ = false;
 			newNode.__treeType__ = treeType;
 
@@ -415,6 +422,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				// Search for country
 				if (_.toLower(this.data[i].name) === nodeName) {
 					this.data[i].__isSearchResult__ = true;
+					this.data[i].__expanded__ = false;
 					return this.data[i];
 				} else if (this.data[i].__children__) {
 					for (var j = 0; j < this.data[i].__children__.length; j ++) {
@@ -422,7 +430,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						if (_.toLower(this.data[i].__children__[j].name) === nodeName) {
 							this.data[i].__children__[j].__isSearchResult__ = true;	
 							// Found region, should expand its parent country
+							this.data[i].__isAncestorOfSearchResult__ = true;
 							this.data[i].__expanded__ = true;
+							this.data[i].__children__[j].__expanded__ = false;
 							return this.data[i].__children__[j];
 						} else if (this.data[i].__children__[j].__children__) {
 							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
@@ -431,7 +441,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 									this.data[i].__children__[j].__children__[k].__isSearchResult__ = true;	
 									// Found city with name that matches the search keyword, should expand its parent country and parent region
 									this.data[i].__expanded__ = true;
+									this.data[i].__isAncestorOfSearchResult__ = true;
 									this.data[i].__children__[j].__expanded__ = true;
+									this.data[i].__children__[j].__isAncestorOfSearchResult__ = true;
 									return this.data[i].__children__[j].__children__[k];
 								}
 							}
@@ -452,11 +464,14 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					for (var j = 0; j < this.data[i].__children__.length; j ++) {
 						if (this.data[i].__children__[j].__isSearchResult__ === true) {
 							this.data[i].__children__[j].__isSearchResult__ = false;	
+							this.data[i].__isAncestorOfSearchResult__ = false;
 							return;
 						} else if (this.data[i].__children__[j].__children__) {
 							for (var k = 0; k < this.data[i].__children__[j].__children__.length; k ++) {
 								if (this.data[i].__children__[j].__children__[k].__isSearchResult__ === true) {
 									this.data[i].__children__[j].__children__[k].__isSearchResult__ = false;	
+									this.data[i].__children__[j].__isAncestorOfSearchResult__ = false;
+									this.data[i].__isAncestorOfSearchResult__ = false;
 									return;
 								}
 							}
@@ -955,34 +970,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			});
 		};
 
-		/**
-		 * Wrapper to initialize geo targets tree and blocked geo tree
-		 * Basically what it does for each tree are
-		 * 1. set default expand level to 0, and
-		 * 2. get stats for tree data
-		 */
-		$scope.initializeBothTrees = function() {
-			// Initialization for geo_targets tree
-			$scope.geo_targets.clearTreeData(function(err) {
-				$scope.geo_targets.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'target');
-				$scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
-				$scope.geo_targets.setExpandLevel(0);
-			});
-
-			// Initialization for blocked_geos tree
-			$scope.blocked_geos.clearTreeData(function(err) {
-				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'block');
-				$scope.blocked_geos.setExpandLevel(0);
-			});
-		};
-
-        //======================================================================//
-        //================= END Tree Initialization Handlers ===================//
-        //======================================================================//
-
-        // Initialize targeting tree and blocked tree objects
-		$scope.initializeBothTrees();
-
+		//================= BEGIN Tree Search functions ===================//
 		$scope.scrollToAnchor = function(id, treeType) {
 			// yOffset set to the height of topbar, sorry had to hard code it
 			$anchorScroll.yOffset = 55;
@@ -998,20 +986,76 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			targetTree: '',
 			blockedTree: '',
 		};
+		$scope.searchingStatus = {
+			'geo_targets': false,
+			'blocked_geos': false
+		};
 		$scope.searchTargetsTree = function() {
 			$scope.geo_targets.clearSearchResult();
 			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
 			if (searchResultNode) {
+				$scope.searchingStatus.geo_targets = true;
 				$scope.scrollToAnchor(searchResultNode._id, $scope.geo_targets.treeType);
 			}
 		};
-
 		$scope.searchBlockedTree = function() {
 			$scope.blocked_geos.clearSearchResult();
 			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
 			if (searchResultNode) {
+				$scope.searchingStatus.blocked_geos = true;
 				$scope.scrollToAnchor(searchResultNode._id, $scope.blocked_geos.treeType);
 			}
-		}
+		};
+		$scope.cancelSearchingStatus = function(treeType) {
+			if (treeType === 'geo_targets') {
+				$scope.searchKeywords.targetTree = '';
+				$scope.geo_targets.clearSearchResult();
+				$scope.searchingStatus.geo_targets = false;
+			} else {
+				$scope.searchKeywords.blockedTree = '';
+				$scope.blocked_geos.clearSearchResult();
+				$scope.searchingStatus.blocked_geos = false;
+			}
+		};
+		//================== END Tree Search functions ====================//
+
+		/**
+		 * Wrapper to initialize geo targets tree and blocked geo tree
+		 * Basically what it does for each tree are
+		 * 1. set default expand level to 0, and
+		 * 2. get stats for tree data
+		 */
+		$scope.initializeBothTrees = function() {
+			// clear search result and search status
+			$scope.geo_targets.clearSearchResult();
+			$scope.searchingStatus.geo_targets = false;
+			$scope.blocked_geos.clearSearchResult();
+			$scope.searchingStatus.blocked_geos = false;
+
+			// Initialization for geo_targets tree
+			$scope.geo_targets.clearTreeData(function(err) {
+				$scope.geo_targets.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'target')
+				.then(function() {
+					$scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
+					$scope.geo_targets.setExpandLevel(0);
+				});
+			});
+
+			// Initialization for blocked_geos tree
+			$scope.blocked_geos.clearTreeData(function(err) {
+				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'block')
+				.then(function() {
+					$scope.blocked_geos.setExpandLevel(0);
+				});
+			});
+		};
+
+        //======================================================================//
+        //================= END Tree Initialization Handlers ===================//
+        //======================================================================//
+
+        // Initialize targeting tree and blocked tree objects
+		$scope.initializeBothTrees();
+
 	}
 ]);

@@ -116,6 +116,11 @@
 								<i class="fa fa-search"></i>
 							</button>
 						</span>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('geo_targets')" ng-disabled="!searchingStatus.geo_targets">
+								<i class="fa fa-times"></i>
+							</button>
+						</span>
 					</div>
 					<div class="geo-tree-body mt">
 						<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
@@ -168,6 +173,11 @@
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="searchKeywords.blockedTree === ''">
 								<i class="fa fa-search"></i>
+							</button>
+						</span>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="cancelSearchingStatus('blocked_geos')" ng-disabled="!searchingStatus.blocked_geos">
+								<i class="fa fa-times"></i>
 							</button>
 						</span>
 					</div>
