@@ -15,7 +15,6 @@ require('./_main')(function(GLOBALS) {
 				region: city.region
 			})
 			.then(function(redundantCount) {
-				console.log('======= city name: ' + city.name + ', redundantCount: ' + redundantCount);
 				if (redundantCount > 1) {
 					var cityInfo = {
 						name: city.name,
