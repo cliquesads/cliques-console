@@ -94,9 +94,13 @@
 					<i class="fa fa-sliders"></i> Custom Bidding
 				</h4>
 			</div>
-			<div class="panel-body">
-				<tree-expand-toggle-buttons control="geo_targets.control"
-					ng-show="geo_targets.data">
+			<div class="panel-body text-muted"
+				ng-if="!geo_targets.data || geo_targets.data.length === 0">
+				Select a region/country from the map and click <button class="btn btn-success text-md">Customize Bidding <i class="fa fa-sliders"></i></button> to set custom bids
+			</div>
+			<div class="panel-body"
+				ng-if="geo_targets.data.length > 0">
+				<tree-expand-toggle-buttons control="geo_targets.control">
 				</tree-expand-toggle-buttons>
 				<div class="text-center mt-xl"
 					ng-if="loadingTargetTree">
@@ -155,7 +159,12 @@
 			<div class="panel-heading bg-danger">
 				<h4><i class="fa fa-ban"></i> Blocked</h4>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body text-muted"
+				ng-if="!blocked_geos.data || blocked_geos.data.length === 0">
+				Select a region/country from the map and click <button class="btn btn-danger text-md">Block <i class="fa fa-ban"></i></button> to block specific geos
+			</div>
+			<div class="panel-body"
+				ng-if="blocked_geos.data.length > 0">
 				<tree-expand-toggle-buttons control="blocked_geos.control"
 					ng-show="blocked_geos.data">
 				</tree-expand-toggle-buttons>
