@@ -109,7 +109,8 @@
 				<div ng-if="!loadingTargetTree">
 					<!-- Search box -->
 					<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
-					<div class="input-group mt">
+					<div class="input-group mt"
+						ng-if="geo_targets.data.length > 0">
 						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="searchKeywords.targetTree" ng-keypress="$event.keyCode === 13 && searchTargetsTree()">
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="searchKeywords.targetTree === ''">
@@ -168,7 +169,8 @@
 				</div>
 				<div ng-if="!loadingBlockTree">
 					<!-- Search box for blocked geo tree -->
-					<div class="input-group mt">
+					<div class="input-group mt"
+						ng-if="blocked_geos.data.length > 0">
 						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="searchKeywords.blockedTree" ng-keypress="$event.keyCode === 13 && searchBlockedTree()">
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="searchKeywords.blockedTree === ''">
