@@ -966,7 +966,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				// Now bind to geoTree data to use in template
 				function inner(treeData) {
 					treeData.forEach(function(node) {
-						node.stats = allGeosStats[node.nodeType][node._id];
+						if (node.nodeType !== 'City') {
+							node.stats = allGeosStats[node.nodeType][node._id];
+						} else {
+							node.stats = allGeosStats[node.nodeType][node.name];
+						}
 						if (node.__children__ && node.__children__.length > 0) {
 							inner(node.__children__);
 						}
