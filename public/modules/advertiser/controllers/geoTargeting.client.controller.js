@@ -825,7 +825,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    // text hint for country and region nodes
 				    '<div class="text-muted" ng-if="node.__hideSlider__ && !node.__expanded__ && node.nodeType !== \'City\'"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>' +
 				    // button for city node to show/hide sliders
-				    '<button ng-if="node.nodeType === \'City\'" type="button" class="btn btn-success btn-xs ml" ng-click="node.__hideSlider__ = !node.__hideSlider__"><i class="fa fa-sliders"></i>&nbsp;Click to Modify Bid</button>'
+				    '<button ng-if="node.nodeType === \'City\'" type="button" class="btn btn-success btn-xs ml" title="Click to Modify Bid" ng-click="node.__hideSlider__ = !node.__hideSlider__"><i class="fa fa-sliders"></i></button>'
 				},
 				{
 				    field: 'bid',
@@ -1003,7 +1003,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		$scope.searchKeywords = {
 			targetTree: '',
-			blockedTree: '',
+			blockedTree: ''
 		};
 		$scope.searchingStatus = {
 			'geo_targets': false,
