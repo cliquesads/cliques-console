@@ -932,19 +932,29 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 			var startDate = $scope.dateRanges[dateRange].startDate;
 			var endDate = $scope.dateRanges[dateRange].endDate;
-			var geos = [];
+			var countryIds = [],
+				regionIds = [];
 			geoTree.forEach(function(geo) {
-				geos.push(geo._id);
+				countryIds.push(geo._id);
+				geo.__children__.forEach(function(region) {
+					regionIds.push(region._id);
+				});
 			});
-			var geosQueryStr;
-			if (geos.length === 1) {
-				geosQueryStr = geos[0];
+			var countryQueryString, regionQueryString;
+			if (countryIds.length === 1) {
+				countryQueryString = countryIds[0];
 			} else {
-				geosQueryStr = '{in}' + geos.join(',');
+				countryQueryString = '{in}' + countryIds.join(',');
+			}
+			if (regionIds.length === 1) {
+				regionQueryString = regionIds[0];
+			} else {
+				regionQueryString = '{in}' + regionIds.join(',');
 			}
 			return GeoAdStat.pubSummaryQuery({
 				groupBy: 'country,region,city',
-				country: geosQueryStr,
+				country: countryQueryString,
+				region: regionQueryString,
 				startDate: startDate,
 				endDate: endDate
 			}).then(function(response) {
