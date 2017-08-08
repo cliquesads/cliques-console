@@ -32,13 +32,13 @@
 					analytics-event="GeoTargeting_GetAllGeosHelp">
 				</a>
 				<a class="btn btn-default pull-right mt-sm-neg"
-					ng-click="switchLayout()"
+					ng-click="setLayout()"
 					analytics-on="click"
 					analytics-event="GeoTargeting_SwitchLayout">
 					<i class="fa fa-lg"
 						ng-class="{
-							'fa-ellipsis-v': layout === 'horizontal',
-							'fa-ellipsis-h': layout === 'vertical'
+							'fa-expand': layout === 'horizontal',
+							'fa-compress': layout === 'vertical'
 						}">
 					</i>
 				</a>
@@ -138,8 +138,8 @@
 							enable-drop="true"
 							enable-move="false"
 							icon-leaf="fa fa-lg fa-map-marker"
-			                icon-expand="fa fa-lg fa-compress"
-			                icon-collapse="fa fa-lg fa-expand"
+			                icon-expand="fa fa-lg fa-minus"
+			                icon-collapse="fa fa-lg fa-plus-circle"
 			                data-indent="15"
 			                data-indent-unit="px">
 						</tree-dnd>
@@ -203,9 +203,9 @@
 							enable-drag="false"
 							enable-drop="true"
 							enable-move="false"
-							icon-leaf="fa fa-lg fa-tags"
-			                icon-expand="fa fa-lg fa-compress"
-			                icon-collapse="fa fa-lg fa-expand"
+							icon-leaf="fa fa-lg fa-map-marker"
+			                icon-expand="fa fa-lg fa-minus"
+			                icon-collapse="fa fa-lg fa-plus-circle"
 			                data-indent="15"
 			                data-indent-unit="px">
 						</tree-dnd>

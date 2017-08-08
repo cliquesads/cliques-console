@@ -7,9 +7,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		$scope.Math = Math;
 		$scope.dirty = false;
-		$scope.layout = 'horizontal';
-
-		$scope.switchLayout = function() {
+		$scope.layout = $rootScope.geoTargetMapLayout ? $rootScope.geoTargetMapLayout : 'horizontal';
+		$scope.setLayout = function() {
 			// Change page layout 
 			if ($scope.layout === 'horizontal') {
 				$scope.layout = 'vertical';
@@ -18,6 +17,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.layout = 'horizontal';
 				$scope.mapObject.options.width = ($window.innerWidth - 320) * 7 / 12;
 			}
+			$rootScope.geoTargetMapLayout = $scope.layout;
 		};
 
 		$scope.showActionsDialog = function() {
@@ -177,6 +177,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			delete $rootScope.selectedCountry;
 			$state.reload();
 		};
+		if ($scope.layout === 'vertical') {
+			$scope.mapObject.options.width = $window.innerWidth - 294;
+		} else {
+			$scope.mapObject.options.width = ($window.innerWidth - 320) * 7 / 12;
+		}
+
 		//====================================================//
 		//================ END of Map Settings ================//
 		//====================================================//
