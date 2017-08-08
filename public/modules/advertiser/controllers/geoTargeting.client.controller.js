@@ -942,19 +942,22 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				regionIds = [];
 			geoTree.forEach(function(geo) {
 				countryIds.push(geo._id);
-				geo.__children__.forEach(function(region) {
-					regionIds.push(region._id);
-				});
+				if (geo.__children__) {
+					geo.__children__.forEach(function(region) {
+						regionIds.push(region._id);
+					});
+				}
 			});
-			var countryQueryString, regionQueryString;
+			var countryQueryString = '',
+				regionQueryString = '';
 			if (countryIds.length === 1) {
 				countryQueryString = countryIds[0];
-			} else {
+			} else if (countryIds.length > 1) {
 				countryQueryString = '{in}' + countryIds.join(',');
 			}
 			if (regionIds.length === 1) {
 				regionQueryString = regionIds[0];
-			} else {
+			} else if (regionIds.length > 1) {
 				regionQueryString = '{in}' + regionIds.join(',');
 			}
 			return GeoAdStat.pubSummaryQuery({
