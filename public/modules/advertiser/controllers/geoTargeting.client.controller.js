@@ -771,8 +771,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 								'<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM</a></div>',
 			titleClass: 		'wd-xxs text-center',
 			cellClass: 			'wd-xxs text-center',
-			cellTemplate: 		'<div ng-show="node.stats.cpm">{{ node.stats.cpm | currency: "$" : 2 }}</div>' +
-								'<small ng-hide="node.stats.cpm" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
+			cellTemplate: 		'<div ng-if="node.stats.cpm">{{ node.stats.cpm | currency: "$" : 2 }}</div>' +
+								'<small ng-if="!(node.stats.cpm)" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
 
 		};
 		/**
@@ -821,7 +821,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    field: "weight",
 				    titleClass:  'text-center',
 				    displayName: "Weight",
-				    cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-hide="node.__hideSlider__"></rzslider>' +
+				    cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-if="!node.__hideSlider__"></rzslider>' +
 				    // text hint for country and region nodes
 				    '<div class="text-muted" ng-if="node.__hideSlider__ && !node.__expanded__ && node.nodeType !== \'City\'"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>' +
 				    // button for city node to show/hide sliders
@@ -832,7 +832,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				    displayName: "Bid",
 				    titleClass:   'wd-xxs text-center',
 				    cellClass:    'wd-xxs text-center',
-				    cellTemplate: '<span ng-hide="node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">' +
+				    cellTemplate: '<span ng-if="!node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">' +
 				    '<strong>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</strong></span>'
 				},
 				cpmColumnDef,
