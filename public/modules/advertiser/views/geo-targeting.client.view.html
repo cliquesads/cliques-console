@@ -96,7 +96,9 @@
 			</div>
 			<div class="panel-body text-muted"
 				ng-if="!geo_targets.data || geo_targets.data.length === 0">
-				Select a region/country from the map and click <button class="btn btn-success text-md">Customize Bidding <i class="fa fa-sliders"></i></button> to set custom bids
+				<div class="box-placeholder text-center">
+					Select a region/country from the map and click <button class="btn btn-success btn-sm" disabled>Customize Bidding <i class="fa fa-sliders"></i></button> to set custom bids
+				</div>
 			</div>
 			<div class="panel-body"
 				ng-if="geo_targets.data.length > 0">
@@ -161,7 +163,9 @@
 			</div>
 			<div class="panel-body text-muted"
 				ng-if="!blocked_geos.data || blocked_geos.data.length === 0">
-				Select a region/country from the map and click <button class="btn btn-danger text-md">Block <i class="fa fa-ban"></i></button> to block specific geos
+				<div class="box-placeholder text-center">
+					Select a region/country from the map and click <button class="btn btn-danger btn-sm" disabled>Block <i class="fa fa-ban"></i></button> to block specific geos
+				</div>
 			</div>
 			<div class="panel-body"
 				ng-if="blocked_geos.data.length > 0">
