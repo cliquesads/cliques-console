@@ -322,9 +322,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param columns tree-dnd column model
 		 * @constructor
 		 */
-		var GeoTree = function(treeData, control, expanding_property, columns, treeType) {
+		var GeoTree = function(treeData, control, treeType) {
 			this.treeType = treeType;
-			DndTreeWrapper.call(this, treeData, control, expanding_property, columns);	
+			DndTreeWrapper.call(this, treeData, control, {}, []);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
 
@@ -803,49 +803,14 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		/**
 		 * Geo Targets tree vars
 		 */
+		$scope.rzSliderCeil = Math.round($scope.campaign.max_bid / $scope.campaign.base_bid * 10) / 10;
 		$scope.geo_targets = new GeoTree([], 
 			{
 				remove: function(node) {
 					$scope.geo_targets.control.remove_node(node);
 					$scope.dirty = true;
 				}
-			},
-			{
-				field: 'name',
-				cellClass: 'v-middle wd-md',
-				displayName: 'Name',
-				logoSize: 'xs'	
-			},
-			[
-				{
-				    field: "weight",
-				    titleClass:  'text-center',
-				    displayName: "Weight",
-				    cellTemplate: '<rzslider rz-slider-model="node.weight" rz-slider-options="{floor: 0,ceil: Math.round(campaign.max_bid/campaign.base_bid * 10) / 10,step: 0.0001,precision: 4,id: node._id, showSelectionBar: true, onStart: onStart, hideLimitLabels: true}" ng-if="!node.__hideSlider__"></rzslider>' +
-				    // text hint for country and region nodes
-				    '<div class="text-muted" ng-if="node.__hideSlider__ && !node.__expanded__ && node.nodeType !== \'City\'"><small><i class="fa fa-plus-circle"></i><em>&nbsp;&nbsp;Expand to view & set bids</em></small></div>' +
-				    // button for city node to show/hide sliders
-				    '<button ng-if="node.nodeType === \'City\'" type="button" class="btn btn-success btn-xs ml" title="Click to Modify Bid" ng-click="node.__hideSlider__ = !node.__hideSlider__"><i class="fa fa-sliders"></i></button>'
-				},
-				{
-				    field: 'bid',
-				    displayName: "Bid",
-				    titleClass:   'wd-xxs text-center',
-				    cellClass:    'wd-xxs text-center',
-				    cellTemplate: '<span ng-if="!node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">' +
-				    '<strong>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</strong></span>'
-				},
-				cpmColumnDef,
-				{
-				    displayName:  'Actions',
-				    titleClass:   'wd-xxs text-center',
-				    cellClass:    'wd-xxs text-center',
-				    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="geo_targets.control.remove(node)" tooltip="Clear Bids">' +
-				    '<i class="fa fa-lg fa-remove"></i></button>'
-				}
-			],
-			'geo_targets'
-		);
+			}, 'geo_targets');
 
 		/**
 		 * GeoTree for blocked geo tree vars
@@ -856,29 +821,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.blocked_geos.control.remove_node(node);
 					$scope.dirty = true;
 				}
-			},
-			{
-			    field: "name",
-			    cellClass: 'v-middle',
-			    displayName: 'Name'
-			},
-			[{
-			    displayName:  'Actions',
-			    cellTemplate: '<button type="button" class="btn btn-xs bg-gray-light" ng-click="blocked_geos.control.remove(node)" tooltip="Unblock">' +
-			    '<i class="fa fa-lg fa-remove"></i></button>'
-			}],
-			'blocked_geos'
-		);
+			}, 'blocked_geos');
 
 		//==========================================================//
 		//================= END GeoTree Instances =================//
 		//==========================================================//
-
-		$scope.positions = function(posCode) {
-			return _.find(OPENRTB.positions, function(pos_obj) {
-				return pos_obj.code === posCode;
-			});
-		};
 
 		/**
 		 * This scope watch handles overriding of child entity weights when 
@@ -990,17 +937,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		//================= BEGIN Tree Search functions ===================//
-		$scope.scrollToAnchor = function(id, treeType) {
-			// yOffset set to the height of topbar, sorry had to hard code it
-			$anchorScroll.yOffset = 55;
-			var newHash = 'anchor-' + treeType + '-' + id;
-			if ($location.hash() !== newHash) {
-				$location.hash(newHash);
-			} else {
-				$anchorScroll();
-			}
-		};
-
 		$scope.searchKeywords = {
 			targetTree: '',
 			blockedTree: ''
@@ -1013,17 +949,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			$scope.geo_targets.clearSearchResult();
 			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
 			$scope.searchingStatus.geo_targets = true;
-			if (searchResultNode) {
-				$scope.scrollToAnchor(searchResultNode._id, $scope.geo_targets.treeType);
-			}
 		};
 		$scope.searchBlockedTree = function() {
 			$scope.blocked_geos.clearSearchResult();
 			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
 			$scope.searchingStatus.blocked_geos = true;
-			if (searchResultNode) {
-				$scope.scrollToAnchor(searchResultNode._id, $scope.blocked_geos.treeType);
-			}
 		};
 		$scope.cancelSearchingStatus = function(treeType) {
 			if (treeType === 'geo_targets') {

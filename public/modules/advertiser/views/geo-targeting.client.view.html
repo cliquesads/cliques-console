@@ -130,14 +130,12 @@
 						</span>
 					</div>
 					<div class="geo-tree-body mt">
-						<tree-dnd template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+						<tree-dnd template-url="modules/advertiser/views/partials/geo-target-tree-table-dnd.html"
 							tree-data="geo_targets.data"
 							tree-control="geo_targets.control"
-							column-defs="geo_targets.columns"
-							expand-on="geo_targets.expanding_property"
 							primary-key="_id"
 							enable-drag="false"
-							enable-drop="true"
+							enable-drop="false"
 							enable-move="false"
 							icon-leaf="fa fa-lg fa-map-marker"
 			                icon-expand="fa fa-lg fa-minus"
@@ -198,14 +196,12 @@
 					</div>
 					<div class="geo-tree-body mt">
 						<tree-dnd
-							template-url="modules/advertiser/views/partials/geos-tree-table-dnd.html"
+							template-url="modules/advertiser/views/partials/geo-block-tree-table-dnd.html"
 							tree-data="blocked_geos.data"
 							tree-control="blocked_geos.control"
-							column-defs="blocked_geos.columns"
-							expand-on="blocked_geos.expanding_property"
 							primary-key="_id"
 							enable-drag="false"
-							enable-drop="true"
+							enable-drop="false"
 							enable-move="false"
 							icon-leaf="fa fa-lg fa-map-marker"
 			                icon-expand="fa fa-lg fa-minus"

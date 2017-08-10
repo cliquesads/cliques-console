@@ -1,0 +1,63 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody tree-dnd-nodes>
+		<tr tree-dnd-node="node"
+			ng-repeat="node in tree_nodes track by node.__hashKey__"
+			ng-if="(enabledFilter ? node.__filtered_visible__ === true && node.__visible__ : node.__visible__) && (searchingStatus[node.__treeType__] ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true)"
+			ng-class="node.__isSearchResult__ ? 'success' : ''">
+			<!-- Node name -->
+			<td tree-dnd-node-handle
+				ng-style="{'padding-left': $callbacks.calsIndent(node.__level__)}"
+				class="v-middle">
+				<a ng-if="node.nodeType != 'Country'"
+					data-nodrag
+					analytics-on="click"
+					analytics-event="GeoTreeTableDnd_ToggleExpand">
+					<i ng-class="node.__icon_class__"
+						ng-click="toggleExpand(node)"
+						class="tree-icon">
+					</i>	
+				</a>				
+				<span ng-switch on="node.nodeType">
+					<span ng-switch-when="Country">
+						<h4>
+							<a data-nodrag>
+								<i ng-class="node.__icon_class__"
+									ng-click="toggleExpand(node)"
+									class="tree-icon">
+								</i>
+							</a>
+							<span>
+								{{node.name}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
+							</span>
+						</h4>	
+					</span>	
+					<span ng-switch-when="Region">
+						<strong>
+							<span>
+								{{node.name}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
+							</span>
+						</strong>
+					</span>
+					<span ng-switch-when="City">
+						{{node.name}}
+					</span>
+				</span>
+			</td>
+			<!-- Actions -->
+			<td>
+				<button type="button"
+					class="btn btn-xs bg-gray-light"
+					ng-click="blocked_geos.control.remove(node)"
+					tooltip="Unblock">	
+					<i class="fa fa-lg fa-remove"></i>
+				</button>
+			</td>
+		</tr>	
+	</tbody>
+</table>
