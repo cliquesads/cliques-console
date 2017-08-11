@@ -8,7 +8,7 @@
 	<tbody tree-dnd-nodes>
 		<tr tree-dnd-node="node"
 			ng-repeat="node in tree_nodes track by node.__hashKey__"
-			ng-if="(enabledFilter ? node.__filtered_visible__ === true && node.__visible__ : node.__visible__) && (searchingStatus[node.__treeType__] ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true)"
+			ng-if="node.__visible__ && (searchingStatus[node.__treeType__] ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true)"
 			ng-class="node.__isSearchResult__ ? 'success' : ''">
 			<!-- Node name -->
 			<td tree-dnd-node-handle

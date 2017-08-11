@@ -274,6 +274,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// search result flag to show the node background with a different color
 			newNode.__isAncestorOfSearchResult__ = false;
 			newNode.__isSearchResult__ = false;
+			newNode.__searchVisibility__ = true;
 			newNode.__treeType__ = treeType;
 
 			// Properties used by blocked_geos settings
@@ -327,6 +328,37 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			DndTreeWrapper.call(this, treeData, control, {}, []);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
+
+		/**
+		 * After a search result is found, 
+		 * this function goes through each node for given tree to update the node
+		 * visibility status, this was previously done in html template, for the 
+		 * sake of performance, moved into controller
+		 *
+		 */
+		GeoTree.prototype.updateNodesSearchVisibility = function() {
+			var self = this;
+			var getVisibleStatus = function(node) {
+				if ($scope.searchingStatus[self.treeType] ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true) {
+					return true;
+				} else {
+					return false;
+				}
+			};
+			this.data.forEach(function(countryNode) {
+				countryNode.__searchVisibility__ = getVisibleStatus(countryNode);
+				if (countryNode.__children__) {
+					countryNode.__children__.forEach(function(regionNode) {
+						regionNode.__searchVisibility__ = getVisibleStatus(regionNode);
+						if (regionNode.__children__) {
+							regionNode.__children__.forEach(function(cityNode) {
+								cityNode.__searchVisibility__ = getVisibleStatus(cityNode);
+							});
+						}
+					});
+				}
+			});
+		};
 
 		GeoTree.prototype.addCountryNode = function(countryObj) {
 			// Need to make sure the country node is NOT YET in geotree
@@ -949,22 +981,25 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			$scope.geo_targets.clearSearchResult();
 			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
 			$scope.searchingStatus.geo_targets = true;
+			$scope.geo_targets.updateNodesSearchVisibility();
 		};
 		$scope.searchBlockedTree = function() {
 			$scope.blocked_geos.clearSearchResult();
 			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
 			$scope.searchingStatus.blocked_geos = true;
+			$scope.blocked_geos.updateNodesSearchVisibility();
 		};
-		$scope.cancelSearchingStatus = function(treeType) {
-			if (treeType === 'geo_targets') {
-				$scope.searchKeywords.targetTree = '';
-				$scope.geo_targets.clearSearchResult();
-				$scope.searchingStatus.geo_targets = false;
-			} else {
-				$scope.searchKeywords.blockedTree = '';
-				$scope.blocked_geos.clearSearchResult();
-				$scope.searchingStatus.blocked_geos = false;
-			}
+		$scope.cancelGeoTargetsSearchingStatus = function() {
+			$scope.searchKeywords.targetTree = '';
+			$scope.geo_targets.clearSearchResult();
+			$scope.searchingStatus.geo_targets = false;
+			$scope.geo_targets.updateNodesSearchVisibility();
+		};
+		$scope.cancelGeoBlockedSearchingStatus = function() {
+			$scope.searchKeywords.blockedTree = '';
+			$scope.blocked_geos.clearSearchResult();
+			$scope.searchingStatus.blocked_geos = false;
+			$scope.blocked_geos.updateNodesSearchVisibility();
 		};
 		//================== END Tree Search functions ====================//
 
