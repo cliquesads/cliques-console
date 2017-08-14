@@ -205,9 +205,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.save = function() {
 			// clear search result and search status
 			$scope.geo_targets.clearSearchResult();
-			$scope.searchingStatus.geo_targets = false;
 			$scope.blocked_geos.clearSearchResult();
-			$scope.searchingStatus.blocked_geos = false;
 
 			$scope.geo_targets.toGeoTargetsSchema(function(err, targetsArray) {
 				$scope.campaign.geo_targets = targetsArray;
@@ -240,7 +238,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param parentId
 		 * @returns {node}
 		 */
-		var _initializeGeoTreeNode = function(node, nodeType, parentId, treeType, parentNodeWeight) {
+		var _initializeGeoTreeNode = function(node, nodeType, parentId, parentNodeWeight) {
 			// Create node clone
 			var newNode = _.clone(node);
 
@@ -275,7 +273,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			newNode.__isAncestorOfSearchResult__ = false;
 			newNode.__isSearchResult__ = false;
 			newNode.__searchVisibility__ = true;
-			newNode.__treeType__ = treeType;
 
 			// Properties used by blocked_geos settings
 			newNode.explicit = false;
@@ -323,8 +320,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param columns tree-dnd column model
 		 * @constructor
 		 */
-		var GeoTree = function(treeData, control, treeType) {
-			this.treeType = treeType;
+		var GeoTree = function(treeData, control) {
 			DndTreeWrapper.call(this, treeData, control, {}, []);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
@@ -339,7 +335,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		GeoTree.prototype.updateNodesSearchVisibility = function() {
 			var self = this;
 			var getVisibleStatus = function(node) {
-				if ($scope.searchingStatus[self.treeType] ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true) {
+				if (self.searchingStatus ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true) {
 					return true;
 				} else {
 					return false;
@@ -367,7 +363,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					return this.data[i];
 				}
 			}
-			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null, this.treeType);
+			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null);
 			this.data.push(countryNode);
 			return countryNode;
 		};
@@ -383,7 +379,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 			regionObj.weight = countryNode.weight;
-			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, this.treeType, countryNode.weight);
+			var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, countryNode.weight);
 			if (!countryNode.__children__) {
 				countryNode.__children__ = [];
 			}
@@ -403,7 +399,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 			cityObj.weight = regionNode.weight;
-			var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, this.treeType, regionNode.weight);
+			var cityNode = _initializeGeoTreeNode(cityObj, 'City', regionNode._id, regionNode.weight);
 			if (!regionNode.__children__) {
 				regionNode.__children__ = [];
 			}
@@ -490,6 +486,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		GeoTree.prototype.clearSearchResult = function() {
+			var self = this;
+			self.searchKeyword = '';
+			self.searchingStatus = false;
 			for (var i = 0; i < this.data.length; i ++) {
 				if (this.data[i].__isSearchResult__ === true) {
 					this.data[i].__isSearchResult__ = false;
@@ -532,15 +531,15 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				var flattened = [];
 				if (!geoData) return;
 				geoData.forEach(function(country) {
-					var countryNode = _initializeGeoTreeNode(country, 'Country', null, self.treeType);
+					var countryNode = _initializeGeoTreeNode(country, 'Country', null);
 					flattened.push(countryNode);
 					if (country.regions) {
 						country.regions.forEach(function(region) {
-							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, self.treeType, countryNode.weight);
+							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, countryNode.weight);
 							flattened.push(regionNode);
 							if (region.cities) {
 								region.cities.forEach(function(city) {
-									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, self.treeType, regionNode.weight);
+									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, regionNode.weight);
 									flattened.push(cityNode);
 								});
 							}
@@ -913,36 +912,22 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		//================= BEGIN Tree Search functions ===================//
-		$scope.searchKeywords = {
-			targetTree: '',
-			blockedTree: ''
-		};
-		$scope.searchingStatus = {
-			'geo_targets': false,
-			'blocked_geos': false
-		};
 		$scope.searchTargetsTree = function() {
-			$scope.geo_targets.clearSearchResult();
-			var searchResultNode = $scope.geo_targets.searchNode($scope.searchKeywords.targetTree);
-			$scope.searchingStatus.geo_targets = true;
+			var searchResultNode = $scope.geo_targets.searchNode($scope.geo_targets.searchKeyword);
+			$scope.geo_targets.searchingStatus = true;
 			$scope.geo_targets.updateNodesSearchVisibility();
 		};
 		$scope.searchBlockedTree = function() {
-			$scope.blocked_geos.clearSearchResult();
-			var searchResultNode = $scope.blocked_geos.searchNode($scope.searchKeywords.blockedTree);
-			$scope.searchingStatus.blocked_geos = true;
+			var searchResultNode = $scope.blocked_geos.searchNode($scope.blocked_geos.searchKeyword);
+			$scope.blocked_geos.searchingStatus = true;
 			$scope.blocked_geos.updateNodesSearchVisibility();
 		};
 		$scope.cancelGeoTargetsSearchingStatus = function() {
-			$scope.searchKeywords.targetTree = '';
 			$scope.geo_targets.clearSearchResult();
-			$scope.searchingStatus.geo_targets = false;
 			$scope.geo_targets.updateNodesSearchVisibility();
 		};
 		$scope.cancelGeoBlockedSearchingStatus = function() {
-			$scope.searchKeywords.blockedTree = '';
 			$scope.blocked_geos.clearSearchResult();
-			$scope.searchingStatus.blocked_geos = false;
 			$scope.blocked_geos.updateNodesSearchVisibility();
 		};
 		//================== END Tree Search functions ====================//
@@ -956,9 +941,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.initializeBothTrees = function() {
 			// clear search result and search status
 			$scope.geo_targets.clearSearchResult();
-			$scope.searchingStatus.geo_targets = false;
 			$scope.blocked_geos.clearSearchResult();
-			$scope.searchingStatus.blocked_geos = false;
 
 			// Initialization for geo_targets tree
 			$scope.geo_targets.clearTreeData(function(err) {

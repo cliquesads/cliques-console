@@ -117,14 +117,14 @@
 					<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
 					<div class="input-group mt"
 						ng-if="geo_targets.data.length > 0">
-						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="searchKeywords.targetTree" ng-keypress="$event.keyCode === 13 && searchTargetsTree()">
+						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="geo_targets.searchKeyword" ng-keypress="$event.keyCode === 13 && searchTargetsTree()">
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="searchKeywords.targetTree === ''">
+							<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="geo_targets.searchKeyword === ''">
 								<i class="fa fa-search"></i>
 							</button>
 						</span>
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="cancelGeoTargetsSearchingStatus()" ng-disabled="searchKeywords.targetTree === ''">
+							<button class="btn btn-default" type="button" ng-click="cancelGeoTargetsSearchingStatus()" ng-disabled="geo_targets.searchKeyword === ''">
 								<i class="fa fa-times"></i>
 							</button>
 						</span>
@@ -181,14 +181,14 @@
 					<!-- Search box for blocked geo tree -->
 					<div class="input-group mt"
 						ng-if="blocked_geos.data.length > 0">
-						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="searchKeywords.blockedTree" ng-keypress="$event.keyCode === 13 && searchBlockedTree()">
+						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="blocked_geos.searchKeyword" ng-keypress="$event.keyCode === 13 && searchBlockedTree()">
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="searchKeywords.blockedTree === ''">
+							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="blocked_geos.searchKeyword === ''">
 								<i class="fa fa-search"></i>
 							</button>
 						</span>
 						<span class="input-group-btn">
-							<button class="btn btn-default" type="button" ng-click="cancelGeoBlockedSearchingStatus()" ng-disabled="searchKeywords.blockedTree === ''">
+							<button class="btn btn-default" type="button" ng-click="cancelGeoBlockedSearchingStatus()" ng-disabled="blocked_geos.searchKeyword === ''">
 								<i class="fa fa-times"></i>
 							</button>
 						</span>
