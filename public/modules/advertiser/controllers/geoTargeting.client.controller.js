@@ -2,8 +2,8 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'OPENRTB', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo', '$location', '$anchorScroll',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, OPENRTB, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo, $location, $anchorScroll) {
+	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo',
+	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
