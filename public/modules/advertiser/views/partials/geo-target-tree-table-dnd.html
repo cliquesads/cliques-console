@@ -19,15 +19,6 @@
 			<td tree-dnd-node-handle
 				ng-style="{'padding-left': $callbacks.calsIndent(node.__level__)}"
 				class="v-middle wd-md">
-				<a ng-if="node.nodeType != 'Country'"
-					data-nodrag
-					analytics-on="click"
-					analytics-event="GeoTreeTableDnd_ToggleExpand">
-					<i ng-class="node.__icon_class__"
-						ng-click="toggleExpand(node)"
-						class="tree-icon">
-					</i>	
-				</a>				
 				<span ng-switch on="node.nodeType">
 					<span ng-switch-when="Country">
 						<h4>
@@ -36,19 +27,25 @@
 									ng-click="toggleExpand(node)"
 									class="tree-icon">
 								</i>
-							</a> <span>
-								{{node.name}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
-							</span>
+							</a>
+							{{node.name}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
 						</h4>	
 					</span>	
 					<span ng-switch-when="Region">
 						<strong>
-							<span>
-								{{node.name}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
-							</span>
+							<a data-nodrag>
+								<i ng-class="node.__icon_class__"
+									ng-click="toggleExpand(node)"
+									class="tree-icon">
+								</i>
+							</a>
+							{{node.name}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
 						</strong>
 					</span>
 					<span ng-switch-when="City">
+						<a data-nodrag>
+							<i class="fa fa-lg fa-map-marker"></i>
+						</a>
 						{{node.name}}
 					</span>
 				</span>
@@ -68,14 +65,6 @@
 					}"
 					ng-if="!node.__hideSlider__">
 				</rzslider>
-				<!-- text hint for country and region nodes -->
-				<div class="text-muted"
-					ng-if="node.__hideSlider__ && !node.__expanded__ && node.nodeType !== 'City'">
-					<small>
-						<i class="fa fa-plus-circle"></i>
-						<em>&nbsp;&nbsp;Expand to view & set bids</em>
-					</small>
-				</div>
 				<!-- button for city node to show/hide sliders -->
 				<button ng-if="node.nodeType === 'City'"
 					type="button"

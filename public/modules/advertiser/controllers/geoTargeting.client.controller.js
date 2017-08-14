@@ -584,62 +584,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		/**
-		 * Sets __hideSlider__ property on this tree, given a masterTree
-		 * to perform diff on.
-		 *
-		 * ONLY USE IF YOU PLAN TO ALWAYS REMOVE NON-BASE LEVEL LEAF NODES FROM
-		 * MASTER TREE (I.E. NODES WITHOUT ANY CHILDREN)
-		 *
-		 * __hideSlider__ property is meant to indicate that the "weighting"
-		 * slider UI element should be hidden, which will prevent users from
-		 * settings a weight for this node.
-		 *
-		 * The logic encapsulated in this method dictates that sliders be hidden
-		 * for any nodes that exist in the provided "Master" GeoTree instance.
-		 * The KEY ASSUMPTION here is that once a Master tree node on longer has
-		 * any children, it is removed from the master tree.
-		 *
-		 * The `GeoTree.reGeoTree.prototype.moveNodeAndEmptyAncestors` method 
-		 * does exactly this, so as long as you use this method to clean up the
-		 * master tree when nodes are added to this tree, you're fine.
-		 *
-		 * @param masterTree master GeoTree instance w/ record of all nodes
-		 */
-		GeoTree.prototype.setSliderHiders = function(masterTree) {
-			// If you need to unhide a node slider, you also need to unhide
-			// all child node sliders, so this is just a quick method to hide
-			// node & all child sliders recursively
-			function unhideSliders(node) {
-				node.__hideSlider__ = false;
-				if (node.__children__ && node.__children__.length > 0) {
-					node.__children__.forEach(function(child) {
-						unhideSliders(child);
-					});
-				}
-			}
-
-			function inner(masterTree, slaveTree) {
-				slaveTree.forEach(function(node) {
-					var existingNode = _.find(masterTree, function(n) {
-						return n._id === node._id;
-					});
-					// If node exists in amster tree, seet hideSlider to true
-					// so user can't set weight on a node whose children are
-					// not all present
-					if (existingNode) {
-						node.__hideSlider__ = true;
-						if (node.__children__.length > 0) {
-							inner(existingNode.__children__, node.__children__);
-						}
-					} else {
-						unhideSliders(node);
-					}
-				});
-			}
-			return inner(masterTree.data, this.data);
-		};
-
-		/**
 		 * Helper function to prune any unnecessary children from client-side tree data
 		 * before persisting to DB. This is useful because of the "sparse tree" format
 		 * that targeting trees are stored in.
