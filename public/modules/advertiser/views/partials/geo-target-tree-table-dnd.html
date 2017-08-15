@@ -51,7 +51,7 @@
 				</span>
 			</td>
 			<!-- Weight -->
-			<td>
+			<td class="p0">
 				<rzslider rz-slider-model="node.weight"
 					rz-slider-options="{
 						floor: 0,
@@ -66,13 +66,18 @@
 					ng-if="!node.__hideSlider__">
 				</rzslider>
 				<!-- button for city node to show/hide sliders -->
-				<button ng-if="node.nodeType === 'City'"
+				<button ng-if="node.nodeType === 'City' && node.__hideSlider__"
 					type="button"
-					class="btn btn-success btn-xs ml"
-					title="Click to Modify Bid"
+					class="btn btn-success btn-xs ml mt"
+					tooltip="Click to Modify Bid"
 					ng-click="node.__hideSlider__ = !node.__hideSlider__">
-					<i class="fa fa-sliders"></i>
+					<i class="fa fa-sliders"></i> Modify
 				</button>
+				<!-- button for city node to hide sliders -->
+				<i ng-if="node.nodeType === 'City' && !node.__hideSlider__"
+				   tooltip="Hide slider"
+				   ng-click="node.__hideSlider__ = !node.__hideSlider__"
+				   class="fa fa-xl fa-minus-circle" style="position: absolute; left: -20px; top: 10px;"></i>
 			</td>
 			<!-- Bid -->
 			<td class="wd-xxs text-center">
