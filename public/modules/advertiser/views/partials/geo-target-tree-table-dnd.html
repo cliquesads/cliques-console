@@ -22,22 +22,32 @@
 				<span ng-switch on="node.nodeType">
 					<span ng-switch-when="Country">
 						<h4>
-							<a data-nodrag>
+							<a data-nodrag
+								ng-if="node.__children__.length > 0">
 								<i ng-class="node.__icon_class__"
 									ng-click="toggleExpand(node)"
 									class="tree-icon">
 								</i>
+							</a>
+							<a data-nodrag
+								ng-if="!node.__children__ || node.__children__.length === 0">
+								<i class="fa fa-lg fa-map-marker"></i>
 							</a>
 							{{node.name}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
 						</h4>	
 					</span>	
 					<span ng-switch-when="Region">
 						<strong>
-							<a data-nodrag>
+							<a data-nodrag
+								ng-if="node.__children__.length > 0">
 								<i ng-class="node.__icon_class__"
 									ng-click="toggleExpand(node)"
 									class="tree-icon">
 								</i>
+							</a>
+							<a data-nodrag
+								ng-if="!node.__children__ || node.__children__.length === 0">
+								<i class="fa fa-lg fa-map-marker"></i>	
 							</a>
 							{{node.name}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
 						</strong>
