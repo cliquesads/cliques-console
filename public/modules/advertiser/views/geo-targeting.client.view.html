@@ -130,7 +130,14 @@
 							</button>
 						</span>
 					</div>
-					<div class="geo-tree-body mt">
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="geo_targets.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- Geo targets tree -->
+					<div class="geo-tree-body mt"
+						ng-if="geo_targets.searchingStatus !== 'NotFound'">
 						<tree-dnd template-url="modules/advertiser/views/partials/geo-target-tree-table-dnd.html"
 							tree-data="geo_targets.data"
 							tree-control="geo_targets.control"
@@ -194,7 +201,19 @@
 							</button>
 						</span>
 					</div>
-					<div class="geo-tree-body mt">
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="geo_targets.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="blocked_geos.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- blocked geos tree -->
+					<div class="geo-tree-body mt"
+						ng-if="blocked_geos.searchingStatus !== 'NotFound'">
 						<tree-dnd
 							template-url="modules/advertiser/views/partials/geo-block-tree-table-dnd.html"
 							tree-data="blocked_geos.data"

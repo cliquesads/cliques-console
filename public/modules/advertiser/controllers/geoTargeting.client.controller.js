@@ -335,7 +335,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		GeoTree.prototype.updateNodesSearchVisibility = function() {
 			var self = this;
 			var getVisibleStatus = function(node) {
-				if (self.searchingStatus ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true) {
+				if (self.searchingStatus === 'FoundResult' ? (node.__isSearchResult__ || node.__isAncestorOfSearchResult__) : true) {
 					return true;
 				} else {
 					return false;
@@ -488,7 +488,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		GeoTree.prototype.clearSearchResult = function() {
 			var self = this;
 			self.searchKeyword = '';
-			self.searchingStatus = false;
+			self.searchingStatus = 'NotSearching';
 			for (var i = 0; i < this.data.length; i ++) {
 				if (this.data[i].__isSearchResult__ === true) {
 					this.data[i].__isSearchResult__ = false;
@@ -786,6 +786,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.dirty = true;
 				}
 			}, 'geo_targets');
+		$scope.geo_targets.searchingStatus = 'NotSearching';
 
 		/**
 		 * GeoTree for blocked geo tree vars
@@ -797,6 +798,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.dirty = true;
 				}
 			}, 'blocked_geos');
+		$scope.blocked_geos.searchingStatus = 'NotSearching';
 
 		//==========================================================//
 		//================= END GeoTree Instances =================//
@@ -914,13 +916,21 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		//================= BEGIN Tree Search functions ===================//
 		$scope.searchTargetsTree = function() {
 			var searchResultNode = $scope.geo_targets.searchNode($scope.geo_targets.searchKeyword);
-			$scope.geo_targets.searchingStatus = true;
-			$scope.geo_targets.updateNodesSearchVisibility();
+			if (searchResultNode) {
+				$scope.geo_targets.searchingStatus = 'FoundResult';
+				$scope.geo_targets.updateNodesSearchVisibility();
+			} else {
+				$scope.geo_targets.searchingStatus = 'NotFound';
+			}
 		};
 		$scope.searchBlockedTree = function() {
 			var searchResultNode = $scope.blocked_geos.searchNode($scope.blocked_geos.searchKeyword);
-			$scope.blocked_geos.searchingStatus = true;
-			$scope.blocked_geos.updateNodesSearchVisibility();
+			if (searchResultNode) {
+				$scope.blocked_geos.searchingStatus = 'FoundResult';
+				$scope.blocked_geos.updateNodesSearchVisibility();
+			} else {
+				$scope.blocked_geos.searchingStatus = 'NotFound';
+			}
 		};
 		$scope.cancelGeoTargetsSearchingStatus = function() {
 			$scope.geo_targets.clearSearchResult();
