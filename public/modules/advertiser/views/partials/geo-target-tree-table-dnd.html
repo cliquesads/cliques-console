@@ -73,21 +73,39 @@
 						onStart: onStart,
 						hideLimitLabels: true
 					}"
-					ng-if="!node.__hideSlider__">
+					ng-if="node.nodeType !== 'City' && !node.__hideSlider__">
 				</rzslider>
-				<!-- button for city node to show/hide sliders -->
-				<button ng-if="node.nodeType === 'City' && node.__hideSlider__"
-					type="button"
-					class="btn btn-success btn-xs ml mt"
-					tooltip="Click to Modify Bid"
-					ng-click="node.__hideSlider__ = !node.__hideSlider__">
-					<i class="fa fa-sliders"></i> Modify
-				</button>
-				<!-- button for city node to hide sliders -->
-				<i ng-if="node.nodeType === 'City' && !node.__hideSlider__"
-				   tooltip="Hide slider"
-				   ng-click="node.__hideSlider__ = !node.__hideSlider__"
-				   class="fa fa-xl fa-minus-circle" style="position: absolute; left: -20px; top: 10px;"></i>
+				<span ng-if="node.nodeType === 'City'">
+					<div ng-switch="node.__hideSlider__">
+						<!-- button for city node to show/hide sliders -->
+						<button ng-switch-when="true"
+							type="button"
+							class="btn btn-success btn-xs ml mt"
+							tooltip="Click to Modify Bid"
+							ng-click="node.__hideSlider__ = !node.__hideSlider__">
+							<i class="fa fa-sliders"></i> Modify
+						</button>
+						<div ng-switch-when="false"
+							class="horizontal-layout">
+							<i tooltip="Hide slider"
+							   ng-click="node.__hideSlider__ = !node.__hideSlider__"
+							   class="fa fa-xl fa-minus-circle mt">
+						   </i>
+						   <rzslider rz-slider-model="node.weight"
+							   	rz-slider-options="{
+							   		floor: 0,
+							   		ceil: rzSliderCeil,
+							   		step: 0.0001,
+							   		precision: 4,
+							   		id: node._id,
+							   		showSelectionBar: true,
+							   		onStart: onStart,
+							   		hideLimitLabels: true
+							   	}"
+							   	class="ml">
+						</div>
+					</div>	
+				</span>
 			</td>
 			<!-- Bid -->
 			<td class="wd-xxs text-center">
