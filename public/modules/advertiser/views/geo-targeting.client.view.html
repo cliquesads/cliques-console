@@ -1,0 +1,237 @@
+<div class="topsavebar bg-primary-light" ng-show="dirty">
+	<div class="text-center">
+		<button type="button"
+			class="btn btn-lg btn-primary"
+			ng-click="save()"
+			analytics-on="click"
+			analytics-event="GeoTargeting_Save">
+			Save	
+		</button>
+		<button type="button"
+			class="btn btn-lg btn-default"
+			ng-click="initializeBothTrees()"
+			analytics-in="click"
+			analytics-event="GeoTargeting_Reset">
+			Reset	
+		</button>
+	</div>	
+</div>
+
+<!-- World map or country map(Currently supports world & USA only) -->
+<div ng-class="{
+		'col-sm-7': layout === 'horizontal',
+		'col-sm-12': layout === 'vertical'
+	}">
+	<div class="panel">
+		<div class="panel-heading">
+			<h4>
+				<i class="fa fa-map"></i>&nbsp;&nbsp;Default Bidding
+				<a class="fa fa-lg fa-question-circle pull-right"
+					ng-click="getAllGeosHelp()"
+					analytics-on="click"
+					analytics-event="GeoTargeting_GetAllGeosHelp">
+				</a>
+				<a class="btn btn-default pull-right mt-sm-neg"
+					ng-click="setLayout()"
+					analytics-on="click"
+					analytics-event="GeoTargeting_SwitchLayout">
+					<i class="fa fa-lg"
+						ng-class="{
+							'fa-expand': layout === 'horizontal',
+							'fa-compress': layout === 'vertical'
+						}">
+					</i>
+				</a>
+			</h4>
+			<em class="text-muted">
+				<p><strong>To target or block a city, region or country, <i class="fa fa-sm fa-mouse-pointer"></i> select it from the map below.</strong></p>
+				<p>Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all geo targets in this map unless you indicate otherwise.</p>
+			</em>
+		</div>
+		<div class="panel-body">
+			<!-- Button to reload world map -->
+			<div ng-if="mapObject.scope !== 'world'">
+				<button class="btn btn-default"
+					ng-click="reloadWorldMap()">
+					<i class="fa fa-lg fa-angle-double-left"></i> Back to world map
+				</button>
+			</div>
+
+			<!-- Map -->
+			<datamap
+				data-ng-if="mapAvailable"
+				class="pb0"
+				on-click="mapClicked"
+				map="mapObject"
+				plugins="mapPlugins"
+				plugin-data="mapPluginData">
+			</datamap>	
+
+			<!-- Placeholder for non-USA users -->
+			<div ng-if="!mapAvailable"
+				class="text-center">
+				<h3><i class="fa fa-lg fa-globe"></i> States map only available for United States</h3>	
+				<p class="mb-lg">Stay tuned for updates!</p>
+				<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of map section -->
+
+<!-- Geo targets tree & blocked geos tree scection -->
+<div ng-class="{
+		'col-sm-5': layout === 'horizontal',
+		'col-sm-12': layout === 'vertical'
+	}">
+	<!-- Geo targets tree section -->
+	<div ng-class="{
+			'col-sm-12': layout === 'horizontal',
+			'col-sm-6': layout === 'vertical'
+		}">
+		<div class="panel">
+			<div class="panel-heading bg-success">
+				<h4>
+					<i class="fa fa-sliders"></i> Custom Bidding
+				</h4>
+			</div>
+			<div class="panel-body text-muted"
+				ng-if="!geo_targets.data || geo_targets.data.length === 0">
+				<div class="box-placeholder text-center">
+					Select a region/country from the map and click <button class="btn btn-success btn-sm" disabled>Customize Bidding <i class="fa fa-sliders"></i></button> to set custom bids
+				</div>
+			</div>
+			<div class="panel-body"
+				ng-if="geo_targets.data.length > 0">
+				<tree-expand-toggle-buttons control="geo_targets.control">
+				</tree-expand-toggle-buttons>
+				<div class="text-center mt-xl"
+					ng-if="loadingTargetTree">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>	
+					</div>
+					<h4>Loading regions and cities...</h4>
+				</div>
+				<div ng-if="!loadingTargetTree">
+					<!-- Search box -->
+					<!-- After found search result, the geo tree should scroll down to the search result element, and that element should have different background color -->
+					<div class="input-group mt"
+						ng-if="geo_targets.data.length > 0">
+						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="geo_targets.searchKeyword" ng-keypress="$event.keyCode === 13 && searchTargetsTree()">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="searchTargetsTree()" ng-disabled="geo_targets.searchKeyword === ''">
+								<i class="fa fa-search"></i>
+							</button>
+						</span>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="cancelGeoTargetsSearchingStatus()" ng-disabled="geo_targets.searchKeyword === ''">
+								<i class="fa fa-times"></i>
+							</button>
+						</span>
+					</div>
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="geo_targets.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- Geo targets tree -->
+					<div class="geo-tree-body mt"
+						ng-if="geo_targets.searchingStatus !== 'NotFound'">
+						<tree-dnd template-url="modules/advertiser/views/partials/geo-target-tree-table-dnd.html"
+							tree-data="geo_targets.data"
+							tree-control="geo_targets.control"
+							primary-key="_id"
+							enable-drag="false"
+							enable-drop="false"
+							enable-move="false"
+			                icon-expand="fa fa-lg fa-minus"
+			                icon-collapse="fa fa-lg fa-plus-circle"
+			                data-indent="15"
+			                data-indent-unit="px">
+						</tree-dnd>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of geo targets tree section -->
+
+	<!-- Blocked geos tree section -->
+	<div ng-class="{
+			'col-sm-12': layout === 'horizontal',
+			'col-sm-6': layout === 'vertical'
+		}">
+		<div class="panel">
+			<div class="panel-heading bg-danger">
+				<h4><i class="fa fa-ban"></i> Blocked</h4>
+			</div>
+			<div class="panel-body text-muted"
+				ng-if="!blocked_geos.data || blocked_geos.data.length === 0">
+				<div class="box-placeholder text-center">
+					Select a region/country from the map and click <button class="btn btn-danger btn-sm" disabled>Block <i class="fa fa-ban"></i></button> to block specific geos
+				</div>
+			</div>
+			<div class="panel-body"
+				ng-if="blocked_geos.data.length > 0">
+				<tree-expand-toggle-buttons control="blocked_geos.control"
+					ng-show="blocked_geos.data">
+				</tree-expand-toggle-buttons>
+				<div class="text-center mt-xl"
+					ng-if="loadingBlockTree">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>	
+					</div>
+					<h4>Loading regions and cities...</h4>
+				</div>
+				<div ng-if="!loadingBlockTree">
+					<!-- Search box for blocked geo tree -->
+					<div class="input-group mt"
+						ng-if="blocked_geos.data.length > 0">
+						<input type="text" class="form-control" placeholder="Filter Country/Region/City" ng-model="blocked_geos.searchKeyword" ng-keypress="$event.keyCode === 13 && searchBlockedTree()">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="searchBlockedTree()" ng-disabled="blocked_geos.searchKeyword === ''">
+								<i class="fa fa-search"></i>
+							</button>
+						</span>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="cancelGeoBlockedSearchingStatus()" ng-disabled="blocked_geos.searchKeyword === ''">
+								<i class="fa fa-times"></i>
+							</button>
+						</span>
+					</div>
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="geo_targets.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- Search not found placeholder -->
+					<div class="box-placeholder text-center"
+						ng-if="blocked_geos.searchingStatus === 'NotFound'">
+						No Search Result
+					</div>
+					<!-- blocked geos tree -->
+					<div class="geo-tree-body mt"
+						ng-if="blocked_geos.searchingStatus !== 'NotFound'">
+						<tree-dnd
+							template-url="modules/advertiser/views/partials/geo-block-tree-table-dnd.html"
+							tree-data="blocked_geos.data"
+							tree-control="blocked_geos.control"
+							primary-key="_id"
+							enable-drag="false"
+							enable-drop="false"
+							enable-move="false"
+			                icon-expand="fa fa-lg fa-minus"
+			                icon-collapse="fa fa-lg fa-plus-circle"
+			                data-indent="15"
+			                data-indent-unit="px">
+						</tree-dnd>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of blocked geos tree section -->	
+</div>
+<!-- End of Geo targets tree & blocked geos tree scection -->

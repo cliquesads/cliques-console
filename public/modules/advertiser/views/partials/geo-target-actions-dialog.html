@@ -1,0 +1,22 @@
+<div class="text-md mt">
+	<span ng-if="selectedGeo.type === 'country'">
+		For <strong>{{ selectedGeo.name }}</strong>, do you want to
+	</span>
+	<span ng-if="selectedGeo.type === 'region'">
+		For <strong>{{ selectedGeo.name }}</strong> in <strong>{{ selectedCountry.name }}</strong>, do you want to
+	</span>
+</div>
+<div class="row mt-xl">
+	<div class="col-sm-6">
+		<button class="btn btn-success btn-block text-md"
+			ng-click="customizeBiddingForGeo()">
+			Customize Bidding <i class="fa fa-sliders"></i>
+		</button>
+	</div>
+	<div class="col-sm-6">
+		<button class="btn btn-danger btn-block text-md"
+			ng-click="blockGeo()">
+			Block <i class="fa fa-ban"></i>
+		</button>
+	</div>
+</div>

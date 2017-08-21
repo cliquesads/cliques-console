@@ -61,7 +61,7 @@ angular.module('advertiser').directive('nativeCreativeUploader', [
                                 fileItem.rawImageW = self.width;
 
                                 var tooBig = self.height > scope.NATIVE_SPECS.image.maxHeightPx || self.width > scope.NATIVE_SPECS.image.maxWidthPx;
-                                var tooSmall = self.height < scope.NATIVE_SPECS.image.minHeightPx || self.width < scope.NATIVE_SPECS.image.minWidthPx
+                                var tooSmall = self.height < scope.NATIVE_SPECS.image.minHeightPx || self.width < scope.NATIVE_SPECS.image.minWidthPx;
                                 // Now check to make sure dimensions are supported, calling callback
                                 // if they're not.
                                 if (tooBig || tooSmall){

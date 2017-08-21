@@ -1,0 +1,143 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th class="text-center">Weight</th>
+			<th class="wd-xxs text-center">Bid</th>
+			<th class="wd-xxs text-center">
+				<a href="#" tooltip="Average CPM on this Geo area for the {{ dateRanges[defaultDateRange].label }}"><i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM</a>
+			</th>
+			<th class="wd-xxs text-center">Actions</th>
+		</tr>
+	</thead>
+	<tbody tree-dnd-nodes>
+		<tr tree-dnd-node="node"
+			ng-repeat="node in tree_nodes track by node.__hashKey__"
+			ng-if="node.__visible__ && node.__searchVisibility__"
+			ng-class="node.__isSearchResult__ ? 'success' : ''">
+			<!-- Node name -->
+			<td tree-dnd-node-handle
+				ng-style="{'padding-left': $callbacks.calsIndent(node.__level__)}"
+				class="v-middle wd-md">
+				<span ng-switch on="node.nodeType">
+					<span ng-switch-when="Country">
+						<h4>
+							<a data-nodrag
+								ng-if="node.__children__.length > 0">
+								<i ng-class="node.__icon_class__"
+									ng-click="toggleExpand(node)"
+									class="tree-icon">
+								</i>
+							</a>
+							<a data-nodrag
+								ng-if="!node.__children__ || node.__children__.length === 0">
+								<i class="fa fa-lg fa-map-marker"></i>
+							</a>
+							{{node.name}} ({{node.__children__.length }} Region{{node.__children__.length != 1 ? 's': null}})
+						</h4>	
+					</span>	
+					<span ng-switch-when="Region">
+						<strong>
+							<a data-nodrag
+								ng-if="node.__children__.length > 0">
+								<i ng-class="node.__icon_class__"
+									ng-click="toggleExpand(node)"
+									class="tree-icon">
+								</i>
+							</a>
+							<a data-nodrag
+								ng-if="!node.__children__ || node.__children__.length === 0">
+								<i class="fa fa-lg fa-map-marker"></i>	
+							</a>
+							{{node.name}} ({{node.__children__.length}} {{node.__children__.length != 1 ? 'Cities':'City'}})
+						</strong>
+					</span>
+					<span ng-switch-when="City">
+						<a data-nodrag>
+							<i class="fa fa-lg fa-map-marker"></i>
+						</a>
+						{{node.name}}
+					</span>
+				</span>
+			</td>
+			<!-- Weight -->
+			<td class="p0">
+				<rzslider rz-slider-model="node.weight"
+					rz-slider-options="{
+						floor: 0,
+						ceil: rzSliderCeil,
+						step: 0.0001,
+						precision: 4,
+						id: node._id,
+						showSelectionBar: true,
+						onStart: onStart,
+						hideLimitLabels: true
+					}"
+					ng-if="node.nodeType !== 'City' && !node.__hideSlider__">
+				</rzslider>
+				<span ng-if="node.nodeType === 'City'">
+					<div ng-switch="node.__hideSlider__">
+						<!-- button for city node to show/hide sliders -->
+						<button ng-switch-when="true"
+							type="button"
+							class="btn btn-success btn-xs ml mt"
+							tooltip="Click to Modify Bid"
+							ng-click="node.__hideSlider__ = !node.__hideSlider__">
+							<i class="fa fa-sliders"></i> Modify
+						</button>
+						<div ng-switch-when="false"
+							class="horizontal-layout">
+							<i tooltip="Hide slider"
+							   ng-click="node.__hideSlider__ = !node.__hideSlider__"
+							   class="fa fa-xl fa-minus-circle mt">
+						   </i>
+						   <rzslider rz-slider-model="node.weight"
+							   	rz-slider-options="{
+							   		floor: 0,
+							   		ceil: rzSliderCeil,
+							   		step: 0.0001,
+							   		precision: 4,
+							   		id: node._id,
+							   		showSelectionBar: true,
+							   		onStart: onStart,
+							   		hideLimitLabels: true
+							   	}"
+							   	class="ml">
+						</div>
+					</div>	
+				</span>
+			</td>
+			<!-- Bid -->
+			<td class="wd-xxs text-center">
+				<span ng-if="!node.__hideSlider__"
+					ng-class="{
+						'text-green': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm,
+						'text-warning': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm,
+						'text-danger': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">
+					<strong>
+						{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}
+					</strong>
+				</span>
+			</td>
+			<!-- CPM -->
+			<td class="wd-xxs text-center">
+				<div ng-if="node.stats.cpm">
+					{{ node.stats.cpm | currency: "$" : 2 }}
+				</div>
+				<small ng-if="!(node.stats.cpm)"
+					class="text-muted">
+					<i class="fa fa-heartbeat"></i> Not Enough Data
+				</small>
+			</td>
+			<!-- Actions -->
+			<td class="ws-xxs text-center">
+				<button type="button"
+					class="btn btn-xs bg-gray-light"
+					ng-click="geo_targets.control.remove(node)"
+					tooltip="Clear Bids">
+					<i class="fa fa-lg fa-remove"></i>
+				</button>
+			</td>
+		</tr>	
+	</tbody>
+</table>

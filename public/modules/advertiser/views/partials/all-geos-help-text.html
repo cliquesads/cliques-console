@@ -1,0 +1,9 @@
+<h4>Inventory Targeting & Blocking</h4>
+<!-- TO-DO:::ycx should figure out how to show campaign geo name based on geoTarget -->
+<p class="text-md">This campaign belongs to the <strong>{{ campaign.clique }}</strong> Clique, which means that it has access to all Sites in <strong>{{ campaign.clique }} & all child Cliques.</strong></p>
+<p class="text-md">
+	By default, this Campaign will bid its Base Bid of {{ campaign.base_bid | currency : "$" : 2 }} for all available countries/regions/cities.
+</p>
+<p class="text-md">
+	To modify bids for individual Countries, Regions or Cities, use the <button type="button" class="btn btn-success btn-xs"><i class="fa fa-sliders"></i></button> button to add to your targets list. To <strong>block</strong>, use the <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-ban"></i></button> button.
+</p>

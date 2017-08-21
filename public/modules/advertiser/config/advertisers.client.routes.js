@@ -267,6 +267,28 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign.viewCampaignGeoTargets', {
+            url: '/geo-targets',
+            resolve: {
+                campaign: function($stateParams, advertiser){
+                    var i = _.findIndex(advertiser.campaigns, function(campaign){
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                    return {
+                        advertiser: advertiser,
+                        index: i,
+                        campaign: advertiser.campaigns[i]
+                    };
+                },
+                $title: function() { return 'Geo Targets'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/geo-targeting.client.view.html',
+                    controller: 'GeoTargetingController'
+                }
+            }
+        }).
         state('app.advertiser.allAdvertisers.viewAdvertiser.actionBeacons', {
             url: '/actionbeacon',
             resolve: {
