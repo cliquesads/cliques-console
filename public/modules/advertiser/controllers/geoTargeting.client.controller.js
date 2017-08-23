@@ -583,6 +583,37 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		};
 
 		/**
+		 * Sets __hideSlider__ property on this tree.
+		 *
+		 * If the weight of a country/region node is either null or unchanged,
+		 * that means this node is just a placeholder for at lease one of its 
+		 * children whose weight has been customized, so the slider of this node
+		 * itself should be hidden
+		 *
+		 * NOTE: this function should ONLY be invoked when initializing tree 
+		 * data from backend database
+		 */
+		GeoTree.prototype.setSliderHiders = function() {
+			// If you need to unhide a node slider, you also need to unhide
+			// all child node sliders, so this is just a quick method to hide
+			// node & all child sliders recursively
+			this.data.forEach(function(countryNode) {
+				if (countryNode.weight === null || countryNode.weight === 1) {
+					countryNode.__hideSlider__ = true;
+				} else {
+					countryNode.__hideSlider__ = false;
+				}
+				countryNode.__children__.forEach(function(regionNode) {
+					if (regionNode.weight === null || regionNode.weight === 1) {
+						regionNode.__hideSlider__ = true;
+					} else {
+						regionNode.__hideSlider__ = false;
+					}
+				});
+			});
+		};
+
+		/**
 		 * Helper function to prune any unnecessary children from client-side tree data
 		 * before persisting to DB. This is useful because of the "sparse tree" format
 		 * that targeting trees are stored in.
@@ -962,6 +993,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				})
 				.then(function() {
 					$scope.geo_targets.setExpandLevel(0);
+					$scope.geo_targets.setSliderHiders();
 					$scope.loadingTargetTree = false;
 				});
 			});
