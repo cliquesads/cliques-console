@@ -95,13 +95,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
         // ######################################### //
-        $scope.editDMATargets = function(){
-            ngDialog.open({
-                template: 'modules/advertiser/views/partials/dma-targets.html',
-                controller: 'dmaTargetsController',
-                data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
-            });
-        };
         $scope.editCreatives = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth1000',

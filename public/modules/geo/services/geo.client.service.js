@@ -11,11 +11,18 @@ angular.module('geo')
 	);
 }])
 .factory('Country', ['$resource', function($resource) {
-	return $resource('/console/country/:countryId', { countryId: '@_id' }, {});
+	return $resource('/console/country/:countryId', { countryId: '@_id' }, 
+		{
+			readOne: { method: 'GET', isArray: false },
+			query: { method: 'GET', isArray: true }
+		}
+	);
 }])
 .factory('Region', ['$resource', function($resource) {
 	return $resource('/console/region/:regionId', { regionId: '@_id' }, 
 		{
+			query: { method: 'GET', isArray: true },
+			readOne: { method: 'GET', isArray: false },
 			update: { method: 'PATCH' }
 		}
 	);

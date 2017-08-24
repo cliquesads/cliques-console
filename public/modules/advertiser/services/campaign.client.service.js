@@ -1,3 +1,4 @@
+/* global _ */
 'use strict';
 angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',function(AdvertiserUtils){
     /**
@@ -195,5 +196,35 @@ angular.module('advertiser').factory('ClientSideCampaign',['AdvertiserUtils',fun
                 create: { method: 'POST'}
             }
         );
+    }
+])
+.factory('CampaignGeo', ['$http',
+    function($http) {
+        var getGeoTrees = function(advertiserId, campaignId, targetOrBlock) {
+            return $http.get('/console/advertiser/' + advertiserId + '/campaign/' + campaignId + '/getGeoTrees', {
+                params: { targetOrBlock: targetOrBlock }
+            });
+        };
+        var getGeoChildren = function(geoNode) {
+            return $http.get('/console/country/getGeoChildren', {
+                params: {
+                    geo: {
+                        id: geoNode._id, 
+                    }
+                }
+            });
+        };
+        var getRegionCities = function(regionId) {
+            return $http.get('/console/region/getCities', {
+                params: {
+                    regionId: regionId
+                }
+            });
+        };
+        return {
+            getGeoTrees: getGeoTrees,
+            getGeoChildren: getGeoChildren,
+            getRegionCities: getRegionCities
+        };
     }
 ]);

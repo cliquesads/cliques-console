@@ -204,6 +204,30 @@ angular.module('core').service('DndTreeWrapper', function(){
         }
     };
 
+    /**
+     * Helper function to get all nodes from on DnDTreeWrapper instance
+     * broad-first search, non recursively
+     * @param -
+     */
+    DndTreeWrapper.prototype.traverseTree = function() {
+        var self = this;
+        if (!self || !self.length) return;
+        var stack = [];
+        for (var i = 0, len = self.length; i < len; i ++) {
+            stack.push(self[i]);
+        }
+        var item;
+        var nodesArr = [];
+        while (stack.length) {
+            item = stack.shift();
+            nodesArr.push(item);
+            if (item.__children__ && item.__children__.length) {
+                stack = stack.concat(item.__children__);
+            }
+        }
+        return nodesArr;
+    };
+
     //===========================================================//
     //=============== END DndTreeWrapper Methods=================//
     //===========================================================//
