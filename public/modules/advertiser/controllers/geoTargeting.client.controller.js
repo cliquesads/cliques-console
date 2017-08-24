@@ -257,6 +257,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param node
 		 * @param nodeType
 		 * @param parentId
+		 * @param parentNodeWeight
 		 * @returns {node}
 		 */
 		var _initializeGeoTreeNode = function(node, nodeType, parentId, parentNodeWeight) {
@@ -270,7 +271,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if (nodeType !== 'City') {
 				newNode.__hideSlider__ = false;
 			} else {
-				newNode.__hideSlider__ = true;
+				// don't hide if a weight is already applied to this city
+				newNode.__hideSlider__ = (node.weight === parentNodeWeight) || _.isNil(node.weight);
 			}
 			// Set initial state as overridden so that it only can be set false
 			// when slider is engaged by user
