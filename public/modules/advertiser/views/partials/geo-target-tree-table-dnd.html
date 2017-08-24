@@ -62,7 +62,38 @@
 			</td>
 			<!-- Weight -->
 			<td>
-				<div ng-if="node.nodeType !== 'City'">
+				<span ng-if="node.nodeType === 'Country'">
+					<div ng-switch="node.__hideSlider__">
+						<!-- button for city node to show/hide sliders -->
+						<button ng-switch-when="true"
+							type="button"
+							class="btn btn-success btn-xs ml mt"
+							tooltip="Click to Modify Country Bid"
+							ng-click="showWarningForCountryCustomization(node)">
+							<i class="fa fa-sliders"></i> Modify
+						</button>
+						<div ng-switch-when="false"
+							class="horizontal-layout m0">
+							<i tooltip="Hide slider"
+							   ng-click="node.__hideSlider__ = !node.__hideSlider__"
+							   class="fa fa-xl fa-minus-circle mt">
+						   </i>
+						   <rzslider rz-slider-model="node.weight"
+							   	rz-slider-options="{
+							   		floor: 0,
+							   		ceil: rzSliderCeil,
+							   		step: 0.0001,
+							   		precision: 4,
+							   		id: node._id,
+							   		showSelectionBar: true,
+							   		onStart: onStart,
+							   		hideLimitLabels: true
+							   	}"
+							   	class="ml">
+						</div>
+					</div>	
+				</span>	
+				<span ng-if="node.nodeType === 'Region'">
 					<rzslider rz-slider-model="node.weight"
 						rz-slider-options="{
 							floor: 0,
@@ -73,18 +104,9 @@
 							showSelectionBar: true,
 							onStart: onStart,
 							hideLimitLabels: true
-						}"
-						ng-show="!node.__hideSlider__">
+						}">
 					</rzslider>
-					<div class="text-muted"
-						ng-class="{'mt': node.nodeType === 'Country'}"
-						ng-show="node.__hideSlider__ && !node.__expand__">
-						<small>
-							<i class="fa fa-plus-circle"></i>
-							<em>&nbsp;&nbsp;Expand to view & set bids</em>
-						</small>	
-					</div>
-				</div>
+				</span>
 				<span ng-if="node.nodeType === 'City'">
 					<div ng-switch="node.__hideSlider__">
 						<!-- button for city node to show/hide sliders -->
