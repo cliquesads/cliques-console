@@ -339,6 +339,7 @@ module.exports = function(db) {
                             countryObj.regions = [];
                             return promise.each(country.children, function(region) {
                                 var regionObj;
+                                var customizedCityIds = [];
                                 return geoModels.Region.findOne({_id: region.target})
                                 .then(function(regionResult) {
                                     regionObj = JSON.parse(JSON.stringify(regionResult));
@@ -348,6 +349,7 @@ module.exports = function(db) {
                                         regionObj.cities = [];
                                         return promise.each(region.children, function(city) {
                                             var cityObj;
+                                            customizedCityIds.push(city.target);
                                             return geoModels.City.findOne({_id: city.target})
                                             .then(function(cityResult) {
                                                 cityObj = JSON.parse(JSON.stringify(cityResult));
@@ -357,6 +359,19 @@ module.exports = function(db) {
                                             });
                                         });
                                     }
+                                })
+                                .then(function() {
+                                    // For each region, all those cities that haven't 
+                                    // been customized should also be loaded
+                                    return geoModels.City.find({
+                                        region: region.target,
+                                        _id: {
+                                            $nin: customizedCityIds
+                                        }
+                                    })
+                                    .then(function(notCustomizedCities) {
+                                        regionObj.cities = regionObj.cities.concat(notCustomizedCities);
+                                    });
                                 })
                                 .then(function() {
                                     countryObj.regions.push(regionObj);

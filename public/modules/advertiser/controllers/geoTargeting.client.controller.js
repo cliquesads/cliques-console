@@ -225,6 +225,27 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			});
 		};
 
+		$scope.showWarningForCountryCustomization = function(node) {
+			var parentScope = $scope;
+			ngDialog.open({
+				template: 'modules/advertiser/views/partials/customize-countrybid-warning.html',
+				data: {
+					countryNode: node
+				},
+				controller: ['$scope', function($scope) {
+					$scope.countryNode = $scope.ngDialogData.countryNode;
+					$scope.showSlider = function() {
+						$scope.countryNode.__hideSlider__ = !$scope.countryNode.__hideSlider__;
+						$scope.closeThisDialog('success');
+					};
+
+					$scope.cancel = function() {
+						$scope.closeThisDialog('success');
+					};
+				}]
+			});
+		};
+
 		/**
 		 * Adds custom methods & properties to tree node object.
 		 *
@@ -236,6 +257,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param node
 		 * @param nodeType
 		 * @param parentId
+		 * @param parentNodeWeight
 		 * @returns {node}
 		 */
 		var _initializeGeoTreeNode = function(node, nodeType, parentId, parentNodeWeight) {
@@ -249,7 +271,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			if (nodeType !== 'City') {
 				newNode.__hideSlider__ = false;
 			} else {
-				newNode.__hideSlider__ = true;
+				// don't hide if a weight is already applied to this city
+				newNode.__hideSlider__ = (node.weight === parentNodeWeight) || _.isNil(node.weight);
 			}
 			// Set initial state as overridden so that it only can be set false
 			// when slider is engaged by user
@@ -364,6 +387,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}
 			var countryNode = _initializeGeoTreeNode(countryObj, 'Country', null);
+			countryNode.__hideSlider__ = true;
 			this.data.push(countryNode);
 			return countryNode;
 		};
@@ -581,6 +605,30 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			}
 			return inner(self.data, oldGeoTree.data);
 		};
+
+		/**
+		 * Sets __hideSlider__ property for each country node on this tree.
+		 *
+		 * If the weight of a country node is either null or unchanged,
+		 * that means this node is just a placeholder for at lease one of its 
+		 * children whose weight has been customized, so the slider of this node
+		 * itself should be hidden, and instead a button should show up that
+		 * allows the user to customize bid at a country level
+		 *
+		 * NOTE: this function should ONLY be invoked when initializing tree 
+		 * data from backend database
+		 */
+		 GeoTree.prototype.setCountrySliderHiders = function() {
+		 	// For each country, check if its bid has been customized,
+		 	// if so, show the slider, otherwise hide it
+			this.data.forEach(function(countryNode) {
+				if (countryNode.weight === null || countryNode.weight === 1) {
+					countryNode.__hideSlider__ = true;
+				} else {
+					countryNode.__hideSlider__ = false;
+				}
+			});
+		 };
 
 		/**
 		 * Helper function to prune any unnecessary children from client-side tree data
@@ -962,6 +1010,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				})
 				.then(function() {
 					$scope.geo_targets.setExpandLevel(0);
+					$scope.geo_targets.setCountrySliderHiders();
 					$scope.loadingTargetTree = false;
 				});
 			});
