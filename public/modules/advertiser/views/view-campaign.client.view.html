@@ -176,21 +176,9 @@ adding hook in parent template ---->
                         </tab>
                         <tab heading="Targeting">
                             <div class="panel-body">
+                                <!-- Inventory targeting panel -->
                                 <fieldset>
                                     <small><em class="text-muted">Inventory</em></small>
-                                    <!--<div class="form-group m0">-->
-                                        <!--<label class="col-sm-4 control-label">Sites</label>-->
-                                        <!--<div class="col-sm-8">-->
-                                            <!--<p class="form-control-static">-->
-                                                <!--<strong>-->
-                                                    <!--<a href="#" ng-click="editPlacementTargets()"><span class="fa fa-sliders"></span>  {{ campaign.placement_targets.length || 0 }} Placement Targets Set</a>-->
-                                                <!--</strong>-->
-                                            <!--</p>-->
-                                        <!--</div>-->
-                                    <!--</div>-->
-                                <!--</fieldset>-->
-                                <!--<fieldset>-->
-                                    <!--<small><em class="text-muted">Sites</em></small>-->
                                     <div class="form-group m0">
                                         <label class="col-sm-4 control-label">Sites, Pages & Placements</label>
                                         <div class="col-sm-8">
@@ -202,6 +190,7 @@ adding hook in parent template ---->
                                         </div>
                                     </div>
                                 </fieldset>
+                                <!-- Geographical targeting panel -->
                                 <fieldset>
                                     <small><em class="text-muted">Geographical</em></small>
                                     <div class="form-group m0">
@@ -209,12 +198,30 @@ adding hook in parent template ---->
                                         <div class="col-sm-8">
                                             <p class="form-control-static">
                                                 <strong>
-                                                    <a
-                                                        data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/geo-targets"
+                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/geo-targets"
                                                         analytics-on="click"
                                                         analytics-event="ViewCampaign_GeoTargets">
                                                         <span class="fa fa-sliders"></span>
                                                         {{ campaign.geo_targets.length + campaign.blocked_geo.length || 0 }} Geo Targets Set
+                                                    </a>
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <!-- Keyword targeting panel -->
+                                <fieldset>
+                                    <small><em class="text-muted">Keyword</em></small>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Page Keywords</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">
+                                                <strong>
+                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/keyword-targets"
+                                                        analytics-on="click"
+                                                        analytics-event="ViewCampaign_KeywordTargets">
+                                                        <span class="fa fa-sliders"></span> 
+                                                        {{ campaign.keyword_targets.length + campaign.blocked_keywords.length || 0 }} Keyword Targets Set
                                                     </a>
                                                 </strong>
                                             </p>
