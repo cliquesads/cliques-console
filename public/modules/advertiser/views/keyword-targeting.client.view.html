@@ -1,10 +1,109 @@
+<div class="col-sm-12">
+	<div class="panel">
+		<div class="panel-heading">
+			<h4>
+				<i class="fa fa-italic"></i>&nbsp;&nbsp;Default Bidding
+				<a class="fa fa-lg fa-question-circle pull-right"
+					ng-click="getKeywordTargetingHelp()"
+					analytics-on="click"
+					analytics-event="KeywordTargeting_GetHelp">
+				</a>
+			</h4>
+			<em class="text-muted">
+				<p>
+					<strong>
+						To target or block a keyword, <i class="fa fa-sm fa-italic"></i> type it in the corresponding input boxes below.
+					</strong>
+				</p>
+				<p>
+					Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all keywords <strong>unless you indicate otherwise.</strong>
+				</p>
+			</em>
+		</div>
+	</div>
+</div>
 <!-- Targeted Keywords input section -->
 <div class="col-sm-6">
 	<div class="panel">
 		<div class="panel-heading bg-success">
 			<h4><i class="fa fa-slider"></i> Custom Bidding</h4>
 		</div>
-		<div class="panel-body text-muted"></div>
+		<div class="panel-body">
+			<input type="text"
+				tagsinput="tagsinput"
+				data-width="100%"
+				ng-model="targetedKeywords"
+				placeholder="Type Keyword than you want to customize bidding, then hit enter"
+				class="form-control">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th class="text-center">Weight</th>
+						<th class="wd-xxs text-center">Bid</th>
+						<th class="wd-xxs text-center">
+							<a href="#"
+								tooltip="Average CPM on this Keyword for the {{ dateRanges[defaultDateRange].label }}">
+								<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM
+							</a>
+						</th>
+						<th class="wd-xxs text-center">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="node in targetKeywordNodes track by node.target">
+						<!-- Keyword text -->
+						<td>{{ node.target }}</td>	
+						<!-- Weight slider -->
+						<td>
+							<rzslider rz-slider-model="node.weight"
+								rz-slider-options="{
+									floor: 0,
+									ceil: rzSliderCeil,
+									step: 0.0001,
+									precision: 4,
+									id: node.target,
+									showSelectionBar: true,
+									onStart: onStart,
+									hideLimitLabels: true
+								}"
+								class="ml">
+							</rzslider>
+						</td>
+						<!-- Bid -->
+						<td class="wd-xxs text-center">
+							<span ng-class="{
+								'text-green': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm,
+								'text-warning': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm,
+								'text-danger': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">
+								<strong>
+									{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}
+								</strong>								
+							</span>	
+						</td>
+						<!-- CPM -->
+						<td class="wd-xxs text-center">
+							<div ng-if="node.stats.cpm">
+								{{ node.stats.cpm | currency: "$" : 2 }}	
+							</div>
+							<small ng-if="!(node.stats.cpm)"
+								class="text-muted">
+								<i class="fa fa-heartbeat"></i>	Not Enough Data
+							</small>
+						</td>
+						<!-- Actions -->
+						<td class="ws-xxs text-center">
+							<button type="button"
+								class="btn btn-xs bg-gray-light"
+								ng-click="removeTargetedKeyword(node)"
+								tooltip="Clear Bids">
+								<i class="fa fa-lg fa-remove"></i>	
+							</button>
+						</td>
+					</tr>
+ 				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 <!-- Blocked Keywords input section -->
