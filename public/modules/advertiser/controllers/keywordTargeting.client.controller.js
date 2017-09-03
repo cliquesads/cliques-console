@@ -76,12 +76,10 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		$scope.reset();
 
 		$scope.$watch('targetedKeywords', function(newValue, oldValue) {
-			console.log('========== targetedKeywords has changed');
 			if ($scope.targetedKeywords.constructor === Array) {
 				if ($scope.targetedKeywords.length === ($scope.numberOfTargets + 1)) {
 					// targeted keywords added
 					var addedTargetKeyword = $scope.targetedKeywords[$scope.numberOfTargets];
-					console.log('increased++++++, new keyword: ' + addedTargetKeyword);
 					$scope.targetKeywordNodes.push(_initializeKeywordNode({
 						target: addedTargetKeyword
 					}));
@@ -97,7 +95,6 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 							break;
 						}
 					}
-					console.log('decreased------, deleted keyword: ' + deletedTargetKeyword);
 					for (i = 0; i < $scope.targetKeywordNodes.length; i ++) {
 						if ($scope.targetKeywordNodes[i].target === deletedTargetKeyword) {
 							targetNodeIndexToDelete = i;
@@ -111,7 +108,6 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 				$scope.previousTargetedKeywords = $scope.targetedKeywords;
 			} else if (!$scope.targetedKeywords) {
 				if ($scope.numberOfTargets === 1) {
-					console.log('decreased------, deleted keyword: ' + $scope.previousTargetedKeywords[0]);
 					$scope.dirty = true;
 				}
 				$scope.targetKeywordNodes = [];
@@ -121,12 +117,10 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		});
 
 		$scope.$watch('blockedKeywords', function(newValue, oldValue) {
-			console.log('========== blockedKeywords has changed');
 			if ($scope.blockedKeywords.constructor === Array) {
-				if ($scope.blockedKeywords.length === ($scope.numberOfTargets + 1)) {
+				if ($scope.blockedKeywords.length === ($scope.numberOfBlocks + 1)) {
 					// blocked keywords added
 					var addedBlockKeyword = $scope.blockedKeywords[$scope.numberOfBlocks];
-					console.log('increased++++++, new keyword: ' + addedBlockKeyword);
 					$scope.blockKeywordNodes.push(_initializeKeywordNode({
 						target: addedBlockKeyword
 					}));
@@ -142,7 +136,6 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 							break;
 						}
 					}
-					console.log('decreased------, deleted keyword: ' + deletedBlockKeyword);
 					for (i = 0; i < $scope.blockKeywordNodes.length; i ++) {
 						if ($scope.blockKeywordNodes[i].target === deletedBlockKeyword) {
 							blockNodeIndexToDelete = i;
@@ -156,7 +149,6 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 				$scope.previousBlockedKeywords = $scope.blockedKeywords;
 			} else if (!$scope.blockedKeywords) {
 				if ($scope.numberOfBlocks === 1) {
-					console.log('decreased------, deleted keyword: ' + $scope.previousBlockedKeywords[0]);
 					$scope.dirty = true;
 				}
 				$scope.blockKeywordNodes = [];
@@ -170,37 +162,31 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 			$scope.dirty = true;
 		};
 
+		var removeTagFromTagsInput = function(tagKeyword) {
+			// query related tag in tagsinput and 
+			// then click the 'remove' span programmatically
+			var spanTags = angular.element('span.tag.label.label-info');
+			for (var i = 0; i < spanTags.length; i ++) {
+				if (spanTags[i].childNodes[0].data === tagKeyword) {
+					spanTags[i].childNodes[1].click();
+					break;
+				}
+			}
+		};
+
 		$scope.removeTargetedKeyword = function(keywordNode) {
-			var i;
-			for (i = 0; i < $scope.targetedKeywords.length; i ++) {
-				if (keywordNode.target === $scope.targetedKeywords[i]) {
-					$scope.targetedKeywords.splice(i, 1);
-					break;
-				}
-			}
-			for (i = 0; i < $scope.targetKeywordNodes.length; i ++) {
-				if (keywordNode.target === $scope.targetKeywordNodes[i].target) {
-					$scope.targetKeywordNodes.splice(i, 1);
-					break;
-				}
-			}
+			// remove the related tag in tagsinput,
+			// $scope.$watch will be triggered so related 
+			// targetKeywordNode can be removed as well
+			removeTagFromTagsInput(keywordNode.target);
 			$scope.dirty = true;
 		};
 
 		$scope.removeBlockedKeyword = function(keywordNode) {
-			var i;
-			for (i = 0; i < $scope.blockedKeywords.length; i ++) {
-				if (keywordNode.target === $scope.blockedKeywords[i]) {
-					$scope.blockedKeywords.splice(i, 1);
-					break;
-				}
-			}
-			for (i = 0; i < $scope.blockKeywordNodes.length; i ++) {
-				if (keywordNode.target === $scope.blockKeywordNodes[i].target) {
-					$scope.blockKeywordNodes.splice(i, 1);
-					break;
-				}
-			}
+			// remove the related tag in tagsinput,
+			// $scope.$watch will be triggered so related
+			// blockKeywordNode can be removed as well
+			removeTagFromTagsInput(keywordNode.target);
 			$scope.dirty = true;
 		};
 
