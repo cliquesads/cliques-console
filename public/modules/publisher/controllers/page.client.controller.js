@@ -251,5 +251,25 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 data: {publisher: $scope.publisher, placement: placement}
             });
         };
+
+        /**
+         * Start to edit page form, also show existed keywords in tagsinput
+         */
+        $scope.existedKeywords = [];
+        $scope.editPageForm = function() {
+            $scope.existedKeywords = angular.copy($scope.page.keywords);
+            var tagsinputDOM = angular.element(document.getElementById('keywords-tagsinput'));
+            $scope.page.keywords.forEach(function(keyword) {
+                tagsinputDOM.tagsinput('add', keyword);
+            });
+            $scope.pageForm.$show();
+            $scope.isEditingPageForm = true;
+
+            // respond to itemAdded/itemRemoved event and 
+            // update the value of $scope.page.keywords
+            tagsinputDOM.on('itemAdded itemRemoved', function() {
+                $scope.page.keywords = $scope.existedKeywords;
+            });
+        };
 	}
 ]);
