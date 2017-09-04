@@ -43,6 +43,17 @@
                 {{ page.clique || "empty" }}
             </p>
         </div>
+        <div class="form-group m0 col-sm-12">
+            <label class="control-label">Keywords</label>
+            <p class="form-control-static">
+                <input type="text"
+                    tagsinput="tagsinput"
+                    data-width="100%"
+                    ng-model="page.keywords"
+                    placeholder="Type Keywords for this page"
+                    class="form-control">
+            </p>
+        </div>
     </form>
 </fieldset>
 <fieldset>
