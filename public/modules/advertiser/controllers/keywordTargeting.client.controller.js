@@ -162,23 +162,12 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 			$scope.dirty = true;
 		};
 
-		var removeTagFromTagsInput = function(tagKeyword) {
-			// query related tag in tagsinput and 
-			// then click the 'remove' span programmatically
-			var spanTags = angular.element('span.tag.label.label-info');
-			for (var i = 0; i < spanTags.length; i ++) {
-				if (spanTags[i].childNodes[0].data === tagKeyword) {
-					spanTags[i].childNodes[1].click();
-					break;
-				}
-			}
-		};
-
 		$scope.removeTargetedKeyword = function(keywordNode) {
 			// remove the related tag in tagsinput,
 			// $scope.$watch will be triggered so related 
 			// targetKeywordNode can be removed as well
-			removeTagFromTagsInput(keywordNode.target);
+			var targetedTagsinputDOM = angular.element(document.getElementById('targeted-tagsinput'));
+			targetedTagsinputDOM.tagsinput('remove', keywordNode.target);
 			$scope.dirty = true;
 		};
 
@@ -186,7 +175,8 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 			// remove the related tag in tagsinput,
 			// $scope.$watch will be triggered so related
 			// blockKeywordNode can be removed as well
-			removeTagFromTagsInput(keywordNode.target);
+			var blockedTargsinputDOM = angular.element(document.getElementById('blocked-tagsinput'));
+			blockedTargsinputDOM.tagsinput('remove', keywordNode.target);
 			$scope.dirty = true;
 		};
 
