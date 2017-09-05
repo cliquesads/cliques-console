@@ -176,6 +176,20 @@ adding hook in parent template ---->
                         </tab>
                         <tab heading="Targeting">
                             <div class="panel-body">
+                                <!-- Frequency cap setting -->
+                                <fieldset>
+                                    <div class="form-group m0">
+                                        <label class="col-sm-4 control-label">Frequency</label>
+                                        <div class="col-sm-8">
+                                            <a href="#"
+                                                editable-text="campaign.frequency"
+                                                e-type="number"
+                                                onaftersave="saveCampaignFrequency()">
+                                                {{ campaign.frequency || 0 }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 <!-- Inventory targeting panel -->
                                 <fieldset>
                                     <small><em class="text-muted">Inventory</em></small>
