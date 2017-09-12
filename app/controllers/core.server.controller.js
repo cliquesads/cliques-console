@@ -17,7 +17,7 @@ module.exports = function(db){
                 res.render('index', {
                     user: req.user || null,
                     request: req,
-                    latestHour: result.toUTCString(),
+                    latestHour: result ? result.toUTCString() : null,
                     nativeSpecs: nativeSpecs,
                     consoleVersion: res._headers['console-version'],
                     stripePublishableKey: stripePublishableKey
