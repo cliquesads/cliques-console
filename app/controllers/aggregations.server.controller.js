@@ -29,7 +29,7 @@ module.exports = function(db) {
             getLatestHour: function(callback){
                 hourlyAdStatAPI.aggregationModels.HourlyAdStat.findOne().sort('-hour').exec(function(err, result){
                     if (err) return callback(err);
-                    return callback(null, result.hour);
+                    return callback(null, result ? result.hour : null);
                 });
             }
         },
