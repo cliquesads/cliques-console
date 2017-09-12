@@ -29,6 +29,7 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
         $scope.OPENRTB.positions.forEach(function(pos){
             $scope.positions_object[pos.code] = pos.name;
         });
+        $scope.newSiteKeywords = [];
 
         // something weird about storing regexes as scope vars, they don't bind
         // to the template properly to have to convert to string
