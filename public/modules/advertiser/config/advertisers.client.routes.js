@@ -289,6 +289,28 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign.viewCampaignKeywordTargets', {
+            url: '/keyword-targets',
+            resolve: {
+                campaign: function($stateParams, advertiser) {
+                    var i = _.findIndex(advertiser.campaigns, function(campaign) {
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                    return {
+                        advertiser: advertiser,
+                        index: i,
+                        campaign: advertiser.campaigns[i]
+                    };
+                },
+                $title: function() { return 'Keyword Targets'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/keyword-targeting.client.view.html',
+                    controller: 'KeywordTargetingController'
+                }
+            }
+        }).
         state('app.advertiser.allAdvertisers.viewAdvertiser.actionBeacons', {
             url: '/actionbeacon',
             resolve: {
