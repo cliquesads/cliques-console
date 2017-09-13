@@ -9,8 +9,8 @@ var vendorImages = require('./vendorFiles/vendorImages');
 
 module.exports = {
 	app: {
-		title: 'Cliques Console',
-		description: 'Meanjs App for Cliques Labs Inc.',
+		title: 'Cliques for SmarterTravel',
+		description: 'Cliques Console for Smarter Travel Media LLC',
 		keywords: 'MongoDB, Express, AngularJS, Node.js'
 	},
 	port: process.env.PORT || 5000,
