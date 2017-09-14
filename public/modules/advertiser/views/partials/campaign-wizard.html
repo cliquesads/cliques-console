@@ -10,19 +10,15 @@
                 <small class="text-muted"></small>
             </li>
             <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
-                <h4>2. Clique</h4>
+                <h4>2. Bids </h4>
                 <small class="text-muted"></small>
             </li>
             <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
-                <h4>3. Bids </h4>
+                <h4>3. Creatives</h4>
                 <small class="text-muted"></small>
             </li>
             <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                <h4>4. Creatives</h4>
-                <small class="text-muted"></small>
-            </li>
-            <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                <h4>5. Submit</h4>
+                <h4>4. Submit</h4>
                 <small class="text-muted"></small>
             </li>
         </ol>
@@ -65,54 +61,13 @@
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="loadCliqueStep(wizard.go, 2)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep2">Next <span>&rarr;</span></a>
-                </li>
-            </ul>
-        </div>
-
-        <div id="step2" ng-show="wizard.active(2)">
-            <legend>Choose a Clique</legend>
-            <p class="legend-help-text">
-                <em class="text-muted">
-                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/59-choosing-a-clique" target="_blank" analytics-on="click" analytics-event="CampaignWizard_CliquesDefinition">here</a>
-                </em>
-            </p>
-            <div class="alert alert-success" data-ng-show="campaign.clique"><b>Selected:</b> {{ campaign.clique }}</div>
-            <input style="display: None" type="text" name="campaign.clique" id="campaign.clique" data-ng-model="campaign.clique" data-parsley-group="step2" placeholder="{{ campaign.clique }}" required="required" class="form-control" />
-            <div class="form-group col-md-5">
-                <div class="pb-lg">
-                    <tree-expand-toggle-buttons control="my_tree" ng-show="cliques"></tree-expand-toggle-buttons>
-                </div>
-                <!--controller will lazily load abn-tree directive and inject inside of this div-->
-                <div class="text-md" id="cliquesTree"></div>
-            </div>
-            <div ng-show="campaign.clique" style="max-height: 400px; overflow: auto" class="col-md-7 box-placeholder">
-                <!--<h4 class="text-muted">Sites in the {{ campaign.clique }} Clique</h4>-->
-                <sites-in-clique-branch clique-id="campaign.clique" size="sm"></sites-in-clique-branch>
-                <div ng-show="sites.length == 0" class="text-center">
-                    <span class="fa fa-meh-o fa-2x"></span>
-                    <h4>Lame</h4>
-                    <p>This Clique doesn't have any sites yet. Please stay tuned!</p>
-                    <!--<p>Know someone who runs a site that fits this Clique? <a href="#">Refer them and save $100 on your campaign!</a></p>-->
-                </div>
-            </div>
-            <div class="bs-callout bs-callout-primary pl-sm pr-sm col-md-12">
-                <h4>Don't worry</h4>
-                <p>You can fine tune your site targeting after you've finished setting up your campaign.</p>
-            </div>
-            <ul class="pager">
-                <li class="previous">
-                    <a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CampaignWizard_StepOne">
-                        <span>&larr; Previous</span>
-                    </a>
-                </li>
-                <li class="next"><a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep3">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep2">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
 
         <!-- START CAMPAIGN inputs -->
-        <div id="step3" ng-show="wizard.active(3)">
+        <div id="step2" ng-show="wizard.active(2)">
             <legend>Bid Settings</legend>
             <p class="legend-help-text"><em class="text-muted">You can set targeting specifics (DMA, Site) later</em></p>
             <br/>
@@ -140,18 +95,18 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo">
+                    <a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CampaignWizard_StepOne">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
-                <li class="next"><a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep4">Next <span>&rarr;</span></a>
+                <li class="next"><a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep3">Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
         <!-- END Wizard Step inputs -->
 
         <!-- START CREATIVE UPLOAD STEP-->
-        <div id="step4" ng-show="wizard.active(4)">
+        <div id="step3" ng-show="wizard.active(3)">
             <legend>Add some creatives</legend>
             <!--<small><em class="text-muted">You can also skip and add these later</em></small>-->
             <tabset>
@@ -205,19 +160,19 @@
             </tabset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree">
+                    <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo">
                         <span>&larr; Previous</span>
                     </a>
                 </li>
                 <li class="next" ng-show="campaign.creatives || uploads_completed">
-                    <a href="#" ng-click="ingestCreatives(wizard.go, 5)" analytics-on="click" analytics-event="CampaignSetup_CampaignStep5"> Next <span>&rarr;</span></a>
+                    <a href="#" ng-click="ingestCreatives(wizard.go, 4)" analytics-on="click" analytics-event="CampaignSetup_CampaignStepFour"> Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
         <!-- END Wizard Step inputs -->
 
         <!-- START Wizard Step inputs -->
-        <div id="step5" ng-show="wizard.active(5)">
+        <div id="step4" ng-show="wizard.active(4)">
             <legend>Review & Submit</legend>
             <div ng-show="creation_error" class="alert alert-danger col-md-12">{{ creation_error }}</div>
             <fieldset>
@@ -229,16 +184,12 @@
                 <div class="col-sm-4"><b>End Date</b></div><div class="col-sm-8">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
             </fieldset>
             <fieldset>
-                <h5>Campaign Clique&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo"><span class="fa fa-edit"></span></a></h5>
-                <div class="col-sm-4"><b>Clique</b></div><div class="col-sm-8">{{ campaign.clique }}</div>
-            </fieldset>
-            <fieldset>
-                <h5>Bid Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree"><span class="fa fa-edit"></span></a></h5>
+                <h5>Bid Settings&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CampaignWizard_StepTwo"><span class="fa fa-edit"></span></a></h5>
                 <div class="col-sm-4"><b>Base Bid</b></div><div class="col-sm-8">{{ campaign.base_bid | currency:"$":2 }}</div>
                 <div class="col-sm-4"><b>Max Bid</b></div><div class="col-sm-8">{{ campaign.max_bid | currency:"$":2 }}</div>
             </fieldset>
             <fieldset>
-                <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour"><span class="fa fa-edit"></span></a></h5>
+                <h5>Campaign Creatives&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree"><span class="fa fa-edit"></span></a></h5>
                 <div ng-repeat="creative in campaign.creatives">
                     <div class="col-sm-4 text-center">
                         <div class="col-sm-12"><em>{{ creative.name }} {{ creative.type === 'native' ? '(Native)' : '' }}</em></div>
@@ -248,7 +199,7 @@
             </fieldset>
             <ul class="pager">
                 <li class="previous">
-                    <a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CampaignWizard_StepFour">
+                    <a href="#" ng-click="wizard.go(3)" analytics-on="click" analytics-event="CampaignWizard_StepThree">
                         <span>&larr; Previous</span>
                     </a>
                 </li>

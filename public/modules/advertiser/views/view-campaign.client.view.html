@@ -179,14 +179,14 @@ adding hook in parent template ---->
                                 <!-- Frequency cap setting -->
                                 <fieldset>
                                     <div class="form-group m0">
-                                        <label class="col-sm-4 control-label">Frequency</label>
+                                        <label class="col-sm-4 control-label">Frequency Cap</label>
                                         <div class="col-sm-8">
                                             <a href="#"
                                                 editable-text="campaign.frequency"
                                                 e-type="number"
                                                 onaftersave="saveCampaignFrequency()">
-                                                {{ campaign.frequency || 0 }}
-                                            </a>
+                                                {{ campaign.frequency || 0 }} impressions
+                                            </a> / 24 hrs
                                         </div>
                                     </div>
                                 </fieldset>
