@@ -8,26 +8,7 @@
 angular.module('core').controller('AdminDashboardController',
     ['$scope','$location','$window','Advertiser','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','Authentication',
         function($scope, $location, $window, Advertiser, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges, Authentication) {
-            $scope.creatives = [];
-            $scope.advertisers = Advertiser.query(function(advertisers){
-                advertisers.forEach(function(adv){
-                    adv.campaigns.forEach(function(camp){
-                        camp.creativegroups.forEach(function(crg){
-                            crg.creatives.forEach(function(cr){
-                                var description = camp.name + ' - ' + cr.name;
-                                var link = '#!/advertiser/' + adv._id + '/campaign/' + camp._id;
-                                $scope.creatives.push({
-                                    id: cr._id,
-                                    title: adv.name,
-                                    description: description,
-                                    src: cr.secureUrl,
-                                    link: link
-                                });
-                            });
-                        });
-                    });
-                });
-            });
+            $scope.advertisers = Advertiser.query();
 
             $scope.publishers = Publisher.query();
             HourlyAdStat.query({}).then(function(response){
@@ -74,33 +55,6 @@ angular.module('core').controller('AdminDashboardController',
 
             $scope.dateRangeSelection = "7d";
             $scope.tabFunctions = {
-                cliques: function(dateShortCode){
-                    var startDate = $scope.dateRanges[dateShortCode].startDate;
-                    var endDate = $scope.dateRanges[dateShortCode].endDate;
-                    // query HourlyAdStats api endpoint
-                    HourlyAdStat.query({
-                        groupBy: 'pub_clique',
-                        startDate: startDate,
-                        endDate: endDate
-                    }).then(function(response){
-                        // build datatables options object
-                        $scope.dtOptions = DTOptionsBuilder.newOptions();
-                        $scope.dtOptions.withOption('paging', false);
-                        $scope.dtOptions.withOption('searching', false);
-                        $scope.dtOptions.withOption('scrollX', true);
-                        $scope.dtOptions.withOption('order', [[1,'desc']]);
-                        // Not entirely sure if this is necessary
-                        $scope.dtColumnDefs = [
-                            DTColumnDefBuilder.newColumnDef(0),
-                            DTColumnDefBuilder.newColumnDef(1),
-                            DTColumnDefBuilder.newColumnDef(2),
-                            DTColumnDefBuilder.newColumnDef(3),
-                            DTColumnDefBuilder.newColumnDef(4),
-                            DTColumnDefBuilder.newColumnDef(5)
-                        ];
-                        $scope.cliqueData = response.data;
-                    });
-                },
                 publishers: function(dateShortCode){
                     var startDate = $scope.dateRanges[dateShortCode].startDate;
                     var endDate = $scope.dateRanges[dateShortCode].endDate;
@@ -160,7 +114,7 @@ angular.module('core').controller('AdminDashboardController',
                     });
                 }
             };
-            $scope.activeTab = 'cliques';
+            $scope.activeTab = 'publisher';
             $scope.getTabData = function(dateShortCode, tab){
                 tab = tab || $scope.activeTab;
                 $scope.activeTab = tab;

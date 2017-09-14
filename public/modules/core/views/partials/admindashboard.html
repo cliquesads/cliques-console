@@ -108,30 +108,6 @@
                     </div>
                 </div>
                 <tabset>
-                    <tab heading="Cliques" select="getTabData(dateRangeSelection,'cliques')">
-                        <table datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
-                            <thead>
-                                <tr>
-                                    <th>Clique</th>
-                                    <th>Impressions</th>
-                                    <th>Spend</th>
-                                    <th>Avg. CPM</th>
-                                    <th>CTR</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="row in cliqueData">
-                                <td>{{ row._id.pub_clique }}</td>
-                                <td>{{ row.imps | number: 0 }}</td>
-                                <td>{{ row.spend | currency:"$":"0" }}</td>
-                                <td>{{ row.spend / row.imps * 1000 |  currency:"$":"2" }}</td>
-                                <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
-                                <td>{{ row.view_convs + row.click_convs }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </tab>
                     <tab heading="Publishers" select="getTabData(dateRangeSelection,'publishers')">
                         <table datatable="ng" dt-options="dtOptions_pubs" dt-column-defs="dtColumnDefs_pubs" class="row-border hover">
                             <thead>
@@ -186,14 +162,6 @@
                     </tab>
                 </tabset>
             </div>
-        </div>
-    </div>
-    <hr/>
-    <em>Creative Showcase</em>
-    <br/><br/>
-    <div class="row">
-        <div class="container-fluid">
-            <div deckgrid="" source="creatives" cardtemplate="modules/core/views/partials/grid-masonry-deck-card.html" class="deckgrid clearfix"></div>
         </div>
     </div>
 </section>
