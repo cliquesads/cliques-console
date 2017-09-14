@@ -12,10 +12,11 @@ angular.module('advertiser').directive('campaignWizard', [
     'CampaignDraft',
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
+    'THIRD_PARTY_CLIQUE_ID',
     'ngDialog',
 	function($compile, $analytics, Authentication, Advertiser,
              getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
-             BID_SETTINGS, ADVERTISER_TOOLTIPS, ngDialog) {
+             BID_SETTINGS, ADVERTISER_TOOLTIPS, THIRD_PARTY_CLIQUE_ID, ngDialog) {
         return {
             restrict: 'E',
             scope: {
@@ -44,47 +45,9 @@ angular.module('advertiser').directive('campaignWizard', [
                 scope.campaign = new ClientSideCampaign(scope.existingCampaign, { useSuffix: scope.useSuffix });
                 scope.campaign.type = scope.campaignType;
 
-                // Populate tree data for tree visualization
-                scope.cliques = [];
-
-                // Get whole tree of active Cliques on load to render in ABN tree
-                getCliqueTree({active: true},function(err, cliques){
-                    scope.cliques = cliques;
-                });
-
-                // This gets bound to 'on-select' of abn-tree directive
-                // Sets Clique and gets sites in Clique for visualization purposes
-                scope.set_clique = function(branch) {
-                    scope.campaign.clique = branch.label;
-                };
-
-                var tree;
-                // This is our API control variable
-                scope.my_tree = tree = {};
-
-                /**
-                 * Stupid helper because stupid ABN Tree directive doesn't
-                 * come with this stupid method as it should
-                 */
-                scope.my_tree.get_branch_by_label = function(label){
-                    function inner(branch){
-                        var selection;
-                        if (branch.label === label) {
-                            selection = branch;
-                        } else if (branch.children.length > 0){
-                            branch.children.forEach(function(child){
-                                var k = inner(child);
-                                if (k){
-                                    selection = k;
-                                }
-                            });
-                        }
-                        return selection;
-                    }
-                    return inner(this.get_first_branch());
-                };
-
-                scope.dmas = DMA.query();
+                // Set Campaign Clique internally, will not be exposed on the front-end as front-end users
+                // won't be uploading first-party campaigns. This will be done programmatically.
+                scope.campaign.clique = THIRD_PARTY_CLIQUE_ID;
 
                 // Set mins & maxes
                 scope.min_base_bid = BID_SETTINGS.min_base_bid;
