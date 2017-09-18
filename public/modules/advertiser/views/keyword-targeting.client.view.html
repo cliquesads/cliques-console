@@ -118,7 +118,7 @@
 						<td class="ws-xxs text-center">
 							<button type="button"
 								class="btn btn-xs bg-gray-light"
-								ng-click="removeTargetedKeyword(node)"
+								ng-click="removeTargetedKeywordFromList(node.target, true)"
 								tooltip="Clear Bids">
 								<i class="fa fa-lg fa-remove"></i>	
 							</button>
@@ -165,7 +165,7 @@
 						<td class="ws-xxs text-center">
 							<button type="button"
 								class="btn btn-xs bg-gray-light"
-								ng-click="removeBlockedKeyword(node)"
+								ng-click="removeBlockedKeywordFromList(node.target, true)"
 								tooltip="Clear Bids">
 								<i class="fa fa-lg fa-remove"></i>	
 							</button>

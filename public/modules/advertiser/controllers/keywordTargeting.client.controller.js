@@ -8,7 +8,7 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		$scope.Math = Math;
 		$scope.dirty = false;
 
-		// user typed in keywords data model
+		// user typed in tagsinput keywords data model
 		$scope.targetedKeywords = [];
 		$scope.previousTargetedKeywords = [];
 		$scope.blockedKeywords = [];
@@ -16,6 +16,7 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 
 		$scope.numberOfTargets = $scope.targetedKeywords.length;
 		$scope.numberOfBlocks = $scope.blockedKeywords.length;
+
 		// targeted/blocked keyword schemas to save to database
 		$scope.targetKeywordNodes = [];
 		$scope.blockKeywordNodes = [];
@@ -31,18 +32,79 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		$scope.campaign = campaign.campaign;
 
 		var _initializeKeywordNode = function(node) {
-			var newNode = {
-				target: node.target
-			};
+			var newNode = angular.copy(node);
 			if (node.weight === 0) {
 				newNode.weight = 0;
 			} else {
 				newNode.weight = node.weight || 1.0;
 			}
-			if (node._id) {
-				newNode._id = node._id;
-			}
 			return newNode;
+		};
+
+		$scope.targetedTagsinputDOM = angular.element(document.getElementById('targeted-tagsinput'));
+		$scope.blockedTagsinputDOM = angular.element(document.getElementById('blocked-tagsinput'));
+
+		$scope.addTargetedKeyword = function(keyword, weight) {
+			var keywordExists = false;
+			for (var i = 0; i < $scope.targetKeywordNodes.length; i ++) {
+				if ($scope.targetKeywordNodes[i].target === keyword) {
+					keywordExists = true;
+					break;
+				}
+			}
+			if (!keywordExists) {
+				$scope.targetKeywordNodes.push(_initializeKeywordNode({
+					target: keyword,
+					weight: weight
+				}));
+			}
+		};
+
+		$scope.addBlockedKeyword = function(keyword) {
+			var keywordExists = false;
+			for (var i = 0; i < $scope.blockKeywordNodes.length; i ++) {
+				if ($scope.blockKeywordNodes[i].target === keyword) {
+					keywordExists = true;
+					break;
+				}
+			}
+			if (!keywordExists) {
+				$scope.blockKeywordNodes.push(_initializeKeywordNode({
+					target: keyword
+				}));
+			}
+		};
+
+		$scope.removeTargetedKeywordFromList = function(keyword, removeFromTagsinputAsWell) {
+			for (var i = 0; i < $scope.targetKeywordNodes.length; i ++) {
+				if ($scope.targetKeywordNodes[i].target === keyword) {
+					$scope.targetKeywordNodes.splice(i, 1);
+					break;
+				}
+			}
+			if (removeFromTagsinputAsWell) {
+				if ($scope.targetedKeywords.constructor === Array && 
+					$scope.targetedKeywords.indexOf(keyword) !== -1) {
+					$scope.targetedTagsinputDOM.tagsinput('remove', keyword);
+				}
+			}
+			$scope.dirty = true;
+		};
+
+		$scope.removeBlockedKeywordFromList = function(keyword, removeFromTagsinputAsWell) {
+			for (var i = 0; i < $scope.blockKeywordNodes.length; i ++) {
+				if ($scope.blockKeywordNodes[i].target === keyword) {
+					$scope.blockKeywordNodes.splice(i, 1);
+					break;
+				}
+			}
+			if (removeFromTagsinputAsWell) {
+				if ($scope.blockedKeywords.constructor === Array && 
+					$scope.blockedKeywords.indexOf(keyword) !== -1) {
+					$scope.blockedTagsinputDOM.tagsinput('remove', keyword);
+				}
+			}
+			$scope.dirty = true;
 		};
 
 		$scope.save = function() {
@@ -67,116 +129,36 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 			$scope.targetKeywordNodes = [];
 			$scope.blockKeywordNodes = [];
 			$scope.campaign.keyword_targets.forEach(function(keywordNode) {
-				$scope.targetKeywordNodes.push(_initializeKeywordNode(keywordNode));
+				$scope.addTargetedKeyword(keywordNode.target, keywordNode.weight);
 			});
 			$scope.campaign.blocked_keywords.forEach(function(keywordNode) {
-				$scope.blockKeywordNodes.push(_initializeKeywordNode(keywordNode));
+				$scope.addBlockedKeyword(keywordNode.target);
 			});
 		};
 		$scope.reset();
 
-		$scope.$watch('targetedKeywords', function(newValue, oldValue) {
-			if ($scope.targetedKeywords.constructor === Array) {
-				if ($scope.targetedKeywords.length === ($scope.numberOfTargets + 1)) {
-					// targeted keywords added
-					var addedTargetKeyword = $scope.targetedKeywords[$scope.numberOfTargets];
-					$scope.targetKeywordNodes.push(_initializeKeywordNode({
-						target: addedTargetKeyword
-					}));
-					$scope.dirty = true;
-				} else if ($scope.targetedKeywords.length === ($scope.numberOfTargets - 1)) {
-					// targeted keywords deleted
-					var deletedTargetKeyword,
-						targetNodeIndexToDelete,
-						i;
-					for (i = 0; i < $scope.previousTargetedKeywords.length; i ++) {
-						if ($scope.targetedKeywords.indexOf($scope.previousTargetedKeywords[i]) === -1) {
-							deletedTargetKeyword = $scope.previousTargetedKeywords[i];
-							break;
-						}
-					}
-					for (i = 0; i < $scope.targetKeywordNodes.length; i ++) {
-						if ($scope.targetKeywordNodes[i].target === deletedTargetKeyword) {
-							targetNodeIndexToDelete = i;
-							break;
-						}
-					}
-					$scope.targetKeywordNodes.splice(targetNodeIndexToDelete, 1);
-					$scope.dirty = true;
-				}
-				$scope.numberOfTargets = $scope.targetedKeywords.length;	
-				$scope.previousTargetedKeywords = $scope.targetedKeywords;
-			} else if (!$scope.targetedKeywords) {
-				if ($scope.numberOfTargets === 1) {
-					$scope.dirty = true;
-				}
-				$scope.targetKeywordNodes = [];
-				$scope.numberOfTargets = 0;
-				$scope.previousTargetedKeywords = $scope.targetedKeywords;
-			}
+		$scope.targetedTagsinputDOM.on('itemAdded', function(event) {
+			$scope.addTargetedKeyword(event.item);
+		});
+		$scope.targetedTagsinputDOM.on('itemRemoved', function(event) {
+			$scope.removeTargetedKeywordFromList(event.item, false);
+			setTimeout(function() {
+				$scope.$apply();
+			}, 0);
 		});
 
-		$scope.$watch('blockedKeywords', function(newValue, oldValue) {
-			if ($scope.blockedKeywords.constructor === Array) {
-				if ($scope.blockedKeywords.length === ($scope.numberOfBlocks + 1)) {
-					// blocked keywords added
-					var addedBlockKeyword = $scope.blockedKeywords[$scope.numberOfBlocks];
-					$scope.blockKeywordNodes.push(_initializeKeywordNode({
-						target: addedBlockKeyword
-					}));
-					$scope.dirty = true;
-				} else if ($scope.blockedKeywords.length === ($scope.numberOfBlocks - 1)) {
-					// blocked keywords deleted
-					var deletedBlockKeyword,
-						blockNodeIndexToDelete,
-						i;
-					for (i = 0; i < $scope.previousBlockedKeywords.length; i ++) {
-						if ($scope.blockedKeywords.indexOf($scope.previousBlockedKeywords[i]) === -1) {
-							deletedBlockKeyword = $scope.previousBlockedKeywords[i];
-							break;
-						}
-					}
-					for (i = 0; i < $scope.blockKeywordNodes.length; i ++) {
-						if ($scope.blockKeywordNodes[i].target === deletedBlockKeyword) {
-							blockNodeIndexToDelete = i;
-							break;
-						}
-					}
-					$scope.blockKeywordNodes.splice(blockNodeIndexToDelete, 1);
-					$scope.dirty = true;
-				}
-				$scope.numberOfBlocks = $scope.blockedKeywords.length;	
-				$scope.previousBlockedKeywords = $scope.blockedKeywords;
-			} else if (!$scope.blockedKeywords) {
-				if ($scope.numberOfBlocks === 1) {
-					$scope.dirty = true;
-				}
-				$scope.blockKeywordNodes = [];
-				$scope.numberOfBlocks = 0;
-				$scope.previousBlockedKeywords = $scope.blockedKeywords;
-			}
+		$scope.blockedTagsinputDOM.on('itemAdded', function(event) {
+			$scope.addBlockedKeyword(event.item);
+		});
+		$scope.blockedTagsinputDOM.on('itemRemoved', function(event) {
+			$scope.removeBlockedKeywordFromList(event.item, false);
+			setTimeout(function() {
+				$scope.$apply();
+			}, 0);
 		});
 
 		$scope.onRZSliderDragEnd = function() {
 			// keyword weight has been modified, show save/reset button
-			$scope.dirty = true;
-		};
-
-		$scope.removeTargetedKeyword = function(keywordNode) {
-			// remove the related tag in tagsinput,
-			// $scope.$watch will be triggered so related 
-			// targetKeywordNode can be removed as well
-			var targetedTagsinputDOM = angular.element(document.getElementById('targeted-tagsinput'));
-			targetedTagsinputDOM.tagsinput('remove', keywordNode.target);
-			$scope.dirty = true;
-		};
-
-		$scope.removeBlockedKeyword = function(keywordNode) {
-			// remove the related tag in tagsinput,
-			// $scope.$watch will be triggered so related
-			// blockKeywordNode can be removed as well
-			var blockedTargsinputDOM = angular.element(document.getElementById('blocked-tagsinput'));
-			blockedTargsinputDOM.tagsinput('remove', keywordNode.target);
 			$scope.dirty = true;
 		};
 
