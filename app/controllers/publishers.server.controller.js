@@ -268,6 +268,7 @@ module.exports = function(db) {
                     port: exchangePort,
                     secure: secure,
                     cloaderURL: cloaderURL,
+                    keywords: req.query.keywords,
                     tag_type: req.query.type,
                     targetId: req.query.targetId,
                     targetChildIndex: req.query.targetChildIndex
