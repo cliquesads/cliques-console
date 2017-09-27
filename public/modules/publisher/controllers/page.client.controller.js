@@ -9,7 +9,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
         $scope.getPositionByCode = function(code, placement){
-            if (placement.type === 'native'){
+            if (placement.type === 'native' || placement.type === 'multiPaneNative'){
                 return NATIVE_POSITIONS.filter(function(pos){ return pos.code === code; })[0];
             } else {
                 return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
