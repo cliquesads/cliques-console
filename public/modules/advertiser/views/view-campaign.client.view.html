@@ -137,27 +137,49 @@ adding hook in parent template ---->
                                 <fieldset>
                                     <form editable-form name="bidsInline" onaftersave="update()">
                                         <div class="form-horizontal">
-                                            <div class="form-group m0">
-                                                <label class="col-sm-4 control-label">Base Bid</label>
-                                                <div class="col-sm-6">
-                                                    <p class="form-control-static">
-                                                        <span editable-number="campaign.base_bid" e-name="base_bid" e-min="{{ min_base_bid }}" e-max="{{ campaign.max_bid }}" e-required>{{ campaign.base_bid | currency:"$":2 }}</span>
-                                                    </p>
+                                            <fieldset>
+                                                <div class="form-group m0">
+                                                    <label class="col-sm-4 control-label">Base Bid</label>
+                                                    <div class="col-sm-6">
+                                                        <p class="form-control-static">
+                                                            <span editable-number="campaign.base_bid" e-name="base_bid" e-min="{{ min_base_bid }}" e-max="{{ campaign.max_bid }}" e-required>{{ campaign.base_bid | currency:"$":2 }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <a href="#" class="pull-right" ng-click="bidsInline.$show()" ng-show="!bidsInline.$visible" analytics-on="click" analytics-event="ViewCampaign_ShowBids">
+                                                            <span class="fa fa-edit"></span>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                                <div class="col-sm-2">
-                                                    <a href="#" class="pull-right" ng-click="bidsInline.$show()" ng-show="!bidsInline.$visible" analytics-on="click" analytics-event="ViewCampaign_ShowBids">
-                                                        <span class="fa fa-edit"></span>
-                                                    </a>
+                                                <div class="form-group m0">
+                                                    <label class="col-sm-4 control-label">Max Bid</label>
+                                                    <div class="col-sm-6">
+                                                        <p class="form-control-static">
+                                                            <span editable-number="campaign.max_bid" e-name="name" e-min="{{ campaign.base_bid }}" e-required>{{ campaign.max_bid | currency:"$":2 }}</span>
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group m0">
-                                                <label class="col-sm-4 control-label">Max Bid</label>
-                                                <div class="col-sm-6">
-                                                    <p class="form-control-static">
-                                                        <span editable-number="campaign.max_bid" e-name="name" e-min="{{ campaign.base_bid }}" e-required>{{ campaign.max_bid | currency:"$":2 }}</span>
-                                                    </p>
+                                            </fieldset>
+                                            <fieldset>
+                                                <div class="form-horizontal">
+                                                    <div class="form-group m0">
+                                                        <label class="col-sm-4 control-label">
+                                                            Multi-Bid
+                                                        </label>
+
+                                                        <div class="col-sm-8 form-control-static">
+                                                            <label class="switch">
+                                                                <input type="checkbox" checked="checked" ng-model="campaign.multi_bid" ng-click="toggleMultiBid()"/>
+                                                                <span></span>
+                                                            </label>
+                                                            <div class="label" ng-class="campaign.multi_bid ? 'label-success':'label-default'">{{ campaign.multi_bid ? "On":"Off"}}</div>
+                                                            <a href="#" tooltip="{{ TOOLTIPS.multi_bid }}" tooltip-class="wd-md" tooltip-placement="right" analytics-on="click" analytics-event="CampaignWizard_TooltipMultiBid">
+                                                                <em class="fa fa-question-circle"></em>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </fieldset>
                                         </div>
                                         <div class="pull-right">
                                             <!-- buttons to submit / cancel form -->
