@@ -25,7 +25,7 @@
         <div class="pl-sm checkbox c-checkbox">
             <label><input type="checkbox" ng-model="options.dynamicInsertion"/><span class="fa fa-check"></span>Dynamic Insertion</label>
         </div>
-        <fieldset class="pb0 mb0">
+        <fieldset class="pb-sm">
             <table class="col-sm-12" ng-show="options.dynamicInsertion">
                 <thead>
                     <th>Target ID</th>
@@ -42,6 +42,17 @@
                 </tr>
                 </tbody>
             </table>
+        </fieldset>
+        <fieldset class="pb0 mb0">
+            <strong>Keywords</strong>
+            <p class="form-control-static">
+                <input type="text"
+                       id="keywords-tagsinput"
+                       tagsinput="tagsinput"
+                       data-width="100%"
+                       ng-model="options.keywords"
+                       placeholder="Type a keyword & press Enter.">
+            </p>
         </fieldset>
     </form>
     <small class="text-muted">Paste this ad tag directly into your Page or 3rd-party ad-server</small>

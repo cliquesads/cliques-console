@@ -225,7 +225,8 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         secure: false,
                         type: defaultTagType,
                         targetId: null,
-                        targetChildIndex: null
+                        targetChildIndex: null,
+                        keywords: null
                     };
 
                     $scope.copySuccess = function(e){
@@ -239,14 +240,16 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             secure: $scope.options.secure,
                             type: $scope.options.type,
                             targetId: $scope.options.targetId,
+                            keywords: $scope.options.keywords,
                             targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex'], function(){
-                        $scope.getPlacementTag();
-                    });
+                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex','options.keywords'],
+                        function(){
+                            $scope.getPlacementTag();
+                        });
                 }],
                 data: {publisher: $scope.publisher, placement: placement}
             });
