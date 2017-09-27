@@ -128,12 +128,16 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		$scope.reset = function() {
 			$scope.targetKeywordNodes = [];
 			$scope.blockKeywordNodes = [];
-			$scope.campaign.keyword_targets.forEach(function(keywordNode) {
-				$scope.addTargetedKeyword(keywordNode.target, keywordNode.weight);
-			});
-			$scope.campaign.blocked_keywords.forEach(function(keywordNode) {
-				$scope.addBlockedKeyword(keywordNode.target);
-			});
+			if ($scope.campaign.keyword_targets){
+				$scope.campaign.keyword_targets.forEach(function(keywordNode) {
+					$scope.targetKeywordNodes.push(_initializeKeywordNode(keywordNode));
+				});
+			}
+			if ($scope.campaign.blocked_keywords){
+				$scope.campaign.blocked_keywords.forEach(function(keywordNode) {
+					$scope.blockKeywordNodes.push(_initializeKeywordNode(keywordNode));
+				});
+			}
 		};
 		$scope.reset();
 

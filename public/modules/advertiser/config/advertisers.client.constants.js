@@ -15,4 +15,5 @@ angular.module('advertiser')
         actionbeacons: "View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI."
     })
     .constant('REVIEW_TIME','2 - 4 Business Hours')
+    .constant('THIRD_PARTY_CLIQUE_ID', 'Third Party')
     .constant('NATIVE_SPECS', nativeSpecs);

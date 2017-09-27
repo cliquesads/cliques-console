@@ -53,7 +53,7 @@ export NODE_ENV="$env"
 
 # make sure cliques-config repo is cloned & pull any new commits
 if [ ! -d "../cliques-config" ]; then
-    git clone git@github.com:cliquesads/cliques-config.git ../cliques-config
+    git clone git@github.com:cliquesads/smartertravel-config.git ../cliques-config
     ln -s ../cliques-config cliques-config
 else
     cd ../cliques-config
