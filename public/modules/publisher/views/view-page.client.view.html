@@ -40,8 +40,17 @@
                         <div class="form-group m0">
                             <label class="control-label col-sm-3">URL</label>
                             <div class="col-sm-9">
-                                <p class="form-control-static">
-                                    <span editable-text="page.url" e-name="url">{{ page.url }}</span>
+                                <p class="form-control-static" style="word-wrap: break-word">
+                                    <span editable-text="page.url" e-name="url">
+                                        <hm-read-more
+                                            hm-text="{{ page.url }}"
+                                            hm-limit="20"
+                                            hm-more-text="read more"
+                                            hm-less-text="read less"
+                                            hm-dots-class="dots"
+                                            hm-link-class="links">
+                                        </hm-read-more>
+                                    </span>
                                 </p>
                             </div>
                         </div>
@@ -68,9 +77,10 @@
                                 <p class="form-control-static"
                                     ng-show="!pageForm.$visible">
                                     <span class="tag label label-info mr"
-                                        ng-repeat="keyword in page.keywords">
+                                        ng-repeat="keyword in page.keywords" ng-show="page.keywords">
                                         {{ keyword }} 
                                     </span>
+                                    <span ng-show="!page.keywords"><em class="text-muted">None</em></span>
                                 </p>
                                 <p class="form-control-static"
                                     ng-show="pageForm.$visible">
