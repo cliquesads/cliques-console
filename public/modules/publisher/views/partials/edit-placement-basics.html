@@ -42,7 +42,7 @@
             <label class="col-sm-3 control-label">Dimensions *</label>
             <div class="col-sm-9">
                 <p class="form-control-static">
-                    <select name="dimensions" ng-disabled="placement.type === 'native'" data-ng-model="placement.dimensions" ng-required="placement.type === 'display' || !placement.type" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                    <select name="dimensions" ng-disabled="placement.type === 'native' || placement.type === 'multiPaneNative'" data-ng-model="placement.dimensions" ng-required="placement.type === 'display' || !placement.type" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
                         <option value=""></option>
                     </select>
                     <span ng-show="validateInput('dimensions', 'required')" class="text-danger">This field is required</span>
@@ -53,10 +53,10 @@
             <label class="col-sm-3 control-label">Position *</label>
             <div class="col-sm-9">
                 <p class="form-control-static">
-                    <select ng-if="placement.type === 'native'" name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
+                    <select ng-if="placement.type === 'native' || placement.type === 'multiPaneNative'" name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
                         <option value=""></option>
                     </select>
-                    <select ng-if="placement.type !== 'native'" name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                    <select ng-if="placement.type !== 'native' && placement.type !== 'multiPaneNative'" name="position" data-ng-model="placement.pos" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
                         <option value=""></option>
                     </select>
                     <span ng-show="validateInput('position', 'required')" class="text-danger">This field is required</span>

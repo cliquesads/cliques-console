@@ -38,9 +38,7 @@ angular.module('publisher')
         },
         multiPaneNative: {
             displayName : 'Multi-Pane Native',
-            // TO-DO::: need to set the correct description for multiPaneNative
-            description: 'Not sure what to say here?',
-            // TO-DO::: need to set the correct tagTypes for multiPaneNative
+            description: 'Units featuring anywhere from 2-20 distinct native ads, or "panes". Ideal for "Sponsored Content" widgets, etc.',
             tagTypes: ['javascript']
         }
     })

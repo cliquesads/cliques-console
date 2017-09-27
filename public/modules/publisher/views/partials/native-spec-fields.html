@@ -1,0 +1,54 @@
+<fieldset>
+    <div class="row pb">
+        <label class="col-sm-3">Brand Disclosure Prefix*</label>
+        <div class="col-sm-4 form-group">
+            <input type="text" id="prefix" name="prefix" required="required" class="form-control" ng-model="native.brandDisclosurePrefix"/>
+        </div>
+        <label class="col-sm-3" for="descriptionLength">Max Description Length *</label>
+        <div class="col-sm-2 form-group">
+            <input type="number" required="required" id="descriptionLength" name="descriptionLength" min="{{ NATIVE_SPECS.description.minChars }}" max="{{ NATIVE_SPECS.description.maxChars }}" class="form-control" data-ng-model="native.descriptionMaxLength">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-3">Advertisement Disclosure*</label>
+        <div class="col-sm-4 form-group">
+            <input type="text" id="adDisclosure" name="adDisclosure" required="required" class="form-control" ng-model="native.advertisementDisclosure"/>
+        </div>
+    </div>
+</fieldset>
+<fieldset>
+    <div class="col-sm-4">
+        <h4>
+            <i class="fa fa-desktop"></i> Desktop
+        </h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group form-control-static">
+            <label class="switch" ng-show="showActiveSwitches">
+                <input type="checkbox" checked="checked" ng-model="native.desktop.active"/>
+                <span></span>
+            </label>
+            <div class="label" ng-class="native.desktop.active ? 'label-success':'label-default'">{{ native.desktop.active ? "Active":"Inactive"}}</div>
+        </div>
+    </div>
+    <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
+    <textarea ng-show="native.desktop.active" ng-required="native.desktop.active" ng-model="native.desktop.template" id="desktopTemplate" rows=7 name="desktopTemplate" placeholder="<div>I am a desktop native template!</div>" class="form-control code-input"></textarea>
+    <span ng-show="validateInput('desktopTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+</fieldset>
+<fieldset>
+    <div class="col-sm-4">
+        <h4><i class="fa fa-mobile"></i> Mobile / <i class="fa fa-tablet"></i> Tablet</h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group form-control-static">
+            <label class="switch" ng-show="showActiveSwitches">
+                <input type="checkbox" checked="checked" ng-model="native.mobile.active"/>
+                <span></span>
+            </label>
+            <div class="label" ng-class="native.mobile.active ? 'label-success':'label-default'">{{ native.mobile.active ? "Active":"Inactive"}}</div>
+        </div>
+    </div>
+    <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
+    <textarea ng-show="native.mobile.active" ng-required="native.mobile.active" ng-model="native.mobile.template" id="mobileTemplate" rows=7 name="mobileTemplate" placeholder="<div>I am a mobile native template!</div>" class="form-control code-input"></textarea>
+    <span ng-show="validateInput('mobileTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+</fieldset>

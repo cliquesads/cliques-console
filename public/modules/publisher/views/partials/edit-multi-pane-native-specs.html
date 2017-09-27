@@ -1,0 +1,64 @@
+<h4>{{ placement.name }} - Multi-Pane Native Specs</h4>
+<div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
+<form id="multiPaneNativeSpecsForm" name="multiPaneNativeSpecsForm" data-ng-submit="save()">
+    <tabset>
+        <tab heading="Wrapper">
+            <fieldset>
+                <div class="row">
+                    <label class="col-sm-3">Number of Panes*</label>
+                    <div class="col-sm-4 form-group">
+                        <input type="number"
+                               id="count"
+                               name="count"
+                               required="required"
+                               class="form-control"
+                               min="2"
+                               ng-model="placement.multiPaneNative.count" />
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="col-sm-6">
+                    <h4>
+                        <i class="fa fa-desktop"></i> Desktop Wrapper Template
+                    </h4>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group form-control-static">
+                        <label class="switch">
+                            <input type="checkbox" checked="checked" ng-model="placement.multiPaneNative.wrapper.desktop.active"/>
+                            <span></span>
+                        </label>
+                        <div class="label" ng-class="placement.multiPaneNative.wrapper.desktop.active ? 'label-success':'label-default'">{{ placement.multiPaneNative.wrapper.desktop.active ? "Active":"Inactive"}}</div>
+                    </div>
+                </div>
+                <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
+                <textarea ng-show="placement.multiPaneNative.wrapper.desktop.active" ng-required="placement.multiPaneNative.wrapper.desktop.active" ng-model="placement.multiPaneNative.wrapper.desktop.template" id="wrapperDesktopTemplate" rows=7 name="wrapperDesktopTemplate" placeholder="<div>I am a desktop native wrapper template! {{ panes }}</div>" class="form-control code-input"></textarea>
+                <span ng-show="validateInput('wrapperDesktopTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+            </fieldset>
+            <fieldset>
+                <div class="col-sm-6">
+                    <h4><i class="fa fa-mobile"></i> Mobile / <i class="fa fa-tablet"></i> Tablet Wrapper Template</h4>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group form-control-static">
+                        <label class="switch">
+                            <input type="checkbox" checked="checked" ng-model="placement.multiPaneNative.wrapper.mobile.active"/>
+                            <span></span>
+                        </label>
+                        <div class="label" ng-class="placement.multiPaneNative.wrapper.mobile.active ? 'label-success':'label-default'">{{ placement.multiPaneNative.wrapper.mobile.active ? "Active":"Inactive"}}</div>
+                    </div>
+                </div>
+                <textarea ng-show="placement.multiPaneNative.wrapper.mobile.active" ng-required="placement.multiPaneNative.wrapper.mobile.active" ng-model="placement.multiPaneNative.wrapper.mobile.template" id="wrapperMobileTemplate" rows=7 name="wrapperMobileTemplate" placeholder="<div>I am a mobile native template! {{ panes }}</div>" class="form-control code-input"></textarea>
+                <span ng-show="validateInput('wrapperMobileTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+            </fieldset>
+        </tab>
+        <tab heading="Pane">
+            <native-spec-fields native="placement.multiPaneNative.pane" show-active-switches="false"></native-spec-fields>
+        </tab>
+    </tabset>
+    <br/>
+    <div class="row text-center">
+        <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="EditMultiPaneNativeSpecs_Save">Save</button>
+    </div>
+</form>

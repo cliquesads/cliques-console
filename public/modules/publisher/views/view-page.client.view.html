@@ -187,7 +187,20 @@
                                         <span class="fa fa-edit"></span>
                                     </a>
                                     <h4 class="list-group-item-heading">{{ placement.name }}</h4>
-                                    <p class="list-group-item-text">{{ placement.type === 'native' ? 'Native' : placement.w + 'x' + placement.h }} - {{ getPositionByCode(placement.pos, placement).name }}</p>
+                                    <p class="list-group-item-text">
+                                        <span ng-switch="placement.type">
+                                            <span ng-switch-when="native">
+                                                Native
+                                            </span>
+                                            <span ng-switch-when="multiPaneNative">
+                                                Multi-Pane Native
+                                            </span>
+                                            <span ng-switch-default>
+                                                {{ placement.w + 'x' + placement.h }}
+                                            </span>
+                                        </span>
+                                        - {{ getPositionByCode(placement.pos, placement).name }}
+                                    </p>
                                 </td>
                                 <td class="col-sm-3 edit-inline hover-visible" ng-click="editDefaultCondition(placement)">
                                     <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditDefaultCondition">
@@ -205,12 +218,25 @@
                                             <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditNativeSpecs">
                                                 <span class="fa fa-edit"></span>
                                             </a>
-                                            <p ng-repeat="form in ['desktop','mobile','tablet']" class="list-group-item-text">
+                                            <p ng-repeat="form in ['desktop','mobile']" class="list-group-item-text">
                                                 <span ng-if="placement.native[form].active">
                                                     <span class="col-sm-2"><i class="fa fa-{{ form }}"></i></span><span class="col-sm-9"> {{ form | capitalize }} </span>
                                                 </span>
                                             </p>
                                             <p ng-if="!placement.native.desktop.active && !placement.native.mobile.active && !placement.native.tablet.active">
+                                                No templates uploaded yet.
+                                            </p>
+                                        </div>
+                                        <div ng-switch-when="multiPaneNative" ng-click="editMultiPaneNativeSpecs(placement)">
+                                            <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditMultiPaneNativeSpecs">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                            <p ng-repeat="form in ['desktop','mobile']" class="list-group-item-text">
+                                                <span ng-if="placement.multiPaneNative.wrapper[form].active">
+                                                    <span class="col-sm-2"><i class="fa fa-{{ form }}"></i></span><span class="col-sm-9"> {{ form | capitalize }} </span>
+                                                </span>
+                                            </p>
+                                            <p ng-if="!placement.multiPaneNative.wrapper.desktop.active && !placement.multiPaneNative.wrapper.mobile.active">
                                                 No templates uploaded yet.
                                             </p>
                                         </div>
