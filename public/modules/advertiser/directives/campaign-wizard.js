@@ -13,10 +13,12 @@ angular.module('advertiser').directive('campaignWizard', [
     'BID_SETTINGS',
     'ADVERTISER_TOOLTIPS',
     'THIRD_PARTY_CLIQUE_ID',
+    'FIRST_PARTY_CLIQUE_ID',
+    'CLIQUE_ICON_CLASSES',
     'ngDialog',
 	function($compile, $analytics, Authentication, Advertiser,
              getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
-             BID_SETTINGS, ADVERTISER_TOOLTIPS, THIRD_PARTY_CLIQUE_ID, ngDialog) {
+             BID_SETTINGS, ADVERTISER_TOOLTIPS, THIRD_PARTY_CLIQUE_ID, FIRST_PARTY_CLIQUE_ID, CLIQUE_ICON_CLASSES, ngDialog) {
         return {
             restrict: 'E',
             scope: {
@@ -47,7 +49,7 @@ angular.module('advertiser').directive('campaignWizard', [
 
                 // Set Campaign Clique internally, will not be exposed on the front-end as front-end users
                 // won't be uploading first-party campaigns. This will be done programmatically.
-                scope.campaign.clique = THIRD_PARTY_CLIQUE_ID;
+                scope.campaign.clique = FIRST_PARTY_CLIQUE_ID;
 
                 // Set mins & maxes
                 scope.min_base_bid = BID_SETTINGS.min_base_bid;

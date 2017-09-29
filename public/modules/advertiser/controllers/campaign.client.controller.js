@@ -4,16 +4,17 @@
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
     'Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-    'REVIEW_TIME','ADVERTISER_TOOLTIPS',
+    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES',
 	function($scope, $stateParams, $location, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
-             REVIEW_TIME, ADVERTISER_TOOLTIPS) {
+             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES) {
 
         $scope.advertiser = campaign.advertiser;
         $scope.campaignIndex = campaign.index;
         $scope.campaign = campaign.campaign;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
-        
+        $scope.CLIQUE_ICON_CLASSES = CLIQUE_ICON_CLASSES;
+
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;

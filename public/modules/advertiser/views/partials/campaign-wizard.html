@@ -29,6 +29,23 @@
             <legend>New {{ campaignType | capitalize }} Campaign</legend>
             <fieldset>
                 <div class="form-group">
+                    <label>Content Type*</label>
+                    <div class="box-form">
+                        <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                            <li ng-class="{'active': campaign.clique === 'First Party'}" ng-click="campaign.clique = 'First Party'" class="col-sm-6 align-middle">
+                                <h4><i class="{{ CLIQUE_ICON_CLASSES['First Party']}}"></i>&nbsp;First Party Content</h4>
+                                <p>Drive traffic to other owned & operated first-party content.</p>
+                            </li>
+                            <li ng-class="{'active': campaign.clique === 'Third Party'}" ng-click="campaign.clique = 'Third Party'" class="col-sm-6 align-middle">
+                                <h4><i class="{{ CLIQUE_ICON_CLASSES['Third Party'] }}"></i>&nbsp;Third Party Advertiser</h4>
+                                <p>Promote an offering for an third-party, paying advertiser.</p>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div class="form-group mb-sm">
                     <label>Name *</label>
                     <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step1" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
                 </div>

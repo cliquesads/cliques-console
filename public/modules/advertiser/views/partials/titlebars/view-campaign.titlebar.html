@@ -7,6 +7,11 @@
         <h3 class="ml-sm">
             <logo-widget model="advertiser" size="sm" oncompleteall="update()" onremove="update()"></logo-widget>
             {{ campaign.name }}
+            <span class="pull-right" style="font-weight: normal">
+                <i class="{{ CLIQUE_ICON_CLASSES[campaign.clique] }}"></i>
+                {{ campaign.clique }}
+            </span>
         </h3>
+
     </div>
 </div>

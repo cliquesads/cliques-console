@@ -17,7 +17,10 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'CREATIVE_SIZES',
     'OPENRTB',
     'LOGO',
-	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree, FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, LOGO) {
+    'FIRST_PARTY_CLIQUE_ID',
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree,
+             FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB,
+             LOGO, FIRST_PARTY_CLIQUE_ID) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -39,18 +42,6 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         // start event tracking funnel here
         $analytics.eventTrack('SiteSetup_StartPublisherWizard');
 
-        $scope.cliques = [];
-        // Get whole tree of active Cliques on load to render in ABN tree
-        getCliqueTree({active: true},function(err, cliques){
-            $scope.cliques = cliques;
-        });
-        $scope.set_clique = function(branch) {
-            $scope.site.clique = branch.label;
-        };
-        var tree;
-        // This is our API control variable
-        $scope.my_tree = tree = {};
-
         $scope.uploader = new FileUploader({
             url: 'console/logos'
         });
@@ -69,7 +60,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             description:    '',
             bid_floor:      '',
             domain_name:    '',
-            clique:         null,
+            clique:         FIRST_PARTY_CLIQUE_ID,
             bidfloor:       null,
             blacklist:      []
         };
