@@ -260,7 +260,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
         };
 
         $scope.editDefaultCondition = function(placement){
-            if (placement.type !== 'native'){
+            if (placement.type !== 'native' && placement.type !== 'multiPaneNative'){
                 var initDefaultType = placement.defaultType;
                 var initPassbackTag = placement.passbackTag;
                 var initHostedCreatives = placement.hostedCreatives;
