@@ -10,19 +10,19 @@ angular.module('advertiser').config(['$stateProvider',
             abstract: true,
             templateUrl: 'modules/admin/views/admin-layout.client.view.html'
         }).
-		state('app.admin.networkReport', {
-            url: '/admin/network-report',
-            title: 'Network Report',
-            resolve: {
-                $title: function(){ return 'Cliques Network Report'; }
-            },
-            views: {
-                'main': {
-                    templateUrl: 'modules/admin/views/network-report.client.view.html',
-                    controller: 'NetworkReportController'
-                }
-            }
-		}).
+		// state('app.admin.networkReport', {
+         //    url: '/admin/network-report',
+         //    title: 'Network Report',
+         //    resolve: {
+         //        $title: function(){ return 'Cliques Network Report'; }
+         //    },
+         //    views: {
+         //        'main': {
+         //            templateUrl: 'modules/admin/views/network-report.client.view.html',
+         //            controller: 'NetworkReportController'
+         //        }
+         //    }
+		// }).
         state('app.admin.paymentAdmin', {
             url: '/admin/payment-admin',
             title: 'Payment Admin',
