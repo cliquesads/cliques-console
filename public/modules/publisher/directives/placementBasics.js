@@ -61,7 +61,8 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                                 break;
                             case "multiPaneNative":
                                 scope.placement.defaultType = 'hide';
-                                scope.placement.multiPaneNative = scope.placement.multiPaneNative || {};
+                                scope.placement.multiPaneNative = scope.placement.multiPaneNative ||
+                                    { pane: { desktop: {}, mobile: {}}, wrapper: {}};
                                 scope.placement.w = 1;
                                 scope.placement.h = 1;
                                 break;
