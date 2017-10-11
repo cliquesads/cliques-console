@@ -291,7 +291,18 @@ adding hook in parent template ---->
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="col-sm-6"><span ng-class="creative.active ? 'text-bold':'text-thin'">{{ creative.name }}</span></td>
+                                                        <td class="col-sm-6">
+                                                            <span ng-class="creative.active ? 'text-bold':'text-thin'">
+                                                                <hm-read-more
+                                                                    hm-text="{{ creative.type === 'native' ? creative.native.headline : creative.name }}"
+                                                                    hm-limit="40"
+                                                                    hm-more-text="more"
+                                                                    hm-less-text="less"
+                                                                    hm-dots-class="dots"
+                                                                    hm-link-class="links" ng-click="$event.stopPropagation()">
+                                                                </hm-read-more>
+                                                            </span>
+                                                        </td>
                                                         <td class="col-sm-2">{{ creative.type === 'native' ? 'Native' : creativegroup.w + 'x' + creativegroup.h }}</td>
                                                     </tr>
                                                 </tbody>
