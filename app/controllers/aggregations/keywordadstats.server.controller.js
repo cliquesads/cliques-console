@@ -20,13 +20,12 @@ var KeywordAdStatAPI = exports.KeywordAdStatAPI = function(db) {
 	this.adv_params = ['advertiser', 'campaign'];
 	this.pub_params = ['publisher', 'site', 'page', 'placement'];
 	this.clique_params = ['pub_clique', 'adv_clique'];
-	this.keywords_params = ['keywords'];
+	this.keyword_params = ['keyword'];
 
 	// TODO: Don't love this, should figure out better way to handle general queries
 	var all_params = this.adv_params.concat(this.pub_params);
 	all_params = all_params.concat(this.clique_params);
-	all_params = all_params.concat(this.keywords_params);
-
+	all_params = all_params.concat(this.keyword_params);
 	this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([], all_params, 'hour');
 	AdStatsAPIHandler.call(this, db);
 };
@@ -35,7 +34,7 @@ util.inherits(KeywordAdStatAPI, AdStatsAPIHandler);
 /*------------ General (non-path-param) methods ------------ */
 
 KeywordAdStatAPI.prototype.getMany = function(req, res) {
-	return this._getManyWrapper(this.genPipelineBuilder, this.aggregationModels.KeywordAdStat)(req, res);
+	return this._getmanyWrapper(this.genPipelineBuilder, this.aggregationModels.KeywordAdStat)(req, res);
 };
 
 /**
@@ -58,7 +57,7 @@ KeywordAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res) {
 			ids.push(doc.id);
 		});
 		req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-		return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
+		return self._getmanyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
 	});
 };
 
@@ -83,6 +82,6 @@ KeywordAdStatAPI.prototype.getManyPublisherSummary = function(req, res) {
 			ids.push(doc.id);
 		});
 		req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-		return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
+		return self._getmanyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
 	});
 };
