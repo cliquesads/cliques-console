@@ -47,7 +47,7 @@ module.exports = function(db) {
             }
         },
         keywordAdStat: {
-            getMany: function(req, ers) {
+            getMany: function(req, res) {
                 return keywordAdStatAPI.getMany(req, res);
             },
             getManyAdvertiserSummary: function(req, res) {
