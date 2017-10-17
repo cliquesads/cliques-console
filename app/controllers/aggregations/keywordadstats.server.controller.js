@@ -34,7 +34,7 @@ util.inherits(KeywordAdStatAPI, AdStatsAPIHandler);
 /*------------ General (non-path-param) methods ------------ */
 
 KeywordAdStatAPI.prototype.getMany = function(req, res) {
-	return this._getmanyWrapper(this.genPipelineBuilder, this.aggregationModels.KeywordAdStat)(req, res);
+	return this._getManyWrapper(this.genPipelineBuilder, this.aggregationModels.KeywordAdStat)(req, res);
 };
 
 /**
@@ -57,7 +57,7 @@ KeywordAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res) {
 			ids.push(doc.id);
 		});
 		req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-		return self._getmanyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
+		return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
 	});
 };
 
@@ -82,6 +82,6 @@ KeywordAdStatAPI.prototype.getManyPublisherSummary = function(req, res) {
 			ids.push(doc.id);
 		});
 		req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-		return self._getmanyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
+		return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.KeywordAdStat)(req, res);
 	});
 };
