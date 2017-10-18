@@ -16,8 +16,8 @@ angular.module('analytics').factory('Query', ['$resource',
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
-    '$http', 'HourlyAdStat', 'GeoAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
-    function($http, HourlyAdStat, GeoAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
+    '$http', 'HourlyAdStat', 'GeoAdStat', 'KeywordAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
+    function($http, HourlyAdStat, GeoAdStat, KeywordAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
 
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
@@ -90,10 +90,12 @@ angular.module('analytics').factory('Analytics', [
     var queryFunction = function(queryType, role) {
         var collection;
         var queryFunction;
-        if (queryType !== 'city' && queryType !== 'state' && queryType !== 'country') {
-            collection = HourlyAdStat;
-        } else {
+        if (queryType === 'keyword') {
+            collection = KeywordAdStat;
+        } else if (queryType === 'city' || queryType === 'state' || queryType === 'country') {
             collection = GeoAdStat;
+        } else {
+            collection = HourlyAdStat;
         }
         switch (role){
             case 'networkAdmin':
