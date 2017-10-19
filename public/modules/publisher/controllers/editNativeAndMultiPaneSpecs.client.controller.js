@@ -13,8 +13,69 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
+        /****************************************/
+        /************ CodeMirror Setup **********/
+        /****************************************/
+        // to hold CodeMirror control objects for each CM instance
+        $scope.codeMirrors = {
+            desktop: null,
+            mobile: null
+        };
+        // holds error messages for codemirror instances
+        $scope.templateErrors = {
+            desktop: null,
+            mobile: null
+        };
+
+        // onLoad functions to pass to directive init to bind instances
+        // to vars in this $scope
+
+        $scope.onDesktopCMLoad =  function(codeMirror){
+            $scope.codeMirrors.desktop = codeMirror;
+        };
+        $scope.onMobileCMLoad =  function(codeMirror){
+            $scope.codeMirrors.mobile = codeMirror;
+        };
+
+        // options to pass to ui-codemirror directive
+        $scope.codeMirrorOpts = {
+            mode: 'htmlmixed',
+            placeholder: "<div>I am a native template! {{ panes }}</div>",
+            lineNumbers: true,
+            lineWrapping : true,
+            htmlMode: true,
+            autoRefresh: true,
+            foldGutter: true,
+            autoCloseTags: true,
+            matchTags: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        };
+
+        /**
+         * Wrapper to handle validation of codemirror instances, which aren't
+         * part of the form
+         * @returns {boolean}
+         */
+        $scope.validateTemplates = function(){
+            var requiredErrorMessage = 'This field is required.';
+            var valid = true;
+            var forms = ['desktop', 'mobile'];
+            for (var i = 0; i < forms.length; i++) {
+                var form = forms[i];
+                var val = $scope.codeMirrors[form].getValue();
+                if (val === null || val === '') {
+                    $scope.templateErrors[form] = requiredErrorMessage;
+                    valid = false;
+                }
+            }
+            return valid;
+        };
+
         $scope.save = function(){$scope.submitted = true;
-            if (this.nativeSpecsForm.$valid){
+            var templatesValid = this.validateTemplates();
+            if (this.nativeSpecsForm.$valid && templatesValid){
                 $scope.publisher.$update(function(){
                     $scope.closeThisDialog('Success');
                 }, function(errorResponse){
@@ -122,7 +183,8 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
         };
 
         $scope.save = function(){$scope.submitted = true;
-            if (this.multiPaneNativeSpecsForm.$valid && this.validateTemplates()){
+            var templatesValid = this.validateTemplates();
+            if (this.multiPaneNativeSpecsForm.$valid && templatesValid){
                 $scope.publisher.$update(function(){
                     $scope.closeThisDialog('Success');
                 }, function(errorResponse){

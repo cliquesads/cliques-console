@@ -36,7 +36,9 @@
                     <div ui-codemirror="{ onLoad: onDesktopWrapperCMLoad }"
                          ui-codemirror-opts="codeMirrorOpts"
                          ng-model="placement.multiPaneNative.wrapper.desktop.template"
-                         id="wrapperDesktopTemplate"></div>
+                         id="wrapperDesktopTemplate"
+                         ng-required="placement.multiPaneNative.wrapper.desktop.active"
+                         class="cm-form-control"></div>
                     <span ng-show="templateErrors.wrapper.desktop" class="text-danger">{{ templateErrors.wrapper.desktop }}</span>
                 </div>
             </fieldset>
@@ -58,6 +60,8 @@
                     <div ui-codemirror="{ onLoad: onMobileWrapperCMLoad }"
                          ui-codemirror-opts="codeMirrorOpts"
                          ng-model="placement.multiPaneNative.wrapper.mobile.template"
+                         ng-required="placement.multiPaneNative.wrapper.mobile.active"
+                         class="cm-form-control"
                          id="wrapperMobileTemplate"></div>
                     <span ng-show="templateErrors.wrapper.mobile" class="text-danger">{{ templateErrors.wrapper.mobile }}</span>
                 </div>

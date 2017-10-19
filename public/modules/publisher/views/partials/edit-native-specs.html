@@ -1,7 +1,14 @@
 <h4>{{ placement.name }} - Native Specs</h4>
 <div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
 <form id="nativeSpecsForm" name="nativeSpecsForm" data-ng-submit="save()">
-    <native-spec-fields native="placement.native" show-active-switches="true"></native-spec-fields>
+    <native-spec-fields
+            native="placement.native"
+            show-active-switches="true"
+            code-mirror-options="codeMirrorOpts"
+            on-desktop-cm-load="onDesktopCMLoad(codeMirror)"
+            on-mobile-cm-load="onMobileCMLoad(codeMirror)"
+            errors="templateErrors">
+    </native-spec-fields>
     <br/>
     <div class="row text-center">
         <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="EditNativeSpecs_Save">Save</button>

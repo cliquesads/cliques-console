@@ -35,6 +35,8 @@
         <div ui-codemirror="{ onLoad: onDesktopCmLoadTest }"
              ui-codemirror-opts="codeMirrorOptions"
              ng-model="native.desktop.template"
+             ng-required="native.desktop.active"
+             class="cm-form-control"
              id="desktopTemplate"></div>
         <span ng-show="errors.desktop" class="text-danger">{{ errors.desktop }}</span>
     </div>
@@ -56,6 +58,8 @@
         <div ui-codemirror="{ onLoad: onMobileCmLoadTest }"
              ui-codemirror-opts="codeMirrorOptions"
              ng-model="native.mobile.template"
+             ng-required="native.mobile.active"
+             class="cm-form-control"
              id="mobileTemplate"></div>
         <span ng-show="errors.mobile" class="text-danger">{{ errors.mobile }}</span>
     </div>
