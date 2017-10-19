@@ -67,22 +67,22 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
         // onLoad functions to pass to directive init to bind instances
         // to vars in this $scope
 
-        $scope.onDesktopWrapperCMLoad =  function(_editor){
-            $scope.codeMirrors.wrapper.desktop = _editor;
+        $scope.onDesktopWrapperCMLoad =  function(codeMirror){
+            $scope.codeMirrors.wrapper.desktop = codeMirror;
         };
-        $scope.onMobileWrapperCMLoad =  function(_editor){
-            $scope.codeMirrors.wrapper.mobile = _editor;
+        $scope.onMobileWrapperCMLoad =  function(codeMirror){
+            $scope.codeMirrors.wrapper.mobile = codeMirror;
         };
-        $scope.onDesktopPaneCMLoad =  function(_editor){
-            $scope.codeMirrors.panes.desktop = _editor;
+        $scope.onDesktopPaneCMLoad =  function(codeMirror){
+            $scope.codeMirrors.panes.desktop = codeMirror;
         };
-        $scope.onMobilePaneCMLoad =  function(_editor){
-            $scope.codeMirrors.panes.mobile = _editor;
+        $scope.onMobilePaneCMLoad =  function(codeMirror){
+            $scope.codeMirrors.panes.mobile = codeMirror;
         };
 
         // options to pass to ui-codemirror directive
         $scope.codeMirrorOpts = {
-            mode: 'xml',
+            mode: 'htmlmixed',
             placeholder: "<div>I am a native template! {{ panes }}</div>",
             lineNumbers: true,
             lineWrapping : true,

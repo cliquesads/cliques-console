@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="col-sm-12" ng-show="native.desktop.active">
-        <div ui-codemirror="{ onLoad: onDesktopCmLoad }"
+        <div ui-codemirror="{ onLoad: onDesktopCmLoadTest }"
              ui-codemirror-opts="codeMirrorOptions"
              ng-model="native.desktop.template"
              id="desktopTemplate"></div>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="col-sm-12" ng-show="native.mobile.active">
-        <div ui-codemirror="{ onLoad: onMobileCmLoad }"
+        <div ui-codemirror="{ onLoad: onMobileCmLoadTest }"
              ui-codemirror-opts="codeMirrorOptions"
              ng-model="native.mobile.template"
              id="mobileTemplate"></div>

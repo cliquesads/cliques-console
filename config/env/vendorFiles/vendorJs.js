@@ -79,6 +79,8 @@ module.exports = [
     'public/lib/angular-ui-codemirror/ui-codemirror.min.js',
     'public/lib/codemirror/mode/xml/xml.js',
     'public/lib/codemirror/mode/javascript/javascript.js',
+    'public/lib/codemirror/mode/css/css.js',
+    'public/lib/codemirror/mode/htmlmixed/htmlmixed.js',
     'public/lib/codemirror/addon/display/autorefresh.js',
     'public/lib/codemirror/addon/display/placeholder.js',
     'public/lib/codemirror/addon/edit/matchtags.js',
