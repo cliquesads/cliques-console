@@ -1,6 +1,6 @@
 {
   "name": "Cliques Console",
-  "version": "1.0.24",
+  "version": "1.2.0",
   "authors": [
     "Ben Liang"
   ],
@@ -80,7 +80,8 @@
     "angular-filter": "~0.5.8",
     "fuck-adblock": "fuckadblock#^3.2.0",
     "angular-ui-router-title": "~0.1.1",
-    "angular-datamaps": "^0.1.2"
+    "angular-datamaps": "^0.1.2",
+    "angular-ui-codemirror": "^0.3.0"
   },
   "resolutions": {
     "angular": "1.5.8",

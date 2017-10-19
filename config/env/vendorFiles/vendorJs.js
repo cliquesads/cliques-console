@@ -74,5 +74,18 @@ module.exports = [
     'public/lib/d3/d3.min.js',
     'public/lib/topojson/topojson.min.js',
     'public/lib/datamaps/dist/datamaps.all.min.js',
-    'public/lib/angular-datamaps/dist/angular-datamaps.min.js'
+    'public/lib/angular-datamaps/dist/angular-datamaps.min.js',
+    'public/lib/codemirror/lib/codemirror.js',
+    'public/lib/angular-ui-codemirror/ui-codemirror.min.js',
+    'public/lib/codemirror/mode/xml/xml.js',
+    'public/lib/codemirror/mode/javascript/javascript.js',
+    'public/lib/codemirror/addon/display/autorefresh.js',
+    'public/lib/codemirror/addon/display/placeholder.js',
+    'public/lib/codemirror/addon/edit/matchtags.js',
+    'public/lib/codemirror/addon/edit/closetag.js',
+    'public/lib/codemirror/addon/edit/matchbrackets.js',
+    'public/lib/codemirror/addon/fold/foldcode.js',
+    'public/lib/codemirror/addon/fold/xml-fold.js',
+    'public/lib/codemirror/addon/fold/foldgutter.js',
+    'public/lib/codemirror/addon/fold/comment-fold.js'
 ];
