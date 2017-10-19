@@ -18,6 +18,7 @@ module.exports = [
     'public/lib/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.min.css',
     'public/lib/codemirror/lib/codemirror.css',
     'public/lib/codemirror/addon/fold/foldgutter.css',
+    'public/lib/codemirror/addon/lint/lint.css',
 
     // Following files are all built from SASS sources
     'public/dist/common.css',

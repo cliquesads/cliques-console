@@ -31,9 +31,13 @@
             <div class="label" ng-class="native.desktop.active ? 'label-success':'label-default'">{{ native.desktop.active ? "Active":"Inactive"}}</div>
         </div>
     </div>
-    <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
-    <textarea ng-show="native.desktop.active" ng-required="native.desktop.active" ng-model="native.desktop.template" id="desktopTemplate" rows=7 name="desktopTemplate" placeholder="<div>I am a desktop native template!</div>" class="form-control code-input"></textarea>
-    <span ng-show="validateInput('desktopTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+    <div class="col-sm-12" ng-show="native.desktop.active">
+        <div ui-codemirror="{ onLoad: onDesktopCmLoad }"
+             ui-codemirror-opts="codeMirrorOptions"
+             ng-model="native.desktop.template"
+             id="desktopTemplate"></div>
+        <span ng-show="errors.desktop" class="text-danger">{{ errors.desktop }}</span>
+    </div>
 </fieldset>
 <fieldset>
     <div class="col-sm-4">
@@ -48,7 +52,11 @@
             <div class="label" ng-class="native.mobile.active ? 'label-success':'label-default'">{{ native.mobile.active ? "Active":"Inactive"}}</div>
         </div>
     </div>
-    <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
-    <textarea ng-show="native.mobile.active" ng-required="native.mobile.active" ng-model="native.mobile.template" id="mobileTemplate" rows=7 name="mobileTemplate" placeholder="<div>I am a mobile native template!</div>" class="form-control code-input"></textarea>
-    <span ng-show="validateInput('mobileTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+    <div class="col-sm-12" ng-show="native.mobile.active">
+        <div ui-codemirror="{ onLoad: onMobileCmLoad }"
+             ui-codemirror-opts="codeMirrorOptions"
+             ng-model="native.mobile.template"
+             id="mobileTemplate"></div>
+        <span ng-show="errors.mobile" class="text-danger">{{ errors.mobile }}</span>
+    </div>
 </fieldset>

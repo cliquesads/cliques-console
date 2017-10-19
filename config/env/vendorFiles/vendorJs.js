@@ -87,5 +87,15 @@ module.exports = [
     'public/lib/codemirror/addon/fold/foldcode.js',
     'public/lib/codemirror/addon/fold/xml-fold.js',
     'public/lib/codemirror/addon/fold/foldgutter.js',
-    'public/lib/codemirror/addon/fold/comment-fold.js'
+    'public/lib/codemirror/addon/fold/comment-fold.js',
+    'public/lib/codemirror/addon/hint/javascript-hint.js',
+    'public/lib/codemirror/addon/hint/xml-hint.js',
+    'public/lib/codemirror/addon/hint/html-hint.js',
+    'public/lib/codemirror/addon/hint/css-hint.js',
+    'public/lib/codemirror/addon/lint/lint.js',
+    'public/lib/codemirror/addon/lint/html-lint.js',
+    'public/lib/codemirror/addon/lint/javascript-lint.js',
+    'public/lib/codemirror/addon/lint/css-lint.js',
+    'public/lib/codemirror/addon/lint/json-lint.js'
+
 ];

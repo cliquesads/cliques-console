@@ -156,31 +156,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-native-specs.html',
-                controller: ['$scope','Authentication',
-                    function($scope, Authentication) {
-                        $scope.authentication = Authentication;
-                        $scope.placement = $scope.ngDialogData.placement;
-                        $scope.publisher = $scope.ngDialogData.publisher;
-                        $scope.submitted = false;
-
-                        $scope.validateInput = function(name, type) {
-                            var input = $scope.nativeSpecsForm[name];
-                            return (input.$dirty || $scope.submitted) && input.$error[type];
-                        };
-
-                        $scope.save = function(){$scope.submitted = true;
-                            if (this.nativeSpecsForm.$valid){
-                                $scope.publisher.$update(function(){
-                                    $scope.closeThisDialog('Success');
-                                }, function(errorResponse){
-                                    $scope.saveerror = errorResponse.message;
-                                });
-                            } else {
-                                return false;
-                            }
-                        };
-                    }
-                ],
+                controller: 'EditNativeSpecs',
                 scope: $scope,
                 data: { placement: placement, publisher: $scope.publisher },
                 preCloseCallback: function(value){
@@ -204,43 +180,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-multi-pane-native-specs.html',
-                controller: ['$scope','Authentication',
-                    function($scope, Authentication) {
-                        $scope.authentication = Authentication;
-                        $scope.placement = $scope.ngDialogData.placement;
-                        $scope.publisher = $scope.ngDialogData.publisher;
-                        $scope.submitted = false;
-
-                        $scope.validateInput = function(name, type) {
-                            var input = $scope.multiPaneNativeSpecsForm[name];
-                            return (input.$dirty || $scope.submitted) && input.$error[type];
-                        };
-
-                        $scope.save = function(){$scope.submitted = true;
-                            if (this.multiPaneNativeSpecsForm.$valid){
-                                $scope.publisher.$update(function(){
-                                    $scope.closeThisDialog('Success');
-                                }, function(errorResponse){
-                                    $scope.saveerror = errorResponse.message;
-                                });
-                            } else {
-                                return false;
-                            }
-                        };
-
-                        $scope.$watch('placement.multiPaneNative.wrapper.desktop.active', function(newVal, oldVal){
-                            if (oldVal !== newVal){
-                                $scope.placement.multiPaneNative.pane.desktop.active = newVal;
-                            }
-                        });
-
-                        $scope.$watch('placement.multiPaneNative.wrapper.mobile.active', function(newVal, oldVal){
-                            if (oldVal !== newVal){
-                                $scope.placement.multiPaneNative.pane.mobile.active = newVal;
-                            }
-                        });
-                    }
-                ],
+                controller: 'EditMultiPaneNativeSpecs',
                 scope: $scope,
                 data: { placement: placement, publisher: $scope.publisher },
                 preCloseCallback: function(value){

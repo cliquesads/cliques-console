@@ -32,9 +32,13 @@
                         <div class="label" ng-class="placement.multiPaneNative.wrapper.desktop.active ? 'label-success':'label-default'">{{ placement.multiPaneNative.wrapper.desktop.active ? "Active":"Inactive"}}</div>
                     </div>
                 </div>
-                <!--<p class="text-muted">Copy and paste this from your DFP Ad Server or affiliate network. We will then call this tag when we have no ads to serve.</p>-->
-                <textarea ng-show="placement.multiPaneNative.wrapper.desktop.active" ng-required="placement.multiPaneNative.wrapper.desktop.active" ng-model="placement.multiPaneNative.wrapper.desktop.template" id="wrapperDesktopTemplate" rows=7 name="wrapperDesktopTemplate" placeholder="<div>I am a desktop native wrapper template! {{ panes }}</div>" class="form-control code-input"></textarea>
-                <span ng-show="validateInput('wrapperDesktopTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+                <div class="col-sm-12" ng-show="placement.multiPaneNative.wrapper.desktop.active">
+                    <div ui-codemirror="{ onLoad: onDesktopWrapperCMLoad }"
+                         ui-codemirror-opts="codeMirrorOpts"
+                         ng-model="placement.multiPaneNative.wrapper.desktop.template"
+                         id="wrapperDesktopTemplate"></div>
+                    <span ng-show="templateErrors.wrapper.desktop" class="text-danger">{{ templateErrors.wrapper.desktop }}</span>
+                </div>
             </fieldset>
             <fieldset>
                 <div class="col-sm-6">
@@ -49,12 +53,25 @@
                         <div class="label" ng-class="placement.multiPaneNative.wrapper.mobile.active ? 'label-success':'label-default'">{{ placement.multiPaneNative.wrapper.mobile.active ? "Active":"Inactive"}}</div>
                     </div>
                 </div>
-                <textarea ng-show="placement.multiPaneNative.wrapper.mobile.active" ng-required="placement.multiPaneNative.wrapper.mobile.active" ng-model="placement.multiPaneNative.wrapper.mobile.template" id="wrapperMobileTemplate" rows=7 name="wrapperMobileTemplate" placeholder="<div>I am a mobile native template! {{ panes }}</div>" class="form-control code-input"></textarea>
-                <span ng-show="validateInput('wrapperMobileTemplate', 'html')" class="text-danger">It looks like this isn't valid HTML.</span>
+                <div class="col-sm-12" ng-show="placement.multiPaneNative.wrapper.mobile.active">
+                <!--<textarea  ng-required="placement.multiPaneNative.wrapper.mobile.active" ng-model="placement.multiPaneNative.wrapper.mobile.template" id="wrapperMobileTemplate" rows=7 name="wrapperMobileTemplate" placeholder="<div>I am a mobile native template! {{ panes }}</div>" class="form-control code-input"></textarea>-->
+                    <div ui-codemirror="{ onLoad: onMobileWrapperCMLoad }"
+                         ui-codemirror-opts="codeMirrorOpts"
+                         ng-model="placement.multiPaneNative.wrapper.mobile.template"
+                         id="wrapperMobileTemplate"></div>
+                    <span ng-show="templateErrors.wrapper.mobile" class="text-danger">{{ templateErrors.wrapper.mobile }}</span>
+                </div>
             </fieldset>
         </tab>
         <tab heading="Pane">
-            <native-spec-fields native="placement.multiPaneNative.pane" show-active-switches="false"></native-spec-fields>
+            <native-spec-fields
+                    native="placement.multiPaneNative.pane"
+                    show-active-switches="false"
+                    code-mirror-options="codeMirrorOpts"
+                    on-desktop-cm-load="onDesktopPaneCMLoad"
+                    on-mobile-cm-load="onMobilePaneCMLoad"
+                    errors="templateErrors.panes">
+            </native-spec-fields>
         </tab>
     </tabset>
     <br/>

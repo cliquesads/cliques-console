@@ -10,7 +10,11 @@ angular.module('publisher').directive('nativeSpecFields', ['CREATIVE_SIZES','OPE
             restrict: 'E',
             scope: {
                 native: '=',
-                showActiveSwitches: '='
+                errors: '=',
+                onDesktopCmLoad: '&',
+                onMobileCmLoad: '&',
+                showActiveSwitches: '=',
+                codeMirrorOptions: '='
             },
             templateUrl: 'modules/publisher/views/partials/native-spec-fields.html',
             link: function (scope, element, attrs) {
