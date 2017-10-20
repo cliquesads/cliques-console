@@ -2,11 +2,14 @@
 'use strict';
 
 angular.module('advertiser').controller('KeywordTargetingController', [
-	'$scope', 'campaign', 'ngDialog', 'Notify',
-	function($scope, campaign, ngDialog, Notify) {
+	'$scope', 'campaign', 'ngDialog', 'Notify', 'KeywordAdStat', 'aggregationDateRanges',
+	function($scope, campaign, ngDialog, Notify, KeywordAdStat, aggregationDateRanges) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
+
+		$scope.dateRanges = aggregationDateRanges(user.tz);
+		$scope.defaultDateRange = '30d';
 
 		// user typed in tagsinput keywords data model
 		$scope.targetedKeywords = [];
@@ -23,6 +26,63 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 
 		// Slider max value
 		$scope.rzSliderCeil = Math.round($scope.campaign.max_bid / $scope.campaign.base_bid * 10) / 10;
+
+		/**
+		 * Quick helper function to calculate CPMs for grouped keywordadstat data
+		 * @param groupedData
+		 * @return {{}}
+		 * @private
+		 */
+		function _getCpms(groupedData) {
+			var cpms = {};
+			for (var id in groupedData) {
+				if (groupedData.hasOwnProperty(id)) {
+					var imps = _.sumBy(groupedData[id], function(row) { return row.imps; });
+					var spend = _.sumBy(groupedData[id], function(row) { return row.spend; });
+					var cpm = spend / imps * 1000;
+					cpms[id] = {
+						imps: imps,
+						spend: spend,
+						cpm: cpm
+					};
+				}
+			}	
+			return cpms;
+		}
+
+		/**
+		 * Gets impression, spend & CPM total within given date range for 
+		 * targeted keywords, groups by keywords for efficient retrieval
+		 *
+		 * @param [Object] targetKeywordNodes 
+		 * @param dateRange
+		 */
+		$scope.getKeywordsStats = function(keywordNodes, dateRange) {
+			if (!keywordNodes || keywordNodes.length === 0) return;
+
+			var startDate = $scope.dateRanges[dateRange].startDate;
+			var endDate = $scope.dateRanges[dateRange].endDate;
+			var keywords = [];
+			keywordNodes.forEach(function(keywordNode) {
+				keywords.push(keywordNode.target);	
+			});
+			var keywordQueryString = '';
+			if (keywords.length === 1) {
+				keywordQueryString = keywords[0];
+			} else if (keywords.length > 1) {
+				keywordQueryString = '{in}' + keywords.join(',');
+			}
+			return KeywordAdStat.pubSummaryQuery({
+				groupBy: 'keyword',
+				startDate: startDate,
+				endDate: endDate
+			}).then(function(response) {
+				var allKeywordsStats = _getCpms(_.groupBy(response.data, '_id.keyword'));
+				keywordNodes.forEach(function(keywordNode) {
+					keywordNode.stats = allKeywordsStats[keywordNode.target];
+				});
+			});
+		};
 
 		/**
 		 * Get Campaigns from URL state params on load
@@ -138,6 +198,7 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 					$scope.blockKeywordNodes.push(_initializeKeywordNode(keywordNode));
 				});
 			}
+			$scope.getKeywordsStats($scope.targetKeywordNodes, $scope.defaultDateRange);
 		};
 		$scope.reset();
 
