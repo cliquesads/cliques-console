@@ -53,7 +53,7 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
             var val = row._id[queryType];
             if (val){
                 // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city'){
+                if (queryType !== 'city' && queryType !== 'keyword'){
                     // otherwise, get name of populated object
                     val = row._id[queryType].name;
                 }
