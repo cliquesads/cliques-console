@@ -165,6 +165,28 @@ angular.module('analytics')
                     hasTable: true
                 }
             },
+            keyword: {
+                name: 'Keywords',
+                iconClass: 'fa fa-search',
+                description: 'keywords helps you to better define placements/pages.',
+                route: 'app._analytics.analytics.quickQueries.keyword',
+                defaultQueryParam: {
+                    name: 'Keywords',
+                    type: 'keyword',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Dats',
+                    groupBy: 'keyword',
+                },
+                availableSettings: {
+                    timePeriod: false,
+                    dateGroupBy: false,
+                    campaignFilter: true,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    hasKeywordCloud: true
+                }
+            },
             city: {
                 name: 'Cities',
                 iconClass: 'fa fa-map-marker',
@@ -327,6 +349,28 @@ angular.module('analytics')
                     hasTable: true
                 }
             },
+            keyword: {
+                name: 'Keywords',
+                iconClass: 'fa fa-search',
+                description: 'keywords helps you to better define placements/pages.',
+                route: 'app._analytics.analytics.quickQueries.keyword',
+                defaultQueryParam: {
+                    name: 'Keywords',
+                    type: 'keyword',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Dats',
+                    groupBy: 'keyword',
+                },
+                availableSettings: {
+                    timePeriod: false,
+                    dateGroupBy: false,
+                    campaignFilter: true,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    hasKeywordCloud: true
+                }
+            },
             city: {
                 name: 'Cities',
                 iconClass: 'fa fa-map-marker',
@@ -486,6 +530,28 @@ angular.module('analytics')
                     siteFilter: true,
                     hasGraph: false,
                     hasTable: true
+                }
+            },
+            keyword: {
+                name: 'Keywords',
+                iconClass: 'fa fa-search',
+                description: 'keywords helps you to better define placements/pages.',
+                route: 'app._analytics.analytics.quickQueries.keyword',
+                defaultQueryParam: {
+                    name: 'Keywords',
+                    type: 'keyword',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Dats',
+                    groupBy: 'keyword',
+                },
+                availableSettings: {
+                    timePeriod: false,
+                    dateGroupBy: false,
+                    campaignFilter: true,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
