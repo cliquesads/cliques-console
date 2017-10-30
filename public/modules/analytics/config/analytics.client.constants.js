@@ -176,7 +176,6 @@ angular.module('analytics')
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
                     groupBy: 'keyword',
-                    // populate: 'keyword'
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -184,7 +183,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
@@ -360,7 +360,6 @@ angular.module('analytics')
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
                     groupBy: 'keyword',
-                    // populate: 'keyword'
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -368,7 +367,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
@@ -543,7 +543,6 @@ angular.module('analytics')
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
                     groupBy: 'keyword',
-                    // populate: 'keyword'
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -551,7 +550,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
