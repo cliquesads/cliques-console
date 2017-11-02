@@ -18,4 +18,5 @@ angular.module('advertiser')
     .constant('REVIEW_TIME','2 - 4 Business Hours')
     .constant('THIRD_PARTY_CLIQUE_ID', 'Third Party')
     .constant('FIRST_PARTY_CLIQUE_ID', 'First Party')
+    .constant('CONTENT_CLIQUE_ID', 'Content')
     .constant('NATIVE_SPECS', nativeSpecs);
