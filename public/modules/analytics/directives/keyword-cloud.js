@@ -68,10 +68,14 @@ angular.module('analytics').directive('keywordCloud', [
 							}	
 						});
 						scope.queryResults.forEach(function(result) {
-							frequency_list.push({
-								"text": result._id.keyword,
-								"size": calculateWordSize(maxImps, result.imps)
-							});
+							if (result._id.keywords && result._id.keywords.constructor === Array) {
+								result._id.keywords.forEach(function(keyword) {
+									frequency_list.push({
+										"text": keyword,
+										"size": calculateWordSize(maxImps, result.imps)
+									});
+								});
+							}
 						});
 						if (frequency_list.length > 0) {
 							d3.layout.cloud().size([800, 300])

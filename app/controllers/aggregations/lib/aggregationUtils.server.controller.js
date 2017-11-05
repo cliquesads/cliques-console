@@ -53,7 +53,7 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
             var val = row._id[queryType];
             if (val){
                 // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city' && queryType !== 'keyword'){
+                if (queryType !== 'city' && queryType !== 'keywords'){
                     // otherwise, get name of populated object
                     val = row._id[queryType].name;
                 }
@@ -501,6 +501,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     }
                 }
             ]);
+
         query.exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);
