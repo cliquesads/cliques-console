@@ -282,6 +282,25 @@
 						</div>	
 					</div>
 
+					<!-- Keyword filter -->
+					<div class="form-horizontal col-sm-6"
+						ng-if="availableSettings.keywordFilter">
+						<div class="form-group">
+							<label for="keywordFilter"
+								class="col-sm-3 text-md mt-sm">
+								Keyword Filter
+							</label>
+							<div class="col-sm-9">
+								<input type="text"
+									name="keywordFilter"
+									id="keywordFilter"
+									class="form-control"
+									ng-model="selectedSettings.keywordFilter"
+									placeholder="Enter keyword to filter results">
+							</div>
+						</div>	
+					</div>
+
 				</div>
 
 			</div>
