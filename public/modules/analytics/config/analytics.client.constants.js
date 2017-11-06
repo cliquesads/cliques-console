@@ -182,6 +182,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
                     hasKeywordCloud: true
@@ -366,6 +367,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
                     hasKeywordCloud: true
@@ -549,6 +551,7 @@ angular.module('analytics')
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
                     hasKeywordCloud: true

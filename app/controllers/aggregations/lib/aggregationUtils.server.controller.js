@@ -201,6 +201,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             match[param] = req.param(param);
         }
     });
+
     // Now parse query params & add to match, if passed in
     // Parsing includes parsing out {} operators as well, and coercing
     // comma-separated strings to arrays
@@ -226,6 +227,26 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             }
         } catch (e) {
             throw new Error('Invalid endDate, cannot parse to Date object');
+        }
+    }
+    if (req.query.hasOwnProperty('keywordFilter')) {
+        var keywordFilter = req.query.keywordFilter; 
+        var firstLetterCapitalizedKeywordFilter = _.startCase(_.toLower(keywordFilter));
+        var allLowerCaseKeywordFilter = _.toLower(keywordFilter);
+        if (keywordFilter !== firstLetterCapitalizedKeywordFilter) {
+            // It's possible user entered a keyword with all lowercase, say 'destinations', and the keyword in db is 'Destinations'
+            match['$or'] = [
+                {keywords: new RegExp(keywordFilter)},
+                {keywords: new RegExp(firstLetterCapitalizedKeywordFilter)},
+            ];
+        } else if (keywordFilter !== allLowerCaseKeywordFilter) {
+            // It's also possible user entered 'Destinations' where in db the keyword is 'destinations'
+            match['$or'] = [
+                {keywords: new RegExp(keywordFilter)},
+                {keywords: new RegExp(allLowerCaseKeywordFilter)}
+            ];
+        } else {
+            match.keywords = keywordFilter;
         }
     }
     return match;
