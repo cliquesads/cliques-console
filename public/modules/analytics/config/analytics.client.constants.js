@@ -359,11 +359,11 @@ angular.module('analytics')
                     name: 'Keywords',
                     type: 'keywords',
                     dateRangeShortCode: '7d',
-                    humanizedDateRange: 'Last 7 Dats',
+                    humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
                 },
                 availableSettings: {
-                    timePeriod: false,
+                    timePeriod: true,
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
