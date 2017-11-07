@@ -229,25 +229,24 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             throw new Error('Invalid endDate, cannot parse to Date object');
         }
     }
-    if (req.query.hasOwnProperty('keywordFilter')) {
+    if (req.query.hasOwnProperty('keywordFilter') && req.query.keywordFilter !== '') {
         var keywordFilter = req.query.keywordFilter; 
-        var firstLetterCapitalizedKeywordFilter = _.startCase(_.toLower(keywordFilter));
-        var allLowerCaseKeywordFilter = _.toLower(keywordFilter);
-        if (keywordFilter !== firstLetterCapitalizedKeywordFilter) {
-            // It's possible user entered a keyword with all lowercase, say 'destinations', and the keyword in db is 'Destinations'
-            match['$or'] = [
-                {keywords: new RegExp(keywordFilter)},
-                {keywords: new RegExp(firstLetterCapitalizedKeywordFilter)},
-            ];
-        } else if (keywordFilter !== allLowerCaseKeywordFilter) {
-            // It's also possible user entered 'Destinations' where in db the keyword is 'destinations'
-            match['$or'] = [
-                {keywords: new RegExp(keywordFilter)},
-                {keywords: new RegExp(allLowerCaseKeywordFilter)}
-            ];
+        var filterArray = [];
+        if (keywordFilter.constructor !== Array) {
+            filterArray.push(keywordFilter); 
         } else {
-            match.keywords = keywordFilter;
+            filterArray = keywordFilter;
         }
+        var orQuery = [];
+        for (var i = 0; i < filterArray.length; i ++) {
+            orQuery.push({
+                // For each keyword filter:
+                // 1. We check if the keyword filter is a substring of any existing keywords in database, no need to match exactly
+                // 2. We ignore upper/lower case
+                keywords: new RegExp(filterArray[i], 'i'),
+            });
+        }
+        match['$or'] = orQuery;
     }
     return match;
 };
