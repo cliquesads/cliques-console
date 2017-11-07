@@ -24,7 +24,7 @@ var validateLocalStrategyPassword = exports.validateLocalStrategyPassword = func
 	return (this.provider !== 'local' || (password && password.length > 6));
 };
 
-var USER_ROLES = exports.USER_ROLES = ['admin','readWrite','readOnly'];
+var USER_ROLES = exports.USER_ROLES = ['admin','readWrite','readOnly','observer'];
 
 /**
  * User Schema

@@ -98,7 +98,7 @@
                         <th>Email</th>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="u in organization.users" ng-class="{'text-bold': u._id === organization.primaryContact}">
+                        <tr ng-repeat="u in organization.users | filter: notObserver" ng-class="{'text-bold': u._id === organization.primaryContact}">
                             <td>{{ u.firstName }}</td>
                             <td>{{ u.lastName }}</td>
                             <td>{{ u.email }} <span class="text-sm" ng-show="u._id === organization.primaryContact">(owner)</span></td>
