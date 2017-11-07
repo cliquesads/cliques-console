@@ -38,8 +38,17 @@ angular.module('analytics').directive('queryTable', [
 					scope.isLoading = false;
 					scope.queryParam = args.queryParam;
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
-
 					scope.tableQueryResults = args.results;
+
+					if (scope.queryParam.type === 'keywords') {
+						// For keywords query, show keywords as string separated by comma instead of array
+						for (var i = 0; i < scope.tableQueryResults.length; i ++) {
+							if (scope.tableQueryResults[i].Keywords && 
+								scope.tableQueryResults[i].Keywords.constructor === Array) {
+								scope.tableQueryResults[i].Keywords = scope.tableQueryResults[i].Keywords.join();
+							}
+						}
+					} 
 
 					// Decide default table headers and format/calculate values for each row
 					scope.headers = Analytics.getDefaultDataHeaders(

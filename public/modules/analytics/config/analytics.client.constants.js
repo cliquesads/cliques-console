@@ -172,19 +172,20 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keyword',
+                    type: 'keywords',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
-                    groupBy: 'keyword',
-                    // populate: 'keyword'
+                    groupBy: 'keywords',
                 },
                 availableSettings: {
                     timePeriod: false,
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
@@ -356,19 +357,20 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keyword',
+                    type: 'keywords',
                     dateRangeShortCode: '7d',
-                    humanizedDateRange: 'Last 7 Dats',
-                    groupBy: 'keyword',
-                    // populate: 'keyword'
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'keywords',
                 },
                 availableSettings: {
-                    timePeriod: false,
+                    timePeriod: true,
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
@@ -539,19 +541,20 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keyword',
+                    type: 'keywords',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
-                    groupBy: 'keyword',
-                    // populate: 'keyword'
+                    groupBy: 'keywords',
                 },
                 availableSettings: {
                     timePeriod: false,
                     dateGroupBy: false,
                     campaignFilter: true,
                     siteFilter: true,
+                    keywordFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    hasKeywordCloud: true
                 }
             },
             city: {
