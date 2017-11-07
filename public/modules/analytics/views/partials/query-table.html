@@ -46,7 +46,7 @@
 				<table class="table table-striped table-hover mb0">
 				    <thead>
 				        <tr>
-				        	<th ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region'"
+				        	<th ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region' && queryParam.type !== 'keywords'"
 								class="clickable"
 								ng-class="{
 				        			'current-sorting': currentSorting.orderBy === 'logo.name'
@@ -85,7 +85,7 @@
 				    </thead>
 				    <tbody>
 					    <tr ng-repeat="row in tableQueryResults">
-					    	<td ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region'">
+					    	<td ng-if="queryParam.type !== 'time' && queryParam.type !== 'country' && queryParam.type !== 'city' && queryParam.type !== 'region' && queryParam.type !== 'keywords'">
 					    		<img ng-src="{{ row.logo ? row.logo.logo_secure_url : null }}" class="client-logo-xs" tooltip="{{ row.logo ? row.logo.name : null }}" tooltip-placement="right">
 					    	</td>
 						    <td ng-repeat="header in headers"
