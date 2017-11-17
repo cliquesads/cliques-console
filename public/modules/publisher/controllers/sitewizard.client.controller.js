@@ -70,15 +70,23 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
                 this.page.url = 'http://' + this.page.url;
                 site.pages = [this.page];
                 site.pages[0].placements.forEach(function(p){
-                    if (p.type === 'native'){
-                        // set placeholder values here on creation for native placements
-                        p.w = 1;
-                        p.h = 1;
-                        p.native = {};
-                    } else {
-                        var dims = p.dimensions.split('x');
-                        p.w = Number(dims[0]);
-                        p.h = Number(dims[1]);
+                    switch (p.type){
+                        case "native":
+                            p.defaultType = 'hide';
+                            p.native = {};
+                            p.w = 1;
+                            p.h = 1;
+                            break;
+                        case "multiPaneNative":
+                            p.defaultType = 'hide';
+                            p.multiPaneNative = { pane: { desktop: {}, mobile: {}}, wrapper: {}};
+                            p.w = 1;
+                            p.h = 1;
+                            break;
+                        default:
+                            var dims = p.dimensions.split('x');
+                            p.w = Number(dims[0]);
+                            p.h = Number(dims[1]);
                     }
                 });
                 var publisher = $scope.ngDialogData.publisher;
