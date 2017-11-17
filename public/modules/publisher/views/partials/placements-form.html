@@ -38,7 +38,7 @@
                     <select ng-if="placement.type === 'native' || placement.type === 'multiPaneNative'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
                         <option value=""></option>
                     </select>
-                    <select ng-if="placement.type !== 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                    <select ng-if="placement.type !== 'native' && placement.type !== 'multiPaneNative'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
                         <option value=""></option>
                     </select>
                 </td>
