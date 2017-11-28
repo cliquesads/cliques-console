@@ -54,9 +54,24 @@ angular.module('publisher').controller('newPageController', ['$scope','PUBLISHER
             if (valid){
                 this.page.placements.forEach(function(placement){
                     if (!placement.w && !placement.h){
-                        var dims = placement.dimensions.split('x');
-                        placement.w = Number(dims[0]);
-                        placement.h = Number(dims[1]);
+                        switch (placement.type){
+                            case "native":
+                                placement.defaultType = 'hide';
+                                placement.native = {};
+                                placement.w = 1;
+                                placement.h = 1;
+                                break;
+                            case "multiPaneNative":
+                                placement.defaultType = 'hide';
+                                placement.multiPaneNative = { pane: { desktop: {}, mobile: {}}, wrapper: {}};
+                                placement.w = 1;
+                                placement.h = 1;
+                                break;
+                            default:
+                                var dims = placement.dimensions.split('x');
+                                placement.w = Number(dims[0]);
+                                placement.h = Number(dims[1]);
+                        }
                     }
                 });
                 this.publisher.$update(function() {
