@@ -10,7 +10,7 @@ var _ = require('lodash'),
 	User = mongoose.model('User'),
 	Organization = mongoose.model('Organization'),
 	auth = require('@cliques/cliques-node-utils').google.auth,
-	gcloud = require('gcloud');
+	gcloud = require('google-cloud');
 
 var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
 var PROJECT_ID = 'mimetic-codex-781';

@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Wrapper for all scripts that need DB & server config variables.
  *
