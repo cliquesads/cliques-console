@@ -232,7 +232,7 @@ module.exports = function(db) {
                         // active bidding agents yet.
                         //TODO: This is lazy, should figure out whether campaign has changed or not
                         initCampaigns.forEach(function(campaign){
-                            service.publishers.updateBidder(campaign._id);
+                            service.publishers.updateBidder(campaign.id);
                         });
 
                         // Send internal email notifying of new campaign(s), if any
@@ -524,7 +524,7 @@ module.exports = function(db) {
                                     // Now publish message to update bidding agent w/ new config,
                                     // picking up previously-inactive creative group
                                     if (updateBidder){
-                                        service.publishers.updateBidder(campaign._id);
+                                        service.publishers.updateBidder(campaign.id);
                                     }
                                     return res.status(200).send();
                                 }
@@ -571,7 +571,7 @@ module.exports = function(db) {
                                     // Now publish message to update bidding agent w/ new config,
                                     // picking up previously-inactive creative group
                                     if (updateBidder){
-                                        service.publishers.updateBidder(campaign._id);
+                                        service.publishers.updateBidder(campaign.id);
                                     }
                                     return res.status(200).send();
                                 }
