@@ -47,20 +47,22 @@ angular.module('advertiser').directive('campaignWizard', [
                 // Populate tree data for tree visualization
                 scope.cliques = [];
 
+                scope.campaign.clique = "Outdoor";
+
                 // Get whole tree of active Cliques on load to render in ABN tree
-                getCliqueTree({active: true},function(err, cliques){
-                    scope.cliques = cliques;
-                });
-
-                // This gets bound to 'on-select' of abn-tree directive
-                // Sets Clique and gets sites in Clique for visualization purposes
-                scope.set_clique = function(branch) {
-                    scope.campaign.clique = branch.label;
-                };
-
-                var tree;
-                // This is our API control variable
-                scope.my_tree = tree = {};
+                // getCliqueTree({active: true},function(err, cliques){
+                //     scope.cliques = cliques;
+                // });
+                //
+                // // This gets bound to 'on-select' of abn-tree directive
+                // // Sets Clique and gets sites in Clique for visualization purposes
+                // scope.set_clique = function(branch) {
+                //     scope.campaign.clique = branch.label;
+                // };
+                //
+                // var tree;
+                // // This is our API control variable
+                // scope.my_tree = tree = {};
 
                 /**
                  * Stupid helper because stupid ABN Tree directive doesn't
