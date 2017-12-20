@@ -91,3 +91,26 @@ angular.module('aggregations').factory('GeoAdStat', ['$http',
         return geoadstatfactory;
     }
 ]);
+
+/**
+ * Factory to help query KeywordAdStat API endpoints.
+ */
+angular.module('aggregations').factory('KeywordAdStat', ['$http', 
+    function($http) {
+        var base_path = '/console/keywordadstat';
+        var advSummary_path = base_path + '/advSummary';
+        var pubSummary_path = base_path + '/pubSummary';
+        var keywordadstatfactory = {};
+
+        keywordadstatfactory.query = function(queryParams) {
+            return $http.get(base_path, {params: queryParams});
+        };
+        keywordadstatfactory.advSummaryQuery = function(queryParams) {
+            return $http.get(advSummary_path, {params: queryParams});
+        };
+        keywordadstatfactory.pubSummaryQuery = function(queryParams) {
+            return $http.get(pubSummary_path, {params: queryParams});
+        };
+        return keywordadstatfactory;
+    }
+]);
