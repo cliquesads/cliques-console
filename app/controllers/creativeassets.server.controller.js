@@ -1,6 +1,6 @@
 /* jshint node: true */ 'use strict';
 var auth = require('@cliques/cliques-node-utils').google.auth,
-    gcloud = require('gcloud'),
+    gcloud = require('google-cloud'),
     config = require('config'),
     cloudinary = require('cloudinary'),
     errorHandler = require('./errors.server.controller');

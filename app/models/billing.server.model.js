@@ -173,16 +173,16 @@ var PaymentSchema = new Schema({
  */
 var QBO_ACCOUNT_IDS = exports.QBO_ACCOUNT_IDS = {
     "AdSpend": {
-        value: "68",
-        name: "Advertising Impressions"
+        value: "53",
+        name: "Sales Of Product Income"
     },
     "RevShare": {
         value: "75",
         name: "Publisher Revenue Share"
     },
     "Revenue": {
-        value: "53",
-        name: "Sales Of Product Income"
+        value: "68",
+        name: "Advertising Impressions"
     },
     "Fee": {
         value: "85",

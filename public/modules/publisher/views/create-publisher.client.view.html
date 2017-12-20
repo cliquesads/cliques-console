@@ -204,6 +204,18 @@
                             <label>Description</label>
                             <input type="text" name="page.description" id="page.description" data-ng-model="page.description" data-parsley-group="step4" placeholder="Optional - describe this page" class="form-control" />
                         </div>
+                        <div class="form-group">
+                            <label>Keywords</label>
+                            <input type="text"
+                                name="page.keywords"
+                                id="page.keywords"
+                                tagsinput="tagsinput"
+                                data-width="100%"
+                                ng-model="page.keywords"
+                                data-parsley-group="step4"
+                                placeholder="Type Keywords for this page"
+                                class="form-control">
+                        </div>
                     </fieldset>
                     <fieldset>
                         <placement-form wizardstep="step4" page="page"></placement-form>
@@ -248,6 +260,15 @@
                         <div class="col-sm-2"><b>Page Name</b></div><div class="col-sm-10">{{ page.name || &apos;empty&apos; }}</div>
                         <div class="col-sm-2"><b>Page URL</b></div><div class="col-sm-10">{{ page.url || &apos;empty&apos; }}</div>
                         <div class="col-sm-2"><b>Page Description</b></div><div class="col-sm-10">{{ page.description || &apos;empty&apos; }}</div>
+                        <div class="col-sm-2">
+                            <b>Page Keywords</b>
+                        </div>
+                        <div class="col-sm-10">
+                            <span class="tag label label-info mr"
+                                ng-repeat="keyword in page.keywords">
+                                {{ keyword }}
+                            </span>
+                        </div>
                         <div class="col-sm-2"><b>Placements</b></div>
                         <div class="table-responsive col-sm-12">
                             <table class="table">

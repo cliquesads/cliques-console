@@ -76,6 +76,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
         $scope.page = {
             name: null,
             description: null,
+            keywords: [],
             url: null,
             placements: []
         };

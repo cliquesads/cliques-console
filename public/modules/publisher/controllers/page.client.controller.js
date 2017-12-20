@@ -225,7 +225,8 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         secure: false,
                         type: defaultTagType,
                         targetId: null,
-                        targetChildIndex: null
+                        targetChildIndex: null,
+                        keywords: null
                     };
 
                     $scope.copySuccess = function(e){
@@ -239,16 +240,38 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             secure: $scope.options.secure,
                             type: $scope.options.type,
                             targetId: $scope.options.targetId,
+                            keywords: $scope.options.keywords,
                             targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex'], function(){
-                        $scope.getPlacementTag();
-                    });
+                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex','options.keywords'],
+                        function(){
+                            $scope.getPlacementTag();
+                        });
                 }],
                 data: {publisher: $scope.publisher, placement: placement}
+            });
+        };
+
+        /**
+         * Start to edit page form, also show existed keywords in tagsinput
+         */
+        $scope.existedKeywords = [];
+        $scope.editPageForm = function() {
+            $scope.existedKeywords = angular.copy($scope.page.keywords);
+            var tagsinputDOM = angular.element(document.getElementById('keywords-tagsinput'));
+            $scope.page.keywords.forEach(function(keyword) {
+                tagsinputDOM.tagsinput('add', keyword);
+            });
+            $scope.pageForm.$show();
+            $scope.isEditingPageForm = true;
+
+            // respond to itemAdded/itemRemoved event and 
+            // update the value of $scope.page.keywords
+            tagsinputDOM.on('itemAdded itemRemoved', function() {
+                $scope.page.keywords = $scope.existedKeywords;
             });
         };
 	}

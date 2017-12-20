@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-1">
-                                <a href="#" class="pull-right" ng-click="pageForm.$show()" ng-show="!pageForm.$visible" analytics-on="click" analytics-event="ViewPage_ShowPageForm">
+                                <a href="#" class="pull-right" ng-click="editPageForm()" ng-show="!pageForm.$visible" analytics-on="click" analytics-event="ViewPage_ShowPageForm">
                                     <span class="fa fa-edit"></span>
                                 </a>
                             </div>
@@ -58,6 +58,28 @@
                                             hm-dots-class="dots"
                                             hm-link-class="links">
                                     </hm-read-more></span>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Page Keywords -->
+                        <div class="form-group m0">
+                            <label class="control-label col-sm-3">Keywords</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static"
+                                    ng-show="!pageForm.$visible">
+                                    <span class="tag label label-info mr"
+                                        ng-repeat="keyword in page.keywords">
+                                        {{ keyword }} 
+                                    </span>
+                                </p>
+                                <p class="form-control-static"
+                                    ng-show="pageForm.$visible">
+                                    <input type="text"
+                                        id="keywords-tagsinput"
+                                        tagsinput="tagsinput"
+                                        data-width="100%"
+                                        ng-model="existedKeywords"
+                                        placeholder="Type Keywords for this page">
                                 </p>
                             </div>
                         </div>
