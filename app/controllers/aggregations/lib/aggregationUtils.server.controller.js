@@ -53,7 +53,7 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
             var val = row._id[queryType];
             if (val){
                 // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city'){
+                if (queryType !== 'city' && queryType !== 'keywords'){
                     // otherwise, get name of populated object
                     val = row._id[queryType].name;
                 }
@@ -201,6 +201,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
             match[param] = req.param(param);
         }
     });
+
     // Now parse query params & add to match, if passed in
     // Parsing includes parsing out {} operators as well, and coercing
     // comma-separated strings to arrays
@@ -227,6 +228,25 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
         } catch (e) {
             throw new Error('Invalid endDate, cannot parse to Date object');
         }
+    }
+    if (req.query.hasOwnProperty('keywordFilter') && req.query.keywordFilter !== '') {
+        var keywordFilter = req.query.keywordFilter; 
+        var filterArray = [];
+        if (keywordFilter.constructor !== Array) {
+            filterArray.push(keywordFilter); 
+        } else {
+            filterArray = keywordFilter;
+        }
+        var orQuery = [];
+        for (var i = 0; i < filterArray.length; i ++) {
+            orQuery.push({
+                // For each keyword filter:
+                // 1. We check if the keyword filter is a substring of any existing keywords in database, no need to match exactly
+                // 2. We ignore upper/lower case
+                keywords: new RegExp(filterArray[i], 'i'),
+            });
+        }
+        match['$or'] = orQuery;
     }
     return match;
 };
@@ -501,6 +521,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     }
                 }
             ]);
+
         query.exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);

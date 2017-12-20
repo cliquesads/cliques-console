@@ -18,6 +18,14 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         $scope.min_base_bid = 1;
         $scope.max_base_bid = 20;
 
+        $scope.saveCampaignFrequency = function() {
+            $scope.advertiser.$update(function(){
+                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+            }, function(errorResponse) {
+                $scope.error = errorResponse.data.message;
+            }); 
+        };
+
         /**
          * Overlap campaign helper modal if state includes necessary query params
          */

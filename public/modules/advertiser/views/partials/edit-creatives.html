@@ -34,8 +34,9 @@
                     <th>Preview</th>
                     <th>Name</th>
                     <th ng-if="campaign.type === 'display' || !campaign.type">Dimensions</th>
-                    <th ng-if="campaign.type === 'native'">Ad Title</th>
-                    <th ng-if="campaign.type === 'native'">Full Ad Copy</th>
+                    <th ng-if="campaign.type === 'native'">Headline</th>
+                    <th ng-if="campaign.type === 'native'">Category</th>
+                    <th ng-if="campaign.type === 'native'">Description</th>
                     <th>Click URL</th>
                     <th>Actions</th>
                 </tr>
@@ -56,6 +57,9 @@
                     <td ng-if="creative.type === 'display' || !creative.type"><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
                     <td ng-if="creative.type === 'native'"><p class="form-control-static">
                         <a href="#" editable-textarea="creative.native.headline" e-maxlength="{{ NATIVE_SPECS.headline.maxChars }}" e-minlength="{{ NATIVE_SPECS.headline.minChars }}" e-rows="2" onaftersave="update()" e-required>{{ creative.native.headline }}</a>
+                    </td>
+                    <td ng-if="creative.type === 'native'"><p class="form-control-static">
+                        <a href="#" editable-textarea="creative.native.category" e-maxlength="{{ NATIVE_SPECS.category.maxChars }}" e-minlength="{{ NATIVE_SPECS.category.minChars }}" e-rows="1" onaftersave="update()">{{ creative.native.category || "None" }}</a>
                     </td>
                     <td ng-if="creative.type === 'native'"><p class="form-control-static">
                         <a href="#" editable-textarea="creative.native.description" e-maxlength="{{ NATIVE_SPECS.description.maxChars }}" e-minlength="{{ NATIVE_SPECS.description.minChars }}" e-rows="8" onaftersave="update()" e-required>{{ creative.native.description }}</a>

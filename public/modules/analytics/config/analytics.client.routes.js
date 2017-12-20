@@ -115,6 +115,19 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
+        state('app._analytics.analytics.quickQueries.keyword', {
+            url: '/keyword',
+            queryType: 'keyword',
+            resolve: {
+                $title: function() { return 'Keyword Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController',
+                }
+            }
+        }).
         state('app._analytics.analytics.quickQueries.state', {
             url: '/state/:countryId',
             queryType: 'state',

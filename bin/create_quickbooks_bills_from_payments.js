@@ -1,4 +1,3 @@
-
 var _ = require('lodash'),
     inquirer = require('inquirer'),
     Promise = require('promise'),
