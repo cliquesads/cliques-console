@@ -1,11 +1,13 @@
 /* jshint node: true */ 'use strict';
 
 var HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').HourlyAdStatsAPI,
-    GeoAdStatAPI = require('./aggregations/geoadstats.server.controller').GeoAdStatAPI;
+    GeoAdStatAPI = require('./aggregations/geoadstats.server.controller').GeoAdStatAPI,
+    KeywordAdStatAPI = require('./aggregations/keywordadstats.server.controller').KeywordAdStatAPI;
 
 module.exports = function(db) {
     var hourlyAdStatAPI = new HourlyAdStatAPI(db);
     var geoAdStatAPI = new GeoAdStatAPI(db);
+    var keywordAdStatAPI = new KeywordAdStatAPI(db);
     return {
         hourlyAdStat: {
             getMany: function(req, res) {
@@ -42,6 +44,17 @@ module.exports = function(db) {
             },
             getManyPublisherSummary: function(req, res) {
                 return geoAdStatAPI.getManyPublisherSummary(req, res);
+            }
+        },
+        keywordAdStat: {
+            getMany: function(req, res) {
+                return keywordAdStatAPI.getMany(req, res);
+            },
+            getManyAdvertiserSummary: function(req, res) {
+                return keywordAdStatAPI.getManyAdvertiserSummary(req, res);
+            },
+            getManyPublisherSummary: function(req, res) {
+                return keywordAdStatAPI.getManyPublisherSummary(req, res);
             }
         }
     };
