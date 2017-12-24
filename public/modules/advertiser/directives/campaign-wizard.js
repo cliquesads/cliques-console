@@ -72,13 +72,13 @@ angular.module('advertiser').directive('campaignWizard', [
                     var treeDirective = '<abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2"></abn-tree>';
                     injectDirective('#cliquesTree', treeDirective);
                     // Set initial selection dynamically, can't use initial-selection param
-                    var branch;
-                    if (scope.campaign.clique){
-                        branch = scope.my_tree.get_branch_by_label(scope.campaign.clique);
-                    } else {
-                        branch = scope.my_tree.get_first_branch();
-                    }
-                    scope.my_tree.select_branch(branch);
+                    // var branch;
+                    // if (scope.campaign.clique){
+                    //     branch = scope.my_tree.get_branch_by_label(scope.campaign.clique);
+                    // } else {
+                    //     branch = scope.my_tree.get_first_branch();
+                    // }
+                    // scope.my_tree.select_branch(branch);
 
                     return callback(callbackArg);
                 };
