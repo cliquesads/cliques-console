@@ -17,7 +17,6 @@ module.exports = function(db){
                     user: req.user || null,
                     request: req,
                     latestHour: result ? result.toUTCString() : null,
-                    nativeSpecs: nativeSpecs,
                     consoleVersion: res._headers['console-version'],
                     stripePublishableKey: stripePublishableKey
                 });
