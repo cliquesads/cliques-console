@@ -2,16 +2,20 @@
 'use strict';
 
 var cliquesConfig = require('config');
+var NATIVE_SPECS = require('@cliques/cliques-node-utils').mongodb.models.NATIVE_SPECS;
 var vendorCss = require('./vendorFiles/vendorCss');
 var vendorJs = require('./vendorFiles/vendorJs');
 var vendorSass = require('./vendorFiles/vendorSass');
 var vendorImages = require('./vendorFiles/vendorImages');
 
+var nativeSpecs = _.extend(cliquesConfig.get('Native'), NATIVE_SPECS);
+
 module.exports = {
 	app: {
-		title: 'Cliques for SmarterTravel',
-		description: 'Cliques Console for Smarter Travel Media LLC',
-		keywords: 'MongoDB, Express, AngularJS, Node.js'
+		title: cliquesConfig.get('Console.app.title'),
+		description: cliquesConfig.get('Console.app.description'),
+		keywords: cliquesConfig.get('Console.app.keywords'),
+        logoBucket: cliquesConfig.get('Console.brand.logoBucket'),
 	},
 	port: process.env.PORT || 5000,
 	templateEngine: 'swig',
@@ -60,6 +64,15 @@ module.exports = {
                 pass: cliquesConfig.get('Email.Support.password')
             }
         }
+    },
+
+    // Native Ad Specs (i.e. string length minimums, etc.) shared by utils
+    nativeSpecs: nativeSpecs,
+
+    // Helpscout beacon & support URL configs
+    helpScout: {
+        baseUrl: cliquesConfig.get('HelpScout.baseUrl'),
+        beaconFormId: cliquesConfig.get('HelpScout.beaconFormId')
     },
 
     // Strategies are unused for now
