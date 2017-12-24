@@ -1,4 +1,4 @@
-/* globals user */
+/* globals user, helpScout, bucketUrl */
 'use strict';
 
 angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Organizations', 'Menus', 'userIdenticon',
@@ -7,6 +7,8 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.userIdenticon = userIdenticon;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
+		$scope.helpScoutUrl = helpScout.baseUrl;
+		$scope.bucketUrl = bucketUrl;
 
 		$scope.settingsCollapsed = true;
 
