@@ -169,7 +169,7 @@ module.exports = function(db) {
 			 */
 			getMany: function (req, res) {
                 req.query.user = req.user.id;
-                req.query.per_page = req.query.per_page || String(ITEMS_PER_PAGE);
+                req.query.per_page = req.query.per_page ? Number(req.query.per_page) : ITEMS_PER_PAGE;
 				Query.apiQuery(req.query, function(err, queries) {
                     if (err) {
                         return res.status(400).send({

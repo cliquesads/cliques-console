@@ -21,8 +21,11 @@ module.exports = function(db) {
          * Gets arbitrary number of Cliques
          */
         getMany: function (req, res) {
+            // TODO: Mongo 3.4.7 seems to have an issue passing limits as strings, but apiQuery (which isn't maintained)
+            // TODO: Needs them passed as strings b/c it performs regex on them. So either need to patch apiQuery
+            // TODO: or get rid of this functionality altogether.
             // this defaults to 10, kind of infuriating
-            req.query.per_page = "1000000";
+            // req.query.per_page = 1000000;
             cliqueModels.Clique.apiQuery(req.query).populate('default_advertisers').exec(function (err, cliques) {
                 if (err) {
                     return res.status(400).send({

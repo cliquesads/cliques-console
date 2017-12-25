@@ -1,10 +1,7 @@
 /* jshint node: true */ 'use strict';
 var config = require('config');
 var stripePublishableKey = config.get('Stripe.publishable_key');
-var NATIVE_SPECS = require('@cliques/cliques-node-utils').mongodb.models.NATIVE_SPECS;
 var _ = require('lodash');
-
-var nativeSpecs = _.extend(config.get('Native'), NATIVE_SPECS);
 
 /**
  * Module dependencies.
@@ -17,8 +14,7 @@ module.exports = function(db){
                 res.render('index', {
                     user: req.user || null,
                     request: req,
-                    latestHour: result.toUTCString(),
-                    nativeSpecs: nativeSpecs,
+                    latestHour: result ? result.toUTCString() : null,
                     consoleVersion: res._headers['console-version'],
                     stripePublishableKey: stripePublishableKey
                 });

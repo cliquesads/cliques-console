@@ -18,6 +18,11 @@ angular.module('core').controller('AppController',
             if (user) {
                 $rootScope.role = $scope.role = user.organization.effectiveOrgType;
 
+                // TODO: Temporary, make default role advertiser role
+                if (user.organization.effectiveOrgType === 'networkAdmin'){
+                    $rootScope.role = $scope.role = 'advertiser';
+                }
+
                 // Now set MixPanel user properties
                 $analytics.setUsername(user.username);
                 $analytics.setAlias(user.displayName);

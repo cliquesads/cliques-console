@@ -61,8 +61,10 @@ npm whoami
 if [ $? -ne 0 ]; then
     npm login
 fi
+
 # run npm install to install any new dependencies
 npm install
+npm install --only=dev
 
 # run build step
 rm -rf ./public/dist/*

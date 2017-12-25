@@ -15,17 +15,29 @@ angular.module('advertiser').controller('editCreativesController', [
         $scope.NATIVE_SPECS = NATIVE_SPECS;
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
-        var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
-            return campaign._id === $scope.ngDialogData.campaign._id;
-        });
 
-        //$scope.campaign as pointer to campaign in advertiser.campaigns array
-        //this way, all Advertiser resource methods will work
-        $scope.campaign = $scope.advertiser.campaigns[i];
+        // Set refs to nested documents in parent Advertiser so $update method
+        // can be used.  Don't know if this is entirely necessary but doing
+        // to be safe, as I find Angular's handling of object refs kind of confusing
+        function setCampaign(){
+            var i = _.findIndex($scope.advertiser.campaigns, function(campaign){
+                return campaign._id === $scope.ngDialogData.campaign._id;
+            });
+            //$scope.campaign as pointer to campaign in advertiser.campaigns array
+            //this way, all Advertiser resource methods will work
+            $scope.campaign = $scope.advertiser.campaigns[i];
+        }
+        setCampaign();
 
-        $scope.update = function(){
-            this.advertiser.$update(function(){
+        // almost trivial wrapper for scope.advertiser.$update that just ensures campaign
+        // is reset properly in scope when advertiser is updated, and sets scope.saveerror if error
+        // is thrown.
+        $scope.update = function(success, error){
+            this.advertiser.$update(function(response){
+                setCampaign();
+                if (success) success(response);
             },function(errorResponse){
+                if (error) error(errorResponse);
                 $scope.saveerror = errorResponse.data.message;
             });
         };
@@ -34,9 +46,9 @@ angular.module('advertiser').controller('editCreativesController', [
         $scope.onDCMUpload = function(creatives){
             var creativeGroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             AdvertiserUtils.updateCreativeGroups(creativeGroups, $scope.campaign);
-            this.advertiser.$update(function(){
+            $scope.update(function(response){
                 Notify.alert('Success! Your doubleClick creative was added to your campaign.', {status: 'success'});
-            },function(errorResponse){
+            }, function(errorResponse){
                 Notify.alert('Oops, something went wrong: ' + errorResponse.data.message, {status: 'danger'});
             });
         };
@@ -65,11 +77,9 @@ angular.module('advertiser').controller('editCreativesController', [
                         $scope.campaign.creativegroups.push(crg);
                     }
                 });
-                $scope.advertiser.$update(function(){
+                $scope.update(function(){
                     $scope.uploader.clearQueue();
-                }, function(errorResponse){
-                    $scope.saveerror = errorResponse.data.message;
-                });
+                }, function(errorResponse){});
             });
         };
 
@@ -98,16 +108,25 @@ angular.module('advertiser').controller('editCreativesController', [
                 plain: true
             }).then(function(val){
                 if (val === 1){
+                    var removedCreative;
+                    var removedCreativeGroup;
                     // first find indices of desired creative
                     var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup; });
                     var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative; });
                     // remove from creatives document array
-                    $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
+                    removedCreative = $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
                     //remove creative group if it doesn't contain any creatives anymore
                     if ($scope.campaign.creativegroups[crg_ind].creatives.length === 0){
-                        $scope.campaign.creativegroups.splice(crg_ind, 1);
+                        removedCreativeGroup = $scope.campaign.creativegroups.splice(crg_ind, 1);
                     }
-                    $scope.update();
+                    $scope.update(function(response){},
+                    function(errorResponse){
+                        // add back in if
+                        if (removedCreativeGroup){
+                            $scope.campaign.creativegroups.splice(crg_ind, 0, removedCreativeGroup[0]);
+                        }
+                        $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 0, removedCreative[0]);
+                    });
                 }
             });
         };
@@ -145,11 +164,9 @@ angular.module('advertiser').controller('editCreativesController', [
                         $scope.campaign.creativegroups.push(crg);
                     }
                 });
-                $scope.advertiser.$update(function(){
+                $scope.update(function(){
                     $scope.nativeUploader.clearQueue();
-                }, function(errorResponse){
-                    $scope.saveerror = errorResponse.data.message;
-                });
+                }, function(errorResponse){});
             });
         };
 
@@ -172,13 +189,9 @@ angular.module('advertiser').controller('editCreativesController', [
             return $('#nativeCreativeUploadQueue').parsley().validate();
         };
 
-
-
         $scope.updateAndClose = function(){
-            this.advertiser.$update(function() {
+            $scope.update(function(){
                 $scope.closeThisDialog('Success');
-            }, function(errorResponse){
-                $scope.saveerror = errorResponse.data.message;
-            });
+            }, function(errorResponse){});
         };
 }]);

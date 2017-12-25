@@ -40,8 +40,17 @@
                         <div class="form-group m0">
                             <label class="control-label col-sm-3">URL</label>
                             <div class="col-sm-9">
-                                <p class="form-control-static">
-                                    <span editable-text="page.url" e-name="url">{{ page.url }}</span>
+                                <p class="form-control-static" style="word-wrap: break-word">
+                                    <span editable-text="page.url" e-name="url">
+                                        <hm-read-more
+                                            hm-text="{{ page.url }}"
+                                            hm-limit="20"
+                                            hm-more-text="read more"
+                                            hm-less-text="read less"
+                                            hm-dots-class="dots"
+                                            hm-link-class="links">
+                                        </hm-read-more>
+                                    </span>
                                 </p>
                             </div>
                         </div>
@@ -68,9 +77,10 @@
                                 <p class="form-control-static"
                                     ng-show="!pageForm.$visible">
                                     <span class="tag label label-info mr"
-                                        ng-repeat="keyword in page.keywords">
+                                        ng-repeat="keyword in page.keywords" ng-show="page.keywords">
                                         {{ keyword }} 
                                     </span>
+                                    <span ng-show="!page.keywords"><em class="text-muted">None</em></span>
                                 </p>
                                 <p class="form-control-static"
                                     ng-show="pageForm.$visible">
@@ -177,7 +187,20 @@
                                         <span class="fa fa-edit"></span>
                                     </a>
                                     <h4 class="list-group-item-heading">{{ placement.name }}</h4>
-                                    <p class="list-group-item-text">{{ placement.type === 'native' ? 'Native' : placement.w + 'x' + placement.h }} - {{ getPositionByCode(placement.pos, placement).name }}</p>
+                                    <p class="list-group-item-text">
+                                        <span ng-switch="placement.type">
+                                            <span ng-switch-when="native">
+                                                Native
+                                            </span>
+                                            <span ng-switch-when="multiPaneNative">
+                                                Multi-Pane Native
+                                            </span>
+                                            <span ng-switch-default>
+                                                {{ placement.w + 'x' + placement.h }}
+                                            </span>
+                                        </span>
+                                        - {{ getPositionByCode(placement.pos, placement).name }}
+                                    </p>
                                 </td>
                                 <td class="col-sm-3 edit-inline hover-visible" ng-click="editDefaultCondition(placement)">
                                     <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditDefaultCondition">
@@ -195,12 +218,25 @@
                                             <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditNativeSpecs">
                                                 <span class="fa fa-edit"></span>
                                             </a>
-                                            <p ng-repeat="form in ['desktop','mobile','tablet']" class="list-group-item-text">
+                                            <p ng-repeat="form in ['desktop','mobile']" class="list-group-item-text">
                                                 <span ng-if="placement.native[form].active">
                                                     <span class="col-sm-2"><i class="fa fa-{{ form }}"></i></span><span class="col-sm-9"> {{ form | capitalize }} </span>
                                                 </span>
                                             </p>
                                             <p ng-if="!placement.native.desktop.active && !placement.native.mobile.active && !placement.native.tablet.active">
+                                                No templates uploaded yet.
+                                            </p>
+                                        </div>
+                                        <div ng-switch-when="multiPaneNative" ng-click="editMultiPaneNativeSpecs(placement)">
+                                            <a href="#" class="hover-hidden pull-right" analytics-on="click" analytics-event="ViewPage_EditMultiPaneNativeSpecs">
+                                                <span class="fa fa-edit"></span>
+                                            </a>
+                                            <p ng-repeat="form in ['desktop','mobile']" class="list-group-item-text">
+                                                <span ng-if="placement.multiPaneNative.wrapper[form].active">
+                                                    <span class="col-sm-2"><i class="fa fa-{{ form }}"></i></span><span class="col-sm-9"> {{ form | capitalize }} </span>
+                                                </span>
+                                            </p>
+                                            <p ng-if="!placement.multiPaneNative.wrapper.desktop.active && !placement.multiPaneNative.wrapper.mobile.active">
                                                 No templates uploaded yet.
                                             </p>
                                         </div>

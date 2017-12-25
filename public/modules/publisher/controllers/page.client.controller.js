@@ -9,7 +9,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
         $scope.getPositionByCode = function(code, placement){
-            if (placement.type === 'native'){
+            if (placement.type === 'native' || placement.type === 'multiPaneNative'){
                 return NATIVE_POSITIONS.filter(function(pos){ return pos.code === code; })[0];
             } else {
                 return OPENRTB.positions.filter(function(pos){ return pos.code === code; })[0];
@@ -156,7 +156,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth800',
                 template: 'modules/publisher/views/partials/edit-native-specs.html',
-                controller: 'NativeDetailsController',
+                controller: 'EditNativeSpecs',
                 scope: $scope,
                 data: { placement: placement, publisher: $scope.publisher },
                 preCloseCallback: function(value){
@@ -175,8 +175,32 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 
+        $scope.editMultiPaneNativeSpecs = function(placement){
+            var initMultiPaneNative = placement.multiPaneNative;
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/publisher/views/partials/edit-multi-pane-native-specs.html',
+                controller: 'EditMultiPaneNativeSpecs',
+                scope: $scope,
+                data: { placement: placement, publisher: $scope.publisher },
+                preCloseCallback: function(value){
+                    if (value !== 'Success'){
+                        var placement_ind = _.findIndex($scope.page.placements, function(pl){
+                            return pl._id === placement._id;
+                        });
+                        $scope.$apply(function(){
+                            $scope.page.placements[placement_ind].multiPaneNative = initMultiPaneNative;
+                        });
+                        return true;
+                    } else {
+                        setPage();
+                    }
+                }
+            });
+        };
+
         $scope.editDefaultCondition = function(placement){
-            if (placement.type !== 'native'){
+            if (placement.type !== 'native' && placement.type !== 'multiPaneNative'){
                 var initDefaultType = placement.defaultType;
                 var initPassbackTag = placement.passbackTag;
                 var initHostedCreatives = placement.hostedCreatives;

@@ -90,7 +90,7 @@ angular.module('analytics').factory('Analytics', [
     var queryFunction = function(queryType, role) {
         var collection;
         var queryFunction;
-        if (queryType === 'keyword') {
+        if (queryType === 'keywords') {
             collection = KeywordAdStat;
         } else if (queryType === 'city' || queryType === 'state' || queryType === 'country') {
             collection = GeoAdStat;

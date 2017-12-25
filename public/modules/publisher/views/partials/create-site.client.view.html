@@ -11,15 +11,11 @@
                 <small class="text-muted"></small>
             </li>
             <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
-                <h4>3. Choose a Clique</h4>
+                <h4>3. Pages & Placements</h4>
                 <small class="text-muted"></small>
             </li>
             <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
-                <h4>4. Pages & Placements</h4>
-                <small class="text-muted"></small>
-            </li>
-            <li ng-class="{'active':wizard.active(5)}" ng-click="wizard.go(5)">
-                <h4>5. Review & Submit</h4>
+                <h4>4. Review & Submit</h4>
                 <small class="text-muted"></small>
             </li>
         </ol>
@@ -93,41 +89,14 @@
         </div>
         <br/>
 
-        <div id="step3" ng-show="wizard.active(3)">
-            <legend>Choose the Clique that best describes your site</legend>
-            <p>
-                <em class="text-muted">
-                    Why do we make you do this? What the $%&# is a Clique? Read more <a href="http://support.cliquesads.com/article/58-choosing-a-clique" target="_blank" analytics-on="click" analytics-event="CreateSite_WhatIsClique">here</a>
-                </em>
-            </p>
-            <fieldset>
-                <input style="display: None" type="text" name="site.clique" id="site.clique" data-ng-model="site.clique" data-parsley-group="step3" placeholder="{{ site.clique }}" required="required" class="form-control" />
-                <!--<p class="form-control-static">{{ site.clique }}</p>-->
-                <div class="form-group">
-                    <abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2" initial-selection="Outdoor"></abn-tree>
-                </div>
-            </fieldset>
-            <div class="alert alert-success" data-ng-show="site.clique"><b>Selected:</b> {{ site.clique }}</div>
-            <small class="text-muted">* Required</small>
-            <ul class="pager">
-                <li class="previous">
-                    <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="CreateSite_WizardStepTwo">
-                        <span>&larr; Previous</span>
-                    </a>
-                </li>
-                <li class="next"><a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="SiteSetup_Step4">Next <span>&rarr;</span></a>
-                </li>
-            </ul>
-        </div>
-
         <!-- START PLACEMENT CREATION STEP-->
-        <div id="step4" ng-show="wizard.active(4)">
+        <div id="step3" ng-show="wizard.active(3)">
             <legend>Set up a page & add placements</legend>
             <em><small class="text-muted"></small></em>
             <fieldset>
                 <div class="form-group">
                     <label>Name *</label>
-                    <input type="text" name="page.name" id="page.name" data-ng-model="page.name" data-parsley-group="step4" placeholder="Homepage" required="required" class="form-control" />
+                    <input type="text" name="page.name" id="page.name" data-ng-model="page.name" data-parsley-group="step3" placeholder="Homepage" required="required" class="form-control" />
                 </div>
                 <br/>
                 <div class="form-group">
@@ -137,13 +106,22 @@
                     </a>
                     <div class="input-group">
                         <span class="input-group-addon">http://</span>
-                        <input name="page_url" type="text" data-ng-model="page.url" id="page_url" data-parsley-group="step4" class="form-control" placeholder="www.example.com/post.html" required="required">
+                        <input name="page_url" type="text" data-ng-model="page.url" id="page_url" data-parsley-group="step3" class="form-control" placeholder="www.example.com/post.html" required="required">
                     </div>
                 </div>
                 <br/>
                 <div class="form-group">
                     <label>Description</label>
-                    <input type="text" name="page.description" id="page.description" data-ng-model="page.description" data-parsley-group="step4" placeholder="Optional - describe this page" class="form-control" />
+                    <input type="text" name="page.description" id="page.description" data-ng-model="page.description" data-parsley-group="step3" placeholder="Optional - describe this page" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Keywords</label>
+                    <input type="text"
+                        id="keywords-tagsinput"
+                        tagsinput="tagsinput"
+                        data-width="100%"
+                        ng-model="page.keywords"
+                        placeholder="Type Keywords for this page">
                 </div>
                 <div class="form-group">
                     <label>Keywords</label>
@@ -156,7 +134,7 @@
                 </div>
             </fieldset>
             <fieldset>
-                <placement-form wizardstep="step4" page="page"></placement-form>
+                <placement-form wizardstep="step3" page="page"></placement-form>
             </fieldset>
             <ul class="pager">
                 <li class="previous">
@@ -165,14 +143,14 @@
                     </a>
                 </li>
                 <li class="next">
-                    <a href="#" ng-click="wizard.go(5)" analytics-on="click" analytics-event="CreateSite_WizardStepFive"> Next <span>&rarr;</span></a>
+                    <a href="#" ng-click="wizard.go(4)" analytics-on="click" analytics-event="CreateSite_WizardStepFive"> Next <span>&rarr;</span></a>
                 </li>
             </ul>
         </div>
         <!-- END Wizard Step inputs -->
 
         <!-- START Wizard Step inputs -->
-        <div id="step5" ng-show="wizard.active(5)">
+        <div id="step4" ng-show="wizard.active(4)">
             <legend>Review your new publisher</legend>
             <div ng-show="creation_error" class="alert alert-danger">{{ creation_error }}</div>
             <fieldset>
@@ -229,7 +207,7 @@
                     </div>
                 </li>
                 <li class="next pull-right">
-                    <button type="button" class="btn btn-primary" ng-click="createSite()" analytics-on="click" analytics-event="SiteSetup_Step5">Submit</button>
+                    <button type="button" class="btn btn-primary" ng-click="createSite()" analytics-on="click" analytics-event="SiteSetup_Step4">Submit</button>
                 </li>
             </ul>
         </div>

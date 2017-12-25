@@ -4,15 +4,17 @@
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
     'Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-    'REVIEW_TIME',
+    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES',
 	function($scope, $stateParams, $location, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
-             REVIEW_TIME) {
+             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES) {
 
         $scope.advertiser = campaign.advertiser;
         $scope.campaignIndex = campaign.index;
         $scope.campaign = campaign.campaign;
-        
+        $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+        $scope.CLIQUE_ICON_CLASSES = CLIQUE_ICON_CLASSES;
+
 		$scope.authentication = Authentication;
         // Set mins & maxes
         $scope.min_base_bid = 1;
@@ -62,6 +64,16 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     Notify.alert('Error activating campaign: ' + errorResponse.message,{status: 'danger'});
                 });
             }
+        };
+
+        $scope.toggleMultiBid = function(){
+            $scope.advertiser.$update(function(){
+                Notify.alert('Multi-Bid setting changed.',{});
+                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+            }, function(errorResponse) {
+                Notify.alert('Error deactivating Multi-Bid: ' + errorResponse.message,{status: 'danger'});
+                $scope.error = errorResponse.data.message;
+            });
         };
 
         $scope.validateInput = function(name, type) {
