@@ -18,6 +18,7 @@ module.exports = {
         logoBucket: cliquesConfig.get('Console.brand.logoBucket')
 	},
     deploymentMode: cliquesConfig.get('Console.deploymentMode'),
+    rootCliqueId: cliquesConfig.get('Console.rootCliqueId'),
 	port: process.env.PORT || 5000,
 	templateEngine: 'swig',
     templatePath: 'app/views/templates',

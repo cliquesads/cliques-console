@@ -23,8 +23,8 @@ sudo apt-get install libfontconfig1
 
 # make sure cliques-config repo is cloned & pull any new commits
 if [ ! -d $HOME"/repositories/cliques-config" ]; then
-    git clone git@github.com:cliquesads/smartertravel-config.git ../cliques-config
-    ln -s ../cliques-config cliques-config
+    echo "No cliques-config symlink found, cannot activate environment. Please clone the appropriate config repository and symlink to ./cliques-config, then retry."
+    exit 1
 else
     cd ../cliques-config
     git pull

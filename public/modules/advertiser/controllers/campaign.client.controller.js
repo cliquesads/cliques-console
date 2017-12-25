@@ -1,4 +1,4 @@
-/* global _, angular, moment, user */
+/* global _, angular, moment, user, deploymentMode */
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
@@ -14,6 +14,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         $scope.campaign = campaign.campaign;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
         $scope.CLIQUE_ICON_CLASSES = CLIQUE_ICON_CLASSES;
+        $scope.deploymentMode = deploymentMode;
 
 		$scope.authentication = Authentication;
         // Set mins & maxes
