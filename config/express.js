@@ -44,6 +44,7 @@ module.exports = function(db) {
     app.locals.logoBucket = config.app.logoBucket;
 	app.locals.helpScout = config.helpscout;
 	app.locals.nativeSpecs = config.nativeSpecs;
+	app.locals.deploymentMode = config.deploymentMode;
 	app.locals.facebookAppId = config.facebook.clientID;
 	app.locals.jsFiles = config.getJavaScriptAssets();
 	app.locals.cssFiles = config.getCSSAssets();

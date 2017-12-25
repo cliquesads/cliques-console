@@ -70,10 +70,14 @@
 
 	<!--Embedding variables shared by server & client-->
 	<script type="text/javascript">
+        var deploymentMode = "{{ deploymentMode }}";
 		var user = {{ user | json | safe }};
 		var nativeSpecs = {{ nativeSpecs | json | safe }};
 		var consoleVersion = "{{ consoleVersion }}";
         var latestHour = new Date("{{ latestHour }}");
+        var helpScout = {{ helpScout | json | safe }};
+        var logoBucket = "{{ logoBucket }}";
+
         latestHour = Date.UTC(
                 latestHour.getUTCFullYear(),
                 latestHour.getUTCMonth(),

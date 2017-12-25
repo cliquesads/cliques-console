@@ -3,8 +3,6 @@ var config = require('config');
 var stripePublishableKey = config.get('Stripe.publishable_key');
 var _ = require('lodash');
 
-
-
 /**
  * Module dependencies.
  */

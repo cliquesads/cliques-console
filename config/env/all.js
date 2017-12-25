@@ -15,8 +15,9 @@ module.exports = {
 		title: cliquesConfig.get('Console.app.title'),
 		description: cliquesConfig.get('Console.app.description'),
 		keywords: cliquesConfig.get('Console.app.keywords'),
-        logoBucket: cliquesConfig.get('Console.brand.logoBucket'),
+        logoBucket: cliquesConfig.get('Console.brand.logoBucket')
 	},
+    deploymentMode: cliquesConfig.get('Console.deploymentMode'),
 	port: process.env.PORT || 5000,
 	templateEngine: 'swig',
     templatePath: 'app/views/templates',
