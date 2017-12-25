@@ -30,15 +30,15 @@
                     </select>
                 </td>
                 <td>
-                    <select ng-disabled="placement.type === 'native'" name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="{{ wizardstep }}" ng-required="placement.type === 'display' || !placement.type" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
+                    <select ng-disabled="placement.type === 'native' || placement.type === 'multiPaneNative'" name="dimensions" data-ng-model="placement.dimensions" data-parsley-group="{{ wizardstep }}" ng-required="placement.type === 'display' || !placement.type" class="form-control" ng-options="dim for dim in CREATIVE_SIZES.supported_dimensions">
                         <option value=""></option>
                     </select>
                 </td>
                 <td>
-                    <select ng-if="placement.type === 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
+                    <select ng-if="placement.type === 'native' || placement.type === 'multiPaneNative'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in NATIVE_POSITIONS">
                         <option value=""></option>
                     </select>
-                    <select ng-if="placement.type !== 'native'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
+                    <select ng-if="placement.type !== 'native' && placement.type !== 'multiPaneNative'" name="position" data-ng-model="placement.pos" data-parsley-group="{{ wizardstep }}" required="required" class="form-control" ng-options="position.code as position.name for position in OPENRTB.positions">
                         <option value=""></option>
                     </select>
                 </td>

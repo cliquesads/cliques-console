@@ -35,6 +35,11 @@ angular.module('publisher')
             description: 'Ads that are custom-styled to resemble a piece of content on your site. No fixed dimensions & styling is totally custom. ' +
                 'Higher CPM\'s but slightly more integration work.',
             tagTypes: ['javascript']
+        },
+        multiPaneNative: {
+            displayName : 'Multi-Pane Native',
+            description: 'Units featuring anywhere from 2-20 distinct native ads, or "panes". Ideal for "Sponsored Content" widgets, etc.',
+            tagTypes: ['javascript']
         }
     })
     .constant('NATIVE_TEMPLATE_TYPES',{

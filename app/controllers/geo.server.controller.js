@@ -35,7 +35,7 @@ module.exports = function(db) {
              */
             getManyDmas: function (req, res) {
                 // this defaults to 10, kind of infuriating
-                req.query.per_page = "1000000";
+                req.query.per_page = 1000000;
                 geoModels.DMA.apiQuery(req.query, function (err, geos) {
                     if (err) {
                         return res.status(400).send({
@@ -67,7 +67,7 @@ module.exports = function(db) {
              */
             getManyCountries: function (req, res) {
                 // this defaults to 10, kind of infuriating
-                req.query.per_page = "1000000";
+                req.query.per_page = 1000000;
                 geoModels.Country.apiQuery(req.query, function (err, geos) {
                     if (err) {
                         return res.status(400).send({
@@ -125,7 +125,7 @@ module.exports = function(db) {
              */
             getManyRegions: function (req, res) {
                 // this defaults to 10, kind of infuriating
-                req.query.per_page = "1000000";
+                req.query.per_page = 1000000;
                 geoModels.Region.apiQuery(req.query, function (err, geos) {
                     if (err) {
                         return res.status(400).send({
@@ -260,7 +260,7 @@ module.exports = function(db) {
              * Gets many cities with given city names as request parameter
              */
             getManyCities: function (req, res) {
-                req.query.per_page = "1000000";
+                req.query.per_page = 1000000;
                 geoModels.City.apiQuery(req.query, function (err, cities) {
                     if (err) {
                         return res.status(400).send({

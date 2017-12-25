@@ -2,7 +2,7 @@
 
 module.exports = {
 	app: {
-		title: 'Cliques Console - Test'
+		// title: 'Cliques Console - Test'
 	}
 	// mongodb: {
 	// 	host: 'localhost',

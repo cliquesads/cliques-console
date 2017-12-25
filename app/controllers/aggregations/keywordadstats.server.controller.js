@@ -20,12 +20,13 @@ var KeywordAdStatAPI = exports.KeywordAdStatAPI = function(db) {
 	this.adv_params = ['advertiser', 'campaign'];
 	this.pub_params = ['publisher', 'site', 'page', 'placement'];
 	this.clique_params = ['pub_clique', 'adv_clique'];
-	this.keyword_params = ['keyword'];
+	this.keywords_params = ['keywords'];
 
 	// TODO: Don't love this, should figure out better way to handle general queries
 	var all_params = this.adv_params.concat(this.pub_params);
 	all_params = all_params.concat(this.clique_params);
-	all_params = all_params.concat(this.keyword_params);
+	all_params = all_params.concat(this.keywords_params);
+
 	this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([], all_params, 'hour');
 	AdStatsAPIHandler.call(this, db);
 };

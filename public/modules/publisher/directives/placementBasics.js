@@ -52,15 +52,24 @@ angular.module('publisher').directive('placementBasics', ['Authentication',
                     // set placement dimensions first
                     scope.submitted = true;
                     if (this.placementForm.$valid) {
-                        if (scope.placement.type === 'display' || !scope.placement.type){
-                            var dims = scope.placement.dimensions.split('x');
-                            scope.placement.w = Number(dims[0]);
-                            scope.placement.h = Number(dims[1]);
-                        } else {
-                            scope.placement.defaultType = 'hide';
-                            scope.placement.native = scope.placement.native || {};
-                            scope.placement.w = 1;
-                            scope.placement.h = 1;
+                        switch (scope.placement.type){
+                            case "native":
+                                scope.placement.defaultType = 'hide';
+                                scope.placement.native = scope.placement.native || {};
+                                scope.placement.w = 1;
+                                scope.placement.h = 1;
+                                break;
+                            case "multiPaneNative":
+                                scope.placement.defaultType = 'hide';
+                                scope.placement.multiPaneNative = scope.placement.multiPaneNative ||
+                                    { pane: { desktop: {}, mobile: {}}, wrapper: {}};
+                                scope.placement.w = 1;
+                                scope.placement.h = 1;
+                                break;
+                            default:
+                                var dims = scope.placement.dimensions.split('x');
+                                scope.placement.w = Number(dims[0]);
+                                scope.placement.h = Number(dims[1]);
                         }
                         scope.publisher.$update(function(publisher) {
                             scope.onSaveSuccess(publisher);

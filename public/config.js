@@ -43,7 +43,8 @@ var ApplicationConfiguration = (function() {
         'puigcerber.countryPicker',
         'angular.filter',
         'ui.router.title',
-        'datamaps'
+        'datamaps',
+        'ui.codemirror'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

@@ -1,0 +1,66 @@
+<fieldset>
+    <div class="row pb">
+        <label class="col-sm-3">Brand Disclosure Prefix*</label>
+        <div class="col-sm-4 form-group">
+            <input type="text" id="prefix" name="prefix" required="required" class="form-control" ng-model="native.brandDisclosurePrefix"/>
+        </div>
+        <label class="col-sm-3" for="descriptionLength">Max Description Length *</label>
+        <div class="col-sm-2 form-group">
+            <input type="number" required="required" id="descriptionLength" name="descriptionLength" min="{{ NATIVE_SPECS.description.minChars }}" max="{{ NATIVE_SPECS.description.maxChars }}" class="form-control" data-ng-model="native.descriptionMaxLength">
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-3">Advertisement Disclosure*</label>
+        <div class="col-sm-4 form-group">
+            <input type="text" id="adDisclosure" name="adDisclosure" required="required" class="form-control" ng-model="native.advertisementDisclosure"/>
+        </div>
+    </div>
+</fieldset>
+<fieldset>
+    <div class="col-sm-4">
+        <h4>
+            <i class="fa fa-desktop"></i> Desktop
+        </h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group form-control-static">
+            <label class="switch" ng-show="showActiveSwitches">
+                <input type="checkbox" checked="checked" ng-model="native.desktop.active"/>
+                <span></span>
+            </label>
+            <div class="label" ng-class="native.desktop.active ? 'label-success':'label-default'">{{ native.desktop.active ? "Active":"Inactive"}}</div>
+        </div>
+    </div>
+    <div class="col-sm-12" ng-show="native.desktop.active">
+        <div ui-codemirror="{ onLoad: onDesktopCmLoadTest }"
+             ui-codemirror-opts="codeMirrorOptions"
+             ng-model="native.desktop.template"
+             ng-required="native.desktop.active"
+             class="cm-form-control"
+             id="desktopTemplate"></div>
+        <span ng-show="errors.desktop" class="text-danger">{{ errors.desktop }}</span>
+    </div>
+</fieldset>
+<fieldset>
+    <div class="col-sm-4">
+        <h4><i class="fa fa-mobile"></i> Mobile / <i class="fa fa-tablet"></i> Tablet</h4>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group form-control-static">
+            <label class="switch" ng-show="showActiveSwitches">
+                <input type="checkbox" checked="checked" ng-model="native.mobile.active"/>
+                <span></span>
+            </label>
+            <div class="label" ng-class="native.mobile.active ? 'label-success':'label-default'">{{ native.mobile.active ? "Active":"Inactive"}}</div>
+        </div>
+    </div>
+    <div class="col-sm-12" ng-show="native.mobile.active">
+        <div ui-codemirror="{ onLoad: onMobileCmLoadTest }"
+             ui-codemirror-opts="codeMirrorOptions"
+             ng-model="native.mobile.template"
+             ng-required="native.mobile.active"
+             class="cm-form-control"
+             id="mobileTemplate"></div>
+        <span ng-show="errors.mobile" class="text-danger">{{ errors.mobile }}</span>
+    </div>
+</fieldset>

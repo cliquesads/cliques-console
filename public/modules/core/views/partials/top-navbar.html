@@ -9,18 +9,18 @@
         </a>
         <a href="#/" ng-show="authentication.user" class="navbar-brand" analytics-on="click" analytics-event="TopNavBar_ClickBrand">
             <div class="brand-logo">
-                <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive"/>
+                <img src="{{ logoBucket }}/logo.svg" alt="App Logo" class="img-responsive"/>
             </div>
             <div class="brand-logo-collapsed">
-                <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive"/>
+                <img src="{{ logoBucket }}/logo-single.svg" alt="App Logo" class="img-responsive"/>
             </div>
         </a>
         <div ng-hide="authentication.user" class="navbar-brand">
             <div class="brand-logo">
-                <img src="modules/core/img/brand/logo.svg" alt="App Logo" class="img-responsive"/>
+                <img src="{{ logoBucket }}/logo.svg" alt="App Logo" class="img-responsive"/>
             </div>
             <div class="brand-logo-collapsed">
-                <img src="modules/core/img/brand/logo-single.svg" alt="App Logo" class="img-responsive"/>
+                <img src="{{ logoBucket }}/logo-single.svg" alt="App Logo" class="img-responsive"/>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="http://support.cliquesads.com" target="_blank" analytics-on="click" analytics-event="TopNavBar_SupportCenter">Support Center</a>
+                        <a href="{{ helpScoutUrl }}" target="_blank" analytics-on="click" analytics-event="TopNavBar_SupportCenter">Support Center</a>
                     </li>
                 </ul>
             </li>
