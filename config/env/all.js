@@ -11,8 +11,6 @@ var vendorImages = require('./vendorFiles/vendorImages');
 
 var nativeSpecs = _.extend(cliquesConfig.get('Native'), NATIVE_SPECS);
 
-
-
 module.exports = {
 	app: {
 		title: cliquesConfig.get('Console.app.title'),
