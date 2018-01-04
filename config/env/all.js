@@ -5,20 +5,23 @@ var cliquesConfig = require('config');
 var NATIVE_SPECS = require('@cliques/cliques-node-utils').mongodb.models.NATIVE_SPECS;
 var vendorCss = require('./vendorFiles/vendorCss');
 var vendorJs = require('./vendorFiles/vendorJs');
+var _ = require('lodash');
 var vendorSass = require('./vendorFiles/vendorSass');
 var vendorImages = require('./vendorFiles/vendorImages');
 
 var nativeSpecs = _.extend(cliquesConfig.get('Native'), NATIVE_SPECS);
 
+
+
 module.exports = {
 	app: {
 		title: cliquesConfig.get('Console.app.title'),
 		description: cliquesConfig.get('Console.app.description'),
-		keywords: cliquesConfig.get('Console.app.keywords'),
-        logoBucket: cliquesConfig.get('Console.brand.logoBucket')
+		keywords: cliquesConfig.get('Console.app.keywords')
 	},
     deploymentMode: cliquesConfig.get('Console.deploymentMode'),
     rootCliqueId: cliquesConfig.get('Console.rootCliqueId'),
+    logoBucket: cliquesConfig.get('Console.brand.logoBucket'),
 	port: process.env.PORT || 5000,
 	templateEngine: 'swig',
     templatePath: 'app/views/templates',
