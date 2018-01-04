@@ -4,7 +4,7 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','Notify','$timeout','DndTreeWrapper','getSitesInCliqueBranch',
         'campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
-        'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog','CONTENT_CLIQUE_ID',
+        'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog','ROOT_CLIQUE_ID',
         function($scope, $stateParams, Notify, $timeout, DndTreeWrapper, getSitesInCliqueBranch,
                  campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
                  MongoTimeSeries, aggregationDateRanges, openSiteDescriptionDialog, ROOT_CLIQUE_ID){

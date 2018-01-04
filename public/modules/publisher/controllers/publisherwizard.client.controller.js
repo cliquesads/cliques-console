@@ -123,7 +123,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     name:           this.publisher.name,
                     description:    this.publisher.description,
                     website:        'http://' + this.publisher.website,
-                    logo_url:           this.publisher.logo_url,
+                    logo_url:       this.publisher.logo_url,
                     sites: [site]
                 });
                 publisher.$create(function(response){
