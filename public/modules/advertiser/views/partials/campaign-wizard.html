@@ -27,23 +27,29 @@
         <!-- START CAMPAIGN inputs -->
         <div id="step1" ng-show="wizard.active(1)">
             <legend>New {{ campaignType | capitalize }} Campaign</legend>
-            <fieldset>
-                <div class="form-group">
-                    <label>Content Type*</label>
-                    <div class="box-form">
-                        <ol class="row" style="margin-left: -15px; margin-right: -15px">
-                            <li ng-class="{'active': campaign.clique === 'First Party'}" ng-click="campaign.clique = 'First Party'" class="col-sm-6 align-middle">
-                                <h4><i class="{{ CLIQUE_ICON_CLASSES['First Party']}}"></i>&nbsp;First Party Content</h4>
-                                <p>Drive traffic to other owned & operated first-party content.</p>
-                            </li>
-                            <li ng-class="{'active': campaign.clique === 'Third Party'}" ng-click="campaign.clique = 'Third Party'" class="col-sm-6 align-middle">
-                                <h4><i class="{{ CLIQUE_ICON_CLASSES['Third Party'] }}"></i>&nbsp;Third Party Advertiser</h4>
-                                <p>Promote an offering for an third-party, paying advertiser.</p>
-                            </li>
-                        </ol>
-                    </div>
+            <!-- TODO: resolve deploymentMode differences -->
+            <div ng-switch="deploymentMode">
+                <div ng-switch-when="contentNetwork">
+                    <fieldset>
+                        <div class="form-group">
+                            <label>Content Type*</label>
+                            <div class="box-form">
+                                <ol class="row" style="margin-left: -15px; margin-right: -15px">
+                                    <li ng-class="{'active': campaign.clique === 'First Party'}" ng-click="campaign.clique = 'First Party'" class="col-sm-6 align-middle">
+                                        <h4><i class="{{ CLIQUE_ICON_CLASSES['First Party']}}"></i>&nbsp;First Party Content</h4>
+                                        <p>Drive traffic to other owned & operated first-party content.</p>
+                                    </li>
+                                    <li ng-class="{'active': campaign.clique === 'Third Party'}" ng-click="campaign.clique = 'Third Party'" class="col-sm-6 align-middle">
+                                        <h4><i class="{{ CLIQUE_ICON_CLASSES['Third Party'] }}"></i>&nbsp;Third Party Advertiser</h4>
+                                        <p>Promote an offering for an third-party, paying advertiser.</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
+                <div ng-switch-default></div>
+            </div>
             <fieldset>
                 <div class="form-group mb-sm">
                     <label>Name *</label>
@@ -164,11 +170,13 @@
                         <native-creative-uploader wizardstep="step4" uploader="nativeUploader" onuploadall="nativeValidateAndUpload(wizard.validateStep(4))" width="12"> </native-creative-uploader>
                     </div>
                 </tab>
-                <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+                <!-- TODO: resolve deploymentMode differences -->
+                <tab ng-if="deploymentMode === 'adNetwork'" heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
                     <div class="row" id="creativeUploader">
                         <creative-uploader wizardstep="step4" uploader="displayUploader" onuploadall="displayValidateAndUpload(wizard.validateStep(4))" width="12"> </creative-uploader>
                     </div>
                 </tab>
+                <!-- TODO: resolve deploymentMode differences -->
                 <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
                     <div class="row" id="dcmUploader">
                         <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>

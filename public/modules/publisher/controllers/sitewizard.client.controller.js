@@ -1,4 +1,4 @@
-/* global _, angular, moment, user */
+/* global _, angular, moment, user, deploymentMode */
 'use strict';
 
 angular.module('publisher').controller('SiteWizardController', ['$scope',
@@ -16,7 +16,10 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
     'CREATIVE_SIZES',
     'OPENRTB',
     'FIRST_PARTY_CLIQUE_ID',
-	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, FIRST_PARTY_CLIQUE_ID) {
+	'ROOT_CLIQUE_ID',
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree,
+             BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB, FIRST_PARTY_CLIQUE_ID,
+             ROOT_CLIQUE_ID) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -46,7 +49,8 @@ angular.module('publisher').controller('SiteWizardController', ['$scope',
             description:    '',
             bid_floor:      '',
             domain_name:    '',
-            clique:         FIRST_PARTY_CLIQUE_ID,
+            // TODO: resolve deploymentMode differences
+            clique:         deploymentMode === "contentNetwork" ? FIRST_PARTY_CLIQUE_ID: ROOT_CLIQUE_ID,
             bidfloor:       null,
             blacklist:      []
         };
