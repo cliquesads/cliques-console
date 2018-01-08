@@ -31,6 +31,25 @@
 	<meta name="twitter:url" content="{{url}}">
 	<meta name="twitter:image" content="/img/brand/logo.png">
 
+	<!--Embedding variables shared by server & client-->
+	<script type="text/javascript">
+        var deploymentMode = "{{ deploymentMode }}";
+        var user = {{ user | json | safe }};
+        var nativeSpecs = {{ nativeSpecs | json | safe }};
+        var consoleVersion = "{{ consoleVersion }}";
+        var rootCliqueId = "{{ rootCliqueId }}";
+        var latestHour = new Date("{{ latestHour }}");
+        var helpScout = {{ helpScout | json | safe }};
+        var logoBucket = "{{ logoBucket }}";
+
+        latestHour = Date.UTC(
+            latestHour.getUTCFullYear(),
+            latestHour.getUTCMonth(),
+            latestHour.getUTCDate(),
+            latestHour.getUTCHours(),
+            59, 59);
+	</script>
+
     <!--HelpScout Beacon-->
 	<script>!function(e,o,n){window.HSCW=o,window.HS=n,n.beacon=n.beacon||{};var t=n.beacon;t.userConfig={color:'#26d07c',icon:'message'},t.readyQueue=[],t.config=function(e){this.userConfig=e},t.ready=function(e){this.readyQueue.push(e)},o.config={docs:{enabled:!0,baseUrl:"{{ helpScout.baseUrl }}"},contact:{enabled:!0,formId:"{{ helpScout.beaconFormId }}"}};var r=e.getElementsByTagName("script")[0],c=e.createElement("script");c.type="text/javascript",c.async=!0,c.src="https://djtflbt20bdde.cloudfront.net/",r.parentNode.insertBefore(c,r)}(document,window.HSCW||{},window.HS||{});</script>
 
@@ -50,7 +69,7 @@
 	</script>
 
 	<!-- Fav Icon -->
-	<link href="/modules/core/img/brand/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon">
+	<link href="{{ logoBucket }}/favicon/favicon.ico" rel="shortcut icon" type="image/x-icon">
 
 	<!--Application CSS Files-->
 	{% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
@@ -67,24 +86,6 @@
 
 	<!--<div class="bg-image"></div>-->
 	{% block content %}{% endblock %}
-
-	<!--Embedding variables shared by server & client-->
-	<script type="text/javascript">
-        var deploymentMode = "{{ deploymentMode }}";
-		var user = {{ user | json | safe }};
-		var nativeSpecs = {{ nativeSpecs | json | safe }};
-		var consoleVersion = "{{ consoleVersion }}";
-        var latestHour = new Date("{{ latestHour }}");
-        var helpScout = {{ helpScout | json | safe }};
-        var logoBucket = "{{ logoBucket }}";
-
-        latestHour = Date.UTC(
-                latestHour.getUTCFullYear(),
-                latestHour.getUTCMonth(),
-                latestHour.getUTCDate(),
-                latestHour.getUTCHours(),
-                59, 59);
-	</script>
 
 	<!--Application JavaScript Files-->
 	{% for jsFile in jsFiles %}<script type="text/javascript" src="{{jsFile}}"></script>{% endfor %} 

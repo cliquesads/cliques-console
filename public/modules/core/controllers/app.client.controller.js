@@ -1,4 +1,4 @@
-/* globals consoleVersion, user, latestHour */
+/* globals consoleVersion, user, latestHour, deploymentMode */
 /**=========================================================
  * Module: main.js
  * Main Application Controller
@@ -8,6 +8,8 @@ angular.module('core').controller('AppController',
     ['$rootScope', '$scope', '$state', '$translate', '$location', '$window', '$localStorage', '$timeout', '$analytics', 'colors', 'browser', 'cfpLoadingBar', 'Authentication',
         function ($rootScope, $scope, $state, $translate, $location, $window, $localStorage, $timeout, $analytics, colors, browser, cfpLoadingBar, Authentication, Organization) {
             "use strict";
+            // Either "adNetwork" or "contentNetwork" for different deployment types
+            $scope.deploymentMode = deploymentMode;
 
             // This provides Authentication context.
             $scope.authentication = Authentication;

@@ -160,7 +160,9 @@ adding hook in parent template ---->
                                                     </div>
                                                 </div>
                                             </fieldset>
-                                            <fieldset>
+
+                                            <!-- TODO: resolve deploymentMode differences -->
+                                            <fieldset ng-if="deploymentMode === 'contentNetwork'">
                                                 <div class="form-horizontal">
                                                     <div class="form-group m0">
                                                         <label class="col-sm-4 control-label">

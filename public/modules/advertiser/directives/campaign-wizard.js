@@ -1,3 +1,4 @@
+/* global deploymentMode */
 'use strict';
 angular.module('advertiser').directive('campaignWizard', [
     '$compile',
@@ -14,11 +15,13 @@ angular.module('advertiser').directive('campaignWizard', [
     'ADVERTISER_TOOLTIPS',
     'THIRD_PARTY_CLIQUE_ID',
     'FIRST_PARTY_CLIQUE_ID',
+    'ROOT_CLIQUE_ID',
     'CLIQUE_ICON_CLASSES',
     'ngDialog',
 	function($compile, $analytics, Authentication, Advertiser,
              getCliqueTree, getSitesInClique, DMA, FileUploader, ClientSideCampaign,CampaignDraft,
-             BID_SETTINGS, ADVERTISER_TOOLTIPS, THIRD_PARTY_CLIQUE_ID, FIRST_PARTY_CLIQUE_ID, CLIQUE_ICON_CLASSES, ngDialog) {
+             BID_SETTINGS, ADVERTISER_TOOLTIPS, THIRD_PARTY_CLIQUE_ID, FIRST_PARTY_CLIQUE_ID, ROOT_CLIQUE_ID,
+             CLIQUE_ICON_CLASSES, ngDialog) {
         return {
             restrict: 'E',
             scope: {
@@ -39,6 +42,8 @@ angular.module('advertiser').directive('campaignWizard', [
                 //##################################//
                 scope.authentication = Authentication;
                 scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+                // TODO: resolve deploymentMode differences
+                scope.deploymentMode = deploymentMode;
 
                 $analytics.eventTrack('CampaignSetup_CampaignStep1');
 
@@ -47,41 +52,18 @@ angular.module('advertiser').directive('campaignWizard', [
                 scope.campaign = new ClientSideCampaign(scope.existingCampaign, { useSuffix: scope.useSuffix });
                 scope.campaign.type = scope.campaignType;
 
-                // Set Campaign Clique internally, will not be exposed on the front-end as front-end users
-                // won't be uploading first-party campaigns. This will be done programmatically.
-                scope.campaign.clique = FIRST_PARTY_CLIQUE_ID;
+                // TODO: resolve deploymentMode differences
+                if (deploymentMode === 'adNetwork') {
+                    // Set Campaign Clique internally, will not be exposed on the front-end as front-end users
+                    // won't be uploading first-party campaigns. This will be done programmatically.
+                    scope.campaign.clique = FIRST_PARTY_CLIQUE_ID;
+                } else {
+                    scope.campaign.clique = ROOT_CLIQUE_ID;
+                }
 
                 // Set mins & maxes
                 scope.min_base_bid = BID_SETTINGS.min_base_bid;
                 scope.max_base_bid = BID_SETTINGS.max_base_bid;
-
-                // Horrible hack to lazy load sub-directives
-                // Weird shit happens they pre-load (they don't get the right scope vars & such),
-                // so I've resorted to lazily-compiling their templates & injecting compiled HTML
-                // into elements using jQuery.
-                // I tried to use the DIRECTIVE I JUST WROTE 'compile' as well, but could
-                // never get it to compile so I just gave up
-                function injectDirective(elementId, template){
-                    if ($(elementId).is(':empty')){
-                        $(elementId).append($compile(template)(scope));
-                    }
-                }
-
-                // LAZY LOADERS
-                scope.loadCliqueStep = function(callback, callbackArg){
-                    var treeDirective = '<abn-tree tree-data="cliques" tree-control="my_tree" on-select="set_clique(branch)" icon-leaf="fa fa-square" expand-level="2"></abn-tree>';
-                    injectDirective('#cliquesTree', treeDirective);
-                    // Set initial selection dynamically, can't use initial-selection param
-                    // var branch;
-                    // if (scope.campaign.clique){
-                    //     branch = scope.my_tree.get_branch_by_label(scope.campaign.clique);
-                    // } else {
-                    //     branch = scope.my_tree.get_first_branch();
-                    // }
-                    // scope.my_tree.select_branch(branch);
-
-                    return callback(callbackArg);
-                };
 
                 //#################################//
                 //######### FILE UPLOADER #########//

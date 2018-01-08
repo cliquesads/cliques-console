@@ -4,10 +4,10 @@
 angular.module('advertiser').controller('SiteTargetingController',
     ['$scope','$stateParams','Notify','$timeout','DndTreeWrapper','getSitesInCliqueBranch',
         'campaign','flattenSiteCliques','$TreeDnDConvert','OPENRTB', 'ngDialog','HourlyAdStat',
-        'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog','CONTENT_CLIQUE_ID',
+        'MongoTimeSeries','aggregationDateRanges','openSiteDescriptionDialog','ROOT_CLIQUE_ID',
         function($scope, $stateParams, Notify, $timeout, DndTreeWrapper, getSitesInCliqueBranch,
                  campaign,flattenSiteCliques, $TreeDnDConvert, OPENRTB, ngDialog, HourlyAdStat,
-                 MongoTimeSeries, aggregationDateRanges, openSiteDescriptionDialog, CONTENT_CLIQUE_ID){
+                 MongoTimeSeries, aggregationDateRanges, openSiteDescriptionDialog, ROOT_CLIQUE_ID){
 
             $scope.Math = Math;
             $scope.dirty = false;
@@ -692,7 +692,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 // Get all available sites to this campaign, then load into $scope.all_sites
                 // SiteTree instance
                 // TODO: Hacked right now to retrieve sites at top level of the Clique tree.
-                getSitesInCliqueBranch(CONTENT_CLIQUE_ID).then(function(response){
+                getSitesInCliqueBranch(ROOT_CLIQUE_ID).then(function(response){
                     $scope.all_sites.fromSitesInCliquesBranchResponse(response, function(err, data){
                         // Set default expand level to 0;
                         $scope.getSiteTreeStats(data, $scope.defaultDateRange);

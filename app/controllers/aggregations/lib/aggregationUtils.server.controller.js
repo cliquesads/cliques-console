@@ -289,7 +289,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
 
     // TODO: currently setting timezone offset based on offset for current time.
     // TODO: Need to fix, this is kind of shitty
-    var offset_minutes = moment.tz.zone(req.user.tz).offset(new Date());
+    var offset_minutes = moment.tz.zone(req.user.tz).utcOffset(new Date());
     var offset_ms = offset_minutes * 60 * 1000;
     var dateFieldName = '$' + self.dateFieldName;
     var date_groupings = {

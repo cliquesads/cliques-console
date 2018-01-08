@@ -1,4 +1,4 @@
-/* global _, angular, user, nativeSpecs */
+/* global _, angular, user, nativeSpecs, rootCliqueId */
 angular.module('advertiser')
     .constant('BID_SETTINGS', {
         // Set mins & maxes
@@ -18,5 +18,6 @@ angular.module('advertiser')
     .constant('REVIEW_TIME','2 - 4 Business Hours')
     .constant('THIRD_PARTY_CLIQUE_ID', 'Third Party')
     .constant('FIRST_PARTY_CLIQUE_ID', 'First Party')
-    .constant('CONTENT_CLIQUE_ID', 'Content')
+    // TODO: resolve deploymentMode differences
+    .constant('ROOT_CLIQUE_ID', rootCliqueId)
     .constant('NATIVE_SPECS', nativeSpecs);

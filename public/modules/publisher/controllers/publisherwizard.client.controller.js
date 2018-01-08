@@ -1,4 +1,4 @@
-/* global _, angular, moment, user */
+/* global _, angular, moment, user, deploymentMode */
 'use strict';
 
 angular.module('publisher').controller('PublisherWizardController', ['$scope',
@@ -18,9 +18,10 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
     'OPENRTB',
     'LOGO',
     'FIRST_PARTY_CLIQUE_ID',
+    'ROOT_CLIQUE_ID',
 	function($scope, $stateParams, $location, $q, $analytics, Authentication, Publisher, Advertiser, getCliqueTree,
              FileUploader, BID_FLOOR_SETTINGS, PUBLISHER_TOOLTIPS, REGEXES, CREATIVE_SIZES, OPENRTB,
-             LOGO, FIRST_PARTY_CLIQUE_ID) {
+             LOGO, FIRST_PARTY_CLIQUE_ID, ROOT_CLIQUE_ID) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -60,7 +61,8 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
             description:    '',
             bid_floor:      '',
             domain_name:    '',
-            clique:         FIRST_PARTY_CLIQUE_ID,
+            // TODO: resolve deploymentMode differences
+            clique:         deploymentMode === "contentNetwork" ? FIRST_PARTY_CLIQUE_ID: ROOT_CLIQUE_ID,
             bidfloor:       null,
             blacklist:      []
         };
@@ -121,7 +123,7 @@ angular.module('publisher').controller('PublisherWizardController', ['$scope',
                     name:           this.publisher.name,
                     description:    this.publisher.description,
                     website:        'http://' + this.publisher.website,
-                    logo_url:           this.publisher.logo_url,
+                    logo_url:       this.publisher.logo_url,
                     sites: [site]
                 });
                 publisher.$create(function(response){
