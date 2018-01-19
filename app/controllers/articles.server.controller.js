@@ -1,0 +1,72 @@
+/* jshint node: true */
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+const node_utils = require('@cliques/cliques-node-utils'),
+    errorHandler = require('./errors.server.controller'),
+    mongoose = require('mongoose'),
+    Article = mongoose.model('Article');
+
+module.exports = (db) => {
+
+    return {
+        /**
+         * Get single article by ID
+         * @param req
+         * @param res
+         */
+        read: function (req, res) {
+            return res.json(req.article);
+        },
+
+        /**
+         * Screenshot middleware
+         */
+        articleByID: function (req, res, next, id) {
+            Article
+                .findById(id)
+                .populate('tf_idf.article')
+                .populate('site')
+                .exec(function (err, article) {
+                    if (err) return next(err);
+                    if (!article) return next(new Error('Failed to load article ' + id));
+                    req.article = article;
+                    next();
+                });
+        },
+
+        getMany: function(req, res){
+            // TODO: Mongo 3.4.7 seems to have an issue passing limits as strings, but apiQuery (which isn't maintained)
+            // TODO: Needs them passed as strings b/c it performs regex on them. So either need to patch apiQuery
+            // TODO: or get rid of this functionality altogether.
+            // this defaults to 10, kind of infuriating
+            // req.query.per_page = 1000000;
+            Article.apiQuery(req.query).populate('tf_idf.article').exec(function (err, articles) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getAndLogErrorMessage(err)
+                    });
+                } else {
+                    res.json(articles);
+                }
+            });
+
+        },
+
+        /**
+         * Screenshot authorization middleware -- user has to either be a networkAdmin,
+         * or screenshot must belong to an advertiser or publisher under their organization.
+         */
+        hasAuthorization: function (req, res, next) {
+            if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
+                return res.status(403).send({
+                    message: 'User is not authorized'
+                });
+            }
+            next();
+        },
+
+    };
+};
