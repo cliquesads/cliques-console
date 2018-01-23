@@ -99,6 +99,7 @@ module.exports = [
     'public/lib/codemirror/addon/lint/html-lint.js',
     'public/lib/codemirror/addon/lint/javascript-lint.js',
     'public/lib/codemirror/addon/lint/css-lint.js',
-    'public/lib/codemirror/addon/lint/json-lint.js'
+    'public/lib/codemirror/addon/lint/json-lint.js',
+    'public/lib/angular-paging/dist/paging.min.js'
 
 ];
