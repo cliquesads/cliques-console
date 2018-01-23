@@ -42,17 +42,23 @@ module.exports = (db) => {
             // TODO: Needs them passed as strings b/c it performs regex on them. So either need to patch apiQuery
             // TODO: or get rid of this functionality altogether.
             // this defaults to 10, kind of infuriating
-            // req.query.per_page = 1000000;
-            Article.apiQuery(req.query).populate('tf_idf.article').exec(function (err, articles) {
-                if (err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                } else {
-                    res.json(articles);
-                }
+            const params = Article.apiQueryParams(req.query);
+            Article.count(params.searchParams, function(err, count){
+                Article.apiQuery(req.query).populate('tf_idf.article').exec(function (err, articles) {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        res.json({
+                            current: req.query.page ? Number(req.query.page) : null,
+                            pages: req.query.per_page ? Math.ceil(count / req.query.per_page) : null,
+                            count: count,
+                            results: articles
+                        });
+                    }
+                });
             });
-
         },
 
         /**

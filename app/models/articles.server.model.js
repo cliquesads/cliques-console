@@ -23,8 +23,8 @@ const ArticleMetaSchema = new Schema({
     tag: [String],
     publisher: String,
     section: String,
-    published_time: Date,
-    modified_time: Date
+    published_time: { type: Date, index: true },
+    modified_time: { type: Date, index: true }
 });
 
 const ArticleWeightSchema = new Schema({
