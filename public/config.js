@@ -44,7 +44,8 @@ var ApplicationConfiguration = (function() {
         'angular.filter',
         'ui.router.title',
         'datamaps',
-        'ui.codemirror'
+        'ui.codemirror',
+        'bw.paging'
     ];
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {

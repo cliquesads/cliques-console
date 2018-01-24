@@ -1,0 +1,110 @@
+<div class="panel panel-default col-sm-12">
+    <div class="panel-heading">
+        <h4><i class="fa fa-info-circle"></i> Article Info
+        </h4>
+        <hr class="pt0 pb0 mt0 mb0"/>
+    </div>
+    <div class="panel-body mt-sm ml-lg pt0">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="m0"><small class="text-muted"><i class="fa fa-font"></i> Title </small></p>
+                <span class="text-md">{{ article.meta.opengraph.title }}</span>
+            </div>
+            <div class="col-md-6">
+                <p class="m0"><small class="text-muted"><i class="fa fa-globe"></i> URL</small></p>
+                <a href="{{ article.url }}">{{ article.url }}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <small class="text-muted"><i class="fa fa-clock-o"></i> Published </small>
+                <p class="mt-sm">{{ article.meta.article.published_time | date: "medium" : tz }} {{ tz }}</p>
+            </div>
+            <div class="col-md-4">
+                <small class="text-muted"><i class="fa fa-clock-o"></i> Last Modified </small>
+                <p class="mt-sm">{{ article.meta.article.modified_time | date: "medium" : tz }} {{ tz }}</p>
+            </div>
+            <div class="col-md-4">
+                <small class="text-muted"><i class="fa fa-clock-o"></i> Analyzed </small>
+                <p class="mt-sm">{{ article.tstamp | date: "medium" : tz }} {{ tz }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <!--Begin collapsible Publisher details sub-panel-->
+            <div class="col-md-6">
+                <small class="text-muted"><i class="icon-book-open"></i> Publisher Details</small>
+                <div class="panel panel-default panel-big-border" id="publisherPanel">
+                    <div class="panel-heading" ng-class="{'panel-heading-collapsed':publisherPanel}">
+                        <paneltool tool-collapse="tool-collapse" ng-init="publisherPanel=false"></paneltool>
+                        <logo-widget model="site" size="xs" deactivate-uploader="true"></logo-widget>
+                        <strong>
+                            <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}" analytics-on="click" analytics-event="ViewScreenshot_VisitPublisherSite">{{ site.name }}</a>
+                        </strong>
+                    </div>
+                    <div collapse="publisherPanel" class="panel-wrapper">
+                        <div class="panel-body pt0">
+                            <small class="text-muted">Publisher</small>
+                            <p class="mb0">
+                                <span ng-switch="user.organization.effectiveOrgType">
+                                    <span ng-switch-when="publisher">
+                                        <a href="/#!/publisher/{{ publisher._id }}" analytics-on="click" analytics-event="ViewArticle_VisitPublisher">{{ publisher.name }}</a>
+                                    </span>
+                                    <span ng-switch-default>
+                                        {{ publisher.name }}
+                                    </span>
+                                </span>
+                            </p>
+                            <small class="text-muted">Site</small>
+                            <p class="mb0">
+                                <span ng-switch="user.organization.effectiveOrgType">
+                                    <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}" analytics-on="click" analytics-event="ViewArticle_VisitPublisherSite">{{ site.name }}</a>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-5">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><i class="fa fa-paragraph"></i> Text
+            </h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <!--Begin collapsible Advertiser details sub-panel-->
+        <div class="panel-body">
+            <p>{{ article.text }}</p>
+        </div>
+    </div>
+</div>
+<div class="col-md-7">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><i class="fa fa-magic"></i> Recommendations
+            </h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <!--Begin collapsible Advertiser details sub-panel-->
+        <div class="panel-body table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <th>#</th>
+                    <th>Score</th>
+                    <th>Title <small class="text-muted">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-hand-pointer-o"></i> Hover for Text Preview</small></th>
+                    <th>Published</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="reco in article.tf_idf">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ reco.weight * 100 | number:2 }}</td>
+                        <td><a tooltip="{{ reco.article.text | limitTo:200 }}..." href="#!/admin/article-recommendations/{{ reco.article._id}}">{{ reco.article.meta.opengraph.title }}</a></td>
+                        <td>{{ reco.article.meta.article.published_time | date: "medium" : tz }} {{ tz }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -31,7 +31,7 @@ angular.module('article').config(['$stateProvider',
                     return Article.get({ articleId: $stateParams.articleId }).$promise;
                 },
                 $title: function(article){
-                    return article.site.name + ' : ' + article.meta.opengraph.title;
+                    return article.meta.opengraph.title;
                 }
             },
             views: {

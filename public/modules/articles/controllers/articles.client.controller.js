@@ -1,48 +1,56 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('article').controller('ListArticlesController', ['$scope', 'Article', 'Publisher', 'Notify', 'ngDialog', '$http', '$window', '$state',
-	function($scope, Article, Publisher, Notify, ngDialog, $http, $window, $state) {
-		$scope.hasMore = true;
-
-		let initialQueryParams = {
-			page: 1,
-			per_page: 25,
+angular.module('article').controller('ListArticlesController', ['$scope', 'Article', 'Publisher', 'getSitesInCliqueBranch',
+	'ROOT_CLIQUE_ID','Notify', 'ngDialog', '$http', '$window', '$state',
+	function($scope, Article, Publisher, getSitesInCliqueBranch, ROOT_CLIQUE_ID, Notify, ngDialog, $http, $window, $state) {
+		$scope.perPageOptions = [ 5, 10, 25, 50, 100 ];
+		$scope.queryParams = {
+			per_page: 10,
+			site: null,
+            sort_by: "meta.article.published_time,desc"
+        };
+		$scope.articles = [];
+		$scope.pagination = {
+			count: null,
+			pages: null,
 		};
 
-		$scope.queryParams = _.clone(initialQueryParams);
+		$scope.sites = [];
+		getSitesInCliqueBranch(ROOT_CLIQUE_ID).then(function(response){
+			response.data.forEach(function(clique){
+				$scope.sites = $scope.sites.concat(clique.sites);
+			});
+			$scope._sitesObj = _.groupBy($scope.sites, 'id');
+        });
 
-		$scope.articles = [];
+		$scope.filterChanged = function(){
+			$scope.getArticles();
+		};
 
-		$scope.getPaginatedArticles = function() {
-			if (!$scope.hasMore) {
-				return;
-			}
+		$scope.getArticles = function(page) {
 			// TODO: $http's returned promise's $resolved property doesn't
 			// TODO: exactly behave as expected here so have to manually set resolved flags,
 			// TODO: which is really annoying
 			$scope.resolved = false;
+			$scope.articles = [];
+			$scope.queryParams.page = page;
 			$scope.articleRequest = Article.query($scope.queryParams).$promise
 			.then(function(response) {
 				$scope.resolved = true;
-			    $scope.articles = $scope.articles.concat(response.models);
-			    if (response.length < response.itemsPerPage) {
-			    	$scope.hasMore = false;
-			    }
+				$scope.pagination.count = response.count;
+				$scope.pagination.pages = response.pages;
+				var articles = response.results;
+				articles.forEach(function(article){
+                    article.site = $scope._sitesObj[article.site][0];
+				});
+			    $scope.articles = articles;
 			}, function(errorResponse) {
 				$scope.resolved = true;
 			    Notify.alert(errorResponse.message, {status: 'danger'});
 			});
 		};
-
-		$scope.getPaginatedArticles();
-
-		$scope.reachedBottom = function() {
-			if ($state.current.name === 'app.article.listArticles' && $scope.hasMore) {
-				$scope.queryParams.page ++;
-				$scope.getPaginatedArticles();
-			}
-		};
+		$scope.getArticles(1);
 	}
 ]).controller('ArticleController', ['$scope', '$window', 'article', 'Publisher','Authentication',
     'Notify','ngDialog','$analytics',
@@ -55,7 +63,7 @@ angular.module('article').controller('ListArticlesController', ['$scope', 'Artic
 		// get from user's TZ preference, which is saved as unique Moment timezone identifier.
 		// EX: 'America/New_York' becomes "EST" or "EDT", depending on the timestamp.
 		$scope.tz = moment.tz.zone(user.tz).abbr(
-			moment($scope.screenshot.tstamp).unix()
+			moment($scope.article.tstamp).unix()
 		);
 
 		const predicate = function(id){
