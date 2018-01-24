@@ -27,5 +27,5 @@ $ mongod --dbpath ~/mongodb/db
 
 ## Import dumped data with mongorestore
 ```
-$ mongorestore --db exchange_deb /path/to/dump
+$ mongorestore --db exchange_dev /path/to/dump
 ```
