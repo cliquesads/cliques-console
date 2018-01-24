@@ -57,19 +57,50 @@
                                     <tr>
                                         <th>Date Published</th>
                                         <th>Site</th>
+                                        <th>Image</th>
                                         <th>Title</th>
-                                        <th>Recommendations</th>
+                                        <th>Top {{ recoLimit }} Recommendations</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="article in articles">
                                             <td>{{ article.meta.article.published_time | date : "MM/dd/yyyy" : "UTC"}}</td>
-                                            <td><a href="#!/publisher/{{ article.publisher }}/site/{{ article.site.id }}">{{ article.site.name }}</a></td>
-                                            <td><a href="#!/admin/article-recommendations/{{ article._id}}">{{ article.meta.opengraph.title }}</a></td>
                                             <td>
-                                                <span ng-repeat="reco in article.tf_idf">
-                                                    {{ reco.weight * 100 | number:2 }} -- {{ reco.article.meta.opengraph.title }}<br/>
-                                                </span>
+                                                <a href="#!/publisher/{{ article.publisher }}/site/{{ article.site.id }}">
+                                                    {{ article.site.name }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="#!/admin/article-recommendations/{{ reco.article._id}}">
+                                                    <img src="{{ article.meta.opengraph.image_secure_url }}"
+                                                         alt="No Image Provided"
+                                                         class="smallthumbnail"/>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="#!/admin/article-recommendations/{{ article._id}}">
+                                                    {{ article.meta.opengraph.title }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered table-hover">
+                                                        <thead>
+                                                            <th>Score</th>
+                                                            <th>Title</th>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="reco in article.tf_idf | limitTo: recoLimit">
+                                                                <td>{{ reco.weight * 100 | number:2 }}</td>
+                                                                <td>
+                                                                    <a href="#!/admin/article-recommendations/{{ reco.article._id}}">
+                                                                        {{ reco.article.meta.opengraph.title }}
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -80,12 +111,14 @@
                         <div class="panel-footer">
                             <div class="row ml-sm mr-sm">
                                 <div class="pull-left text-md mt">
-                                    Showing results <strong>{{ queryParams.per_page * (queryParams.page - 1) + 1 }} - {{ queryParams.per_page * queryParams.page }}</strong> of <strong>{{ pagination.count }}</strong>
+                                    Showing results
+                                    <strong>{{ pagination.start }} - {{ pagination.end }}</strong>
+                                    of <strong>{{ pagination.count }}</strong>
                                 </div>
                                 <div class="pull-right"
                                      paging
                                      page="queryParams.page"
-                                     page-size="pagination.pageSize"
+                                     page-size="queryParams.per_page"
                                      total="pagination.count"
                                      paging-action="getArticles(page)"
                                      show-prev-next="true"

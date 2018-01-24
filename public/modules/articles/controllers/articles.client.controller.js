@@ -14,7 +14,11 @@ angular.module('article').controller('ListArticlesController', ['$scope', 'Artic
 		$scope.pagination = {
 			count: null,
 			pages: null,
+			start: 0,
+			end: 0
 		};
+
+		$scope.recoLimit = 3;
 
 		$scope.sites = [];
 		getSitesInCliqueBranch(ROOT_CLIQUE_ID).then(function(response){
@@ -40,10 +44,14 @@ angular.module('article').controller('ListArticlesController', ['$scope', 'Artic
 				$scope.resolved = true;
 				$scope.pagination.count = response.count;
 				$scope.pagination.pages = response.pages;
+				$scope.pagination.start = response.count ? $scope.queryParams.per_page * ($scope.queryParams.page - 1) + 1 : 0;
+				$scope.pagination.end = response.count ? $scope.pagination.start + response.results.length - 1 : 0;
+
 				var articles = response.results;
 				articles.forEach(function(article){
                     article.site = $scope._sitesObj[article.site][0];
 				});
+
 			    $scope.articles = articles;
 			}, function(errorResponse) {
 				$scope.resolved = true;
