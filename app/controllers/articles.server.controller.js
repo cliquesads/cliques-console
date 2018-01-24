@@ -28,7 +28,7 @@ module.exports = (db) => {
             Article
                 .findById(id)
                 .populate('tf_idf.article')
-                .populate('site')
+                .populate('publisher')
                 .exec(function (err, article) {
                     if (err) return next(err);
                     if (!article) return next(new Error('Failed to load article ' + id));

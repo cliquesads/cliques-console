@@ -33,6 +33,7 @@ const ArticleWeightSchema = new Schema({
 });
 
 const ArticleSchema = exports.Article = new Schema({
+    tstamp: { type: Date, default: Date.now },
     publisher: { type: String, ref: 'Publisher' },
     site: { type: String, ref: 'Site' },
     url: { type: String },
