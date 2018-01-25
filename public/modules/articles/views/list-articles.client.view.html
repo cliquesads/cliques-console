@@ -71,8 +71,8 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="#!/admin/article-recommendations/{{ reco.article._id}}">
-                                                    <img src="{{ article.meta.opengraph.image_secure_url }}"
+                                                <a href="#!/admin/article-recommendations/{{ article._id}}">
+                                                    <img src="{{ article.meta.opengraph.image_secure_url || article.meta.opengraph.image }}"
                                                          alt="No Image Provided"
                                                          class="smallthumbnail"/>
                                                 </a>

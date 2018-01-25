@@ -73,7 +73,7 @@
         </div>
         <!--Begin collapsible Advertiser details sub-panel-->
         <div class="panel-body text-center">
-            <img src="{{ article.meta.opengraph.image_secure_url }}" alt="No Image Provided" class="medthumbnail"/>
+            <img src="{{ article.meta.opengraph.image_secure_url || article.meta.opengraph.image }}" alt="No Image Provided" class="medthumbnail"/>
         </div>
     </div>
     <div class="panel panel-default">
@@ -111,7 +111,7 @@
                 <thead>
                     <th>Score</th>
                     <th>Image</th>
-                    <th>Title <small class="text-muted">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-hand-pointer-o"></i> Hover for Text Preview</small></th>
+                    <th>Title <small class="text-muted"><i class="fa fa-hand-pointer-o"></i> Hover for Text Preview</small></th>
                     <th>Published</th>
                 </thead>
                 <tbody>
@@ -119,7 +119,7 @@
                         <td>{{ reco.weight * 100 | number:2 }}</td>
                         <td>
                             <a href="#!/admin/article-recommendations/{{ reco.article._id}}">
-                                <img src="{{ reco.article.meta.opengraph.image_secure_url }}" class="smallthumbnail" alt="No Image Provided"/>
+                                <img src="{{ reco.article.meta.opengraph.image_secure_url || reco.article.meta.opengraph.image }}" class="smallthumbnail" alt="No Image Provided"/>
                             </a>
                         </td>
                         <td>
