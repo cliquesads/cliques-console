@@ -1,0 +1,136 @@
+<div class="panel panel-default col-sm-12" id="infoPanel">
+    <div class="panel-heading" ng-class="{'panel-heading-collapsed':infoPanel}">
+        <paneltool tool-collapse="tool-collapse" ng-init="infoPanel=true"></paneltool>
+        <h4><i class="fa fa-info-circle"></i> Article Info</h4>
+        <hr class="pt0 pb0 mt0 mb0"/>
+    </div>
+    <div collapse="infoPanel" class="panel-wrapper">
+        <div class="panel-body mt-sm ml-lg pt0">
+            <div class="row mb">
+                <div class="col-md-4">
+                    <p class="m0"><small class="text-muted"><i class="fa fa-font"></i> Title </small></p>
+                    <strong>{{ article.meta.opengraph.title }}</strong>
+                </div>
+                <div class="col-md-4">
+                    <p class="m0"><small class="text-muted"><i class="fa fa-globe"></i> URL</small></p>
+                    <a href="{{ article.url }}" target="_blank"><i class="fa fa-external-link"></i>
+                        <hm-read-more
+                                hm-text="{{ article.url}}"
+                                hm-limit="34"
+                                hm-more-text="read more"
+                                hm-less-text="read less"
+                                hm-dots-class="dots"
+                                hm-link-class="links">
+                        </hm-read-more>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb">
+                <div class="col-md-4">
+                    <small class="text-muted"><i class="fa fa-clock-o"></i> Published </small>
+                    <p>{{ article.meta.article.published_time | date: "medium" : tz }} {{ tz }}</p>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted"><i class="fa fa-clock-o"></i> Last Modified </small>
+                    <p>{{ article.meta.article.modified_time | date: "medium" : tz }} {{ tz }}</p>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted"><i class="fa fa-clock-o"></i> Analyzed </small>
+                    <p >{{ article.tstamp | date: "medium" : tz }} {{ tz }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <!--Begin collapsible Publisher details sub-panel-->
+                <div class="col-md-4">
+                    <p class="m0"><small class="text-muted"><i class="icon-book-open"></i> Site</small></p>
+                    <logo-widget model="site" size="xs" deactivate-uploader="true"></logo-widget>
+                    <strong>
+                        <a href="/#!/publisher/{{ publisher._id }}/site/{{ site._id }}" analytics-on="click" analytics-event="ViewArticle_VisitPublisherSite">{{ site.name }}</a>
+                    </strong>
+                </div>
+                <div class="col-md-4">
+                    <p class="m0"><small class="text-muted"><i class="fa fa-tags"></i> Tags</small></p>
+                    <span class="tag label label-info mr"
+                          ng-repeat="tag in article.meta.article.tag" ng-show="article.meta.article.tag">
+                                        {{ tag}}
+                    </span>
+                    <span ng-show="!article.meta.article.tag"><em class="text-muted">None</em></span>
+                </div>
+                <div class="col-md-4">
+                    <p class="m0"><small class="text-muted"><i class="fa fa-folder"></i> Section</small></p>
+                    <strong>{{ article.meta.article.section || "none" }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-5">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><i class="fa fa-image"></i> Featured Image
+            </h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <!--Begin collapsible Advertiser details sub-panel-->
+        <div class="panel-body text-center">
+            <img src="{{ article.meta.opengraph.image_secure_url || article.meta.opengraph.image }}" alt="No Image Provided" class="medthumbnail"/>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><i class="fa fa-paragraph"></i> Text</h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <div class="panel-body">
+            <p>
+                <span class="text-md"><strong>{{ article.meta.opengraph.title }}</strong></span>
+            </p>
+            <p>
+            <hm-read-more
+                    hm-text="{{ article.text }}"
+                    hm-limit="600"
+                    hm-more-text="read more"
+                    hm-less-text="read less"
+                    hm-dots-class="dots"
+                    hm-link-class="links">
+            </hm-read-more>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="col-md-7">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><i class="fa fa-magic"></i> All Recommendations
+            </h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <!--Begin collapsible Advertiser details sub-panel-->
+        <div class="panel-body table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <th>Score</th>
+                    <th>Image</th>
+                    <th>Title <small class="text-muted"><i class="fa fa-hand-pointer-o"></i> Hover for Text Preview</small></th>
+                    <th>Published</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="reco in article.tf_idf">
+                        <td>{{ reco.weight * 100 | number:2 }}</td>
+                        <td>
+                            <a href="#!/admin/article-recommendations/{{ reco.article._id}}">
+                                <img src="{{ reco.article.meta.opengraph.image_secure_url || reco.article.meta.opengraph.image }}" class="smallthumbnail" alt="No Image Provided"/>
+                            </a>
+                        </td>
+                        <td>
+                            <a tooltip="{{ reco.article.text | limitTo:200 }}..." href="#!/admin/article-recommendations/{{ reco.article._id}}">
+                                {{ reco.article.meta.opengraph.title }}
+                            </a>
+                        </td>
+                        <td>{{ reco.article.meta.article.published_time | date: "medium" : tz }} {{ tz }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
