@@ -1,0 +1,93 @@
+<div class="col-sm-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-3">
+                    <h4>Creatives</h4>
+                </div>
+                <div class="col-sm-6">
+
+                </div>
+                <div class="col-sm-3">
+                    <span class="pull-right">
+                        <button type="button" class="btn btn-labeled btn-primary" ng-click="addNewCreatives()" analytics-on="click" analytics-event="EditCreatives_ToggleVisible">
+                            <span class="btn-label"><i class="fa fa-plus"></i></span>Add New Creatives
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <fieldset ng-show="formVisible">
+                <tabset>
+                    <tab ng-if="campaign.type === 'native'">
+                        <tab-heading>
+                            Native <span class="label label-primary">Beta</span>
+                        </tab-heading>
+                        <div class="row" id="nativeUploader">
+                            <native-creative-uploader uploader="nativeUploader" onuploadall="nativeValidateAndUpload(validateNativeQueue())" width="12"> </native-creative-uploader>
+                        </div>
+                    </tab>
+                    <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+                        <div class="row">
+                            <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
+                        </div>
+                    </tab>
+                    <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
+                        <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+                    </tab>
+                </tabset>
+            </fieldset>
+            <fieldset>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Name</th>
+                                <th ng-if="campaign.type === 'display' || !campaign.type">Dimensions</th>
+                                <th ng-if="campaign.type === 'native'">Headline</th>
+                                <th ng-if="campaign.type === 'native'">Category</th>
+                                <th>Click URL</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="creativegroup in campaign.creativegroups">
+                            <tr ng-repeat="creative in creativegroup.creatives">
+                                <td>
+                                    <div ng-switch="creative.hostingType">
+                                        <div ng-switch-when="doubleclick">
+                                            <em><i class="fa fa-image"></i> Preview Unavailable</em>
+                                        </div>
+                                        <div ng-switch-default>
+                                            <img ng-src="{{ creative.type === 'native' ? creative.native.secureImageUrl : creative.secureUrl }}" class="smallthumbnail"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="word-break: break-all;"><p class="form-control-static"><a href="#" editable-text="creative.name" onaftersave="update()" e-required analytics-on="click" analytics-event="EditCreatives_Update">{{ creative.name }}</a></p></td>
+                                <td ng-if="creative.type === 'display' || !creative.type"><p class="form-control-static">{{ creative.w }}x{{ creative.h }}</td>
+                                <td ng-if="creative.type === 'native'"><p class="form-control-static">
+                                    {{ creative.native.headline }}
+                                </td>
+                                <td ng-if="creative.type === 'native'"><p class="form-control-static">
+                                    {{ creative.native.category || "None" }}
+                                </td>
+                                <td style="max-width: 300px;">
+                                    <p class="form-control-static" style="overflow-wrap: break-word;">
+                                        <a href="#" editable-url="creative.click_url" onaftersave="update()" ng-show="creative.type != 'doubleclick' && creative.hostingType != 'doubleclick'" e-required>{{ creative.click_url }}</a>
+                                        <em ng-show="creative.type === 'doubleclick' || creative.hostingType === 'doubleclick'">Set by DoubleClick</em>
+                                    </p>
+                                </td>
+                                <td><button type="button" ng-click="remove(creativegroup, creative)" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="EditCreatives_Remove"><span class="icon-trash mr"></span>Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<!--<div class="text-center">-->
+    <!--<button type="button" ng-click="updateAndClose()" class="btn btn-info btn-large">Save</button>-->
+<!--</div>-->

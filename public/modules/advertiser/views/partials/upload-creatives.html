@@ -1,0 +1,22 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <tabset>
+            <tab ng-if="campaign.type === 'native'">
+                <tab-heading>
+                    Native <span class="label label-primary">Beta</span>
+                </tab-heading>
+                <div class="row" id="nativeUploader">
+                    <native-creative-uploader uploader="nativeUploader" onuploadall="nativeValidateAndUpload(validateNativeQueue())" width="12"> </native-creative-uploader>
+                </div>
+            </tab>
+            <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+                <div class="row">
+                    <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
+                </div>
+            </tab>
+            <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
+                <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+            </tab>
+        </tabset>
+    </div>
+</div>

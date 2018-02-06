@@ -116,11 +116,11 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
         // ######################################### //
-        $scope.editCreatives = function(){
+        $scope.addNewCreatives = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth1000',
-                template: 'modules/advertiser/views/partials/edit-creatives.html',
-                controller: 'editCreativesController',
+                template: 'modules/advertiser/views/partials/upload-creatives.html',
+                controller: 'uploadCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
             });
         };
