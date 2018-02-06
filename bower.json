@@ -66,7 +66,7 @@
     "angular-tree-dnd": "git+https://2c663350df2f1cdd63dd766c9f0a009489f1a0e9:x-oauth-basic@github.com/cliquesads/angular-tree-dnd.git#remove_node_bug_fix",
     "cliques-icons": "0.0.3",
     "datatables-buttons": "^1.1.1",
-    "angularjs-slider": "~2.3.0",
+    "angularjs-slider": "^6.5.0",
     "angular-country-state-select": "*",
     "angular-trustpass": "~0.2.0",
     "intl-tel-input": "~7.1.0",
