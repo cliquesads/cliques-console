@@ -56,9 +56,9 @@ angular.module('advertiser').directive('campaignWizard', [
                 if (deploymentMode === 'adNetwork') {
                     // Set Campaign Clique internally, will not be exposed on the front-end as front-end users
                     // won't be uploading first-party campaigns. This will be done programmatically.
-                    scope.campaign.clique = FIRST_PARTY_CLIQUE_ID;
-                } else {
                     scope.campaign.clique = ROOT_CLIQUE_ID;
+                } else {
+                    scope.campaign.clique = FIRST_PARTY_CLIQUE_ID;
                 }
 
                 // Set mins & maxes
