@@ -29,6 +29,11 @@
         </div>
         <div class="panel-body">
             <fieldset>
+                <!--<div ng-repeat="(size, series) in creativeWeightSeries">-->
+                    <flot dataset="creativeWeightSeries['Native']" options="graphOptions" callback="callback" height="200px"></flot>
+                <!--</div>-->
+            </fieldset>
+            <fieldset>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>

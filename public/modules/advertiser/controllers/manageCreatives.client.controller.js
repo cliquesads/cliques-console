@@ -30,13 +30,74 @@ angular.module('advertiser').controller('manageCreativesController', [
         $scope.campaignIndex = campaign.index;
         $scope.campaign = campaign.campaign;
 
+        /**
+         * Graph options
+         */
+        $scope.graphOptions = {
+            series: {
+                pie: {
+                    show: true,
+                    innerRadius: 0,
+                    radius: 1,
+                    label: {
+                        show: true,
+                        formatter: function (label, series) {
+                            return '<div class="flot-pie-label">' +
+                                // label + ' : ' +
+                                Math.round(series.percent) +
+                                '%</div>';
+                        },
+                        background: {
+                            opacity: 0.8,
+                            color: '#222'
+                        }
+                    },
+                }
+            },
+            legend: {
+                show: false
+            }
+        };
+
+        $scope.getCreativeGroupDims = function(crg){
+            var s = [crg.w, crg.h].join('x');
+            if (s === '1x1'){
+                s = "Native";
+            }
+            return s;
+        };
+
+        /**
+         * Set initial creative weights object for easy retrieval of initial state for comparison,
+         * and create series object for creative probability graph
+         */
         $scope.initCreativeWeights = function(){
             $scope.creativeWeights = {};
+            var creativeWeightSeries = {};
             $scope.campaign.creativegroups.forEach(function(crg){
-               crg.creatives.forEach(function(cr){
+                var size = $scope.getCreativeGroupDims(crg);
+                creativeWeightSeries[size] = [];
+                crg.creatives.forEach(function(cr){
                    $scope.creativeWeights[cr._id] = cr.weight;
-               });
+                   creativeWeightSeries[size].push({ "label": cr.name, "data": cr.weight });
+                });
             });
+
+            // loop over weight Series again to normalize
+            var normalize = function(sum){
+                return function(point){
+                    point.data = point.data / sum;
+                    return point;
+                };
+            };
+
+            for (var k in creativeWeightSeries){
+                if (creativeWeightSeries.hasOwnProperty(k)){
+                    var sum = _.sum(_.map(creativeWeightSeries[k], function(e){ return e.data;}));
+                    creativeWeightSeries[k] = _.map(creativeWeightSeries[k], normalize(sum));
+                }
+            }
+            $scope.creativeWeightSeries = creativeWeightSeries;
         };
         $scope.initCreativeWeights();
 
@@ -118,4 +179,5 @@ angular.module('advertiser').controller('manageCreativesController', [
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
             });
         };
-}]);
+
+    }]);
