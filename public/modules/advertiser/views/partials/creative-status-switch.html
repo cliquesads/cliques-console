@@ -1,0 +1,5 @@
+<label class="switch">
+    <input type="checkbox" checked="checked" ng-model="creative.active" ng-click="toggleCreativeActive()"/>
+    <span></span>
+</label>
+<div class="label" ng-class="creative.active ? 'label-success':'label-default'">{{ creative.active ? "Active":"Inactive"}}</div>
