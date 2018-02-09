@@ -18,14 +18,41 @@
             </div>
             <hr class="pt0 pb0 mt0 mb0"/>
         </div>
-        <div class="panel-body">
+        <div class="panel-body pt0">
+            <div>
+                <small class="text-muted">Bulk Actions: </small>
+                <div class="mt0">
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="activate()" analytics-on="click" analytics-event="ManageCreatives_ActivateBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-toggle-on"></i></span>Activate
+                    </button>
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="deactivate()" analytics-on="click" analytics-event="ManageCreatives_DeactivateBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-toggle-off"></i></span>Deactivate
+                    </button>
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="remove()" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-trash"></i></span>Remove
+                    </button>
+                </div>
+
+            </div>
+
+
             <fieldset>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="col-xs-0">Select</th>
-                                <th class="col-xs-1">
+                                <th class="col-xs-0">
+                                    <div class="checkbox c-checkbox mt-lg pt-sm text-center mb0">
+                                        <label>
+                                            <input type="checkbox" ng-model="select.selectAll">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </div>
+                                </th>
+                                <th class="col-xs-1 pl0 pr0">
                                     <a href="#" ng-click="sortBy('active')">
                                         Status
                                         <span ng-show="isSortedBy('active', true)" class="fa fa-caret-down"></span>

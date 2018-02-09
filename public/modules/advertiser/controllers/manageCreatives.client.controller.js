@@ -27,7 +27,11 @@ angular.module('advertiser').controller('manageCreativesController', [
          */
         $scope.sortType = ["-active","-weight"];
 
-        // Short helper function to manage sortType array logic
+        /**
+         * Short helper function to manage sortType array logic.
+         * Cycles through "ascending" > "descending" > "none" sort cycle
+         * for a given field.
+         */
         $scope.sortBy = function(field){
             var arrIndex = $scope.sortType.indexOf(field);
             var reverseIndex = $scope.sortType.indexOf('-'+field);
@@ -43,6 +47,12 @@ angular.module('advertiser').controller('manageCreativesController', [
             }
         };
 
+        /**
+         * Helper function to determine whether to show/hide sort icons
+         * @param field
+         * @param reverse
+         * @returns {boolean}
+         */
         $scope.isSortedBy = function(field, reverse){
             var isSorted = $scope.sortType.indexOf(field) > -1;
             var isSortedReverse = $scope.sortType.indexOf('-' + field) > -1;
@@ -113,6 +123,31 @@ angular.module('advertiser').controller('manageCreativesController', [
             return s;
         };
 
+        $scope.select = {
+            selectAll: false,
+            selectAny: false
+        };
+
+        $scope.$watch('campaign.creativegroups', function(newVal, oldVal){
+            if (newVal !== oldVal){
+                var creatives = [];
+                newVal.forEach(function(crg){
+                   creatives = creatives.concat(_.map(crg.creatives, function(cr){ return cr.selected; }));
+                });
+                $scope.select.selectAny = _.some(creatives);
+            }
+        }, true);
+
+        $scope.$watch('select.selectAll', function(newVal, oldVal){
+            if (oldVal !== newVal){
+                $scope.campaign.creativegroups.forEach(function(crg){
+                    crg.creatives.forEach(function(cr){
+                        cr.selected = newVal;
+                    });
+                });
+            }
+        });
+
         /**
          * Set initial creative weights object for easy retrieval of initial state for comparison,
          * and create series object for creative probability graph
@@ -155,8 +190,14 @@ angular.module('advertiser').controller('manageCreativesController', [
             }
             $scope.creativeWeightSeries = creativeWeightSeries;
         };
+        // init on first load
         $scope.initCreativeWeights();
 
+        /**
+         * Callback passed to creative status switch onActivate param
+         * @param err
+         * @param creative
+         */
         $scope.onActivate = function(err, creative){
             if (!err){
                 creative.sliderOptions.disabled = false;
@@ -164,6 +205,11 @@ angular.module('advertiser').controller('manageCreativesController', [
             }
         };
 
+        /**
+        * Callback passed to creative status switch onDeactivate param
+        * @param err
+        * @param creative
+        */
         $scope.onDeactivate = function(err, creative){
             if (!err){
                 creative.sliderOptions.disabled = true;
@@ -263,6 +309,9 @@ angular.module('advertiser').controller('manageCreativesController', [
             });
         };
 
+        /**
+         * New creatives dialog
+         */
         $scope.addNewCreatives = function(){
             ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth1000',
