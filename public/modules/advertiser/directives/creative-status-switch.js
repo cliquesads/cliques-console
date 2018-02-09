@@ -9,6 +9,8 @@ angular.module('advertiser').directive('creativeStatusSwitch', ['Notify','Creati
                 campaign: '=',
                 creativegroup: '=',
                 creative: '=',
+                onActivate: '&',
+                onDeactivate: '&'
             },
             templateUrl: 'modules/advertiser/views/partials/creative-status-switch.html',
             link: function(scope, element, attrs){
@@ -22,8 +24,10 @@ angular.module('advertiser').directive('creativeStatusSwitch', ['Notify','Creati
                         }).then(function(response){
                             Notify.alert('Your creative was successfully deactivated.',{});
                             scope.creative.active = false;
+                            scope.onDeactivate({ error: null, creative: scope.creative });
                         }, function(errorResponse){
                             Notify.alert('Error deactivating creative: ' + errorResponse.message,{status: 'danger'});
+                            scope.onDeactivate({ error: errorResponse });
                         });
                     } else {
                         CreativeActivator.activate({
@@ -34,8 +38,10 @@ angular.module('advertiser').directive('creativeStatusSwitch', ['Notify','Creati
                         }).then(function(response){
                             Notify.alert('Your creative was successfully activated.',{});
                             scope.creative.active = true;
+                            scope.onActivate({ error: null, creative: scope.creative });
                         }, function(errorResponse){
                             Notify.alert('Error activating creative: ' + errorResponse.message,{status: 'danger'});
+                            scope.onActivate({ error: errorResponse });
                         });
                     }
                 };

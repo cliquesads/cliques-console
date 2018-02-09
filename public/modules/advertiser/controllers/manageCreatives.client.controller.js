@@ -8,12 +8,89 @@ angular.module('advertiser').controller('manageCreativesController', [
     'FileUploader',
     'ngDialog',
     'Notify',
+    '$timeout',
     'NATIVE_SPECS',
-    function($scope, campaign,AdvertiserUtils,FileUploader,ngDialog, Notify, NATIVE_SPECS){
-        // Set form hidden by default
+    'COLOR_GRADIENTS',
+    function($scope, campaign,AdvertiserUtils,FileUploader,ngDialog, Notify, $timeout, NATIVE_SPECS, COLOR_GRADIENTS){
 
-        $scope.dirty = false;
         $scope.NATIVE_SPECS = NATIVE_SPECS;
+
+        /**
+         * Get Campaigns from URL state params on load
+         */
+        $scope.advertiser = campaign.advertiser;
+        $scope.campaignIndex = campaign.index;
+        $scope.campaign = campaign.campaign;
+
+        /**
+         * Table variables
+         */
+        $scope.sortType = ["-active","-weight"];
+
+        // Short helper function to manage sortType array logic
+        $scope.sortBy = function(field){
+            var arrIndex = $scope.sortType.indexOf(field);
+            var reverseIndex = $scope.sortType.indexOf('-'+field);
+            if (arrIndex > -1){
+                // reverse it
+                $scope.sortType[arrIndex] = '-'+field;
+            } else if (reverseIndex > -1){
+                // get rid of it
+                $scope.sortType.splice(reverseIndex,1);
+            } else {
+                // add it
+                $scope.sortType.push(field);
+            }
+        };
+
+        $scope.isSortedBy = function(field, reverse){
+            var isSorted = $scope.sortType.indexOf(field) > -1;
+            var isSortedReverse = $scope.sortType.indexOf('-' + field) > -1;
+            return reverse ? isSortedReverse : isSorted;
+        };
+
+
+        /**
+         * Pie graph options
+         */
+        $scope.graphOptions = {
+            series: {
+                pie: {
+                    show: true,
+                    innerRadius: 0.2,
+                    radius: 1,
+                    label: {
+                        show: true,
+                        formatter: function (label, series) {
+                            return '<div class="flot-pie-label">' +
+                                Math.round(series.percent) +
+                                '%</div>';
+                        },
+                        background: {
+                            opacity: 0.8,
+                            color: '#222'
+                        }
+                    },
+                }
+            },  
+            grid: {
+                hoverable: true
+            },
+            tooltip: true,
+            tooltipOpts: {
+                content: function(label, v){
+                    return label + '\n' + v.toFixed(2) + '%';
+                }
+            },
+            legend: {
+                show: false
+            }
+        };
+
+        /**
+         * Sets "dirty" on creative to true when slider is changed, but have to search for it by ID.
+         * @param id
+         */
         $scope.onCreativeWeightChange = function(id){
             var ids = id.split(',');
             var crgid = ids[0];
@@ -24,41 +101,10 @@ angular.module('advertiser').controller('manageCreativesController', [
         };
 
         /**
-         * Get Campaigns from URL state params on load
+         * Helper function to generate dimension string
+         * @param crg
+         * @returns {string}
          */
-        $scope.advertiser = campaign.advertiser;
-        $scope.campaignIndex = campaign.index;
-        $scope.campaign = campaign.campaign;
-
-        /**
-         * Graph options
-         */
-        $scope.graphOptions = {
-            series: {
-                pie: {
-                    show: true,
-                    innerRadius: 0,
-                    radius: 1,
-                    label: {
-                        show: true,
-                        formatter: function (label, series) {
-                            return '<div class="flot-pie-label">' +
-                                // label + ' : ' +
-                                Math.round(series.percent) +
-                                '%</div>';
-                        },
-                        background: {
-                            opacity: 0.8,
-                            color: '#222'
-                        }
-                    },
-                }
-            },
-            legend: {
-                show: false
-            }
-        };
-
         $scope.getCreativeGroupDims = function(crg){
             var s = [crg.w, crg.h].join('x');
             if (s === '1x1'){
@@ -75,11 +121,21 @@ angular.module('advertiser').controller('manageCreativesController', [
             $scope.creativeWeights = {};
             var creativeWeightSeries = {};
             $scope.campaign.creativegroups.forEach(function(crg){
+                // counter variable to select color
+                $scope.creativeWeights[crg._id] = {};
+                var i = 1;
                 var size = $scope.getCreativeGroupDims(crg);
                 creativeWeightSeries[size] = [];
                 crg.creatives.forEach(function(cr){
-                   $scope.creativeWeights[cr._id] = cr.weight;
-                   creativeWeightSeries[size].push({ "label": cr.name, "data": cr.weight });
+                   $scope.creativeWeights[crg._id][cr._id] = cr.weight;
+                   if (cr.active) {
+                       creativeWeightSeries[size].push({
+                           "label": cr.name,
+                           "data": cr.weight,
+                           "color": COLOR_GRADIENTS.green10[i % COLOR_GRADIENTS.green10.length]
+                       });
+                       i++;
+                   }
                 });
             });
 
@@ -101,6 +157,24 @@ angular.module('advertiser').controller('manageCreativesController', [
         };
         $scope.initCreativeWeights();
 
+        $scope.onActivate = function(err, creative){
+            if (!err){
+                creative.sliderOptions.disabled = false;
+                creative.sliderOptions.hidePointerLabels = false;
+            }
+        };
+
+        $scope.onDeactivate = function(err, creative){
+            if (!err){
+                creative.sliderOptions.disabled = true;
+                creative.sliderOptions.hidePointerLabels = true;
+            }
+        };
+
+        /**
+         * Creative preview dialog
+         * @param creative
+         */
         $scope.creativePreview = function(creative){
             var dialogClass = 'dialogwidth800';
             if (creative.w >= 800) {
@@ -114,12 +188,15 @@ angular.module('advertiser').controller('manageCreativesController', [
             });
         };
 
-        // almost trivial wrapper for scope.advertiser.$update that just ensures campaign
-        // is reset properly in scope when advertiser is updated, and sets scope.saveerror if error
-        // is thrown.
+        /**
+         * Almost trivial wrapper for scope.advertiser.$update that just ensures campaign
+         * is reset properly in scope when advertiser is updated, and sets scope.saveerror if error
+         * is thrown.
+         */
         $scope.update = function(success, error){
             this.advertiser.$update(function(response){
                 $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                // Reset creative weights
                 $scope.initCreativeWeights();
                 if (success) success(response);
             },function(errorResponse){
@@ -128,15 +205,30 @@ angular.module('advertiser').controller('manageCreativesController', [
             });
         };
 
-        $scope.updateCreative = function(creative){
+        /**
+         * Handler for "update" button on slider.
+         * @param creativeGroup
+         * @param creative
+         */
+        $scope.updateCreative = function(creativeGroup, creative){
+            creative.weight = $scope.creativeWeights[creativeGroup._id][creative._id];
             $scope.update(function(response){
                 creative.dirty = false;
             }, function(errorResponse){
                 creative.dirty = false;
-                creative.weight = $scope.creativeWeights[creative._id];
+                $scope.creativeWeights[creativeGroup._id][creative._id] = creative.weight;
             });
         };
 
+        /**
+         * Handler for remove button. Removes creative, and removes creative group if
+         * removing creatives results in an empty creative group.
+         *
+         * Also shows "are you sure" dialog for user to confirm.
+         *
+         * @param creativegroup
+         * @param creative
+         */
         $scope.remove = function(creativegroup, creative){
             ngDialog.openConfirm({
                 template:'\
