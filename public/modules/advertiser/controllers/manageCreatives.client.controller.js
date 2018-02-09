@@ -4,14 +4,17 @@
 angular.module('advertiser').controller('manageCreativesController', [
     '$scope',
     'campaign',
+    'CreativeActivator',
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
     'Notify',
     '$timeout',
+    '$q',
     'NATIVE_SPECS',
     'COLOR_GRADIENTS',
-    function($scope, campaign,AdvertiserUtils,FileUploader,ngDialog, Notify, $timeout, NATIVE_SPECS, COLOR_GRADIENTS){
+    function($scope, campaign,CreativeActivator,AdvertiserUtils,FileUploader,
+             ngDialog, Notify, $timeout, $q, NATIVE_SPECS, COLOR_GRADIENTS){
 
         $scope.NATIVE_SPECS = NATIVE_SPECS;
 
@@ -147,6 +150,85 @@ angular.module('advertiser').controller('manageCreativesController', [
                 });
             }
         });
+
+        /**
+         * Bulk activate creatives. Calls activate endpoint serially for each creative,
+         * so not super performant for now. Could use a bulk API endpoint.
+         */
+        $scope.deactivateBulk = function(){
+            var promises = [];
+            var after = [];
+            $scope.campaign.creativegroups.forEach(function(crg) {
+                crg.creatives.forEach(function (cr) {
+                    if (cr.selected && cr.active){
+                        promises.push(CreativeActivator.deactivate({
+                            advertiserId: $scope.advertiser._id,
+                            campaignId: $scope.campaign._id,
+                            creativeGroupId: crg._id,
+                            creativeId: cr._id
+                        }));
+                        after.push(function(){
+                            cr.active = false;
+                            cr.selected = false;
+                            $scope.select.selectAll = false;
+                            $scope.onDeactivate(null, cr);
+                        });
+                    } else if (cr.selected){
+                        after.push(function(){
+                            cr.selected = false;
+                        });
+                    }
+                });
+            });
+            $q.all(promises).then(function(){
+                Notify.alert('Creatives successfully deactivated.', {});
+                after.forEach(function(f){
+                    f.call(this);
+                });
+            }, function(error){
+                Notify.alert('Error deactivating creatives: ' + error.message, {status: 'danger'});
+            });
+        };
+
+        /**
+         * Bulk activate creatives. Calls activate endpoint serially for each creative,
+         * so not super performant for now. Could use a bulk API endpoint.
+         */
+        $scope.activateBulk = function(){
+            var promises = [];
+            var after = [];
+            $scope.campaign.creativegroups.forEach(function(crg) {
+                crg.creatives.forEach(function (cr) {
+                    if (cr.selected && !cr.active){
+                        promises.push(CreativeActivator.activate({
+                            advertiserId: $scope.advertiser._id,
+                            campaignId: $scope.campaign._id,
+                            creativeGroupId: crg._id,
+                            creativeId: cr._id
+                        }));
+                        after.push(function(){
+                            cr.active = true;
+                            cr.selected = false;
+                            $scope.select.selectAll = false;
+                            $scope.onActivate(null, cr);
+                        });
+                    } else if (cr.selected){
+                        after.push(function(){
+                            cr.selected = false;
+                        });
+                    }
+
+                });
+            });
+            $q.all(promises).then(function(){
+                Notify.alert('Creatives successfully activated.', {});
+                after.forEach(function(f){
+                    f.call(this);
+                });
+            }, function(error){
+                Notify.alert('Error activating creatives: ' + error.message, {status: 'danger'});
+            });
+        };
 
         /**
          * Set initial creative weights object for easy retrieval of initial state for comparison,

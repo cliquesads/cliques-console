@@ -23,15 +23,15 @@
                 <small class="text-muted">Bulk Actions: </small>
                 <div class="mt0">
                     <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
-                            ng-click="activate()" analytics-on="click" analytics-event="ManageCreatives_ActivateBulkCreatives">
+                            ng-click="activateBulk()" ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_ActivateBulkCreatives">
                         <span class="btn-label"><i class="fa fa-toggle-on"></i></span>Activate
                     </button>
                     <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
-                            ng-click="deactivate()" analytics-on="click" analytics-event="ManageCreatives_DeactivateBulkCreatives">
+                            ng-click="deactivateBulk()" ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_DeactivateBulkCreatives">
                         <span class="btn-label"><i class="fa fa-toggle-off"></i></span>Deactivate
                     </button>
                     <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
-                            ng-click="remove()" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
+                            ng-click="remove()"  ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
                         <span class="btn-label"><i class="fa fa-trash"></i></span>Remove
                     </button>
                 </div>
