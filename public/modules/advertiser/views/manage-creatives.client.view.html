@@ -31,14 +31,11 @@
                         <span class="btn-label"><i class="fa fa-toggle-off"></i></span>Deactivate
                     </button>
                     <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
-                            ng-click="remove()"  ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
+                            ng-click="removeSelected()"  ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
                         <span class="btn-label"><i class="fa fa-trash"></i></span>Remove
                     </button>
                 </div>
-
             </div>
-
-
             <fieldset>
                 <div class="table-responsive">
                     <table class="table table-striped">

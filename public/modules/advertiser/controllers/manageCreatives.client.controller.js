@@ -4,7 +4,9 @@
 angular.module('advertiser').controller('manageCreativesController', [
     '$scope',
     'campaign',
+    'Advertiser',
     'CreativeActivator',
+    'CreativeRemover',
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
@@ -13,7 +15,7 @@ angular.module('advertiser').controller('manageCreativesController', [
     '$q',
     'NATIVE_SPECS',
     'COLOR_GRADIENTS',
-    function($scope, campaign,CreativeActivator,AdvertiserUtils,FileUploader,
+    function($scope, campaign, Advertiser, CreativeActivator,CreativeRemover,AdvertiserUtils,FileUploader,
              ngDialog, Notify, $timeout, $q, NATIVE_SPECS, COLOR_GRADIENTS){
 
         $scope.NATIVE_SPECS = NATIVE_SPECS;
@@ -128,15 +130,23 @@ angular.module('advertiser').controller('manageCreativesController', [
 
         $scope.select = {
             selectAll: false,
-            selectAny: false
+            selectAny: false,
+            count: 0
         };
 
+        /**
+         * Watcher to set select control variables based on how many / which creatives
+         * currently selected
+         */
         $scope.$watch('campaign.creativegroups', function(newVal, oldVal){
             if (newVal !== oldVal){
                 var creatives = [];
                 newVal.forEach(function(crg){
                    creatives = creatives.concat(_.map(crg.creatives, function(cr){ return cr.selected; }));
                 });
+                $scope.select.count = creatives.filter(function(cr){
+                    return cr;
+                }).length;
                 $scope.select.selectAny = _.some(creatives);
             }
         }, true);
@@ -356,6 +366,7 @@ angular.module('advertiser').controller('manageCreativesController', [
          *
          * @param creativegroup
          * @param creative
+         * @param selected
          */
         $scope.remove = function(creativegroup, creative){
             ngDialog.openConfirm({
@@ -368,28 +379,67 @@ angular.module('advertiser').controller('manageCreativesController', [
                 plain: true
             }).then(function(val){
                 if (val === 1){
-                    var removedCreative;
-                    var removedCreativeGroup;
-                    // first find indices of desired creative
-                    var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup; });
-                    var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative; });
-                    // remove from creatives document array
-                    removedCreative = $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
-                    //remove creative group if it doesn't contain any creatives anymore
-                    if ($scope.campaign.creativegroups[crg_ind].creatives.length === 0){
-                        removedCreativeGroup = $scope.campaign.creativegroups.splice(crg_ind, 1);
-                    }
-                    $scope.update(function(response){},
-                    function(errorResponse){
-                        // add back in if
-                        if (removedCreativeGroup){
-                            $scope.campaign.creativegroups.splice(crg_ind, 0, removedCreativeGroup[0]);
-                        }
-                        $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 0, removedCreative[0]);
+                    CreativeRemover.remove({
+                        advertiserId: $scope.advertiser._id,
+                        campaignId: $scope.campaign._id,
+                        creativeGroupId: creativegroup._id,
+                        creativeId: creative._id
+                    }).then(function(response){
+                        // response is updated Advertiser object, so have to refresh $scope.advertiser
+                        // and all other related variables
+                        $scope.advertiser = new Advertiser(response.data);
+                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                        $scope.initCreativeWeights();
+                    }, function(error){
+                        Notify.alert('Error removing creative: ' + error.message, {status: 'danger'});
                     });
                 }
             });
         };
+
+        $scope.removeSelected = function(){
+            ngDialog.openConfirm({
+                template:'\
+                            <p>Are you sure you want to delete these ' + $scope.select.count + ' creative(s)? This cannot be undone.</p>\
+                            <div class="ngdialog-buttons">\
+                                <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
+                                <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
+                        </div>',
+                plain: true
+            }).then(function(val) {
+                if (val === 1) {
+                    var promises = [];
+                    $scope.campaign.creativegroups.forEach(function(crg){
+                        crg.creatives.forEach(function(cr){
+                            if (cr.selected){
+                                // remove from creative document array
+                                promises.push(CreativeRemover.remove({
+                                    advertiserId: $scope.advertiser._id,
+                                    campaignId: $scope.campaign._id,
+                                    creativeGroupId: crg._id,
+                                    creativeId: cr._id
+                                }));
+                            }
+                        });
+                    });
+                    $q.all(promises).then(function(){
+                        Notify.alert('Creatives successfully removed.', {});
+                        $scope.advertiser = Advertiser
+                            .get({ advertiserId: $scope.advertiser._id })
+                            .then(function(advertiser){
+                                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                                $scope.initCreativeWeights();
+                            }, function(error){
+                                Notify.alert('Error resetting Advertiser in $scope: ' + error.message, {status: 'danger'});
+                            });
+                    }, function(error){
+                        Notify.alert('Error removing creatives: ' + error.message, {status: 'danger'});
+                    });
+                }
+            });
+        };
+
+
 
         /**
          * New creatives dialog

@@ -577,6 +577,31 @@ module.exports = function(db) {
                                 }
                             });
                         }
+                    },
+                    remove: function(req, res){
+                        var treeEntities = _getTreeEntitiesFromRequest(req);
+                        var advertiser = treeEntities.advertiser,
+                            campaign = treeEntities.campaign,
+                            creativegroup = treeEntities.creativegroup,
+                            creative = treeEntities.creative;
+                        creative.remove();
+
+                        // if creativegroup is now empty, it needs to be removed as well
+                        if (creativegroup.creatives.length === 0) {
+                            creativegroup.remove();
+                        }
+                        advertiser.save(function (err) {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: errorHandler.getAndLogErrorMessage(err)
+                                });
+                            } else {
+                                // update bidder if successful
+                                service.publishers.updateBidder(campaign.id);
+                                // return updated Advertiser in response
+                                return res.json(advertiser);
+                            }
+                        });
                     }
                 }
             },
