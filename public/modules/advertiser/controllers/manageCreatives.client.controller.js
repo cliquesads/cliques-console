@@ -397,10 +397,15 @@ angular.module('advertiser').controller('manageCreativesController', [
             });
         };
 
+        /**
+         * Handler for removing creatives in selection, calls different endpoint for bulk removal.
+         */
         $scope.removeSelected = function(){
+            var selectedCount = $scope.select.count;
             ngDialog.openConfirm({
                 template:'\
-                            <p>Are you sure you want to delete these ' + $scope.select.count + ' creative(s)? This cannot be undone.</p>\
+                            <p>Are you sure you want to delete these ' + selectedCount + ' creative(s)?</p>\
+                            <p>This <strong>cannot</strong> be undone. We hope you know what you\'re doing!</p>\
                             <div class="ngdialog-buttons">\
                                 <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
                                 <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
@@ -408,38 +413,32 @@ angular.module('advertiser').controller('manageCreativesController', [
                 plain: true
             }).then(function(val) {
                 if (val === 1) {
-                    var promises = [];
+                    var creatives = [];
                     $scope.campaign.creativegroups.forEach(function(crg){
                         crg.creatives.forEach(function(cr){
                             if (cr.selected){
                                 // remove from creative document array
-                                promises.push(CreativeRemover.remove({
-                                    advertiserId: $scope.advertiser._id,
-                                    campaignId: $scope.campaign._id,
-                                    creativeGroupId: crg._id,
-                                    creativeId: cr._id
-                                }));
+                                creatives.push(cr._id);
                             }
                         });
                     });
-                    $q.all(promises).then(function(){
-                        Notify.alert('Creatives successfully removed.', {});
-                        $scope.advertiser = Advertiser
-                            .get({ advertiserId: $scope.advertiser._id })
-                            .then(function(advertiser){
-                                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-                                $scope.initCreativeWeights();
-                            }, function(error){
-                                Notify.alert('Error resetting Advertiser in $scope: ' + error.message, {status: 'danger'});
-                            });
+                    CreativeRemover.removeMany({
+                        advertiserId: $scope.advertiser._id,
+                        campaignId: $scope.campaign._id,
+                        creatives: creatives
+                    }).then(function(response){
+                        // response is updated Advertiser object, so have to refresh $scope.advertiser
+                        // and all other related variables
+                        $scope.advertiser = new Advertiser(response.data);
+                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                        $scope.initCreativeWeights();
+                        Notify.alert(selectedCount + ' creatives successfully removed.', {status: 'success'});
                     }, function(error){
                         Notify.alert('Error removing creatives: ' + error.message, {status: 'danger'});
                     });
                 }
             });
         };
-
-
 
         /**
          * New creatives dialog

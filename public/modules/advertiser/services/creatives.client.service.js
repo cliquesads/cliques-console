@@ -29,6 +29,11 @@ angular.module('advertiser').factory('CreativeActivator',['$http',
                 + '/creative/' + params.creativeId;
             return $http.delete(path, {});
         };
+        factory.removeMany = function(params){
+            var path = '/console/advertiser/' + params.advertiserId
+                + '/campaign/' + params.campaignId + '/remove-creatives';
+            return $http.put(path, { creatives: params.creatives });
+        };
         return factory;
     }
 ]);

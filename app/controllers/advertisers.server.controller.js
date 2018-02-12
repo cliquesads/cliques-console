@@ -602,6 +602,49 @@ module.exports = function(db) {
                                 return res.json(advertiser);
                             }
                         });
+                    },
+                    removeMany: function(req, res){
+                        var advertiser = req.advertiser,
+                            campaignId = req.param('campaignId');
+                        var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
+                            return c._id.toString() === campaignId;
+                        })];
+
+                        var creatives = req.body.creatives;
+                        if (!creatives){
+                            return res.status(400).send({
+                                message: "No creative ID's provided. " +
+                                "You must provide an array of creative IDs to remove in request body `creatives` " +
+                                "parameter."
+                            });
+                        }
+                        creatives.forEach(function(cr){
+                            // find creativeGroup containing this creative
+                            var creativegroup = _.find(campaign.creativegroups, function (crg) {
+                                return _.find(crg.creatives, function(creative){
+                                    return creative.id === cr;
+                                });
+                            });
+                            // now remove creative from creativeGroup
+                            creativegroup.creatives.id(cr).remove();
+                            // if creativegroup is now empty, it needs to be removed as well
+                            if (creativegroup.creatives.length === 0) {
+                                creativegroup.remove();
+                            }
+                        });
+
+                        advertiser.save(function (err) {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: errorHandler.getAndLogErrorMessage(err)
+                                });
+                            } else {
+                                // update bidder if successful
+                                service.publishers.updateBidder(campaign.id);
+                                // return updated Advertiser in response
+                                return res.json(advertiser);
+                            }
+                        });
                     }
                 }
             },
