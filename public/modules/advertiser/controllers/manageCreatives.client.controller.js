@@ -27,9 +27,134 @@ angular.module('advertiser').controller('manageCreativesController', [
         $scope.campaignIndex = campaign.index;
         $scope.campaign = campaign.campaign;
 
+        // var to store number of total creatives. Since creatives are nested in creativegroups, not as easy
+        // as just taking a single array length
+        $scope.creativesCount = 0;
+
+        // ####################################################################### //
+        // ############################## GLOBAL HELPERS ######################### //
+        // ####################################################################### //
+
         /**
-         * Table variables
+         * Helper function to generate dimension string
+         * @param crg
+         * @returns {string}
          */
+        $scope.getCreativeGroupDims = function(crg){
+            var s = [crg.w, crg.h].join('x');
+            if (s === '1x1'){
+                s = "Native";
+            }
+            return s;
+        };
+
+        /**
+         * Almost trivial wrapper for scope.advertiser.$update that just ensures campaign
+         * is reset properly in scope when advertiser is updated, and sets scope.saveerror if error
+         * is thrown.
+         */
+        $scope.update = function(success, error){
+            this.advertiser.$update(function(response){
+                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                // Reset creative weights
+                $scope.initCreativeWeights();
+                if (success) success(response);
+            },function(errorResponse){
+                if (error) error(errorResponse);
+                $scope.saveerror = errorResponse.data.message;
+            });
+        };
+
+        /**
+         * Set initial creative weights object for easy retrieval of initial state for comparison,
+         * and create series object for creative probability graph.
+         *
+         * Also set select.count variable, which contains the total # of creatives
+         */
+        $scope._onAdvertiserLoad = function(){
+            $scope.creativeWeights = {};
+            var creativeWeightSeries = {};
+            $scope.campaign.creativegroups.forEach(function(crg){
+                // counter variable to select color
+                $scope.creativeWeights[crg._id] = {};
+                var i = 1;
+                var size = $scope.getCreativeGroupDims(crg);
+                creativeWeightSeries[size] = [];
+                crg.creatives.forEach(function(cr){
+                    $scope.creativeWeights[crg._id][cr._id] = cr.weight;
+                    if (cr.active) {
+                        creativeWeightSeries[size].push({
+                            "label": cr.name,
+                            "data": cr.weight,
+                            "color": COLOR_GRADIENTS.green10[i % COLOR_GRADIENTS.green10.length]
+                        });
+                        i++;
+                    }
+                    // increment creativeCount
+                    $scope.creativesCount++;
+                });
+            });
+
+            // loop over weight Series again to normalize
+            var normalize = function(sum){
+                return function(point){
+                    point.data = point.data / sum;
+                    return point;
+                };
+            };
+
+            for (var k in creativeWeightSeries){
+                if (creativeWeightSeries.hasOwnProperty(k)){
+                    var sum = _.sum(_.map(creativeWeightSeries[k], function(e){ return e.data;}));
+                    creativeWeightSeries[k] = _.map(creativeWeightSeries[k], normalize(sum));
+                }
+            }
+            $scope.creativeWeightSeries = creativeWeightSeries;
+        };
+
+        // init on first load
+        $scope._onAdvertiserLoad();
+
+
+
+        // ####################################################################### //
+        // ############################## DIALOG BOXES ########################### //
+        // ####################################################################### //
+
+        /**
+         * Creative preview dialog
+         * @param creative
+         */
+        $scope.creativePreview = function(creative){
+            var dialogClass = 'dialogwidth800';
+            if (creative.w >= 800) {
+                dialogClass = 'dialogwidth1000';
+            }
+            ngDialog.open({
+                className: 'ngdialog-theme-default ' + dialogClass,
+                template: 'modules/advertiser/views/partials/creative-preview.html',
+                controller: 'creativePreviewController',
+                data: {creative: creative, advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+        };
+
+        /**
+         * New creatives dialog
+         */
+        $scope.addNewCreatives = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth1000',
+                template: 'modules/advertiser/views/partials/upload-creatives.html',
+                controller: 'uploadCreativesController',
+                data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+        };
+
+        // ####################################################################### //
+        // #################### CREATIVES TABLE VARS & METHODS ################### //
+        // ####################################################################### //
+
+        // Table variables
         $scope.sortType = ["-active","-weight"];
 
         /**
@@ -65,9 +190,10 @@ angular.module('advertiser').controller('manageCreativesController', [
         };
 
 
-        /**
-         * Pie graph options
-         */
+        // ####################################################################### //
+        // #################### PIE CHART OPTIONS & FUNCTIONS #################### //
+        // ####################################################################### //
+
         $scope.graphOptions = {
             series: {
                 pie: {
@@ -102,6 +228,11 @@ angular.module('advertiser').controller('manageCreativesController', [
             }
         };
 
+
+        // ####################################################################### //
+        // #################### WEIGHT SLIDER CONTROL FUNCTIONS ################## //
+        // ####################################################################### //
+
         /**
          * Sets "dirty" on creative to true when slider is changed, but have to search for it by ID.
          * @param id
@@ -116,17 +247,23 @@ angular.module('advertiser').controller('manageCreativesController', [
         };
 
         /**
-         * Helper function to generate dimension string
-         * @param crg
-         * @returns {string}
+         * Handler for "update" button on slider.
+         * @param creativeGroup
+         * @param creative
          */
-        $scope.getCreativeGroupDims = function(crg){
-            var s = [crg.w, crg.h].join('x');
-            if (s === '1x1'){
-                s = "Native";
-            }
-            return s;
+        $scope.updateCreative = function(creativeGroup, creative){
+            creative.weight = $scope.creativeWeights[creativeGroup._id][creative._id];
+            $scope.update(function(response){
+                creative.dirty = false;
+            }, function(errorResponse){
+                creative.dirty = false;
+                $scope.creativeWeights[creativeGroup._id][creative._id] = creative.weight;
+            });
         };
+
+        // ####################################################################### //
+        // #################### SELECT MULTIPLE VARS & WATCHERS ################## //
+        // ####################################################################### //
 
         $scope.select = {
             selectAll: false,
@@ -161,8 +298,13 @@ angular.module('advertiser').controller('manageCreativesController', [
             }
         });
 
+
+        // ####################################################################### //
+        // ################# BULK & INDIVIDUAL ACTIONS CONTROLS ################## //
+        // ####################################################################### //
+
         /**
-         * Bulk activate creatives. Calls activate endpoint serially for each creative,
+         * Bulk deactivate creatives. Calls activate endpoint serially for each creative,
          * so not super performant for now. Could use a bulk API endpoint.
          */
         $scope.deactivateBulk = function(){
@@ -241,51 +383,6 @@ angular.module('advertiser').controller('manageCreativesController', [
         };
 
         /**
-         * Set initial creative weights object for easy retrieval of initial state for comparison,
-         * and create series object for creative probability graph
-         */
-        $scope.initCreativeWeights = function(){
-            $scope.creativeWeights = {};
-            var creativeWeightSeries = {};
-            $scope.campaign.creativegroups.forEach(function(crg){
-                // counter variable to select color
-                $scope.creativeWeights[crg._id] = {};
-                var i = 1;
-                var size = $scope.getCreativeGroupDims(crg);
-                creativeWeightSeries[size] = [];
-                crg.creatives.forEach(function(cr){
-                   $scope.creativeWeights[crg._id][cr._id] = cr.weight;
-                   if (cr.active) {
-                       creativeWeightSeries[size].push({
-                           "label": cr.name,
-                           "data": cr.weight,
-                           "color": COLOR_GRADIENTS.green10[i % COLOR_GRADIENTS.green10.length]
-                       });
-                       i++;
-                   }
-                });
-            });
-
-            // loop over weight Series again to normalize
-            var normalize = function(sum){
-                return function(point){
-                    point.data = point.data / sum;
-                    return point;
-                };
-            };
-
-            for (var k in creativeWeightSeries){
-                if (creativeWeightSeries.hasOwnProperty(k)){
-                    var sum = _.sum(_.map(creativeWeightSeries[k], function(e){ return e.data;}));
-                    creativeWeightSeries[k] = _.map(creativeWeightSeries[k], normalize(sum));
-                }
-            }
-            $scope.creativeWeightSeries = creativeWeightSeries;
-        };
-        // init on first load
-        $scope.initCreativeWeights();
-
-        /**
          * Callback passed to creative status switch onActivate param
          * @param err
          * @param creative
@@ -307,55 +404,6 @@ angular.module('advertiser').controller('manageCreativesController', [
                 creative.sliderOptions.disabled = true;
                 creative.sliderOptions.hidePointerLabels = true;
             }
-        };
-
-        /**
-         * Creative preview dialog
-         * @param creative
-         */
-        $scope.creativePreview = function(creative){
-            var dialogClass = 'dialogwidth800';
-            if (creative.w >= 800) {
-                dialogClass = 'dialogwidth1000';
-            }
-            ngDialog.open({
-                className: 'ngdialog-theme-default ' + dialogClass,
-                template: 'modules/advertiser/views/partials/creative-preview.html',
-                controller: 'creativePreviewController',
-                data: {creative: creative, advertiser: $scope.advertiser, campaign: $scope.campaign}
-            });
-        };
-
-        /**
-         * Almost trivial wrapper for scope.advertiser.$update that just ensures campaign
-         * is reset properly in scope when advertiser is updated, and sets scope.saveerror if error
-         * is thrown.
-         */
-        $scope.update = function(success, error){
-            this.advertiser.$update(function(response){
-                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-                // Reset creative weights
-                $scope.initCreativeWeights();
-                if (success) success(response);
-            },function(errorResponse){
-                if (error) error(errorResponse);
-                $scope.saveerror = errorResponse.data.message;
-            });
-        };
-
-        /**
-         * Handler for "update" button on slider.
-         * @param creativeGroup
-         * @param creative
-         */
-        $scope.updateCreative = function(creativeGroup, creative){
-            creative.weight = $scope.creativeWeights[creativeGroup._id][creative._id];
-            $scope.update(function(response){
-                creative.dirty = false;
-            }, function(errorResponse){
-                creative.dirty = false;
-                $scope.creativeWeights[creativeGroup._id][creative._id] = creative.weight;
-            });
         };
 
         /**
@@ -414,6 +462,7 @@ angular.module('advertiser').controller('manageCreativesController', [
             }).then(function(val) {
                 if (val === 1) {
                     var creatives = [];
+                    // find selected creatives and add ID's to array to pass to request body
                     $scope.campaign.creativegroups.forEach(function(crg){
                         crg.creatives.forEach(function(cr){
                             if (cr.selected){
@@ -439,17 +488,4 @@ angular.module('advertiser').controller('manageCreativesController', [
                 }
             });
         };
-
-        /**
-         * New creatives dialog
-         */
-        $scope.addNewCreatives = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth1000',
-                template: 'modules/advertiser/views/partials/upload-creatives.html',
-                controller: 'uploadCreativesController',
-                data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
-            });
-        };
-
     }]);

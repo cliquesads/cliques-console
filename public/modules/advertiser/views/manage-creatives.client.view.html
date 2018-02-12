@@ -20,7 +20,7 @@
         </div>
         <div class="panel-body pt0">
             <div>
-                <small class="text-muted">Bulk Actions: </small>
+                <small ng-show="select.count">Bulk Actions: </small>
                 <div class="mt0">
                     <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
                             ng-click="activateBulk()" ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_ActivateBulkCreatives">
@@ -36,11 +36,14 @@
                     </button>
                 </div>
             </div>
+            <div ng-class="{'text-muted': !select.count }" class="pt">
+                <strong>{{ select.count }}</strong> / {{ creativesCount }} creatives selected
+            </div>
             <fieldset>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
-                            <tr>
+                            <tr class="mt0 pt0">
                                 <th class="col-xs-0">
                                     <div class="checkbox c-checkbox mt-lg pt-sm text-center mb0">
                                         <label>
