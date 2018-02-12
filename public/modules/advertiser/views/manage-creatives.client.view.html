@@ -95,6 +95,13 @@
                             </tr>
                         </thead>
                         <tbody ng-repeat="creativegroup in campaign.creativegroups">
+                            <tr>
+                                <td colspan="8" class="subdivider-row pl-xl ml-xl text-muted">
+                                    <strong>
+                                        <i>{{ creativegroup.type === "native" ? "Native" : creativegroup.w + "x" + creativegroup.h }}</i>
+                                    </strong>
+                                </td>
+                            </tr>
                             <tr ng-repeat="creative in creativegroup.creatives | orderBy:sortType">
                                 <td class="text-center">
                                     <div class="checkbox c-checkbox mt-lg pt-sm">

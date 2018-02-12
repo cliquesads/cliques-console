@@ -41,9 +41,11 @@ angular.module('advertiser').controller('manageCreativesController', [
          * @returns {string}
          */
         $scope.getCreativeGroupDims = function(crg){
-            var s = [crg.w, crg.h].join('x');
-            if (s === '1x1'){
+            var s;
+            if (crg.type === 'native'){
                 s = "Native";
+            } else {
+                s = [crg.w, crg.h].join('x');
             }
             return s;
         };
