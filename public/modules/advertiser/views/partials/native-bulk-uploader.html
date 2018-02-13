@@ -4,7 +4,7 @@
         <div nv-file-drop="" uploader="uploader">
             <div ng-show="uploader.isHTML5">
                 <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
-                    <h4><i class="fa fa-image"></i> Drag Your Native Ad Images Here</h4>
+                    <h4><i class="fa fa-table"></i> Drag Your Excel Files Here</h4>
                     <p>Each image will be automatically cropped & resized to fit each Site's native placement.</p>
                     <p><small class="text-muted">Supported File Types: <em>.png .jpeg</em></small></p>
                     <p><small class="text-muted">Minimum Dimensions:<em> {{ NATIVE_SPECS.image.minHeightPx }}x{{ NATIVE_SPECS.image.minWidthPx }}</em></small></p>
@@ -17,7 +17,7 @@
     </div>
     <br/>
     <div class="row" data-ng-show="uploader.queue.length">
-        <form action="#" name="nativeCreativeUploadQueue" id="nativeCreativeUploadQueue" ng-submit="" novalidate="">
+        <form action="#" name="nativeBulkUploadQueue" id="nativeCreativeUploadQueue" ng-submit="" novalidate="">
             <p ng-if="uploader.queue.length" class="pull-right label label-primary">Queue length: {{ uploader.queue.length }}</p>
             <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
             <span ng-if="uploader.queue.length">

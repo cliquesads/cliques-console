@@ -49,9 +49,9 @@ angular.module('advertiser').controller('uploadCreativesController', [
             });
         };
 
-        //#################################//
-        //######### FILE UPLOADER #########//
-        //#################################//
+        //#########################################//
+        //######### DISPLAY FILE UPLOADER #########//
+        //#########################################//
 
         var uploader = $scope.uploader = new FileUploader({
             url: 'console/creativeassets'
@@ -99,9 +99,9 @@ angular.module('advertiser').controller('uploadCreativesController', [
             return $('#creativeUploadQueue').parsley().validate();
         };
 
-        //#################################//
-        //######### FILE UPLOADER #########//
-        //#################################//
+        //########################################//
+        //######### NATIVE FILE UPLOADER #########//
+        //########################################//
 
         var nativeUploader = $scope.nativeUploader = new FileUploader({
             url: 'console/native-images'
@@ -132,6 +132,14 @@ angular.module('advertiser').controller('uploadCreativesController', [
                 }, function(errorResponse){});
             });
         };
+
+        //########################################//
+        //######### NATIVE FILE UPLOADER #########//
+        //########################################//
+
+        var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
+
+        $scope.nativeUploader.onCompleteAll = function(){};
 
         /**
          * Wrapper for uploader.uploadAll() which allows form to pass
