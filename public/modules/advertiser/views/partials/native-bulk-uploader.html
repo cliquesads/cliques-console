@@ -4,87 +4,110 @@
         <div nv-file-drop="" uploader="uploader">
             <div ng-show="uploader.isHTML5">
                 <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
-                    <h4><i class="fa fa-table"></i> Drag Your Excel Files Here</h4>
-                    <p>Each image will be automatically cropped & resized to fit each Site's native placement.</p>
-                    <p><small class="text-muted">Supported File Types: <em>.png .jpeg</em></small></p>
-                    <p><small class="text-muted">Minimum Dimensions:<em> {{ NATIVE_SPECS.image.minHeightPx }}x{{ NATIVE_SPECS.image.minWidthPx }}</em></small></p>
-                    <p><small class="text-muted">Maximum Dimensions:<em> {{ NATIVE_SPECS.image.maxHeightPx }}x{{ NATIVE_SPECS.image.maxWidthPx }}</em></small></p>
-                    <p><small class="text-muted">Max File Size:<em> {{ NATIVE_SPECS.image.maxSizeKb }} KB</em></small></p>
+                    <h4><i class="fa fa-table"></i> Drag Excel / CSV Files Here</h4>
+                    <p><small class="text-muted">Supported File Types: <em>.xls .xlsx .csv</em></small></p>
+                    <p><strong>Spreadsheet format:</strong></p>
+                    <div class="table-responsive table-striped table-bordered table-hover">
+                        <table class="table">
+                            <thead>
+                                <th>image_url*</th>
+                                <th>headline*</th>
+                                <th>description*</th>
+                                <th>click_url*</th>
+                                <th>name</th>
+                                <th>category</th>
+                                <th>imp_tracker</th>
+                                <th>click_tracker</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="word-break: break-all;">
+                                        Absolute URL to JPEG or PNG image asset.
+                                    </td>
+                                    <td>
+                                        Min {{ NATIVE_SPECS.headline.minChars }} characters; max {{ NATIVE_SPECS.headline.maxChars }}
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        Min {{ NATIVE_SPECS.headline.minChars }} characters; max {{ NATIVE_SPECS.headline.maxChars }}
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        URL to redirect to on click, i.e. your landing page.
+                                    </td>
+                                    <td>
+                                        <strong>Optional</strong> Name of creative. Defaults to image filename if blank.
+                                    </td>
+                                    <td>
+                                        <strong>Optional</strong> Category name to use for this creative. Defaults to <strong>Sponsored</strong> if left blank.
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <strong>Optional</strong> 3rd party impression tracker URL.
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <strong>Optional</strong> 3rd party click tracker URL.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="word-break: break-all;">
+                                        <small>
+                                            <i><strong>Example:</strong> https://example.com/myimage.jpg</i>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i><strong>Example:</strong> 10 Things You Didn't Know About Ardvarks</i>
+                                        </small>
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <small>
+                                            <i>
+                                                <strong>Example:</strong> Here's a list of 10 things you didn't know about ardvarks,
+                                                please read it in all of its glory.
+                                            </i>
+                                        </small>
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <small>
+                                            <i>
+                                                <strong>Example:</strong> https://ardvarks.com/sweet-offer?utm_source=Cliques&utm_medium=native
+                                            </i>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i>
+                                                <strong>Example:</strong> 10 Things About Ardvarks
+                                            </i>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i><strong>Example:</strong> Ardvarks</i>
+                                        </small>
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <small>
+                                            <i>
+                                                <strong>Example:</strong> http://us.doubleclick.net/imp/stuff
+                                            </i>
+                                        </small>
+                                    </td>
+                                    <td style="word-break: break-all;">
+                                        <small>
+                                            <i>
+                                                <strong>Example:</strong> http://us.doubleclick.net/clk/stuff
+                                            </i>
+                                        </small>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
         </div>
     </div>
     <br/>
-    <div class="row" data-ng-show="uploader.queue.length">
-        <form action="#" name="nativeBulkUploadQueue" id="nativeCreativeUploadQueue" ng-submit="" novalidate="">
-            <p ng-if="uploader.queue.length" class="pull-right label label-primary">Queue length: {{ uploader.queue.length }}</p>
-            <p ng-if="!uploader.queue.length" class="lead text-center">No files in queue. Start adding some..</p>
-            <span ng-if="uploader.queue.length">
-                <table ng-if="uploader.queue.length" class="table">
-                    <thead>
-                    <tr>
-                        <th>Name*</th>
-                        <th>Click URL*</th>
-                        <th>Ad Headline*</th>
-                        <th>Description*</th>
-                        <th>Actions</th>
-                        <th ng-show="uploader.isHTML5">Progress</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="item in uploader.queue">
-                        <td>
-                            <input name="name" type="text" data-ng-model="item.file.name" id="{{ item.file.name }}" data-parsley-group="{{ wizardstep }}" class="form-control" required="required">
-                        </td>
-                        <td>
-                            <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
-                        </td>
-                        <td>
-                            <native-copy-short ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-short>
-                        </td>
-                        <td>
-                            <native-copy-long ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-long>
-                        </td>
-                        <td nowrap="">
-                            <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove" tooltip="Remove">
-                                <span class="icon-trash"></span></button>
-                            <button type="button" ng-click="openTrackerDialog(item)" class="btn btn-primary btn-xs" analytics-on="click" analytics-event="CreativeUploader_AddTrackers"
-                                tooltip="Add/manage 3rd party tracking pixels.">
-                                <span class="fa fa-tags"></span>
-                                &nbsp;
-                                <span ng-if="item.impTracker || item.clickTracker">
-                                    {{ item.impTracker && item.clickTracker ? "2" : "1"}}
-                                </span>
-                            </button>
-                        </td>
-                        <td ng-show="uploader.isHTML5">
-                            <div style="margin-bottom: 0;" class="progress progress-xs">
-                                <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <span ng-show="item.isSuccess"><em class="fa fa-check fa-fw"></em></span>
-                            <span ng-show="item.isCancel"><em class="fa fa-ban-circle fa-fw"></em></span>
-                            <span ng-show="item.isError"><em class="fa fa-times fa-fw"></em></span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </span>
-            <div data-ng-show="uploader.progress">
-                <p>Upload Progress:</p>
-                <div style="" class="progress progress-xs">
-                    <div role="progressbar" ng-style="{ 'width': uploader.progress + '%' }" class="progress-bar"></div>
-                </div>
-            </div>
-            <button type="button" ng-click="uploadAllWrapper()" ng-disabled="!uploader.getNotUploadedItems().length" class="btn btn-info btn-s" analytics-on="click" analytics-event="CreativeUploader_UploadAll">
-                <span class="icon-cloud-upload mr"></span>Upload all</button>
-            <button type="button" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading" class="btn btn-warning btn-s" analytics-on="click" analytics-event="CreativeUploader_CancelAll">
-                <span class="icon-close mr"></span>Cancel all</button>
-            <button type="button" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length" class="btn btn-danger btn-s" analytics-on="click" analytics-event="CreativeUploader_ClearQueue">
-                <span class="icon-trash mr"></span>Remove all</button>
-        </form>
-    </div>
+
+    <div id="xlsx"></div>
 </div>

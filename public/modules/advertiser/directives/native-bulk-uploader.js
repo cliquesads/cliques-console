@@ -51,6 +51,9 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                     reader.onload = function(event){
                         var data = new Uint8Array(event.target.result);
                         scope.xlsx = XLSX.read(data, { type: 'array'});
+                        var worksheet = scope.xlsx.Sheets[scope.xlsx.SheetNames[0]];
+                        var container = document.getElementById('xlsx');
+                        container.innerHTML = XLSX.utils.sheet_to_html(worksheet);
                     };
                     // load file
                     reader.readAsArrayBuffer(fileItem._file);
