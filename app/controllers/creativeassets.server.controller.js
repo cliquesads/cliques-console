@@ -3,6 +3,7 @@ var auth = require('@cliques/cliques-node-utils').google.auth,
     gcloud = require('google-cloud'),
     config = require('config'),
     cloudinary = require('cloudinary'),
+    async = require('async'),
     errorHandler = require('./errors.server.controller');
 
 cloudinary.config({
@@ -79,6 +80,32 @@ module.exports = function(db) {
                     if (err) return res.status(err.http_code).send(err);
                     return res.status(200).json(result);
                 });
+            },
+            /**
+             * Uploads arbitrary number of remote image URL's to Cloudinary, returns object w/
+             * original imageURL's as keys and new Cloudinary URL's as values.
+             */
+            uploadRemoteImages: function (req, res) {
+                let apiCalls = {};
+                if (req.body.hasOwnProperty('imageUrls')){
+                    req.body.imageUrls.forEach(function(url){
+                        apiCalls[url] = (done) => {
+                            cloudinary.v2.uploader.upload(url, {
+                                use_filename: true
+                            }, function(err, result){
+                                done(err, result.url);
+                            });
+                        };
+                    });
+                    async.parallel(apiCalls, function(err, result){
+                        if (err) return res.status(404).send(err);
+                        return res.status(200).json(result);
+                    });
+                } else {
+                    res.status(404).send({
+                        message: "Request body must contain array `imageUrl`"
+                    });
+                }
             }
         }
     };
