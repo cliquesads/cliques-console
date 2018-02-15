@@ -27,10 +27,6 @@ angular.module('advertiser').controller('manageCreativesController', [
         $scope.campaignIndex = campaign.index;
         $scope.campaign = campaign.campaign;
 
-        // var to store number of total creatives. Since creatives are nested in creativegroups, not as easy
-        // as just taking a single array length
-        $scope.creativesCount = 0;
-
         // ####################################################################### //
         // ############################## GLOBAL HELPERS ######################### //
         // ####################################################################### //
@@ -59,7 +55,7 @@ angular.module('advertiser').controller('manageCreativesController', [
             this.advertiser.$update(function(response){
                 $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
                 // Reset creative weights
-                $scope.initCreativeWeights();
+                $scope._onAdvertiserLoad();
                 if (success) success(response);
             },function(errorResponse){
                 if (error) error(errorResponse);
@@ -74,6 +70,9 @@ angular.module('advertiser').controller('manageCreativesController', [
          * Also set select.count variable, which contains the total # of creatives
          */
         $scope._onAdvertiserLoad = function(){
+            // var to store number of total creatives. Since creatives are nested in creativegroups, not as easy
+            // as just taking a single array length
+            $scope.creativesCount = 0;
             $scope.creativeWeights = {};
             var creativeWeightSeries = {};
             $scope.campaign.creativegroups.forEach(function(crg){
@@ -344,6 +343,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 after.forEach(function(f){
                     f.call(this);
                 });
+                $scope._onAdvertiserLoad();
             }, function(error){
                 Notify.alert('Error deactivating creatives: ' + error.message, {status: 'danger'});
             });
@@ -384,6 +384,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 after.forEach(function(f){
                     f.call(this);
                 });
+                $scope._onAdvertiserLoad();
             }, function(error){
                 Notify.alert('Error activating creatives: ' + error.message, {status: 'danger'});
             });
@@ -444,7 +445,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                         // and all other related variables
                         $scope.advertiser = new Advertiser(response.data);
                         $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-                        $scope.initCreativeWeights();
+                        $scope._onAdvertiserLoad();
                         Notify.alert('Creative successfully deleted.', {status: 'success'});
                     }, function(error){
                         Notify.alert('Error removing creative: ' + error.message, {status: 'danger'});
