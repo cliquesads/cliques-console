@@ -1,30 +1,33 @@
 <div class="col-md-{{ width }}">
     <div ng-show="creative_upload_error" class="alert alert-danger">{{ creative_upload_error }}</div>
-    <div class="row">
-        <div nv-file-drop="" uploader="uploader">
-            <div ng-show="uploader.isHTML5">
-                <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
-                    <h4><i class="fa fa-table"></i> Drag Excel / CSV Files Here</h4>
-                    <p><small class="text-muted">Supported File Types: <em>.xls .xlsx .csv</em></small></p>
-                    <div class="p" style="background-color: aliceblue;">
-                        <p><strong><i class="fa fa-info-circle"></i> Spreadsheet Format</strong></p>
-                        <ul>
-                            <li>Data starts in 2nd row</li>
-                            <li>Column order matters, row headers do not</li>
-                        </ul>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead class="bg-white">
-                                    <th>image_url</th>
+    <div ng-switch="activeStep">
+        <!-- BEGIN Uploader step-->
+        <div class="row" ng-switch-when="upload">
+            <div nv-file-drop="" uploader="uploader">
+                <div ng-show="uploader.isHTML5">
+                    <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
+                        <h4><i class="fa fa-table"></i> Drag Excel / CSV Files Here</h4>
+                        <p><small class="text-muted">Supported File Types: <em>.xls .xlsx .csv</em></small></p>
+                        <div class="p" style="background-color: aliceblue;">
+                            <p><strong><i class="fa fa-info-circle"></i> Spreadsheet Format</strong></p>
+                            <ul>
+                                <li>Data starts in 2nd row</li>
+                                <li>Column order matters, row headers do not</li>
+                                <li>All data must be in the first sheet in a workbook (applicable to .xls and .xlsx formats only)</li>
+                            </ul>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead class="bg-white">
+                                    <th>imageUrl</th>
                                     <th>headline</th>
                                     <th>description</th>
                                     <th>click_url</th>
                                     <th><span class="text-muted">name <small>(optional)</small></span></th>
                                     <th><span class="text-muted">category <small>(optional)</small></span></th>
-                                    <th><span class="text-muted">imp_tracker <small>(optional)</small></span></th>
-                                    <th><span class="text-muted">click_tracker <small>(optional)</small></span></th>
-                                </thead>
-                                <tbody>
+                                    <th><span class="text-muted">impTracker <small>(optional)</small></span></th>
+                                    <th><span class="text-muted">clickTracker <small>(optional)</small></span></th>
+                                    </thead>
+                                    <tbody>
                                     <tr>
                                         <td>
                                             Absolute URL to JPEG or PNG image asset.
@@ -51,16 +54,148 @@
                                             3rd party click tracker URL.
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
             </div>
-            <input filestyle="" type="file" data-button-text="Or select from your files" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" class="form-control" />
+        </div>
+        <!-- END Uploader step-->
+
+        <!-- BEGIN Preview Step-->
+        <div class="row" ng-switch-when="previewData">
+            <h4>Preview your creatives</h4>
+            <p>Please fix any issues you see below, or return to the upload step if necessary.</p>
+            <form action="#" name="bulkNativeUploadForm" id="bulkNativeUploadForm" ng-submit="" novalidate="">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="bg-white">
+                        <th>imageUrl*</th>
+                        <th>headline*</th>
+                        <th>description*</th>
+                        <th>click_url*</th>
+                        <th><span class="text-muted">name</span></th>
+                        <th><span class="text-muted">category</span></th>
+                        <th><span class="text-muted">impTracker</span></th>
+                        <th><span class="text-muted">clickTracker</span></th>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in xlsxData">
+                        <td>
+                            <div ng-hide="row.editImageUrl">
+                                <img src="{{ row.imageUrl }}" class="smallthumbnail" alt="Image Not Found"/>
+                                <p>
+                                    <a href="{{ row.imageUrl }}" target="_blank">{{ row.imageUrl }}</a>
+                                    <a href="#" ng-click="row.editImageUrl = true"><i class="fa fa-sm fa-edit"></i></a>
+                                </p>
+                            </div>
+                            <div ng-show="row.editImageUrl">
+                                <div class="col-xs-10">
+                                    <input name="imageUrl" type="url" data-parsley-type="url" data-ng-model="row.imageUrl" id="{{ $index }}_imageUrl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editImageUrl = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <native-copy-short ng-model="row.headline" index="{{ $index }}" form="bulkNativeUploadForm" wizardstep="{{ wizardstep }}"></native-copy-short>
+                        </td>
+                        <td>
+                            <native-copy-long ng-model="row.description" index="{{ $index }}" form="bulkNativeUploadForm" wizardstep="{{ wizardstep }}"></native-copy-long>
+                        </td>
+                        <td>
+                            <div ng-hide="row.editClickUrl">
+                                <a href="{{ row.click_url }}" target="_blank">{{ row.click_url }}</a>
+                                <a href="#" ng-click="row.editClickUrl = true"><i class="fa fa-sm fa-edit"></i></a>
+                            </div>
+                            <div ng-show="row.editClickUrl">
+                                <div class="col-xs-10">
+                                    <input name="click_url" type="url" data-parsley-type="url" data-ng-model="row.click_url" id="{{ $index }}_clickUrl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editClickUrl = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div ng-hide="row.editName">
+                                <span ng-class="{'text-italic': !row.name }">{{ row.name || "null" }}</span>
+                                <a href="#" ng-click="row.editName = true"><i class="fa fa-sm fa-edit"></i></a>
+                            </div>
+                            <div ng-show="row.editName">
+                                <div class="col-xs-10">
+                                    <input name="name" ng-show="row.name" type="text" data-ng-model="row.name" id="{{ $index }}_name" data-parsley-group="{{ wizardstep }}" class="form-control">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editName = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div ng-hide="row.editCategory">
+                                <span ng-class="{'text-italic': !row.category }">{{ row.category || "null" }}</span>
+                                <a href="#" ng-click="row.editCategory = true"><i class="fa fa-sm fa-edit"></i></a>
+                            </div>
+                            <div ng-show="row.editCategory">
+                                <div class="col-xs-10">
+                                    <input name="category"
+                                           ng-show="row.category"
+                                           type="text"
+                                           data-ng-model="row.category"
+                                           id="{{ $index }}_category"
+                                           data-parsley-group="{{ wizardstep }}"
+                                           class="form-control">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editCategory = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div ng-hide="row.editImpTracker">
+                                <span ng-class="{'text-italic': !row.impTracker }">{{ row.impTracker || "null" }}</span>
+                                <a href="#" ng-click="row.editImpTracker = true"><i class="fa fa-sm fa-edit"></i></a>
+                            </div>
+                            <div ng-show="row.editImpTracker">
+                                <div class="col-xs-10">
+                                    <input name="impTracker" ng-show="row.impTracker" type="url" data-parsley-type="url" data-ng-model="row.impTracker" id="{{ $index }}_impTracker" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editImpTracker = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div ng-hide="row.editClickTracker">
+                                <span ng-class="{'text-italic': !row.clickTracker }">{{ row.clickTracker || "null" }}</span>
+                                <a href="#" ng-click="row.editClickTracker = true"><i class="fa fa-sm fa-edit"></i></a>
+                            </div>
+                            <div ng-show="row.editClickTracker">
+                                <div class="col-xs-10">
+                                    <input name="clickTracker" ng-show="row.clickTracker" type="url" data-parsley-type="url" data-ng-model="row.impTracker" id="{{ $index }}_clickTracker" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com">
+                                </div>
+                                <div class="col-xs-2">
+                                    <button class="btn btn-xs btn-primary" ng-click="row.editImpTracker = false"><i class="fa fa-check"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <ul class="pager">
+                <li class="previous">
+                    <a href="#" ng-click="goToStep('upload')" analytics-on="click" analytics-event="BulkUploadNativeCreatives_GoBackToUpload"><span>&larr; Clear Data & Re-Upload</span></a>
+                </li>
+                <li class="next">
+                    <button class="btn btn-primary pull-right" ng-click="finish()" analytics-on="click" analytics-event="BulkUploadNativeCreatives_Finish">Accept & Upload &nbsp;</button>
+                </li>
+            </ul>
         </div>
     </div>
-    <br/>
 
-    <div id="xlsx"></div>
+
 </div>

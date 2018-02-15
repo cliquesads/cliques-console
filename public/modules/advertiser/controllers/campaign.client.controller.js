@@ -118,7 +118,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // ######################################### //
         $scope.addNewCreatives = function(){
             ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth1000',
+                className: 'ngdialog-theme-default dialogwidth1200',
                 template: 'modules/advertiser/views/partials/upload-creatives.html',
                 controller: 'uploadCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}

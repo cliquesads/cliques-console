@@ -1,13 +1,14 @@
 /* global _, angular, moment, XLSX */
 
 angular.module('advertiser').directive('nativeBulkUploader', [
-    'NATIVE_SPECS','ngDialog',
-    function(NATIVE_SPECS, ngDialog){
+    'NATIVE_SPECS','ngDialog','$http','$timeout',
+    function(NATIVE_SPECS, ngDialog, $http, $timeout){
         'use strict';
         return {
             restrict: 'E',
             scope: {
-                onuploadall: '&',
+                onUploadSuccess: '&',
+                preUploadValidator: '&',
                 wizardstep: '@',
                 width: '@',
                 uploader: '='
@@ -15,6 +16,27 @@ angular.module('advertiser').directive('nativeBulkUploader', [
             templateUrl: 'modules/advertiser/views/partials/native-bulk-uploader.html',
             link: function(scope, element, attrs){
                 scope.NATIVE_SPECS = NATIVE_SPECS;
+
+                // Controls for steps. Only two steps but it's easier to use helper function cause
+                // need to wrap update in a $timeout to trigget a digest cycle.
+                scope.activeStep = 'upload';
+                scope.goToStep = function(step){
+                    $timeout(function(){
+                        switch (step){
+                            case 'upload':
+                                scope.xlsxData = null;
+                                scope.xlsx = null;
+                                scope.uploader.clearQueue();
+                                break;
+                            case 'previewData':
+                                break;
+                            default:
+                                break;
+                        }
+                        scope.activeStep = step;
+                    });
+                };
+
 
                 //##### FILTERS ######
                 scope.uploader.filters.push({
@@ -30,7 +52,6 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                             'application/x-xls',
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'text/csv',
-
                         ];
                         return mimetypes.indexOf(item.type) > -1;
                     }
@@ -44,6 +65,14 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                     }
                 };
 
+                // Array of object keys to assign to JSON resulting from spreadsheet parsing.
+                // This doesn't indicate which "headers" to look for in the spreadsheet, but assumes a specific
+                // the column order & assigns field values accordingly.
+                scope.HEADERS = ['imageUrl','headline','description','click_url',
+                    'name','category','impTracker','clickTracker'];
+
+                scope.xlsxData = [];
+
                 scope.uploader.onAfterAddingFile = function(fileItem) {
                     var reader = new FileReader();
                     // Have to use onload callbacks for both FileReader & Image objects,
@@ -51,52 +80,63 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                     reader.onload = function(event){
                         var data = new Uint8Array(event.target.result);
                         scope.xlsx = XLSX.read(data, { type: 'array'});
+                        // Use first worksheet
                         var worksheet = scope.xlsx.Sheets[scope.xlsx.SheetNames[0]];
-                        var container = document.getElementById('xlsx');
-                        container.innerHTML = XLSX.utils.sheet_to_html(worksheet);
+                        // parse worksheet to JSON for easy manipulation, starting at row 2, using assumed headers
+                        scope.xlsxData = XLSX.utils.sheet_to_json(worksheet, { header: scope.HEADERS, range: 1, blankRows: false });
+                        scope.goToStep('previewData');
                     };
                     // load file
                     reader.readAsArrayBuffer(fileItem._file);
                 };
 
-                scope.uploader.onAfterAddingAll = function(addedFileItems) {
-                    if (scope.creative_upload_error){
-                        scope.creative_upload_error = null;
-                    }
-                    console.info('onAfterAddingAll', addedFileItems);
-                };
-                scope.uploader.onBeforeUploadItem = function(item) {
-                    console.info('onBeforeUploadItem', item);
-                };
-                scope.uploader.onProgressItem = function(fileItem, progress) {
-                    console.info('onProgressItem', fileItem, progress);
-                };
-                scope.uploader.onProgressAll = function(progress) {
-                    console.info('onProgressAll', progress);
-                };
-                scope.uploader.onSuccessItem = function(fileItem, response, status, headers) {
-                    console.info('onSuccessItem', fileItem, response, status, headers);
-                };
-                scope.uploader.onErrorItem = function(fileItem, response, status, headers) {
-                    console.info('onErrorItem', fileItem, response, status, headers);
-                };
-                scope.uploader.onCancelItem = function(fileItem, response, status, headers) {
-                    console.info('onCancelItem', fileItem, response, status, headers);
-                };
-                scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
-                    // // Add Google Cloud URL to fileitem when it successfully uploads
-                    // fileItem.imageUrl = response.url;
-                };
-
-                scope.uploadAllWrapper = function(){
-                    // validate form before calling upload all callback
-                    if (scope.nativeBulkUploadQueue.$valid){
-                        return scope.onuploadall();
+                /**
+                 * 1) Validate Form
+                 * 2) Upload imageUrls to get Cloudinary assets
+                 * 3) Call onuploadall function with cleaned creative data
+                 */
+                scope.finish = function(){
+                    var validator = scope.preUploadValidator ? scope.preUploadValidator() : true;
+                    if (this.bulkNativeUploadForm.$valid && validator){
+                        var imageUrls = _.map(scope.xlsxData, function(row){
+                            return row.imageUrl;
+                        });
+                        $http.post('/console/native-images/remote', { imageUrls: imageUrls }).then(
+                            function(response){
+                                // now zip cloudinary URLs and image metadata into xlsxData and pass to callback
+                                var cloudinaryData = response.data;
+                                var creatives = [];
+                                scope.xlsxData.forEach(function(row){
+                                    var imageMeta = cloudinaryData[row.imageUrl];
+                                    // basically convert row to creative schema here. Don't have logo
+                                    // vars yet so pass incomplete object to callback
+                                    creatives.push({
+                                        name: row.name || imageMeta.public_id,
+                                        click_url: row.click_url,
+                                        type: 'native',
+                                        impTracker: row.impTracker,
+                                        clickTracker: row.clickTracker,
+                                        h: 1,
+                                        w: 1,
+                                        native: {
+                                            imageUrl: imageMeta.url,
+                                            imageH: imageMeta.height,
+                                            imageW: imageMeta.width,
+                                            headline: row.headline,
+                                            description: row.description
+                                        }
+                                    });
+                                });
+                                scope.onUploadSuccess({ creatives: creatives });
+                            }, function(error){
+                                scope.creative_upload_error = error.data.message;
+                            }
+                        );
                     }
                 };
 
                 scope.validateInput = function(name, type) {
-                    var input = this.nativeCreativeUploadQueue[name];
+                    var input = this.bulkNativeUploadForm[name];
                     return (input.$dirty || scope.submitted) && input.$error[type];
                 };
             }

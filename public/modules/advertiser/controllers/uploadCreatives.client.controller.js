@@ -38,6 +38,12 @@ angular.module('advertiser').controller('uploadCreativesController', [
             });
         };
 
+        $scope.updateAndClose = function(){
+            $scope.update(function(){
+                $scope.closeThisDialog('Success');
+            }, function(errorResponse){});
+        };
+
         // Function to pass to DoubleClick creative uploader
         $scope.onDCMUpload = function(creatives){
             var creativeGroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
@@ -99,9 +105,9 @@ angular.module('advertiser').controller('uploadCreativesController', [
             return $('#creativeUploadQueue').parsley().validate();
         };
 
-        //########################################//
-        //######### NATIVE FILE UPLOADER #########//
-        //########################################//
+        //##############################################//
+        //######### NATIVE IMAGE FILE UPLOADER #########//
+        //##############################################//
 
         var nativeUploader = $scope.nativeUploader = new FileUploader({
             url: 'console/native-images'
@@ -133,13 +139,6 @@ angular.module('advertiser').controller('uploadCreativesController', [
             });
         };
 
-        //########################################//
-        //######### NATIVE FILE UPLOADER #########//
-        //########################################//
-
-        var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
-
-        $scope.nativeUploader.onCompleteAll = function(){};
 
         /**
          * Wrapper for uploader.uploadAll() which allows form to pass
@@ -160,9 +159,20 @@ angular.module('advertiser').controller('uploadCreativesController', [
             return $('#nativeCreativeUploadQueue').parsley().validate();
         };
 
-        $scope.updateAndClose = function(){
-            $scope.update(function(){
-                $scope.closeThisDialog('Success');
-            }, function(errorResponse){});
+        //########################################//
+        //######### NATIVE FILE UPLOADER #########//
+        //########################################//
+
+        var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
+
+        $scope.onUploadSuccess = function(creatives){
+            console.log(creatives);
         };
+
+        $scope.validateXlsxForm = function(){
+            //TODO: This is pretty janky
+            return $('#bulkNativeUploadForm').parsley().validate();
+        };
+
+
     }]);

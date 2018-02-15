@@ -93,7 +93,7 @@ module.exports = function(db) {
                             cloudinary.v2.uploader.upload(url, {
                                 use_filename: true
                             }, function(err, result){
-                                done(err, result.url);
+                                done(err, result);
                             });
                         };
                     });

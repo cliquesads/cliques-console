@@ -14,7 +14,7 @@
                 <i class="fa fa-table"></i> Native - Bulk Uploader <span class="label label-primary">Beta</span>
             </tab-heading>
             <div class="row" id="bulkUploader">
-                <native-bulk-uploader uploader="nativeBulkUploader" width="12"> </native-bulk-uploader>
+                <native-bulk-uploader uploader="nativeBulkUploader" pre-upload-validator="validateXlsxForm()" on-upload-success="onUploadSuccess(creatives)" onupwidth="12"> </native-bulk-uploader>
             </div>
         </tab>
         <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">

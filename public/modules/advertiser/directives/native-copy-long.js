@@ -13,9 +13,7 @@ angular.module('advertiser').directive('nativeCopyLong', ['NATIVE_SPECS', functi
         link: function(scope, element, attrs){
             scope.NATIVE_SPECS = NATIVE_SPECS;
             scope.rows = scope.rows || 6;
-            
             scope.inputId = scope.index + '_description';
-            scope.nativeModel = scope.ngModel.file ? scope.ngModel : scope.ngModel.native;
         }
     };
 }]);
