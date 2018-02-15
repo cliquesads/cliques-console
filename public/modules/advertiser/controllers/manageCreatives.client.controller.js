@@ -150,8 +150,11 @@ angular.module('advertiser').controller('manageCreativesController', [
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
             });
             dialog.closePromise.then(function(data){
-                if (data.value === "success"){
-                    $scope._onAdvertiserLoad();
+                if (data.value === "Success"){
+                    $timeout(function(){
+                        $scope._onAdvertiserLoad();
+                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                    },100);
                 }
             });
         };
