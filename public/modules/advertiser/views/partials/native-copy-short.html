@@ -1,9 +1,11 @@
 <span class="col-sm-12">
+    <!--TODO: min & max length here should be set by NATIVE_SPECS but two-way binding completely -->
+    <!--TODO: breaks validation and there's no apparent reason why, so they're hardcoded for now.-->
     <textarea ng-model="ngModel"
               id="{{ inputId }}"
               name="{{ inputId }}"
-              ng-maxlength="{{ NATIVE_SPECS.headline.maxChars }}"
-              ng-minlength="{{ NATIVE_SPECS.headline.minChars }}"
+              ng-maxlength="120"
+              ng-minlength="30"
               data-parsley-group="{{ wizardstep }}"
               rows="{{ rows }}"
               required="true"

@@ -1,12 +1,14 @@
 <span class="col-sm-12">
+    <!--TODO: min & max length here should be set by NATIVE_SPECS but two-way binding completely -->
+    <!--TODO: breaks validation and there's no apparent reason why, so they're hardcoded for now.-->
     <textarea ng-model="ngModel"
               id="{{ inputId }}"
               name="{{ inputId }}"
-              ng-maxlength="{{ NATIVE_SPECS.description.maxChars }}"
-              ng-minlength="{{ NATIVE_SPECS.description.minChars }}"
+              ng-maxlength="170"
+              ng-minlength="70"
               data-parsley-group="{{ wizardstep }}"
               rows="{{ rows }}"
-              required="true"
+              ng-required="true"
               placeholder="Min {{ NATIVE_SPECS.description.minChars }} characters, Max {{ NATIVE_SPECS.description.maxChars }}."
               class="note-editor" >
     </textarea>

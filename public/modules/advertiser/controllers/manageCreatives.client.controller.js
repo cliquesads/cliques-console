@@ -144,11 +144,16 @@ angular.module('advertiser').controller('manageCreativesController', [
          * New creatives dialog
          */
         $scope.addNewCreatives = function(){
-            ngDialog.open({
+            var dialog = ngDialog.open({
                 className: 'ngdialog-theme-default dialogwidth1200',
                 template: 'modules/advertiser/views/partials/upload-creatives.html',
                 controller: 'uploadCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+            dialog.closePromise.then(function(data){
+                if (data.value === "success"){
+                    $scope._onAdvertiserLoad();
+                }
             });
         };
 
@@ -335,7 +340,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 });
             });
             $q.all(promises).then(function(){
-                Notify.alert('Creatives successfully deactivated.', {});
+                Notify.alert('Creatives successfully deactivated.', {status: 'success'});
                 after.forEach(function(f){
                     f.call(this);
                 });
@@ -375,7 +380,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 });
             });
             $q.all(promises).then(function(){
-                Notify.alert('Creatives successfully activated.', {});
+                Notify.alert('Creatives successfully activated.', {status: 'success'});
                 after.forEach(function(f){
                     f.call(this);
                 });
@@ -440,6 +445,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                         $scope.advertiser = new Advertiser(response.data);
                         $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
                         $scope.initCreativeWeights();
+                        Notify.alert('Creative successfully deleted.', {status: 'success'});
                     }, function(error){
                         Notify.alert('Error removing creative: ' + error.message, {status: 'danger'});
                     });
@@ -482,7 +488,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                         // and all other related variables
                         $scope.advertiser = new Advertiser(response.data);
                         $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
-                        $scope.initCreativeWeights();
+                        $scope._onAdvertiserLoad();
                         Notify.alert(selectedCount + ' creatives successfully removed.', {status: 'success'});
                     }, function(error){
                         Notify.alert('Error removing creatives: ' + error.message, {status: 'danger'});

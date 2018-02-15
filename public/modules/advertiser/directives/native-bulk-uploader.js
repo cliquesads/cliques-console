@@ -113,12 +113,15 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                                     creatives.push({
                                         name: row.name || imageMeta.public_id,
                                         click_url: row.click_url,
+                                        //TODO: default is set to true, change if that changes
+                                        active: true,
                                         type: 'native',
                                         impTracker: row.impTracker,
                                         clickTracker: row.clickTracker,
                                         h: 1,
                                         w: 1,
                                         native: {
+                                            secureImageUrl: imageMeta.url,
                                             imageUrl: imageMeta.url,
                                             imageH: imageMeta.height,
                                             imageW: imageMeta.width,

@@ -38,10 +38,49 @@ angular.module('advertiser').controller('uploadCreativesController', [
             });
         };
 
-        $scope.updateAndClose = function(){
-            $scope.update(function(){
-                $scope.closeThisDialog('Success');
-            }, function(errorResponse){});
+        /**
+         * Global util to merge array of new creatives into appropriate creativeGroups in
+         * campaign, or create new creativeGroups where necessary.
+         *
+         * @param creatives
+         * @private
+         */
+        $scope._mergeCreativesIntoCampaign = function(creatives){
+            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
+            // have to merge new creativeGroups with any existing first
+            creativegroups.forEach(function (crg) {
+                var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
+                    if (crg.type === 'native'){
+                        return cg.type === 'native';
+                    } else {
+                        return cg.w === crg.w && cg.h === crg.h;
+                    }
+                });
+                // if creativegroup of same size exists, add to this creative group
+                if (ind > -1) {
+                    $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
+                } else {
+                    $scope.campaign.creativegroups.push(crg);
+                }
+            });
+        };
+
+        /**
+         * Global util to un-merge array (does the opposite of _mergeCreativesFromCampaign) of new creatives from
+         * appropriate creativeGroups in campaign.
+         *
+         * Only will remove unsaved creatives, i.e. creatives without an _id
+         *
+         * @param creatives
+         * @private
+         */
+        $scope._removeUnsavedCreatives = function(){
+            $scope.campaign.creativegroups.forEach(function(crg){
+                _.remove(crg.creatives, function(cr){ return !cr._id; });
+                if (crg.creatives.length === 0){
+                    _.pull($scope.campaign.creativegroups, crg);
+                }
+            });
         };
 
         // Function to pass to DoubleClick creative uploader
@@ -66,23 +105,17 @@ angular.module('advertiser').controller('uploadCreativesController', [
         $scope.uploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
             var creatives = AdvertiserUtils.getCreativesFromUploadQueue($scope.uploader);
-            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             // have to merge new creativeGroups with any existing first
             $scope.$apply(function() {
-                creativegroups.forEach(function (crg) {
-                    var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
-                        return cg.w === crg.w && cg.h === crg.h;
-                    });
-                    // if creativegroup of same size exists, add to this creative group
-                    if (ind > -1) {
-                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
-                    } else {
-                        $scope.campaign.creativegroups.push(crg);
-                    }
-                });
+                $scope._mergeCreativesIntoCampaign(creatives);
                 $scope.update(function(){
                     $scope.uploader.clearQueue();
-                }, function(errorResponse){});
+                    $scope.closeThisDialog('Success');
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                }, function(errorResponse){
+                    $scope._removeUnsavedCreatives();
+                    Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+                });
             });
         };
 
@@ -115,27 +148,17 @@ angular.module('advertiser').controller('uploadCreativesController', [
         $scope.nativeUploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
             var creatives = AdvertiserUtils.getCreativesFromNativeUploadQueue($scope.nativeUploader, $scope.advertiser);
-            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             // have to merge new creativeGroups with any existing first
             $scope.$apply(function() {
-                creativegroups.forEach(function (crg) {
-                    var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
-                        if (crg.type === 'native'){
-                            return cg.type === 'native';
-                        } else {
-                            return cg.w === crg.w && cg.h === crg.h;
-                        }
-                    });
-                    // if creativegroup of same size exists, add to this creative group
-                    if (ind > -1) {
-                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
-                    } else {
-                        $scope.campaign.creativegroups.push(crg);
-                    }
-                });
+                $scope._mergeCreativesIntoCampaign(creatives);
                 $scope.update(function(){
                     $scope.nativeUploader.clearQueue();
-                }, function(errorResponse){});
+                    $scope.closeThisDialog('Success');
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                }, function(errorResponse){
+                    $scope._removeUnsavedCreatives();
+                    Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+                });
             });
         };
 
@@ -166,7 +189,22 @@ angular.module('advertiser').controller('uploadCreativesController', [
         var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
 
         $scope.onUploadSuccess = function(creatives){
-            console.log(creatives);
+            creatives.forEach(function(cr){
+                cr.native.logoUrl = $scope.advertiser.logo_url;
+                cr.native.logoH = 20;
+                cr.native.logoW = 20;
+                cr.weight = 1;
+            });
+            $scope._mergeCreativesIntoCampaign(creatives);
+            $scope.update(function(){
+                $scope.closeThisDialog('Success');
+                $scope.$apply(function(){
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                });
+            }, function(errorResponse){
+                $scope._removeUnsavedCreatives();
+                Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+            });
         };
 
         $scope.validateXlsxForm = function(){
