@@ -17,6 +17,7 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         click_url: fileItem.click_url,
                         w: fileItem.width,
                         h: fileItem.height,
+                        weight: 1,
                         type: 'display',
                         retina: fileItem.retina,
                         url: fileItem.url
@@ -42,6 +43,7 @@ angular.module('advertiser').factory('AdvertiserUtils',['$http', function($http)
                         clickTracker: fileItem.clickTracker,
                         h: 1,
                         w: 1,
+                        weight: 1,
                         native: {
                             imageUrl: fileItem.imageUrl,
                             imageW: fileItem.rawImageW,

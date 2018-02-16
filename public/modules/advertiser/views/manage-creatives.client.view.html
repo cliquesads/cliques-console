@@ -1,0 +1,222 @@
+<div class="col-sm-12 alert alert-danger" ng-show="saveerror">{{ saveerror }}</div>
+<div class="col-sm-9 col-sm-12 col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-3">
+                    <h4>Creatives</h4>
+                </div>
+                <div class="col-sm-6">
+                </div>
+                <div class="col-sm-3">
+                    <span class="pull-right">
+                        <button type="button" class="btn btn-labeled btn-primary" ng-click="addNewCreatives()" analytics-on="click" analytics-event="ManageCreatives_AddNewCreatives">
+                            <span class="btn-label"><i class="fa fa-plus"></i></span>Add New Creatives
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <div class="panel-body pt0">
+            <div>
+                <small ng-show="select.count">Bulk Actions: </small>
+                <div class="mt0">
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="activateBulk()" ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_ActivateBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-toggle-on"></i></span>Activate
+                    </button>
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="deactivateBulk()" ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_DeactivateBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-toggle-off"></i></span>Deactivate
+                    </button>
+                    <button type="button" class="btn btn-labeled btn-xs" ng-class="{'btn-primary': select.selectAny, 'btn-default': !select.selectAny }"
+                            ng-click="removeSelected()"  ng-disabled="!select.selectAny" analytics-on="click" analytics-event="ManageCreatives_RemoveBulkCreatives">
+                        <span class="btn-label"><i class="fa fa-trash"></i></span>Remove
+                    </button>
+                </div>
+            </div>
+            <div ng-class="{'text-muted': !select.count }" class="pt">
+                <strong>{{ select.count }}</strong> / {{ creativesCount }} creatives selected
+            </div>
+            <fieldset>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr class="mt0 pt0">
+                                <th class="col-xs-0">
+                                    <div class="checkbox c-checkbox mt-lg pt-sm text-center mb0">
+                                        <label>
+                                            <input type="checkbox" ng-model="select.selectAll">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </div>
+                                </th>
+                                <th class="col-xs-1 pl0 pr0">
+                                    <a href="#" ng-click="sortBy('active')">
+                                        Status
+                                        <span ng-show="isSortedBy('active', true)" class="fa fa-caret-down"></span>
+                                        <span ng-show="isSortedBy('active', false)" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="col-xs-1">Preview</th>
+                                <th class="col-xs-3">
+                                    <a href="#" ng-click="sortBy('name')">
+                                        Name
+                                        <span ng-show="isSortedBy('name', true)" class="fa fa-caret-down"></span>
+                                        <span ng-show="isSortedBy('name', false)" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="col-xs-3" ng-if="campaign.type === 'display' || !campaign.type">
+                                    <a href="#" ng-click="sortBy('w')">
+                                        Dimensions
+                                        <span ng-show="isSortedBy('w', true)" class="fa fa-caret-down"></span>
+                                        <span ng-show="isSortedBy('w', false)" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="col-xs-3" ng-if="campaign.type === 'native'">
+                                    <!--TODO: Can't get sort to work for nested object property -- will work when string literal provided
+                                                directly to filter but not when it relies on a scope variable, no idea why-->
+                                    <a href="#" ng-click="sortBy('native.headline')">
+                                        Headline
+                                        <span ng-show="isSortedBy('native.headline', true)" class="fa fa-caret-down"></span>
+                                        <span ng-show="isSortedBy('native.headline', false)" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <!--<th class="col-xs-1" ng-if="campaign.type === 'native'">Category</th>-->
+                                <th class="col-xs-3">
+                                    <a href="#" ng-click="sortBy('weight')">
+                                        Weight
+                                        <span ng-show="isSortedBy('weight', true)" class="fa fa-caret-down"></span>
+                                        <span ng-show="isSortedBy('weight', false)" class="fa fa-caret-up"></span>
+                                    </a>
+                                </th>
+                                <th class="col-xs-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="creativegroup in campaign.creativegroups">
+                            <tr>
+                                <td colspan="8" class="subdivider-row pl-xl ml-xl text-muted">
+                                    <strong>
+                                        <i>{{ creativegroup.type === "native" ? "Native" : creativegroup.w + "x" + creativegroup.h }}</i>
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr ng-repeat="creative in creativegroup.creatives | orderBy:sortType">
+                                <td class="text-center">
+                                    <div class="checkbox c-checkbox mt-lg pt-sm">
+                                        <label>
+                                            <input type="checkbox" ng-model="creative.selected">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="pt-lg">
+                                    <creative-status-switch
+                                            advertiser="advertiser"
+                                            campaign="campaign"
+                                            creativegroup="creativegroup"
+                                            on-activate="onActivate(error, creative)"
+                                            on-deactivate="onDeactivate(error, creative)"
+                                            creative="creative"></creative-status-switch>
+                                </td>
+                                <td ng-click="creativePreview(creative)">
+                                    <div ng-switch="creative.hostingType">
+                                        <div ng-switch-when="doubleclick">
+                                            <em><i class="fa fa-image"></i> Preview Unavailable</em>
+                                        </div>
+                                        <div ng-switch-default>
+                                            <img ng-src="{{ creative.type === 'native' ? creative.native.secureImageUrl : creative.secureUrl }}" class="smallthumbnail"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="word-break: break-all;" ng-click="creativePreview(creative)">
+                                    <p class="form-control-static">{{ creative.name }}</p>
+                                </td>
+                                <td ng-if="creative.type === 'display' || !creative.type" ng-click="creativePreview(creative)">
+                                    <p class="form-control-static">
+                                        {{ creative.w }}x{{ creative.h }}
+                                    </p>
+                                </td>
+                                <td ng-if="creative.type === 'native'" ng-click="creativePreview(creative)">
+                                    <p class="form-control-static">
+                                        {{ creative.native.headline }}
+                                    </p>
+                                </td>
+                                <!--<td ng-if="creative.type === 'native'" ng-click="creativePreview(creative)">-->
+                                    <!--<p class="form-control-static">-->
+                                        <!--{{ creative.native.category || "None" }}-->
+                                    <!--</p>-->
+                                <!--</td>-->
+                                <td class="text-center"
+                                    ng-init="creative.sliderOptions = {
+                                                        id: creativegroup._id + ',' + creative._id,
+                                                        disabled: !creative.active,
+                                                        ceil: 10,
+                                                        floor: 0,
+                                                        step: 1,
+                                                        showSelectionBar: true,
+                                                        hideLimitLabels: true,
+                                                        hidePointerLabels: !creative.active,
+                                                        onChange: onCreativeWeightChange
+                                            };">
+                                    <div class="col-xs-7" style="width: 95px">
+                                        <rzslider rz-slider-model="creativeWeights[creativegroup._id][creative._id]"
+                                                  rz-slider-options="creative.sliderOptions"
+                                                  class="mt-xl">
+                                        </rzslider>
+                                    </div>
+                                    <div class="col-xs-5">
+                                        <span class="editable-buttons mt-lg pt-sm ml0">
+                                            <button type="button" class="btn btn-xs btn-success ml0"
+                                                    ng-show="creative.dirty"
+                                                    tooltip="Save"
+                                                    ng-click="updateCreative(creativegroup, creative)"
+                                                    analytics-on="click" analytics-event="ManageCreatives_AddNewCreatives">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-xs btn-default ml0"
+                                                    ng-show="creative.dirty"
+                                                    tooltip="Reset"
+                                                    ng-click="creative.dirty = false; creative.weight = creativeWeights[creative._id]"
+                                                    analytics-on="click" analytics-event="ManageCreatives_AddNewCreatives">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mt-lg ml pt-sm">
+                                        <button
+                                                type="button"
+                                                ng-click="remove(creativegroup, creative)"
+                                                class="btn btn-danger btn-xs"
+                                                analytics-on="click"
+                                                tooltip="Remove"
+                                                analytics-event="EditCreatives_Remove">
+                                            <span class="fa fa-trash"></span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+<div class="col-sm-3 col-sm-12 col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Impression Probabilities</h4>
+            <hr class="pt0 pb0 mt0 mb0"/>
+        </div>
+        <div class="panel-body">
+            <div ng-repeat="(size, series) in creativeWeightSeries" class="row text-center">
+                <i class="text-md">{{ size }} Creatives</i>
+                <flot dataset="series" options="graphOptions" callback="callback" height="300px"></flot>
+            </div>
+        </div>
+    </div>
+</div>

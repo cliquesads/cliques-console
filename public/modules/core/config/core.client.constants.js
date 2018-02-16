@@ -27,6 +27,23 @@ angular.module('core')
     'tablet':                 768,
     'mobile':                 480
   })
+    .constant('COLOR_GRADIENTS', {
+        'green20': [
+            '#009F4D','#08A253','#10A659','#18A95F',
+            '#20AD65','#28B06B','#30B471','#39B877',
+            '#41BB7D','#49BF83','#51C289','#59C68F',
+            '#61C995','#6ACD9B','#72D1A1','#7AD4A7',
+            '#82D8AD','#8ADBB3','#92DFB9','#9AE3BF'
+        ],
+        'green10': [
+            '#009F4D','#10A659',
+            '#20AD65','#30B471',
+            '#41BB7D','#51C289',
+            '#61C995','#72D1A1',
+            '#82D8AD','#92DFB9'
+        ]
+
+    })
   .constant('APP_REQUIRES', {
     // jQuery based and standalone scripts
       // also for font libraries which require a bunch of vector images,

@@ -245,6 +245,28 @@ angular.module('advertiser').config(['$stateProvider',
                 }
             }
         }).
+        state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign.manageCreatives', {
+            url: '/edit-creatives',
+            resolve: {
+                campaign: function($stateParams, advertiser){
+                    var i = _.findIndex(advertiser.campaigns, function(campaign){
+                        return campaign._id === $stateParams.campaignId;
+                    });
+                    return {
+                        advertiser: advertiser,
+                        index: i,
+                        campaign: advertiser.campaigns[i]
+                    };
+                },
+                $title: function() { return 'Manage Creatives'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/manage-creatives.client.view.html',
+                    controller: 'manageCreativesController'
+                }
+            }
+        }).
         state('app.advertiser.allAdvertisers.viewAdvertiser.viewCampaign.viewCampaignPlacementTargets', {
             url: '/placement-targets',
             resolve: {

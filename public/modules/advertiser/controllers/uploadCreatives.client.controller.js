@@ -1,18 +1,14 @@
 /* global _, angular, moment */
 'use strict';
 
-angular.module('advertiser').controller('editCreativesController', [
+angular.module('advertiser').controller('uploadCreativesController', [
     '$scope',
-    'Advertiser',
     'AdvertiserUtils',
     'FileUploader',
     'ngDialog',
     'Notify',
     'NATIVE_SPECS',
-    function($scope, Advertiser,AdvertiserUtils,FileUploader,ngDialog, Notify, NATIVE_SPECS){
-        // Set form hidden by default
-        $scope.formVisible = false;
-        $scope.NATIVE_SPECS = NATIVE_SPECS;
+    function($scope,AdvertiserUtils,FileUploader,ngDialog, Notify, NATIVE_SPECS){
 
         $scope.advertiser = $scope.ngDialogData.advertiser;
 
@@ -34,11 +30,56 @@ angular.module('advertiser').controller('editCreativesController', [
         // is thrown.
         $scope.update = function(success, error){
             this.advertiser.$update(function(response){
-                setCampaign();
+                $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
                 if (success) success(response);
             },function(errorResponse){
                 if (error) error(errorResponse);
                 $scope.saveerror = errorResponse.data.message;
+            });
+        };
+
+        /**
+         * Global util to merge array of new creatives into appropriate creativeGroups in
+         * campaign, or create new creativeGroups where necessary.
+         *
+         * @param creatives
+         * @private
+         */
+        $scope._mergeCreativesIntoCampaign = function(creatives){
+            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
+            // have to merge new creativeGroups with any existing first
+            creativegroups.forEach(function (crg) {
+                var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
+                    if (crg.type === 'native'){
+                        return cg.type === 'native';
+                    } else {
+                        return cg.w === crg.w && cg.h === crg.h;
+                    }
+                });
+                // if creativegroup of same size exists, add to this creative group
+                if (ind > -1) {
+                    $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
+                } else {
+                    $scope.campaign.creativegroups.push(crg);
+                }
+            });
+        };
+
+        /**
+         * Global util to un-merge array (does the opposite of _mergeCreativesFromCampaign) of new creatives from
+         * appropriate creativeGroups in campaign.
+         *
+         * Only will remove unsaved creatives, i.e. creatives without an _id
+         *
+         * @param creatives
+         * @private
+         */
+        $scope._removeUnsavedCreatives = function(){
+            $scope.campaign.creativegroups.forEach(function(crg){
+                _.remove(crg.creatives, function(cr){ return !cr._id; });
+                if (crg.creatives.length === 0){
+                    _.pull($scope.campaign.creativegroups, crg);
+                }
             });
         };
 
@@ -53,33 +94,28 @@ angular.module('advertiser').controller('editCreativesController', [
             });
         };
 
-        //#################################//
-        //######### FILE UPLOADER #########//
-        //#################################//
+        //#########################################//
+        //######### DISPLAY FILE UPLOADER #########//
+        //#########################################//
 
         var uploader = $scope.uploader = new FileUploader({
             url: 'console/creativeassets'
         });
+
         $scope.uploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
             var creatives = AdvertiserUtils.getCreativesFromUploadQueue($scope.uploader);
-            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             // have to merge new creativeGroups with any existing first
             $scope.$apply(function() {
-                creativegroups.forEach(function (crg) {
-                    var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
-                        return cg.w === crg.w && cg.h === crg.h;
-                    });
-                    // if creativegroup of same size exists, add to this creative group
-                    if (ind > -1) {
-                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
-                    } else {
-                        $scope.campaign.creativegroups.push(crg);
-                    }
-                });
+                $scope._mergeCreativesIntoCampaign(creatives);
                 $scope.update(function(){
                     $scope.uploader.clearQueue();
-                }, function(errorResponse){});
+                    $scope.closeThisDialog('Success');
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                }, function(errorResponse){
+                    $scope._removeUnsavedCreatives();
+                    Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+                });
             });
         };
 
@@ -97,48 +133,14 @@ angular.module('advertiser').controller('editCreativesController', [
             }
         };
 
-        $scope.remove = function(creativegroup, creative){
-            ngDialog.openConfirm({
-                template:'\
-                            <p>Are you sure you want to delete this creative? This cannot be undone.</p>\
-                            <div class="ngdialog-buttons">\
-                                <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click="closeThisDialog(0)">No</button>\
-                                <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="confirm(1)">Yes</button>\
-                        </div>',
-                plain: true
-            }).then(function(val){
-                if (val === 1){
-                    var removedCreative;
-                    var removedCreativeGroup;
-                    // first find indices of desired creative
-                    var crg_ind = _.findIndex($scope.campaign.creativegroups, function(crg) { return crg === creativegroup; });
-                    var cr_ind = _.findIndex($scope.campaign.creativegroups[crg_ind].creatives, function(cr) { return cr === creative; });
-                    // remove from creatives document array
-                    removedCreative = $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 1);
-                    //remove creative group if it doesn't contain any creatives anymore
-                    if ($scope.campaign.creativegroups[crg_ind].creatives.length === 0){
-                        removedCreativeGroup = $scope.campaign.creativegroups.splice(crg_ind, 1);
-                    }
-                    $scope.update(function(response){},
-                    function(errorResponse){
-                        // add back in if
-                        if (removedCreativeGroup){
-                            $scope.campaign.creativegroups.splice(crg_ind, 0, removedCreativeGroup[0]);
-                        }
-                        $scope.campaign.creativegroups[crg_ind].creatives.splice(cr_ind, 0, removedCreative[0]);
-                    });
-                }
-            });
-        };
-
         $scope.validateQueue = function(){
             //TODO: This is pretty janky
             return $('#creativeUploadQueue').parsley().validate();
         };
 
-        //#################################//
-        //######### FILE UPLOADER #########//
-        //#################################//
+        //##############################################//
+        //######### NATIVE IMAGE FILE UPLOADER #########//
+        //##############################################//
 
         var nativeUploader = $scope.nativeUploader = new FileUploader({
             url: 'console/native-images'
@@ -146,29 +148,20 @@ angular.module('advertiser').controller('editCreativesController', [
         $scope.nativeUploader.onCompleteAll = function(){
             // When all uploads are complete, modify advertiser object for new creatives and call $update
             var creatives = AdvertiserUtils.getCreativesFromNativeUploadQueue($scope.nativeUploader, $scope.advertiser);
-            var creativegroups = AdvertiserUtils.groupCreatives(creatives, $scope.campaign.name);
             // have to merge new creativeGroups with any existing first
             $scope.$apply(function() {
-                creativegroups.forEach(function (crg) {
-                    var ind = _.findIndex($scope.campaign.creativegroups, function (cg) {
-                        if (crg.type === 'native'){
-                            return cg.type === 'native';
-                        } else {
-                            return cg.w === crg.w && cg.h === crg.h;
-                        }
-                    });
-                    // if creativegroup of same size exists, add to this creative group
-                    if (ind > -1) {
-                        $scope.campaign.creativegroups[ind].creatives = $scope.campaign.creativegroups[ind].creatives.concat(crg.creatives);
-                    } else {
-                        $scope.campaign.creativegroups.push(crg);
-                    }
-                });
+                $scope._mergeCreativesIntoCampaign(creatives);
                 $scope.update(function(){
                     $scope.nativeUploader.clearQueue();
-                }, function(errorResponse){});
+                    $scope.closeThisDialog('Success');
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                }, function(errorResponse){
+                    $scope._removeUnsavedCreatives();
+                    Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+                });
             });
         };
+
 
         /**
          * Wrapper for uploader.uploadAll() which allows form to pass
@@ -189,9 +182,38 @@ angular.module('advertiser').controller('editCreativesController', [
             return $('#nativeCreativeUploadQueue').parsley().validate();
         };
 
-        $scope.updateAndClose = function(){
+        //########################################//
+        //######### NATIVE FILE UPLOADER #########//
+        //########################################//
+
+        var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
+
+        $scope.onUploadSuccess = function(creatives){
+            $scope.loadingCreatives = true;
+            creatives.forEach(function(cr){
+                cr.native.logoUrl = $scope.advertiser.logo_url;
+                cr.native.logoH = 20;
+                cr.native.logoW = 20;
+                cr.weight = 1;
+            });
+            $scope._mergeCreativesIntoCampaign(creatives);
             $scope.update(function(){
+                $scope.loadingCreatives = false;
                 $scope.closeThisDialog('Success');
-            }, function(errorResponse){});
+                $scope.$apply(function(){
+                    Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
+                });
+            }, function(errorResponse){
+                $scope.loadingCreatives = false;
+                $scope._removeUnsavedCreatives();
+                Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
+            });
         };
-}]);
+
+        $scope.validateXlsxForm = function(){
+            //TODO: This is pretty janky
+            return $('#bulkNativeUploadForm').parsley().validate();
+        };
+
+
+    }]);

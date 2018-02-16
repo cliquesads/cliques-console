@@ -17,4 +17,23 @@ angular.module('advertiser').factory('CreativeActivator',['$http',
             return activator;
         }
     ]
-);
+).factory('CreativeRemover', ['$http',
+    // Don't want to make this a full-fledged resource as only the "DELETE" method is supported
+    // against this endpoint right now.
+    function($http) {
+        var factory = {};
+        factory.remove = function(params) {
+            var path = '/console/advertiser/' + params.advertiserId
+                + '/campaign/' + params.campaignId
+                + '/creativegroup/' + params.creativeGroupId
+                + '/creative/' + params.creativeId;
+            return $http.delete(path, {});
+        };
+        factory.removeMany = function(params){
+            var path = '/console/advertiser/' + params.advertiserId
+                + '/campaign/' + params.campaignId + '/remove-creatives';
+            return $http.put(path, { creatives: params.creatives });
+        };
+        return factory;
+    }
+]);

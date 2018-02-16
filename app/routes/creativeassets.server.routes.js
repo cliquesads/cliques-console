@@ -48,4 +48,23 @@ module.exports = function(db, routers){
          * @apiSuccess {String} responseBody.url Google Cloud Storage URL of newly uploaded file.
          */
         .post(upload.single('file'), creativeassets.native.uploadImage);
+
+
+    router.route('/native-images/remote')
+        /**
+         * @api {post} /native-images Upload Remote Native Image From URL
+         * @apiName UploadRemoteNativeImage
+         * @apiGroup CreativeAsset
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         * @apiPermission publisher
+         *
+         * @apiDescription Uploads any number of images accessible through remote URLs to Cloudinary
+         *
+         * @apiParam (Body) {String[]} imageUrls remote URLs of images to be uploaded to Cloudinary.
+         *
+         * @apiSuccess {Object} responseBody response body is an object w/ format {"originalImageUrl": "cloudinaryUrl"}
+         */
+        .post(creativeassets.native.uploadRemoteImages);
 };
