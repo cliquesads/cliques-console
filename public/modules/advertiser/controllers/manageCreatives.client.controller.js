@@ -402,6 +402,7 @@ angular.module('advertiser').controller('manageCreativesController', [
             if (!err){
                 creative.sliderOptions.disabled = false;
                 creative.sliderOptions.hidePointerLabels = false;
+                $scope._onAdvertiserLoad();
             }
         };
 
@@ -414,6 +415,7 @@ angular.module('advertiser').controller('manageCreativesController', [
             if (!err){
                 creative.sliderOptions.disabled = true;
                 creative.sliderOptions.hidePointerLabels = true;
+                $scope._onAdvertiserLoad();
             }
         };
 
