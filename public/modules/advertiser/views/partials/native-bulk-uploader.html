@@ -83,22 +83,19 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="row in xlsxData">
-                        <td>
-                            <div ng-hide="row.editImageUrl">
-                                <img src="{{ row.imageUrl }}" class="smallthumbnail" alt="Image Not Found"/>
-                                <p>
-                                    <a href="{{ row.imageUrl }}" target="_blank">{{ row.imageUrl }}</a>
-                                    <a href="#" ng-click="row.editImageUrl = true"><i class="fa fa-sm fa-edit"></i></a>
-                                </p>
-                            </div>
-                            <div ng-show="row.editImageUrl">
-                                <div class="col-xs-10">
-                                    <input name="imageUrl" type="url" data-parsley-type="url" data-ng-model="row.imageUrl" id="{{ $index }}_imageUrl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editImageUrl = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                        <td ng-init="row.imageError = false;">
+                            <img check-image form="bulkNativeUploadForm" field-name="{{ $index + '_imageUrl' }}" ng-src="{{ row.imageUrl }}" class="smallthumbnail" alt="Image Not Found"/>
+                            <hr/>
+                            <input type="url"
+                                   data-parsley-type="url"
+                                   data-ng-model="row.imageUrl"
+                                   name="{{ $index }}_imageUrl"
+                                   id="{{ $index }}_imageUrl"
+                                   data-parsley-group="{{ wizardstep }}"
+                                   class="form-control"
+                                   placeholder="http://www.example.com/something.jpeg"
+                                   required="required">
+                                <span ng-show="bulkNativeUploadForm[$index + '_imageUrl'].$error.isImage" class="text-danger pl text-sm">URL is not an image.</span>
                         </td>
                         <td>
                             <native-copy-short ng-model="row.headline" index="{{ $index }}" form="bulkNativeUploadForm" wizardstep="{{ wizardstep }}"></native-copy-short>
@@ -107,80 +104,21 @@
                             <native-copy-long ng-model="row.description" index="{{ $index }}" form="bulkNativeUploadForm" wizardstep="{{ wizardstep }}"></native-copy-long>
                         </td>
                         <td>
-                            <div ng-hide="row.editClickUrl">
-                                <a href="{{ row.click_url }}" target="_blank">{{ row.click_url }}</a>
-                                <a href="#" ng-click="row.editClickUrl = true"><i class="fa fa-sm fa-edit"></i></a>
-                            </div>
-                            <div ng-show="row.editClickUrl">
-                                <div class="col-xs-10">
-                                    <input name="click_url" type="url" data-parsley-type="url" data-ng-model="row.click_url" id="{{ $index }}_clickUrl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editClickUrl = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                            <a href="{{ row.click_url }}" target="_blank">{{ row.click_url }}</a>
+                            <hr/>
+                            <input name="click_url" type="url" data-parsley-type="url" data-ng-model="row.click_url" id="{{ $index }}_clickUrl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td>
-                            <div ng-hide="row.editName">
-                                <span ng-class="{'text-italic': !row.name }">{{ row.name || "null" }}</span>
-                                <a href="#" ng-click="row.editName = true"><i class="fa fa-sm fa-edit"></i></a>
-                            </div>
-                            <div ng-show="row.editName">
-                                <div class="col-xs-10">
-                                    <input name="name" ng-show="row.name" type="text" data-ng-model="row.name" id="{{ $index }}_name" data-parsley-group="{{ wizardstep }}" class="form-control">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editName = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                            <span ng-class="{'text-italic': !row.name }">{{ row.name || "null" }}</span>
                         </td>
                         <td>
-                            <div ng-hide="row.editCategory">
-                                <span ng-class="{'text-italic': !row.category }">{{ row.category || "null" }}</span>
-                                <a href="#" ng-click="row.editCategory = true"><i class="fa fa-sm fa-edit"></i></a>
-                            </div>
-                            <div ng-show="row.editCategory">
-                                <div class="col-xs-10">
-                                    <input name="category"
-                                           ng-show="row.category"
-                                           type="text"
-                                           data-ng-model="row.category"
-                                           id="{{ $index }}_category"
-                                           data-parsley-group="{{ wizardstep }}"
-                                           class="form-control">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editCategory = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                            <span ng-class="{'text-italic': !row.category }">{{ row.category || "null" }}</span>
                         </td>
                         <td>
-                            <div ng-hide="row.editImpTracker">
-                                <span ng-class="{'text-italic': !row.impTracker }">{{ row.impTracker || "null" }}</span>
-                                <a href="#" ng-click="row.editImpTracker = true"><i class="fa fa-sm fa-edit"></i></a>
-                            </div>
-                            <div ng-show="row.editImpTracker">
-                                <div class="col-xs-10">
-                                    <input name="impTracker" ng-show="row.impTracker" type="url" data-parsley-type="url" data-ng-model="row.impTracker" id="{{ $index }}_impTracker" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editImpTracker = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                            <span ng-class="{'text-italic': !row.impTracker }">{{ row.impTracker || "null" }}</span>
                         </td>
                         <td>
-                            <div ng-hide="row.editClickTracker">
-                                <span ng-class="{'text-italic': !row.clickTracker }">{{ row.clickTracker || "null" }}</span>
-                                <a href="#" ng-click="row.editClickTracker = true"><i class="fa fa-sm fa-edit"></i></a>
-                            </div>
-                            <div ng-show="row.editClickTracker">
-                                <div class="col-xs-10">
-                                    <input name="clickTracker" ng-show="row.clickTracker" type="url" data-parsley-type="url" data-ng-model="row.impTracker" id="{{ $index }}_clickTracker" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com">
-                                </div>
-                                <div class="col-xs-2">
-                                    <button class="btn btn-xs btn-primary" ng-click="row.editImpTracker = false"><i class="fa fa-check"></i></button>
-                                </div>
-                            </div>
+                            <span ng-class="{'text-italic': !row.clickTracker }">{{ row.clickTracker || "null" }}</span>
                         </td>
                     </tr>
                     </tbody>
@@ -196,6 +134,4 @@
             </ul>
         </div>
     </div>
-
-
 </div>

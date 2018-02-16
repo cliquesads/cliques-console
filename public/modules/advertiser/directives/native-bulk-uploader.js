@@ -37,6 +37,12 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                     });
                 };
 
+                scope.imageErrors = {};
+                scope.setImageError = function(key){
+                    return function(){
+                        scope.imageErrors[key] = true;
+                    };
+                };
 
                 //##### FILTERS ######
                 scope.uploader.filters.push({
@@ -73,6 +79,10 @@ angular.module('advertiser').directive('nativeBulkUploader', [
 
                 scope.xlsxData = [];
 
+                /**
+                 * After file is added, parse Excel file
+                 * @param fileItem
+                 */
                 scope.uploader.onAfterAddingFile = function(fileItem) {
                     var reader = new FileReader();
                     // Have to use onload callbacks for both FileReader & Image objects,
