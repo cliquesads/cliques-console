@@ -1,16 +1,25 @@
-span.rz-pointer{
-  top: -5px !important;
-  height: 14px !important;
-  width: 14px !important;
-  background-color: @brand-primary-dark !important;
+.rzslider .rz-pointer{
+  top: -5px;
+  height: 14px;
+  width: 14px;
+  background-color: @brand-primary-dark;
 }
 
-.rz-selection {
-  background: @brand-primary-light !important;
+.rzslider .rz-selection {
+  background: @brand-primary-light;
 }
 
-.rz-bubble {
-  opacity: 0 !important;
+.rzslider[disabled] .rz-limit {
+    opacity: 0;
+}
+
+.rzslider[disabled] .rz-model-value {
+  font-size: x-small;
+}
+
+.rzslider .rz-bubble {
+  font-size: smaller;
+  bottom: 12px;
 }
 
 rzslider {

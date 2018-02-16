@@ -410,7 +410,7 @@ module.exports = function(db, routers){
 
     router.route('/advertiser/:advertiserId/campaign/:campaignId/deactivate')
         /**
-         * @api {patch} /advertiser/:advertiserId/campaign/:campaignId Deactivate Campaign
+         * @api {put} /advertiser/:advertiserId/campaign/:campaignId Deactivate Campaign
          * @apiName DeactivateCampaign
          * @apiGroup Advertiser
          * @apiDescription Sets a Campaign's `active` field to `false`, and sends a `StopBidder` signal to the appropriate
@@ -428,6 +428,50 @@ module.exports = function(db, routers){
          */
         .put(advertisers.hasAuthorization, advertisers.campaign.deactivate);
 
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/remove-creatives')
+        /**
+         * @api {put} /advertiser/:advertiserId/campaign/:campaignId/remove-creatives Remove Many Creatives
+         * @apiName RemoveManyCreatives
+         * @apiGroup Advertiser
+         * @apiDescription Remove multiple creatives from a Campaign. Will also automatically remove empty
+         *      creativeGroups as cleanup.
+         *
+         * ## Hooks ##
+         * 1. Will delete parent creativeGroup if its empty
+         * 2. WIll update bidder w/ new config
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document containing creative
+         * @apiParam (Body)) {String[]} [creatives]    Creative ID's to be removed
+         */
+        .put(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.removeMany);
+
+    router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId')
+        /**
+         * @api {delete} /advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId Remove Creative
+         * @apiName RemoveCreative
+         * @apiGroup Advertiser
+         * @apiDescription Remove a creative from creativeGroup
+         *
+         * ## Hooks ##
+         * 1. Will delete parent creativeGroup if its empty
+         * 2. Will update Bidder w/ new config
+         *
+         * @apiVersion 0.1.0
+         * @apiPermission networkAdmin
+         * @apiPermission advertiser
+         *
+         * @apiParam (Path Parameters){String} advertiserId ObjectID of Advertiser
+         * @apiParam (Path Parameters){String} campaignId ObjectID of Campaign sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeGroupId ObjectID of CreativeGroup sub-document containing creative
+         * @apiParam (Path Parameters){String} creativeId ObjectID of Creative sub-document
+         */
+        .delete(advertisers.hasAuthorization, advertisers.campaign.creativeGroup.creative.remove);
+
     router.route('/advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate')
         /**
          * @api {patch} /advertiser/:advertiserId/campaign/:campaignId/creativegroup/:creativeGroupId/creative/:creativeId/activate Activate Creative
@@ -436,8 +480,8 @@ module.exports = function(db, routers){
          * @apiDescription Sets a Creative's `active` field to `true`, allowing it to be served.
          *
          * ## Hooks ##
-         * 1. Activates parent creativeGroup if it was previously inactive.
-         * 2. Publishes `updateBidder` message if creativeGroup was previously inactive.
+         * 1. Removes parent creativeGroup if removing this creative means that its `creatives` array is now empty.
+         * 2. Publishes `updateBidder` message to update bidder config for this campaign
          *
          * @apiVersion 0.1.0
          * @apiPermission networkAdmin

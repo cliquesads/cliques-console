@@ -269,10 +269,21 @@ adding hook in parent template ---->
                             </div>
                         </tab>
                         <tab heading="Creatives">
-                            <div class="panel-body">
-                                <a href="#" class="pull-right" ng-click="editCreatives()" analytics-on="click" analytics-event="ViewCampaign_EditCreatives">
-                                    <span class="fa fa-edit"></span>
-                                </a>
+                            <div class="row mb">
+                                <small><em class="text-muted">Creatives</em></small>
+                                <div class="pull-right">
+                                    <strong>
+                                        <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/edit-creatives" analytics-on="click" analytics-event="ViewCampaign_EditCreatives">
+                                            <i class="fa fa-edit"></i> Manage Creatives
+                                        </a>
+                                    </strong>
+                                    &nbsp;|&nbsp;
+                                    <button type="button" class="btn btn-xs btn-labeled btn-primary" ng-click="addNewCreatives()" analytics-event="ViewCampaign_UploadCreatives" analytics-on="click">
+                                            <span class="btn-label"><i class="fa fa-plus"></i></span> Add New
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="box-placeholder" ng-show="!campaign.creativegroups.length">
                                     <span class="fa fa-exclamation-circle"></span>&nbsp;&nbsp;<em>No creatives yet.</em>
                                 </div>

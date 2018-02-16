@@ -1,0 +1,29 @@
+<h4>Upload New Creatives</h4>
+<div class="row">
+    <tabset active="0">
+        <tab ng-if="campaign.type === 'native'">
+            <tab-heading>
+                <i class="fa fa-image"></i> Native - Upload Images
+            </tab-heading>
+            <div class="row" id="nativeUploader">
+                <native-creative-uploader uploader="nativeUploader" onuploadall="nativeValidateAndUpload(validateNativeQueue())" width="12"> </native-creative-uploader>
+            </div>
+        </tab>
+        <tab ng-if="campaign.type === 'native'">
+            <tab-heading>
+                <i class="fa fa-table"></i> Native - Bulk Uploader <span class="label label-primary">Beta</span>
+            </tab-heading>
+            <div class="row" id="bulkUploader">
+                <native-bulk-uploader uploader="nativeBulkUploader" pre-upload-validator="validateXlsxForm()" on-upload-success="onUploadSuccess(creatives)" onupwidth="12"> </native-bulk-uploader>
+            </div>
+        </tab>
+        <tab heading="Cliques Hosted" ng-if="campaign.type === 'display' || !campaign.type">
+            <div class="row">
+                <creative-uploader uploader="uploader" onuploadall="validateAndUpload(validateQueue())" width="12"> </creative-uploader>
+            </div>
+        </tab>
+        <tab heading="DoubleClick" ng-if="campaign.type === 'display' || !campaign.type">
+            <doubleclick-creative-uploader on-upload="onDCMUpload(creatives)"></doubleclick-creative-uploader>
+        </tab>
+    </tabset>
+</div>

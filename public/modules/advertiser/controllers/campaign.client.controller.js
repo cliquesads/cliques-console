@@ -2,10 +2,10 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
+    '$timeout','Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
     'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES',
-	function($scope, $stateParams, $location, Authentication, Advertiser, campaign, CampaignActivator, Notify,
+	function($scope, $stateParams, $location, $timeout, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
              REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES) {
 
@@ -116,12 +116,19 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
         // ######################################### //
-        $scope.editCreatives = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth1000',
-                template: 'modules/advertiser/views/partials/edit-creatives.html',
-                controller: 'editCreativesController',
+        $scope.addNewCreatives = function(){
+            var dialog = ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth1200',
+                template: 'modules/advertiser/views/partials/upload-creatives.html',
+                controller: 'uploadCreativesController',
                 data: {advertiser: $scope.advertiser, campaign: $scope.campaign}
+            });
+            dialog.closePromise.then(function(data){
+                if (data.value === "Success"){
+                    $timeout(function(){
+                        $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                    },100);
+                }
             });
         };
 

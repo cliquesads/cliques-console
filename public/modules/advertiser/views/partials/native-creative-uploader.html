@@ -4,7 +4,7 @@
         <div nv-file-drop="" uploader="uploader">
             <div ng-show="uploader.isHTML5">
                 <div nv-file-over="" uploader="uploader" over-class="bg-info" class="box-placeholder my-drop-zone">
-                    <h4>Drag Your Native Ad Images Here</h4>
+                    <h4><i class="fa fa-image"></i> Drag Your Native Ad Images Here</h4>
                     <p>Each image will be automatically cropped & resized to fit each Site's native placement.</p>
                     <p><small class="text-muted">Supported File Types: <em>.png .jpeg</em></small></p>
                     <p><small class="text-muted">Minimum Dimensions:<em> {{ NATIVE_SPECS.image.minHeightPx }}x{{ NATIVE_SPECS.image.minWidthPx }}</em></small></p>
@@ -42,10 +42,10 @@
                             <input name="website" type="url" data-parsley-type="url" data-ng-model="item.click_url" id="{{ item.file.name }}_clickurl" data-parsley-group="{{ wizardstep }}" class="form-control" placeholder="http://www.example.com" required="required">
                         </td>
                         <td>
-                            <native-copy-short ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-short>
+                            <native-copy-short ng-model="item.headline" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-short>
                         </td>
                         <td>
-                            <native-copy-long ng-model="item" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-long>
+                            <native-copy-long ng-model="item.description" index="{{ $index }}" form="nativeCreativeUploadQueue" wizardstep="{{ wizardstep }}"></native-copy-long>
                         </td>
                         <td nowrap="">
                             <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs" analytics-on="click" analytics-event="CreativeUploader_Remove" tooltip="Remove">

@@ -1,6 +1,5 @@
 'use strict';
 
-//Articles service used for communicating with the articles REST endpoints
 angular.module('advertiser').factory('ActionBeacon', ['$http',
     function($http) {
         var actionbeaconfactory = {};
