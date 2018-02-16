@@ -111,6 +111,7 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                         var imageUrls = _.map(scope.xlsxData, function(row){
                             return row.imageUrl;
                         });
+                        scope.loadingImages = true;
                         $http.post('/console/native-images/remote', { imageUrls: imageUrls }).then(
                             function(response){
                                 // now zip cloudinary URLs and image metadata into xlsxData and pass to callback
@@ -140,8 +141,10 @@ angular.module('advertiser').directive('nativeBulkUploader', [
                                         }
                                     });
                                 });
+                                scope.loadingImages = false;
                                 scope.onUploadSuccess({ creatives: creatives });
                             }, function(error){
+                                scope.loadingImages = false;
                                 scope.creative_upload_error = error.data.message;
                             }
                         );

@@ -189,6 +189,7 @@ angular.module('advertiser').controller('uploadCreativesController', [
         var nativeBulkUploader = $scope.nativeBulkUploader = new FileUploader({});
 
         $scope.onUploadSuccess = function(creatives){
+            $scope.loadingCreatives = true;
             creatives.forEach(function(cr){
                 cr.native.logoUrl = $scope.advertiser.logo_url;
                 cr.native.logoH = 20;
@@ -197,11 +198,13 @@ angular.module('advertiser').controller('uploadCreativesController', [
             });
             $scope._mergeCreativesIntoCampaign(creatives);
             $scope.update(function(){
+                $scope.loadingCreatives = false;
                 $scope.closeThisDialog('Success');
                 $scope.$apply(function(){
                     Notify.alert('Your creatives have been uploaded successfully.', {status: 'success'});
                 });
             }, function(errorResponse){
+                $scope.loadingCreatives = false;
                 $scope._removeUnsavedCreatives();
                 Notify.alert('Error uploading creatives: ' + errorResponse.data.message, {status: 'danger'});
             });

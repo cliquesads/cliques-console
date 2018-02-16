@@ -128,8 +128,13 @@
                 <li class="previous">
                     <a href="#" ng-click="goToStep('upload')" analytics-on="click" analytics-event="BulkUploadNativeCreatives_GoBackToUpload"><span>&larr; Clear Data & Re-Upload</span></a>
                 </li>
-                <li class="next">
-                    <button class="btn btn-primary pull-right" ng-click="finish()" analytics-on="click" analytics-event="BulkUploadNativeCreatives_Finish">Accept & Upload &nbsp;</button>
+                <li class="next pull-right">
+                    <button class="btn btn-primary" ng-click="finish()" analytics-on="click" analytics-event="BulkUploadNativeCreatives_Finish">Accept & Upload &nbsp;</button>
+                    <div ng-show="loadingImages" class="ball-pulse">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
                 </li>
             </ul>
         </div>
