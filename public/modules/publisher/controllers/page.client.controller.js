@@ -1,4 +1,4 @@
-/* global _, angular, moment, user */
+/* global _, angular, moment, user, deploymentMode */
 'use strict';
 
 angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher',
@@ -8,6 +8,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
              DEFAULT_TYPES, NATIVE_POSITIONS, HourlyAdStat, aggregationDateRanges, Authentication, Notify, ngDialog){
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
+
         $scope.getPositionByCode = function(code, placement){
             if (placement.type === 'native' || placement.type === 'multiPaneNative'){
                 return NATIVE_POSITIONS.filter(function(pos){ return pos.code === code; })[0];
@@ -229,6 +230,9 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             }
         };
 
+        // get deployment mode from global var
+        $scope.deploymentMode = deploymentMode;
+
         /**
          * Handler for get Ad Tag button, opens new dialog
          * @param placement
@@ -249,6 +253,10 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         secure: false,
                         type: defaultTagType,
                         targetId: null,
+                        // TODO: resolve deploymentMode differences
+                        // this option sets whether JS tag is in standard format, or async "factory"
+                        // format
+                        useFactory: $scope.deploymentMode === 'contentNetwork',
                         targetChildIndex: null,
                         keywords: null
                     };
@@ -265,6 +273,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             type: $scope.options.type,
                             targetId: $scope.options.targetId,
                             keywords: $scope.options.keywords,
+                            useFactory: $scope.options.useFactory,
                             targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;

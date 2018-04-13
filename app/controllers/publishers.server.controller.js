@@ -271,7 +271,9 @@ module.exports = function(db) {
                     keywords: req.query.keywords,
                     tag_type: req.query.type,
                     targetId: req.query.targetId,
-                    targetChildIndex: req.query.targetChildIndex
+                    targetChildIndex: req.query.targetChildIndex,
+                    useFactory: req.query.useFactory,
+                    locationId: req.query.locationId
                 });
                 publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', function(err, placement){
                     if (err){
