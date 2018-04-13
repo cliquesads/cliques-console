@@ -77,6 +77,43 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             });
         };
 
+        $scope.toggleEvenPacing = function(){
+
+            // Wrap $update promise in dialog promise, which has to be resolved
+            // first by clicking "Confirm"
+            var toggle = function(){
+                $scope.advertiser.$update(function(){
+                    Notify.alert('Even-pacing setting changed.',{status: 'success'});
+                    $scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
+                }, function(errorResponse) {
+                    Notify.alert('Error changing even pacing: ' + errorResponse.message,{status: 'danger'});
+                    $scope.error = errorResponse.data.message;
+                });
+            };
+            if (!$scope.campaign.even_pacing){
+                var dialog = ngDialog.openConfirm({
+                    template: '\
+                        <br>\
+                        <p>Are you SURE you want to disable even pacing? Your campaign\'s budget will be spent as \
+                        quickly as possible with even pacing disabled.</p>\
+                        <p class="text-center">\
+                            <button class="btn btn-lg btn-success" ng-click="confirm(true)">Yes</button>\
+                            <button class="btn btn-lg btn-default" ng-click="confirm(false)">No</button>\
+                        </p>',
+                    plain: true
+                });
+                dialog.then(function(doIt) {
+                    if (doIt){
+                        toggle();
+                    } else {
+                        $scope.campaign.even_pacing = true;
+                    }
+                });
+            } else {
+                toggle();
+            }
+        };
+
         $scope.validateInput = function(name, type) {
             var input = this.campaignForm[name];
             return (input.$dirty || $scope.submitted) && input.$error[type];
