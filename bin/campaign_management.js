@@ -11,7 +11,6 @@
 require('./_main')(function(GLOBALS) {
     'use strict';
     const request = require('request'),
-        _ = require('lodash'),
         chalk = require('chalk'),
         async = require('async'),
         mail = require('../app/controllers/mailer.server.controller'),
@@ -26,7 +25,7 @@ require('./_main')(function(GLOBALS) {
     mongoose.Promise = promise;
 
     // Get base API url. Use secure in dev / prod, non-secure in local-test
-    let BASE_API_URL = 'http://localhost:5000';
+    let BASE_API_URL;
     if (process.env.NODE_ENV === 'local-test') {
         BASE_API_URL = 'http://' + config.get('Console.http.external.hostname') +
             ':' + config.get('Console.http.external.port');
