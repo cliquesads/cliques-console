@@ -8,17 +8,16 @@
  * ### w/ end_dates that have occurred in the past
  */
 
-'use strict';
-const init = require('../config/init')(),
-    request = require('request'),
-    _ = require('lodash'),
-    chalk = require('chalk'),
-    async = require('async'),
-    mail = require('../app/controllers/mailer.server.controller'),
-    mailer = new mail.Mailer({ templatePath: __dirname + '/../app/views/templates' }),
-    promise = require('bluebird');
-
 require('./_main')(function(GLOBALS) {
+    'use strict';
+    const request = require('request'),
+        _ = require('lodash'),
+        chalk = require('chalk'),
+        async = require('async'),
+        mail = require('../app/controllers/mailer.server.controller'),
+        mailer = new mail.Mailer({ templatePath: __dirname + '/../app/views/templates' }),
+        promise = require('bluebird');
+
     const models = GLOBALS.cliques_mongo.models,
         db = GLOBALS.db,
         config = GLOBALS.cliques_config;
@@ -28,12 +27,12 @@ require('./_main')(function(GLOBALS) {
 
     // Get base API url. Use secure in dev / prod, non-secure in local-test
     let BASE_API_URL = 'http://localhost:5000';
-    // if (process.env.NODE_ENV === 'local-test') {
-    //     BASE_API_URL = 'http://' + config.get('Console.http.external.hostname') +
-    //         ':' + config.get('Console.http.external.port');
-    // } else {
-    //     BASE_API_URL = 'https://' + config.get('Console.https.external.hostname');
-    // }
+    if (process.env.NODE_ENV === 'local-test') {
+        BASE_API_URL = 'http://' + config.get('Console.http.external.hostname') +
+            ':' + config.get('Console.http.external.port');
+    } else {
+        BASE_API_URL = 'https://' + config.get('Console.https.external.hostname');
+    }
 
     const advertiserModels = new models.AdvertiserModels(db);
 
@@ -92,17 +91,19 @@ require('./_main')(function(GLOBALS) {
             // TODO: which essentially is just a promise wrapping an async.each() instead.
 
             // now send request to API to deactivate campaign
-            return new promise((resolve, reject) =>{
+            return new promise((resolve, reject) => {
                 const errorCampaigns = [],
                     successCampaigns = [];
                 async.each(campaigns, (campaign, callback) => {
+                    const url = `${BASE_API_URL}/api/advertiser/${campaign.__parent.id}/campaign/${campaign.id}/deactivate`;
+                    console.log(`Sending PUT request to ${url}...`);
                     request({
                         auth: {
                             user: GLOBALS.args.username,
                             pass: GLOBALS.args.password
                         },
                         method: "PUT",
-                        url: `${BASE_API_URL}/api/advertiser/${campaign.__parent.id}/campaign/${campaign.id}/deactivate`,
+                        url: url,
                         jar: false // to enable sessions
                     }, (err, response) => {
                         // If uncaught error, callback with error
@@ -125,14 +126,12 @@ require('./_main')(function(GLOBALS) {
                                 };
 
                                 // Log error for posterity's sake
-                                console.error(chalk.red(`Error deactivating campaign ${httpError.campaign.id}: 
-                                    Status ${httpError.statusCode} - ${httpError.message}`));
+                                console.error(chalk.red(`Error deactivating campaign ${httpError.campaign.id}: Status ${httpError.statusCode} - ${httpError.message}`));
 
                                 // add to errorCampaigns array, which will be passed to resolve();
                                 errorCampaigns.push(httpError);
                             } else {
-                                console.log(`Successfully deactivated campaign ID ${campaign.id}`);
-                                console.log(`Response ${response.statusCode}`);
+                                console.log(`Successfully deactivated campaign ID ${campaign.id}: Status ${response.statusCode} - ${response.statusMessage}`);
                                 successCampaigns.push(campaign);
                             }
                             callback();
