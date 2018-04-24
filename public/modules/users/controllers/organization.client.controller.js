@@ -18,8 +18,13 @@ angular.module('users').controller('OrganizationController', ['$scope', '$http',
         // jQuery hack to force input to fill whole column
         $('div.intl-tel-input').addClass('col-md-12 p0');
 
-        $scope.notObserver = function(user){
-            return user.role !== 'observer';
+        /**
+         * Determines whether to hide or show user based on user role
+         * Currently hides 'observer' and 'serviceAccount' roles.
+         */
+        $scope.showOrHideUser = function(user){
+            var rolesToHide = ['observer', 'serviceAccount'];
+            return rolesToHide.indexOf(user.role) === -1;
         };
 
         /**

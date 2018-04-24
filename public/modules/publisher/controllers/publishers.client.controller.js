@@ -32,10 +32,10 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
         $scope.hasActiveSites = function (bool) {
             return function(publisher, index, arr) {
                 var hasBoolSites = publisher.sites.filter(function(site) {
-                    return site.active === bool;
+                    return site.active === true;
                 }).length > 0;
                 if (!bool) {
-                    hasBoolSites = hasBoolSites || publisher.sites.length === 0;
+                    hasBoolSites = !hasBoolSites || publisher.sites.length === 0;
                 }
                 return hasBoolSites;
             };

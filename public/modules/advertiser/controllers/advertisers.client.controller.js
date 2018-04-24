@@ -15,10 +15,10 @@ angular.module('advertiser').controller('ListAdvertisersController', ['$scope', 
         $scope.hasActiveCampaigns = function (bool){
             return function (advertiser, index, arr) {
                 var hasBoolCampaigns = advertiser.campaigns.filter(function(camp){
-                        return camp.active === bool;
+                        return camp.active === true;
                     }).length > 0;
                 if (!bool){
-                    hasBoolCampaigns = hasBoolCampaigns || advertiser.campaigns.length === 0;
+                    hasBoolCampaigns = !hasBoolCampaigns || advertiser.campaigns.length === 0;
                 }
                 return hasBoolCampaigns;
             };

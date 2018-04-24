@@ -182,6 +182,28 @@ adding hook in parent template ---->
                                                     </div>
                                                 </div>
                                             </fieldset>
+
+                                            <!-- TODO: resolve deploymentMode differences -->
+                                            <fieldset ng-if="deploymentMode === 'contentNetwork'">
+                                                <div class="form-horizontal">
+                                                    <div class="form-group m0">
+                                                        <label class="col-sm-4 control-label">
+                                                            Even Pacing
+                                                        </label>
+
+                                                        <div class="col-sm-8 form-control-static">
+                                                            <label class="switch">
+                                                                <input type="checkbox" checked="checked" ng-model="campaign.even_pacing" ng-click="toggleEvenPacing()"/>
+                                                                <span></span>
+                                                            </label>
+                                                            <div class="label" ng-class="campaign.even_pacing ? 'label-success':'label-default'">{{ campaign.even_pacing ? "On":"Off"}}</div>
+                                                            <a href="#" tooltip="{{ TOOLTIPS.even_pacing }}" tooltip-class="wd-md" tooltip-placement="right" analytics-on="click" analytics-event="CampaignWizard_TooltipEvenPacing">
+                                                                <em class="fa fa-question-circle"></em>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
                                         </div>
                                         <div class="pull-right">
                                             <!-- buttons to submit / cancel form -->

@@ -13,7 +13,8 @@ angular.module('advertiser')
         view_lookback: "Match actions from this beacon to any impressions shown this many days prior (or more recently)",
         click_lookback: "Match actions from this beacon to any clicks that occurred this many days prior (or more recently)",
         actionbeacons: "View/Create Action Beacons, which are trackers that go on your website to track ad-effectiveness & ROI.",
-        multi_bid: "Turn Multi-Bid OFF if you do not wish to bid for simultaneous impressions made available from a single Multi-Pane Native placement. Turn ON if you do."
+        multi_bid: "Turn Multi-Bid OFF if you do not wish to bid for simultaneous impressions made available from a single Multi-Pane Native placement. Turn ON if you do.",
+        even_pacing: "Turn even pacing ON to evenly (i.e. linearly) spend your budget over the duration of your campaign. Turning it OFF will spend your campaign's budget as quickly as possible."
     })
     .constant('REVIEW_TIME','2 - 4 Business Hours')
     .constant('THIRD_PARTY_CLIQUE_ID', 'Third Party')
