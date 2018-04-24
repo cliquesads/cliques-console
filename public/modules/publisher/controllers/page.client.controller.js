@@ -243,6 +243,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                 controller: ['$scope','PlacementTag',function($scope,PlacementTag) {
                     $scope.publisher = $scope.ngDialogData.publisher;
                     $scope.placement = $scope.ngDialogData.placement;
+                    $scope.deploymentMode = deploymentMode;
 
                     // set default tagtype based on what tag types are supported by this placement's defaultType
                     var defaultTagType = DEFAULT_TYPES[$scope.placement.defaultType].tagTypes[0];
@@ -253,10 +254,12 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         secure: false,
                         type: defaultTagType,
                         targetId: null,
+
                         // TODO: resolve deploymentMode differences
                         // this option sets whether JS tag is in standard format, or async "factory"
                         // format
                         useFactory: $scope.deploymentMode === 'contentNetwork',
+                        locationId: $scope.deploymentMode === 'contentNetwork',
                         targetChildIndex: null,
                         keywords: null
                     };
@@ -273,13 +276,14 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             type: $scope.options.type,
                             targetId: $scope.options.targetId,
                             keywords: $scope.options.keywords,
+                            locationId: $scope.options.locationId,
                             useFactory: $scope.options.useFactory,
                             targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex','options.keywords'],
+                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex','options.keywords', 'options.locationId'],
                         function(){
                             $scope.getPlacementTag();
                         });

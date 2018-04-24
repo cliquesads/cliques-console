@@ -11,7 +11,8 @@ angular.module('publisher').factory('PlacementTag', ['$http',
                 targetId: params.targetId,
                 targetChildIndex: params.targetChildIndex,
                 keywords: params.keywords,
-                useFactory: params.useFactory
+                useFactory: params.useFactory,
+                locationId: params.locationId
             };
             return $http.get(path, {params: queryParams});
         };
