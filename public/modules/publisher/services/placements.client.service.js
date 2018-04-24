@@ -10,7 +10,9 @@ angular.module('publisher').factory('PlacementTag', ['$http',
                 type: params.type || 'javascript',
                 targetId: params.targetId,
                 targetChildIndex: params.targetChildIndex,
-                keywords: params.keywords
+                keywords: params.keywords,
+                useFactory: params.useFactory,
+                locationId: params.locationId
             };
             return $http.get(path, {params: queryParams});
         };

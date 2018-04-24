@@ -29,6 +29,9 @@ angular.module('advertiser').directive('flightDates', ['DatepickerService','$tim
             function getMidnight(date){
                 return new Date(date.getFullYear(), date.getMonth(), date.getDate(),0,0,0);
             }
+            function getLastSecondBeforeMidnight(date){
+                return new Date(date.getFullYear(), date.getMonth(), date.getDate(),23,59,59);
+            }
             function parseFormattedDate(input){
                 var parts = input.split('-');
                 return new Date(parts[0], parts[1]-1, parts[2]);
