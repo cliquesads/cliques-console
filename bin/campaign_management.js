@@ -37,6 +37,32 @@ require('./_main')(function(GLOBALS) {
 
     const advertiserModels = new models.AdvertiserModels(db);
 
+    /**
+     * Deactivates campaigns with a UTC `end_date` in [start, end) open range,
+     * and returns promise that resolves with { errAndSuccess } object, where
+     *
+     * ```
+     * {
+     *    success: [ <array of campaigns that were deactivated successfully> ],
+     *    error: [ <array of error objects (see below)]
+     * }
+     * ```
+     *
+     * An error object represents a single campaign that threw an error when
+     * deactivate API endpoint was called:
+     *
+     * ```
+     * {
+     *     campaign: campaign,
+     *     message: response.body,
+     *     statusCode: response.statusCode,
+     *     statusMessage: response.statusMessage
+     * }
+     * ```
+     *
+     * @param start Date object for start of range (inclusive)
+     * @param end Date object to end range (exclusive)
+     */
     function deactivateExpiredCampaigns(start, end){
         // TODO: Plug in promise lib to Mongoose globally and this goes away
         // const promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
@@ -61,6 +87,10 @@ require('./_main')(function(GLOBALS) {
             return campaignsToDeactivate;
         })
         .then((campaigns) => {
+            // TODO: wanted to use promise .each() instead to iterate over campaigns
+            // TODO: but couldn't get the flow right. Would be a lot cleaner than this,
+            // TODO: which essentially is just a promise wrapping an async.each() instead.
+
             // now send request to API to deactivate campaign
             return new promise((resolve, reject) =>{
                 const errorCampaigns = [],
@@ -79,27 +109,36 @@ require('./_main')(function(GLOBALS) {
                         if (err){
                             return callback(err);
                         }
-                        // if HTTP error occurs (i.e. statusCode not 200),
-                        // Don't callback with error but actually add pseudo-error-like info object to errors
-                        // array, which will be returned in resolve();
-                        if (response.statusCode !== 200){
-                            const httpError = {
-                                campaign: campaign,
-                                message: response.body,
-                                statusCode: response.statusCode,
-                                statusMessage: response.statusMessage
-                            };
-                            // Log error for posterity's sake
-                            console.error(chalk.red(`Error deactivating campaign ${httpError.campaign.id}: 
-                                Status ${httpError.statusCode} - ${httpError.message}`));
-                            // add to errorCampaigns array, which will be passed to resolve();
-                            errorCampaigns.push(httpError);
-                        } else {
-                            console.log(`Successfully deactivated campaign ID ${campaign.id}`);
-                            console.log(`Response ${response.statusCode}`);
-                            successCampaigns.push(successCampaigns);
+                        // to be safe wrap in try catch in case some weird HTTP object
+                        // is returned w/o expected properties. Otherwise error won't be caught
+                        try {
+                            // if HTTP error occurs (i.e. statusCode not 200),
+                            // Don't callback with error but actually add
+                            // pseudo-error-like info object to errors
+                            // array, which will be returned in resolve();
+                            if (response.statusCode !== 200){
+                                const httpError = {
+                                    campaign: campaign,
+                                    message: response.body,
+                                    statusCode: response.statusCode,
+                                    statusMessage: response.statusMessage
+                                };
+
+                                // Log error for posterity's sake
+                                console.error(chalk.red(`Error deactivating campaign ${httpError.campaign.id}: 
+                                    Status ${httpError.statusCode} - ${httpError.message}`));
+
+                                // add to errorCampaigns array, which will be passed to resolve();
+                                errorCampaigns.push(httpError);
+                            } else {
+                                console.log(`Successfully deactivated campaign ID ${campaign.id}`);
+                                console.log(`Response ${response.statusCode}`);
+                                successCampaigns.push(campaign);
+                            }
+                            callback();
+                        } catch(e){
+                            callback(e);
                         }
-                        callback();
                     });
                 }, (err) => {
                     if (err){
@@ -127,6 +166,7 @@ require('./_main')(function(GLOBALS) {
         .then((errAndSuccess) => {
             const errorCampaigns = errAndSuccess.error;
             const successCampaigns = errAndSuccess.success;
+
             // if nothing happened, just quit.
             if (!errorCampaigns.length && !successCampaigns.length){
                 console.log(`No campaigns to deactivate for range ${rangeStart} to ${rangeEnd}. Peace!`);
