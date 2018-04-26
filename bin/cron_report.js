@@ -1,5 +1,3 @@
-'use strict';
-var init = require('../config/init')();
 var request = require('request');
 var parser = require('cron-parser');
 var moment = require('moment-timezone');
