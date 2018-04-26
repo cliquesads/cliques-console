@@ -77,6 +77,7 @@ else
 fi
 
 #have to point to the right version of node, npm, pm2, mocha
+export NVM_DIR="/home/bliang/repositories/cliques-console/.nvm"
 nvm use $NODE_VERSION
 if [ $? -eq 1 ]; then
     echo "ERROR: Node $NODE_VERSION not installed.  To fix this, run setup.sh" >&2
