@@ -62,13 +62,13 @@ else
 fi
 
 # Now get proper environment variables for global package versions, etc.
-source ./cliques-config/environments/console_environment.cfg
+. ./cliques-config/environments/console_environment.cfg
 
 
 ############## BEGIN Environment Setup ##############
 
 # Use this NVM
-source .nvm/nvm.sh
+. .nvm/nvm.sh
 if [ $? -eq 1 ]; then
     echo "ERROR: nvm not installed.  To fix this, run setup.sh" >&2
     return 1
