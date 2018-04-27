@@ -29,13 +29,28 @@ angular.module('advertiser').directive('flightDates', ['DatepickerService','$tim
             function getMidnight(date){
                 return new Date(date.getFullYear(), date.getMonth(), date.getDate(),0,0,0);
             }
-            function getLastSecondBeforeMidnight(date){
-                return new Date(date.getFullYear(), date.getMonth(), date.getDate(),23,59,59);
-            }
             function parseFormattedDate(input){
                 var parts = input.split('-');
                 return new Date(parts[0], parts[1]-1, parts[2]);
             }
+
+            // On change, set end date time to 23:59:59. Currently don't allow
+            // user to set specific end-time, so only set to end of day UTC so
+            // it will run for a full UTC day.
+            //
+            // NOTE: This will appear to set model to 23:59:59 in CLIENT's TZ. However, the date
+            // that gets sent to the server & stored in the DB is a naive "yyyy-mm-dd 23:59:59",
+            // which will be interpreted as 23:59:59 UTC.
+            scope.$watch('enddatemodel', function(newDate, oldDate){
+                // DatePicker will set coerce model to & from a String when it initially loads,
+                // only converting to Date when it is changed. So have to check if it's not a string
+                // before trying to set hours & minutes.
+                if (newDate !== oldDate && typeof newDate === 'object'){
+                    newDate.setHours(23);
+                    newDate.setMinutes(59);
+                    newDate.setSeconds(59);
+                }
+            });
 
             // Now attach custom validators to Parsley
             window.ParsleyValidator
