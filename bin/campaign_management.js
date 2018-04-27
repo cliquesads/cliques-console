@@ -9,7 +9,6 @@
  */
 
 require('./_main')(function(GLOBALS) {
-    'use strict';
     const request = require('request'),
         chalk = require('chalk'),
         async = require('async'),
