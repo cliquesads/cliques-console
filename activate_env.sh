@@ -62,13 +62,13 @@ else
 fi
 
 # Now get proper environment variables for global package versions, etc.
-source ./cliques-config/environments/console_environment.cfg
+. ./cliques-config/environments/console_environment.cfg
 
 
 ############## BEGIN Environment Setup ##############
 
 # Use this NVM
-source .nvm/nvm.sh
+. .nvm/nvm.sh
 if [ $? -eq 1 ]; then
     echo "ERROR: nvm not installed.  To fix this, run setup.sh" >&2
     return 1
@@ -77,6 +77,7 @@ else
 fi
 
 #have to point to the right version of node, npm, pm2, mocha
+export NVM_DIR="/home/bliang/repositories/cliques-console/.nvm"
 nvm use $NODE_VERSION
 if [ $? -eq 1 ]; then
     echo "ERROR: Node $NODE_VERSION not installed.  To fix this, run setup.sh" >&2
