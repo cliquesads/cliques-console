@@ -1,0 +1,38 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody tree-dnd-nodes>
+		<tr tree-dnd-node="node"
+			ng-repeat="node in tree_nodes track by node.__hashKey__"
+			ng-if="node.__visible__">
+			<!-- Node name -->
+			<td tree-dnd-node-handle
+				ng-style="{'padding-left': $callbacks.calsIndent(node.__level__)}"
+				class="v-middle">
+				<span ng-switch on="node.nodeType">
+					<span ng-switch-when="Country">
+						<h4>
+							<a data-nodrag>
+								<i class="fa fa-lg fa-map-marker"></i>	
+							</a>
+							{{node.name}}
+						</h4>
+					</span>
+				</span>	
+			</td>
+			<!-- Actions -->
+			<td>
+				<button type="button"
+					class="btn btn-xs bg-gray-light"
+					ng-click="unblocked_countries.control.remove(node)"
+					tooltip="Remove">
+					<i class="fa fa-lg fa-remove"></i>	
+				</button>
+			</td>
+		</tr>	
+	</tbody>
+</table>

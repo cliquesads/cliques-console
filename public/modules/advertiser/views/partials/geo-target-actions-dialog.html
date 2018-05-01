@@ -20,3 +20,11 @@
 		</button>
 	</div>
 </div>
+<div class="row mt-sm" ng-if="selectedGeo.type === 'country'">
+	<div class="col-sm-12">
+		<button class="btn btn-primary btn-block text-md"
+			ng-click="targetOnly()">
+			Target {{ selectedGeo.name }} Only <i class="fa fa-map-marker"></i>
+		</button>
+	</div>
+</div>

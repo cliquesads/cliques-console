@@ -84,11 +84,58 @@
 		'col-sm-5': layout === 'horizontal',
 		'col-sm-12': layout === 'vertical'
 	}">
+
+	<!-- Target Only countries section -->
+	<div class="col-sm-12">
+		<div class="panel">
+			<div class="panel-heading bg-primary">
+				<h4>
+					<i class="fa fa-map-marker"></i> Target Only
+				</h4>
+			</div>
+			<div class="panel-body text-muted"
+				ng-if="!unblocked_countries.data || unblocked_countries.data.length === 0">
+				<div class="box-placeholder text-center">
+					Select a country from the map and click <button class="btn btn-primary btn-sm" disabled>Target Only <i class="fa fa-map-marker"></i></button> to target the selected country ONLY
+				</div>
+			</div>
+			<div class="panel-body"
+				ng-if="unblocked_countries.data.length > 0">
+				<div class="text-center mt-xl"
+					ng-if="loadingUnblockedCountries">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>	
+					</div>
+					<h4>Loading regions and cities...</h4>
+				</div>
+				<div ng-if="!loadingUnblockedCountries">
+					<!-- Unblocked countries tree -->
+					<div class="geo-tree-body mt">
+						<tree-dnd
+							template-url="modules/advertiser/views/partials/unblocked-countries-table-dnd.html"
+							tree-data="unblocked_countries.data"
+							tree-control="unblocked_countries.control"
+							primary-key="_id"
+							enable-drag="false"
+							enable-drop="false"
+							enable-move="false"
+							data-indent="15"
+							data-indent-unit="px">
+						</tree-dnd>	
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of Target Only countries section -->
+
 	<!-- Geo targets tree section -->
 	<div ng-class="{
 			'col-sm-12': layout === 'horizontal',
 			'col-sm-6': layout === 'vertical'
 		}">
+
 		<div class="panel">
 			<div class="panel-heading bg-success">
 				<h4>

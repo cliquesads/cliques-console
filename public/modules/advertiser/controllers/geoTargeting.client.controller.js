@@ -91,6 +91,15 @@ angular.module('advertiser').controller('GeoTargetingController', [
 						}
 						$scope.closeThisDialog('success');
 					};
+
+					$scope.targetOnly = function() {
+						parentScope.dirty = true;
+						var countryNode;
+						parentScope.loadingUnblockedCountries = true;
+						countryNode = parentScope.unblocked_countries.addCountryNode(parentScope.selectedGeo);
+						parentScope.loadingUnblockedCountries = false;
+						$scope.closeThisDialog('success');
+					};
 				}]
 			});
 		};
@@ -113,9 +122,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			mapScope = 'usa';
 			if ($rootScope.selectedCountry._id !== 'USA') {
 				mapScope = 'custom';
-				$scope.showActionsDialog();
 				$scope.mapAvailable = false;
 			}
+			$scope.showActionsDialog();
+
 		}
 
 		var mapFillColors = {
@@ -847,6 +857,16 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				}
 			}, 'blocked_geos');
 		$scope.blocked_geos.searchingStatus = 'NotSearching';
+
+		/**
+		 * Target Only tree for unblocked countries
+		 */
+		$scope.unblocked_countries = new GeoTree([],
+				{
+					remove: function(node) {
+						$scope.unblocked_countries.control.remove_node(node);	
+					}
+				}, 'unblocked_countries');
 
 		//==========================================================//
 		//================= END GeoTree Instances =================//
