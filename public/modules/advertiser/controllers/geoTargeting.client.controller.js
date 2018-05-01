@@ -221,6 +221,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.campaign.geo_targets = targetsArray;
 				$scope.blocked_geos.toBlockedGeosSchema(function(err, blockedArray) {
 					$scope.campaign.blocked_geos = blockedArray;
+
+					$scope.campaign.unblocked_countries = $scope.unblocked_countries.toUnblockedCountriesSchema();
 					$scope.advertiser.$update(function() {
 						$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
 						$scope.dirty = false;
@@ -789,6 +791,28 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			return callback(null, blockedTree);
 		};
 
+		/**
+		 * Converts treeData to Campaign.unblocked_countries schema format for saving.
+		 *
+		 * @return {*}
+		 */
+		GeoTree.prototype.toUnblockedCountriesSchema = function() {
+			var self = this;
+			function inner(thisSubtree, targetsTree) {
+				targetsTree = targetsTree || [];
+				thisSubtree.forEach(function(node) {
+					var targetObj = {
+						target: node._id,
+					};
+					targetsTree.push(targetObj);
+				});
+				return targetsTree;
+			}
+			// iterate each unblocked country in unblockedTree
+			var unblockedTree = inner(this.data);
+			return unblockedTree;
+		};
+
 		//====================================================//
 		//================ END GeoTree Class =================//
 		//====================================================//
@@ -862,11 +886,12 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * Target Only tree for unblocked countries
 		 */
 		$scope.unblocked_countries = new GeoTree([],
-				{
-					remove: function(node) {
-						$scope.unblocked_countries.control.remove_node(node);	
-					}
-				}, 'unblocked_countries');
+			{
+				remove: function(node) {
+					$scope.unblocked_countries.control.remove_node(node);	
+					$scope.dirty = true;
+				}
+			}, 'unblocked_countries');
 
 		//==========================================================//
 		//================= END GeoTree Instances =================//
@@ -1042,6 +1067,16 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				.then(function() {
 					$scope.blocked_geos.setExpandLevel(0);
 					$scope.loadingBlockTree = false;
+				});
+			});
+
+			// Initialization for unblocked_countries tree
+			$scope.unblocked_countries.clearTreeData(function(err) {
+				$scope.loadingUnblockedCountries = true;
+				$scope.unblocked_countries.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'unblock')
+				.then(function() {
+					$scope.unblocked_countries.setExpandLevel(0);
+					$scope.loadingUnblockedCountries = false;
 				});
 			});
 		};
