@@ -551,15 +551,24 @@ module.exports = function(db) {
                                 message: "Creative is already inactive, cannot deactivate!"
                             });
                         } else {
-                            var updateBidder = false;
+                            let updateBidder = false;
                             creative.active = false;
                             // if all other creatives in creativegroup are inactive, deactivate
                             // creativegroup as well, and update bidder
-                            var allInactive = creativegroup.creatives.every(function(elem, index, arr){
+                            const allInactive = creativegroup.creatives.every((elem) => {
                                 return !elem.active;
                             });
                             if (allInactive){
                                 creativegroup.active = false;
+                                // check if this would in turn cause all creative groups to be deactivated, in which
+                                // case return an error preventing user from inadvertently deactivating all
+                                // creative groups and wreaking havoc on the adserver & bidder
+                                const allCrgsInactive = campaign.creativegroups.every((el) => { return !el.active; });
+                                if (allCrgsInactive){
+                                    return res.status(400).send({
+                                        message: 'Campaign must have at least one active creative.'
+                                    });
+                                }
                                 updateBidder = true;
                             }
                             advertiser.save(function (err) {
