@@ -319,6 +319,13 @@ angular.module('advertiser').controller('manageCreativesController', [
         $scope.deactivateBulk = function(){
             var promises = [];
             var after = [];
+
+            // don't do anything if
+            if ($scope.select.count === $scope.creativesCount){
+                $scope.select.selectAll = false;
+                return Notify.alert('Sorry, <strong>you can\'t deactivate all creatives.</strong> A campaign must have at least one active creative.',{status: 'danger'});
+            }
+
             $scope.campaign.creativegroups.forEach(function(crg) {
                 crg.creatives.forEach(function (cr) {
                     if (cr.selected && cr.active){
@@ -348,7 +355,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 });
                 $scope._onAdvertiserLoad();
             }, function(error){
-                Notify.alert('Error deactivating creatives: ' + error.message, {status: 'danger'});
+                Notify.alert('Error deactivating creatives: ' + error.data.message, {status: 'danger'});
             });
         };
 
@@ -389,7 +396,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                 });
                 $scope._onAdvertiserLoad();
             }, function(error){
-                Notify.alert('Error activating creatives: ' + error.message, {status: 'danger'});
+                Notify.alert('Error activating creatives: ' + error.data.message, {status: 'danger'});
             });
         };
 
@@ -453,7 +460,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                         $scope._onAdvertiserLoad();
                         Notify.alert('Creative successfully deleted.', {status: 'success'});
                     }, function(error){
-                        Notify.alert('Error removing creative: ' + error.message, {status: 'danger'});
+                        Notify.alert('Error removing creative: ' + error.data.message, {status: 'danger'});
                     });
                 }
             });
@@ -497,7 +504,7 @@ angular.module('advertiser').controller('manageCreativesController', [
                         $scope._onAdvertiserLoad();
                         Notify.alert(selectedCount + ' creatives successfully removed.', {status: 'success'});
                     }, function(error){
-                        Notify.alert('Error removing creatives: ' + error.message, {status: 'danger'});
+                        Notify.alert('Error removing creatives: ' + error.data.message, {status: 'danger'});
                     });
                 }
             });
