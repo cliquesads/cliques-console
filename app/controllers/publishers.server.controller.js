@@ -271,6 +271,7 @@ module.exports = function(db) {
                     keywords: req.query.keywords,
                     tag_type: req.query.type,
                     targetId: req.query.targetId,
+                    external: JSON.parse(req.query.externalTest) ? { test: true } : false,
                     targetChildIndex: req.query.targetChildIndex,
                     useFactory: JSON.parse(req.query.useFactory),
                     locationId: JSON.parse(req.query.locationId)
