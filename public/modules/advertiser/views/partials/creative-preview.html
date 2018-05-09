@@ -28,6 +28,14 @@
                     </div>
                 </div>
                 <div class="form-group m0">
+                    <label class="col-sm-3 control-label">ID</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-static">
+                            {{ creative.id }}
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group m0">
                     <label class="col-sm-3 control-label">Status</label>
                     <div class="col-sm-9">
                         <creative-status-switch
@@ -91,14 +99,6 @@
                     <div class="col-sm-9">
                         <p class="form-control-static">
                             <a href="#" editable-textarea="creative.native.description" e-maxlength="{{ NATIVE_SPECS.description.maxChars }}" e-minlength="{{ NATIVE_SPECS.description.minChars }}" e-rows="2" onaftersave="update()" e-required>{{ creative.native.description }}</a>
-                        </p>
-                    </div>
-                </div>
-                <div class="form-group m0">
-                    <label class="col-sm-3 control-label">Cliques ID</label>
-                    <div class="col-sm-9">
-                        <p class="form-control-static">
-                            {{ creative.id }}
                         </p>
                     </div>
                 </div>
