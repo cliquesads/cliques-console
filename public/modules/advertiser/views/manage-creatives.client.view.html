@@ -62,7 +62,7 @@
                                 <th class="col-xs-1">Preview</th>
                                 <th class="col-xs-3">
                                     <a href="#" ng-click="sortBy('name')">
-                                        Name
+                                        Name / ID
                                         <span ng-show="isSortedBy('name', true)" class="fa fa-caret-down"></span>
                                         <span ng-show="isSortedBy('name', false)" class="fa fa-caret-up"></span>
                                     </a>
@@ -130,8 +130,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td style="word-break: break-all;" ng-click="creativePreview(creative)">
-                                    <p class="form-control-static">{{ creative.name }}</p>
+                                <td ng-click="creativePreview(creative)">
+                                    <p style="word-break: break-all;" class="form-control-static">{{ creative.name }}</p>
+                                    <p class="text-sm text-muted">{{ creative.id }}</p>
                                 </td>
                                 <td ng-if="creative.type === 'display' || !creative.type" ng-click="creativePreview(creative)">
                                     <p class="form-control-static">
