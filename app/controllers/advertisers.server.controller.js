@@ -44,7 +44,7 @@ const _getDraftById = (req, callback) => {
     } else {
         const draft = _.find(sess.campaignDrafts, d => d.draftId === draftId);
         if (!draft) {
-            return callback({message: 'Draft ID ' + draftId + ' not found'});
+            return callback({message: `Draft ID ${draftId} not found`});
         } else {
             return callback(null, draft);
         }
@@ -70,7 +70,7 @@ const _firstCampaignPromoHook = req => {
     const accesscodeId = req.user.organization.accesscode;
     if (accesscodeId){
         AccessCode.findById(accesscodeId, (err, accessCode) => {
-            if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
+            if (err) console.error(`ERROR occurred when populating accesscode field for org: ${err}`);
             // populate issuer orgs, if any
             const promoType = 'Campaign';
             accessCode.redeemIssuerPromos(promoType,(err, results) => {
@@ -79,7 +79,7 @@ const _firstCampaignPromoHook = req => {
                 results.forEach(userPromo => {
                     let subject = util.format('%s Has Created Their First Campaign',
                         req.user.organization.name);
-                    if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                    if (userPromo.promo) subject = `You've Got Cash - ${subject}`;
                     mailer.sendMail({
                         subject: subject,
                         templateName: 'accesscode-redeemed-email.server.view.html',
@@ -245,7 +245,7 @@ module.exports = db => {
                                 // also have to check if organization has any other advertisers.  Don't want to issue
                                 // promo if org has another advertiser already
                                 advertiserModels.Advertiser.find({ organization: req.user.organization._id, _id: { $ne: advertiser._id }}, (err, res) => {
-                                    if (err) console.error('ERROR when getting other advertisers for org: ' + err);
+                                    if (err) console.error(`ERROR when getting other advertisers for org: ${err}`);
                                     if (_.isEmpty(res)){
                                         _firstCampaignPromoHook(req);
                                     }
@@ -282,7 +282,7 @@ module.exports = db => {
                 .populate('user')
                 .exec((err, advertiser) => {
                     if (err) return next(err);
-                    if (!advertiser) return next(new Error('Failed to load advertiser' + id));
+                    if (!advertiser) return next(new Error(`Failed to load advertiser${id}`));
                     req.advertiser = advertiser;
                     next();
                 });
@@ -400,7 +400,7 @@ module.exports = db => {
                 const campaign = advertiser.campaigns[ind];
                 if (!campaign) {
                     return res.status(404).send({
-                        message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
+                        message: `Cannot find campaign ID ${campaignId} in advertiser ID ${advertiser._id}`
                     });
                 }
                 if (campaign.active) {
@@ -438,7 +438,7 @@ module.exports = db => {
                 const campaign = advertiser.campaigns[ind];
                 if (!campaign) {
                     return res.status(404).send({
-                        message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
+                        message: `Cannot find campaign ID ${campaignId} in advertiser ID ${advertiser._id}`
                     });
                 }
                 if (!campaign.active) {
@@ -484,8 +484,7 @@ module.exports = db => {
                         // handle creative not found
                         if (!creative){
                             return res.status(404).send({
-                                message: "Cannot find creative ID " + creative._id + " in advertiser ID "
-                                + advertiser._id
+                                message: `Cannot find creative ID ${creative._id} in advertiser ID ${advertiser._id}`
                             });
                         }
                         // handle when creative is already active
@@ -537,8 +536,7 @@ module.exports = db => {
                         // handle creative not found
                         if (!creative){
                             return res.status(404).send({
-                                message: "Cannot find creative ID " + creative._id + " in advertiser ID "
-                                + advertiser._id
+                                message: `Cannot find creative ID ${creative._id} in advertiser ID ${advertiser._id}`
                             });
                         }
                         // handle when creative is already active
@@ -809,7 +807,7 @@ module.exports = db => {
                     const rendered = tag.render(actionbeacon);
                     res.json({tag: rendered});
                 } else {
-                    res.status(400).send({message: 'No actionbeacon with id ' + actionbeaconId + ' found under advertiser ID ' + req.advertiser.id});
+                    res.status(400).send({message: `No actionbeacon with id ${actionbeaconId} found under advertiser ID ${req.advertiser.id}`});
                 }
             }
         }
