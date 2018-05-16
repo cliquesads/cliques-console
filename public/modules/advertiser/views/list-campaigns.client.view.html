@@ -38,7 +38,7 @@
             </div>
             <div class="hidden-xs hidden-sm col-md-1">
                 <h4 class="list-group-item-heading">{{ (campaign.ecpm||0) | currency:"$":"2" }}</h4>
-                <p class="list-group-item-text">Average CPM</p>
+                <p class="list-group-item-text">Average {{ pricing }}</p>
             </div>
             <div class="hidden-xs col-sm-2 col-md-1">
                 <h4 class="list-group-item-heading">{{ (campaign.ctr||0) | percentage:"2" }}</h4>
