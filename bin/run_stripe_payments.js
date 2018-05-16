@@ -69,7 +69,7 @@ require('./_main')(GLOBALS => {
             amount: Math.round(res.total*100), // all charges performed in lower currency unit, i.e. cents
             currency: "usd",
             customer: res.org.stripeCustomerId,
-            description: "Cliques Advertiser Payment for " + res.org.name,
+            description: `Cliques Advertiser Payment for ${res.org.name}`,
             receipt_email: billingEmails[0]
         });
 
@@ -77,7 +77,7 @@ require('./_main')(GLOBALS => {
             amount: -1 * Math.round(res.total*100),
             currency: "usd",
             destination: res.org.stripeAccountId,
-            description: "Cliques Publisher Payment for " + res.org.name
+            description: `Cliques Publisher Payment for ${res.org.name}`
         });
 
         let promise;
@@ -97,7 +97,7 @@ require('./_main')(GLOBALS => {
 
         // After promise is done, perform org & payment saving tasks
         promise.then(charge => {
-            console.info('The following charge was processed for ' + res.org.name + ': ' + charge.id);
+            console.info(`The following charge was processed for ${res.org.name}: ${charge.id}`);
             // if charge was successful, update payment statuses and save
             async.each(res.payments, (payment, cb) => {
                 payment.status = 'Paid';
@@ -140,7 +140,7 @@ require('./_main')(GLOBALS => {
                 }
 
                 // now prep a unicode table preview of all org payment info for user prompt
-                let results_str = results.map(res => res.org.name + '\t$' + res.total.toFixed(2));
+                let results_str = results.map(res => `${res.org.name}\t$${res.total.toFixed(2)}`);
                 results_str = results_str.join('\n');
                 // only really processing payments in production, so let the user know
                 if (process.env.NODE_ENV !== 'production'){
@@ -152,7 +152,7 @@ require('./_main')(GLOBALS => {
                 const confirm = inquirer.prompt([{
                     type: 'confirm',
                     name: 'confirm',
-                    message: 'The following payments will be processed: \n' + results_str,
+                    message: `The following payments will be processed: \n${results_str}`,
                     default: false
                 }]).then(answers => {
                     if (answers['confirm']){
@@ -175,6 +175,6 @@ require('./_main')(GLOBALS => {
 }, [[
     ['-t', '--type'],
     {
-        help: 'Type of org to run payments for, either \'advertiser\' or \'publisher\''
+        help: 'Type of org to run payments for, either \'advertiser\', \'publisher\' or \'networkAdmin\''
     }
 ]]);
