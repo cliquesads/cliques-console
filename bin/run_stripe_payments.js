@@ -6,18 +6,15 @@
 
 const _ = require('lodash'),
     inquirer = require('inquirer'),
-    util = require('util'),
     async = require('async');
 
 require('./_main')(GLOBALS => {
     const config = GLOBALS.cliques_config,
-        mongoose = GLOBALS.mongoose,
         // pick up custom command line arg (expect either "publisher" or "advertiser"
-        paymentsType = GLOBALS.args.type;
+        paymentsType = GLOBALS.args.type,
+        force = GLOBALS.args.force;
 
-    const users = require('../app/models/user.server.model.js'),
-        Organization = require('../app/models/organization.server.model').Organization,
-        Payment = mongoose.model('Payment');
+    const Organization = require('../app/models/organization.server.model').Organization;
 
     const stripe = require('stripe')(config.get("Stripe.secret_key"));
 
@@ -39,8 +36,10 @@ require('./_main')(GLOBALS => {
             // that haven't been completely used up, org balance will be less than zero, and it doesn't
             // make sense to pay out negative balance to advertisers.  For publishers, if account has
             // promos, the balance will be negative, and we do actually want to pay that out.
-            if ((org.effectiveOrgType === 'advertiser' && org.accountBalance > 0)
-                || (org.effectiveOrgType === 'publisher' && org.accountBalance < 0)){
+            let valid = org.effectiveOrgType === 'advertiser' && org.accountBalance > 0;
+            valid = valid || org.effectiveOrgType === 'publisher' && org.accountBalance < 0;
+            valid = valid || org.effectiveOrgType === 'networkAdmin' && org.accountBalance !== 0;
+            if (valid){
                 const payments = org.getOutstandingPayments();
                 let total = org.getOutstandingPaymentTotals();
                 // this will deduct any promos from total, but also handle post-application tasks like
@@ -89,6 +88,16 @@ require('./_main')(GLOBALS => {
                 case "publisher":
                     promise = _createTransferPromise();
                     break;
+                case "networkAdmin":
+                    // figure out whether to run as Charge or as a Transfer
+                    // depending on balance sign
+                    if (res.total > 0){
+                        promise = _createChargePromise();
+                    } else {
+                        // filtered in previous step so that won't be run if balance is 0
+                        promise = _createTransferPromise();
+                    }
+                    break;
             }
         } else {
             // empty promise for testing
@@ -113,8 +122,8 @@ require('./_main')(GLOBALS => {
         }, err => {
             // Don't actually callback with error here because I want to process all charges,
             // and calling back w/ error would cause series to stop.
-            const msg = util.format("ERROR while processing charge for %s: %s (requestId %s, statusCode %s)",
-                res.org.name, err.message, err.requestId, err.statusCode);
+            const msg = `ERROR while processing charge for ${res.org.name}: ${err.message} (requestId ${err.requestId}, 
+                statusCode ${err.statusCode})`;
             console.error(msg);
             callback();
         });
@@ -148,27 +157,35 @@ require('./_main')(GLOBALS => {
                         'charges will be processed)';
                 }
 
-                // now prompt user with preview and make them confirm to actually process payments
-                const confirm = inquirer.prompt([{
-                    type: 'confirm',
-                    name: 'confirm',
-                    message: `The following payments will be processed: \n${results_str}`,
-                    default: false
-                }]).then(answers => {
-                    if (answers['confirm']){
-                        async.mapSeries(results, makeStripePaymentAndSave, (err, results) => {
-                            if (err) {
-                                console.error(err);
-                                return process.exit(1);
-                            }
-                            console.info('Success! All orgs and payments updated.');
-                            return process.exit(0);
-                        });
-                    } else {
-                        console.info('kthxbai!');
-                        process.exit(0);
+                const callback = () => async.mapSeries(results, makeStripePaymentAndSave, (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        return process.exit(1);
                     }
+                    console.info('Success! All orgs and payments updated.');
+                    return process.exit(0);
                 });
+
+                if (force){
+                    `The following payments will be processed: \n${results_str}`;
+                    callback();
+                } else {
+                    // now prompt user with preview and make them confirm to actually process payments
+                    inquirer.prompt([{
+                        type: 'confirm',
+                        name: 'confirm',
+                        message: `The following payments will be processed: \n${results_str}`,
+                        default: false
+                    }]).then(answers => {
+                        if (answers.confirm){
+                            callback();
+                        } else {
+                            console.info('kthxbai!');
+                            process.exit(0);
+                        }
+                    });
+                }
+
             }
         });
     });
@@ -176,5 +193,11 @@ require('./_main')(GLOBALS => {
     ['-t', '--type'],
     {
         help: 'Type of org to run payments for, either \'advertiser\', \'publisher\' or \'networkAdmin\''
+    }
+],[
+    ['-f', '--force'],
+    {
+        action: 'storeTrue',
+        help: 'Force -- skips confirmation step.'
     }
 ]]);
