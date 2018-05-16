@@ -25,8 +25,7 @@ const mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"
  * @param {Object} [options.templatePath] path to directory containing template files. Default is '../views'
  * @param {Object} [options.mailerOptions] options to pass to nodemailer.createTransport or to pass to Mandrill.message. Default is config.mailer.options
  */
-const Mailer = exports.Mailer = function(options){
-    options             = options || {};
+const Mailer = exports.Mailer = function(options = {}) {
     this.fromAddress    = options.fromAddress || 'support@cliquesads.com';
     this.mailerType     = options.mailerType || 'local';
     this.templatePath   = options.templatePath || config.templatePath;
