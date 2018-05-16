@@ -29,7 +29,7 @@ module.exports = (db) => {
                 .findById(id)
                 .populate('tf_idf.article')
                 .populate('publisher')
-                .exec(function (err, article) {
+                .exec((err, article) => {
                     if (err) return next(err);
                     if (!article) return next(new Error('Failed to load article ' + id));
                     req.article = article;
@@ -50,8 +50,8 @@ module.exports = (db) => {
                 }
             }
             const params = Article.apiQueryParams(req.query);
-            Article.count(params.searchParams, function(err, count){
-                Article.apiQuery(req.query).populate('tf_idf.article').exec(function (err, articles) {
+            Article.count(params.searchParams, (err, count) => {
+                Article.apiQuery(req.query).populate('tf_idf.article').exec((err, articles) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)

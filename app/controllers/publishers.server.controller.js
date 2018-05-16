@@ -21,7 +21,7 @@ var cloaderURLNonSecure = config.get('Static.CLoader.http');
 
 var mailer = new mail.Mailer();
 
-module.exports = function(db) {
+module.exports = db => {
     var publisherModels = new models.PublisherModels(db);
     var cliqueModels = new models.CliquesModels(db);
 
@@ -41,7 +41,7 @@ module.exports = function(db) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
                 req.query.organization = req.user.organization.id;
             }
-            publisherModels.Publisher.find(req.query, function (err, publishers) {
+            publisherModels.Publisher.find(req.query, (err, publishers) => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
@@ -59,14 +59,14 @@ module.exports = function(db) {
             var publisher = new publisherModels.Publisher(req.body);
             publisher.user = [req.user];
             publisher.organization = req.user.organization;
-            publisher.save(function (err) {
+            publisher.save(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
+                    publisherModels.Publisher.populate(publisher, {path: 'user'}, (err, pub) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -93,19 +93,19 @@ module.exports = function(db) {
             // Use this to determine whether to call email hooks or not.
             var publisher = req.publisher,
                 initSites = req.publisher.sites,
-                initPages = _.reduce(initSites, function(result, site){ return result.concat(site.pages); }, []),
-                initPlacements = _.reduce(initPages, function(result, page){ return result.concat(page.placements); }, []);
+                initPages = _.reduce(initSites, (result, site) => result.concat(site.pages), []),
+                initPlacements = _.reduce(initPages, (result, page) => result.concat(page.placements), []);
 
             // Now extend with request body
             publisher = _.extend(publisher, req.body);
-            publisher.save(function (err) {
+            publisher.save(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub) {
+                    publisherModels.Publisher.populate(publisher, {path: 'user'}, (err, pub) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -116,8 +116,8 @@ module.exports = function(db) {
                         // ============== EMAIL HOOKS ==============//
                         if (process.env.NODE_ENV === 'production') {
                             var newSites = pub.sites,
-                                newPages = _.reduce(newSites, function (result, site) {return result.concat(site.pages);}, []),
-                                newPlacements = _.reduce(newPages, function (result, page) { return result.concat(page.placements); }, []);
+                                newPages = _.reduce(newSites, (result, site) => result.concat(site.pages), []),
+                                newPlacements = _.reduce(newPages, (result, page) => result.concat(page.placements), []);
                             // Send internal email notifying of new campaign, if any
                             if (newSites.length > initSites.length) {
                                 var sitesCreated = _.difference(newSites, initSites);
@@ -139,7 +139,7 @@ module.exports = function(db) {
          */
         remove: function (req, res) {
             var publisher = req.publisher;
-            publisher.remove(function (err) {
+            publisher.remove(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
@@ -158,7 +158,7 @@ module.exports = function(db) {
             publisherModels.Publisher
                 .findById(id)
                 .populate('user')
-                .exec(function (err, publisher) {
+                .exec((err, publisher) => {
                     if (err) return next(err);
                     if (!publisher) return next(new Error('Failed to load publisher' + id));
                     req.publisher = publisher;
@@ -184,14 +184,14 @@ module.exports = function(db) {
             getSitesInClique: function(req, res){
                 var sites = [];
                 var cliqueId = req.param('cliqueId');
-                publisherModels.Publisher.find({"sites.clique": cliqueId}, function(err, pubs){
+                publisherModels.Publisher.find({"sites.clique": cliqueId}, (err, pubs) => {
                     if (err){
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        pubs.forEach(function(pub){
-                            sites = sites.concat(pub.sites.filter(function(site){ return site.clique === cliqueId; }));
+                        pubs.forEach(pub => {
+                            sites = sites.concat(pub.sites.filter(site => site.clique === cliqueId));
                         });
                         res.json(sites);
                     }
@@ -205,45 +205,41 @@ module.exports = function(db) {
             getSitesInCliqueBranch: function(req, res){
                 var sites = [];
                 var cliqueId = req.param('cliqueId');
-                cliqueModels.Clique.find({ ancestors: cliqueId }, function(err, cliques) {
-                    var ids = _.map(cliques, function (clique) {
-                        return clique._id;
-                    });
+                cliqueModels.Clique.find({ ancestors: cliqueId }, (err, cliques) => {
+                    var ids = _.map(cliques, clique => clique._id);
                     ids.push(cliqueId);
                     // Only get active sites in branch
                     var query = {"sites.clique": {$in: ids}, "sites.active": true };
-                    publisherModels.Publisher.find(query,function (err, pubs) {
+                    publisherModels.Publisher.find(query,(err, pubs) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         } else {
-                            pubs.forEach(function (pub) {
+                            pubs.forEach(pub => {
                                 // Create shell publisher object w/ base model properties
                                 // to pass to site for client-side use
                                 var pubAttrs = {};
                                 var pubObj = pub.toObject();
-                                Object.keys(pubObj).forEach(function(key){
+                                Object.keys(pubObj).forEach(key => {
                                     if (pubObj.hasOwnProperty(key) && key !== 'sites'){
                                         pubAttrs[key] = pubObj[key];
                                     }
                                 });
-                                var sitesInClique = pub.sites.filter(function (site) {
-                                    return ids.indexOf(site.clique) > -1;
-                                });
+                                var sitesInClique = pub.sites.filter(site => ids.indexOf(site.clique) > -1);
                                 // augment each site with 'parent_publisher' property, which
                                 // contains base model properties of publisher
-                                sitesInClique = sitesInClique.map(function(site){
+                                sitesInClique = sitesInClique.map(site => {
                                     var newSite = site.toObject();
                                     newSite.parent_publisher = pubAttrs;
                                     return newSite;
                                 });
                                 sites = sites.concat(sitesInClique);
                             });
-                            sites = _.groupBy(sites, function(site){return site.clique;});
+                            sites = _.groupBy(sites, site => site.clique);
                             // Restructure a tad to make more friendly for client-side tree utils
                             var tree = [];
-                            Object.keys(sites).forEach(function(clique){
+                            Object.keys(sites).forEach(clique => {
                                 if (sites.hasOwnProperty(clique)){
                                     tree.push({
                                         _id: clique,
@@ -276,7 +272,7 @@ module.exports = function(db) {
                     useFactory: JSON.parse(req.query.useFactory),
                     locationId: JSON.parse(req.query.locationId)
                 });
-                publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', function(err, placement){
+                publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', (err, placement) => {
                     if (err){
                         return res.status(400).send({message: 'Error looking up placement ID ' +
                         req.param('placementId') + ' ' + err});

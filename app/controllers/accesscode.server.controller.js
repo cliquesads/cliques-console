@@ -28,7 +28,7 @@ module.exports = {
      * AccessCode middleware
      */
     accessCodeByID: function (req, res, next, id) {
-        AccessCode.findById(id).populate('issuerOrgs').exec(function (err, accessCode) {
+        AccessCode.findById(id).populate('issuerOrgs').exec((err, accessCode) => {
             if (err) return next(err);
             if (!accessCode) return next(new Error('Failed to load accessCode ' + id));
             req.accessCode = accessCode;
@@ -41,7 +41,7 @@ module.exports = {
      */
     create: function(req, res) {
         var accessCode = new AccessCode(req.body);
-        accessCode.save(function (err, ac) {
+        accessCode.save((err, ac) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -57,13 +57,13 @@ module.exports = {
      */
     update: function(req, res) {
         var thisAccessCode = _.extend(req.accessCode, req.body);
-        thisAccessCode.save(function (err, newAccessCode) {
+        thisAccessCode.save((err, newAccessCode) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                AccessCode.populate(newAccessCode, {path: 'issuerOrgs'}, function(err, c) {
+                AccessCode.populate(newAccessCode, {path: 'issuerOrgs'}, (err, c) => {
                     if (err){
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -106,7 +106,7 @@ module.exports = {
         if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
             query = { issuerOrg: req.user.organization.id };
         }
-        AccessCode.find(query).populate('issuerOrgs').exec(function (err, accessCodes) {
+        AccessCode.find(query).populate('issuerOrgs').exec((err, accessCodes) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -122,7 +122,7 @@ module.exports = {
      */
     remove: function (req, res) {
         var accessCode = req.accessCode;
-        accessCode.remove(function (err) {
+        accessCode.remove(err => {
             if (err) {
                 console.log(err);
                 return res.status(400).send({
@@ -137,28 +137,26 @@ module.exports = {
     sendToUser: function(req, res){
         var accessCode = req.accessCode;
         var asyncFuncs = [];
-        var fu = function(thisUser){
-            return function(callback){
-                var protocol = 'https';
-                if (process.env.NODE_ENV === 'local-test'){
-                    protocol = 'http';
-                }
-                var hostname = req.headers.host;
-                var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
-                var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
-                var templateName = 'welcome-cliques-access-code';
-                mailer.sendMailFromUser(subject, templateName, {
-                    firstName: thisUser.firstName,
-                    inviteUrl: inviteUrl,
-                    accessCode: accessCode.code
-                }, req.user, thisUser.email, callback);
-            };
+        var fu = thisUser => callback => {
+            var protocol = 'https';
+            if (process.env.NODE_ENV === 'local-test'){
+                protocol = 'http';
+            }
+            var hostname = req.headers.host;
+            var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
+            var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
+            var templateName = 'welcome-cliques-access-code';
+            mailer.sendMailFromUser(subject, templateName, {
+                firstName: thisUser.firstName,
+                inviteUrl: inviteUrl,
+                accessCode: accessCode.code
+            }, req.user, thisUser.email, callback);
         };
-        req.body.forEach(function(user){
+        req.body.forEach(user => {
             var func = fu(user);
             asyncFuncs.push(func);
         });
-        async.parallel(asyncFuncs, function(err, results){
+        async.parallel(asyncFuncs, (err, results) => {
             if (err){
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)

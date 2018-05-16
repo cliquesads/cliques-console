@@ -66,7 +66,7 @@ module.exports = {
             Payment.find(req.query).populate({
                 path: 'organization',
                 populate: { path: 'owner payments'}
-            }).exec(function (err, payments) {
+            }).exec((err, payments) => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -84,7 +84,7 @@ module.exports = {
             Payment.findById(id).populate({
                 path: 'organization',
                 populate: { path: 'owner termsAndConditions payments'}
-            }).exec(function (err, payment){
+            }).exec((err, payment) => {
                 if (err) return next(err);
                 if (!payment) return next(new Error('Failed to load payment ' + id));
                 req.payment = payment;
@@ -104,7 +104,7 @@ module.exports = {
             var payment = req.payment;
             payment = _.extend(payment, req.body);
             payment.tstamp = Date.now();
-            payment.save(function (err, p) {
+            payment.save((err, p) => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -132,14 +132,14 @@ module.exports = {
             }
             // handle promo cleanup & deactivation
             org.applyPromosToTotal(payment.totalAmount);
-            org.save(function(err, org){
+            org.save((err, org) => {
                 if (err){
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 }
                 payment.status = "Paid";
-                payment.save(function(err, payment){
+                payment.save((err, payment) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -163,7 +163,7 @@ module.exports = {
             if (payment.status === 'Needs Approval'){
                 payment.organization.accountBalance += payment.totalAmount;
             }
-            payment.renderHtmlInvoice(function(err, invoice){
+            payment.renderHtmlInvoice((err, invoice) => {
                 if (err){
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -178,7 +178,7 @@ module.exports = {
             if (payment.invoicePath){
                 res.sendFile(payment.invoicePath, {
                     root: path.resolve(__dirname, '../..')
-                }, function(err){
+                }, err => {
                     if (err) return console.error(err);
                 });
             } else {
@@ -199,11 +199,11 @@ module.exports = {
             var email = req.query.email;
 
             // helper functions
-            var _getInvoicePath = function(extension){
+            var _getInvoicePath = extension => {
                 var orgType = payment.organization.effectiveOrgType;
                 return util.format('public/uploads/billing/%s/%s/', orgType, extension);
             };
-            var _getInvoiceFileName = function(extension){
+            var _getInvoiceFileName = extension => {
                 var orgType = payment.organization.effectiveOrgType;
                 return util.format(
                     'Cliques-%s-statement_%d_%s.%s',
@@ -220,7 +220,7 @@ module.exports = {
                 htmlInvoicePath = _getInvoicePath('html');
 
             // Sub-function to encapsulate email logic
-            var _sendStatementEmails = function(callback){
+            var _sendStatementEmails = callback => {
                 var subject = util.format("Your Cliques Billing Statement for %s is Ready",
                     moment(payment.start_date).tz('UTC').format('MMMM YYYY'));
                 // Add "ACTION REQUIRED" prefix if advertiser & they need to send a check
@@ -236,8 +236,8 @@ module.exports = {
                 } else {
                     billingEmails = TEST_EMAILS;
                 }
-                billingEmails.forEach(function(address){
-                    var func = function(callback) {
+                billingEmails.forEach(address => {
+                    var func = callback => {
                         mailer.sendMail({
                             subject: subject,
                             templateName: 'billing-statement-email.server.view.html',
@@ -258,27 +258,25 @@ module.exports = {
             };
 
             // Now kick it all off
-            payment.renderHtmlInvoice(function(err, invoice){
+            payment.renderHtmlInvoice((err, invoice) => {
                 if (err){
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 }
                 async.parallel([
-                    // write HTML file
-                    function(callback){
-                        mkdirp(htmlInvoicePath, function(err){
+                    callback => {
+                        mkdirp(htmlInvoicePath, err => {
                             if (err) return callback(err);
-                            fs.writeFile(htmlInvoicePath+ htmlInvoiceName, invoice, function(err){
+                            fs.writeFile(htmlInvoicePath+ htmlInvoiceName, invoice, err => {
                                 // update payment to link to invoiceURL
                                 payment.invoicePath = htmlInvoicePath + htmlInvoiceName;
                                 payment.save(callback);
                             });
                         });
                     },
-                    // write PDF file
-                    function(callback){
-                        mkdirp(pdfInvoicePath, function(err){
+                    callback => {
+                        mkdirp(pdfInvoicePath, err => {
                             if (err) return callback(err);
                             var pdfOpts = {
                                 format: 'Letter',
@@ -290,7 +288,7 @@ module.exports = {
                             pdf.create(invoice, pdfOpts).toFile(pdfInvoicePath + pdfInvoiceName,callback);
                         });
                     }
-                ], function(err, results){
+                ], (err, results) => {
                     if (err) {
                         console.error(err);
                         return res.status(400).send({
@@ -298,7 +296,7 @@ module.exports = {
                         });
                     }
                     if (email){
-                        _sendStatementEmails(function(err, successes){
+                        _sendStatementEmails((err, successes) => {
                             if (err) return res.status(400).send({
                                 message: err.toString()
                             });

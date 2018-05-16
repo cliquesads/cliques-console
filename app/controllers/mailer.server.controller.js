@@ -101,12 +101,12 @@ Mailer.prototype.sendMail = function(mailOptions, callback){
  * @param cb
  * @private
  */
-var _mandrillizeAttachments = function(attachments, cb){
+var _mandrillizeAttachments = (attachments, cb) => {
     if (attachments){
-        async.each(attachments, function(attachmentObj, callback){
+        async.each(attachments, (attachmentObj, callback) => {
             if (attachmentObj.content && attachmentObj.content instanceof stream.Stream){
                 streamToString(attachmentObj.content.pipe(base64.encode()),
-                    function(err, str){
+                    (err, str) => {
                         if (err) return callback(err);
                         attachmentObj.content = str;
                         callback();
@@ -115,7 +115,7 @@ var _mandrillizeAttachments = function(attachments, cb){
             } else {
                 return callback();
             }
-        }, function(err){
+        }, err => {
             cb(err, attachments);
         });
     } else {
@@ -158,7 +158,7 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
 
     // Convert mailOptions.data to format required by mandrill API
     var merge_vars = [];
-    _.forOwn(mailOptions.data, function(val, key){
+    _.forOwn(mailOptions.data, (val, key) => {
         merge_vars.push({
             "name": key,
             "content": val
@@ -171,7 +171,7 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
         _.assignIn(message, mailOptions.mandrillOptions);
     }
 
-    _mandrillizeAttachments(mailOptions.attachments, function(err, attachments){
+    _mandrillizeAttachments(mailOptions.attachments, (err, attachments) => {
         if (err) return callback(err);
         if (attachments) message.attachments = attachments;
         self.mandrillClient.messages.sendTemplate({
@@ -179,14 +179,14 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
                 "template_content": [{}],
                 "message": message
             },
-            function(result){
+            result => {
                 if (result[0].status === 'sent'){
                     callback(null, result);
                 } else {
                     callback(result[0].reject_reason, null);
                 }
             },
-            function(err) {
+            err => {
                 callback(err);
             }
         );
@@ -203,14 +203,14 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
 Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
     var self = this;
     mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
-    self.templateRenderer.render(mailOptions.templateName, mailOptions.data, function(err, html, text){
+    self.templateRenderer.render(mailOptions.templateName, mailOptions.data, (err, html, text) => {
         if (err){
             if (callback) callback(err);
             return console.error("Error rendering email template: " + err);
         }
         mailOptions.html = html;
         mailOptions.text = text;
-        self.smtpTransport.sendMail(mailOptions, function(err, success){
+        self.smtpTransport.sendMail(mailOptions, (err, success) => {
             if (callback){
                 callback(err, success);
             }
@@ -238,14 +238,14 @@ Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, 
     Organization
         .findOne({name: orgName})
         .populate('users')
-        .exec(function(err, group){
+        .exec((err, group) => {
             if (err){
                 return console.error('Error looking up orgName ' + orgName + ' : ' + err);
             }
             // Send single email to all users
             // Could loop through and send multiple emails to individual users
             // but no need to right now
-            var to = group.users.map(function(user){ return user.email; });
+            var to = group.users.map(user => user.email);
             self.sendMail({
                 subject: subject,
                 templateName: templateName,

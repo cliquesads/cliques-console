@@ -11,10 +11,10 @@ var _ = require('lodash'),
 /**
  * User middleware
  */
-exports.userByID = function(req, res, next, id) {
+exports.userByID = (req, res, next, id) => {
 	User.findOne({_id: id})
         .populate('organization')
-        .exec(function(err, user) {
+        .exec((err, user) => {
             if (err) return next(err);
             if (!user) return next(new Error('Failed to load User ' + id));
             req.profile = user;
@@ -23,11 +23,11 @@ exports.userByID = function(req, res, next, id) {
 };
 
 
-exports.basicAuth = function(req, res, next){
+exports.basicAuth = (req, res, next) => {
 	var credentials = auth(req);
 	// use regex to de case-sensitize username
 	User.findOne({ username_lower: credentials.name.toLowerCase() })
-		.populate('organization').exec(function(err, user) {
+		.populate('organization').exec((err, user) => {
 		if (err) {
 			return next(err);
 		}
@@ -46,7 +46,7 @@ exports.basicAuth = function(req, res, next){
 /**
  * Require login routing middleware
  */
-exports.requiresLogin = function(req, res, next) {
+exports.requiresLogin = (req, res, next) => {
 	// Make an exception for uploading logos
 	if (req.url === '/logos') {
 		return next();
@@ -65,8 +65,8 @@ exports.requiresLogin = function(req, res, next) {
 exports.hasAuthorization = function(roles) {
 	var _this = this;
 
-	return function(req, res, next) {
-		_this.requiresLogin(req, res, function() {
+	return (req, res, next) => {
+		_this.requiresLogin(req, res, () => {
 			if (_.intersection(req.user.roles, roles).length) {
 				return next();
 			} else {

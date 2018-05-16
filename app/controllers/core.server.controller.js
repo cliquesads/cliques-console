@@ -6,11 +6,11 @@ var _ = require('lodash');
 /**
  * Module dependencies.
  */
-module.exports = function(db){
+module.exports = db => {
     var getLatestHour = require('./aggregations.server.controller')(db).hourlyAdStat.getLatestHour;
     return {
         index: function(req, res) {
-            getLatestHour(function(err, result){
+            getLatestHour((err, result) => {
                 res.render('index', {
                     user: req.user || null,
                     request: req,

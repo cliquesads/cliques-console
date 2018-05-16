@@ -14,7 +14,7 @@ var node_utils = require('@cliques/cliques-node-utils'),
 
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
-module.exports = function(db) {
+module.exports = db => {
 	var screenshotModels = new models.ScreenshotModels(db);
     var advertiserModels = new models.AdvertiserModels(db);
     var publisherModels = new models.PublisherModels(db);
@@ -36,7 +36,7 @@ module.exports = function(db) {
 			screenshotModels.Screenshot
 				.findById(id)
 				.populate('advertiser publisher')
-				.exec(function (err, screenshot) {
+				.exec((err, screenshot) => {
 					if (err) return next(err);
 					if (!screenshot) return next(new Error('Failed to load screenshot ' + id));
 					req.screenshot = screenshot;
@@ -76,7 +76,7 @@ module.exports = function(db) {
                 { user: req.user, comment: comment, screenshot: req.screenshot },
                 req.user,
                 'support@cliquesads.com',
-                function(err, success){
+                (err, success) => {
                     if (err){
                         res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -120,7 +120,7 @@ module.exports = function(db) {
 			if (req.user.organization.effectiveOrgType === 'advertiser' || req.user.organization.effectiveOrgType === 'networkAdmin') {
 				advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
 				advertiserModels.Advertiser.promisifiedFind(req.query)
-				.then(function(advertisers) {
+				.then(advertisers => {
 					// Get all possible campaigns based on queried advertisers
 					var advertiserIds = [];
 					for (var i = 0; i < advertisers.length; i ++) {
@@ -137,7 +137,7 @@ module.exports = function(db) {
 						advertiser: { $in: advertiserIds }
 					});
 				})
-				.then(function(screenshots) {
+				.then(screenshots => {
 					var siteIds = [];
 					for (var i = 0; i < screenshots.length; i ++) {
 						if (siteIds.indexOf('' + screenshots[i].site) === -1) {
@@ -145,28 +145,22 @@ module.exports = function(db) {
 						}
 					}
 					publisherModels.promisifiedGetNestedObjectById = promise.promisify(publisherModels.getNestedObjectById);
-					return promise.each(siteIds, function(siteId) {
-						return publisherModels.promisifiedGetNestedObjectById(siteId, 'Site')
-						.then(function(foundSite) {
-							filter.sites.push({
-								name: foundSite.name,
-								id: foundSite._id
-							});
-						});
-					});
+					return promise.each(siteIds, siteId => publisherModels.promisifiedGetNestedObjectById(siteId, 'Site')
+                    .then(foundSite => {
+                        filter.sites.push({
+                            name: foundSite.name,
+                            id: foundSite._id
+                        });
+                    }));
 				})
-				.then(function() {
-					return res.json(filter);	
-				})
-				.catch(function(err) {
-					return res.status(400).send({
-						message: 'Error getting screenshot filters'
-					});
-				});
+				.then(() => res.json(filter))
+				.catch(err => res.status(400).send({
+                    message: 'Error getting screenshot filters'
+                }));
 			} else if (req.user.organization.effectiveOrgType === 'publisher') {
 				publisherModels.Publisher.promisifiedFind = promise.promisify(publisherModels.Publisher.find);
 				publisherModels.Publisher.promisifiedFind(req.query)
-				.then(function(publishers) {
+				.then(publishers => {
 					// Get all possible sites based on queried publishers
 					var publisherIds = [];
 					for (var i = 0; i < publishers.length; i ++) {
@@ -183,7 +177,7 @@ module.exports = function(db) {
 						publisher: { $in: publisherIds }
 					});
 				})
-				.then(function(screenshots) {
+				.then(screenshots => {
 					var campaignIds = [];
 					for (var i = 0; i < screenshots.length; i ++) {
 						if (campaignIds.indexOf('' + screenshots[i].campaign) === -1) {
@@ -191,24 +185,18 @@ module.exports = function(db) {
 						}
 					}
 					advertiserModels.promisifiedGetNestedObjectById = promise.promisify(advertiserModels.getNestedObjectById);
-					return promise.each(campaignIds, function(campaignId) {
-						return advertiserModels.promisifiedGetNestedObjectById(campaignId, 'Campaign')
-						.then(function(foundCampaign) {
-							filter.campaigns.push({
-								name: foundCampaign.name,
-								id: foundCampaign._id
-							});
-						});
-					});
+					return promise.each(campaignIds, campaignId => advertiserModels.promisifiedGetNestedObjectById(campaignId, 'Campaign')
+                    .then(foundCampaign => {
+                        filter.campaigns.push({
+                            name: foundCampaign.name,
+                            id: foundCampaign._id
+                        });
+                    }));
 				})
-				.then(function() {
-					return res.json(filter);	
-				})
-				.catch(function(err) {
-					return res.status(400).send({
-						message: 'Error getting screenshot filters'
-					});
-				});
+				.then(() => res.json(filter))
+				.catch(err => res.status(400).send({
+                    message: 'Error getting screenshot filters'
+                }));
 
 
 			} 
@@ -240,7 +228,7 @@ module.exports = function(db) {
 				.sort({tstamp: -1})
 				.skip((page - 1) * itemsPerPage)
 				.limit(itemsPerPage)
-				.exec(function(err, screenshots) {
+				.exec((err, screenshots) => {
 					if (err) {
 						return res.status(400).send({
 							message: errorHandler.getAndLogErrorMessage(err)
@@ -257,7 +245,7 @@ module.exports = function(db) {
 				}
 				if (req.user.organization.effectiveOrgType === 'advertiser' || req.user.organization.effectiveOrgType === 'networkAdmin') {
 					var advertiserIds = [];
-					advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
+					advertiserModels.Advertiser.find(req.query, (err, advertisers) => {
 						if (err) {
 							return res.status(400).send({
 								message: errorHandler.getAndLogErrorMessage(err)
@@ -272,7 +260,7 @@ module.exports = function(db) {
 						.sort({tstamp: -1})
 						.skip((page - 1) * itemsPerPage)
 						.limit(itemsPerPage)
-						.exec(function(err, screenshots) {
+						.exec((err, screenshots) => {
 							if (err) {
 								return res.status(400).send({
 									message: errorHandler.getAndLogErrorMessage(err)
@@ -286,7 +274,7 @@ module.exports = function(db) {
 					});
 				} else {
 					var publisherIds = [];
-					publisherModels.Publisher.find(req.query, function (err, publishers) {
+					publisherModels.Publisher.find(req.query, (err, publishers) => {
 						if (err) {
 							return res.status(400).send({
 								message: errorHandler.getAndLogErrorMessage(err)
@@ -301,7 +289,7 @@ module.exports = function(db) {
 						.sort({tstamp: -1})
 						.skip((page - 1) * itemsPerPage)
 						.limit(itemsPerPage)
-						.exec(function(err, screenshots) {
+						.exec((err, screenshots) => {
 							if (err) {
 								return res.status(400).send({
 									message: errorHandler.getAndLogErrorMessage(err)

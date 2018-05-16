@@ -7,7 +7,7 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 	errorHandler = require('./errors.server.controller'),
 	_ = require('lodash');
 
-module.exports = function(db) {
+module.exports = db => {
     var cliqueModels = new models.CliquesModels(db);
 
     return {
@@ -26,7 +26,7 @@ module.exports = function(db) {
             // TODO: or get rid of this functionality altogether.
             // this defaults to 10, kind of infuriating
             // req.query.per_page = 1000000;
-            cliqueModels.Clique.apiQuery(req.query).populate('default_advertisers').exec(function (err, cliques) {
+            cliqueModels.Clique.apiQuery(req.query).populate('default_advertisers').exec((err, cliques) => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -45,7 +45,7 @@ module.exports = function(db) {
             req.body._id = req.body.name;
             var clique = new cliqueModels.Clique(req.body);
 
-            clique.save(function (err) {
+            clique.save(err => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -62,7 +62,7 @@ module.exports = function(db) {
             cliqueModels.Clique.findOneAndUpdate({'_id': req.body._id },
                 req.body,
                 {'upsert': true},
-                function (err, clique) {
+                (err, clique) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -79,13 +79,13 @@ module.exports = function(db) {
         update: function (req, res) {
             var clique = req.clique;
             var thisClique = _.extend(clique, req.body);
-            thisClique.save(function (err, newClique) {
+            thisClique.save((err, newClique) => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    cliqueModels.Clique.populate(newClique, {path: 'default_advertisers'}, function(err, c) {
+                    cliqueModels.Clique.populate(newClique, {path: 'default_advertisers'}, (err, c) => {
                         if (err){
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -101,7 +101,7 @@ module.exports = function(db) {
          */
         remove: function (req, res) {
             var clique = req.clique;
-            clique.remove(function (err) {
+            clique.remove(err => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -116,7 +116,7 @@ module.exports = function(db) {
          * Advertiser middleware
          */
         cliqueByID: function (req, res, next, id) {
-            cliqueModels.Clique.findById(id).populate('default_advertisers').exec(function (err, clique) {
+            cliqueModels.Clique.findById(id).populate('default_advertisers').exec((err, clique) => {
                 if (err) return next(err);
                 if (!clique) return next(new Error('Failed to load clique ' + id));
                 req.clique = clique;

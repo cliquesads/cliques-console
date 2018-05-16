@@ -55,9 +55,9 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
     if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
         filter_query.organization = req.user.organization.id;
     }
-    self.advertiserModels.Advertiser.find(filter_query, function(err, advertisers){
+    self.advertiserModels.Advertiser.find(filter_query, (err, advertisers) => {
         var ids = [];
-        advertisers.forEach(function(doc){
+        advertisers.forEach(doc => {
             ids.push(doc.id);
         });
         req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
@@ -80,9 +80,9 @@ HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
     if (req.user.organization.organization_types.indexOf('publisher') > -1){
         filter_query.organization = req.user.organization.id;
     }
-    self.publisherModels.Publisher.find(filter_query, function(err, publishers){
+    self.publisherModels.Publisher.find(filter_query, (err, publishers) => {
         var ids = [];
-        publishers.forEach(function(doc){
+        publishers.forEach(doc => {
             ids.push(doc.id);
         });
         req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];

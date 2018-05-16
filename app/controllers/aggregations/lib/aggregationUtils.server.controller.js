@@ -11,7 +11,7 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
     async = require('async'),
     moment = require('moment-timezone');
 
-var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSection) {
+var filterNumber = (number, prefix, suffix, lengthOfDecimal, lengthOfSection) => {
     if (lengthOfSection === undefined) {
         lengthOfSection = 3; 
     }
@@ -31,12 +31,12 @@ var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSec
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
 
-var formatQueryResults = function(rows, queryType, dateGroupBy) {
+var formatQueryResults = (rows, queryType, dateGroupBy) => {
     var monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
-    rows.forEach(function(row) {
+    rows.forEach(row => {
         // get row title
         if (queryType === 'time') {
             row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
@@ -196,7 +196,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     // Match path params first
     var match = {};
     var self = this;
-    this.pathParams.forEach(function(param){
+    this.pathParams.forEach(param => {
         if (req.param(param)){
             match[param] = req.param(param);
         }
@@ -205,7 +205,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     // Now parse query params & add to match, if passed in
     // Parsing includes parsing out {} operators as well, and coercing
     // comma-separated strings to arrays
-    this.queryParams.forEach(function(queryParam){
+    this.queryParams.forEach(queryParam => {
         if (req.query[queryParam]){
             match[queryParam] = self._parseQueryParam(req.query[queryParam]);
         }
@@ -267,7 +267,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     // Also could potentially just group by lower-level hierarchical
     // entity and get the same results but do it this way for completeness.
     // Might want to reevaluate if this causes performance issues.
-    this.pathParams.forEach(function(param){
+    this.pathParams.forEach(param => {
         if (req.param(param)){
             group[param] = '$' + param;
         }
@@ -278,7 +278,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     if (groupBy){
         if (groupBy.indexOf(',') > -1){
             groupBy = groupBy.split(',');
-            groupBy.forEach(function(field){
+            groupBy.forEach(field => {
                 group[field] = '$' + field;
             });
         } else {
@@ -338,7 +338,7 @@ var AdStatsAPIHandler = exports.AdStatsAPIHandler = function(db){
  * Method to proper-case a string, used for resolving populate query params to model names
  */
 String.prototype.toProperCase = function () {
-    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    return this.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 };
 
 /**
@@ -373,8 +373,8 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
     var self = this;
     var populates = populateQueryString.split(',');
     var asyncFieldFuncs = [];
-    populates.forEach(function(field){
-        asyncFieldFuncs.push(function(callback){
+    populates.forEach(field => {
+        asyncFieldFuncs.push(callback => {
             // throw out populate param if populate not in group
             if (Object.keys(group).indexOf(field) > -1){
                 var modelName = field.toProperCase();
@@ -404,13 +404,13 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
 
                 // sub routine to pass to async.map. Just gets child document given
                 // populated top-level node doc
-                var populateChildField = function(doc, callback) {
+                var populateChildField = (doc, callback) => {
                     if (doc._id[field] && doc._id[parentFieldName]){
                         self[treeDocument].getChildDocument(
                             doc._id[field],
                             modelName,
                             doc._id[parentFieldName],
-                            function (err, child) {
+                            (err, child) => {
                                 if (err) {
                                     if (err instanceof ReferenceError){
                                         // this means the object was deleted, just don't populate anything
@@ -441,7 +441,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
                 self[treeDocument][parentModelName].populate(query_results, {
                     path: '_id.' + parentFieldName,
                     model: parentModelName
-                }, function (err, result) {
+                }, (err, result) => {
                     if (err) return callback(err);
                     if (modelName === parentModelName) {
                         query_results = result;
@@ -449,7 +449,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
                     } else {
                         // For non-top-level populates, have to loop over results and populate manually
                         // by finding nested docs in populated top-level docs.
-                        async.map(result, populateChildField, function(err, result){
+                        async.map(result, populateChildField, (err, result) => {
                             if (err) return callback(err);
                             query_results = result;
                             return callback(null, true);
@@ -461,7 +461,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
             }
         });
     });
-    async.series(asyncFieldFuncs, function(err, result){
+    async.series(asyncFieldFuncs, (err, result) => {
         if (err) return callback(err);
         return callback(null, query_results);
     });
@@ -473,7 +473,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
  */
 AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregationModel){
     var self = this;
-    return function (req, res) {
+    return (req, res) => {
         if (!req.query.startDate &&
             !req.query.endDate &&
             req.query.dateRangeShortCode) {
@@ -522,7 +522,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                 }
             ]);
 
-        query.exec(function(err, adStats){
+        query.exec((err, adStats) => {
             if (err) {
                 console.log("error in query: " + err);
                 return res.status(400).send({
@@ -533,7 +533,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                 // NOTE: Can only pass populate for object in 'group' object
                 // otherwise this will throw out the populate param
                 if (req.query.populate){
-                    self._populate(req.query.populate, adStats, group, function(err, results){
+                    self._populate(req.query.populate, adStats, group, (err, results) => {
                         if (err) {
                             return res.status(400).send({ message: err });
                         }

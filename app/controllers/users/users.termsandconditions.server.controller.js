@@ -27,9 +27,9 @@ var ClientTermsAndConditions = function(termsAndConditions){
     this.url = termsAndConditions.url;
 };
 
-exports.read = function(req, res){
+exports.read = (req, res) => {
     var termsId = req.param('termsId');
-    TermsAndConditions.findById(termsId, function(err, terms){
+    TermsAndConditions.findById(termsId, (err, terms) => {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
@@ -52,9 +52,9 @@ exports.read = function(req, res){
  * @param req
  * @param res
  */
-exports.getCurrentTerms = function(req, res){
+exports.getCurrentTerms = (req, res) => {
     var type = req.param('type');
-    TermsAndConditions.find({type: type, active: true}).sort('-tstamp').limit(1).exec(function(err, terms){
+    TermsAndConditions.find({type: type, active: true}).sort('-tstamp').limit(1).exec((err, terms) => {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)

@@ -23,7 +23,7 @@ var BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
  * Uploads to gcloud storage, makes file public and then returns
  * public URL.
  */
-exports.createAvatar = function(req, res) {
+exports.createAvatar = (req, res) => {
 	var client = gcloud({
 		projectId: PROJECT_ID,
 		keyFilename: AUTHFILE
@@ -38,7 +38,7 @@ exports.createAvatar = function(req, res) {
 			userId: req.user.id
 		}
 	};
-	assets_bucket.upload(req.file.path, options, function(err, file){
+	assets_bucket.upload(req.file.path, options, (err, file) => {
 		if (err) {
 			console.log(err);
 			return res.status(404).send({
@@ -46,7 +46,7 @@ exports.createAvatar = function(req, res) {
 			});
 		} else {
 			// make file public and get public facing URL
-			file.makePublic(function(err, apiResponse){
+			file.makePublic((err, apiResponse) => {
 				if (err) return res.status(404).send({
 					message: errorHandler.getAndLogErrorMessage(err)
 				});
@@ -65,7 +65,7 @@ exports.createAvatar = function(req, res) {
 /**
  * Update user details
  */
-exports.update = function(req, res) {
+exports.update = (req, res) => {
 	// Init Variables
 	var user = req.user;
 	var message = null;
@@ -79,13 +79,13 @@ exports.update = function(req, res) {
 		user.updated = Date.now();
 		user.displayName = user.firstName + ' ' + user.lastName;
 		// Don't need to hash password here since passwords shouldn't be getting changed through this method
-		user.save(function(err) {
+		user.save(err => {
 			if (err) {
 				return res.status(400).send({
 					message: errorHandler.getAndLogErrorMessage(err)
 				});
 			} else {
-				req.login(user, function(err) {
+				req.login(user, err => {
 					if (err) {
 						res.status(400).send(err);
 					} else {
@@ -104,6 +104,6 @@ exports.update = function(req, res) {
 /**
  * Send User
  */
-exports.me = function(req, res) {
+exports.me = (req, res) => {
 	res.json(req.user || null);
 };

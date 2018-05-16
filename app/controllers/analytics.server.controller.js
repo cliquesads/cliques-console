@@ -20,12 +20,12 @@ var ITEMS_PER_PAGE = 25;
  * '* * * * * *'
  * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
  */
-var validateScheduleString = function(scheduleString) {
+var validateScheduleString = scheduleString => {
     var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5|2-6|0-4)$/;
     return re.test(scheduleString);
 };
 
-module.exports = function(db) {
+module.exports = db => {
 	var advertiserModels = new models.AdvertiserModels(db);
 	var publisherModels = new models.PublisherModels(db);
 	var geoModels = new models.GeoModels(db);
@@ -39,7 +39,7 @@ module.exports = function(db) {
              */
             queryByID: function (req, res, next, id) {
                 Query.findById(id)
-                    .exec(function (err, query) {
+                    .exec((err, query) => {
                         if (err) return next(err);
                         if (!query) return next(new Error('Failed to load query' + id));
                         req.query = query;
@@ -53,7 +53,7 @@ module.exports = function(db) {
 
             delete: function(req, res) {
 				var query = new Query(req.query);
-				query.remove(function(err, removed) {
+				query.remove((err, removed) => {
 					if (err) {
 						return res.status(400).send({
 						    message: errorHandler.getAndLogErrorMessage(err)
@@ -75,17 +75,17 @@ module.exports = function(db) {
 					newQuery.filters = [];
 				}
 				return promise.resolve()
-					.then(function() {
+					.then(() => {
 						if (req.user.organization.organization_types.indexOf('advertiser') !== -1) {
 							return advertiserModels.Advertiser.promisifiedFind({
 								organization: req.user.organization.id
 							})
-							.then(function(advertisers) {
+							.then(advertisers => {
 								if (advertisers.length === 1) {
 									newQuery.advertiser = advertisers[0]._id;
 								} else {
 									var advertiserIds = [];
-									advertisers.forEach(function(advertiser) {
+									advertisers.forEach(advertiser => {
 										advertiserIds.push(advertiser._id);
 									});
 									if (advertiserIds.length > 0) {
@@ -97,12 +97,12 @@ module.exports = function(db) {
 							return publisherModels.Publisher.promisifiedFind({
 								organization: req.user.organization.id
 							})
-							.then(function(publishers) {
+							.then(publishers => {
 								if (publishers.length === 1) {
 									newQuery.publisher = publishers[0]._id;
 								} else {
 									var publisherIds = [];
-									publishers.forEach(function(publisher) {
+									publishers.forEach(publisher => {
 										publisherIds.push(publisher._id);
 									});
 									if (publisherIds.length > 0) {
@@ -114,19 +114,17 @@ module.exports = function(db) {
 							return promise.resolve();
 						}
 					})
-					.then(function() {
+					.then(() => {
 						newQuery.promisifiedSave = promise.promisify(newQuery.save);
 						return newQuery.promisifiedSave();
-					}).then(function() {
+					}).then(() => {
 						var dateRange = newQuery.getDatetimeRange(req.user.tz);
 						return res.json({
 							id: newQuery._id,
 							dateRange: newQuery.getDatetimeRange(req.user.tz)
 						});
 					})
-					.catch(function(err) {
-						return res.status(400).send({ message: err });
-					});
+					.catch(err => res.status(400).send({ message: err }));
 			},
 			/**
 			 * Update query with object in request body
@@ -153,7 +151,7 @@ module.exports = function(db) {
                 	query.nextRun = nextRun;
                 }
 
-				query.save(function(err) {
+				query.save(err => {
 					if (err) {
 						return res.status(400).send({ message: err });
 					}
@@ -170,7 +168,7 @@ module.exports = function(db) {
 			getMany: function (req, res) {
                 req.query.user = req.user.id;
                 req.query.per_page = req.query.per_page ? Number(req.query.per_page) : ITEMS_PER_PAGE;
-				Query.apiQuery(req.query, function(err, queries) {
+				Query.apiQuery(req.query, (err, queries) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)

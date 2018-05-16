@@ -14,7 +14,7 @@ var errorHandler = require('./errors.server.controller'),
 var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 var stripe = require('stripe')(config.get("Stripe.secret_key"));
 
-var buildInviteURL = function(req, organizationId, accessTokenId){
+var buildInviteURL = (req, organizationId, accessTokenId) => {
     var protocol = 'https';
     if (process.env.NODE_ENV === 'local-test'){
         protocol = 'http';
@@ -39,7 +39,7 @@ var buildInviteURL = function(req, organizationId, accessTokenId){
  *      Ashmore and Cartier Island, Europa Island, Gaza Strip, Glorioso Islands, Howland Island, Jarvis Island,
  *      Johnston Atoll, Laos, Spratly Islands, West Bank
  */
-var lookupCountryCode = function(countryName){
+var lookupCountryCode = countryName => {
     // I did this manually by generating all failed lookup country values, then manually looking up their ISO codes
     // The values with no codes are documented above
     var mapping = {"Antartica":"AQ","Antigua and Barbuda":"AG","Bolivia":"BO","Bosnia and Herzegovina":"BA","British Virgin Islands":"VG","Brunei":"BN","Cape Verde":"CV","Congo, Democratic Republic of the":"CD","Congo, Republic of the":"CG","Cote d'Ivoire":"CI","Czeck Republic":"CZ","Falkland Islands (Islas Malvinas)":"FK","French Southern and Antarctic Lands":"TF","Gambia, The":"GM","Guinea-Bissau":"GW","Heard Island and McDonald Islands":"HM", "Holy See (Vatican City)":"VA","Iran":"IR","Ireland, Northern":"GB","Jan Mayen":"SJ","Korea, North":"KP","Korea, South":"KR","Macau":"MO", "Macedonia, Former Yugoslav Republic of":"MK","Man, Isle of":"IM","Micronesia, Federated States of":"FM","Pitcaim Islands":"PN", "Romainia":"RO","Russia":"RU", "Saint Helena":"SH","Saint Kitts and Nevis":"KN","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Scotland":"GB", "South Georgia and South Sandwich Islands":"GS","Svalbard":"SJ","Syria":"SY","Tanzania":"TZ","Tobago":"TT","Toga":"TG","Trinidad":"TT", "USA":"US","Venezuela":"VE","Vietnam":"VN","Virgin Islands":"VI","Wales":"GB","Wallis and Futuna":"WF"};
@@ -68,7 +68,7 @@ module.exports = {
      * Organization middleware
      */
     organizationByID: function (req, res, next, id) {
-        Organization.findById(id).populate('users owner payments').exec(function (err, organization){
+        Organization.findById(id).populate('users owner payments').exec((err, organization) => {
             if (err) return next(err);
             if (!organization) return next(new Error('Failed to load organization ' + id));
             req.organization = organization;
@@ -81,22 +81,22 @@ module.exports = {
      */
     create: function(req, res) {
         var organization = new Organization(req.body);
-        organization.save(function (err, org) {
+        organization.save((err, org) => {
             if (err) return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
             });
             // now check for access code issuer.
             // If present, issue their promo & send them an email
             if (org.accesscode){
-                AccessCode.findById(org.accesscode, function(err, accessCode){
+                AccessCode.findById(org.accesscode, (err, accessCode) => {
                     if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
                     // populate issuer orgs, if any
                     var promoType = 'Signup';
-                    accessCode.redeemIssuerPromos(promoType,function(err, results){
+                    accessCode.redeemIssuerPromos(promoType,(err, results) => {
                         if (err) console.error(err);
                         // results is array of { user: <User>, promo: <Promo> } objects
                         if (process.env.NODE_ENV === 'production'){
-                            results.forEach(function(userPromo){
+                            results.forEach(userPromo => {
                                 var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
                                     organization.name);
                                 if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
@@ -127,7 +127,7 @@ module.exports = {
         var organization = req.organization;
         organization = _.extend(organization, req.body);
         organization.tstamp = Date.now();
-        organization.save(function (err, org) {
+        organization.save((err, org) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -144,7 +144,7 @@ module.exports = {
      * @param res
      */
     getMany: function(req, res) {
-        Organization.find({}, function (err, organizations){
+        Organization.find({}, (err, organizations) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -160,7 +160,7 @@ module.exports = {
      */
     remove: function (req, res) {
         var organization  = req.organization;
-        organization.remove(function (err) {
+        organization.remove(err => {
             if (err) {
                 console.log(err);
                 return res.status(400).send({
@@ -182,7 +182,7 @@ module.exports = {
      */
     hasAuthorization: function (req, res, next) {
         if (req.organization){
-            var user = _.find(req.organization.users, function(u){ return u.id === req.user.id; });
+            var user = _.find(req.organization.users, u => u.id === req.user.id);
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
                 if (!user) {
                     return res.status(403).send({
@@ -209,7 +209,7 @@ module.exports = {
      * @returns {Function}
      */
     organizationHasAuthorization: function(orgTypes){
-        return function(req, res, next) {
+        return (req, res, next) => {
             if (_.intersection(req.user.organization.organization_types, orgTypes).length) {
                 return next();
             } else {
@@ -226,7 +226,7 @@ module.exports = {
         // manually create token and store in ObjectId so you don't have to look
         // it up later after saving Organization when generating link
         var tokens = [];
-        req.body.forEach(function(newUser){
+        req.body.forEach(newUser => {
             var token = mongoose.Types.ObjectId();
             tokens.push(token);
             organization.accessTokens.push({
@@ -240,7 +240,7 @@ module.exports = {
         // TODO: Debatable whether this needs to be a serial process.
         // TODO: Could just save the org and independently send the email, but probably
         // TODO: worth it to keep it serial just to catch any errors saving the Organization
-        organization.save(function(err, org){
+        organization.save((err, org) => {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
@@ -249,16 +249,14 @@ module.exports = {
                 var subject = util.format("%s Has Invited You To Join Cliques",
                     req.user.displayName);
                 var asyncFuncs = [];
-                var fu = function(thisToken, thisUser){
-                    return function(callback){
-                        var inviteUrl = buildInviteURL(req, organization._id, thisToken);
-                        mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
-                            { user: req.user, inviteUrl: inviteUrl, organization: organization },
-                            req.user,
-                            thisUser.email,
-                            callback
-                        );
-                    };
+                var fu = (thisToken, thisUser) => callback => {
+                    var inviteUrl = buildInviteURL(req, organization._id, thisToken);
+                    mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
+                        { user: req.user, inviteUrl: inviteUrl, organization: organization },
+                        req.user,
+                        thisUser.email,
+                        callback
+                    );
                 };
                 for (var i=0; i < req.body.length; i++){
                     var token = tokens[i];
@@ -266,7 +264,7 @@ module.exports = {
                     var func = fu(token, newUser);
                     asyncFuncs.push(func);
                 }
-                async.parallel(asyncFuncs, function(err, results){
+                async.parallel(asyncFuncs, (err, results) => {
                     if (err){
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -301,7 +299,7 @@ module.exports = {
                 });
             }
 
-            var stripeErrorHandler = function(error){
+            var stripeErrorHandler = error => {
                 console.error(error);
                 return res.status(402).send({
                     message: error.toString()
@@ -343,9 +341,9 @@ module.exports = {
                         date: Math.floor(Date.now() / 1000),
                         ip: req.ip
                     }
-                }).then(function(account) {
+                }).then(account => {
                     organization.stripeAccountId = account.id;
-                    organization.save(function(err, org){
+                    organization.save((err, org) => {
                         if (err){
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -358,7 +356,7 @@ module.exports = {
                 // just update existing Customer with new source
                 stripe.accounts.update(organization.stripeAccountId, {
                     external_account: stripeToken
-                }).then(function(account){
+                }).then(account => {
                     // TODO: Should probably respond w/ card object instead?
                     res.status(200).json(organization).send();
                 }, stripeErrorHandler);
@@ -371,7 +369,7 @@ module.exports = {
                     message: "Organization does not have an associated Stripe Account ID"
                 });
             }
-            stripe.accounts.retrieve(organization.stripeAccountId, function(err, account){
+            stripe.accounts.retrieve(organization.stripeAccountId, (err, account) => {
                 if (err) return res.status(400).send(err);
                 res.status(200).json(account);
             });
@@ -402,7 +400,7 @@ module.exports = {
                 });
             }
 
-            var stripeErrorHandler = function(error){
+            var stripeErrorHandler = error => {
                 console.log(error);
                 return res.status(402).send({
                     message: error.toString()
@@ -421,9 +419,9 @@ module.exports = {
                         organization_type: organization.organization_types.join(',')
                     },
                     account_balance: organization.account_balance
-                }).then(function(customer) {
+                }).then(customer => {
                     organization.stripeCustomerId = customer.id;
-                    organization.save(function(err, org){
+                    organization.save((err, org) => {
                         if (err){
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -436,12 +434,10 @@ module.exports = {
                 // just update existing Customer with new source
                 stripe.customers.createSource(organization.stripeCustomerId, {
                     source: stripeToken
-                }).then(function(card) {
-                    // now make new source the default_source for this customer
-                    return stripe.customers.update(organization.stripeCustomerId, {
-                        default_source: card.id
-                    });
-                }).then(function(customer){
+                }).then(card => // now make new source the default_source for this customer
+                stripe.customers.update(organization.stripeCustomerId, {
+                    default_source: card.id
+                })).then(customer => {
                     // TODO: Should probably respond w/ card object instead?
                     res.status(200).json(organization).send();
                 }, stripeErrorHandler);
@@ -458,7 +454,7 @@ module.exports = {
                     message: "Organization does not have an associated Stripe Customer ID"
                 });
             }
-            stripe.customers.retrieve(organization.stripeCustomerId, function(err, customer){
+            stripe.customers.retrieve(organization.stripeCustomerId, (err, customer) => {
                 if (err) return res.status(400).send(err);
                 res.status(200).json(customer);
             });

@@ -18,7 +18,7 @@ var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 var baseFactor = 3.5;
 var baseZoomRatio = 8000;
 
-module.exports = function(db) {
+module.exports = db => {
     var geoModels = new models.GeoModels(db);
     request.promisifiedGet = promise.promisify(request.get);
 
@@ -36,7 +36,7 @@ module.exports = function(db) {
             getManyDmas: function (req, res) {
                 // this defaults to 10, kind of infuriating
                 req.query.per_page = 1000000;
-                geoModels.DMA.apiQuery(req.query, function (err, geos) {
+                geoModels.DMA.apiQuery(req.query, (err, geos) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -47,7 +47,7 @@ module.exports = function(db) {
                 });
             },
             dmaByID: function (req, res, next, id) {
-                geoModels.DMA.findById(id).exec(function (err, dma) {
+                geoModels.DMA.findById(id).exec((err, dma) => {
                     if (err) return next(err);
                     if (!dma) return next(new Error('Failed to load geo ' + id));
                     req.dma = dma;
@@ -68,7 +68,7 @@ module.exports = function(db) {
             getManyCountries: function (req, res) {
                 // this defaults to 10, kind of infuriating
                 req.query.per_page = 1000000;
-                geoModels.Country.apiQuery(req.query, function (err, geos) {
+                geoModels.Country.apiQuery(req.query, (err, geos) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -79,7 +79,7 @@ module.exports = function(db) {
                 });
             },
             countryByID: function (req, res, next, id) {
-                geoModels.Country.findById(id).exec(function (err, country) {
+                geoModels.Country.findById(id).exec((err, country) => {
                     if (err) return next(err);
                     if (!country) return next(new Error('Failed to load geo ' + id));
                     req.country = country;
@@ -103,7 +103,7 @@ module.exports = function(db) {
                 return geoModels.City
                 .find({country: geo.id})
                 .populate('region')
-                .exec(function(err, cities) {
+                .exec((err, cities) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -126,7 +126,7 @@ module.exports = function(db) {
             getManyRegions: function (req, res) {
                 // this defaults to 10, kind of infuriating
                 req.query.per_page = 1000000;
-                geoModels.Region.apiQuery(req.query, function (err, geos) {
+                geoModels.Region.apiQuery(req.query, (err, geos) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -137,7 +137,7 @@ module.exports = function(db) {
                 });
             },
             regionByID: function (req, res, next, id) {
-                geoModels.Region.findById(id).exec(function (err, region) {
+                geoModels.Region.findById(id).exec((err, region) => {
                     if (err) return next(err);
                     if (!region) return next(new Error('Failed to load geo ' + id));
                     req.region = region;
@@ -148,7 +148,7 @@ module.exports = function(db) {
                 var regionId = req.param('regionId');
                 geoModels.City.find({
                     region: regionId 
-                }, function(err, cities) {
+                }, (err, cities) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -162,13 +162,13 @@ module.exports = function(db) {
             updateRegionId: function (req, res) {
                 geoModels.Region.find({
                     country: 'AUS'
-                }, function(err, regions) {
+                }, (err, regions) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        regions.forEach(function(region) {
+                        regions.forEach(region => {
                             // Add a padding '0' in front of region index
                             var regionIndex = region._id.substring('AUS-'.length);
                             if (regionIndex.length === 1) {
@@ -177,14 +177,14 @@ module.exports = function(db) {
                                 // Cannot update _id field to a document, have to create a 
                                 // new document and then delete the old one
                                 var updatedRegion = new geoModels.Region(copiedRegionObject);
-                                updatedRegion.save(function(err, updatedRegion) {
+                                updatedRegion.save((err, updatedRegion) => {
                                     if (err) {
                                         return res.status(400).send({
                                             message: errorHandler.getAndLogErrorMessage(err)
                                         });
                                     }
                                 });
-                                region.remove(function(err) {
+                                region.remove(err => {
                                     if (err) {
                                         return res.status(400).send({
                                             message: errorHandler.getAndLogErrorMessage(err)
@@ -212,7 +212,7 @@ module.exports = function(db) {
                         key: GOOGLE_GEOCODE_API_KEY
                     });
                     return request.promisifiedGet(queryUrl)
-                    .then(function(response) {
+                    .then(response => {
                         var coordinates;
                         var geoInfo = JSON.parse(response.body);
 
@@ -238,20 +238,12 @@ module.exports = function(db) {
                             return region.save();
                         }
                     })
-                    .then(function(savedRegion) {
-                        return res.json(savedRegion);
-                    })
-                    .catch(function(err) {
-                        return res.status(400).send(err);
-                    });
+                    .then(savedRegion => res.json(savedRegion))
+                    .catch(err => res.status(400).send(err));
                 } else {
                     return region.save()
-                    .then(function(savedRegion) {
-                        return res.json(savedRegion);
-                    })
-                    .catch(function(err) {
-                        return res.status(400).send(err);
-                    });
+                    .then(savedRegion => res.json(savedRegion))
+                    .catch(err => res.status(400).send(err));
                 }
             }
         },
@@ -261,7 +253,7 @@ module.exports = function(db) {
              */
             getManyCities: function (req, res) {
                 req.query.per_page = 1000000;
-                geoModels.City.apiQuery(req.query, function (err, cities) {
+                geoModels.City.apiQuery(req.query, (err, cities) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
@@ -284,13 +276,13 @@ module.exports = function(db) {
                     // single city creation
                     cities = [req.body];
                 }
-                return promise.each(cities, function(cityInfo) {
+                return promise.each(cities, cityInfo => {
                     var city = new geoModels.City(cityInfo);
 
                     return geoModels.Region.findOne({
                         _id: cityInfo.region
                     })
-                    .then(function(region) {
+                    .then(region => {
                         var regionName = region ? region.name : '';
                         // query Google Geocode API to get the latitude/longitude coordinates for this city
                         var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
@@ -299,7 +291,7 @@ module.exports = function(db) {
                         });
                         return request.promisifiedGet(queryUrl);
                     })
-                    .then(function(response) {
+                    .then(response => {
                         var coordinates;
                         var geoInfo = JSON.parse(response.body);
 
@@ -319,16 +311,12 @@ module.exports = function(db) {
                             return city.save();
                         }
                     })
-                    .then(function(savedCity) {
+                    .then(savedCity => {
                         savedCities.push(savedCity);
                     });
                 })
-                .then(function() {
-                    return res.json(savedCities);
-                })
-                .catch(function(err) {
-                    return res.status(400).send(err);
-                });
+                .then(() => res.json(savedCities))
+                .catch(err => res.status(400).send(err));
             }
         },
     };

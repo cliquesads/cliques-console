@@ -4,7 +4,7 @@ var HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').
     GeoAdStatAPI = require('./aggregations/geoadstats.server.controller').GeoAdStatAPI,
     KeywordAdStatAPI = require('./aggregations/keywordadstats.server.controller').KeywordAdStatAPI;
 
-module.exports = function(db) {
+module.exports = db => {
     var hourlyAdStatAPI = new HourlyAdStatAPI(db);
     var geoAdStatAPI = new GeoAdStatAPI(db);
     var keywordAdStatAPI = new KeywordAdStatAPI(db);
@@ -29,7 +29,7 @@ module.exports = function(db) {
                 return hourlyAdStatAPI.getManyClique(req, res);
             },
             getLatestHour: function(callback){
-                hourlyAdStatAPI.aggregationModels.HourlyAdStat.findOne().sort('-hour').exec(function(err, result){
+                hourlyAdStatAPI.aggregationModels.HourlyAdStat.findOne().sort('-hour').exec((err, result) => {
                     if (err) return callback(err);
                     return callback(null, result ? result.hour : null);
                 });
