@@ -29,7 +29,7 @@ require('./_main')(GLOBALS => {
      * @param callback
      * @private
      */
-    var getSingleOrgPaymentInfo = (org, callback) => {
+    const getSingleOrgPaymentInfo = (org, callback) => {
         // first check if orgType matches this paymentsType, and if org billing preference is in fact Stripe
         if (org.effectiveOrgType === paymentsType && org.billingPreference === 'Stripe'){
 
@@ -41,8 +41,8 @@ require('./_main')(GLOBALS => {
             // promos, the balance will be negative, and we do actually want to pay that out.
             if ((org.effectiveOrgType === 'advertiser' && org.accountBalance > 0)
                 || (org.effectiveOrgType === 'publisher' && org.accountBalance < 0)){
-                var payments = org.getOutstandingPayments();
-                var total = org.getOutstandingPaymentTotals();
+                const payments = org.getOutstandingPayments();
+                let total = org.getOutstandingPaymentTotals();
                 // this will deduct any promos from total, but also handle post-application tasks like
                 // deducting amount used and deactivating as necessary
                 total = org.applyPromosToTotal(total).total;
@@ -62,10 +62,10 @@ require('./_main')(GLOBALS => {
      * @param res
      * @param callback
      */
-    var makeStripePaymentAndSave = (res, callback) => {
-        var billingEmails = res.org.getAllBillingEmails();
+    const makeStripePaymentAndSave = (res, callback) => {
+        const billingEmails = res.org.getAllBillingEmails();
 
-        var _createChargePromise = () => stripe.charges.create({
+        const _createChargePromise = () => stripe.charges.create({
             amount: Math.round(res.total*100), // all charges performed in lower currency unit, i.e. cents
             currency: "usd",
             customer: res.org.stripeCustomerId,
@@ -73,7 +73,7 @@ require('./_main')(GLOBALS => {
             receipt_email: billingEmails[0]
         });
 
-        var _createTransferPromise = () => stripe.transfers.create({
+        const _createTransferPromise = () => stripe.transfers.create({
             amount: -1 * Math.round(res.total*100),
             currency: "usd",
             destination: res.org.stripeAccountId,
@@ -113,7 +113,7 @@ require('./_main')(GLOBALS => {
         }, err => {
             // Don't actually callback with error here because I want to process all charges,
             // and calling back w/ error would cause series to stop.
-            var msg = util.format("ERROR while processing charge for %s: %s (requestId %s, statusCode %s)",
+            const msg = util.format("ERROR while processing charge for %s: %s (requestId %s, statusCode %s)",
                 res.org.name, err.message, err.requestId, err.statusCode);
             console.error(msg);
             callback();
@@ -140,7 +140,7 @@ require('./_main')(GLOBALS => {
                 }
 
                 // now prep a unicode table preview of all org payment info for user prompt
-                var results_str = results.map(res => res.org.name + '\t$' + res.total.toFixed(2));
+                let results_str = results.map(res => res.org.name + '\t$' + res.total.toFixed(2));
                 results_str = results_str.join('\n');
                 // only really processing payments in production, so let the user know
                 if (process.env.NODE_ENV !== 'production'){
@@ -149,7 +149,7 @@ require('./_main')(GLOBALS => {
                 }
 
                 // now prompt user with preview and make them confirm to actually process payments
-                var confirm = inquirer.prompt([{
+                const confirm = inquirer.prompt([{
                     type: 'confirm',
                     name: 'confirm',
                     message: 'The following payments will be processed: \n' + results_str,
