@@ -202,11 +202,11 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
  */
 Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
     const self = this;
-    mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
+    mailOptions.from = mailOptions.fromAlias ? `${mailOptions.fromAlias} <${self.fromAddress}>` : self.fromAddress;
     self.templateRenderer.render(mailOptions.templateName, mailOptions.data, (err, html, text) => {
         if (err){
             if (callback) callback(err);
-            return console.error("Error rendering email template: " + err);
+            return console.error(`Error rendering email template: ${err}`);
         }
         mailOptions.html = html;
         mailOptions.text = text;
@@ -215,8 +215,8 @@ Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
                 callback(err, success);
             }
             if (err) {
-                console.error("Error sending email: " + err);
-                console.error("Used the following mailOptions: " + mailOptions);
+                console.error(`Error sending email: ${err}`);
+                console.error(`Used the following mailOptions: ${mailOptions}`);
             }
         });
     });
@@ -240,7 +240,7 @@ Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, 
         .populate('users')
         .exec((err, group) => {
             if (err){
-                return console.error('Error looking up orgName ' + orgName + ' : ' + err);
+                return console.error(`Error looking up orgName ${orgName} : ${err}`);
             }
             // Send single email to all users
             // Could loop through and send multiple emails to individual users

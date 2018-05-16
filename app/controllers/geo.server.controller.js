@@ -49,7 +49,7 @@ module.exports = db => {
             dmaByID: function (req, res, next, id) {
                 geoModels.DMA.findById(id).exec((err, dma) => {
                     if (err) return next(err);
-                    if (!dma) return next(new Error('Failed to load geo ' + id));
+                    if (!dma) return next(new Error(`Failed to load geo ${id}`));
                     req.dma = dma;
                     next();
                 });
@@ -81,7 +81,7 @@ module.exports = db => {
             countryByID: function (req, res, next, id) {
                 geoModels.Country.findById(id).exec((err, country) => {
                     if (err) return next(err);
-                    if (!country) return next(new Error('Failed to load geo ' + id));
+                    if (!country) return next(new Error(`Failed to load geo ${id}`));
                     req.country = country;
                     next();
                 });
@@ -139,7 +139,7 @@ module.exports = db => {
             regionByID: function (req, res, next, id) {
                 geoModels.Region.findById(id).exec((err, region) => {
                     if (err) return next(err);
-                    if (!region) return next(new Error('Failed to load geo ' + id));
+                    if (!region) return next(new Error(`Failed to load geo ${id}`));
                     req.region = region;
                     next();
                 });
@@ -173,7 +173,7 @@ module.exports = db => {
                             const regionIndex = region._id.substring('AUS-'.length);
                             if (regionIndex.length === 1) {
                                 const copiedRegionObject = JSON.parse(JSON.stringify(region));
-                                copiedRegionObject._id = 'AUS-0' + copiedRegionObject._id.substring(4);
+                                copiedRegionObject._id = `AUS-0${copiedRegionObject._id.substring(4)}`;
                                 // Cannot update _id field to a document, have to create a 
                                 // new document and then delete the old one
                                 const updatedRegion = new geoModels.Region(copiedRegionObject);
@@ -207,10 +207,10 @@ module.exports = db => {
                 if (!region.latitude || !region.longitude || !region.zoomRatio) {
                     // geo coords / map zoom ratio missing
                     // query Google Geocode API to get the latitude/longitude coordinates for this region
-                    const queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-                        address: region.name + ',' + region.country,
-                        key: GOOGLE_GEOCODE_API_KEY
-                    });
+                    const queryUrl = `${GoogleGeocodeUrl}?${querystring.stringify({
+    address: `${region.name},${region.country}`,
+    key: GOOGLE_GEOCODE_API_KEY
+})}`;
                     return request.promisifiedGet(queryUrl)
                     .then(response => {
                         let coordinates;
@@ -285,10 +285,10 @@ module.exports = db => {
                     .then(region => {
                         const regionName = region ? region.name : '';
                         // query Google Geocode API to get the latitude/longitude coordinates for this city
-                        const queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
-                            address: city.name + ',' + regionName + ',' + city.country,
-                            key: GOOGLE_GEOCODE_API_KEY
-                        });
+                        const queryUrl = `${GoogleGeocodeUrl}?${querystring.stringify({
+    address: `${city.name},${regionName},${city.country}`,
+    key: GOOGLE_GEOCODE_API_KEY
+})}`;
                         return request.promisifiedGet(queryUrl);
                     })
                     .then(response => {

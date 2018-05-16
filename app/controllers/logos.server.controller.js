@@ -9,7 +9,7 @@ const AUTHFILE = path.resolve('../cliques-config/google/jwt.json');
 const PROJECT_ID = 'mimetic-codex-781';
 const BUCKET = 'cliquesads-console-logos-us';
 // Use non-secure URL for now, secureURL is virtual field on creative model
-const BASE_URL = 'http://storage.googleapis.com/'+BUCKET+'/';
+const BASE_URL = `http://storage.googleapis.com/${BUCKET}/`;
 
 module.exports = db => ({
     /**

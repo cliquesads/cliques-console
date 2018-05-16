@@ -8,7 +8,7 @@ const getUniqueErrorMessage = err => {
 
 	try {
 		const fieldName = err.err.substring(err.err.lastIndexOf('.$') + 2, err.err.lastIndexOf('_1'));
-		output = fieldName.charAt(0).toUpperCase() + fieldName.slice(1) + ' already exists';
+		output = `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} already exists`;
 
 	} catch (ex) {
 		output = 'Unique field already exists';
@@ -35,12 +35,12 @@ exports.getAndLogErrorMessage = err => {
 	} else {
         if (err.errors){
             for (const errName in err.errors) {
-                if (err.errors[errName].message) message += err.errors[errName].message + '  ';
+                if (err.errors[errName].message) message += `${err.errors[errName].message}  `;
             }
         } else {
             message = err.message;
         }
 	}
-    console.error('ERROR: ' + message);
+    console.error(`ERROR: ${message}`);
 	return message;
 };

@@ -41,7 +41,7 @@ module.exports = db => {
                 Query.findById(id)
                     .exec((err, query) => {
                         if (err) return next(err);
-                        if (!query) return next(new Error('Failed to load query' + id));
+                        if (!query) return next(new Error(`Failed to load query${id}`));
                         req.query = query;
                         next();
                     });
@@ -89,7 +89,7 @@ module.exports = db => {
 										advertiserIds.push(advertiser._id);
 									});
 									if (advertiserIds.length > 0) {
-										newQuery.advertiser = '{in}' + advertiserIds.join(',');
+										newQuery.advertiser = `{in}${advertiserIds.join(',')}`;
 									}
 								}
 							});
@@ -106,7 +106,7 @@ module.exports = db => {
 										publisherIds.push(publisher._id);
 									});
 									if (publisherIds.length > 0) {
-										newQuery.publisher = '{in}' + publisherIds.join(',');
+										newQuery.publisher = `{in}${publisherIds.join(',')}`;
 									}
 								}
 							});

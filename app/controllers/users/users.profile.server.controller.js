@@ -8,7 +8,7 @@ const _ = require('lodash'), errorHandler = require('../errors.server.controller
 const AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
 const PROJECT_ID = 'mimetic-codex-781';
 const BUCKET = 'cliquesads-console-avatars-us';
-const BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
+const BASE_URL = `https://storage.googleapis.com/${BUCKET}/`;
 
 /**
  * Handles upload of logo to Google Cloud Storage.
@@ -70,7 +70,7 @@ exports.update = (req, res) => {
 		// Merge existing user
 		user = _.extend(user, req.body);
 		user.updated = Date.now();
-		user.displayName = user.firstName + ' ' + user.lastName;
+		user.displayName = `${user.firstName} ${user.lastName}`;
 		// Don't need to hash password here since passwords shouldn't be getting changed through this method
 		user.save(err => {
 			if (err) {

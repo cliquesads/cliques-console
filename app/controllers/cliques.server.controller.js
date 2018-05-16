@@ -118,7 +118,7 @@ module.exports = db => {
         cliqueByID: function (req, res, next, id) {
             cliqueModels.Clique.findById(id).populate('default_advertisers').exec((err, clique) => {
                 if (err) return next(err);
-                if (!clique) return next(new Error('Failed to load clique ' + id));
+                if (!clique) return next(new Error(`Failed to load clique ${id}`));
                 req.clique = clique;
                 next();
             });

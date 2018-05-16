@@ -86,7 +86,7 @@ module.exports = {
                 populate: { path: 'owner termsAndConditions payments'}
             }).exec((err, payment) => {
                 if (err) return next(err);
-                if (!payment) return next(new Error('Failed to load payment ' + id));
+                if (!payment) return next(new Error(`Failed to load payment ${id}`));
                 req.payment = payment;
                 next();
             });
@@ -223,7 +223,7 @@ module.exports = {
                 // Add "ACTION REQUIRED" prefix if advertiser & they need to send a check
                 if (payment.organization.billingPreference === 'Check'
                     && payment.organization.effectiveOrgType === 'advertiser'){
-                    subject = 'ACTION REQUIRED: ' + subject;
+                    subject = `ACTION REQUIRED: ${subject}`;
                 }
                 const asyncFuncs = [];
                 // build email list, taking into account environment. Only send to users if it's in prod.

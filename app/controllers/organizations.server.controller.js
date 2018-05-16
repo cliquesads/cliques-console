@@ -69,7 +69,7 @@ module.exports = {
     organizationByID: function (req, res, next, id) {
         Organization.findById(id).populate('users owner payments').exec((err, organization) => {
             if (err) return next(err);
-            if (!organization) return next(new Error('Failed to load organization ' + id));
+            if (!organization) return next(new Error(`Failed to load organization ${id}`));
             req.organization = organization;
             next();
         });
@@ -88,7 +88,7 @@ module.exports = {
             // If present, issue their promo & send them an email
             if (org.accesscode){
                 AccessCode.findById(org.accesscode, (err, accessCode) => {
-                    if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
+                    if (err) console.error(`ERROR occurred when populating accesscode field for org: ${err}`);
                     // populate issuer orgs, if any
                     const promoType = 'Signup';
                     accessCode.redeemIssuerPromos(promoType,(err, results) => {
@@ -98,7 +98,7 @@ module.exports = {
                             results.forEach(userPromo => {
                                 let subject = util.format('%s Has Redeemed Your Cliques Access Code.',
                                     organization.name);
-                                if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
+                                if (userPromo.promo) subject = `You've Got Cash - ${subject}`;
                                 mailer.sendMail({
                                     subject: subject,
                                     templateName: 'accesscode-redeemed-email.server.view.html',

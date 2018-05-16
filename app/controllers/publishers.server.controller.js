@@ -158,7 +158,7 @@ module.exports = db => {
                 .populate('user')
                 .exec((err, publisher) => {
                     if (err) return next(err);
-                    if (!publisher) return next(new Error('Failed to load publisher' + id));
+                    if (!publisher) return next(new Error(`Failed to load publisher${id}`));
                     req.publisher = publisher;
                     next();
                 });
@@ -272,8 +272,7 @@ module.exports = db => {
                 });
                 publisherModels.getNestedObjectById(req.param('placementId'), 'Placement', (err, placement) => {
                     if (err){
-                        return res.status(400).send({message: 'Error looking up placement ID ' +
-                        req.param('placementId') + ' ' + err});
+                        return res.status(400).send({message: `Error looking up placement ID ${req.param('placementId')} ${err}`});
                     }
                     const rendered = tag.render(placement);
                     return res.json({tag: rendered});

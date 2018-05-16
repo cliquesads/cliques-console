@@ -21,7 +21,7 @@ const filterNumber = (number, prefix, suffix, lengthOfDecimal, lengthOfSection) 
     if (suffix === '%'){
         number = number * 100;
     }
-    const re = '\\d(?=(\\d{' + (lengthOfSection || 3) + '})+' + (lengthOfDecimal > 0 ? '\\.' : '$') + ')';
+    const re = `\\d(?=(\\d{${lengthOfSection || 3}})+${lengthOfDecimal > 0 ? '\\.' : '$'})`;
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
 
@@ -33,14 +33,14 @@ const formatQueryResults = (rows, queryType, dateGroupBy) => {
     rows.forEach(row => {
         // get row title
         if (queryType === 'time') {
-            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
+            row[queryType] = `${row._id.date.month}/${row._id.date.day}/${row._id.date.year}`;
             if (dateGroupBy === 'hour') {
-                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
+                row.Hour = `${row[queryType]} ${row._id.date.hour}:00`;
             } else if (dateGroupBy === 'day') {
                 row.Day = row[queryType];
             } else {
                 // date group by month
-                row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
+                row.Month = `${monthNames[row._id.date.month - 1]} ${row._id.date.year}`;
             }
         } else {
             const queryTypeHeader = _.capitalize(queryType);
@@ -53,7 +53,7 @@ const formatQueryResults = (rows, queryType, dateGroupBy) => {
                 }
             } else {
                 // fill blank values
-                val = "<No " + queryTypeHeader + " Provided>";
+                val = `<No ${queryTypeHeader} Provided>`;
             }
             if (queryType === 'state' && row._id.region) {
                 val = row._id.region.name;
@@ -170,9 +170,9 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     if (operator){
         operator = operator[1];
         if (this.queryParamOperators.indexOf(operator) > -1){
-            operator = '$' + operator;
+            operator = `$${operator}`;
         } else {
-            throw new Error('Unknown operator: ' + operator);
+            throw new Error(`Unknown operator: ${operator}`);
         }
         const obj = {};
         obj[operator] = val;
@@ -263,7 +263,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     // Might want to reevaluate if this causes performance issues.
     this.pathParams.forEach(param => {
         if (req.param(param)){
-            group[param] = '$' + param;
+            group[param] = `$${param}`;
         }
     });
 
@@ -273,10 +273,10 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
         if (groupBy.indexOf(',') > -1){
             groupBy = groupBy.split(',');
             groupBy.forEach(field => {
-                group[field] = '$' + field;
+                group[field] = `$${field}`;
             });
         } else {
-            group[groupBy] = '$' + groupBy;
+            group[groupBy] = `$${groupBy}`;
         }
     }
     // Handle dateGroupBy directives
@@ -285,7 +285,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     // TODO: Need to fix, this is kind of shitty
     const offset_minutes = moment.tz.zone(req.user.tz).utcOffset(new Date());
     const offset_ms = offset_minutes * 60 * 1000;
-    const dateFieldName = '$' + self.dateFieldName;
+    const dateFieldName = `$${self.dateFieldName}`;
     const date_groupings = {
         hour: {
             hour: { $hour: [{ $subtract: [dateFieldName,offset_ms]}]},
@@ -393,7 +393,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
                     parentModelName = modelName;
                     parentFieldName = field;
                 } else {
-                    return callback('Populate field not recognized: ' + field);
+                    return callback(`Populate field not recognized: ${field}`);
                 }
 
                 // sub routine to pass to async.map. Just gets child document given
@@ -433,7 +433,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
                 // TODO: been populated, can save a trip to the database
                 // have to populate top level first before doing anything at child-level
                 self[treeDocument][parentModelName].populate(query_results, {
-                    path: '_id.' + parentFieldName,
+                    path: `_id.${parentFieldName}`,
                     model: parentModelName
                 }, (err, result) => {
                     if (err) return callback(err);
@@ -451,7 +451,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
                     }
                 });
             } else {
-                return callback('Populate field not in group: ' + field);
+                return callback(`Populate field not in group: ${field}`);
             }
         });
     });
@@ -481,7 +481,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
         try {
             group = pipelineBuilder.getGroup(req);
         } catch (e) {
-            console.log("error in group: " + e);
+            console.log(`error in group: ${e}`);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
@@ -490,7 +490,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
         try {
             match = pipelineBuilder.getMatch(req);
         } catch (e) {
-            console.log("error in match: " + e);
+            console.log(`error in match: ${e}`);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
@@ -518,7 +518,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
 
         query.exec((err, adStats) => {
             if (err) {
-                console.log("error in query: " + err);
+                console.log(`error in query: ${err}`);
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });

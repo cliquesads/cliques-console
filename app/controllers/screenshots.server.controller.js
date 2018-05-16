@@ -38,7 +38,7 @@ module.exports = db => {
 				.populate('advertiser publisher')
 				.exec((err, screenshot) => {
 					if (err) return next(err);
-					if (!screenshot) return next(new Error('Failed to load screenshot ' + id));
+					if (!screenshot) return next(new Error(`Failed to load screenshot ${id}`));
 					req.screenshot = screenshot;
 					next();
 				});
@@ -140,8 +140,8 @@ module.exports = db => {
 				.then(screenshots => {
 					const siteIds = [];
 					for (let i = 0; i < screenshots.length; i ++) {
-						if (siteIds.indexOf('' + screenshots[i].site) === -1) {
-							siteIds.push('' + screenshots[i].site);
+						if (siteIds.indexOf(`${screenshots[i].site}`) === -1) {
+							siteIds.push(`${screenshots[i].site}`);
 						}
 					}
 					publisherModels.promisifiedGetNestedObjectById = promise.promisify(publisherModels.getNestedObjectById);
@@ -180,8 +180,8 @@ module.exports = db => {
 				.then(screenshots => {
 					const campaignIds = [];
 					for (let i = 0; i < screenshots.length; i ++) {
-						if (campaignIds.indexOf('' + screenshots[i].campaign) === -1) {
-							campaignIds.push('' + screenshots[i].campaign);
+						if (campaignIds.indexOf(`${screenshots[i].campaign}`) === -1) {
+							campaignIds.push(`${screenshots[i].campaign}`);
 						}
 					}
 					advertiserModels.promisifiedGetNestedObjectById = promise.promisify(advertiserModels.getNestedObjectById);

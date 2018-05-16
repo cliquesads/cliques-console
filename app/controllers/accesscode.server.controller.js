@@ -29,7 +29,7 @@ module.exports = {
     accessCodeByID: function (req, res, next, id) {
         AccessCode.findById(id).populate('issuerOrgs').exec((err, accessCode) => {
             if (err) return next(err);
-            if (!accessCode) return next(new Error('Failed to load accessCode ' + id));
+            if (!accessCode) return next(new Error(`Failed to load accessCode ${id}`));
             req.accessCode = accessCode;
             next();
         });

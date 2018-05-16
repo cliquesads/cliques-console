@@ -57,7 +57,7 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
         advertisers.forEach(doc => {
             ids.push(doc.id);
         });
-        req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+        req.query.advertiser = ids.length > 1 ? `{in}${ids.join(',')}` : ids[0];
         return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
     });
 };
@@ -82,7 +82,7 @@ HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
         publishers.forEach(doc => {
             ids.push(doc.id);
         });
-        req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
+        req.query.publisher = ids.length > 1 ? `{in}${ids.join(',')}` : ids[0];
         return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
     });
 };

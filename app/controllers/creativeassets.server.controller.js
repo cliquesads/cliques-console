@@ -18,7 +18,7 @@ const PROJECT_ID = 'mimetic-codex-781';
 // Bucket to store creative assets for display
 const DISPLAY_BUCKET = 'cliquesads-creativeassets-us';
 // Use non-secure URL for now, secureURL is virtual field on creative model
-const DISPLAY_BASE_URL = 'http://storage.googleapis.com/'+DISPLAY_BUCKET+'/';
+const DISPLAY_BASE_URL = `http://storage.googleapis.com/${DISPLAY_BUCKET}/`;
 
 module.exports = db => ({
     display: {

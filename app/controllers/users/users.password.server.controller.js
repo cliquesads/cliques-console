@@ -28,7 +28,7 @@ exports.forgot = (req, res, next) => {
 						});
 					} else if (user.provider !== 'local') {
 						return res.status(400).send({
-							message: 'It seems like you signed up using your ' + user.provider + ' account'
+							message: `It seems like you signed up using your ${user.provider} account`
 						});
 					} else {
 						user.resetPasswordToken = token;
@@ -49,7 +49,7 @@ exports.forgot = (req, res, next) => {
 			res.render('templates/reset-password-email', {
 				name: user.displayName,
 				appName: config.app.title,
-				url: 'http://' + req.headers.host + '/auth/reset/' + token
+				url: `http://${req.headers.host}/auth/reset/${token}`
 			}, (err, emailHTML) => {
 				done(err, emailHTML, user);
 			});
@@ -65,7 +65,7 @@ exports.forgot = (req, res, next) => {
 			smtpTransport.sendMail(mailOptions, err => {
 				if (!err) {
 					res.send({
-						message: 'An email has been sent to ' + user.email + ' with further instructions.'
+						message: `An email has been sent to ${user.email} with further instructions.`
 					});
 				}
 				done(err);
@@ -90,7 +90,7 @@ exports.validateResetToken = (req, res) => {
 			return res.redirect('/#!/password/reset/invalid');
 		}
 
-		res.redirect('/#!/password/reset/' + req.params.token);
+		res.redirect(`/#!/password/reset/${req.params.token}`);
 	});
 };
 

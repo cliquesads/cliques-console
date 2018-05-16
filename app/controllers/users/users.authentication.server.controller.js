@@ -64,7 +64,7 @@ module.exports = db => ({
 
         // Add missing user fields
         user.provider = 'local';
-        user.displayName = user.firstName + ' ' + user.lastName;
+        user.displayName = `${user.firstName} ${user.lastName}`;
         // Explicitly hash user's password prior to saving
         user.hashPassword();
         // Then save the user
@@ -246,8 +246,8 @@ module.exports = db => ({
     saveOAuthUserProfile: function(req, providerUserProfile, done) {
         if (!req.user) {
             // Define a search query fields
-            const searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
-            const searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
+            const searchMainProviderIdentifierField = `providerData.${providerUserProfile.providerIdentifierField}`;
+            const searchAdditionalProviderIdentifierField = `additionalProvidersData.${providerUserProfile.provider}.${providerUserProfile.providerIdentifierField}`;
 
             // Define main provider search query
             const mainProviderSearchQuery = {};
@@ -367,18 +367,17 @@ function handleError(res, err){
  */
 var addUserToMailChimpList = (req, user, org) => {
 	function _listMemberEndpoint(listId){
-		return 'lists/' + listId + '/members';
+		return `lists/${listId}/members`;
 	}
 	// subfunc to subscribe user to list, will simply log success or failure
 	function _subscribeToList(listId, payload){
 		// subscribe to newsletter list
 		mailchimp.post(_listMemberEndpoint(listId), payload).
 		then(response => {
-			console.info("MAILCHIMP: Added member ID " + response.id + " (" + response.email_address + ") to list " + response.list_id);
+			console.info(`MAILCHIMP: Added member ID ${response.id} (${response.email_address}) to list ${response.list_id}`);
 		}).
 		catch(error => {
-			console.error("MAILCHIMP ERROR title " + error.title + " - type " + error.type + " - status " +
-				error.status + " - detail " + error.detail + " - instance " + error.instance);
+			console.error(`MAILCHIMP ERROR title ${error.title} - type ${error.type} - status ${error.status} - detail ${error.detail} - instance ${error.instance}`);
 		});
 	}
 

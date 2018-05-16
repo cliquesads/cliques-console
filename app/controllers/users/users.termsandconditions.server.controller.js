@@ -36,7 +36,7 @@ exports.read = (req, res) => {
             return res.json(clientTerms);
         } else {
             return res.status(400).send({
-                message: 'No TermsAndConditions found for id: ' + termsId
+                message: `No TermsAndConditions found for id: ${termsId}`
             });
         }
     });
@@ -62,7 +62,7 @@ exports.getCurrentTerms = (req, res) => {
             return res.json(clientTerms);
         } else {
             return res.status(400).send({
-                message: 'No active TermsAndConditions found for type: ' + type
+                message: `No active TermsAndConditions found for type: ${type}`
             });
         }
     });
