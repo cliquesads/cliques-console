@@ -3,46 +3,46 @@
 /**
  * Module dependencies.
  */
-var node_utils = require('@cliques/cliques-node-utils'),
+const node_utils = require('@cliques/cliques-node-utils'),
     promise = require('bluebird'),
     models = node_utils.mongodb.models,
     mongoose = require('mongoose'),
     tags = node_utils.tags,
-	errorHandler = require('./errors.server.controller'),
+    errorHandler = require('./errors.server.controller'),
     mail = require('./mailer.server.controller'),
     BidderPubSub = node_utils.google.pubsub.BidderPubSub,
     AccessCode = mongoose.model('AccessCode'),
     util = require('util'),
-	_ = require('lodash');
+    _ = require('lodash');
 
-
+let pubsub_options;
 if (process.env.NODE_ENV !== 'production'){
-    var pubsub_options = {
+    pubsub_options = {
         projectId: 'mimetic-codex-781',
         test: true
     };
 } else {
     pubsub_options = {projectId: 'mimetic-codex-781'};
 }
-var service = new BidderPubSub(pubsub_options);
-var mailer = new mail.Mailer();
+const service = new BidderPubSub(pubsub_options);
+const mailer = new mail.Mailer();
 
 // Global vars to render action beacon tags
-var config = require('config');
-var adserverHostname = config.get('AdServer.http.external.hostname');
-var adserverPort = config.get('AdServer.http.external.port');
-var adserverSecureHostname = config.get('AdServer.https.external.hostname');
-var adserverSecurePort = config.get('AdServer.https.external.port');
+const config = require('config');
+const adserverHostname = config.get('AdServer.http.external.hostname');
+const adserverPort = config.get('AdServer.http.external.port');
+const adserverSecureHostname = config.get('AdServer.https.external.hostname');
+const adserverSecurePort = config.get('AdServer.https.external.port');
 
 // This method is mostly just to handle redundant error logic.  I don't
 // want to bind this to middleware because draftId is fairly ambiguous
-var _getDraftById = function(req, callback){
-    var sess = req.session;
-    var draftId = req.param('draftId');
+const _getDraftById = (req, callback) => {
+    const sess = req.session;
+    const draftId = req.param('draftId');
     if (!sess.campaignDrafts){
         return callback({ message: 'No campaign drafts for this session'}, null);
     } else {
-        var draft = _.find(sess.campaignDrafts, function(d){ return d.draftId === draftId; });
+        const draft = _.find(sess.campaignDrafts, d => d.draftId === draftId);
         if (!draft) {
             return callback({message: 'Draft ID ' + draftId + ' not found'});
         } else {
@@ -51,22 +51,13 @@ var _getDraftById = function(req, callback){
     }
 };
 
-var _getTreeEntitiesFromRequest = function(req){
+const _getTreeEntitiesFromRequest = req => {
     // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
-    var advertiser = req.advertiser,
-        campaignId = req.param('campaignId'),
-        creativeGroupId = req.param('creativeGroupId'),
-        creativeId = req.param('creativeId');
+    const advertiser = req.advertiser, campaignId = req.param('campaignId'), creativeGroupId = req.param('creativeGroupId'), creativeId = req.param('creativeId');
     // repetitive, I know.  Sorry.
-    var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
-        return c._id.toString() === campaignId;
-    })];
-    var creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, function (c) {
-        return c._id.toString() === creativeGroupId;
-    })];
-    var creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, function (c) {
-        return c._id.toString() === creativeId;
-    })];
+    const campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, c => c._id.toString() === campaignId)];
+    const creativeGroup = campaign.creativegroups[_.findIndex(campaign.creativegroups, c => c._id.toString() === creativeGroupId)];
+    const creative = creativeGroup.creatives[_.findIndex(creativeGroup.creatives, c => c._id.toString() === creativeId)];
     return {
         advertiser: advertiser,
         campaign: campaign,
@@ -75,18 +66,18 @@ var _getTreeEntitiesFromRequest = function(req){
     };
 };
 
-var _firstCampaignPromoHook = function(req){
-    var accesscodeId = req.user.organization.accesscode;
+const _firstCampaignPromoHook = req => {
+    const accesscodeId = req.user.organization.accesscode;
     if (accesscodeId){
-        AccessCode.findById(accesscodeId, function(err, accessCode){
+        AccessCode.findById(accesscodeId, (err, accessCode) => {
             if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
             // populate issuer orgs, if any
-            var promoType = 'Campaign';
-            accessCode.redeemIssuerPromos(promoType,function(err, results){
+            const promoType = 'Campaign';
+            accessCode.redeemIssuerPromos(promoType,(err, results) => {
                 if (err) console.error(err);
                 // results is array of { user: <User>, promo: <Promo> } objects
-                results.forEach(function(userPromo){
-                    var subject = util.format('%s Has Created Their First Campaign',
+                results.forEach(userPromo => {
+                    let subject = util.format('%s Has Created Their First Campaign',
                         req.user.organization.name);
                     if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
                     mailer.sendMail({
@@ -106,9 +97,9 @@ var _firstCampaignPromoHook = function(req){
     }
 };
 
-module.exports = function(db) {
-    var advertiserModels = new models.AdvertiserModels(db);
-    var geoModels = new models.GeoModels(db);
+module.exports = db => {
+    const advertiserModels = new models.AdvertiserModels(db);
+    const geoModels = new models.GeoModels(db);
 
     return {
         /**
@@ -127,7 +118,7 @@ module.exports = function(db) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
                 req.query.organization = req.user.organization.id;
             }
-            advertiserModels.Advertiser.find(req.query, function (err, advertisers) {
+            advertiserModels.Advertiser.find(req.query, (err, advertisers) => {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
@@ -141,18 +132,18 @@ module.exports = function(db) {
          * Create new advertiser
          */
         create: function (req, res) {
-            var advertiser = new advertiserModels.Advertiser(req.body);
+            const advertiser = new advertiserModels.Advertiser(req.body);
             advertiser.user = [req.user];
             advertiser.organization = req.user.organization;
 
-            advertiser.save(function (err) {
+            advertiser.save(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, (err, adv) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -179,14 +170,14 @@ module.exports = function(db) {
             advertiserModels.Advertiser.findOneAndUpdate({'name': req.body.name},
                 req.body,
                 {'upsert': true},
-                function (err, advertiser) {
+                (err, advertiser) => {
                     if (err) {
                         console.log(err);
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                        advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, (err, adv) => {
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
@@ -207,31 +198,31 @@ module.exports = function(db) {
          * 4) Send internal email notifying admins of new campaigns that were created, if any
          */
         update: function (req, res) {
-            var advertiser = req.advertiser;
-            var initCampaigns = advertiser.campaigns;
+            let advertiser = req.advertiser;
+            const initCampaigns = advertiser.campaigns;
             advertiser = _.extend(advertiser, req.body);
-            advertiser.save(function (err) {
+            advertiser.save(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                    advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, (err, adv) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
                         }
                         // now get new campaigns that were created
-                        var newCampaigns = _.difference(adv.campaigns, initCampaigns);
+                        const newCampaigns = _.difference(adv.campaigns, initCampaigns);
                         res.json(adv);
 
                         // Now publish update message to bidders
                         // Only update bidders for existing campaigns, as new campaigns don't have
                         // active bidding agents yet.
                         //TODO: This is lazy, should figure out whether campaign has changed or not
-                        initCampaigns.forEach(function(campaign){
+                        initCampaigns.forEach(campaign => {
                             service.publishers.updateBidder(campaign.id);
                         });
 
@@ -239,7 +230,7 @@ module.exports = function(db) {
                         if (newCampaigns.length > 0){
                             //if (process.env.NODE_ENV === 'production'){
                                 // send one email per campaign
-                                newCampaigns.forEach(function(campaign){
+                                newCampaigns.forEach(campaign => {
                                     mailer.sendMailFromUser('New Campaign Created', 'new-campaign-email.server.view.html',
                                         {advertiser: advertiser, campaign: campaign, user: req.user},
                                         req.user,
@@ -253,7 +244,7 @@ module.exports = function(db) {
                             if (_.isEmpty(initCampaigns)){
                                 // also have to check if organization has any other advertisers.  Don't want to issue
                                 // promo if org has another advertiser already
-                                advertiserModels.Advertiser.find({ organization: req.user.organization._id, _id: { $ne: advertiser._id }}, function(err, res){
+                                advertiserModels.Advertiser.find({ organization: req.user.organization._id, _id: { $ne: advertiser._id }}, (err, res) => {
                                     if (err) console.error('ERROR when getting other advertisers for org: ' + err);
                                     if (_.isEmpty(res)){
                                         _firstCampaignPromoHook(req);
@@ -269,8 +260,8 @@ module.exports = function(db) {
          * Delete an advertiser
          */
         remove: function (req, res) {
-            var advertiser = req.advertiser;
-            advertiser.remove(function (err) {
+            const advertiser = req.advertiser;
+            advertiser.remove(err => {
                 if (err) {
                     console.log(err);
                     return res.status(400).send({
@@ -289,7 +280,7 @@ module.exports = function(db) {
             advertiserModels.Advertiser
                 .findById(id)
                 .populate('user')
-                .exec(function (err, advertiser) {
+                .exec((err, advertiser) => {
                     if (err) return next(err);
                     if (!advertiser) return next(new Error('Failed to load advertiser' + id));
                     req.advertiser = advertiser;
@@ -313,45 +304,43 @@ module.exports = function(db) {
 
         campaign: {
             getGeoTrees: function (req, res) {
-                var advertiser = req.advertiser;
-                var campaignId = req.param('campaignId');
-                var targetOrBlock = req.param('targetOrBlock');
-                var ind = _.findIndex(req.advertiser.campaigns, function(c) {
-                    return c._id.toString() === campaignId;
-                });
-                var campaign = advertiser.campaigns[ind];
+                const advertiser = req.advertiser;
+                const campaignId = req.param('campaignId');
+                const targetOrBlock = req.param('targetOrBlock');
+                const ind = _.findIndex(req.advertiser.campaigns, c => c._id.toString() === campaignId);
+                const campaign = advertiser.campaigns[ind];
 
-                var geoTrees = [];
-                var wantedGeos;
+                const geoTrees = [];
+                let wantedGeos;
                 if (targetOrBlock === 'target') {
                     wantedGeos = campaign.geo_targets;
                 } else if (targetOrBlock === 'block') {
                     wantedGeos = campaign.blocked_geos;
                 }
-                return promise.each(wantedGeos, function(country) {
-                    var countryObj;
+                return promise.each(wantedGeos, country => {
+                    let countryObj;
                     return geoModels.Country.findOne({_id: country.target})
-                    .then(function(countryResult) {
+                    .then(countryResult => {
                         countryObj = JSON.parse(JSON.stringify(countryResult));
                         countryObj.weight = country.weight;
                         countryObj.explicit = country.explicit;
                         if (country.children) {
                             countryObj.regions = [];
-                            return promise.each(country.children, function(region) {
-                                var regionObj;
-                                var customizedCityIds = [];
+                            return promise.each(country.children, region => {
+                                let regionObj;
+                                const customizedCityIds = [];
                                 return geoModels.Region.findOne({_id: region.target})
-                                .then(function(regionResult) {
+                                .then(regionResult => {
                                     regionObj = JSON.parse(JSON.stringify(regionResult));
                                     regionObj.weight = region.weight;
                                     regionObj.explicit = region.explicit;
                                     if (region.children) {
                                         regionObj.cities = [];
-                                        return promise.each(region.children, function(city) {
-                                            var cityObj;
+                                        return promise.each(region.children, city => {
+                                            let cityObj;
                                             customizedCityIds.push(city.target);
                                             return geoModels.City.findOne({_id: city.target})
-                                            .then(function(cityResult) {
+                                            .then(cityResult => {
                                                 cityObj = JSON.parse(JSON.stringify(cityResult));
                                                 cityObj.weight = city.weight;
                                                 cityObj.explicit = city.explicit;
@@ -360,52 +349,44 @@ module.exports = function(db) {
                                         });
                                     }
                                 })
-                                .then(function() {
-                                    // For each region, all those cities that haven't 
-                                    // been customized should also be loaded
-                                    return geoModels.City.find({
-                                        region: region.target,
-                                        _id: {
-                                            $nin: customizedCityIds
-                                        }
-                                    })
-                                    .then(function(notCustomizedCities) {
-                                        regionObj.cities = regionObj.cities.concat(notCustomizedCities);
-                                    });
+                                .then(() => // For each region, all those cities that haven't 
+                                // been customized should also be loaded
+                                geoModels.City.find({
+                                    region: region.target,
+                                    _id: {
+                                        $nin: customizedCityIds
+                                    }
                                 })
-                                .then(function() {
+                                .then(notCustomizedCities => {
+                                    regionObj.cities = regionObj.cities.concat(notCustomizedCities);
+                                }))
+                                .then(() => {
                                     countryObj.regions.push(regionObj);
                                 });
                             });
                         }
                     })
-                    .then(function() {
+                    .then(() => {
                         geoTrees.push(countryObj);
                     });
                 })
-                .then(function() {
-                    return res.json(geoTrees);
-                })
-                .catch(function(err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                });
+                .then(() => res.json(geoTrees))
+                .catch(err => res.status(400).send({
+                    message: errorHandler.getAndLogErrorMessage(err)
+                }));
             },
             //TODO: Campaign controllers here
             getCampaignsInClique: function (req, res) {
-                var camps = [];
-                var cliqueId = req.param('cliqueId');
-                advertiserModels.Advertiser.find({"campaigns.clique": cliqueId}, function (err, advs) {
+                let camps = [];
+                const cliqueId = req.param('cliqueId');
+                advertiserModels.Advertiser.find({"campaigns.clique": cliqueId}, (err, advs) => {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     } else {
-                        advs.forEach(function (adv) {
-                            camps = camps.concat(adv.campaigns.filter(function (camp) {
-                                return camp.clique === cliqueId;
-                            }));
+                        advs.forEach(adv => {
+                            camps = camps.concat(adv.campaigns.filter(camp => camp.clique === cliqueId));
                         });
                         res.json(camps);
                     }
@@ -413,12 +394,10 @@ module.exports = function(db) {
             },
             activate: function (req, res) {
                 // Checks if campaign is active.  If not, publishes 'createBidder' message and sets campaign to active
-                var advertiser = req.advertiser;
-                var campaignId = req.param('campaignId');
-                var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id.toString() === campaignId;
-                });
-                var campaign = advertiser.campaigns[ind];
+                const advertiser = req.advertiser;
+                const campaignId = req.param('campaignId');
+                const ind = _.findIndex(req.advertiser.campaigns, c => c._id.toString() === campaignId);
+                const campaign = advertiser.campaigns[ind];
                 if (!campaign) {
                     return res.status(404).send({
                         message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
@@ -438,7 +417,7 @@ module.exports = function(db) {
                         }
                         // Now set to active and save
                         advertiser.campaigns[ind].active = true;
-                        advertiser.save(function (err) {
+                        advertiser.save(err => {
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
@@ -453,12 +432,10 @@ module.exports = function(db) {
 
             deactivate: function (req, res) {
                 // Checks if campaign is inactive.  If not, publishes 'stopBidder' message and sets campaign to inactive
-                var advertiser = req.advertiser;
-                var campaignId = req.param('campaignId');
-                var ind = _.findIndex(req.advertiser.campaigns, function (c) {
-                    return c._id.toString() === campaignId;
-                });
-                var campaign = advertiser.campaigns[ind];
+                const advertiser = req.advertiser;
+                const campaignId = req.param('campaignId');
+                const ind = _.findIndex(req.advertiser.campaigns, c => c._id.toString() === campaignId);
+                const campaign = advertiser.campaigns[ind];
                 if (!campaign) {
                     return res.status(404).send({
                         message: "Cannot find campaign ID " + campaignId + " in advertiser ID " + advertiser._id
@@ -478,7 +455,7 @@ module.exports = function(db) {
                         }
                         // Now set to active and save
                         advertiser.campaigns[ind].active = false;
-                        advertiser.save(function (err) {
+                        advertiser.save(err => {
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
@@ -501,11 +478,8 @@ module.exports = function(db) {
                  */
                 creative: {
                     activate: function (req, res) {
-                        var treeEntities = _getTreeEntitiesFromRequest(req);
-                        var advertiser = treeEntities.advertiser,
-                            campaign = treeEntities.campaign,
-                            creativegroup = treeEntities.creativegroup,
-                            creative = treeEntities.creative;
+                        const treeEntities = _getTreeEntitiesFromRequest(req);
+                        const advertiser = treeEntities.advertiser, campaign = treeEntities.campaign, creativegroup = treeEntities.creativegroup, creative = treeEntities.creative;
 
                         // handle creative not found
                         if (!creative){
@@ -520,7 +494,7 @@ module.exports = function(db) {
                                 message: "Creative is already active, cannot activate!"
                             });
                         } else {
-                            var updateBidder = false;
+                            let updateBidder = false;
                             creative.active = true;
                             // if parent creativeGroup is inactive, it needs to be reactivated as well,
                             // and bidder needs to be updated.
@@ -528,7 +502,7 @@ module.exports = function(db) {
                                 creativegroup.active = true;
                                 updateBidder = true;
                             }
-                            advertiser.save(function (err) {
+                            advertiser.save(err => {
                                 if (err) {
                                     return res.status(400).send({
                                         message: errorHandler.getAndLogErrorMessage(err)
@@ -593,7 +567,7 @@ module.exports = function(db) {
                                 }
                                 updateBidder = true;
                             }
-                            advertiser.save(function (err) {
+                            advertiser.save(err => {
                                 if (err) {
                                     return res.status(400).send({
                                         message: errorHandler.getAndLogErrorMessage(err)
@@ -619,8 +593,8 @@ module.exports = function(db) {
                         }
                     },
                     remove: function(req, res){
-                        var treeEntities = _getTreeEntitiesFromRequest(req);
-                        var advertiser = treeEntities.advertiser,
+                        const treeEntities = _getTreeEntitiesFromRequest(req);
+                        const advertiser = treeEntities.advertiser,
                             campaign = treeEntities.campaign,
                             creativegroup = treeEntities.creativegroup,
                             creative = treeEntities.creative;
@@ -653,7 +627,7 @@ module.exports = function(db) {
                                 });
                             }
                         }
-                        advertiser.save(function (err) {
+                        advertiser.save(err => {
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
@@ -678,13 +652,10 @@ module.exports = function(db) {
                         });
                     },
                     removeMany: function(req, res){
-                        var advertiser = req.advertiser,
-                            campaignId = req.param('campaignId');
-                        var campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, function (c) {
-                            return c._id.toString() === campaignId;
-                        })];
+                        const advertiser = req.advertiser, campaignId = req.param('campaignId');
+                        const campaign = advertiser.campaigns[_.findIndex(advertiser.campaigns, c => c._id.toString() === campaignId)];
 
-                        var creatives = req.body.creatives;
+                        const creatives = req.body.creatives;
                         if (!creatives){
                             return res.status(400).send({
                                 message: "No creative ID's provided. " +
@@ -693,13 +664,9 @@ module.exports = function(db) {
                             });
                         }
                         let updateBidder = false;
-                        creatives.forEach(function(cr){
+                        creatives.forEach(cr => {
                             // find creativeGroup containing this creative
-                            var creativegroup = _.find(campaign.creativegroups, function (crg) {
-                                return _.find(crg.creatives, function(creative){
-                                    return creative.id === cr;
-                                });
-                            });
+                            const creativegroup = _.find(campaign.creativegroups, crg => _.find(crg.creatives, creative => creative.id === cr));
                             // now remove creative from creativeGroup
                             creativegroup.creatives.id(cr).remove();
 
@@ -730,7 +697,7 @@ module.exports = function(db) {
                             });
                         }
 
-                        advertiser.save(function (err) {
+                        advertiser.save(err => {
                             if (err) {
                                 return res.status(400).send({
                                     message: errorHandler.getAndLogErrorMessage(err)
@@ -763,7 +730,7 @@ module.exports = function(db) {
              */
             draft: {
                 getAllInSession: function(req, res){
-                    var sess = req.session;
+                    const sess = req.session;
                     if (sess.campaignDrafts){
                         return res.json(sess.campaignDrafts);
                     } else {
@@ -771,24 +738,24 @@ module.exports = function(db) {
                     }
                 },
                 getForAdvertiser: function (req, res) {
-                    var sess = req.session;
-                    var advertiserId = req.advertiser.id;
+                    const sess = req.session;
+                    const advertiserId = req.advertiser.id;
                     if (sess.campaignDrafts){
-                        var drafts = sess.campaignDrafts.filter(function(draft){ return draft.advertiserId === advertiserId; });
+                        const drafts = sess.campaignDrafts.filter(draft => draft.advertiserId === advertiserId);
                         return res.json(drafts);
                     } else {
                         return res.json(null);
                     }
                 },
                 create: function (req, res) {
-                    var draft = req.body;
+                    const draft = req.body;
                     if (!draft.advertiserId){
                         return res.status(400).send({
                             message: 'CampaignDraft must contain an advertiserId'
                         });
                     }
                     draft.tstamp = new Date();
-                    var sess = req.session;
+                    const sess = req.session;
                     sess.campaignDrafts = sess.campaignDrafts || [];
                     // Give draft a Mongo-style ObjectId
                     draft.draftId = mongoose.Types.ObjectId();
@@ -796,13 +763,13 @@ module.exports = function(db) {
                     return res.json(draft);
                 },
                 read: function (req, res) {
-                    _getDraftById(req, function(err, draft){
+                    _getDraftById(req, (err, draft) => {
                         if (err) return res.status(404).send(err);
                         return res.json(draft);
                     });
                 },
                 update: function (req, res) {
-                    _getDraftById(req, function(err, draft){
+                    _getDraftById(req, (err, draft) => {
                         if (err) return res.status(404).send(err);
                         _.extend(draft, req.body);
                         // update timestamp
@@ -811,11 +778,11 @@ module.exports = function(db) {
                     });
                 },
                 remove: function (req, res) {
-                    var sess = req.session;
-                    var draftId = req.param('draftId');
-                    _getDraftById(req, function(err, draft){
+                    const sess = req.session;
+                    const draftId = req.param('draftId');
+                    _getDraftById(req, (err, draft) => {
                         if (err) return res.status(404).send(err);
-                        _.remove(sess.campaignDrafts, function(d){ return d.draftId === draft.draftId; });
+                        _.remove(sess.campaignDrafts, d => d.draftId === draft.draftId);
                         // clear campaignDrafts if empty
                         if (sess.campaignDrafts === []){
                             delete sess.campaignDrafts;
@@ -827,19 +794,19 @@ module.exports = function(db) {
         },
         actionbeacon: {
             getTag: function (req, res) {
-                var secure = JSON.parse(req.query.secure);
-                var tag = new tags.ActionBeaconTag(adserverHostname, {
+                const secure = JSON.parse(req.query.secure);
+                const tag = new tags.ActionBeaconTag(adserverHostname, {
                     port: secure ? adserverSecurePort : adserverPort,
                     secure: JSON.parse(req.query.secure),
                     secure_hostname: adserverSecureHostname
                 });
-                var actionbeaconId = req.param('actionbeaconId');
-                var actionbeacon = _.find(req.advertiser.actionbeacons, function(b){ return b.id === actionbeaconId; });
+                const actionbeaconId = req.param('actionbeaconId');
+                const actionbeacon = _.find(req.advertiser.actionbeacons, b => b.id === actionbeaconId);
                 if (actionbeacon){
                     // Kind of a hack, but don't want to change render method
                     actionbeacon.parent_advertiser = {};
                     actionbeacon.parent_advertiser.id = req.advertiser.id;
-                    var rendered = tag.render(actionbeacon);
+                    const rendered = tag.render(actionbeacon);
                     res.json({tag: rendered});
                 } else {
                     res.status(400).send({message: 'No actionbeacon with id ' + actionbeaconId + ' found under advertiser ID ' + req.advertiser.id});
