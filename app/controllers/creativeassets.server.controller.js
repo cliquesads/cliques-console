@@ -1,5 +1,5 @@
 /* jshint node: true */ 'use strict';
-var auth = require('@cliques/cliques-node-utils').google.auth,
+const auth = require('@cliques/cliques-node-utils').google.auth,
     gcloud = require('google-cloud'),
     config = require('config'),
     cloudinary = require('cloudinary'),
@@ -12,13 +12,13 @@ cloudinary.config({
     api_secret: config.get('Cloudinary.api_secret')
 });
 
-var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
-var PROJECT_ID = 'mimetic-codex-781';
+const AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
+const PROJECT_ID = 'mimetic-codex-781';
 
 // Bucket to store creative assets for display
-var DISPLAY_BUCKET = 'cliquesads-creativeassets-us';
+const DISPLAY_BUCKET = 'cliquesads-creativeassets-us';
 // Use non-secure URL for now, secureURL is virtual field on creative model
-var DISPLAY_BASE_URL = 'http://storage.googleapis.com/'+DISPLAY_BUCKET+'/';
+const DISPLAY_BASE_URL = 'http://storage.googleapis.com/'+DISPLAY_BUCKET+'/';
 
 module.exports = db => ({
     display: {
@@ -29,13 +29,13 @@ module.exports = db => ({
          * public URL.
          */
         create: function (req, res, next) {
-            var client = gcloud({
+            const client = gcloud({
                 projectId: PROJECT_ID,
                 keyFilename: AUTHFILE
             }).storage();
-            var assets_bucket = client.bucket(DISPLAY_BUCKET);
-            var object_path = req.file.filename;
-            var options = {
+            const assets_bucket = client.bucket(DISPLAY_BUCKET);
+            const object_path = req.file.filename;
+            const options = {
                 destination: object_path,
                 resumable: true,
                 validation: 'crc32c',

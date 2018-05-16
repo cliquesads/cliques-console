@@ -1,26 +1,25 @@
 'use strict';
-var errorHandler = require('./errors.server.controller'),
+const errorHandler = require('./errors.server.controller'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
     _ = require('lodash'),
     Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode'),
     mail = require('./mailer.server.controller'),
-    util = require('util'),
-    config = require('config'),
+    util = require('util'), config = require('config'),
     countryDataLookup = require('country-data').lookup,
     async = require('async');
 
-var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
-var stripe = require('stripe')(config.get("Stripe.secret_key"));
+const mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
+const stripe = require('stripe')(config.get("Stripe.secret_key"));
 
-var buildInviteURL = (req, organizationId, accessTokenId) => {
-    var protocol = 'https';
+const buildInviteURL = (req, organizationId, accessTokenId) => {
+    let protocol = 'https';
     if (process.env.NODE_ENV === 'local-test'){
         protocol = 'http';
     }
-    var hostname = req.headers.host;
-    var base = util.format("%s://%s", protocol, hostname);
+    const hostname = req.headers.host;
+    const base = util.format("%s://%s", protocol, hostname);
     return util.format("%s/#!/invite/organization/%s/%s", base, organizationId, accessTokenId);
 };
 
@@ -39,13 +38,13 @@ var buildInviteURL = (req, organizationId, accessTokenId) => {
  *      Ashmore and Cartier Island, Europa Island, Gaza Strip, Glorioso Islands, Howland Island, Jarvis Island,
  *      Johnston Atoll, Laos, Spratly Islands, West Bank
  */
-var lookupCountryCode = countryName => {
+const lookupCountryCode = countryName => {
     // I did this manually by generating all failed lookup country values, then manually looking up their ISO codes
     // The values with no codes are documented above
-    var mapping = {"Antartica":"AQ","Antigua and Barbuda":"AG","Bolivia":"BO","Bosnia and Herzegovina":"BA","British Virgin Islands":"VG","Brunei":"BN","Cape Verde":"CV","Congo, Democratic Republic of the":"CD","Congo, Republic of the":"CG","Cote d'Ivoire":"CI","Czeck Republic":"CZ","Falkland Islands (Islas Malvinas)":"FK","French Southern and Antarctic Lands":"TF","Gambia, The":"GM","Guinea-Bissau":"GW","Heard Island and McDonald Islands":"HM", "Holy See (Vatican City)":"VA","Iran":"IR","Ireland, Northern":"GB","Jan Mayen":"SJ","Korea, North":"KP","Korea, South":"KR","Macau":"MO", "Macedonia, Former Yugoslav Republic of":"MK","Man, Isle of":"IM","Micronesia, Federated States of":"FM","Pitcaim Islands":"PN", "Romainia":"RO","Russia":"RU", "Saint Helena":"SH","Saint Kitts and Nevis":"KN","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Scotland":"GB", "South Georgia and South Sandwich Islands":"GS","Svalbard":"SJ","Syria":"SY","Tanzania":"TZ","Tobago":"TT","Toga":"TG","Trinidad":"TT", "USA":"US","Venezuela":"VE","Vietnam":"VN","Virgin Islands":"VI","Wales":"GB","Wallis and Futuna":"WF"};
+    const mapping = {"Antartica":"AQ","Antigua and Barbuda":"AG","Bolivia":"BO","Bosnia and Herzegovina":"BA","British Virgin Islands":"VG","Brunei":"BN","Cape Verde":"CV","Congo, Democratic Republic of the":"CD","Congo, Republic of the":"CG","Cote d'Ivoire":"CI","Czeck Republic":"CZ","Falkland Islands (Islas Malvinas)":"FK","French Southern and Antarctic Lands":"TF","Gambia, The":"GM","Guinea-Bissau":"GW","Heard Island and McDonald Islands":"HM", "Holy See (Vatican City)":"VA","Iran":"IR","Ireland, Northern":"GB","Jan Mayen":"SJ","Korea, North":"KP","Korea, South":"KR","Macau":"MO", "Macedonia, Former Yugoslav Republic of":"MK","Man, Isle of":"IM","Micronesia, Federated States of":"FM","Pitcaim Islands":"PN", "Romainia":"RO","Russia":"RU", "Saint Helena":"SH","Saint Kitts and Nevis":"KN","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Scotland":"GB", "South Georgia and South Sandwich Islands":"GS","Svalbard":"SJ","Syria":"SY","Tanzania":"TZ","Tobago":"TT","Toga":"TG","Trinidad":"TT", "USA":"US","Venezuela":"VE","Vietnam":"VN","Virgin Islands":"VI","Wales":"GB","Wallis and Futuna":"WF"};
 
     // first try countryData
-    var lookupVals = countryDataLookup.countries({ name: countryName });
+    const lookupVals = countryDataLookup.countries({ name: countryName });
     if (lookupVals.length === 0){
         // if lookup fails, go to mapping
         // if that fails just return countryName
@@ -80,7 +79,7 @@ module.exports = {
      * Create a new organization
      */
     create: function(req, res) {
-        var organization = new Organization(req.body);
+        const organization = new Organization(req.body);
         organization.save((err, org) => {
             if (err) return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
@@ -91,13 +90,13 @@ module.exports = {
                 AccessCode.findById(org.accesscode, (err, accessCode) => {
                     if (err) console.error('ERROR occurred when populating accesscode field for org: ' + err);
                     // populate issuer orgs, if any
-                    var promoType = 'Signup';
+                    const promoType = 'Signup';
                     accessCode.redeemIssuerPromos(promoType,(err, results) => {
                         if (err) console.error(err);
                         // results is array of { user: <User>, promo: <Promo> } objects
                         if (process.env.NODE_ENV === 'production'){
                             results.forEach(userPromo => {
-                                var subject = util.format('%s Has Redeemed Your Cliques Access Code.',
+                                let subject = util.format('%s Has Redeemed Your Cliques Access Code.',
                                     organization.name);
                                 if (userPromo.promo) subject = 'You\'ve Got Cash - ' + subject;
                                 mailer.sendMail({
@@ -124,7 +123,7 @@ module.exports = {
      * @param res
      */
     update: function(req, res) {
-        var organization = req.organization;
+        let organization = req.organization;
         organization = _.extend(organization, req.body);
         organization.tstamp = Date.now();
         organization.save((err, org) => {
@@ -159,7 +158,7 @@ module.exports = {
      * Delete an organization
      */
     remove: function (req, res) {
-        var organization  = req.organization;
+        const organization  = req.organization;
         organization.remove(err => {
             if (err) {
                 console.log(err);
@@ -182,7 +181,7 @@ module.exports = {
      */
     hasAuthorization: function (req, res, next) {
         if (req.organization){
-            var user = _.find(req.organization.users, u => u.id === req.user.id);
+            const user = _.find(req.organization.users, u => u.id === req.user.id);
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
                 if (!user) {
                     return res.status(403).send({
@@ -221,13 +220,13 @@ module.exports = {
     },
 
     sendUserInvite: function(req, res){
-        var organization = req.organization;
+        const organization = req.organization;
 
         // manually create token and store in ObjectId so you don't have to look
         // it up later after saving Organization when generating link
-        var tokens = [];
+        const tokens = [];
         req.body.forEach(newUser => {
-            var token = mongoose.Types.ObjectId();
+            const token = mongoose.Types.ObjectId();
             tokens.push(token);
             organization.accessTokens.push({
                 _id: token,
@@ -246,11 +245,11 @@ module.exports = {
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
-                var subject = util.format("%s Has Invited You To Join Cliques",
+                const subject = util.format("%s Has Invited You To Join Cliques",
                     req.user.displayName);
-                var asyncFuncs = [];
-                var fu = (thisToken, thisUser) => callback => {
-                    var inviteUrl = buildInviteURL(req, organization._id, thisToken);
+                const asyncFuncs = [];
+                const fu = (thisToken, thisUser) => callback => {
+                    const inviteUrl = buildInviteURL(req, organization._id, thisToken);
                     mailer.sendMailFromUser(subject, 'invite-user-in-org-email.server.view.html',
                         { user: req.user, inviteUrl: inviteUrl, organization: organization },
                         req.user,
@@ -258,10 +257,10 @@ module.exports = {
                         callback
                     );
                 };
-                for (var i=0; i < req.body.length; i++){
-                    var token = tokens[i];
-                    var newUser = req.body[i];
-                    var func = fu(token, newUser);
+                for (let i=0; i < req.body.length; i++){
+                    const token = tokens[i];
+                    const newUser = req.body[i];
+                    const func = fu(token, newUser);
                     asyncFuncs.push(func);
                 }
                 async.parallel(asyncFuncs, (err, results) => {
@@ -279,14 +278,14 @@ module.exports = {
 
     stripeAccount: {
         saveToken: function(req, res){
-            var organization = req.organization;
+            const organization = req.organization;
             // Get the credit card details submitted by the form
-            var stripeToken = req.query.stripeToken;
+            const stripeToken = req.query.stripeToken;
             // pass in account type collected in stripe form
-            var accountType = req.query.accountType;
+            const accountType = req.query.accountType;
 
             // assumes dob in 'MM/DD/YYYY' form
-            var dob;
+            let dob;
             if (req.query.dob){
                 dob = req.query.dob.split("/");
             } else {
@@ -299,7 +298,7 @@ module.exports = {
                 });
             }
 
-            var stripeErrorHandler = error => {
+            const stripeErrorHandler = error => {
                 console.error(error);
                 return res.status(402).send({
                     message: error.toString()
@@ -309,7 +308,7 @@ module.exports = {
             // create new Stripe Account object if there isn't already one tied
             // to this organization
             if (_.isNil(organization.stripeAccountId)){
-                var countryCode = lookupCountryCode(organization.country);
+                const countryCode = lookupCountryCode(organization.country);
                 stripe.accounts.create({
                     managed: true,
                     country: countryCode,
@@ -363,7 +362,7 @@ module.exports = {
             }
         },
         getAccount: function(req, res){
-            var organization = req.organization;
+            const organization = req.organization;
             if (_.isNil(organization.stripeAccountId)){
                 return res.status(404).send({
                     message: "Organization does not have an associated Stripe Account ID"
@@ -391,8 +390,8 @@ module.exports = {
          */
         saveToken: function(req, res){
             // Get the credit card details submitted by the form
-            var stripeToken = req.query.stripeToken;
-            var organization = req.organization;
+            const stripeToken = req.query.stripeToken;
+            const organization = req.organization;
 
             if (!stripeToken){
                 return res.status(404).send({
@@ -400,7 +399,7 @@ module.exports = {
                 });
             }
 
-            var stripeErrorHandler = error => {
+            const stripeErrorHandler = error => {
                 console.log(error);
                 return res.status(402).send({
                     message: error.toString()
@@ -448,7 +447,7 @@ module.exports = {
          * Gets Organization's Stripe customer data (like saved cards, etc.)
          */
         getCustomer: function(req, res){
-            var organization = req.organization;
+            const organization = req.organization;
             if (_.isNil(organization.stripeCustomerId)){
                 return res.status(404).send({
                     message: "Organization does not have an associated Stripe Customer ID"

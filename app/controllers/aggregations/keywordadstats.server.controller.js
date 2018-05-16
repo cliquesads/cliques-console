@@ -3,10 +3,7 @@
 /**
  * Module dependencies.
  */
-var util = require('util'),
-    aggregationUtils = require('./lib/aggregationUtils.server.controller.js'),
-    HourlyAggregationPipelineVarBuilder = aggregationUtils.HourlyAggregationPipelineVarBuilder,
-    AdStatsAPIHandler = aggregationUtils.AdStatsAPIHandler;
+const util = require('util'), aggregationUtils = require('./lib/aggregationUtils.server.controller.js'), HourlyAggregationPipelineVarBuilder = aggregationUtils.HourlyAggregationPipelineVarBuilder, AdStatsAPIHandler = aggregationUtils.AdStatsAPIHandler;
 
 /**
  * Lightweight object to expose KeywordAdStats query methods to API routes.
@@ -16,14 +13,14 @@ var util = require('util'),
  * @param publisherModels
  * @constructor
  */
-var KeywordAdStatAPI = exports.KeywordAdStatAPI = function(db) {
+const KeywordAdStatAPI = exports.KeywordAdStatAPI = function(db) {
 	this.adv_params = ['advertiser', 'campaign'];
 	this.pub_params = ['publisher', 'site', 'page', 'placement'];
 	this.clique_params = ['pub_clique', 'adv_clique'];
 	this.keywords_params = ['keywords'];
 
 	// TODO: Don't love this, should figure out better way to handle general queries
-	var all_params = this.adv_params.concat(this.pub_params);
+	let all_params = this.adv_params.concat(this.pub_params);
 	all_params = all_params.concat(this.clique_params);
 	all_params = all_params.concat(this.keywords_params);
 
@@ -47,13 +44,13 @@ KeywordAdStatAPI.prototype.getMany = function(req, res) {
  * @return {*}
  */
 KeywordAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res) {
-	var self = this;
-	var filter_query = {};
+	const self = this;
+	const filter_query = {};
 	if (req.user.organization.organization_types.indexOf('networkAdmin') === -1) {
 		filter_query.organization = req.user.organization.id;
 	}
 	self.advertiserModels.Advertiser.find(filter_query, (err, advertisers) => {
-		var ids = [];
+		const ids = [];
 		advertisers.forEach(doc => {
 			ids.push(doc.id);
 		});
@@ -71,14 +68,14 @@ KeywordAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res) {
  * @return {*}
  */
 KeywordAdStatAPI.prototype.getManyPublisherSummary = function(req, res) {
-	var self = this;
-	var filter_query = {};
+	const self = this;
+	const filter_query = {};
 	// allow Advertisers & Admins to access publisher data
 	if (req.user.organization.organization_types.indexOf('publisher') > -1) {
 		filter_query.organization = req.user.organization.id;
 	}
 	self.publisherModels.Publisher.find(filter_query, (err, publishers) => {
-		var ids = [];
+		const ids = [];
 		publishers.forEach(doc => {
 			ids.push(doc.id);
 		});

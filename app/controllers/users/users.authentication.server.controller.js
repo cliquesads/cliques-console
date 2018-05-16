@@ -3,21 +3,10 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-	errorHandler = require('../errors.server.controller'),
-	mongoose = require('mongoose'),
-	passport = require('passport'),
-	User = mongoose.model('User'),
-    Organization = mongoose.model('Organization'),
-    AccessCode = mongoose.model('AccessCode'),
-    mail = require('../mailer.server.controller.js'),
-	config = require('config'),
-	mailchimp = require('mailchimp-v3'),
-	node_utils = require('@cliques/cliques-node-utils'),
-    models = node_utils.mongodb.models;
+const _ = require('lodash'), errorHandler = require('../errors.server.controller'), mongoose = require('mongoose'), passport = require('passport'), User = mongoose.model('User'), Organization = mongoose.model('Organization'), AccessCode = mongoose.model('AccessCode'), mail = require('../mailer.server.controller.js'), config = require('config'), mailchimp = require('mailchimp-v3'), node_utils = require('@cliques/cliques-node-utils'), models = node_utils.mongodb.models;
 
 
-var mailer = new mail.Mailer();
+const mailer = new mail.Mailer();
 
 // set API key for mailchimp client
 mailchimp.setApiKey(config.get('MailChimp.apiKey'));
@@ -29,7 +18,7 @@ module.exports = db => ({
     authorizeAccessCode: function(req, res) {
         // For security measurement we remove the roles from the req.body object
 
-        var code = req.body.code;
+        const code = req.body.code;
         AccessCode.validate(code, (err, valid, accesscode) => {
             if (err){
                 res.status(400).send({
@@ -55,7 +44,7 @@ module.exports = db => ({
      * @param res
      */
     isUsernameTaken: function(req, res){
-        var username = req.param('username');
+        const username = req.param('username');
         User.isUsernameTaken(username, (err, taken) => {
             if (err) return handleError(res, err);
             return res.json({ taken: taken });
@@ -68,10 +57,10 @@ module.exports = db => ({
     signup: function(req, res) {
         // flag to tell whether or not user should be made
         // primary contact for organization
-        var isOwner= req.body.isOwner;
-        var logoUrl = req.body.logo_url;
-        var user = new User(req.body);
-        var message = null;
+        const isOwner= req.body.isOwner;
+        const logoUrl = req.body.logo_url;
+        const user = new User(req.body);
+        const message = null;
 
         // Add missing user fields
         user.provider = 'local';
@@ -94,7 +83,7 @@ module.exports = db => ({
 
                 // Set access token to expired, if present
                 if (req.body.accessToken){
-                    var accessToken = _.find(org.accessTokens, token => token._id.toString() === req.body.accessToken._id);
+                    const accessToken = _.find(org.accessTokens, token => token._id.toString() === req.body.accessToken._id);
                     if (accessToken){
                         accessToken.expired = true;
                     }
@@ -106,8 +95,8 @@ module.exports = db => ({
 
                     if (org.organization_types[0] === 'advertiser') {
                         // create a default advertiser and attaches it to the new organization
-                        var advertiserModels = new models.AdvertiserModels(db);
-                        var advertiser = new advertiserModels.Advertiser();
+                        const advertiserModels = new models.AdvertiserModels(db);
+                        const advertiser = new advertiserModels.Advertiser();
 
                         advertiser.user = user;
                         advertiser.organization = org;
@@ -143,8 +132,8 @@ module.exports = db => ({
                         });
                     } else if (org.organization_types[0] === 'publisher') {
                         // create a default publisher and attaches it to the new organization
-                        var publisherModels = new models.PublisherModels(db);
-                        var publisher = new publisherModels.Publisher();
+                        const publisherModels = new models.PublisherModels(db);
+                        const publisher = new publisherModels.Publisher();
                         publisher.user = user;
                         publisher.organization = org;
                         publisher.name = org.name;
@@ -257,20 +246,20 @@ module.exports = db => ({
     saveOAuthUserProfile: function(req, providerUserProfile, done) {
         if (!req.user) {
             // Define a search query fields
-            var searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
-            var searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
+            const searchMainProviderIdentifierField = 'providerData.' + providerUserProfile.providerIdentifierField;
+            const searchAdditionalProviderIdentifierField = 'additionalProvidersData.' + providerUserProfile.provider + '.' + providerUserProfile.providerIdentifierField;
 
             // Define main provider search query
-            var mainProviderSearchQuery = {};
+            const mainProviderSearchQuery = {};
             mainProviderSearchQuery.provider = providerUserProfile.provider;
             mainProviderSearchQuery[searchMainProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
             // Define additional provider search query
-            var additionalProviderSearchQuery = {};
+            const additionalProviderSearchQuery = {};
             additionalProviderSearchQuery[searchAdditionalProviderIdentifierField] = providerUserProfile.providerData[providerUserProfile.providerIdentifierField];
 
             // Define a search query to find existing user with current provider profile
-            var searchQuery = {
+            const searchQuery = {
                 $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
             };
 
@@ -279,7 +268,7 @@ module.exports = db => ({
                     return done(err);
                 } else {
                     if (!user) {
-                        var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
+                        const possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
                         User.findUniqueUsername(possibleUsername, null, availableUsername => {
                             user = new User({
@@ -303,7 +292,7 @@ module.exports = db => ({
             });
         } else {
             // User is already logged in, join the provider data to the existing user
-            var user = req.user;
+            const user = req.user;
 
             // Check if user exists, is not signed in using this provider, and doesn't have that provider data already configured
             if (user.provider !== providerUserProfile.provider && (!user.additionalProvidersData || !user.additionalProvidersData[providerUserProfile.provider])) {
@@ -327,8 +316,8 @@ module.exports = db => ({
      * Remove OAuth provider
      */
     removeOAuthProvider: function(req, res, next) {
-        var user = req.user;
-        var provider = req.param('provider');
+        const user = req.user;
+        const provider = req.param('provider');
 
         if (user && provider) {
             // Delete the additional provider
@@ -395,7 +384,7 @@ var addUserToMailChimpList = (req, user, org) => {
 
 	// see http://developer.mailchimp.com/documentation/mailchimp/reference/lists/members/
 	// for field descriptions
-	var payload = {
+	const payload = {
 		status: "subscribed",
 		merge_fields: {
 			FNAME: user.firstName,

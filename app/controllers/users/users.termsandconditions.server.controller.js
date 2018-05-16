@@ -3,11 +3,7 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-    errorHandler = require('../errors.server.controller'),
-    mongoose = require('mongoose'),
-    swig = require('swig'),
-    TermsAndConditions = mongoose.model('TermsAndConditions');
+const _ = require('lodash'), errorHandler = require('../errors.server.controller'), mongoose = require('mongoose'), swig = require('swig'), TermsAndConditions = mongoose.model('TermsAndConditions');
 
 /**
  * Wrapper for TermsAndConditions instances to compile template & expose only
@@ -16,8 +12,8 @@ var _ = require('lodash'),
  * @param termsAndConditions
  * @constructor
  */
-var ClientTermsAndConditions = function(termsAndConditions){
-    var compiledTemplate = swig.compileFile(termsAndConditions.templatePath);
+const ClientTermsAndConditions = function(termsAndConditions){
+    const compiledTemplate = swig.compileFile(termsAndConditions.templatePath);
     this._id = termsAndConditions._id;
     this.id = termsAndConditions.id;
     this.html = compiledTemplate({});
@@ -28,7 +24,7 @@ var ClientTermsAndConditions = function(termsAndConditions){
 };
 
 exports.read = (req, res) => {
-    var termsId = req.param('termsId');
+    const termsId = req.param('termsId');
     TermsAndConditions.findById(termsId, (err, terms) => {
         if (err) {
             return res.status(400).send({
@@ -36,7 +32,7 @@ exports.read = (req, res) => {
             });
         }
         if (terms){
-            var clientTerms = new ClientTermsAndConditions(terms);
+            const clientTerms = new ClientTermsAndConditions(terms);
             return res.json(clientTerms);
         } else {
             return res.status(400).send({
@@ -53,16 +49,16 @@ exports.read = (req, res) => {
  * @param res
  */
 exports.getCurrentTerms = (req, res) => {
-    var type = req.param('type');
+    const type = req.param('type');
     TermsAndConditions.find({type: type, active: true}).sort('-tstamp').limit(1).exec((err, terms) => {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(err)
             });
         }
-        var term = terms[0];
+        const term = terms[0];
         if (term){
-            var clientTerms = new ClientTermsAndConditions(term);
+            const clientTerms = new ClientTermsAndConditions(term);
             return res.json(clientTerms);
         } else {
             return res.status(400).send({

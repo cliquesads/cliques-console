@@ -1,16 +1,15 @@
 'use strict';
-var errorHandler = require('./errors.server.controller'),
+const errorHandler = require('./errors.server.controller'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
     _ = require('lodash'),
     Organization = mongoose.model('Organization'),
     AccessCode = mongoose.model('AccessCode'),
-    util = require('util'),
-    config = require('config'),
+    util = require('util'), config = require('config'),
     mail = require('./mailer.server.controller'),
     async = require('async');
 
-var mailer = new mail.Mailer({
+const mailer = new mail.Mailer({
     mailerType: 'mandrill',
     fromAddress: 'support@cliquesads.com'
 });
@@ -40,7 +39,7 @@ module.exports = {
      * Create new AccessCode
      */
     create: function(req, res) {
-        var accessCode = new AccessCode(req.body);
+        const accessCode = new AccessCode(req.body);
         accessCode.save((err, ac) => {
             if (err) {
                 return res.status(400).send({
@@ -56,7 +55,7 @@ module.exports = {
      * Update AccessCode
      */
     update: function(req, res) {
-        var thisAccessCode = _.extend(req.accessCode, req.body);
+        const thisAccessCode = _.extend(req.accessCode, req.body);
         thisAccessCode.save((err, newAccessCode) => {
             if (err) {
                 return res.status(400).send({
@@ -102,7 +101,7 @@ module.exports = {
     getMany: function (req, res) {
         // limit scope of query to just those accessCodes to which
         // user is permitted to see, i.e. those issued by org unless org is networkAdmin
-        var query = {};
+        let query = {};
         if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
             query = { issuerOrg: req.user.organization.id };
         }
@@ -121,7 +120,7 @@ module.exports = {
      * Delete an advertiser
      */
     remove: function (req, res) {
-        var accessCode = req.accessCode;
+        const accessCode = req.accessCode;
         accessCode.remove(err => {
             if (err) {
                 console.log(err);
@@ -135,17 +134,17 @@ module.exports = {
     },
 
     sendToUser: function(req, res){
-        var accessCode = req.accessCode;
-        var asyncFuncs = [];
-        var fu = thisUser => callback => {
-            var protocol = 'https';
+        const accessCode = req.accessCode;
+        const asyncFuncs = [];
+        const fu = thisUser => callback => {
+            let protocol = 'https';
             if (process.env.NODE_ENV === 'local-test'){
                 protocol = 'http';
             }
-            var hostname = req.headers.host;
-            var subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
-            var inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
-            var templateName = 'welcome-cliques-access-code';
+            const hostname = req.headers.host;
+            const subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
+            const inviteUrl = util.format("%s://%s/#!/beta-access?accessCode=%s",protocol,hostname,accessCode.code);
+            const templateName = 'welcome-cliques-access-code';
             mailer.sendMailFromUser(subject, templateName, {
                 firstName: thisUser.firstName,
                 inviteUrl: inviteUrl,
@@ -153,7 +152,7 @@ module.exports = {
             }, req.user, thisUser.email, callback);
         };
         req.body.forEach(user => {
-            var func = fu(user);
+            const func = fu(user);
             asyncFuncs.push(func);
         });
         async.parallel(asyncFuncs, (err, results) => {

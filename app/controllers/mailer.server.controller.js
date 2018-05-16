@@ -1,6 +1,6 @@
 /* jshint node: true */
 'use strict';
-var mongoose = require('mongoose'),
+const mongoose = require('mongoose'),
     config = require('../../config/config'),
     cliquesConfig = require('config'),
     nodemailer = require('nodemailer'),
@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
     streamToString = require('stream-to-string'),
     _ = require('lodash');
 
-var mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"));
+const mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"));
 
 /**
  * Helper object to abstract away annoying low-level mail config duties
@@ -25,7 +25,7 @@ var mandrillClient = new mandrill.Mandrill(cliquesConfig.get("Mandrill.apiKey"))
  * @param {Object} [options.templatePath] path to directory containing template files. Default is '../views'
  * @param {Object} [options.mailerOptions] options to pass to nodemailer.createTransport or to pass to Mandrill.message. Default is config.mailer.options
  */
-var Mailer = exports.Mailer = function(options){
+const Mailer = exports.Mailer = function(options){
     options             = options || {};
     this.fromAddress    = options.fromAddress || 'support@cliquesads.com';
     this.mailerType     = options.mailerType || 'local';
@@ -76,7 +76,7 @@ var Mailer = exports.Mailer = function(options){
  * @param {Function} callback
  */
 Mailer.prototype.sendMail = function(mailOptions, callback){
-    var self = this;
+    const self = this;
     //var compiledTemplate = swig.compileFile(self.templatePath + '/' + mailOptions.templateName);
     // extend data with defaults
     _.extend(mailOptions.data, self.defaults);
@@ -101,7 +101,7 @@ Mailer.prototype.sendMail = function(mailOptions, callback){
  * @param cb
  * @private
  */
-var _mandrillizeAttachments = (attachments, cb) => {
+const _mandrillizeAttachments = (attachments, cb) => {
     if (attachments){
         async.each(attachments, (attachmentObj, callback) => {
             if (attachmentObj.content && attachmentObj.content instanceof stream.Stream){
@@ -130,9 +130,9 @@ var _mandrillizeAttachments = (attachments, cb) => {
  * @private
  */
 Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
-    var self = this;
+    const self = this;
     // set message default options here
-    var message = {
+    const message = {
         "subject": mailOptions.subject,
         "from_email": mailOptions.from,
         "from_name": mailOptions.fromAlias,
@@ -157,7 +157,7 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
     };
 
     // Convert mailOptions.data to format required by mandrill API
-    var merge_vars = [];
+    const merge_vars = [];
     _.forOwn(mailOptions.data, (val, key) => {
         merge_vars.push({
             "name": key,
@@ -201,7 +201,7 @@ Mailer.prototype._mandrillSendMail = function(mailOptions, callback){
  * @private
  */
 Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
-    var self = this;
+    const self = this;
     mailOptions.from = mailOptions.fromAlias ? mailOptions.fromAlias + " <" + self.fromAddress + ">" : self.fromAddress;
     self.templateRenderer.render(mailOptions.templateName, mailOptions.data, (err, html, text) => {
         if (err){
@@ -233,8 +233,8 @@ Mailer.prototype._nodemailerSendMail = function(mailOptions, callback){
  * @param {Function} callback
  */
 Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, orgName, callback){
-    var self = this;
-    var Organization = mongoose.model('Organization');
+    const self = this;
+    const Organization = mongoose.model('Organization');
     Organization
         .findOne({name: orgName})
         .populate('users')
@@ -245,7 +245,7 @@ Mailer.prototype.sendMailToOrganization = function(subject, templateName, data, 
             // Send single email to all users
             // Could loop through and send multiple emails to individual users
             // but no need to right now
-            var to = group.users.map(user => user.email);
+            const to = group.users.map(user => user.email);
             self.sendMail({
                 subject: subject,
                 templateName: templateName,

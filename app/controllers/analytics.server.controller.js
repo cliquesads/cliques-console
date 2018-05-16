@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-var models = require('@cliques/cliques-node-utils').mongodb.models,
+const models = require('@cliques/cliques-node-utils').mongodb.models,
 	mongoose = require('mongoose'),
 	Query = mongoose.model('Query'),
 	errorHandler = require('./errors.server.controller'),
@@ -11,7 +11,7 @@ var models = require('@cliques/cliques-node-utils').mongodb.models,
 	promise = require('bluebird'),
 	_ = require('lodash');
 
-var ITEMS_PER_PAGE = 25;
+const ITEMS_PER_PAGE = 25;
 
 /**
  * Validates the schedule string before saving query model to database.
@@ -20,15 +20,15 @@ var ITEMS_PER_PAGE = 25;
  * '* * * * * *'
  * Each wildcard in order from left to right represents second, minute, hour, day of month, month and day of week respectively.
  */
-var validateScheduleString = scheduleString => {
-    var re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5|2-6|0-4)$/;
+const validateScheduleString = scheduleString => {
+    const re = /^(\*\s|[1-5]{0,1}[0-9]\s){1,2}(\*\s|1{0,1}[0-9]\s|2[0-4]\s)(\*\s|[1-2]{0,1}[0-9]\s|3[0-1]\s)(\*\s|[1-9]\s|1[0-2]\s)(\*|[0-7]|1-5|2-6|0-4)$/;
     return re.test(scheduleString);
 };
 
 module.exports = db => {
-	var advertiserModels = new models.AdvertiserModels(db);
-	var publisherModels = new models.PublisherModels(db);
-	var geoModels = new models.GeoModels(db);
+	const advertiserModels = new models.AdvertiserModels(db);
+	const publisherModels = new models.PublisherModels(db);
+	const geoModels = new models.GeoModels(db);
 	advertiserModels.Advertiser.promisifiedFind = promise.promisify(advertiserModels.Advertiser.find);
 	publisherModels.Publisher.promisifiedFind = promise.promisify(publisherModels.Publisher.find);
 
@@ -52,7 +52,7 @@ module.exports = db => {
             },
 
             delete: function(req, res) {
-				var query = new Query(req.query);
+				const query = new Query(req.query);
 				query.remove((err, removed) => {
 					if (err) {
 						return res.status(400).send({
@@ -68,7 +68,7 @@ module.exports = db => {
 			 * Create new query
 			 */
 			create: function(req, res) {
-				var newQuery = new Query(req.body);
+				const newQuery = new Query(req.body);
 				newQuery.user = req.user._id;
 				// If user is NOT networkAdmin, this query should be filtered by the user's advertisers/publishers
 				if (!newQuery.filters) {
@@ -84,7 +84,7 @@ module.exports = db => {
 								if (advertisers.length === 1) {
 									newQuery.advertiser = advertisers[0]._id;
 								} else {
-									var advertiserIds = [];
+									const advertiserIds = [];
 									advertisers.forEach(advertiser => {
 										advertiserIds.push(advertiser._id);
 									});
@@ -101,7 +101,7 @@ module.exports = db => {
 								if (publishers.length === 1) {
 									newQuery.publisher = publishers[0]._id;
 								} else {
-									var publisherIds = [];
+									const publisherIds = [];
 									publishers.forEach(publisher => {
 										publisherIds.push(publisher._id);
 									});
@@ -118,7 +118,7 @@ module.exports = db => {
 						newQuery.promisifiedSave = promise.promisify(newQuery.save);
 						return newQuery.promisifiedSave();
 					}).then(() => {
-						var dateRange = newQuery.getDatetimeRange(req.user.tz);
+						const dateRange = newQuery.getDatetimeRange(req.user.tz);
 						return res.json({
 							id: newQuery._id,
 							dateRange: newQuery.getDatetimeRange(req.user.tz)
@@ -130,11 +130,11 @@ module.exports = db => {
 			 * Update query with object in request body
 			 */
 			update: function(req, res) {
-                var query = req.query;
+                let query = req.query;
                 query = _.extend(query, req.body);
 
-                var scheduleString = query.schedule;
-                var nextRun;
+                const scheduleString = query.schedule;
+                let nextRun;
                 if (scheduleString) {
                 	// validate schedule string
                 	if (!validateScheduleString(scheduleString)) {
@@ -142,8 +142,8 @@ module.exports = db => {
                 			message: 'Illegal schedule string'
                 		});
                 	}
-                	var parser = require('cron-parser');
-                	var interval = parser.parseExpression(scheduleString, {utc: true});
+                	const parser = require('cron-parser');
+                	const interval = parser.parseExpression(scheduleString, {utc: true});
                 	nextRun = new Date(interval.next().toString());
                 }
                 if (nextRun) {

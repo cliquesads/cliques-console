@@ -3,12 +3,12 @@
 /**
  * Module dependencies.
  */
-var models = require('@cliques/cliques-node-utils').mongodb.models,
-	errorHandler = require('./errors.server.controller'),
-	_ = require('lodash');
+const models = require('@cliques/cliques-node-utils').mongodb.models,
+    errorHandler = require('./errors.server.controller'),
+    _ = require('lodash');
 
 module.exports = db => {
-    var cliqueModels = new models.CliquesModels(db);
+    const cliqueModels = new models.CliquesModels(db);
 
     return {
         /**
@@ -43,7 +43,7 @@ module.exports = db => {
             // pass in _id as name, as passing _id directly in request body
             // messes up client-side resource class
             req.body._id = req.body.name;
-            var clique = new cliqueModels.Clique(req.body);
+            const clique = new cliqueModels.Clique(req.body);
 
             clique.save(err => {
                 if (err) {
@@ -77,8 +77,8 @@ module.exports = db => {
          * Update existing clique
          */
         update: function (req, res) {
-            var clique = req.clique;
-            var thisClique = _.extend(clique, req.body);
+            const clique = req.clique;
+            const thisClique = _.extend(clique, req.body);
             thisClique.save((err, newClique) => {
                 if (err) {
                     return res.status(400).send({
@@ -100,7 +100,7 @@ module.exports = db => {
          * Delete an advertiser
          */
         remove: function (req, res) {
-            var clique = req.clique;
+            const clique = req.clique;
             clique.remove(err => {
                 if (err) {
                     return res.status(400).send({

@@ -3,19 +3,12 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-	errorHandler = require('../errors.server.controller.js'),
-	mongoose = require('mongoose'),
-	passport = require('passport'),
-	User = mongoose.model('User'),
-	Organization = mongoose.model('Organization'),
-	auth = require('@cliques/cliques-node-utils').google.auth,
-	gcloud = require('google-cloud');
+const _ = require('lodash'), errorHandler = require('../errors.server.controller.js'), mongoose = require('mongoose'), passport = require('passport'), User = mongoose.model('User'), Organization = mongoose.model('Organization'), auth = require('@cliques/cliques-node-utils').google.auth, gcloud = require('google-cloud');
 
-var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
-var PROJECT_ID = 'mimetic-codex-781';
-var BUCKET = 'cliquesads-console-avatars-us';
-var BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
+const AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
+const PROJECT_ID = 'mimetic-codex-781';
+const BUCKET = 'cliquesads-console-avatars-us';
+const BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
 
 /**
  * Handles upload of logo to Google Cloud Storage.
@@ -24,13 +17,13 @@ var BASE_URL = 'https://storage.googleapis.com/'+BUCKET+'/';
  * public URL.
  */
 exports.createAvatar = (req, res) => {
-	var client = gcloud({
+	const client = gcloud({
 		projectId: PROJECT_ID,
 		keyFilename: AUTHFILE
 	}).storage();
-	var assets_bucket = client.bucket(BUCKET);
-	var object_path = req.file.filename;
-	var options = {
+	const assets_bucket = client.bucket(BUCKET);
+	const object_path = req.file.filename;
+	const options = {
 		destination: object_path,
 		resumable: true,
 		validation: 'crc32c',
@@ -67,8 +60,8 @@ exports.createAvatar = (req, res) => {
  */
 exports.update = (req, res) => {
 	// Init Variables
-	var user = req.user;
-	var message = null;
+	let user = req.user;
+	const message = null;
 
 	// For security measurement we remove the roles from the req.body object
 	delete req.body.roles;

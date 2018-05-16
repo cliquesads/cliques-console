@@ -4,20 +4,20 @@
 /**
  * Module dependencies.
  */
-var node_utils = require('@cliques/cliques-node-utils'),
+const node_utils = require('@cliques/cliques-node-utils'),
 	errorHandler = require('./errors.server.controller'),
 	models = node_utils.mongodb.models,
-	config = require('config'),
+    config = require('config'),
     util = require('util'),
     mail = require('./mailer.server.controller'),
-	promise = require('bluebird');
+    promise = require('bluebird');
 
-var mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
+const mailer = new mail.Mailer({ fromAddress : "no-reply@cliquesads.com" });
 
 module.exports = db => {
-	var screenshotModels = new models.ScreenshotModels(db);
-    var advertiserModels = new models.AdvertiserModels(db);
-    var publisherModels = new models.PublisherModels(db);
+	const screenshotModels = new models.ScreenshotModels(db);
+    const advertiserModels = new models.AdvertiserModels(db);
+    const publisherModels = new models.PublisherModels(db);
 
 	return {
 		/**
@@ -50,9 +50,9 @@ module.exports = db => {
 		 */
 		hasAuthorization: function (req, res, next) {
 			if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
-				var ss = req.screenshot;
-				var org = req.user.organization.id;
-				var isAuthorized = ss.advertiser.organization === org || ss.publisher === org;
+				const ss = req.screenshot;
+				const org = req.user.organization.id;
+				const isAuthorized = ss.advertiser.organization === org || ss.publisher === org;
 				if (!isAuthorized){
 					return res.status(403).send({
 						message: 'User is not authorized'
@@ -69,8 +69,8 @@ module.exports = db => {
          * @param next
          */
 		reportScreenshot: function(req, res, next){
-			var comment = req.body.comment;
-            var subject = util.format("%s Has Reported a Screenshot",
+			const comment = req.body.comment;
+            const subject = util.format("%s Has Reported a Screenshot",
                 req.user.displayName);
             mailer.sendMailFromUser(subject, 'report-screenshot-email.server.view.html',
                 { user: req.user, comment: comment, screenshot: req.screenshot },
@@ -110,7 +110,7 @@ module.exports = db => {
 		 * }
 		 */
 		getScreenshotFilters: function (req, res) {
-			var filter = {
+			const filter = {
 				campaigns: [],
 				sites: []
 			};
@@ -122,10 +122,10 @@ module.exports = db => {
 				advertiserModels.Advertiser.promisifiedFind(req.query)
 				.then(advertisers => {
 					// Get all possible campaigns based on queried advertisers
-					var advertiserIds = [];
-					for (var i = 0; i < advertisers.length; i ++) {
+					const advertiserIds = [];
+					for (let i = 0; i < advertisers.length; i ++) {
 						advertiserIds.push(advertisers[i]._id);
-						for (var j = 0; j < advertisers[i].campaigns.length; j ++) {
+						for (let j = 0; j < advertisers[i].campaigns.length; j ++) {
 							filter.campaigns.push({
 								name: advertisers[i].campaigns[j].name,
 								id: advertisers[i].campaigns[j]._id	
@@ -138,8 +138,8 @@ module.exports = db => {
 					});
 				})
 				.then(screenshots => {
-					var siteIds = [];
-					for (var i = 0; i < screenshots.length; i ++) {
+					const siteIds = [];
+					for (let i = 0; i < screenshots.length; i ++) {
 						if (siteIds.indexOf('' + screenshots[i].site) === -1) {
 							siteIds.push('' + screenshots[i].site);
 						}
@@ -162,10 +162,10 @@ module.exports = db => {
 				publisherModels.Publisher.promisifiedFind(req.query)
 				.then(publishers => {
 					// Get all possible sites based on queried publishers
-					var publisherIds = [];
-					for (var i = 0; i < publishers.length; i ++) {
+					const publisherIds = [];
+					for (let i = 0; i < publishers.length; i ++) {
 						publisherIds.push(publishers[i]._id);
-						for (var j = 0; j < publishers[i].sites.length; j ++) {
+						for (let j = 0; j < publishers[i].sites.length; j ++) {
 							filter.sites.push({
 								name: publishers[i].sites[j].name,
 								id: publishers[i].sites[j]._id	
@@ -178,8 +178,8 @@ module.exports = db => {
 					});
 				})
 				.then(screenshots => {
-					var campaignIds = [];
-					for (var i = 0; i < screenshots.length; i ++) {
+					const campaignIds = [];
+					for (let i = 0; i < screenshots.length; i ++) {
 						if (campaignIds.indexOf('' + screenshots[i].campaign) === -1) {
 							campaignIds.push('' + screenshots[i].campaign);
 						}
@@ -205,17 +205,17 @@ module.exports = db => {
 		 * Get screenshots by advertiserId
 		 */
 		getMany: function (req, res) {
-			var page = req.query.page;
-			var filterCampaignId = req.query.filterCampaignId;
-			var filterSiteId = req.query.filterSiteId;
-			var itemsPerPage = 25;
+			const page = req.query.page;
+			const filterCampaignId = req.query.filterCampaignId;
+			const filterSiteId = req.query.filterSiteId;
+			const itemsPerPage = 25;
 
 			delete req.query.page;
 			delete req.query.filterCampaignId;
 			delete req.query.filterSiteId;
 
 			if (filterCampaignId || filterSiteId) {
-				var queryParams = {};
+				const queryParams = {};
 				if (filterCampaignId) {
 					queryParams.campaign = filterCampaignId;
 				}
@@ -244,14 +244,14 @@ module.exports = db => {
 					req.query.organization = req.user.organization.id;
 				}
 				if (req.user.organization.effectiveOrgType === 'advertiser' || req.user.organization.effectiveOrgType === 'networkAdmin') {
-					var advertiserIds = [];
+					const advertiserIds = [];
 					advertiserModels.Advertiser.find(req.query, (err, advertisers) => {
 						if (err) {
 							return res.status(400).send({
 								message: errorHandler.getAndLogErrorMessage(err)
 							});
 						}
-						for (var i = 0; i < advertisers.length; i ++) {
+						for (let i = 0; i < advertisers.length; i ++) {
 							advertiserIds.push(advertisers[i]._id);
 						}
 						screenshotModels.Screenshot.find({
@@ -273,14 +273,14 @@ module.exports = db => {
 						});
 					});
 				} else {
-					var publisherIds = [];
+					const publisherIds = [];
 					publisherModels.Publisher.find(req.query, (err, publishers) => {
 						if (err) {
 							return res.status(400).send({
 								message: errorHandler.getAndLogErrorMessage(err)
 							});
 						}
-						for (var i = 0; i < publishers.length; i ++) {
+						for (let i = 0; i < publishers.length; i ++) {
 							publisherIds.push(publishers[i]._id);
 						}
 						screenshotModels.Screenshot.find({

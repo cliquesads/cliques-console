@@ -1,15 +1,15 @@
 /* jshint node: true */ 'use strict';
-var auth = require('@cliques/cliques-node-utils').google.auth,
+const auth = require('@cliques/cliques-node-utils').google.auth,
     gcloud = require('google-cloud'),
     errorHandler = require('./errors.server.controller'),
     path = require('path');
 
 // var AUTHFILE = auth.DEFAULT_JWT_SECRETS_FILE;
-var AUTHFILE = path.resolve('../cliques-config/google/jwt.json');
-var PROJECT_ID = 'mimetic-codex-781';
-var BUCKET = 'cliquesads-console-logos-us';
+const AUTHFILE = path.resolve('../cliques-config/google/jwt.json');
+const PROJECT_ID = 'mimetic-codex-781';
+const BUCKET = 'cliquesads-console-logos-us';
 // Use non-secure URL for now, secureURL is virtual field on creative model
-var BASE_URL = 'http://storage.googleapis.com/'+BUCKET+'/';
+const BASE_URL = 'http://storage.googleapis.com/'+BUCKET+'/';
 
 module.exports = db => ({
     /**
@@ -19,13 +19,13 @@ module.exports = db => ({
      * public URL.
      */
     create: function (req, res, next) {
-        var client = gcloud({
+        const client = gcloud({
             projectId: PROJECT_ID,
             keyFilename: AUTHFILE
         }).storage();
-        var assets_bucket = client.bucket(BUCKET);
-        var object_path = req.file.filename;
-        var options = {
+        const assets_bucket = client.bucket(BUCKET);
+        const object_path = req.file.filename;
+        const options = {
             destination: object_path,
             resumable: true,
             validation: 'crc32c',

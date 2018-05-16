@@ -3,23 +3,23 @@
 /**
  * Module dependencies.
  */
-var models = require('@cliques/cliques-node-utils').mongodb.models,
+const models = require('@cliques/cliques-node-utils').mongodb.models,
     config = require('config'),
-	errorHandler = require('./errors.server.controller'),
+    errorHandler = require('./errors.server.controller'),
     promise = require('bluebird'),
     request = require('request'),
     querystring = require('querystring'),
-	_ = require('lodash');
+    _ = require('lodash');
 
-var GOOGLE_GEOCODE_API_KEY = config.get('Google.apiKey');
-var GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
+const GOOGLE_GEOCODE_API_KEY = config.get('Google.apiKey');
+const GoogleGeocodeUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
 
 // Constants to calculate zoomRatio for region
-var baseFactor = 3.5;
-var baseZoomRatio = 8000;
+const baseFactor = 3.5;
+const baseZoomRatio = 8000;
 
 module.exports = db => {
-    var geoModels = new models.GeoModels(db);
+    const geoModels = new models.GeoModels(db);
     request.promisifiedGet = promise.promisify(request.get);
 
     return {
@@ -91,7 +91,7 @@ module.exports = db => {
              * get all its cities populating the region field
              */
             getGeoChildren: function(req, res) {
-                var geo = req.param('geo');
+                let geo = req.param('geo');
                 try {
                     geo = JSON.parse(geo);
                 } catch (err) {
@@ -145,7 +145,7 @@ module.exports = db => {
                 });
             },
             getCities: function (req, res) {
-                var regionId = req.param('regionId');
+                const regionId = req.param('regionId');
                 geoModels.City.find({
                     region: regionId 
                 }, (err, cities) => {
@@ -170,13 +170,13 @@ module.exports = db => {
                     } else {
                         regions.forEach(region => {
                             // Add a padding '0' in front of region index
-                            var regionIndex = region._id.substring('AUS-'.length);
+                            const regionIndex = region._id.substring('AUS-'.length);
                             if (regionIndex.length === 1) {
-                                var copiedRegionObject = JSON.parse(JSON.stringify(region));
+                                const copiedRegionObject = JSON.parse(JSON.stringify(region));
                                 copiedRegionObject._id = 'AUS-0' + copiedRegionObject._id.substring(4);
                                 // Cannot update _id field to a document, have to create a 
                                 // new document and then delete the old one
-                                var updatedRegion = new geoModels.Region(copiedRegionObject);
+                                const updatedRegion = new geoModels.Region(copiedRegionObject);
                                 updatedRegion.save((err, updatedRegion) => {
                                     if (err) {
                                         return res.status(400).send({
@@ -201,20 +201,20 @@ module.exports = db => {
              * For an existed region, update its geo-coordinates
              */
             update: function (req, res) {
-                var region = req.region;
+                let region = req.region;
                 region = _.extend(region, req.body);
 
                 if (!region.latitude || !region.longitude || !region.zoomRatio) {
                     // geo coords / map zoom ratio missing
                     // query Google Geocode API to get the latitude/longitude coordinates for this region
-                    var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                    const queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
                         address: region.name + ',' + region.country,
                         key: GOOGLE_GEOCODE_API_KEY
                     });
                     return request.promisifiedGet(queryUrl)
                     .then(response => {
-                        var coordinates;
-                        var geoInfo = JSON.parse(response.body);
+                        let coordinates;
+                        const geoInfo = JSON.parse(response.body);
 
                         if (geoInfo.error_message) {
                             return promise.reject(geoInfo.error_message);
@@ -223,10 +223,10 @@ module.exports = db => {
                         if (geoInfo.results.length > 0) {
                             if (geoInfo.results[0].geometry) {
                                 coordinates = geoInfo.results[0].geometry.location;
-                                var viewport = geoInfo.results[0].geometry.viewport;
+                                const viewport = geoInfo.results[0].geometry.viewport;
                                 if (viewport) {
                                     // calculate the length of diagonal for the region from northeast to southwest
-                                    var diagonal = Math.sqrt(Math.pow(viewport.northeast.lat - viewport.southwest.lat, 2) + Math.pow(viewport.northeast.lng - viewport.southwest.lng, 2));
+                                    const diagonal = Math.sqrt(Math.pow(viewport.northeast.lat - viewport.southwest.lat, 2) + Math.pow(viewport.northeast.lng - viewport.southwest.lng, 2));
                                     region.zoomRatio = baseZoomRatio * baseFactor / diagonal;
                                 }
                             }
@@ -267,8 +267,8 @@ module.exports = db => {
              * Create new city(cities) by querying Geocode api service to get city(cities) coordinates
              */
             create: function (req, res) {
-                var cities;
-                var savedCities = [];
+                let cities;
+                const savedCities = [];
                 if (req.body.length >= 1) {
                     // batch cities creation
                     cities = req.body;
@@ -277,23 +277,23 @@ module.exports = db => {
                     cities = [req.body];
                 }
                 return promise.each(cities, cityInfo => {
-                    var city = new geoModels.City(cityInfo);
+                    const city = new geoModels.City(cityInfo);
 
                     return geoModels.Region.findOne({
                         _id: cityInfo.region
                     })
                     .then(region => {
-                        var regionName = region ? region.name : '';
+                        const regionName = region ? region.name : '';
                         // query Google Geocode API to get the latitude/longitude coordinates for this city
-                        var queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
+                        const queryUrl = GoogleGeocodeUrl + '?' + querystring.stringify({
                             address: city.name + ',' + regionName + ',' + city.country,
                             key: GOOGLE_GEOCODE_API_KEY
                         });
                         return request.promisifiedGet(queryUrl);
                     })
                     .then(response => {
-                        var coordinates;
-                        var geoInfo = JSON.parse(response.body);
+                        let coordinates;
+                        const geoInfo = JSON.parse(response.body);
 
                         if (geoInfo.error_message) {
                             return promise.reject(geoInfo.error_message);

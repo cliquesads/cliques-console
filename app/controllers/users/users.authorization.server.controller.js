@@ -3,10 +3,7 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-	mongoose = require('mongoose'),
-	User = mongoose.model('User'),
-	auth = require('basic-auth');
+const _ = require('lodash'), mongoose = require('mongoose'), User = mongoose.model('User'), auth = require('basic-auth');
 
 /**
  * User middleware
@@ -24,7 +21,7 @@ exports.userByID = (req, res, next, id) => {
 
 
 exports.basicAuth = (req, res, next) => {
-	var credentials = auth(req);
+	const credentials = auth(req);
 	// use regex to de case-sensitize username
 	User.findOne({ username_lower: credentials.name.toLowerCase() })
 		.populate('organization').exec((err, user) => {
@@ -63,7 +60,7 @@ exports.requiresLogin = (req, res, next) => {
  * User authorizations routing middleware
  */
 exports.hasAuthorization = function(roles) {
-	var _this = this;
+	const _this = this;
 
 	return (req, res, next) => {
 		_this.requiresLogin(req, res, () => {

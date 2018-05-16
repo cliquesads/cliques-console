@@ -1,13 +1,13 @@
 /* jshint node: true */ 'use strict';
 
-var HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').HourlyAdStatsAPI,
+const HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').HourlyAdStatsAPI,
     GeoAdStatAPI = require('./aggregations/geoadstats.server.controller').GeoAdStatAPI,
     KeywordAdStatAPI = require('./aggregations/keywordadstats.server.controller').KeywordAdStatAPI;
 
 module.exports = db => {
-    var hourlyAdStatAPI = new HourlyAdStatAPI(db);
-    var geoAdStatAPI = new GeoAdStatAPI(db);
-    var keywordAdStatAPI = new KeywordAdStatAPI(db);
+    const hourlyAdStatAPI = new HourlyAdStatAPI(db);
+    const geoAdStatAPI = new GeoAdStatAPI(db);
+    const keywordAdStatAPI = new KeywordAdStatAPI(db);
     return {
         hourlyAdStat: {
             getMany: function(req, res) {

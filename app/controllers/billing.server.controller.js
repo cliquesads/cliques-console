@@ -1,6 +1,6 @@
 'use strict';
 
-var errorHandler = require('./errors.server.controller'),
+const errorHandler = require('./errors.server.controller'),
     paymentStatuses = require('../models/billing.server.model').PAYMENT_STATUSES,
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
@@ -18,7 +18,7 @@ var errorHandler = require('./errors.server.controller'),
     pdf = require('html-pdf'),
     async = require('async');
 
-var mailer = new mail.Mailer({
+const mailer = new mail.Mailer({
     fromAddress : "billing@cliquesads.com",
     mailerOptions: {
         service: config.get('Email.Billing.service'),
@@ -28,9 +28,9 @@ var mailer = new mail.Mailer({
         }
     }
 });
-var stripe = require('stripe')(config.get("Stripe.secret_key"));
+const stripe = require('stripe')(config.get("Stripe.secret_key"));
 // email list to send billing emails to in testing
-var TEST_EMAILS = ['bliang@cliquesads.com'];
+const TEST_EMAILS = ['bliang@cliquesads.com'];
 
 module.exports = {
     payments: {
@@ -101,7 +101,7 @@ module.exports = {
          * @param res
          */
         update: function(req, res) {
-            var payment = req.payment;
+            let payment = req.payment;
             payment = _.extend(payment, req.body);
             payment.tstamp = Date.now();
             payment.save((err, p) => {
@@ -123,8 +123,8 @@ module.exports = {
          * @param res
          */
         setPaid: function(req, res){
-            var payment = req.payment;
-            var org = req.payment.organization;
+            const payment = req.payment;
+            const org = req.payment.organization;
             if (payment.status === 'Needs Approval'){
                 res.status(403).send({
                     message: 'Payment must be approved before it can be marked Paid'
@@ -157,7 +157,7 @@ module.exports = {
          * @param res
          */
         getInvoicePreview: function(req, res){
-            var payment = req.payment;
+            const payment = req.payment;
             // add payment amount to accountBalance if status == "Needs Approval" so
             // outstanding balance renders properly in preview mode.
             if (payment.status === 'Needs Approval'){
@@ -174,7 +174,7 @@ module.exports = {
         },
 
         viewInvoice: function(req, res){
-            var payment = req.payment;
+            const payment = req.payment;
             if (payment.invoicePath){
                 res.sendFile(payment.invoicePath, {
                     root: path.resolve(__dirname, '../..')
@@ -194,17 +194,17 @@ module.exports = {
          * @param res
          */
         generateAndSendInvoice: function(req, res){
-            var payment = req.payment;
+            const payment = req.payment;
             // whether or not to send email
-            var email = req.query.email;
+            const email = req.query.email;
 
             // helper functions
-            var _getInvoicePath = extension => {
-                var orgType = payment.organization.effectiveOrgType;
+            const _getInvoicePath = extension => {
+                const orgType = payment.organization.effectiveOrgType;
                 return util.format('public/uploads/billing/%s/%s/', orgType, extension);
             };
-            var _getInvoiceFileName = extension => {
-                var orgType = payment.organization.effectiveOrgType;
+            const _getInvoiceFileName = extension => {
+                const orgType = payment.organization.effectiveOrgType;
                 return util.format(
                     'Cliques-%s-statement_%d_%s.%s',
                     orgType,
@@ -214,30 +214,27 @@ module.exports = {
                 );
             };
 
-            var pdfInvoiceName = _getInvoiceFileName('pdf'),
-                pdfInvoicePath = _getInvoicePath('pdf'),
-                htmlInvoiceName = _getInvoiceFileName('html'),
-                htmlInvoicePath = _getInvoicePath('html');
+            const pdfInvoiceName = _getInvoiceFileName('pdf'), pdfInvoicePath = _getInvoicePath('pdf'), htmlInvoiceName = _getInvoiceFileName('html'), htmlInvoicePath = _getInvoicePath('html');
 
             // Sub-function to encapsulate email logic
-            var _sendStatementEmails = callback => {
-                var subject = util.format("Your Cliques Billing Statement for %s is Ready",
+            const _sendStatementEmails = callback => {
+                let subject = util.format("Your Cliques Billing Statement for %s is Ready",
                     moment(payment.start_date).tz('UTC').format('MMMM YYYY'));
                 // Add "ACTION REQUIRED" prefix if advertiser & they need to send a check
                 if (payment.organization.billingPreference === 'Check'
                     && payment.organization.effectiveOrgType === 'advertiser'){
                     subject = 'ACTION REQUIRED: ' + subject;
                 }
-                var asyncFuncs = [];
+                const asyncFuncs = [];
                 // build email list, taking into account environment. Only send to users if it's in prod.
-                var billingEmails;
+                let billingEmails;
                 if (process.env.NODE_ENV === 'production') {
                     billingEmails = payment.organization.getAllBillingEmails();
                 } else {
                     billingEmails = TEST_EMAILS;
                 }
                 billingEmails.forEach(address => {
-                    var func = callback => {
+                    const func = callback => {
                         mailer.sendMail({
                             subject: subject,
                             templateName: 'billing-statement-email.server.view.html',
@@ -278,7 +275,7 @@ module.exports = {
                     callback => {
                         mkdirp(pdfInvoicePath, err => {
                             if (err) return callback(err);
-                            var pdfOpts = {
+                            const pdfOpts = {
                                 format: 'Letter',
                                 border:  {
                                     top: "10px",

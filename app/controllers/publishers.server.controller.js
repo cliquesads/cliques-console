@@ -3,27 +3,26 @@
 /**
  * Module dependencies.
  */
-var node_utils = require('@cliques/cliques-node-utils'),
+const node_utils = require('@cliques/cliques-node-utils'),
     models = node_utils.mongodb.models,
-    mongoose = require('mongoose'),
     tags = node_utils.tags,
     mail = require('./mailer.server.controller'),
     errorHandler = require('./errors.server.controller'),
-	_ = require('lodash');
+    _ = require('lodash');
 
 // Global vars to render action beacon tags
-var config = require('config');
-var exchangeHostname = config.get('Exchange.http.external.hostname');
-var exchangeSecureHostname = config.get('Exchange.https.external.hostname');
-var exchangePort = config.get('Exchange.http.external.port');
-var cloaderURLSecure = config.get('Static.CLoader.https');
-var cloaderURLNonSecure = config.get('Static.CLoader.http');
+const config = require('config');
+const exchangeHostname = config.get('Exchange.http.external.hostname');
+const exchangeSecureHostname = config.get('Exchange.https.external.hostname');
+const exchangePort = config.get('Exchange.http.external.port');
+const cloaderURLSecure = config.get('Static.CLoader.https');
+const cloaderURLNonSecure = config.get('Static.CLoader.http');
 
-var mailer = new mail.Mailer();
+const mailer = new mail.Mailer();
 
 module.exports = db => {
-    var publisherModels = new models.PublisherModels(db);
-    var cliqueModels = new models.CliquesModels(db);
+    const publisherModels = new models.PublisherModels(db);
+    const cliqueModels = new models.CliquesModels(db);
 
     return {
         /**
@@ -56,7 +55,7 @@ module.exports = db => {
          * Create new publisher
          */
         create: function (req, res) {
-            var publisher = new publisherModels.Publisher(req.body);
+            const publisher = new publisherModels.Publisher(req.body);
             publisher.user = [req.user];
             publisher.organization = req.user.organization;
             publisher.save(err => {
@@ -91,10 +90,11 @@ module.exports = db => {
         update: function (req, res) {
             // Capture initial publisher state to diff against new.
             // Use this to determine whether to call email hooks or not.
-            var publisher = req.publisher,
-                initSites = req.publisher.sites,
-                initPages = _.reduce(initSites, (result, site) => result.concat(site.pages), []),
-                initPlacements = _.reduce(initPages, (result, page) => result.concat(page.placements), []);
+            let publisher = req.publisher;
+
+            const initSites = req.publisher.sites;
+            const initPages = _.reduce(initSites, (result, site) => result.concat(site.pages), []);
+            const initPlacements = _.reduce(initPages, (result, page) => result.concat(page.placements), []);
 
             // Now extend with request body
             publisher = _.extend(publisher, req.body);
@@ -115,18 +115,16 @@ module.exports = db => {
 
                         // ============== EMAIL HOOKS ==============//
                         if (process.env.NODE_ENV === 'production') {
-                            var newSites = pub.sites,
-                                newPages = _.reduce(newSites, (result, site) => result.concat(site.pages), []),
-                                newPlacements = _.reduce(newPages, (result, page) => result.concat(page.placements), []);
+                            const newSites = pub.sites, newPages = _.reduce(newSites, (result, site) => result.concat(site.pages), []), newPlacements = _.reduce(newPages, (result, page) => result.concat(page.placements), []);
                             // Send internal email notifying of new campaign, if any
                             if (newSites.length > initSites.length) {
-                                var sitesCreated = _.difference(newSites, initSites);
+                                const sitesCreated = _.difference(newSites, initSites);
                                 mailer.sendMailFromUser('New Site(s) Created','new-sites-email.server.view.html',{publisher: pub, user: req.user, sites: sitesCreated},req.user,'support@cliquesads.com');
                             } else if (newPages.length > initPages.length) {
-                                var pagesCreated = _.difference(newPages, initPages);
+                                const pagesCreated = _.difference(newPages, initPages);
                                 mailer.sendMailFromUser('New Page(s) Created','new-pages-email.server.view.html',{publisher: pub, user: req.user, pages: pagesCreated},req.user,'support@cliquesads.com');
                             } else if (newPlacements.length > initPlacements.length) {
-                                var placementsCreated = _.difference(newPlacements, initPlacements);
+                                const placementsCreated = _.difference(newPlacements, initPlacements);
                                 mailer.sendMailFromUser('New Placement(s) Created','new-placements-email.server.view.html',{publisher: pub, user: req.user, placements: placementsCreated},req.user,'support@cliquesads.com');
                             }
                         }
@@ -138,7 +136,7 @@ module.exports = db => {
          * Delete a publisher
          */
         remove: function (req, res) {
-            var publisher = req.publisher;
+            const publisher = req.publisher;
             publisher.remove(err => {
                 if (err) {
                     console.log(err);
@@ -171,7 +169,7 @@ module.exports = db => {
          */
         hasAuthorization: function (req, res, next) {
             if (req.user.organization.organization_types.indexOf('networkAdmin') === -1){
-                if (req.publisher.organization != req.user.organization.id){
+                if (req.publisher.organization !== req.user.organization.id){
                     return res.status(403).send({
                         message: 'User is not authorized'
                     });
@@ -182,8 +180,8 @@ module.exports = db => {
 
         site: {
             getSitesInClique: function(req, res){
-                var sites = [];
-                var cliqueId = req.param('cliqueId');
+                let sites = [];
+                const cliqueId = req.param('cliqueId');
                 publisherModels.Publisher.find({"sites.clique": cliqueId}, (err, pubs) => {
                     if (err){
                         return res.status(400).send({
@@ -203,13 +201,13 @@ module.exports = db => {
              * @param res
              */
             getSitesInCliqueBranch: function(req, res){
-                var sites = [];
-                var cliqueId = req.param('cliqueId');
+                let sites = [];
+                const cliqueId = req.param('cliqueId');
                 cliqueModels.Clique.find({ ancestors: cliqueId }, (err, cliques) => {
-                    var ids = _.map(cliques, clique => clique._id);
+                    const ids = _.map(cliques, clique => clique._id);
                     ids.push(cliqueId);
                     // Only get active sites in branch
-                    var query = {"sites.clique": {$in: ids}, "sites.active": true };
+                    const query = {"sites.clique": {$in: ids}, "sites.active": true };
                     publisherModels.Publisher.find(query,(err, pubs) => {
                         if (err) {
                             return res.status(400).send({
@@ -219,18 +217,18 @@ module.exports = db => {
                             pubs.forEach(pub => {
                                 // Create shell publisher object w/ base model properties
                                 // to pass to site for client-side use
-                                var pubAttrs = {};
-                                var pubObj = pub.toObject();
+                                const pubAttrs = {};
+                                const pubObj = pub.toObject();
                                 Object.keys(pubObj).forEach(key => {
                                     if (pubObj.hasOwnProperty(key) && key !== 'sites'){
                                         pubAttrs[key] = pubObj[key];
                                     }
                                 });
-                                var sitesInClique = pub.sites.filter(site => ids.indexOf(site.clique) > -1);
+                                let sitesInClique = pub.sites.filter(site => ids.indexOf(site.clique) > -1);
                                 // augment each site with 'parent_publisher' property, which
                                 // contains base model properties of publisher
                                 sitesInClique = sitesInClique.map(site => {
-                                    var newSite = site.toObject();
+                                    const newSite = site.toObject();
                                     newSite.parent_publisher = pubAttrs;
                                     return newSite;
                                 });
@@ -238,7 +236,7 @@ module.exports = db => {
                             });
                             sites = _.groupBy(sites, site => site.clique);
                             // Restructure a tad to make more friendly for client-side tree utils
-                            var tree = [];
+                            const tree = [];
                             Object.keys(sites).forEach(clique => {
                                 if (sites.hasOwnProperty(clique)){
                                     tree.push({
@@ -257,9 +255,9 @@ module.exports = db => {
 
         placement: {
             getTag: function (req, res) {
-                var secure = JSON.parse(req.query.secure);
-                var cloaderURL = secure ? cloaderURLSecure : cloaderURLNonSecure;
-                var tag = new tags.PubTag(exchangeHostname,{
+                const secure = JSON.parse(req.query.secure);
+                const cloaderURL = secure ? cloaderURLSecure : cloaderURLNonSecure;
+                const tag = new tags.PubTag(exchangeHostname,{
                     secure_hostname: exchangeSecureHostname,
                     port: exchangePort,
                     secure: secure,
@@ -277,7 +275,7 @@ module.exports = db => {
                         return res.status(400).send({message: 'Error looking up placement ID ' +
                         req.param('placementId') + ' ' + err});
                     }
-                    var rendered = tag.render(placement);
+                    const rendered = tag.render(placement);
                     return res.json({tag: rendered});
                 });
             }

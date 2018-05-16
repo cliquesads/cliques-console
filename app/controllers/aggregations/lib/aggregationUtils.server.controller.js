@@ -3,15 +3,9 @@
 /**
  * Module dependencies.
  */
-var models = require('@cliques/cliques-node-utils').mongodb.models,
-    mongoose = require('mongoose'),
-    Query = mongoose.model('Query'),
-    errorHandler = require('../../errors.server.controller'),
-    _ = require('lodash'),
-    async = require('async'),
-    moment = require('moment-timezone');
+const models = require('@cliques/cliques-node-utils').mongodb.models, mongoose = require('mongoose'), Query = mongoose.model('Query'), errorHandler = require('../../errors.server.controller'), _ = require('lodash'), async = require('async'), moment = require('moment-timezone');
 
-var filterNumber = (number, prefix, suffix, lengthOfDecimal, lengthOfSection) => {
+const filterNumber = (number, prefix, suffix, lengthOfDecimal, lengthOfSection) => {
     if (lengthOfSection === undefined) {
         lengthOfSection = 3; 
     }
@@ -27,12 +21,12 @@ var filterNumber = (number, prefix, suffix, lengthOfDecimal, lengthOfSection) =>
     if (suffix === '%'){
         number = number * 100;
     }
-    var re = '\\d(?=(\\d{' + (lengthOfSection || 3) + '})+' + (lengthOfDecimal > 0 ? '\\.' : '$') + ')';
+    const re = '\\d(?=(\\d{' + (lengthOfSection || 3) + '})+' + (lengthOfDecimal > 0 ? '\\.' : '$') + ')';
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
 
-var formatQueryResults = (rows, queryType, dateGroupBy) => {
-    var monthNames = ["January", "February", "March", "April", "May", "June",
+const formatQueryResults = (rows, queryType, dateGroupBy) => {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
@@ -49,8 +43,8 @@ var formatQueryResults = (rows, queryType, dateGroupBy) => {
                 row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
             }
         } else {
-            var queryTypeHeader = _.capitalize(queryType);
-            var val = row._id[queryType];
+            const queryTypeHeader = _.capitalize(queryType);
+            let val = row._id[queryType];
             if (val){
                 // city doesn't get populated, so _id.city == city name
                 if (queryType !== 'city' && queryType !== 'keywords'){
@@ -139,7 +133,7 @@ var formatQueryResults = (rows, queryType, dateGroupBy) => {
  * @param {String} dateFieldName name of date field in aggregation model, default is 'hour'
  * @constructor
  */
-var HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, dateFieldName){
+const HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVarBuilder = function(pathParams, queryParams, dateFieldName){
     this.pathParams = pathParams;
     this.queryParams = queryParams;
     this.dateFieldName = dateFieldName || 'hour';
@@ -163,7 +157,7 @@ var HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVarBu
  */
 HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
     // first parse out operator & val
-    var operator = val.match(/\{(.*)\}/);
+    let operator = val.match(/\{(.*)\}/);
     val = val.replace(/\{(.*)\}/, '');
     // try to parse value as array if a comma found
     // Should go without saying that you SHOULDN'T USE COMMAS IN QUERY PARAMS
@@ -180,7 +174,7 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
         } else {
             throw new Error('Unknown operator: ' + operator);
         }
-        var obj = {};
+        const obj = {};
         obj[operator] = val;
         return obj;
     } else {
@@ -194,8 +188,8 @@ HourlyAggregationPipelineVarBuilder.prototype._parseQueryParam = function(val){
  */
 HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
     // Match path params first
-    var match = {};
-    var self = this;
+    const match = {};
+    const self = this;
     this.pathParams.forEach(param => {
         if (req.param(param)){
             match[param] = req.param(param);
@@ -230,15 +224,15 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
         }
     }
     if (req.query.hasOwnProperty('keywordFilter') && req.query.keywordFilter !== '') {
-        var keywordFilter = req.query.keywordFilter; 
-        var filterArray = [];
+        const keywordFilter = req.query.keywordFilter; 
+        let filterArray = [];
         if (keywordFilter.constructor !== Array) {
             filterArray.push(keywordFilter); 
         } else {
             filterArray = keywordFilter;
         }
-        var orQuery = [];
-        for (var i = 0; i < filterArray.length; i ++) {
+        const orQuery = [];
+        for (let i = 0; i < filterArray.length; i ++) {
             orQuery.push({
                 // For each keyword filter:
                 // 1. We check if the keyword filter is a substring of any existing keywords in database, no need to match exactly
@@ -259,8 +253,8 @@ HourlyAggregationPipelineVarBuilder.prototype.getMatch = function(req){
  * @param req
  */
 HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
-    var group = {};
-    var self = this;
+    const group = {};
+    const self = this;
 
     // This assumes you want the field names to persist in grouped query results
     //
@@ -274,7 +268,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
     });
 
     // Now parse groupBy param, which can either CSV or single field
-    var groupBy = req.query.groupBy;
+    let groupBy = req.query.groupBy;
     if (groupBy){
         if (groupBy.indexOf(',') > -1){
             groupBy = groupBy.split(',');
@@ -289,10 +283,10 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
 
     // TODO: currently setting timezone offset based on offset for current time.
     // TODO: Need to fix, this is kind of shitty
-    var offset_minutes = moment.tz.zone(req.user.tz).utcOffset(new Date());
-    var offset_ms = offset_minutes * 60 * 1000;
-    var dateFieldName = '$' + self.dateFieldName;
-    var date_groupings = {
+    const offset_minutes = moment.tz.zone(req.user.tz).utcOffset(new Date());
+    const offset_ms = offset_minutes * 60 * 1000;
+    const dateFieldName = '$' + self.dateFieldName;
+    const date_groupings = {
         hour: {
             hour: { $hour: [{ $subtract: [dateFieldName,offset_ms]}]},
             month: { $month: [{ $subtract: [dateFieldName,offset_ms]}]},
@@ -327,7 +321,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
  * @param publisherModels
  * @constructor
  */
-var AdStatsAPIHandler = exports.AdStatsAPIHandler = function(db){
+const AdStatsAPIHandler = exports.AdStatsAPIHandler = function(db){
     this.aggregationModels = new models.AggregationModels(db);
     this.advertiserModels = new models.AdvertiserModels(db);
     this.publisherModels = new models.PublisherModels(db);
@@ -370,19 +364,19 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
     // Finally, once the query result is populated with the top-level doc from the respective
     // tree, it maps the appropriate child doc to the populate field in each query result row.
     // So net-net, calls the DB once per populate field provided (I think).
-    var self = this;
-    var populates = populateQueryString.split(',');
-    var asyncFieldFuncs = [];
+    const self = this;
+    const populates = populateQueryString.split(',');
+    const asyncFieldFuncs = [];
     populates.forEach(field => {
         asyncFieldFuncs.push(callback => {
             // throw out populate param if populate not in group
             if (Object.keys(group).indexOf(field) > -1){
-                var modelName = field.toProperCase();
+                const modelName = field.toProperCase();
                 // First determine whether field is in Publisher or Advertiser tree.
                 // If neither, skip it.
-                var treeDocument;
-                var parentFieldName;
-                var parentModelName;
+                let treeDocument;
+                let parentFieldName;
+                let parentModelName;
                 if (self.advertiserModels.hasOwnProperty(modelName)){
                     treeDocument = 'advertiserModels';
                     parentFieldName =  'advertiser';
@@ -404,7 +398,7 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
 
                 // sub routine to pass to async.map. Just gets child document given
                 // populated top-level node doc
-                var populateChildField = (doc, callback) => {
+                const populateChildField = (doc, callback) => {
                     if (doc._id[field] && doc._id[parentFieldName]){
                         self[treeDocument].getChildDocument(
                             doc._id[field],
@@ -472,18 +466,18 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
  * pieces (parsing `group` & `match` pipeline objects, executing aggregation query & populating results).
  */
 AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregationModel){
-    var self = this;
+    const self = this;
     return (req, res) => {
         if (!req.query.startDate &&
             !req.query.endDate &&
             req.query.dateRangeShortCode) {
-            var analyticsQuery = new Query(req.query);
-            var dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
+            const analyticsQuery = new Query(req.query);
+            const dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
             req.query.startDate = dateRange.startDate;
             req.query.endDate = dateRange.endDate;
         }
 
-        var group;
+        let group;
         try {
             group = pipelineBuilder.getGroup(req);
         } catch (e) {
@@ -492,7 +486,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        var match;
+        let match;
         try {
             match = pipelineBuilder.getMatch(req);
         } catch (e) {
@@ -504,7 +498,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
         // toggle demo or non-demo aggregation model, depending on
         // request query param sent in
         // var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
-        var query = aggregationModel
+        const query = aggregationModel
             .aggregate([
                 { $match: match },
                 //{ $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
