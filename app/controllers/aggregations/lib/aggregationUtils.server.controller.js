@@ -514,6 +514,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         bids: {$sum: "$bids"},
                         imps: {$sum: "$imps"},
                         defaults: {$sum: "$defaults"},
+                        clearprice: {$avg: "$clearprice"},
                         spend: {$sum: "$spend"},
                         clicks: {$sum: "$clicks"},
                         view_convs: {$sum: "$view_convs"},
