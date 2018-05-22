@@ -59,8 +59,8 @@
                         <p class="campaign-list-item-text">{{ site.clique }}</p>
                     </div>
                     <div class="col-sm-2">
-                        <h4 class="campaign-list-item-heading">{{ site.rpm || "$0.00" }}</h4>
-                        <p class="campaign-list-item-text">RPM</p>
+                        <h4 class="campaign-list-item-heading">{{ site.rpm | rpcOrRpm || "$0.00" }}</h4>
+                        <p class="campaign-list-item-text">{{ pricing | pubPricing }}</p>
                     </div>
 
                     <div class="col-sm-2">
@@ -125,8 +125,8 @@
                                 <small class="text-muted">Revenue</small>
                             </div>
                             <div class="col-sm-1 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ RPM | currency:"$":"2" }}</div>
-                                <small class="text-muted">RPM</small>
+                                <div class="h3 mt-sm mb0">{{ pricing === 'CPC' ? RPC : RPM | currency:"$":"2" }}</div>
+                                <small class="text-muted">{{ pricing | pubPricing }}</small>
                             </div>
                             <div class="col-sm-2 col-xs-6 text-center">
                                 <div class="h3 mt-sm mb0">{{ CTR | percentage: 2 }}</div>

@@ -27,4 +27,22 @@ angular.module('core').filter('percentage', ['$filter', function ($filter) {
             return model.cpm;
         }
     };
+})
+.filter('rpcOrRpm', function() {
+    return function(model) {
+        if (pricing === 'CPC'){
+            return model.rpc;
+        } else {
+            return model.rpm;
+        }
+    };
+})
+.filter('pubPricing', function(){
+    return function(pricing) {
+        if (pricing === 'CPC'){
+            return 'RPC';
+        } else {
+            return 'RPM';
+        }
+    };
 });
