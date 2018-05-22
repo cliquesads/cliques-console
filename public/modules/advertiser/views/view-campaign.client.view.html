@@ -400,8 +400,11 @@ adding hook in parent template ---->
                                         <div class="h3">{{ spend | currency:"$":"0" }}</div>
                                     </div>
                                     <div class="col-sm-2 col-xs-6 text-center">
-                                        <p>Avg. CPM</p>
-                                        <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
+                                        <p>Avg. {{ pricing }}</p>
+                                        <div class="h3">
+                                            <avg-pricing-currency-format clicks-model="clicks" spend-model="spend" imps-model="imps">
+                                            </avg-pricing-currency-format>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
