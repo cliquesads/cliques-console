@@ -206,7 +206,7 @@ adding hook in parent template ---->
                                         <div class="h3">{{ spend | currency:"$":"0" }}</div>
                                     </div>
                                     <div class="col-sm-2 col-xs-6 text-center">
-                                        <p>Avg. RPM</p>
+                                        <p>Avg. {{ pricing }}</p>
                                         <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
                                     </div>
                                 </div>
