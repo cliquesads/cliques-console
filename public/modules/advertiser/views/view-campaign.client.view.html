@@ -402,7 +402,7 @@ adding hook in parent template ---->
                                     <div class="col-sm-2 col-xs-6 text-center">
                                         <p>Avg. {{ pricing }}</p>
                                         <div class="h3">
-                                            <avg-pricing-currency-format clicks-model="clicks" spend-model="spend" imps-model="impressions">
+                                            <avg-pricing-currency-format clicks="{{ clicks }}" spend="{{ spend }}" imps="{{ impressions }}">
                                             </avg-pricing-currency-format>
                                         </div>
                                     </div>

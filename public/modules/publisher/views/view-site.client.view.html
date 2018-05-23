@@ -233,7 +233,10 @@ adding hook in parent template ---->
                                     <td style="max-width: 150px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
-                                    <td><avg-pricing-currency-format row-model="row"></avg-pricing-currency-format></td>
+                                    <td>
+                                        <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}">
+                                        </avg-pricing-currency-format>
+                                    </td>
                                     <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 </tr>
                                 </tbody>
@@ -259,7 +262,10 @@ adding hook in parent template ---->
                                     <td>{{ row._id.placement.w }}{{ row._id.placement.w ? 'x' : ''}}{{ row._id.placement.h }}</td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
-                                    <td><avg-pricing-currency-format row-model="quickStats[0]"></avg-pricing-currency-format></td>
+                                    <td>
+                                        <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}>
+                                        </avg-pricing-currency-format>
+                                    </td>
                                     <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 </tr>
                                 </tbody>
