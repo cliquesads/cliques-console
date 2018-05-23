@@ -1,7 +1,7 @@
 /**
  * Created by bliang on 1/13/17.
  */
-/* global _, angular, user */
+/* global _, angular, user, pricing */
 
 // split into pairs b/c typical UI presentation is in col-4's, so each pair represents one column
 angular.module('analytics')
@@ -664,7 +664,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'CPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -676,7 +676,7 @@ angular.module('analytics')
                 index: 5,
                 name: 'CPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 6,
@@ -731,6 +731,12 @@ angular.module('analytics')
                 name: 'CPA',
                 type: 'data',
                 selected: false
+            },
+            {
+                index: 15,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
             }
         ],
         'networkAdmin': [
@@ -750,7 +756,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'CPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -762,7 +768,7 @@ angular.module('analytics')
                 index: 5,
                 name: 'CPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 6,
@@ -787,7 +793,7 @@ angular.module('analytics')
                 name: 'Fill Rate',
                 type: 'data',
                 selected: true
-            }, 
+            },
             {
                 index: 10,
                 name: 'Bids',
@@ -829,7 +835,13 @@ angular.module('analytics')
                 name: 'CPA',
                 type: 'data',
                 selected: false
-            }
+            },
+            {
+                index: 17,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
+            },
         ],
         'publisher': [
             {
@@ -848,7 +860,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'RPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -872,7 +884,7 @@ angular.module('analytics')
                 index: 7,
                 name: 'RPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 8,
@@ -915,6 +927,12 @@ angular.module('analytics')
                 name: 'RPA',
                 type: 'data',
                 selected: false
+            },
+            {
+                index: 15,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
             }
         ]
     });

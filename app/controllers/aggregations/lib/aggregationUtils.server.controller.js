@@ -99,6 +99,7 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
         row.RPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '$0.00';
         row['Win Rate'] = row.bids ? filterNumber(row.imps / row.bids, '', '%') : '0.00%';
         row.Revenue = filterNumber(row.spend, '$');
+        row['Avg. Clear Price'] = row.clearprice ? filterNumber(row.clearprice, '$') : 'N/A';
 
     });
     return rows;
