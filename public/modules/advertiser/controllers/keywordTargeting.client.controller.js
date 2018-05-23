@@ -37,8 +37,8 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 			var priceData = {};
 			for (var id in groupedData) {
 				if (groupedData.hasOwnProperty(id)) {
-					var imps = _.sumBy(groupedData[id], function(row) { return row.imps; });
-                    var numerator = _.sumBy(groupedData[id], function(row) { return row.imps * row.clearprice; });
+					var imps = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps : 0; });
+                    var numerator = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps * row.clearprice : 0; });
 					priceData[id] = { 
 						imps: imps,
 						clearprice: numerator / imps
