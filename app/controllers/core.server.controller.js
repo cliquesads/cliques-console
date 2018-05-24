@@ -1,6 +1,7 @@
 /* jshint node: true */ 'use strict';
 var config = require('config');
 var stripePublishableKey = config.get('Stripe.publishable_key');
+var pricing = config.get('Pricing');
 var _ = require('lodash');
 
 /**
@@ -16,7 +17,8 @@ module.exports = function(db){
                     request: req,
                     latestHour: result ? result.toUTCString() : null,
                     consoleVersion: res._headers['console-version'],
-                    stripePublishableKey: stripePublishableKey
+                    stripePublishableKey: stripePublishableKey,
+                    pricing: pricing
                 });
             });
         }

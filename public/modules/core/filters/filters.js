@@ -2,7 +2,7 @@
  * Created by bliang on 8/4/15.
  */
 
-/* global _, angular */
+/* global _, angular, pricing */
 'use strict';
 
 // This filter makes the assumption that the input will be in decimal form (i.e. 17% is 0.17).
@@ -16,5 +16,33 @@ angular.module('core').filter('percentage', ['$filter', function ($filter) {
         if (input!==null)
             input = input.toLowerCase();
         return input.substring(0,1).toUpperCase()+input.substring(1);
+    };
+})
+// filter to pull correct pricing metric from row input
+.filter('cpcOrCpm', function() {
+    return function(model) {
+        if (pricing === 'CPC'){
+            return model.cpc;
+        } else {
+            return model.cpm;
+        }
+    };
+})
+.filter('rpcOrRpm', function() {
+    return function(model) {
+        if (pricing === 'CPC'){
+            return model.rpc;
+        } else {
+            return model.rpm;
+        }
+    };
+})
+.filter('pubPricing', function(){
+    return function(pricing) {
+        if (pricing === 'CPC'){
+            return 'RPC';
+        } else {
+            return 'RPM';
+        }
     };
 });
