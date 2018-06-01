@@ -128,8 +128,7 @@
                                 <td>{{ row.imps | number: 0 }}</td>
                                 <td>{{ row.spend | currency:"$":"0" }}</td>
                                 <td>
-                                    <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}>
-                                    </avg-pricing-currency-format>
+                                    {{ pricing === 'CPC' ? row.spend / row.clicks : row.spend / row.imps * 1000 | currency:"$":"2" }}
                                 </td>
                                 <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 <td>{{ row.view_convs + row.click_convs }}</td>
@@ -157,8 +156,7 @@
                                 <td>{{ row.imps | number: 0 }}</td>
                                 <td>{{ row.spend | currency:"$":"0" }}</td>
                                 <td>
-                                    <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}>
-                                    </avg-pricing-currency-format>
+                                    {{ pricing === 'CPC' ? row.spend / row.clicks : row.spend / row.imps * 1000 | currency:"$":"2" }}
                                 </td>
                                 <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 <td>{{ row.view_convs + row.click_convs }}</td>

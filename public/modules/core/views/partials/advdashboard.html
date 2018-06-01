@@ -129,8 +129,7 @@
                             </div>
                             <div class="col-sm-2 col-xs-6 text-center">
                                 <div class="h3 mt-sm mb0">
-                                    <avg-pricing-currency-format imps="{{ impressions }}" spend="{{ spend }}" clicks="{{ clicks }}">
-                                    </avg-pricing-currency-format>
+                                    {{ pricing === 'CPC' ? spend / clicks : spend / impressions * 1000 | currency:"$":"2" }}
                                 </div>
                                 <small class="text-muted">Avg. {{ pricing }}</small>
                             </div>
