@@ -1,5 +1,4 @@
 <h4>{{ placement.name }} - Multi-Pane Native Specs</h4>
-<div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
 <form id="multiPaneNativeSpecsForm" name="multiPaneNativeSpecsForm" data-ng-submit="save()">
     <tabset>
         <tab heading="Wrapper">
@@ -90,7 +89,15 @@
         </tab>
     </tabset>
     <br/>
+    <div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
     <div class="row text-center">
         <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="EditMultiPaneNativeSpecs_Save">Save</button>
+    </div>
+    <div ng-show="loading" class="row text-center">
+        <div class="ball-pulse">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
 </form>
