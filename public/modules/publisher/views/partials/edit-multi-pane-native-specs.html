@@ -5,15 +5,26 @@
         <tab heading="Wrapper">
             <fieldset>
                 <div class="row">
-                    <label class="col-sm-3">Number of Panes*</label>
-                    <div class="col-sm-4 form-group">
+                    <label class="col-sm-2">Panes - Desktop*</label>
+                    <div class="col-sm-2 form-group">
                         <input type="number"
-                               id="count"
-                               name="count"
+                               id="desktop_count"
+                               name="desktop_count"
                                required="required"
                                class="form-control"
                                min="2"
-                               ng-model="placement.multiPaneNative.count" />
+                               ng-model="placement.multiPaneNative.count.desktop" />
+                    </div>
+                    <div class="col-sm-1"> </div>
+                    <label class="col-sm-2">Panes - Mobile*</label>
+                    <div class="col-sm-2 form-group">
+                        <input type="number"
+                               id="mobile_count"
+                               name="mobile_count"
+                               required="required"
+                               class="form-control"
+                               min="2"
+                               ng-model="placement.multiPaneNative.count.mobile" />
                     </div>
                 </div>
             </fieldset>
