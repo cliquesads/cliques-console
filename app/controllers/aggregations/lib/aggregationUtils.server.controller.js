@@ -99,6 +99,7 @@ var formatQueryResults = function(rows, queryType, dateGroupBy) {
         row.RPC = row.clicks ? filterNumber(row.spend / row.clicks, '$') : '$0.00';
         row['Win Rate'] = row.bids ? filterNumber(row.imps / row.bids, '', '%') : '0.00%';
         row.Revenue = filterNumber(row.spend, '$');
+        row['Avg. Clear Price'] = row.clearprice ? filterNumber(row.clearprice, '$') : 'N/A';
 
     });
     return rows;
@@ -514,6 +515,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         bids: {$sum: "$bids"},
                         imps: {$sum: "$imps"},
                         defaults: {$sum: "$defaults"},
+                        clearprice: {$avg: "$clearprice"},
                         spend: {$sum: "$spend"},
                         clicks: {$sum: "$clicks"},
                         view_convs: {$sum: "$view_convs"},

@@ -344,15 +344,15 @@ angular.module('advertiser').controller('SiteTargetingController',
             //=============== BEGIN SiteTree Instances =================//
             //==========================================================//
 
-            var cpmColumnDef = {
-                    field:        "stats.cpm",
-                    displayName:  'Avg. CPM',
-                    titleTemplate: '<a href="#" tooltip="Average CPM on the Cliques Exchange for the {{ dateRanges[defaultDateRange].label }}">' +
-                    '<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM</a></div>',
+            var pricingColumnDef = {
+                    field:        "stats.clearprice",
+                    displayName:  'Avg. {{ pricing }}',
+                    titleTemplate: '<a href="#" tooltip="Average {{ pricing }} on the Cliques Exchange for the {{ dateRanges[defaultDateRange].label }}">' +
+                    '<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>{{ pricing }}</a></div>',
                     titleClass:   'wd-xxs text-center',
                     cellClass:    'wd-xxs text-center',
-                    cellTemplate: '<div ng-show="node.stats.cpm">{{ node.stats.cpm | currency:"$":2 }}</div>' +
-                    '<small ng-hide="node.stats.cpm" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
+                    cellTemplate: '<div ng-show="node.stats.clearprice">{{ node.stats.clearprice | currency:"$":2 }}</div>' +
+                    '<small ng-hide="node.stats.clearprice" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
                 };
             /**
              * SiteTree for All Available Sites tree vars
@@ -377,7 +377,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     displayName: 'Name'
                 },
                 [
-                    cpmColumnDef,
+                    pricingColumnDef,
                     {
                         displayName:  'Actions',
                         cellTemplate: '<button type="button" class="btn btn-success btn-xs" ng-click="all_sites.control.target(node)" tooltip="Customize Bid">' +
@@ -443,10 +443,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                         displayName: "Bid",
                         titleClass:   'wd-xxs text-center',
                         cellClass:    'wd-xxs text-center',
-                        cellTemplate: '<span ng-hide="node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">' +
+                        cellTemplate: '<span ng-hide="node.__hideSlider__" ng-class="{ \'text-green\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.clearprice, \'text-warning\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.clearprice, \'text-danger\': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.clearprice / 2 }">' +
                         '<strong>{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}</strong></span>'
                     },
-                    cpmColumnDef,
+                    pricingColumnDef,
                     {
                         displayName:  'Actions',
                         titleClass:   'wd-xxs text-center',
@@ -614,26 +614,24 @@ angular.module('advertiser').controller('SiteTargetingController',
             $scope.defaultDateRange = '30d';
 
             /**
-             * Quick helper function to calculate CPMs for grouped hourlyadstats data
+             * Quick helper function to calculate pricing data (CPM & CPC) for grouped hourlyadstats data
              * @param groupedData
              * @returns {{}}
              * @private
              */
-            function _getCpms(groupedData){
-                var cpms = {};
+            function _getPriceData(groupedData){
+                var priceData = {};
                 for (var id in groupedData){
                     if (groupedData.hasOwnProperty(id)){
-                        var imps = _.sumBy(groupedData[id], function(row){ return row.imps; });
-                        var spend = _.sumBy(groupedData[id], function(row){ return row.spend; });
-                        var cpm = spend / imps * 1000;
-                        cpms[id] = {
+                        var imps = _.sumBy(groupedData[id], function(row){ return row.clearprice ? row.imps : 0; });
+                        var numerator = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps * row.clearprice : 0; });
+                        priceData[id] = {
                             imps: imps,
-                            spend: spend,
-                            cpm: cpm
+                            clearprice: numerator / imps
                         };
                     }
                 }
-                return cpms;
+                return priceData;
             }
 
             /**
@@ -666,10 +664,10 @@ angular.module('advertiser').controller('SiteTargetingController',
                     endDate: endDate
                 }).then(function (response) {
                     var allSitesStats = {
-                        Clique: _getCpms(_.groupBy(response.data, '_id.pub_clique')),
-                        Site: _getCpms(_.groupBy(response.data, '_id.site')),
-                        Page: _getCpms(_.groupBy(response.data, '_id.page')),
-                        Placement: _getCpms(_.groupBy(response.data, '_id.placement'))
+                        Clique: _getPriceData(_.groupBy(response.data, '_id.pub_clique')),
+                        Site: _getPriceData(_.groupBy(response.data, '_id.site')),
+                        Page: _getPriceData(_.groupBy(response.data, '_id.page')),
+                        Placement: _getPriceData(_.groupBy(response.data, '_id.placement'))
                     };
                     // Now bind to siteTree data to use in template
                     function inner(treeData){

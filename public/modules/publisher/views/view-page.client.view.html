@@ -132,8 +132,11 @@
                         <small class="text-muted">Revenue</small>
                     </div>
                     <div class="col-sm-6">
-                        <div class="h3">{{ (quickStats[0].spend / quickStats[0].imps) * 1000 | currency:"$":"2" }}</div>
-                        <small class="text-muted">Avg. RPM</small>
+                        <div class="h3">
+                            <avg-pricing-currency-format imps="{{ quickStats[0].imps }}" spend="{{ quickStats[0].spend }}" clicks="{{ quickStats[0].clicks }}">
+                            </avg-pricing-currency-format>
+                        </div>
+                        <small class="text-muted">Avg. {{ pricing | pubPricing }}</small>
                     </div>
                 </div>
                 <div class="row row-table text-center">

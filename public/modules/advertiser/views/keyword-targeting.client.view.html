@@ -69,8 +69,8 @@
 						<th class="wd-xxs text-center">Bid</th>
 						<th class="wd-xxs text-center">
 							<a href="#"
-								tooltip="Average CPM on this Keyword for the {{ dateRanges[defaultDateRange].label }}">
-								<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM
+								tooltip="Average {{ pricing }} on this Keyword for the {{ dateRanges[defaultDateRange].label }}">
+								<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>{{ pricing }}
 							</a>
 						</th>
 						<th class="wd-xxs text-center">Actions</th>
@@ -100,9 +100,9 @@
 						<!-- Bid -->
 						<td class="wd-xxs text-center">
 							<span ng-class="{
-								'text-green': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.cpm,
-								'text-warning': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm,
-								'text-danger': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.cpm / 2 }">
+								'text-green': Math.min(node.weight * campaign.base_bid, campaign.max_bid) > node.stats.clearprice,
+								'text-warning': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.clearprice,
+								'text-danger': Math.min(node.weight * campaign.base_bid, campaign.max_bid) < node.stats.clearprice / 2 }">
 								<strong>
 									{{ Math.min(node.weight * campaign.base_bid, campaign.max_bid) | currency : "$" : 2 }}
 								</strong>								
@@ -110,10 +110,10 @@
 						</td>
 						<!-- CPM -->
 						<td class="wd-xxs text-center">
-							<div ng-if="node.stats.cpm">
-								{{ node.stats.cpm | currency: "$" : 2 }}	
+							<div ng-if="node.stats.clearprice">
+								{{ node.stats.clearprice | currency: "$" : 2 }}
 							</div>
-							<small ng-if="!(node.stats.cpm)"
+							<small ng-if="!(node.stats.clearprice)"
 								class="text-muted">
 								<i class="fa fa-heartbeat"></i>	Not Enough Data
 							</small>

@@ -206,7 +206,7 @@ adding hook in parent template ---->
                                         <div class="h3">{{ spend | currency:"$":"0" }}</div>
                                     </div>
                                     <div class="col-sm-2 col-xs-6 text-center">
-                                        <p>Avg. RPM</p>
+                                        <p>Avg. {{ pricing }}</p>
                                         <div class="h3">{{ (spend / impressions) * 1000 | currency:"$":"2" }}</div>
                                     </div>
                                 </div>
@@ -223,7 +223,7 @@ adding hook in parent template ---->
                                     <th>Name</th>
                                     <th>Spend</th>
                                     <th>Impressions</th>
-                                    <th>RPM</th>
+                                    <th>{{ pricing | pubPricing }}</th>
                                     <th>CTR</th>
                                 </tr>
                                 </thead>
@@ -233,7 +233,10 @@ adding hook in parent template ---->
                                     <td style="max-width: 150px; word-wrap: break-word">{{ row._id.advertiser.name }}<em ng-hide="row._id.advertiser.name">Deleted Advertiser</em></td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 | currency:"$":"2"  }}</td>
+                                    <td>
+                                        <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}">
+                                        </avg-pricing-currency-format>
+                                    </td>
                                     <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 </tr>
                                 </tbody>
@@ -248,7 +251,7 @@ adding hook in parent template ---->
                                     <th>Size</th>
                                     <th>Revenue</th>
                                     <th>Impressions</th>
-                                    <th>RPM</th>
+                                    <th>{{ pricing | pubPricing }}</th>
                                     <th>CTR</th>
                                 </tr>
                                 </thead>
@@ -259,7 +262,10 @@ adding hook in parent template ---->
                                     <td>{{ row._id.placement.w }}{{ row._id.placement.w ? 'x' : ''}}{{ row._id.placement.h }}</td>
                                     <td>{{ row.spend | currency:"$":"0" }}</td>
                                     <td>{{ row.imps | number: 0 }}</td>
-                                    <td>{{ row.spend / row.imps * 1000 | currency:"$":"2"  }}</td>
+                                    <td>
+                                        <avg-pricing-currency-format imps="{{ row.imps }}" spend="{{ row.spend }}" clicks="{{ row.clicks }}>
+                                        </avg-pricing-currency-format>
+                                    </td>
                                     <td>{{ row.clicks / row.imps | percentage: 2 }}</td>
                                 </tr>
                                 </tbody>

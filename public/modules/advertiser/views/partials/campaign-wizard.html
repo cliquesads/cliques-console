@@ -96,7 +96,7 @@
             <br/>
             <!-- START row -->
             <fieldset>
-                <label>Base Bid (CPM) *</label>
+                <label>Base Bid ({{ pricing }}) *</label>
                 &nbsp;&nbsp;&nbsp;
                 <a href="#" tooltip="{{ TOOLTIPS.base_bid }}" analytics-on="click" analytics-event="CampaignWizard_TooltipBaseBid">
                     <em class="fa fa-question-circle"></em>
@@ -106,7 +106,7 @@
                     <input data-parsley-type="number" name="campaign.base_bid" id="campaign.base_bid" ng-model="campaign.base_bid" placeholder="7.00" data-parsley-group="step3" min="{{ min_base_bid }}" max="{{ max_base_bid }}" class="form-control" required="required"/>
                 </div>
                 <br/>
-                <label>Max Bid (CPM) *</label>
+                <label>Max Bid ({{ pricing }}) *</label>
                 &nbsp;&nbsp;&nbsp;
                 <a href="#" tooltip="{{ TOOLTIPS.max_bid }}" analytics-on="click" analytics-event="CampaignWizard_TooltipMaxBid">
                     <em class="fa fa-question-circle"></em>
