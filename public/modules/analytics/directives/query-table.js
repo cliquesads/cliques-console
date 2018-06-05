@@ -96,11 +96,11 @@ angular.module('analytics').directive('queryTable', [
 							// Remove format characters and convert string to number so as to compare
 							aValue = aValue.replace('$', '');
 							aValue = aValue.replace('%', '');
-							aValue = aValue.replace(',', '');
+							aValue = aValue.replace(/,/g, '');
 
 							bValue = bValue.replace('$', '');
 							bValue = bValue.replace('%', '');
-							bValue = bValue.replace(',', '');
+							bValue = bValue.replace(/,/g, '');
 
 							// don't coerce to number if string can't be,
 							// will just sort alphabetically if still strings
