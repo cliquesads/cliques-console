@@ -142,7 +142,7 @@ adding hook in parent template ---->
                                                     <label class="col-sm-4 control-label">Base Bid</label>
                                                     <div class="col-sm-6">
                                                         <p class="form-control-static">
-                                                            <span editable-number="campaign.base_bid" e-name="base_bid" e-min="{{ min_base_bid }}" e-max="{{ campaign.max_bid }}" e-required>{{ campaign.base_bid | currency:"$":2 }}</span>
+                                                            <span editable-number="campaign.base_bid" e-name="base_bid" e-min="{{ min_base_bid }}" e-max="{{ campaign.max_bid }}" e-required e-step="0.01">{{ campaign.base_bid | currency:"$":2 }}</span>
                                                         </p>
                                                     </div>
                                                     <div class="col-sm-2">
@@ -155,7 +155,7 @@ adding hook in parent template ---->
                                                     <label class="col-sm-4 control-label">Max Bid</label>
                                                     <div class="col-sm-6">
                                                         <p class="form-control-static">
-                                                            <span editable-number="campaign.max_bid" e-name="name" e-min="{{ campaign.base_bid }}" e-required>{{ campaign.max_bid | currency:"$":2 }}</span>
+                                                            <span editable-number="campaign.max_bid" e-name="name" e-min="{{ campaign.base_bid }}" e-step="0.01" e-required>{{ campaign.max_bid | currency:"$":2 }}</span>
                                                         </p>
                                                     </div>
                                                 </div>
