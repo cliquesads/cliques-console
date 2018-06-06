@@ -153,8 +153,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -338,8 +338,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -499,8 +499,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
