@@ -31,49 +31,60 @@ var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSec
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
 
-var formatQueryResults = function(rows, queryType, dateGroupBy) {
-    var monthNames = ["January", "February", "March", "April", "May", "June",
+const formatQueryResults = function(rows, reqQuery) {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
-    rows.forEach(function(row) {
-        // get row title
-        if (queryType === 'time') {
-            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            if (dateGroupBy === 'hour') {
-                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
-            } else if (dateGroupBy === 'day') {
-                row.Day = row[queryType];
+    // attribute fields will be whatever is passed to groupBy field
+    // TODO: Assumes all groupBy fields will be passed as "populate" as well
+    const attributeFields = reqQuery.groupBy ? reqQuery.groupBy.split(",") : [];
+
+    rows.forEach((row) => {
+        // Parse out row attribute fields
+        // special case for Time query
+        if (reqQuery.queryType === 'time') {
+            row[reqQuery.queryType] = `${row._id.date.month}/${row._id.date.day}/${row._id.date.year}`;
+            if (reqQuery.dateGroupBy === 'hour') {
+                row.Hour = `${row[reqQuery.queryType]} ${row._id.date.hour}:00`;
+            } else if (reqQuery.dateGroupBy === 'day') {
+                row.Day = row[reqQuery.queryType];
             } else {
                 // date group by month
                 row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
             }
         } else {
-            var queryTypeHeader = _.capitalize(queryType);
-            var val = row._id[queryType];
-            if (val){
-                // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city' && queryType !== 'keywords'){
-                    // otherwise, get name of populated object
-                    val = row._id[queryType].name;
+            // Otherwise, get formatted values for each attribute header and store
+            // under capitalized key name (except for state, where "region" => "State")
+            for (let header of attributeFields){
+                let queryTypeHeader = false;
+                let val = row._id[header];
+                switch (header) {
+                    case 'city':
+                    case'keywords':
+                        // city doesn't get populated, so _id.city == city name
+                        break;
+                    case 'region':
+                        val = val ? val.name : "<No state provided>";
+                        queryTypeHeader = 'State';
+                        break;
+                    case 'advertiser':
+                        row.logo = val;
+                        row._logo_type = 'Advertiser';
+                        break;
+                    case 'publisher':
+                        row.logo = val;
+                        row._logo_type = 'Publisher';
+                        break;
+                    default:
+                        // otherwise, get name of populated object
+                        val = val ? val.name : `<No ${queryTypeHeader} Provided>`;
                 }
-            } else {
-                // fill blank values
-                val = "<No " + queryTypeHeader + " Provided>";
+                if (!queryTypeHeader) {
+                    queryTypeHeader = _.capitalize(header);
+                }
+                row[queryTypeHeader] = val;
             }
-            if (queryType === 'state' && row._id.region) {
-                val = row._id.region.name;
-            }
-            row[queryTypeHeader] = val;
-        }
-
-        // get row logo
-        if (queryType === 'campaign' || queryType === 'creative') {
-            row.logo = row._id.advertiser;
-            row._logo_type = 'Advertiser';
-        } else if (queryType === 'site' || queryType ==='placement') {
-            row.logo = row._id.publisher;
-            row._logo_type = 'Publisher';
         }
 
         row.Impressions = filterNumber(row.imps, '', '', 0);
@@ -539,11 +550,11 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         if (err) {
                             return res.status(400).send({ message: err });
                         }
-                        results = formatQueryResults(results, req.query.type, req.query.dateGroupBy);
+                        results = formatQueryResults(results, req.query);
                         res.json(results);
                     });
                 } else {
-                    adStats = formatQueryResults(adStats, req.query.type, req.query.dateGroupBy);
+                    adStats = formatQueryResults(adStats, req.query);
                     res.json(adStats);
                 }
             }
