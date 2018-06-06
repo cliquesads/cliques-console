@@ -16,8 +16,8 @@ angular.module('analytics').factory('Query', ['$resource',
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
-    '$http', 'HourlyAdStat', 'GeoAdStat', 'KeywordAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
-    function($http, HourlyAdStat, GeoAdStat, KeywordAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
+    '$http', 'HourlyAdStat', 'GeoAdStat', 'KeywordAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS','QUICKQUERIES',
+    function($http, HourlyAdStat, GeoAdStat, KeywordAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS, QUICKQUERIES) {
 
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
@@ -120,12 +120,32 @@ angular.module('analytics').factory('Analytics', [
                 selected: true
             }];
         } else {
-            headers = [{
-                index: 0,
-                name: _.capitalize(queryType),
-                type: 'attribute',
-                selected: true
-            }];
+            var groupBy = QUICKQUERIES[role][queryType].defaultQueryParam.groupBy.split(',');
+            if (queryType !== 'state'){
+                var h = 0;
+                for (var i = 0; i < groupBy.length; i++){
+                    if (groupBy[i] === 'advertiser' || groupBy[i] === 'publisher'){
+                        h = i-1;
+                        continue;
+                    } else {
+                        headers.push({
+                            index: h,
+                            name: _.capitalize(groupBy[i]),
+                            type: 'attribute',
+                            selected: true
+                        });
+                    }
+                    h += 1;
+                }
+            } else {
+                headers[0] = {
+                    index: 0,
+                    name: _.capitalize(queryType),
+                    type: 'attribute',
+                    selected: true
+                };
+            }
+
         }
         switch (role){
             case 'networkAdmin':
