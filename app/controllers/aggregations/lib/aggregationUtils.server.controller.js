@@ -331,6 +331,57 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
 };
 
 /**
+ * Parses "sort" query parameter, if provided, into pipeline instruction
+ *
+ * Takes queryParam of format "sort=field,asc" or "sort=field,desc" and
+ * Currently sorting on only one field is supported, can pretty easily modify if needed though.
+ * @param req
+ */
+HourlyAggregationPipelineVarBuilder.prototype.getSort = function(req){
+    let sort = false;
+    if (req.query.sort){
+        sort = {};
+        const val = req.query.sort.split(",");
+        // default to ascending order
+        sort[val[0]] = 1;
+        if (val.length > 1){
+            const order = val[1];
+            switch (order){
+                case 'asc':
+                    sort[val[0]] = 1;
+                    break;
+                case 'desc':
+                    sort[val[0]] = -1;
+                    break;
+            }
+        }
+    }
+    return sort;
+};
+
+/**
+ * Gets skip and limit values which are used for pagination of query results.
+ *
+ * Current behavior is to only generate `limit` if pagination is called for, i.e. you cannot pass
+ * `perPage` queryParam and limit results without also specifying a `resultsPage` value.
+ *
+ * @param req
+ */
+HourlyAggregationPipelineVarBuilder.prototype.getSkipAndLimit = function(req){
+    // NOTE: Can't use "page" query param here because it collides w/ 'page' query param filter for Page entity ID.
+    // so have to use 'resultsPage' instead.
+    let skipAndLimit = false;
+    if (req.query.resultsPage){
+        const limit = req.query.perPage || 50;
+        skipAndLimit = {
+            skip: (req.query.resultsPage - 1) * limit,
+            limit: limit
+        };
+    }
+    return skipAndLimit;
+};
+
+/**
  * Object to subclass per aggregation model to provide getMany wrappers that
  * handle aggregation API requests.
  *
@@ -484,58 +535,87 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
  * pieces (parsing `group` & `match` pipeline objects, executing aggregation query & populating results).
  */
 AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregationModel){
-    var self = this;
+    const self = this;
     return function (req, res) {
         if (!req.query.startDate &&
             !req.query.endDate &&
             req.query.dateRangeShortCode) {
-            var analyticsQuery = new Query(req.query);
-            var dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
+            const analyticsQuery = new Query(req.query);
+            const dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
             req.query.startDate = dateRange.startDate;
             req.query.endDate = dateRange.endDate;
         }
-
-        var group;
+        // first build grouping
+        let group;
         try {
             group = pipelineBuilder.getGroup(req);
         } catch (e) {
-            console.log("error in group: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        var match;
+
+        // now build match step
+        let match;
         try {
             match = pipelineBuilder.getMatch(req);
         } catch (e) {
-            console.log("error in match: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        // toggle demo or non-demo aggregation model, depending on
-        // request query param sent in
-        // var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
-        var query = aggregationModel
-            .aggregate([
-                { $match: match },
-                //{ $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
-                {
-                    $group: {
-                        _id: group,
-                        bids: {$sum: "$bids"},
-                        imps: {$sum: "$imps"},
-                        defaults: {$sum: "$defaults"},
-                        clearprice: {$avg: "$clearprice"},
-                        spend: {$sum: "$spend"},
-                        clicks: {$sum: "$clicks"},
-                        view_convs: {$sum: "$view_convs"},
-                        click_convs: {$sum: "$click_convs"}
-                    }
-                }
-            ]);
 
-        query.exec(function(err, adStats){
+        // build sort, which may or may not be populated
+        let sort;
+        try {
+            sort = pipelineBuilder.getSort(req);
+        } catch (e){
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+
+        // build pagination params
+        let skipAndLimit;
+        try {
+            skipAndLimit = pipelineBuilder.getSkipAndLimit(req);
+        } catch (e) {
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+
+        // construct pipelines w/ values provided by pipelineBuilder steps
+        const pipelines = [
+            { $match: match },
+            {
+                $group: {
+                    _id: group,
+                    bids: {$sum: "$bids"},
+                    imps: {$sum: "$imps"},
+                    defaults: {$sum: "$defaults"},
+                    clearprice: {$avg: "$clearprice"},
+                    spend: {$sum: "$spend"},
+                    clicks: {$sum: "$clicks"},
+                    view_convs: {$sum: "$view_convs"},
+                    click_convs: {$sum: "$click_convs"}
+                }
+            }
+        ];
+
+        // add sort, skip & limit to pipelines, if requested in queryParams
+        if (sort) pipelines.push({$sort: sort});
+        if (skipAndLimit) {
+            pipelines.push({
+                $skip: skipAndLimit.skip
+            });
+            pipelines.push({
+                $limit: skipAndLimit.limit
+            });
+        }
+
+        // Now execute the query w/ all pipelines built
+        aggregationModel.aggregate(pipelines).exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);
                 return res.status(400).send({
