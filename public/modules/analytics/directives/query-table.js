@@ -51,7 +51,7 @@ angular.module('analytics').directive('queryTable', [
 					} 
 
 					// Decide default table headers and format/calculate values for each row
-					scope.headers = Analytics.getDefaultDataHeaders(
+					scope.headers = scope.headers || Analytics.getDefaultDataHeaders(
 						scope.queryParam.type,
 						scope.queryParam.dateGroupBy,
 						$rootScope.role
@@ -204,16 +204,16 @@ angular.module('analytics').directive('queryTable', [
 								header.selected = !header.selected;
 							};
 							$scope.updateDataHeaders = function() {
+                                var selectedDataHeaders = [];
+                                // update related query with updated table data headers
+                                parentScope.queryParam.dataHeaders = selectedDataHeaders;
+                                $scope.headers.forEach(function(header) {
+                                    if (header.selected === true) {
+                                        selectedDataHeaders.push(header.name);
+                                    }
+                                });
 								if (parentScope.queryParam._id) {
 									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
-									var selectedDataHeaders = [];
-									$scope.headers.forEach(function(header) {
-										if (header.selected === true) {
-											selectedDataHeaders.push(header.name);
-										}
-									});
-									// update related query with updated table data headers
-									parentScope.queryParam.dataHeaders = selectedDataHeaders;
 									new Query(parentScope.queryParam).$update();
 								}
 								$scope.closeThisDialog(0);	
