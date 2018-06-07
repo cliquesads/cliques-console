@@ -43,12 +43,12 @@ const formatQueryResults = function(rows, reqQuery) {
     rows.forEach((row) => {
         // Parse out row attribute fields
         // special case for Time query
-        if (reqQuery.queryType === 'time') {
-            row[reqQuery.queryType] = `${row._id.date.month}/${row._id.date.day}/${row._id.date.year}`;
+        if (reqQuery.type === 'time') {
+            row[reqQuery.type] = `${row._id.date.month}/${row._id.date.day}/${row._id.date.year}`;
             if (reqQuery.dateGroupBy === 'hour') {
-                row.Hour = `${row[reqQuery.queryType]} ${row._id.date.hour}:00`;
+                row.Hour = `${row[reqQuery.type]} ${row._id.date.hour}:00`;
             } else if (reqQuery.dateGroupBy === 'day') {
-                row.Day = row[reqQuery.queryType];
+                row.Day = row[reqQuery.type];
             } else {
                 // date group by month
                 row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
