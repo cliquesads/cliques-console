@@ -400,9 +400,18 @@ angular.module('analytics').directive('reportSettings', [
                     }
                 };
 
+                // Watcher for endDate that adds 1 day to endDate so results are inclusive of end date.
+                scope.$watch('selectedSettings.endDate', function(newVal, oldVal){
+                    if (newVal !== oldVal && typeof newVal=== 'object'){
+                        newVal.setDate(newVal.getDate() + 1);
+                    }
+                });
+
                 scope.getCustomHumanizedDateRange = function() {
-                    var momentStartDate = moment.tz(scope.selectedSettings.startDate, user.tz).format();
-                    var momentEndDate = moment.tz(scope.selectedSettings.endDate, user.tz).format();
+                    // var format = 'MMMM Do YYYY hh:mm a z';
+                    var format = 'LLL';
+                    var momentStartDate = moment.tz(scope.selectedSettings.startDate, user.tz).format(format);
+                    var momentEndDate = moment.tz(scope.selectedSettings.endDate, user.tz).endOf('day').format(format);
                     if (scope.selectedSettings.startDate && scope.selectedSettings.endDate) {
                         scope.selectedSettings.humanizedDateRange = momentStartDate + ' - ' + momentEndDate;
                     }
