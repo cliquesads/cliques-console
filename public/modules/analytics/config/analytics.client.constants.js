@@ -130,8 +130,8 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,campaign,creative',
-                    populate: 'advertiser,campaign,creative'
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -315,8 +315,8 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,campaign,creative',
-                    populate: 'advertiser,campaign,creative'
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -522,8 +522,8 @@ angular.module('analytics')
                     type: 'creative',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'advertiser,campaign,creative',
-                    populate: 'advertiser,campaign,creative'
+                    groupBy: 'advertiser,creative',
+                    populate: 'advertiser,creative'
                 },
                 availableSettings: {
                     timePeriod: true,
