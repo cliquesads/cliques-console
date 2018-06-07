@@ -606,11 +606,23 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
         // add sort, skip & limit to pipelines, if requested in queryParams
         if (sort) pipelines.push({$sort: sort});
         if (skipAndLimit) {
+            // This completely-absurd-but-effective way to count total results and
+            // generate paginated results in a single query brought to you by this StackOverflow answer:
+            // https://stackoverflow.com/questions/20348093/mongodb-aggregation-how-to-get-total-records-count
             pipelines.push({
-                $skip: skipAndLimit.skip
+                '$group': {
+                    '_id': null,
+                    'total': {'$sum': 1},
+                    'results': {'$push': '$$ROOT'}
+                }
             });
             pipelines.push({
-                $limit: skipAndLimit.limit
+                '$project': {
+                    'total' : 1,
+                    'results' : {
+                        '$slice': ['$results', skipAndLimit.skip, skipAndLimit.limit ]
+                    }
+                }
             });
         }
 
@@ -622,20 +634,44 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
+                let returnObj;
+                let results;
+                // first generate paginated results object if pagination was called for
+                if (skipAndLimit){
+                    adStats = adStats[0];
+                    returnObj = {
+                        current: Number(req.query.resultsPage),
+                        pages: Math.ceil(adStats.total / skipAndLimit.limit),
+                        count: skipAndLimit.limit,
+                        results: adStats.results
+                    };
+                    results = adStats.results;
+                } else {
+                    returnObj = adStats;
+                    results = adStats;
+                }
+
+                const formatResultsAndRespond = (results) => {
+                    if (skipAndLimit){
+                        returnObj.results = formatQueryResults(results, req.query);
+                    } else {
+                        returnObj = results;
+                    }
+                    res.json(returnObj);
+                };
+
                 //catch populate query param here and call model populate
                 // NOTE: Can only pass populate for object in 'group' object
                 // otherwise this will throw out the populate param
                 if (req.query.populate){
-                    self._populate(req.query.populate, adStats, group, function(err, results){
+                    self._populate(req.query.populate, results, group, function(err, results){
                         if (err) {
                             return res.status(400).send({ message: err });
                         }
-                        results = formatQueryResults(results, req.query);
-                        res.json(results);
+                        formatResultsAndRespond(results);
                     });
                 } else {
-                    adStats = formatQueryResults(adStats, req.query);
-                    res.json(adStats);
+                    formatResultsAndRespond(results);
                 }
             }
         });
