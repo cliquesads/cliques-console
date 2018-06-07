@@ -61,7 +61,7 @@ const formatQueryResults = function(rows, reqQuery) {
                 let val = row._id[header];
                 switch (header) {
                     case 'city':
-                    case'keywords':
+                    case'keyword':
                         // city doesn't get populated, so _id.city == city name
                         break;
                     case 'region':

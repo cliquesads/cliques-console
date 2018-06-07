@@ -172,7 +172,7 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
@@ -357,7 +357,7 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
@@ -541,7 +541,7 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Dats',
                     groupBy: 'keywords',

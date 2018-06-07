@@ -40,7 +40,7 @@ angular.module('analytics').directive('queryTable', [
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
 					scope.tableQueryResults = args.results;
 
-					if (scope.queryParam.type === 'keywords') {
+					if (scope.queryParam.type === 'keyword') {
 						// For keywords query, show keywords as string separated by comma instead of array
 						for (var i = 0; i < scope.tableQueryResults.length; i ++) {
 							if (scope.tableQueryResults[i].Keywords && 
