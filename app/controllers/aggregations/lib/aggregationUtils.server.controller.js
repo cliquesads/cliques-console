@@ -656,8 +656,9 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                 }
 
                 const formatResultsAndRespond = (results) => {
+                    results = formatQueryResults(results, req.query);
                     if (skipAndLimit){
-                        returnObj.results = formatQueryResults(results, req.query);
+                        returnObj.results = results;
                     } else {
                         returnObj = results;
                     }
