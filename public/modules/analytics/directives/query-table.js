@@ -35,6 +35,8 @@ angular.module('analytics').directive('queryTable', [
                     end: 0
                 };
 
+                scope.globalSort = $rootScope.globalSort;
+
 				scope.$on('queryStarted', function(event, args) {
 					scope.isLoading = true;
 				});

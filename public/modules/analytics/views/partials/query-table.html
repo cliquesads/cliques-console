@@ -71,6 +71,10 @@
 				        		ng-repeat="header in headers" style="max-width: 400px"
 				        		ng-if="header.type === 'attribute' || header.selected === true">
 				        		{{ header.name }}
+								<a href="#" ng-show="globalSort.column" tooltip="All results pages sorted globally by {{ header.name }} ({{ globalSort.order | capitalize }}.) To change global sorting, use the 'Sort By' field in the Query Settings panel above.">
+									<i ng-if="globalSort.column === header.name && globalSort.order === 'asc'" class="fa fa-sort-amount-asc"></i>
+									<i ng-if="globalSort.column === header.name && globalSort.order === 'desc'" class="fa fa-sort-amount-desc"></i>
+								</a>
 				        		<span class="pull-right">
 				        			<i class="fa"
 				        				ng-class="{

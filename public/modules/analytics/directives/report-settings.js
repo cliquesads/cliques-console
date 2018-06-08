@@ -454,6 +454,31 @@ angular.module('analytics').directive('reportSettings', [
                     });
                 });
                 scope.sortOptions = sortOptions;
+
+                $rootScope.globalSort = {};
+                scope.$watch('selectedSettings.sort', function(newVal, oldVal){
+                    var headerMap = {
+                        "imps": "Impressions",
+                        "clicks": "Clicks",
+                        "bids": "Bids",
+                        "clearprice": "Avg. Clear Price",
+                        "spend": "Revenue",
+                        "defaults": "Defaults",
+                        "view_convs": "View-Through Actions",
+                        "click_convs": "Click-Through Actions"
+                    };
+                    if (newVal){
+                        var sortArr = newVal.split(",");
+                        if (sortArr.length > 1){
+                            $rootScope.globalSort.order = sortArr[1];
+                        } else {
+                            $rootScope.globalSort.order = 'asc';
+                        }
+                        if (headerMap.hasOwnProperty(sortArr[0])){
+                            $rootScope.globalSort.column = headerMap[sortArr[0]];
+                        }
+                    }
+                });
             }
         };
     }
