@@ -61,8 +61,12 @@ const formatQueryResults = function(rows, reqQuery) {
                 let val = row._id[header];
                 switch (header) {
                     case 'city':
-                    case'keyword':
-                        // city doesn't get populated, so _id.city == city name
+                        // city doesn't get populated
+                        val = val || `<No city provided>`;
+                        break;
+                    case 'keywords':
+                        // keywords don't get populated
+                        val = val || `<No keywords provided>`;
                         break;
                     case 'region':
                         val = val ? val.name : "<No state provided>";
@@ -78,7 +82,7 @@ const formatQueryResults = function(rows, reqQuery) {
                         break;
                     default:
                         // otherwise, get name of populated object
-                        val = val ? val.name : `<No ${queryTypeHeader} Provided>`;
+                        val = val ? val.name : `<No ${queryTypeHeader} provided>`;
                 }
                 if (!queryTypeHeader) {
                     queryTypeHeader = _.capitalize(header);
@@ -372,7 +376,7 @@ HourlyAggregationPipelineVarBuilder.prototype.getSkipAndLimit = function(req){
     // so have to use 'resultsPage' instead.
     let skipAndLimit = false;
     if (req.query.resultsPage){
-        const limit = req.query.perPage || 50;
+        const limit = req.query.perPage ? Number(req.query.perPage) : 50;
         skipAndLimit = {
             skip: (req.query.resultsPage - 1) * limit,
             limit: limit
@@ -642,7 +646,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     returnObj = {
                         current: Number(req.query.resultsPage),
                         pages: Math.ceil(adStats.total / skipAndLimit.limit),
-                        count: skipAndLimit.limit,
+                        count: adStats.total,
                         results: adStats.results
                     };
                     results = adStats.results;
