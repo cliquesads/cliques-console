@@ -16,8 +16,8 @@ angular.module('analytics').factory('Query', ['$resource',
 
 // Export csv transforms object/array to csv data blob
 angular.module('analytics').factory('Analytics', [
-    '$http', 'HourlyAdStat', 'GeoAdStat', 'KeywordAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS',
-    function($http, HourlyAdStat, GeoAdStat, KeywordAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS) {
+    '$http', 'HourlyAdStat', 'GeoAdStat', 'KeywordAdStat', '$filter', 'TABLE_HEADERS', 'CRONTAB_DAY_OPTIONS','QUICKQUERIES',
+    function($http, HourlyAdStat, GeoAdStat, KeywordAdStat, $filter, TABLE_HEADERS, CRONTAB_DAY_OPTIONS, QUICKQUERIES) {
 
 	var getCSVFileName = function(queryName) {
         var asOfDate = moment().tz('America/New_York').startOf('day').subtract(1, 'days').toISOString();
@@ -90,7 +90,7 @@ angular.module('analytics').factory('Analytics', [
     var queryFunction = function(queryType, role) {
         var collection;
         var queryFunction;
-        if (queryType === 'keywords') {
+        if (queryType === 'keyword') {
             collection = KeywordAdStat;
         } else if (queryType === 'city' || queryType === 'state' || queryType === 'country') {
             collection = GeoAdStat;
@@ -110,6 +110,24 @@ angular.module('analytics').factory('Analytics', [
         }
         return queryFunction;
     };
+
+    /**
+     * Gets headers for a given query, including attribute headers & data headers.
+     *
+     * The resulting headers array is used to generate the query table. Query data rows
+     * are assumed to have each header key as own properties.
+     *
+     * For most queries, the attribute headers are assumed to be the fields set in each
+     * query's `defaultQueryParam.groupBy` param, so this string will be split on commas,
+     * capitalized and added as the first N headers in array.
+     *
+     * The rest of the headers are data headers, and these are stored in TABLE_HEADERS constant.
+     *
+     * @param queryType key in QUICKQUERIES[role] for query type
+     * @param dateGroupBy
+     * @param role either 'advertiser', 'publisher' or 'networkAdmin'
+     * @returns {Array}
+     */
     var getDefaultDataHeaders = function(queryType, dateGroupBy, role) {
         var headers = [];
         if (queryType === 'time'){
@@ -120,13 +138,40 @@ angular.module('analytics').factory('Analytics', [
                 selected: true
             }];
         } else {
-            headers = [{
-                index: 0,
-                name: _.capitalize(queryType),
-                type: 'attribute',
-                selected: true
-            }];
+            // get headers from query settings `groupBy` attribute
+            // if 'advertiser' or 'publisher' are in the 'groupBy' string they're ignored,
+            // as these fields are represented by logos in the queryTable and have a separate
+            // template block specifically for logo column.
+            var groupBy = QUICKQUERIES[role][queryType].defaultQueryParam.groupBy.split(',');
+            if (queryType !== 'state'){
+                var h = 0;
+                for (var i = 0; i < groupBy.length; i++){
+                    if (groupBy[i] === 'advertiser' || groupBy[i] === 'publisher'){
+                        h = i-1;
+                        continue;
+                    } else {
+                        headers.push({
+                            index: h,
+                            name: _.capitalize(groupBy[i]),
+                            type: 'attribute',
+                            selected: true
+                        });
+                    }
+                    h += 1;
+                }
+            } else {
+                // state query groupBy is "region" (state is just the display name for
+                // cosmetic purposes), so have to handle as a separate case.
+                // "State" field is added to result rows server-side (identical vals to "region").
+                headers[0] = {
+                    index: 0,
+                    name: _.capitalize(queryType),
+                    type: 'attribute',
+                    selected: true
+                };
+            }
         }
+
         switch (role){
             case 'networkAdmin':
                 headers = headers.concat(angular.copy(TABLE_HEADERS.networkAdmin));

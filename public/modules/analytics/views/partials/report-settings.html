@@ -71,7 +71,7 @@
 					<!-- Time unit selection -->
 					<div class="form-horizontal col-sm-6" ng-if="availableSettings.dateGroupBy">
 						<div class="form-group">
-							<label for="timeUnitSelection"
+							<label
 								class="col-sm-3 text-md mt-sm">
 								Group By
 							</label>
@@ -301,6 +301,42 @@
 									placeholder="Enter filter keywords separated by commas">
 							</div>
 						</div>	
+					</div>
+
+					<!-- Pagination options -->
+					<div class="form-horizontal col-sm-6"
+						 ng-if="availableSettings.pagination">
+						<div class="form-group">
+							<label for="perPage"
+								   class="col-sm-3 text-md mt-sm">
+								Results / Page
+							</label>
+							<div class="col-sm-2">
+								<select
+										name="perPage"
+										id="perPage"
+										class="form-control chosen-select"
+										data-ng-model="selectedSettings.perPage"
+										ng-options="selectedItem as selectedItem for selectedItem in perPageOptions">
+								</select>
+							</div>
+							<label for="perPage"
+								   class="col-sm-2 text-md mt-sm">
+								Sort By
+							</label>
+							<div class="col-sm-5">
+								<select
+										name="sortBy"
+										id="sortBy"
+										class="form-control chosen-select"
+										data-ng-model="selectedSettings.sort"
+										ng-options="sort.id as sort.name for sort in sortOptions">
+									<option value="" selected>
+										-- None --
+									</option>
+								</select>
+							</div>
+						</div>
 					</div>
 
 				</div>
