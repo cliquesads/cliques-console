@@ -631,7 +631,9 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
         }
 
         // Now execute the query w/ all pipelines built
-        aggregationModel.aggregate(pipelines).exec(function(err, adStats){
+        const aggregation = aggregationModel.aggregate(pipelines);
+        aggregation.options = { allowDiskUse: true };
+        aggregation.exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);
                 return res.status(400).send({
