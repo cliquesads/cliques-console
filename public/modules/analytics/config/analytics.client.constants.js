@@ -176,6 +176,9 @@ angular.module('analytics')
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 50,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -361,6 +364,9 @@ angular.module('analytics')
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 50,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -543,8 +549,11 @@ angular.module('analytics')
                     name: 'Keywords',
                     type: 'keyword',
                     dateRangeShortCode: '7d',
-                    humanizedDateRange: 'Last 7 Dats',
+                    humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 50,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: false,

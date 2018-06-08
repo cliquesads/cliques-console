@@ -205,10 +205,15 @@ angular.module('analytics').directive('reportSettings', [
                         scope.selectedSettings._id = response.id;
                         scope.selectedDateRange = response.dateRange;
 
+                        var isPaginated = scope.selectedSettings.resultsPage;
+
                         $rootScope.$broadcast('queryEnded', {
                             queryParam: scope.selectedSettings,
                             dateRange: scope.selectedDateRange,
-                            results: queryResults,
+                            results: isPaginated ? queryResults.results : queryResults,
+                            count: isPaginated ? queryResults.count : null,
+                            pages: isPaginated ? queryResults.pages : null,
+
                             // for geo query only
                             country: scope.geo.countryObject,
                             region: scope.geo.regionObject
@@ -219,6 +224,15 @@ angular.module('analytics').directive('reportSettings', [
                         $rootScope.$broadcast('queryError');
                     });
                 };
+
+                /**
+                 * Listener to refresh query if event is broadcast, taking queryParam changes
+                 * as args.
+                 */
+                scope.$on('refreshQuery', function(event, args){
+                    _.extend(scope.selectedSettings, args);
+                    scope.launchQuery();
+                });
 
                 scope.dateGroupByChanged = function(dateGroupBy) {
                     scope.selectedSettings.dateGroupBy = dateGroupBy;

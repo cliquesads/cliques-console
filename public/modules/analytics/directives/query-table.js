@@ -28,6 +28,13 @@ angular.module('analytics').directive('queryTable', [
 			    scope.user = user;
 			    scope.isLoading = true;
 
+                scope.pagination = {
+                    count: null,
+                    pages: null,
+                    start: 0,
+                    end: 0
+                };
+
 				scope.$on('queryStarted', function(event, args) {
 					scope.isLoading = true;
 				});
@@ -39,6 +46,14 @@ angular.module('analytics').directive('queryTable', [
 					scope.queryParam = args.queryParam;
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
 					scope.tableQueryResults = args.results;
+
+					if (scope.queryParam.resultsPage){
+                        scope.pagination.count = args.count;
+                        scope.pagination.pages = args.pages;
+                        scope.pagination.start = args.count ? scope.queryParam.perPage * (scope.queryParam.resultsPage - 1) + 1 : 0;
+                        scope.pagination.end = args.count ? scope.pagination.start + args.results.length - 1 : 0;
+					}
+
 
 					if (scope.queryParam.type === 'keyword') {
 						// For keywords query, show keywords as string separated by comma instead of array
@@ -191,6 +206,7 @@ angular.module('analytics').directive('queryTable', [
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });
 				};
+
 				/**
 				 * Allows user to select additional table fields
 				 */
@@ -216,9 +232,19 @@ angular.module('analytics').directive('queryTable', [
 									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
 									new Query(parentScope.queryParam).$update();
 								}
-								$scope.closeThisDialog(0);	
+								$scope.closeThisDialog(0);
 							};
 						}]
+					});
+				};
+
+                /**
+				 * Broadcasts event to load new page of query results, passing
+				 * desired queryParam changes.
+                 */
+				scope.loadNewPage = function(page){
+					$rootScope.$broadcast("refreshQuery", {
+						resultsPage: page
 					});
 				};
 			}

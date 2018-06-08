@@ -96,15 +96,30 @@
 					    </tr>
 				    </tbody>
 				</table>
-				<hr class="mt0">
-				<div class="text-muted">
-					<i>Showing {{ tableQueryResults.length }} entries</i>
-				</div>
 			</div>
 			<!-- Spin Loader -->
 			<div class="panel-body pt0"
-				ng-if="isLoading">
-				<spin-loader></spin-loader>	
+				 ng-if="isLoading">
+				<spin-loader></spin-loader>
+			</div>
+			<div class="panel-footer">
+				<div class="row ml-sm mr-sm">
+					<div class="pull-left text-md mt">
+						Showing results
+						<strong>{{ pagination.start }} - {{ pagination.end }}</strong>
+						of <strong>{{ pagination.count }}</strong>
+					</div>
+					<div class="pull-right"
+						 paging
+						 page="queryParam.resultsPage"
+						 page-size="queryParam.perPage"
+						 total="pagination.count"
+						 paging-action="loadNewPage(page)"
+						 show-prev-next="true"
+						 show-first-last="true"
+						 scroll-top="true"
+					></div>
+				</div>
 			</div>
 		</div>
 	</div>
