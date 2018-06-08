@@ -430,6 +430,30 @@ angular.module('analytics').directive('reportSettings', [
                         scope.selectedSettings.humanizedDateRange = momentStartDate + ' - ' + momentEndDate;
                     }
                 };
+
+                scope.perPageOptions = [ 5, 10, 25, 50, 100 ];
+                var sortFields = [
+                    { id:"imps", alias: "Impressions" },
+                    { id:"bids", alias: "Bids" },
+                    { id:"defaults", alias: "Defaults" },
+                    { id:"clicks", alias: "Clicks" },
+                    { id:"clearprice", alias: "Avg. Clear Price" },
+                    { id:"spend", alias: "Spend" },
+                    { id:"view_convs", alias: "View-Through Actions" },
+                    { id:"click_convs", alias: "Click-Through Actions" }
+                ];
+                var sortOptions = [];
+                sortFields.forEach(function(field){
+                    sortOptions.push({
+                        name: field.alias + " (Asc.)",
+                        id: field.id + ",asc"
+                    });
+                    sortOptions.push({
+                        name: field.alias + " (Desc.)",
+                        id: field.id + ",desc"
+                    });
+                });
+                scope.sortOptions = sortOptions;
             }
         };
     }

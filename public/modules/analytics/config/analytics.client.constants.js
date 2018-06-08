@@ -72,7 +72,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             site: {
@@ -94,7 +95,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false,
                 }
             },
             campaign: {
@@ -116,7 +118,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -139,7 +142,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -162,7 +166,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -177,7 +182,7 @@ angular.module('analytics')
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
                     resultsPage: 1,
-                    perPage: 50,
+                    perPage: 25,
                     sort: "imps,desc"
                 },
                 availableSettings: {
@@ -188,7 +193,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true,
                 }
             },
             city: {
@@ -201,7 +207,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -212,7 +221,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -236,7 +246,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -259,7 +270,8 @@ angular.module('analytics')
                     siteFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         },
@@ -282,7 +294,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             site: {
@@ -304,7 +317,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -327,7 +341,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -350,7 +365,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -365,7 +381,7 @@ angular.module('analytics')
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
                     resultsPage: 1,
-                    perPage: 50,
+                    perPage: 25,
                     sort: "imps,desc"
                 },
                 availableSettings: {
@@ -376,7 +392,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true
                 }
             },
             city: {
@@ -389,7 +406,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -400,7 +420,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -424,7 +445,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -447,7 +469,8 @@ angular.module('analytics')
                     siteFilter: false,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         },
@@ -470,7 +493,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             campaign: {
@@ -492,7 +516,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -514,7 +539,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -537,7 +563,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -552,7 +579,7 @@ angular.module('analytics')
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
                     resultsPage: 1,
-                    perPage: 50,
+                    perPage: 25,
                     sort: "imps,desc"
                 },
                 availableSettings: {
@@ -563,7 +590,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true
                 }
             },
             city: {
@@ -576,7 +604,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -587,7 +618,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -611,7 +643,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -634,7 +667,8 @@ angular.module('analytics')
                     siteFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         }
