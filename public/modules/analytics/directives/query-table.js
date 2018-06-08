@@ -28,6 +28,15 @@ angular.module('analytics').directive('queryTable', [
 			    scope.user = user;
 			    scope.isLoading = true;
 
+                scope.pagination = {
+                    count: null,
+                    pages: null,
+                    start: 0,
+                    end: 0
+                };
+
+                scope.globalSort = $rootScope.globalSort;
+
 				scope.$on('queryStarted', function(event, args) {
 					scope.isLoading = true;
 				});
@@ -40,7 +49,15 @@ angular.module('analytics').directive('queryTable', [
 					scope.humanizedDateRange = scope.queryParam.humanizedDateRange;
 					scope.tableQueryResults = args.results;
 
-					if (scope.queryParam.type === 'keywords') {
+					if (scope.queryParam.resultsPage){
+                        scope.pagination.count = args.count;
+                        scope.pagination.pages = args.pages;
+                        scope.pagination.start = args.count ? scope.queryParam.perPage * (scope.queryParam.resultsPage - 1) + 1 : 0;
+                        scope.pagination.end = args.count ? scope.pagination.start + args.results.length - 1 : 0;
+					}
+
+
+					if (scope.queryParam.type === 'keyword') {
 						// For keywords query, show keywords as string separated by comma instead of array
 						for (var i = 0; i < scope.tableQueryResults.length; i ++) {
 							if (scope.tableQueryResults[i].Keywords && 
@@ -51,7 +68,7 @@ angular.module('analytics').directive('queryTable', [
 					} 
 
 					// Decide default table headers and format/calculate values for each row
-					scope.headers = Analytics.getDefaultDataHeaders(
+					scope.headers = scope.headers || Analytics.getDefaultDataHeaders(
 						scope.queryParam.type,
 						scope.queryParam.dateGroupBy,
 						$rootScope.role
@@ -96,11 +113,11 @@ angular.module('analytics').directive('queryTable', [
 							// Remove format characters and convert string to number so as to compare
 							aValue = aValue.replace('$', '');
 							aValue = aValue.replace('%', '');
-							aValue = aValue.replace(',', '');
+							aValue = aValue.replace(/,/g, '');
 
 							bValue = bValue.replace('$', '');
 							bValue = bValue.replace('%', '');
-							bValue = bValue.replace(',', '');
+							bValue = bValue.replace(/,/g, '');
 
 							// don't coerce to number if string can't be,
 							// will just sort alphabetically if still strings
@@ -191,6 +208,7 @@ angular.module('analytics').directive('queryTable', [
 				        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 				    });
 				};
+
 				/**
 				 * Allows user to select additional table fields
 				 */
@@ -204,21 +222,31 @@ angular.module('analytics').directive('queryTable', [
 								header.selected = !header.selected;
 							};
 							$scope.updateDataHeaders = function() {
+                                var selectedDataHeaders = [];
+                                // update related query with updated table data headers
+                                parentScope.queryParam.dataHeaders = selectedDataHeaders;
+                                $scope.headers.forEach(function(header) {
+                                    if (header.selected === true) {
+                                        selectedDataHeaders.push(header.name);
+                                    }
+                                });
 								if (parentScope.queryParam._id) {
 									// If this query is already saved in database, since now user changed desired table headers to display, this selected additional table headers should also be saved with this query
-									var selectedDataHeaders = [];
-									$scope.headers.forEach(function(header) {
-										if (header.selected === true) {
-											selectedDataHeaders.push(header.name);
-										}
-									});
-									// update related query with updated table data headers
-									parentScope.queryParam.dataHeaders = selectedDataHeaders;
 									new Query(parentScope.queryParam).$update();
 								}
-								$scope.closeThisDialog(0);	
+								$scope.closeThisDialog(0);
 							};
 						}]
+					});
+				};
+
+                /**
+				 * Broadcasts event to load new page of query results, passing
+				 * desired queryParam changes.
+                 */
+				scope.loadNewPage = function(page){
+					$rootScope.$broadcast("refreshQuery", {
+						resultsPage: page
 					});
 				};
 			}

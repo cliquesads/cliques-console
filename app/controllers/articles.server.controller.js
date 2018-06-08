@@ -42,11 +42,11 @@ module.exports = (db) => {
             // TODO: Needs them passed as strings b/c it performs regex on them. So either need to patch apiQuery
             // TODO: or get rid of this functionality altogether.
             // this defaults to 10, kind of infuriating
-            if (req.query.per_page){
+            if (req.query.perPage){
                 try {
-                    req.query.per_page = Number(req.query.per_page);
+                    req.query.perPage = Number(req.query.perPage);
                 } catch(e) {
-                    req.query.per_page = null;
+                    req.query.perPage = null;
                 }
             }
             const params = Article.apiQueryParams(req.query);
@@ -59,7 +59,7 @@ module.exports = (db) => {
                     } else {
                         res.json({
                             current: req.query.page ? Number(req.query.page) : null,
-                            pages: req.query.per_page ? Math.ceil(count / req.query.per_page) : null,
+                            pages: req.query.perPage ? Math.ceil(count / req.query.perPage) : null,
                             count: count,
                             results: articles
                         });

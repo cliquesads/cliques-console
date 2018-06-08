@@ -18,7 +18,7 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 
 		$scope.authentication = Authentication;
         // Set mins & maxes
-        $scope.min_base_bid = 1;
+        $scope.min_base_bid = 0.01;
         $scope.max_base_bid = 20;
 
         $scope.saveCampaignFrequency = function() {

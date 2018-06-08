@@ -31,49 +31,64 @@ var filterNumber = function(number, prefix, suffix, lengthOfDecimal, lengthOfSec
     return prefix + number.toFixed(Math.max(0, ~~lengthOfDecimal)).replace(new RegExp(re, 'g'), '$&,') + suffix;
 };
 
-var formatQueryResults = function(rows, queryType, dateGroupBy) {
-    var monthNames = ["January", "February", "March", "April", "May", "June",
+const formatQueryResults = function(rows, reqQuery) {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
-    rows.forEach(function(row) {
-        // get row title
-        if (queryType === 'time') {
-            row[queryType] = row._id.date.month + "/" + row._id.date.day + "/" + row._id.date.year;
-            if (dateGroupBy === 'hour') {
-                row.Hour = row[queryType] + ' ' + row._id.date.hour + ':00';
-            } else if (dateGroupBy === 'day') {
-                row.Day = row[queryType];
+    // attribute fields will be whatever is passed to groupBy field
+    // TODO: Assumes all groupBy fields will be passed as "populate" as well
+    const attributeFields = reqQuery.groupBy ? reqQuery.groupBy.split(",") : [];
+
+    rows.forEach((row) => {
+        // Parse out row attribute fields
+        // special case for Time query
+        if (reqQuery.type === 'time') {
+            row[reqQuery.type] = `${row._id.date.month}/${row._id.date.day}/${row._id.date.year}`;
+            if (reqQuery.dateGroupBy === 'hour') {
+                row.Hour = `${row[reqQuery.type]} ${row._id.date.hour}:00`;
+            } else if (reqQuery.dateGroupBy === 'day') {
+                row.Day = row[reqQuery.type];
             } else {
                 // date group by month
                 row.Month = monthNames[row._id.date.month - 1] + ' ' + row._id.date.year;
             }
         } else {
-            var queryTypeHeader = _.capitalize(queryType);
-            var val = row._id[queryType];
-            if (val){
-                // city doesn't get populated, so _id.city == city name
-                if (queryType !== 'city' && queryType !== 'keywords'){
-                    // otherwise, get name of populated object
-                    val = row._id[queryType].name;
+            // Otherwise, get formatted values for each attribute header and store
+            // under capitalized key name (except for state, where "region" => "State")
+            for (let header of attributeFields){
+                let queryTypeHeader = false;
+                let val = row._id[header];
+                switch (header) {
+                    case 'city':
+                        // city doesn't get populated
+                        val = val || `<No city provided>`;
+                        break;
+                    case 'keywords':
+                        // keywords don't get populated
+                        val = val || `<No keywords provided>`;
+                        break;
+                    case 'region':
+                        val = val ? val.name : "<No state provided>";
+                        queryTypeHeader = 'State';
+                        break;
+                    case 'advertiser':
+                        row.logo = val;
+                        row._logo_type = 'Advertiser';
+                        break;
+                    case 'publisher':
+                        row.logo = val;
+                        row._logo_type = 'Publisher';
+                        break;
+                    default:
+                        // otherwise, get name of populated object
+                        val = val ? val.name : `<No ${queryTypeHeader} provided>`;
                 }
-            } else {
-                // fill blank values
-                val = "<No " + queryTypeHeader + " Provided>";
+                if (!queryTypeHeader) {
+                    queryTypeHeader = _.capitalize(header);
+                }
+                row[queryTypeHeader] = val;
             }
-            if (queryType === 'state' && row._id.region) {
-                val = row._id.region.name;
-            }
-            row[queryTypeHeader] = val;
-        }
-
-        // get row logo
-        if (queryType === 'campaign' || queryType === 'creative') {
-            row.logo = row._id.advertiser;
-            row._logo_type = 'Advertiser';
-        } else if (queryType === 'site' || queryType ==='placement') {
-            row.logo = row._id.publisher;
-            row._logo_type = 'Publisher';
         }
 
         row.Impressions = filterNumber(row.imps, '', '', 0);
@@ -320,6 +335,57 @@ HourlyAggregationPipelineVarBuilder.prototype.getGroup = function(req){
 };
 
 /**
+ * Parses "sort" query parameter, if provided, into pipeline instruction
+ *
+ * Takes queryParam of format "sort=field,asc" or "sort=field,desc" and
+ * Currently sorting on only one field is supported, can pretty easily modify if needed though.
+ * @param req
+ */
+HourlyAggregationPipelineVarBuilder.prototype.getSort = function(req){
+    let sort = false;
+    if (req.query.sort){
+        sort = {};
+        const val = req.query.sort.split(",");
+        // default to ascending order
+        sort[val[0]] = 1;
+        if (val.length > 1){
+            const order = val[1];
+            switch (order){
+                case 'asc':
+                    sort[val[0]] = 1;
+                    break;
+                case 'desc':
+                    sort[val[0]] = -1;
+                    break;
+            }
+        }
+    }
+    return sort;
+};
+
+/**
+ * Gets skip and limit values which are used for pagination of query results.
+ *
+ * Current behavior is to only generate `limit` if pagination is called for, i.e. you cannot pass
+ * `perPage` queryParam and limit results without also specifying a `resultsPage` value.
+ *
+ * @param req
+ */
+HourlyAggregationPipelineVarBuilder.prototype.getSkipAndLimit = function(req){
+    // NOTE: Can't use "page" query param here because it collides w/ 'page' query param filter for Page entity ID.
+    // so have to use 'resultsPage' instead.
+    let skipAndLimit = false;
+    if (req.query.resultsPage){
+        const limit = req.query.perPage ? Number(req.query.perPage) : 50;
+        skipAndLimit = {
+            skip: (req.query.resultsPage - 1) * limit,
+            limit: limit
+        };
+    }
+    return skipAndLimit;
+};
+
+/**
  * Object to subclass per aggregation model to provide getMany wrappers that
  * handle aggregation API requests.
  *
@@ -473,78 +539,144 @@ AdStatsAPIHandler.prototype._populate = function(populateQueryString, query_resu
  * pieces (parsing `group` & `match` pipeline objects, executing aggregation query & populating results).
  */
 AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregationModel){
-    var self = this;
+    const self = this;
     return function (req, res) {
         if (!req.query.startDate &&
             !req.query.endDate &&
             req.query.dateRangeShortCode) {
-            var analyticsQuery = new Query(req.query);
-            var dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
+            const analyticsQuery = new Query(req.query);
+            const dateRange = analyticsQuery.getDatetimeRange(req.user.tz);
             req.query.startDate = dateRange.startDate;
             req.query.endDate = dateRange.endDate;
         }
-
-        var group;
+        // first build grouping
+        let group;
         try {
             group = pipelineBuilder.getGroup(req);
         } catch (e) {
-            console.log("error in group: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        var match;
+
+        // now build match step
+        let match;
         try {
             match = pipelineBuilder.getMatch(req);
         } catch (e) {
-            console.log("error in match: " + e);
             return res.status(400).send({
                 message: errorHandler.getAndLogErrorMessage(e)
             });
         }
-        // toggle demo or non-demo aggregation model, depending on
-        // request query param sent in
-        // var model = req.query.demo === 'true' ? self.aggregationModels.DemoHourlyAdStat : self.aggregationModels.HourlyAdStat;
-        var query = aggregationModel
-            .aggregate([
-                { $match: match },
-                //{ $sort: { hour: -1 }}, //I thought this sorts descending but apparently doesn't??
-                {
-                    $group: {
-                        _id: group,
-                        bids: {$sum: "$bids"},
-                        imps: {$sum: "$imps"},
-                        defaults: {$sum: "$defaults"},
-                        clearprice: {$avg: "$clearprice"},
-                        spend: {$sum: "$spend"},
-                        clicks: {$sum: "$clicks"},
-                        view_convs: {$sum: "$view_convs"},
-                        click_convs: {$sum: "$click_convs"}
+
+        // build sort, which may or may not be populated
+        let sort;
+        try {
+            sort = pipelineBuilder.getSort(req);
+        } catch (e){
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+
+        // build pagination params
+        let skipAndLimit;
+        try {
+            skipAndLimit = pipelineBuilder.getSkipAndLimit(req);
+        } catch (e) {
+            return res.status(400).send({
+                message: errorHandler.getAndLogErrorMessage(e)
+            });
+        }
+
+        // construct pipelines w/ values provided by pipelineBuilder steps
+        const pipelines = [
+            { $match: match },
+            {
+                $group: {
+                    _id: group,
+                    bids: {$sum: "$bids"},
+                    imps: {$sum: "$imps"},
+                    defaults: {$sum: "$defaults"},
+                    clearprice: {$avg: "$clearprice"},
+                    spend: {$sum: "$spend"},
+                    clicks: {$sum: "$clicks"},
+                    view_convs: {$sum: "$view_convs"},
+                    click_convs: {$sum: "$click_convs"}
+                }
+            }
+        ];
+
+        // add sort, skip & limit to pipelines, if requested in queryParams
+        if (sort) pipelines.push({$sort: sort});
+        if (skipAndLimit) {
+            // This completely-absurd-but-effective way to count total results and
+            // generate paginated results in a single query brought to you by this StackOverflow answer:
+            // https://stackoverflow.com/questions/20348093/mongodb-aggregation-how-to-get-total-records-count
+            pipelines.push({
+                '$group': {
+                    '_id': null,
+                    'total': {'$sum': 1},
+                    'results': {'$push': '$$ROOT'}
+                }
+            });
+            pipelines.push({
+                '$project': {
+                    'total' : 1,
+                    'results' : {
+                        '$slice': ['$results', skipAndLimit.skip, skipAndLimit.limit ]
                     }
                 }
-            ]);
+            });
+        }
 
-        query.exec(function(err, adStats){
+        // Now execute the query w/ all pipelines built
+        aggregationModel.aggregate(pipelines).exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(err)
                 });
             } else {
+                let returnObj;
+                let results;
+                // first generate paginated results object if pagination was called for
+                if (skipAndLimit){
+                    adStats = adStats[0];
+                    returnObj = {
+                        current: Number(req.query.resultsPage),
+                        pages: Math.ceil(adStats.total / skipAndLimit.limit),
+                        count: adStats.total,
+                        results: adStats.results
+                    };
+                    results = adStats.results;
+                } else {
+                    returnObj = adStats;
+                    results = adStats;
+                }
+
+                const formatResultsAndRespond = (results) => {
+                    results = formatQueryResults(results, req.query);
+                    if (skipAndLimit){
+                        returnObj.results = results;
+                    } else {
+                        returnObj = results;
+                    }
+                    res.json(returnObj);
+                };
+
                 //catch populate query param here and call model populate
                 // NOTE: Can only pass populate for object in 'group' object
                 // otherwise this will throw out the populate param
                 if (req.query.populate){
-                    self._populate(req.query.populate, adStats, group, function(err, results){
+                    self._populate(req.query.populate, results, group, function(err, results){
                         if (err) {
                             return res.status(400).send({ message: err });
                         }
-                        results = formatQueryResults(results, req.query.type, req.query.dateGroupBy);
-                        res.json(results);
+                        formatResultsAndRespond(results);
                     });
                 } else {
-                    adStats = formatQueryResults(adStats, req.query.type, req.query.dateGroupBy);
-                    res.json(adStats);
+                    formatResultsAndRespond(results);
                 }
             }
         });
