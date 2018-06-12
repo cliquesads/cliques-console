@@ -108,21 +108,31 @@
 			</div>
 			<div class="panel-footer">
 				<div class="row ml-sm mr-sm">
-					<div class="pull-left text-md mt">
-						Showing results
-						<strong>{{ pagination.start }} - {{ pagination.end }}</strong>
-						of <strong>{{ pagination.count }}</strong>
+					<div ng-switch="queryParam.resultsPage || '_undefined_'">
+						<div ng-switch-when="_undefined_">
+							<div class="pull-left text-md mt">
+								Showing results
+								<strong> 1 - {{ tableQueryResults.length }}</strong>
+								of <strong>{{ tableQueryResults.length }}</strong>
+							</div>
+						</div>
+						<div ng-switch-default>
+							<div class="pull-left text-md mt">
+								Showing results
+								<strong>{{ pagination.start }} - {{ pagination.end }}</strong>
+								of <strong>{{ pagination.count }}</strong>
+							</div><div class="pull-right"
+									   paging
+									   page="queryParam.resultsPage"
+									   page-size="queryParam.perPage"
+									   total="pagination.count"
+									   paging-action="loadNewPage(page)"
+									   show-prev-next="true"
+									   show-first-last="true"
+									   scroll-top="true"
+							></div>
+						</div>
 					</div>
-					<div class="pull-right"
-						 paging
-						 page="queryParam.resultsPage"
-						 page-size="queryParam.perPage"
-						 total="pagination.count"
-						 paging-action="loadNewPage(page)"
-						 show-prev-next="true"
-						 show-first-last="true"
-						 scroll-top="true"
-					></div>
 				</div>
 			</div>
 		</div>
