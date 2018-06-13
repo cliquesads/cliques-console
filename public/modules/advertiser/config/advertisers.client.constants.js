@@ -2,7 +2,7 @@
 angular.module('advertiser')
     .constant('BID_SETTINGS', {
         // Set mins & maxes
-        min_base_bid: 1,
+        min_base_bid: 0.01,
         max_base_bid: 20
     })
     .constant('MAX_CREATIVE_SIZE_KB',120)
