@@ -651,6 +651,12 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         count: adStats.total,
                         results: adStats.results
                     };
+                    // returnObj = {
+                    //     current: Number(req.query.resultsPage),
+                    //     pages: 10,
+                    //     count: 1000000,
+                    //     results: adStats
+                    // };
                     results = adStats.results;
                 } else {
                     returnObj = adStats;
