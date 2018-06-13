@@ -327,8 +327,8 @@ module.exports = function(db) {
                     wantedGeos = campaign.geo_targets;
                 } else if (targetOrBlock === 'block') {
                     wantedGeos = campaign.blocked_geos;
-                } else if (targetOrBlock === 'unblock') {
-                    wantedGeos = campaign.unblocked_countries;
+                } else if (targetOrBlock === 'targetOnly') {
+                    wantedGeos = campaign.target_only_geos;
                 }
                 return promise.each(wantedGeos, function(country) {
                     var countryObj;
