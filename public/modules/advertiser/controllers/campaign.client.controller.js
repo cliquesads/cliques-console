@@ -4,10 +4,10 @@
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
     '$timeout','Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES',
+    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES','BID_SETTINGS',
 	function($scope, $stateParams, $location, $timeout, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
-             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES) {
+             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES,BID_SETTINGS) {
 
         $scope.advertiser = campaign.advertiser;
         $scope.campaignIndex = campaign.index;
@@ -18,8 +18,8 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 
 		$scope.authentication = Authentication;
         // Set mins & maxes
-        $scope.min_base_bid = 0.01;
-        $scope.max_base_bid = 20;
+        $scope.min_base_bid = BID_SETTINGS.min_base_bid;
+        $scope.max_base_bid = BID_SETTINGS.max_base_bid;
 
         $scope.saveCampaignFrequency = function() {
             $scope.advertiser.$update(function(){
