@@ -32,7 +32,7 @@
                                         <label for="perPage" class="col-sm-4 text-md text-right mt-sm">Per Page</label>
                                         <div class="col-sm-8">
                                             <select name="perPage" id="perPage" class="form-control chosen-select"
-                                                    data-ng-model="queryParams.per_page"
+                                                    data-ng-model="queryParams.perPage"
                                                     ng-options="selectedItem as selectedItem for selectedItem in perPageOptions"
                                                     ng-change="filterChanged()">
                                             </select>
@@ -118,7 +118,7 @@
                                 <div class="pull-right"
                                      paging
                                      page="queryParams.page"
-                                     page-size="queryParams.per_page"
+                                     page-size="queryParams.perPage"
                                      total="pagination.count"
                                      paging-action="getArticles(page)"
                                      show-prev-next="true"

@@ -57,14 +57,14 @@
             <legend>Advanced Site Settings</legend>
             <fieldset>
                 <div class="form-group">
-                    <label>Bid Floor (CPM)</label>
+                    <label>Bid Floor ({{ pricing }})</label>
                     &nbsp;&nbsp;&nbsp;
                     <a href="#" tooltip="{{ TOOLTIPS.bid_floor }}" analytics-on="click" analytics-event="CreateSite_TooltipBidFloor">
                         <em class="fa fa-question-circle"></em>
                     </a>
                     <div class="input-group">
                         <span class="input-group-addon">$</span>
-                        <input data-parsley-type="number" name="site.bidfloor" id="site.bidfloor" ng-model="site.bidfloor" placeholder="Optional. If you do want to set one, min is $1.00 & max is $5.00" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
+                        <input data-parsley-type="number" name="site.bidfloor" id="site.bidfloor" ng-model="site.bidfloor" placeholder="Optional. If you do want to set one, min is {{ min_bid_floor | currency:'$':'2' }} & max is {{ max_bid_floor | currency:'$':'2' }}" data-parsley-group="step2" min="{{ min_bid_floor }}" max="{{ max_bid_floor }}" class="form-control"/>
                     </div>
                 </div>
                 <br/>

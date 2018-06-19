@@ -1,4 +1,4 @@
-/* global deploymentMode */
+/* global deploymentMode, pricing */
 'use strict';
 angular.module('advertiser').directive('campaignWizard', [
     '$compile',
@@ -36,7 +36,7 @@ angular.module('advertiser').directive('campaignWizard', [
             },
             templateUrl: 'modules/advertiser/views/partials/campaign-wizard.html',
             link: function (scope, element, attrs) {
-
+                scope.pricing = pricing;
                 //##################################//
                 //###### INIT SCOPE VARIABLES ######//
                 //##################################//

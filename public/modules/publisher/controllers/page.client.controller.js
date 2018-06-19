@@ -261,6 +261,7 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                         useFactory: $scope.deploymentMode === 'contentNetwork',
                         locationId: $scope.deploymentMode === 'contentNetwork',
                         targetChildIndex: null,
+                        externalTest: false,
                         keywords: null
                     };
 
@@ -278,12 +279,14 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
                             keywords: $scope.options.keywords,
                             locationId: $scope.options.locationId,
                             useFactory: $scope.options.useFactory,
+                            externalTest: $scope.options.externalTest,
                             targetChildIndex: $scope.options.targetChildIndex
                         }).then(function(response){
                             $scope.tag = response.data.tag;
                         });
                     };
-                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex','options.keywords', 'options.locationId'],
+                    $scope.$watchGroup(['options.secure', 'options.type', 'options.targetId', 'options.targetChildIndex',
+                            'options.keywords', 'options.locationId','options.externalTest'],
                         function(){
                             $scope.getPlacementTag();
                         });

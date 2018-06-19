@@ -205,10 +205,15 @@ angular.module('analytics').directive('reportSettings', [
                         scope.selectedSettings._id = response.id;
                         scope.selectedDateRange = response.dateRange;
 
+                        var isPaginated = scope.selectedSettings.resultsPage;
+
                         $rootScope.$broadcast('queryEnded', {
                             queryParam: scope.selectedSettings,
                             dateRange: scope.selectedDateRange,
-                            results: queryResults,
+                            results: isPaginated ? queryResults.results : queryResults,
+                            count: isPaginated ? queryResults.count : null,
+                            pages: isPaginated ? queryResults.pages : null,
+
                             // for geo query only
                             country: scope.geo.countryObject,
                             region: scope.geo.regionObject
@@ -219,6 +224,15 @@ angular.module('analytics').directive('reportSettings', [
                         $rootScope.$broadcast('queryError');
                     });
                 };
+
+                /**
+                 * Listener to refresh query if event is broadcast, taking queryParam changes
+                 * as args.
+                 */
+                scope.$on('refreshQuery', function(event, args){
+                    _.extend(scope.selectedSettings, args);
+                    scope.launchQuery();
+                });
 
                 scope.dateGroupByChanged = function(dateGroupBy) {
                     scope.selectedSettings.dateGroupBy = dateGroupBy;
@@ -400,13 +414,71 @@ angular.module('analytics').directive('reportSettings', [
                     }
                 };
 
+                // Watcher for endDate that adds 1 day to endDate so results are inclusive of end date.
+                scope.$watch('selectedSettings.endDate', function(newVal, oldVal){
+                    if (newVal !== oldVal && typeof newVal=== 'object'){
+                        newVal.setDate(newVal.getDate() + 1);
+                    }
+                });
+
                 scope.getCustomHumanizedDateRange = function() {
-                    var momentStartDate = moment.tz(scope.selectedSettings.startDate, user.tz).format();
-                    var momentEndDate = moment.tz(scope.selectedSettings.endDate, user.tz).format();
+                    // var format = 'MMMM Do YYYY hh:mm a z';
+                    var format = 'LLL';
+                    var momentStartDate = moment.tz(scope.selectedSettings.startDate, user.tz).format(format);
+                    var momentEndDate = moment.tz(scope.selectedSettings.endDate, user.tz).endOf('day').format(format);
                     if (scope.selectedSettings.startDate && scope.selectedSettings.endDate) {
                         scope.selectedSettings.humanizedDateRange = momentStartDate + ' - ' + momentEndDate;
                     }
                 };
+
+                scope.perPageOptions = [ 5, 10, 25, 50, 100 ];
+                var sortFields = [
+                    { id:"imps", alias: "Impressions" },
+                    { id:"bids", alias: "Bids" },
+                    { id:"defaults", alias: "Defaults" },
+                    { id:"clicks", alias: "Clicks" },
+                    { id:"clearprice", alias: "Avg. Clear Price" },
+                    { id:"spend", alias: "Spend" },
+                    { id:"view_convs", alias: "View-Through Actions" },
+                    { id:"click_convs", alias: "Click-Through Actions" }
+                ];
+                var sortOptions = [];
+                sortFields.forEach(function(field){
+                    sortOptions.push({
+                        name: field.alias + " (Asc.)",
+                        id: field.id + ",asc"
+                    });
+                    sortOptions.push({
+                        name: field.alias + " (Desc.)",
+                        id: field.id + ",desc"
+                    });
+                });
+                scope.sortOptions = sortOptions;
+
+                $rootScope.globalSort = {};
+                scope.$watch('selectedSettings.sort', function(newVal, oldVal){
+                    var headerMap = {
+                        "imps": "Impressions",
+                        "clicks": "Clicks",
+                        "bids": "Bids",
+                        "clearprice": "Avg. Clear Price",
+                        "spend": "Revenue",
+                        "defaults": "Defaults",
+                        "view_convs": "View-Through Actions",
+                        "click_convs": "Click-Through Actions"
+                    };
+                    if (newVal){
+                        var sortArr = newVal.split(",");
+                        if (sortArr.length > 1){
+                            $rootScope.globalSort.order = sortArr[1];
+                        } else {
+                            $rootScope.globalSort.order = 'asc';
+                        }
+                        if (headerMap.hasOwnProperty(sortArr[0])){
+                            $rootScope.globalSort.column = headerMap[sortArr[0]];
+                        }
+                    }
+                });
             }
         };
     }

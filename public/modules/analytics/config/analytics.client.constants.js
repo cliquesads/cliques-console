@@ -1,7 +1,7 @@
 /**
  * Created by bliang on 1/13/17.
  */
-/* global _, angular, user */
+/* global _, angular, user, pricing */
 
 // split into pairs b/c typical UI presentation is in col-4's, so each pair represents one column
 angular.module('analytics')
@@ -72,7 +72,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             site: {
@@ -94,7 +95,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false,
                 }
             },
             campaign: {
@@ -116,7 +118,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -139,7 +142,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -153,8 +157,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -162,7 +166,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -172,10 +177,13 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
-                    humanizedDateRange: 'Last 7 Dats',
+                    humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -185,7 +193,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true,
                 }
             },
             city: {
@@ -198,7 +207,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -209,7 +221,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -233,7 +246,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -256,7 +270,8 @@ angular.module('analytics')
                     siteFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         },
@@ -279,7 +294,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             site: {
@@ -301,7 +317,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -324,7 +341,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -338,8 +356,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -347,7 +365,8 @@ angular.module('analytics')
                     campaignFilter: true,
                     siteFilter: false,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -357,10 +376,13 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -370,7 +392,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true
                 }
             },
             city: {
@@ -383,7 +406,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -394,7 +420,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -418,7 +445,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -441,7 +469,8 @@ angular.module('analytics')
                     siteFilter: false,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         },
@@ -464,7 +493,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: true,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             campaign: {
@@ -486,7 +516,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             placement: {
@@ -499,8 +530,8 @@ angular.module('analytics')
                     type: 'placement',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'publisher,placement',
-                    populate: 'publisher,placement'
+                    groupBy: 'publisher,site,placement',
+                    populate: 'publisher,site,placement'
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -508,7 +539,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             creative: {
@@ -531,7 +563,8 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             keyword: {
@@ -541,10 +574,13 @@ angular.module('analytics')
                 route: 'app._analytics.analytics.quickQueries.keyword',
                 defaultQueryParam: {
                     name: 'Keywords',
-                    type: 'keywords',
+                    type: 'keyword',
                     dateRangeShortCode: '7d',
-                    humanizedDateRange: 'Last 7 Dats',
+                    humanizedDateRange: 'Last 7 Days',
                     groupBy: 'keywords',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: false,
@@ -554,7 +590,8 @@ angular.module('analytics')
                     keywordFilter: true,
                     hasGraph: false,
                     hasTable: true,
-                    hasKeywordCloud: true
+                    hasKeywordCloud: true,
+                    pagination: true
                 }
             },
             city: {
@@ -567,7 +604,10 @@ angular.module('analytics')
                     type: 'city',
                     dateRangeShortCode: '7d',
                     humanizedDateRange: 'Last 7 Days',
-                    groupBy: 'city'
+                    groupBy: 'city',
+                    resultsPage: 1,
+                    perPage: 25,
+                    sort: "imps,desc"
                 },
                 availableSettings: {
                     timePeriod: true,
@@ -578,7 +618,8 @@ angular.module('analytics')
                     regionFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: true
                 }
             },
             state: {
@@ -602,7 +643,8 @@ angular.module('analytics')
                     countryFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             },
             country: {
@@ -625,7 +667,8 @@ angular.module('analytics')
                     siteFilter: true,
                     hasMap: true,
                     hasGraph: false,
-                    hasTable: true
+                    hasTable: true,
+                    pagination: false
                 }
             }
         }
@@ -664,7 +707,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'CPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -676,7 +719,7 @@ angular.module('analytics')
                 index: 5,
                 name: 'CPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 6,
@@ -731,6 +774,12 @@ angular.module('analytics')
                 name: 'CPA',
                 type: 'data',
                 selected: false
+            },
+            {
+                index: 15,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
             }
         ],
         'networkAdmin': [
@@ -750,7 +799,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'CPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -762,7 +811,7 @@ angular.module('analytics')
                 index: 5,
                 name: 'CPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 6,
@@ -787,7 +836,7 @@ angular.module('analytics')
                 name: 'Fill Rate',
                 type: 'data',
                 selected: true
-            }, 
+            },
             {
                 index: 10,
                 name: 'Bids',
@@ -829,7 +878,13 @@ angular.module('analytics')
                 name: 'CPA',
                 type: 'data',
                 selected: false
-            }
+            },
+            {
+                index: 17,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
+            },
         ],
         'publisher': [
             {
@@ -848,7 +903,7 @@ angular.module('analytics')
                 index: 3,
                 name: 'RPM',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPM'
             },
             {
                 index: 4,
@@ -872,7 +927,7 @@ angular.module('analytics')
                 index: 7,
                 name: 'RPC',
                 type: 'data',
-                selected: true
+                selected: pricing === 'CPC'
             },
             {
                 index: 8,
@@ -915,6 +970,12 @@ angular.module('analytics')
                 name: 'RPA',
                 type: 'data',
                 selected: false
+            },
+            {
+                index: 15,
+                name: 'Avg. Clear Price',
+                type: 'data',
+                selected: pricing === 'CPC'
             }
         ]
     });

@@ -25,7 +25,8 @@
         <div class="pl-sm checkbox c-checkbox">
             <label><input type="checkbox" ng-model="options.dynamicInsertion"/><span class="fa fa-check"></span>Dynamic Insertion</label>
             &nbsp;&nbsp;
-            <label ng-if="deploymentMode === 'contentNetwork'"><input type="checkbox" ng-model="options.locationId"/><span class="fa fa-check"></span>Use Location Parameter</label>
+            <label ng-if="deploymentMode === 'contentNetwork'"><input type="checkbox" ng-model="options.locationId"/><span class="fa fa-check"></span>Location ID</label>
+            <label ng-if="deploymentMode === 'contentNetwork'"><input type="checkbox" ng-model="options.externalTest"/><span class="fa fa-check"></span>Test</label>
         </div>
         <fieldset class="pb-sm">
             <table class="col-sm-12" ng-show="options.dynamicInsertion">

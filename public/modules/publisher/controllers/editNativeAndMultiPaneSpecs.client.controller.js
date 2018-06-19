@@ -182,13 +182,18 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
             return valid;
         };
 
-        $scope.save = function(){$scope.submitted = true;
+        $scope.loading = false;
+        $scope.save = function(){
+            $scope.loading = true;
+            $scope.submitted = true;
             var templatesValid = this.validateTemplates();
             if (this.multiPaneNativeSpecsForm.$valid && templatesValid){
                 $scope.publisher.$update(function(){
+                    $scope.loading = false;
                     $scope.closeThisDialog('Success');
                 }, function(errorResponse){
-                    $scope.saveerror = errorResponse.message;
+                    $scope.loading = false;
+                    $scope.saveerror = errorResponse.data.message;
                 });
             } else {
                 return false;

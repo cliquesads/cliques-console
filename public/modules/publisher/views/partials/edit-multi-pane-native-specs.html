@@ -1,19 +1,29 @@
 <h4>{{ placement.name }} - Multi-Pane Native Specs</h4>
-<div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
 <form id="multiPaneNativeSpecsForm" name="multiPaneNativeSpecsForm" data-ng-submit="save()">
     <tabset>
         <tab heading="Wrapper">
             <fieldset>
                 <div class="row">
-                    <label class="col-sm-3">Number of Panes*</label>
-                    <div class="col-sm-4 form-group">
+                    <label class="col-sm-2">Panes - Desktop*</label>
+                    <div class="col-sm-2 form-group">
                         <input type="number"
-                               id="count"
-                               name="count"
+                               id="desktop_count"
+                               name="desktop_count"
                                required="required"
                                class="form-control"
                                min="2"
-                               ng-model="placement.multiPaneNative.count" />
+                               ng-model="placement.multiPaneNative.count.desktop" />
+                    </div>
+                    <div class="col-sm-1"> </div>
+                    <label class="col-sm-2">Panes - Mobile*</label>
+                    <div class="col-sm-2 form-group">
+                        <input type="number"
+                               id="mobile_count"
+                               name="mobile_count"
+                               required="required"
+                               class="form-control"
+                               min="2"
+                               ng-model="placement.multiPaneNative.count.mobile" />
                     </div>
                 </div>
             </fieldset>
@@ -79,7 +89,15 @@
         </tab>
     </tabset>
     <br/>
+    <div ng-show="saveerror" class="col-sm-12 alert alert-danger">{{ saveerror }}</div>
     <div class="row text-center">
         <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="EditMultiPaneNativeSpecs_Save">Save</button>
+    </div>
+    <div ng-show="loading" class="row text-center">
+        <div class="ball-pulse">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
 </form>

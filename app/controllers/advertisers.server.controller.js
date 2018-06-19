@@ -432,17 +432,23 @@ module.exports = function(db) {
                     });
                 } else {
                     // Publish message to create new bidding agent
-                    service.publishers.createBidder(campaignId);
-                    // Now set to active and save
-                    advertiser.campaigns[ind].active = true;
-                    advertiser.save(function (err) {
+                    service.publishers.createBidder(campaignId, (err, messageIds) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
-                        } else {
-                            return res.status(200).send();
                         }
+                        // Now set to active and save
+                        advertiser.campaigns[ind].active = true;
+                        advertiser.save(function (err) {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: errorHandler.getAndLogErrorMessage(err)
+                                });
+                            } else {
+                                return res.status(200).send();
+                            }
+                        });
                     });
                 }
             },
@@ -465,19 +471,26 @@ module.exports = function(db) {
                         message: "Campaign already inactive, cannot deactivate!"
                     });
                 } else {
-                    // Publish message to create new bidding agent
-                    service.publishers.stopBidder(campaignId);
-                    // Now set to active and save
-                    advertiser.campaigns[ind].active = false;
-                    advertiser.save(function (err) {
+                    // Publish message to stop bidding agent
+                    service.publishers.stopBidder(campaignId, (err, messageIds) => {
                         if (err) {
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
                             });
-                        } else {
-                            return res.status(200).send();
                         }
+                        // Now set to active and save
+                        advertiser.campaigns[ind].active = false;
+                        advertiser.save(function (err) {
+                            if (err) {
+                                return res.status(400).send({
+                                    message: errorHandler.getAndLogErrorMessage(err)
+                                });
+                            } else {
+                                return res.status(200).send();
+                            }
+                        });
                     });
+
                 }
             },
             /**
@@ -526,16 +539,25 @@ module.exports = function(db) {
                                     // Now publish message to update bidding agent w/ new config,
                                     // picking up previously-inactive creative group
                                     if (updateBidder){
-                                        service.publishers.updateBidder(campaign.id);
+                                        service.publishers.updateBidder(campaign.id, (err, messageIds) => {
+                                            if (err) {
+                                                return res.status(400).send({
+                                                    message: errorHandler.getAndLogErrorMessage(err)
+                                                });
+                                            }
+                                            return res.status(200).send();
+                                        });
+                                    } else {
+                                        return res.status(200).send();
                                     }
-                                    return res.status(200).send();
+
                                 }
                             });
                         }
                     },
                     deactivate: function (req, res) {
-                        var treeEntities = _getTreeEntitiesFromRequest(req);
-                        var advertiser = treeEntities.advertiser,
+                        const treeEntities = _getTreeEntitiesFromRequest(req);
+                        const advertiser = treeEntities.advertiser,
                             campaign = treeEntities.campaign,
                             creativegroup = treeEntities.creativegroup,
                             creative = treeEntities.creative;
@@ -553,15 +575,24 @@ module.exports = function(db) {
                                 message: "Creative is already inactive, cannot deactivate!"
                             });
                         } else {
-                            var updateBidder = false;
+                            let updateBidder = false;
                             creative.active = false;
                             // if all other creatives in creativegroup are inactive, deactivate
                             // creativegroup as well, and update bidder
-                            var allInactive = creativegroup.creatives.every(function(elem, index, arr){
+                            const allInactive = creativegroup.creatives.every((elem) => {
                                 return !elem.active;
                             });
                             if (allInactive){
                                 creativegroup.active = false;
+                                // check if this would in turn cause all creative groups to be deactivated, in which
+                                // case return an error preventing user from inadvertently deactivating all
+                                // creative groups and wreaking havoc on the adserver & bidder
+                                const allCrgsInactive = campaign.creativegroups.every((el) => { return !el.active; });
+                                if (allCrgsInactive){
+                                    return res.status(400).send({
+                                        message: 'Campaign must have at least one active creative.'
+                                    });
+                                }
                                 updateBidder = true;
                             }
                             advertiser.save(function (err) {
@@ -573,9 +604,18 @@ module.exports = function(db) {
                                     // Now publish message to update bidding agent w/ new config,
                                     // picking up previously-inactive creative group
                                     if (updateBidder){
-                                        service.publishers.updateBidder(campaign.id);
+                                        service.publishers.updateBidder(campaign.id, (err, messageIds) => {
+                                            if (err) {
+                                                return res.status(400).send({
+                                                    message: errorHandler.getAndLogErrorMessage(err)
+                                                });
+                                            }
+                                            return res.status(200).send();
+                                        });
+                                    } else {
+                                        return res.status(200).send();
                                     }
-                                    return res.status(200).send();
+
                                 }
                             });
                         }
@@ -588,9 +628,32 @@ module.exports = function(db) {
                             creative = treeEntities.creative;
                         creative.remove();
 
+                        let updateBidder = false;
+
                         // if creativegroup is now empty, it needs to be removed as well
                         if (creativegroup.creatives.length === 0) {
                             creativegroup.remove();
+                            updateBidder = true;
+                        }
+
+                        // if all other creatives in creativegroup are inactive, deactivate
+                        // creativegroup as well, and update bidder
+                        const allInactive = creativegroup.creatives.every((elem) => {
+                            return !elem.active;
+                        });
+
+                        if (allInactive){
+                            creativegroup.active = false;
+                            updateBidder = true;
+                            // check if this would in turn cause all creative groups to be deactivated, in which
+                            // case return an error preventing user from inadvertently deactivating all
+                            // creative groups and wreaking havoc on the adserver & bidder
+                            const allCrgsInactive = campaign.creativegroups.every((el) => { return !el.active; });
+                            if (allCrgsInactive){
+                                return res.status(400).send({
+                                    message: 'Campaign must have at least one active creative.'
+                                });
+                            }
                         }
                         advertiser.save(function (err) {
                             if (err) {
@@ -599,9 +662,20 @@ module.exports = function(db) {
                                 });
                             } else {
                                 // update bidder if successful
-                                service.publishers.updateBidder(campaign.id);
-                                // return updated Advertiser in response
-                                return res.json(advertiser);
+                                if (updateBidder){
+                                    service.publishers.updateBidder(campaign.id, (err, messageIds) => {
+                                        if (err) {
+                                            return res.status(400).send({
+                                                message: errorHandler.getAndLogErrorMessage(err)
+                                            });
+                                        }
+                                        // return updated Advertiser in response
+                                        return res.json(advertiser);
+                                    });
+                                } else {
+                                    return res.json(advertiser);
+                                }
+
                             }
                         });
                     },
@@ -620,6 +694,7 @@ module.exports = function(db) {
                                 "parameter."
                             });
                         }
+                        let updateBidder = false;
                         creatives.forEach(function(cr){
                             // find creativeGroup containing this creative
                             var creativegroup = _.find(campaign.creativegroups, function (crg) {
@@ -629,11 +704,33 @@ module.exports = function(db) {
                             });
                             // now remove creative from creativeGroup
                             creativegroup.creatives.id(cr).remove();
+
+                            // if all other creatives in creativegroup are inactive, deactivate
+                            // creativegroup as well, and update bidder
+                            const allInactive = creativegroup.creatives.every((elem) => {
+                                return !elem.active;
+                            });
+
+                            if (allInactive) {
+                                creativegroup.active = false;
+                                updateBidder = true;
+                            }
+
                             // if creativegroup is now empty, it needs to be removed as well
                             if (creativegroup.creatives.length === 0) {
                                 creativegroup.remove();
+                                // update bidder if creativeGroup has been removed
+                                updateBidder = true;
                             }
                         });
+
+                        // check if all creativeGroups are inactive, in which case return 400 & revert
+                        const allCrgsInactive = campaign.creativegroups.every((el) => { return !el.active; });
+                        if (allCrgsInactive){
+                            return res.status(400).send({
+                                message: 'Campaign must have at least one active creative.'
+                            });
+                        }
 
                         advertiser.save(function (err) {
                             if (err) {
@@ -642,9 +739,20 @@ module.exports = function(db) {
                                 });
                             } else {
                                 // update bidder if successful
-                                service.publishers.updateBidder(campaign.id);
-                                // return updated Advertiser in response
-                                return res.json(advertiser);
+                                if (updateBidder){
+                                    service.publishers.updateBidder(campaign.id, (err, messageIds) => {
+                                        if (err) {
+                                            return res.status(400).send({
+                                                message: errorHandler.getAndLogErrorMessage(err)
+                                            });
+                                        }
+                                        // return updated Advertiser in response
+                                        return res.json(advertiser);
+                                    });
+                                } else {
+                                    return res.json(advertiser);
+                                }
+
                             }
                         });
                     }
