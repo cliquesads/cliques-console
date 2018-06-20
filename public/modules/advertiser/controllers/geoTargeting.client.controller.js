@@ -75,6 +75,15 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
 							parentScope.blocked_geos.loadCountryGeoChildren(countryNode)
 							.then(function() {
+								// Also need to check if this blocked country has been targeted only, if so, remove it from the target_only_geos
+								var targetOnlyData = parentScope.target_only_geos.data;
+								for (var i = 0; i < targetOnlyData.length; i ++) {
+									if (targetOnlyData[i]._id === countryNode._id) {
+										parentScope.target_only_geos.data.splice(i, 1)
+										break;
+									}
+								}
+
 								parentScope.loadingBlockTree = false;
 							});
 						} else {
@@ -86,6 +95,21 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							regionNode.__expanded__ = false;
 							parentScope.blocked_geos.loadRegionGeoChildren(regionNode)
 							.then(function() {
+								// Check if this blocked region has already been targeted only, if so, remove it from the target_only_geos
+								var targetOnlyData = parentScope.target_only_geos.data;
+								for (var i = 0; i < targetOnlyData.length; i ++) {
+									if (targetOnlyData[i]._id === countryNode._id) {
+										for (var j = 0; j < targetOnlyData[i].__children__.length; j ++) {
+											if (targetOnlyData[i].__children__[j]._id === regionNode._id) {
+												parentScope.target_only_geos.data[i].__children__.splice(j, 1);
+												if (parentScope.target_only_geos.data[i].__children__.length === 0) {
+													parentScope.target_only_geos.data.splice(i, 1);
+												}
+												break;
+											}
+										}
+									}
+								}
 								parentScope.loadingBlockTree = false;
 							});
 						}
@@ -102,6 +126,15 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							countryNode = parentScope.target_only_geos.addCountryNode(parentScope.selectedGeo);
 							parentScope.target_only_geos.loadCountryGeoChildren(countryNode)
 							.then(function() {
+								// Also need to check if this target-only country is in blocked list, if so, remove it from the blocked list
+								var blockedData = parentScope.blocked_geos.data;
+								for (var i = 0; i < blockedData.length; i ++) {
+									if (blockedData[i]._id === countryNode._id) {
+										parentScope.blocked_geos.data.splice(i, 1);
+										break;
+									}
+								}
+
 								parentScope.loadingTargetOnlyGeos = false;
 							});
 						} else {
@@ -113,6 +146,22 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							regionNode.__expanded__ = false;
 							parentScope.target_only_geos.loadRegionGeoChildren(regionNode)
 							.then(function() {
+								// Check if the target only region is already blocked, if so, remove it from blocked_geos
+								var blockedData = parentScope.blocked_geos.data;
+								for (var i = 0; i < blockedData.length; i ++) {
+									if (blockedData[i]._id === countryNode._id) {
+										for (var j = 0; j < blockedData[i].__children__.length; j ++) {
+											if (blockedData[i].__children__[j]._id === regionNode._id) {
+												parentScope.blocked_geos.data[i].__children__.splice(j, 1);
+												if (parentScope.blocked_geos.data[i].__children__.length === 0) {
+													parentScope.blocked_geos.data.splice(i, 1);
+												}
+												break;
+											}
+										}
+									}
+								}
+
 								parentScope.loadingTargetOnlyGeos = false;
 							});
 						}
