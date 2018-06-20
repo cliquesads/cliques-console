@@ -28,26 +28,24 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 		$scope.rzSliderCeil = Math.round($scope.campaign.max_bid / $scope.campaign.base_bid * 10) / 10;
 
 		/**
-		 * Quick helper function to calculate CPMs for grouped keywordadstat data
+		 * Quick helper function to calculate pricing data (CPM & CPC) for grouped keywordadstat data
 		 * @param groupedData
 		 * @return {{}}
 		 * @private
 		 */
-		function _getCpms(groupedData) {
-			var cpms = {};
+		function _getPriceData(groupedData) {
+			var priceData = {};
 			for (var id in groupedData) {
 				if (groupedData.hasOwnProperty(id)) {
-					var imps = _.sumBy(groupedData[id], function(row) { return row.imps; });
-					var spend = _.sumBy(groupedData[id], function(row) { return row.spend; });
-					var cpm = spend / imps * 1000;
-					cpms[id] = {
+					var imps = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps : 0; });
+                    var numerator = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps * row.clearprice : 0; });
+					priceData[id] = { 
 						imps: imps,
-						spend: spend,
-						cpm: cpm
+						clearprice: numerator / imps
 					};
 				}
 			}	
-			return cpms;
+			return priceData;
 		}
 
 		/**
@@ -77,7 +75,7 @@ angular.module('advertiser').controller('KeywordTargetingController', [
 				startDate: startDate,
 				endDate: endDate
 			}).then(function(response) {
-				var allKeywordsStats = _getCpms(_.groupBy(response.data, '_id.keyword'));
+				var allKeywordsStats = _getPriceData(_.groupBy(response.data, '_id.keyword'));
 				keywordNodes.forEach(function(keywordNode) {
 					keywordNode.stats = allKeywordsStats[keywordNode.target];
 				});

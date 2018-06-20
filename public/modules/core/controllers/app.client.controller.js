@@ -1,4 +1,4 @@
-/* globals consoleVersion, user, latestHour, deploymentMode */
+/* globals consoleVersion, user, latestHour, deploymentMode, pricing */
 /**=========================================================
  * Module: main.js
  * Main Application Controller
@@ -10,6 +10,9 @@ angular.module('core').controller('AppController',
             "use strict";
             // Either "adNetwork" or "contentNetwork" for different deployment types
             $scope.deploymentMode = deploymentMode;
+
+            // Either "adNetwork" or "contentNetwork" for different deployment types
+            $scope.pricing = pricing;
 
             // This provides Authentication context.
             $scope.authentication = Authentication;

@@ -26,7 +26,8 @@ angular.module('advertiser').directive('creativeStatusSwitch', ['Notify','Creati
                             scope.creative.active = false;
                             scope.onDeactivate({ error: null, creative: scope.creative });
                         }, function(errorResponse){
-                            Notify.alert('Error deactivating creative: ' + errorResponse.message,{status: 'danger'});
+                            scope.creative.active = true;
+                            Notify.alert('Error deactivating creative: ' + errorResponse.data.message,{status: 'danger'});
                             scope.onDeactivate({ error: errorResponse });
                         });
                     } else {
@@ -40,7 +41,8 @@ angular.module('advertiser').directive('creativeStatusSwitch', ['Notify','Creati
                             scope.creative.active = true;
                             scope.onActivate({ error: null, creative: scope.creative });
                         }, function(errorResponse){
-                            Notify.alert('Error activating creative: ' + errorResponse.message,{status: 'danger'});
+                            scope.creative.active = true;
+                            Notify.alert('Error activating creative: ' + errorResponse.data.message,{status: 'danger'});
                             scope.onActivate({ error: errorResponse });
                         });
                     }

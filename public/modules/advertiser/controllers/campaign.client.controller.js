@@ -4,10 +4,10 @@
 angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
     '$timeout','Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
     'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES',
+    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES','BID_SETTINGS',
 	function($scope, $stateParams, $location, $timeout, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
-             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES) {
+             REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES,BID_SETTINGS) {
 
         $scope.advertiser = campaign.advertiser;
         $scope.campaignIndex = campaign.index;
@@ -18,8 +18,8 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
 
 		$scope.authentication = Authentication;
         // Set mins & maxes
-        $scope.min_base_bid = 1;
-        $scope.max_base_bid = 20;
+        $scope.min_base_bid = BID_SETTINGS.min_base_bid;
+        $scope.max_base_bid = BID_SETTINGS.max_base_bid;
 
         $scope.saveCampaignFrequency = function() {
             $scope.advertiser.$update(function(){
@@ -126,29 +126,6 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                 $scope.error = errorResponse.data.message;
             });
         };
-
-        // TODO: This is only being used in listCampaigns view, deprecate this eventually or move to
-        // TODO: separate controller.
-        $scope.$watch(function(scope){ return scope.selectedAdvertiser; }, function(newAdv, oldAdv){
-            if (newAdv){
-                HourlyAdStat.advQuery({advertiserId: newAdv._id},{
-                    groupBy: 'campaign'
-                }).then(function(response){
-                    response.data.forEach(function(campaign_data){
-                        var i = _.findIndex($scope.selectedAdvertiser.campaigns, function(campaign){
-                            return campaign._id === campaign_data._id.campaign;
-                        });
-                        // augment campaign w/ campaign quickstats
-                        $scope.selectedAdvertiser.campaigns[i].percent_spent = (campaign_data.spend/ $scope.selectedAdvertiser.campaigns[i].budget).toFixed(4);
-                        $scope.selectedAdvertiser.campaigns[i].imps = campaign_data.imps;
-                        $scope.selectedAdvertiser.campaigns[i].clicks = campaign_data.clicks;
-                        $scope.selectedAdvertiser.campaigns[i].ctr = (campaign_data.clicks / campaign_data.imps).toFixed(4);
-                        $scope.selectedAdvertiser.campaigns[i].spend = campaign_data.spend;
-                        $scope.selectedAdvertiser.campaigns[i].ecpm = ((campaign_data.spend / campaign_data.imps) * 1000).toFixed(4);
-                    });
-                });
-            }
-        });
 
         // ######################################### //
         // ######### EDIT DIALOG HANDLERS ########## //
@@ -258,7 +235,8 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
                     $scope.impressions = _.sumBy($scope.campaignTimeSeries.imps, function(item){ return item[1];});
                     $scope.clicks = _.sumBy($scope.campaignTimeSeries.clicks, function(item){ return item[1];});
                     $scope.spend = _.sumBy($scope.campaignTimeSeries.spend, function(item){ return item[1];});
-                    $scope.actions = _.sumBy($scope.campaignTimeSeries.view_convs, function(item){ return item[1];}) + _.sumBy($scope.campaignTimeSeries.click_convs, function(item){ return item[1];});
+                    $scope.actions = _.sumBy($scope.campaignTimeSeries.view_convs, function(item){ return item[1];}) +
+                        _.sumBy($scope.campaignTimeSeries.click_convs, function(item){ return item[1];});
                     $scope.CTR = $scope.clicks / $scope.impressions;
                 });
                 // TODO: Need to provide error callback for query promise as well

@@ -1,4 +1,4 @@
-/* global _, angular, moment, user */
+/* global _, angular, moment, user, pricing */
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
@@ -926,17 +926,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		//==========================================================//
 		//================ BEGIN GeoTree Instances =================//
 		//==========================================================//
-		var cpmColumnDef = {
-			field: 				'stats.cpm',
-			displayName: 		'Avg.CPM',
-			titleTemplate: 		'<a href="#" tooltip="Average CPM on this Geo area for the {{ dateRanges[defaultDateRange].label }}">'  +
-								'<i class="fa fa-line-chart"></i>&nbsp;Avg.<br/>CPM</a></div>',
-			titleClass: 		'wd-xxs text-center',
-			cellClass: 			'wd-xxs text-center',
-			cellTemplate: 		'<div ng-if="node.stats.cpm">{{ node.stats.cpm | currency: "$" : 2 }}</div>' +
-								'<small ng-if="!(node.stats.cpm)" class="text-muted"><i class="fa fa-heartbeat"> Not Enough Data</i></small>'
-
-		};
 		/**
 		 * Event Handler to be bound to each slider `onStart` event.
 		 * 
@@ -1026,33 +1015,32 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.defaultDateRange = '30d';
 		
 		/**
-		 * Quick helper function to calculate CPMs for grouped geoadstat data
+		 * Quick helper function to calculate clearprices (CPM or CPC) for grouped geoadstat data
 		 * @param groupedData
 		 * @return {{}}
 		 * @private
 		 */
-		function _getCpms(groupedData) {
-			var cpms = {};
+		function _getPriceData(groupedData) {
+			var priceData = {};
 			for (var id in groupedData) {
 				if (groupedData.hasOwnProperty(id)) {
-					var imps = _.sumBy(groupedData[id], function(row) { return row.imps; });
-					var spend = _.sumBy(groupedData[id], function(row) { return row.spend; });
-					var cpm = spend / imps * 1000;
-					cpms[id] = {
+                    // calculate weighted average clearprice
+					var imps = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps : 0; });
+					var numerator = _.sumBy(groupedData[id], function(row) { return row.clearprice ? row.imps * row.clearprice : 0; });
+					priceData[id] = {
 						imps: imps,
-						spend: spend,
-						cpm: cpm
+						clearprice: numerator / imps
 					};
 				}
 			}	
-			return cpms;
+			return priceData;
 		}
 
 		/**
 		 * Gets impression, spend & CPM totals for given date range from GeoAdStat,
 		 * groups by all Countries, Regions & Cities for efficient retrieval
 		 *
-		 * @param GeoTree
+		 * @param geoTree
 		 * @param dateRange
 		 */
 		$scope.getGeoTreeStats = function(geoTree, dateRange) {
@@ -1091,9 +1079,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				endDate: endDate
 			}).then(function(response) {
 				var allGeosStats = {
-					Country: _getCpms(_.groupBy(response.data, '_id.country')),
-					Region: _getCpms(_.groupBy(response.data, '_id.region')),
-					City: _getCpms(_.groupBy(response.data, '_id.city'))
+					Country: _getPriceData(_.groupBy(response.data, '_id.country')),
+					Region: _getPriceData(_.groupBy(response.data, '_id.region')),
+					City: _getPriceData(_.groupBy(response.data, '_id.city'))
 				};
 				// Now bind to geoTree data to use in template
 				function inner(treeData) {

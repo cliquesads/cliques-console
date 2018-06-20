@@ -6,7 +6,7 @@ angular.module('article').controller('ListArticlesController', ['$scope', 'Artic
 	function($scope, Article, Publisher, getSitesInCliqueBranch, ROOT_CLIQUE_ID, Notify, ngDialog, $http, $window, $state) {
 		$scope.perPageOptions = [ 5, 10, 25, 50, 100 ];
 		$scope.queryParams = {
-			per_page: 10,
+			perPage: 10,
 			site: null,
             sort_by: "meta.article.published_time,desc"
         };
@@ -44,7 +44,7 @@ angular.module('article').controller('ListArticlesController', ['$scope', 'Artic
 				$scope.resolved = true;
 				$scope.pagination.count = response.count;
 				$scope.pagination.pages = response.pages;
-				$scope.pagination.start = response.count ? $scope.queryParams.per_page * ($scope.queryParams.page - 1) + 1 : 0;
+				$scope.pagination.start = response.count ? $scope.queryParams.perPage * ($scope.queryParams.page - 1) + 1 : 0;
 				$scope.pagination.end = response.count ? $scope.pagination.start + response.results.length - 1 : 0;
 
 				var articles = response.results;
