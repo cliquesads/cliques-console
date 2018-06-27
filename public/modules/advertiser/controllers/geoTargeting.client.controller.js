@@ -73,6 +73,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							// load the whole country and all its regions/cities
 							parentScope.loadingBlockTree = true;
 							countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
+							countryNode.explicit = true;
 							parentScope.blocked_geos.loadCountryGeoChildren(countryNode)
 							.then(function() {
 								// Also need to check if this blocked country has been targeted only, if so, remove it from the target_only_geos
@@ -83,7 +84,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 										break;
 									}
 								}
-
 								parentScope.loadingBlockTree = false;
 							});
 						} else {
@@ -93,6 +93,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							countryNode = parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
 							var regionNode = parentScope.blocked_geos.addRegionNode(parentScope.selectedGeo, countryNode);
 							regionNode.__expanded__ = false;
+							regionNode.explicit = true;
 							parentScope.blocked_geos.loadRegionGeoChildren(regionNode)
 							.then(function() {
 								// Check if this blocked region has already been targeted only, if so, remove it from the target_only_geos
@@ -124,6 +125,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							// load the whole country and all its regions/cities
 							parentScope.loadingTargetOnlyGeos = true;
 							countryNode = parentScope.target_only_geos.addCountryNode(parentScope.selectedGeo);
+							countryNode.explicit = true;
 							parentScope.target_only_geos.loadCountryGeoChildren(countryNode)
 							.then(function() {
 								// Also need to check if this target-only country is in blocked list, if so, remove it from the blocked list
@@ -144,6 +146,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							countryNode = parentScope.target_only_geos.addCountryNode($rootScope.selectedCountry);
 							var regionNode = parentScope.target_only_geos.addRegionNode(parentScope.selectedGeo, countryNode);
 							regionNode.__expanded__ = false;
+							regionNode.explicit = true;
 							parentScope.target_only_geos.loadRegionGeoChildren(regionNode)
 							.then(function() {
 								// Check if the target only region is already blocked, if so, remove it from blocked_geos
@@ -831,28 +834,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				return targetsTree;
 			}
 			var blockedTree = inner(this.data);
-			// iterate each blocked node in blockedTree, 
-			// if the node is a leaf node,  i.e. a node with no children, 
-			// then set node.explicit to true,
-			// otherwise set node.explicit to false
-			blockedTree.forEach(function(countryNode) {
-				if (countryNode.children && countryNode.children.length > 0) {
-					countryNode.explicit = false;
-					countryNode.children.forEach(function(regionNode) {
-						if (regionNode.children && regionNode.children.length > 0) {
-							regionNode.explicit = false;
-							regionNode.children.forEach(function(cityNode) {
-								cityNode.explicit = true;
-							});
-						} else {
-							regionNode.explicit = true;
-						}
-					});
-				} else {
-					countryNode.explicit = true;
-				}
-			});
-
 			blockedTree = pruneOverriddenChildren(blockedTree, function(obj) {
 				return obj.explicit === false;
 			});
@@ -889,29 +870,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				});
 				return targetsTree;
 			}
-			// iterate each target only node in targetOnlyGeoTree,
-			// if the node is a leaf node, i.e. a node with no children,
-			// then set node.explicit to true,
-			// otherwise set node.explicit to false
 			var targetOnlyTree = inner(this.data);
-			targetOnlyTree.forEach(function(countryNode) {
-				if (countryNode.children && countryNode.children.length > 0) {
-					countryNode.explicit = false;	
-					countryNode.children.forEach(function(regionNode) {
-						if (regionNode.children && regionNode.children.length > 0) {
-							regionNode.explicit = false;
-							regionNode.children.forEach(function(cityNode) {
-								cityNode.explicit = true;
-							});
-						} else {
-							regionNode = true;
-						}
-					});
-				} else {
-					countryNode.explicit = true;
-				}
-			});
-
 			targetOnlyTree = pruneOverriddenChildren(targetOnlyTree, function(obj) {
 				return obj.explicit === false;
 			});
@@ -970,6 +929,43 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.blocked_geos = new GeoTree([],
 			{
 				remove: function(node) {
+					switch(node.nodeType) {
+						case 'Country':
+						break;
+						case 'Region':
+							var parentCountryId = node.parentId;
+							for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
+								if (parentCountryId === $scope.blocked_geos.data[i]._id) {
+									$scope.blocked_geos.data[i].explicit = false;
+									for (var j = 0; j < $scope.blocked_geos.data[i].__children__.length; j ++) {
+										$scope.blocked_geos.data[i].__children__[j].explicit = true;	
+									}
+									break;
+								}
+							}
+						break;
+						case 'City':
+							var parentRegionId = node.parentId;
+							var parentRegionFound = false;
+							for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
+								for (var j = 0; j < $scope.blocked_geos.data[i].__children__.length; j ++) {
+									if (parentRegionId === $scope.blocked_geos.data[i].__children__[j]._id) {
+										$scope.blocked_geos.data[i].__children__[j].explicit = false;
+										for (var k = 0; k < $scope.blocked_geos.data[i].__children__[j].__children__.length; k ++) {
+											$scope.blocked_geos.data[i].__children__[j].__children__[k].explicit = true;
+										}
+										parentRegionFound = true;
+										break;
+									}
+								}
+								if (parentRegionFound) {
+									break;
+								}
+							}
+						break;
+						default:
+						break;
+					}
 					$scope.blocked_geos.control.remove_node(node);
 					$scope.dirty = true;
 				}
@@ -982,6 +978,43 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.target_only_geos = new GeoTree([],
 			{
 				remove: function(node) {
+					switch(node.nodeType) {
+						case 'Country':
+						break;
+						case 'Region':
+							var parentCountryId = node.parentId;
+							for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
+								if (parentCountryId === $scope.target_only_geos.data[i]._id) {
+									$scope.target_only_geos.data[i].explicit = false;
+									for (var j = 0; j < $scope.target_only_geos.data[i].__children__.length; j ++) {
+										$scope.target_only_geos.data[i].__children__[j].explicit = true;
+									}
+									break;
+								}
+							}
+						break;
+						case 'City':
+							var parentRegionId = node.parentId;
+							var parentRegionFound = false;
+							for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
+								for (var j = 0; j < $scope.target_only_geos.data[i].__children__.length; j ++) {
+									if (parentRegionId === $scope.target_only_geos.data[i].__children__[j]._id) {
+										$scope.target_only_geos.data[i].__children__[j].explicit = false;
+										for (var k = 0; k < $scope.target_only_geos.data[i].__children__[j].__children__.length; k ++) {
+											$scope.target_only_geos.data[i].__children__[j].__children__[k].explicit = true;
+										}
+										parentRegionFound = true;
+										break;
+									}
+								}
+								if (parentRegionFound) {
+									break;
+								}
+							}
+						break;
+						default:
+						break;
+					}
 					$scope.target_only_geos.control.remove_node(node);	
 					$scope.dirty = true;
 				}
