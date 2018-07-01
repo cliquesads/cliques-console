@@ -639,14 +639,17 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				if (!geoData) return;
 				geoData.forEach(function(country) {
 					var countryNode = _initializeGeoTreeNode(country, 'Country', null);
+					countryNode.explicit = country.explicit;
 					flattened.push(countryNode);
 					if (country.regions) {
 						country.regions.forEach(function(region) {
 							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, countryNode.weight);
+							regionNode.explicit = region.explicit;
 							flattened.push(regionNode);
 							if (region.cities) {
 								region.cities.forEach(function(city) {
 									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, regionNode.weight);
+									cityNode.explicit = city.explicit;
 									flattened.push(cityNode);
 								});
 							}
@@ -1206,6 +1209,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.loadingBlockTree = true;
 				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'block')
 				.then(function() {
+					// Now load regions for country, and load cities for regions
+					for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
+						$scope.blocked_geos.loadCountryGeoChildren($scope.blocked_geos.data[i]);
+					}
 					$scope.blocked_geos.setExpandLevel(0);
 					$scope.loadingBlockTree = false;
 				});
@@ -1216,6 +1223,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.loadingTargetOnlyGeos = true;
 				$scope.target_only_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'targetOnly')
 				.then(function() {
+					for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
+						$scope.target_only_geos.loadCountryGeoChildren($scope.target_only_geos.data[i]);
+					}
 					$scope.target_only_geos.setExpandLevel(0);
 					$scope.loadingTargetOnlyGeos = false;
 				});
