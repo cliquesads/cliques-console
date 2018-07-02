@@ -269,7 +269,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 
 		$scope.getAllGeosHelp = function() {
 			ngDialog.open({
-				className: 'ngdialog-theme-default',
+				className: 'ngdialog-theme-default dialogwidth600',
 				template: 'modules/advertiser/views/partials/all-geos-help-text.html',
 				controller: ['$scope', function($scope) {
 					$scope.campaign = $scope.ngDialogData.campaign;
