@@ -2,8 +2,10 @@
 'use strict';
 
 angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City', 'DndTreeWrapper', '$TreeDnDConvert', 'aggregationDateRanges', 'GeoAdStat', '$timeout', 'CampaignGeo',
-	function($scope, $state, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DndTreeWrapper, $TreeDnDConvert, aggregationDateRanges, GeoAdStat, $timeout, CampaignGeo) {
+	'$scope', '$state', '$q', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City',
+	'aggregationDateRanges', 'GeoAdStat', 'GeoTree','$timeout',
+	function($scope, $state, $q, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City,
+			 aggregationDateRanges, GeoAdStat, GeoTree, $timeout) {
 
 		$scope.Math = Math;
 		$scope.dirty = false;
@@ -28,7 +30,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				data: {
 					selectedGeo: $scope.selectedGeo
 				},
-				controller: ['$scope', '$rootScope', function($scope, $rootScope) {
+				controller: ['$scope', '$rootScope', 'ngDialog', function($scope, $rootScope, ngDialog) {
 					$scope.selectedGeo = $scope.ngDialogData.selectedGeo;
 					$scope.customizeBiddingForGeo = function() {
 						parentScope.dirty = true;
@@ -68,107 +70,123 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					$scope.blockGeo = function() {
 						parentScope.dirty = true;
 						var countryNode;
-						if (parentScope.selectedGeo.type === 'country') {
-							// A country is selected to block,
-							// load the whole country and all its regions/cities
-							parentScope.loadingBlockTree = true;
-							countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
-							countryNode.explicit = true;
-							parentScope.blocked_geos.loadCountryGeoChildren(countryNode)
-							.then(function() {
-								// Also need to check if this blocked country has been targeted only, if so, remove it from the target_only_geos
-								var targetOnlyData = parentScope.target_only_geos.data;
-								for (var i = 0; i < targetOnlyData.length; i ++) {
-									if (targetOnlyData[i]._id === countryNode._id) {
-										parentScope.target_only_geos.data.splice(i, 1)
-										break;
-									}
-								}
-								parentScope.loadingBlockTree = false;
-							});
-						} else {
-							// A region is selected to block,
-							// should load just that region and its cities
-							parentScope.loadingBlockTree = true;
-							countryNode = parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
-							var regionNode = parentScope.blocked_geos.addRegionNode(parentScope.selectedGeo, countryNode);
-							regionNode.__expanded__ = false;
-							regionNode.explicit = true;
-							parentScope.blocked_geos.loadRegionGeoChildren(regionNode)
-							.then(function() {
-								// Check if this blocked region has already been targeted only, if so, remove it from the target_only_geos
-								var targetOnlyData = parentScope.target_only_geos.data;
-								for (var i = 0; i < targetOnlyData.length; i ++) {
-									if (targetOnlyData[i]._id === countryNode._id) {
-										for (var j = 0; j < targetOnlyData[i].__children__.length; j ++) {
-											if (targetOnlyData[i].__children__[j]._id === regionNode._id) {
-												parentScope.target_only_geos.data[i].__children__.splice(j, 1);
-												if (parentScope.target_only_geos.data[i].__children__.length === 0) {
-													parentScope.target_only_geos.data.splice(i, 1);
-												}
-												break;
-											}
-										}
-									}
-								}
-								parentScope.loadingBlockTree = false;
-							});
+						var promise;
+                        if (parentScope.target_only_geos.data.length){
+							promise = ngDialog.openConfirm({
+								data: {
+									selectedGeo: $scope.selectedGeo,
+                                    target_only_geos: parentScope.target_only_geos,
+								},
+								controller: function($scope){
+                                    $scope.selectedGeo = $scope.ngDialogData.selectedGeo;
+                                    $scope.target_only_geos = $scope.ngDialogData.target_only_geos.data;
+								},
+                                template: '\
+										<br>\
+										<p>By blacklisting {{ selectedGeo.name }}, the following whitelist will be cleared:</p>\
+										<ul><li ng-repeat="geo in target_only_geos">\
+										<strong>{{ geo.name }} ({{ geo.__children__.length }} {{ geo.nodeType == "Country" ? "Regions" : "Cities" }})</strong>\
+										</li></ul>\
+										<p class="text-center">\
+											<button class="btn btn-lg btn-primary" ng-click="confirm()">OK</button>\
+											<button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+										</p>',
+                                plain: true
+                            });
+                        } else {
+                        	promise = $q.when([]);
 						}
-						$scope.closeThisDialog('success');
+						promise.then(function(){
+                            if (parentScope.selectedGeo.type === 'country') {
+                                // A country is selected to block,
+                                // load the whole country and all its regions/cities
+                                parentScope.loadingBlockTree = true;
+                                countryNode = parentScope.blocked_geos.addCountryNode(parentScope.selectedGeo);
+                                countryNode.explicit = true;
+                                parentScope.blocked_geos.loadCountryGeoChildren(countryNode)
+                                    .then(function() {
+                                        // clear targetOnlyGeos
+                                        parentScope.target_only_geos.data = [];
+                                        parentScope.loadingBlockTree = false;
+                                    });
+
+                            } else {
+                                // A region is selected to block,
+                                // should load just that region and its cities
+                                parentScope.loadingBlockTree = true;
+                                countryNode = parentScope.blocked_geos.addCountryNode($rootScope.selectedCountry);
+                                var regionNode = parentScope.blocked_geos.addRegionNode(parentScope.selectedGeo, countryNode);
+                                regionNode.__expanded__ = false;
+                                regionNode.explicit = true;
+                                parentScope.blocked_geos.loadRegionGeoChildren(regionNode)
+                                    .then(function() {
+                                        parentScope.target_only_geos.data = [];
+                                        parentScope.loadingBlockTree = false;
+                                    });
+                            }
+                            $scope.closeThisDialog('success');
+						});
 					};
 
 					$scope.targetOnly = function() {
 						parentScope.dirty = true;
 						var countryNode;
-						if (parentScope.selectedGeo.type === 'country') {
-							// A country is selected to target only,
-							// load the whole country and all its regions/cities
-							parentScope.loadingTargetOnlyGeos = true;
-							countryNode = parentScope.target_only_geos.addCountryNode(parentScope.selectedGeo);
-							countryNode.explicit = true;
-							parentScope.target_only_geos.loadCountryGeoChildren(countryNode)
-							.then(function() {
-								// Also need to check if this target-only country is in blocked list, if so, remove it from the blocked list
-								var blockedData = parentScope.blocked_geos.data;
-								for (var i = 0; i < blockedData.length; i ++) {
-									if (blockedData[i]._id === countryNode._id) {
-										parentScope.blocked_geos.data.splice(i, 1);
-										break;
-									}
-								}
-
-								parentScope.loadingTargetOnlyGeos = false;
-							});
-						} else {
-							// A region is selected to target only,
-							// should load just that region and its cities
-							parentScope.loadingTargetOnlyGeos = true;
-							countryNode = parentScope.target_only_geos.addCountryNode($rootScope.selectedCountry);
-							var regionNode = parentScope.target_only_geos.addRegionNode(parentScope.selectedGeo, countryNode);
-							regionNode.__expanded__ = false;
-							regionNode.explicit = true;
-							parentScope.target_only_geos.loadRegionGeoChildren(regionNode)
-							.then(function() {
-								// Check if the target only region is already blocked, if so, remove it from blocked_geos
-								var blockedData = parentScope.blocked_geos.data;
-								for (var i = 0; i < blockedData.length; i ++) {
-									if (blockedData[i]._id === countryNode._id) {
-										for (var j = 0; j < blockedData[i].__children__.length; j ++) {
-											if (blockedData[i].__children__[j]._id === regionNode._id) {
-												parentScope.blocked_geos.data[i].__children__.splice(j, 1);
-												if (parentScope.blocked_geos.data[i].__children__.length === 0) {
-													parentScope.blocked_geos.data.splice(i, 1);
-												}
-												break;
-											}
-										}
-									}
-								}
-
-								parentScope.loadingTargetOnlyGeos = false;
-							});
-						}
-						$scope.closeThisDialog('success');
+						var promise;
+                        if (parentScope.blocked_geos.data.length){
+                            promise = ngDialog.openConfirm({
+                                data: {
+                                    selectedGeo: $scope.selectedGeo,
+                                    blocked_geos: parentScope.blocked_geos,
+                                },
+                                controller: function($scope){
+                                    $scope.selectedGeo = $scope.ngDialogData.selectedGeo;
+                                    $scope.blocked_geos = $scope.ngDialogData.blocked_geos.data;
+                                },
+                                template: '\
+										<br>\
+										<p>By whitelisting {{ selectedGeo.name }}, the following blacklist will be cleared:</p>\
+										<ul><li ng-repeat="geo in blocked_geos">\
+										<strong>{{ geo.name }} ({{ geo.__children__.length }} {{ geo.nodeType == "Country" ? "Regions" : "Cities" }})</strong>\
+										</li></ul>\
+										<p class="text-center">\
+											<button class="btn btn-lg btn-primary" ng-click="confirm()">OK</button>\
+											<button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+										</p>',
+                                plain: true
+                            });
+                        } else {
+                            promise = $q.when([]);
+                        }
+                        promise.then(function() {
+                            if (parentScope.selectedGeo.type === 'country') {
+                                // A country is selected to target only,
+                                // load the whole country and all its regions/cities
+                                parentScope.loadingTargetOnlyGeos = true;
+                                countryNode = parentScope.target_only_geos.addCountryNode(parentScope.selectedGeo);
+                                countryNode.explicit = true;
+                                parentScope.target_only_geos.loadCountryGeoChildren(countryNode)
+                                    .then(function () {
+                                        // Clear blacklist
+                                        parentScope.blocked_geos.data = [];
+                                        parentScope.loadingTargetOnlyGeos = false;
+                                    });
+                            } else {
+                                // A region is selected to target only,
+                                // should load just that region and its cities
+                                parentScope.loadingTargetOnlyGeos = true;
+                                countryNode = parentScope.target_only_geos.addCountryNode($rootScope.selectedCountry);
+                                var regionNode = parentScope.target_only_geos.addRegionNode(parentScope.selectedGeo, countryNode);
+                                regionNode.__expanded__ = false;
+                                regionNode.explicit = true;
+                                parentScope.target_only_geos.loadRegionGeoChildren(regionNode)
+                                    .then(function () {
+                                        // Clear blacklist
+                                        parentScope.blocked_geos.data = [];
+                                        parentScope.loadingTargetOnlyGeos = false;
+                                    });
+                            }
+                            $scope.closeThisDialog('success');
+                        });
 					};
 				}]
 			});
