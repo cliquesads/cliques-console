@@ -426,7 +426,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		 * @param columns tree-dnd column model
 		 * @constructor
 		 */
-		var GeoTree = function(treeData, control) {
+		var GeoTree = function(treeData, control, type) {
+			this.type = type;
 			DndTreeWrapper.call(this, treeData, control, {}, []);	
 		};
 		GeoTree.prototype = Object.create(DndTreeWrapper.prototype);		
@@ -520,6 +521,8 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			.then(function(response) {
 				var cities = response.data;
 				var sortedCities = _.orderBy(cities, 'name', 'asc');
+				regionNode.numOfCities = sortedCities.length;
+				regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
 				sortedCities.forEach(function(city) {
 					self.addCityNode(city, regionNode);
 				});
@@ -531,24 +534,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			// Get all regions for this country and load them in tree
 			return CampaignGeo.getGeoChildren(countryNode)
 			.then(function(response) {
-				var cities = response.data;
-				// Group cities by region id
-				var groupedCities = _.groupBy(cities, 'region._id');
-				for (var regionId in groupedCities) {
-					// For data inconsistencies, some cities don't belong to 
-					// any region, get rid of those cities
-					if (groupedCities.hasOwnProperty(regionId) && regionId !== 'undefined') {
-						var regionNode = self.addRegionNode(groupedCities[regionId][0].region, countryNode);
-						// Sort cities alphabetically by their name
-						var sortedCities = _.orderBy(groupedCities[regionId], 'name', 'asc');
-						for (var i = 0; i < sortedCities.length; i ++) {
-							var clonedCity = _.clone(sortedCities[i]);
-							clonedCity.region = clonedCity.region._id;
-							self.addCityNode(clonedCity, regionNode);
-						}
-						// default collapse region node
-						regionNode.__expanded__ = false;
-					}
+				var regions = response.data;
+				for (var i = 0; i < regions.length; i ++) {
+					var regionNode = self.addRegionNode(regions[i], countryNode);
+					regionNode.__expanded__ = false;
+					regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
 				}
 			});
 		};
@@ -646,7 +636,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, countryNode.weight);
 							regionNode.explicit = region.explicit;
 							flattened.push(regionNode);
+							regionNode.numOfCities = 0;
 							if (region.cities) {
+								regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
+								regionNode.numOfCities = region.cities.length;
 								region.cities.forEach(function(city) {
 									var cityNode = _initializeGeoTreeNode(city, 'City', region._id, regionNode.weight);
 									cityNode.explicit = city.explicit;
@@ -913,6 +906,33 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			return inner($scope.geo_targets.data);
 		};
 
+		$scope.lazyLoadCities = function(regionNode, geoTree) {
+			if (!regionNode.citiesLoaded) {
+				return CampaignGeo.getRegionCities(regionNode._id)
+				.then(function(response) {
+					var cities = response.data;
+					var sortedCities = _.orderBy(cities, 'name', 'asc');
+					sortedCities.forEach(function(city) {
+						geoTree.addCityNode(city, regionNode);
+					});
+					regionNode.citiesLoaded = true;
+					regionNode.__expanded__ = !regionNode.__expanded__;
+					if (regionNode.__expanded__) {
+						regionNode.regionNodeIcon = 'fa fa-lg fa-minus';
+					} else {
+						regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
+					}
+				});
+			} else {
+				regionNode.__expanded__ = !regionNode.__expanded__;
+				if (regionNode.__expanded__) {
+					regionNode.regionNodeIcon = 'fa fa-lg fa-minus';
+				} else {
+					regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
+				}
+			}
+		};
+
 		/**
 		 * Geo Targets tree vars
 		 */
@@ -922,6 +942,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				remove: function(node) {
 					$scope.geo_targets.control.remove_node(node);
 					$scope.dirty = true;
+				},
+				toggleExpandRegion: function(node) {
+					$scope.lazyLoadCities(node, $scope.geo_targets);
 				}
 			}, 'geo_targets');
 		$scope.geo_targets.searchingStatus = 'NotSearching';
@@ -971,6 +994,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					}
 					$scope.blocked_geos.control.remove_node(node);
 					$scope.dirty = true;
+				},
+				toggleExpandRegion: function(node) {
+					$scope.lazyLoadCities(node, $scope.blocked_geos);
 				}
 			}, 'blocked_geos');
 		$scope.blocked_geos.searchingStatus = 'NotSearching';
@@ -1020,6 +1046,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					}
 					$scope.target_only_geos.control.remove_node(node);	
 					$scope.dirty = true;
+				},
+				toggleExpandRegion: function(node) {
+					$scope.lazyLoadCities(node, $scope.target_only_geos);	
 				}
 			}, 'target_only_geos');
 		$scope.target_only_geos.searchingStatus = 'NotSearching';

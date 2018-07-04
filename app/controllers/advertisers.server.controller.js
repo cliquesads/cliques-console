@@ -347,8 +347,8 @@ module.exports = function(db) {
                                     regionObj = JSON.parse(JSON.stringify(regionResult));
                                     regionObj.weight = region.weight;
                                     regionObj.explicit = region.explicit;
+                                    regionObj.cities = [];
                                     if (region.children) {
-                                        regionObj.cities = [];
                                         return promise.each(region.children, function(city) {
                                             var cityObj;
                                             customizedCityIds.push(city.target);

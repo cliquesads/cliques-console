@@ -35,18 +35,18 @@
 					<span ng-switch-when="Region">
 						<strong>
 							<a data-nodrag
-								ng-if="node.__children__.length > 0">
-								<i ng-class="node.__icon_class__"
-									ng-click="toggleExpand(node)"
+								ng-if="node.numOfCities > 0">
+								<i ng-class="node.regionNodeIcon"
+									ng-click="target_only_geos.control.toggleExpandRegion(node)"
 									class="tree-icon">
 								</i>	
 							</a>
 							<a data-nodrag
-								ng-if="!node.__children__ || node.__children__.length === 0">
+								ng-if="!node.numOfCities || node.numOfCities === 0">
 								<i class="fa fa-lg fa-map-maker"></i>	
 							</a>
-							{{node.name}} ({{node.__children__.length}}
-							{{node.__children__.length != 1 ? 'Cities' : 'City'}})
+							{{node.name}} ({{node.numOfCities}}
+							{{node.numOfCities != 1 ? 'Cities' : 'City'}})
 						</strong>	
 					</span>
 					<span ng-switch-when="City">

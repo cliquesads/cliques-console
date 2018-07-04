@@ -87,8 +87,8 @@ module.exports = function(db) {
                 });
             },
             /**
-             * For a given country, get all its children, that is,
-             * get all its cities populating the region field
+             * For a given country, get all its regions and 
+             * the number of cities for each region
              */
             getGeoChildren: function(req, res) {
                 var geo = req.param('geo');
@@ -99,17 +99,33 @@ module.exports = function(db) {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 }
-                // Finding all geo children for a country, i.e. all cities with regions populated in this country
-                return geoModels.City
+                return geoModels.Region
                 .find({country: geo.id})
-                .populate('region')
-                .exec(function(err, cities) {
+                .exec(function(err, regions) {
                     if (err) {
                         return res.status(400).send({
                             message: errorHandler.getAndLogErrorMessage(err)
                         });
                     }
-                    return res.json(cities);
+                    var resultRegions = [];
+                    return promise.each(regions, function(region) {
+                        return geoModels.City.count({region: region._id})
+                        .then(function(numOfCities) {
+                            if (numOfCities > 0) {
+                                var copiedRegion = JSON.parse(JSON.stringify(region));
+                                copiedRegion.numOfCities = numOfCities;
+                                resultRegions.push(copiedRegion);
+                            }
+                        });
+                    })
+                    .then(function() {
+                        return res.json(resultRegions);
+                    })
+                    .catch(function(err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    });
                 });
             },
         },
