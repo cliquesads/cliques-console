@@ -25,7 +25,7 @@
 	<div class="panel">
 		<div class="panel-heading">
 			<h4>
-				<i class="fa fa-map"></i>&nbsp;&nbsp;Default Bidding
+				<i class="fa fa-map"></i>&nbsp;&nbsp;Select a Country or Region
 				<a class="fa fa-lg fa-question-circle pull-right"
 					ng-click="getAllGeosHelp()"
 					analytics-on="click"
@@ -44,7 +44,7 @@
 				</a>
 			</h4>
 			<em class="text-muted">
-				<p><strong>To target or block a city, region or country, <i class="fa fa-sm fa-mouse-pointer"></i> select it from the map below.</strong></p>
+				<p><strong>To whitelist, blacklist or set bids for a city, region or country, <i class="fa fa-sm fa-mouse-pointer"></i> select it from the map below.</strong></p>
 				<p>Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all countries, regions & cities in this map <strong>unless you indicate otherwise.</strong></p>
 			</em>
 		</div>
@@ -134,15 +134,15 @@
 	<!-- Target Only Geos section -->
 	<div class="col-sm-12">
 		<div class="panel">
-			<div class="panel-heading bg-primary">
+			<div class="panel-heading bg-success">
 				<h4>
-					<i class="fa fa-map-maker"></i> Target Only
+					<i class="fa fa-map-marker"></i> Whitelist
 				</h4>
 			</div>
 			<div class="panel-body text-muted"	
 				ng-if="!target_only_geos.data || target_only_geos.data.length === 0">
 				<div class="box-placeholder text-center">
-					Select a country/region from the map and click <button class="btn btn-primary btn-sm" disabled>Target Only <i class="fa fa-map-maker"></i></button> to target the selected country/region ONLY
+					Select a country/region from the map and click <button class="btn btn-success btn-sm" disabled> Whitelist <i class="fa fa-map-maker"></i></button> to target the selected country/region ONLY
 				</div>
 			</div>
 			<div class="panel-body"
@@ -219,7 +219,7 @@
 		}">
 
 		<div class="panel">
-			<div class="panel-heading bg-success">
+			<div class="panel-heading bg-primary">
 				<h4>
 					<i class="fa fa-sliders"></i> Custom Bidding
 				</h4>
@@ -227,7 +227,7 @@
 			<div class="panel-body text-muted"
 				ng-if="!geo_targets.data || geo_targets.data.length === 0">
 				<div class="box-placeholder text-center">
-					Select a region/country from the map and click <button class="btn btn-success btn-sm" disabled>Customize Bidding <i class="fa fa-sliders"></i></button> to set custom bids
+					Select a region/country from the map and click <button class="btn btn-primary btn-sm" disabled>Customize Bid <i class="fa fa-sliders"></i></button> to set custom bids
 				</div>
 			</div>
 			<div class="panel-body"
@@ -293,12 +293,12 @@
 		}">
 		<div class="panel">
 			<div class="panel-heading bg-danger">
-				<h4><i class="fa fa-ban"></i> Blocked</h4>
+				<h4><i class="fa fa-ban"></i> Blacklist</h4>
 			</div>
 			<div class="panel-body text-muted"
 				ng-if="!blocked_geos.data || blocked_geos.data.length === 0">
 				<div class="box-placeholder text-center">
-					Select a region/country from the map and click <button class="btn btn-danger btn-sm" disabled>Block <i class="fa fa-ban"></i></button> to block specific geos
+					Select a region/country from the map and click <button class="btn btn-danger btn-sm" disabled>Blacklist <i class="fa fa-ban"></i></button> to block specific geos
 				</div>
 			</div>
 			<div class="panel-body"
