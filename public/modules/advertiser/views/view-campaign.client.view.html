@@ -256,16 +256,36 @@ adding hook in parent template ---->
                                     <div class="form-group m0">
                                         <label class="col-sm-4 control-label">Countries, Regions & Cities</label>
                                         <div class="col-sm-8">
-                                            <p class="form-control-static">
-                                                <strong>
-                                                    <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/geo-targets"
-                                                        analytics-on="click"
-                                                        analytics-event="ViewCampaign_GeoTargets">
-                                                        <span class="fa fa-sliders"></span>
-                                                        {{ campaign.geo_targets.length + campaign.blocked_geo.length || 0 }} Geo Targets Set
-                                                    </a>
-                                                </strong>
-                                            </p>
+                                            <strong>
+                                                <a data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}/geo-targets"
+                                                    analytics-on="click"
+                                                    analytics-event="ViewCampaign_GeoTargets">
+                                                    <div ng-if="campaign.target_only_geos.length">
+                                                        <i class="fa fa-map-marker"></i> <strong>Whitelist</strong>
+                                                        <ul>
+                                                            <li ng-repeat="geo in campaign.target_only_geos">
+                                                                <strong>{{ geo.name ? geo.name : geo.target }} ({{ geo.children.length ? geo.children.length + " Child Targets": "Entire Region"}})</strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div ng-if="campaign.geo_targets.length">
+                                                        <i class="fa fa-sliders"></i> <strong>Custom Bids</strong>
+                                                        <ul>
+                                                            <li ng-repeat="geo in campaign.geo_targets">
+                                                                <strong>{{ geo.name ? geo.name : geo.target }} ({{ geo.children.length ? geo.children.length + " Child Targets": "Entire Region"}})</strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div ng-if="campaign.blocked_geos.length">
+                                                        <i class="fa fa-ban"></i> <strong>Blacklist</strong>
+                                                        <ul>
+                                                            <li ng-repeat="geo in campaign.blocked_geos">
+                                                                <strong>{{ geo.name ? geo.name : geo.target }} ({{ geo.children.length ? geo.children.length + " Child Targets": "Entire Region"}})</strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </a>
+                                            </strong>
                                         </div>
                                     </div>
                                 </fieldset>
