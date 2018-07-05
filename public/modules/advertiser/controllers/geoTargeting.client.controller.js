@@ -145,7 +145,6 @@ angular.module('advertiser').controller('GeoTargetingController', [
 					 * user intends to clear blacklist by adding whitelist.
                      */
 					$scope.targetOnly = function() {
-						parentScope.dirty = true;
 						var countryNode;
 						var promise;
 						if (parentScope.blocked_geos.data.length){
@@ -174,6 +173,7 @@ angular.module('advertiser').controller('GeoTargetingController', [
 							promise = $q.when([]);
 						}
 						promise.then(function() {
+                            parentScope.dirty = true;
 							if (parentScope.selectedGeo.type === 'country') {
 								// A country is selected to target only,
 								// load the whole country and all its regions/cities
