@@ -85,52 +85,6 @@
 		'col-sm-12': layout === 'vertical'
 	}">
 
-	<!-- Target Only countries section -->
-	<!--
-	<div class="col-sm-12">
-		<div class="panel">
-			<div class="panel-heading bg-primary">
-				<h4>
-					<i class="fa fa-map-marker"></i> Target Only
-				</h4>
-			</div>
-			<div class="panel-body text-muted"
-				ng-if="!unblocked_countries.data || unblocked_countries.data.length === 0">
-				<div class="box-placeholder text-center">
-					Select a country from the map and click <button class="btn btn-primary btn-sm" disabled>Target Only <i class="fa fa-map-marker"></i></button> to target the selected country ONLY
-				</div>
-			</div>
-			<div class="panel-body"
-				ng-if="unblocked_countries.data.length > 0">
-				<div class="text-center mt-xl"
-					ng-if="loadingUnblockedCountries">
-					<div class="ball-clip-rotate-pulse" style="display: inline-block">
-						<div></div>
-						<div></div>	
-					</div>
-					<h4>Loading regions and cities...</h4>
-				</div>
-				<div ng-if="!loadingUnblockedCountries">
-					<div class="geo-tree-body mt">
-						<tree-dnd
-							template-url="modules/advertiser/views/partials/unblocked-countries-table-dnd.html"
-							tree-data="unblocked_countries.data"
-							tree-control="unblocked_countries.control"
-							primary-key="_id"
-							enable-drag="false"
-							enable-drop="false"
-							enable-move="false"
-							data-indent="15"
-							data-indent-unit="px">
-						</tree-dnd>	
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	-->
-	<!-- End of Target Only countries section -->
-
 	<!-- Target Only Geos section -->
 	<div class="col-sm-12">
 		<div class="panel">
@@ -296,9 +250,19 @@
 				<h4><i class="fa fa-ban"></i> Blacklist</h4>
 			</div>
 			<div class="panel-body text-muted"
-				ng-if="!blocked_geos.data || blocked_geos.data.length === 0">
+				ng-if="!blocked_geos.data || blocked_geos.data.length === 0 && !loadingBlockTree">
 				<div class="box-placeholder text-center">
 					Select a region/country from the map and click <button class="btn btn-danger btn-sm" disabled>Blacklist <i class="fa fa-ban"></i></button> to block specific geos
+				</div>
+			</div>
+			<div class="panel-body" ng-if="blocked_geos.data.length === 0 && loadingBlockTree">
+				<div class="text-center mt-xl"
+					 ng-if="loadingBlockTree">
+					<div class="ball-clip-rotate-pulse" style="display: inline-block">
+						<div></div>
+						<div></div>
+					</div>
+					<h4>Loading regions and cities...</h4>
 				</div>
 			</div>
 			<div class="panel-body"
@@ -306,14 +270,6 @@
 				<tree-expand-toggle-buttons control="blocked_geos.control"
 					ng-show="blocked_geos.data">
 				</tree-expand-toggle-buttons>
-				<div class="text-center mt-xl"
-					ng-if="loadingBlockTree">
-					<div class="ball-clip-rotate-pulse" style="display: inline-block">
-						<div></div>
-						<div></div>	
-					</div>
-					<h4>Loading regions and cities...</h4>
-				</div>
 				<div ng-if="!loadingBlockTree">
 					<!-- Search box for blocked geo tree -->
 					<div class="input-group mt"
