@@ -1,7 +1,36 @@
-<h4>Geo Targeting & Blocking</h4>
+<h3>Geo Targeting & Blocking</h3>
+<div class="panel panel-default mb-lg hint">
+	<div class="panel-body>">
+		By default, this Campaign will bid its Base Bid of {{ campaign.base_bid | currency : "$" : 2 }} for <strong>all
+		available countries/regions/cities ("geos").</strong> To change this, select any country or region on the map to the
+		left, then select one of the following actions in the dialog box that follows:
+	</div>
+</div>
+<h4>Whitelist</h4>
 <p class="text-md">
-	By default, this Campaign will bid its Base Bid of {{ campaign.base_bid | currency : "$" : 2 }} for all available countries/regions/cities.
+	Use the <button type="button" class="btn btn-success btn-xs"><i class="fa fa-map-marker"></i></button> button to
+	<strong>whitelist</strong> specific geos. Whitelisting geos means that only impressions originating from whitelisted
+	geos will be bid for; impressions originating from anywhere else will be ignored.
 </p>
+<p class="text-md mb-lg">
+	When you whitelist a particular geo, you will, by definition,
+	<strong>block all other geos</strong>. As such, if you have entered any <strong>blacklist</strong> settings, these
+	settings will be cleared when you use the whitelist.
+</p>
+<h4>Blacklist</h4>
 <p class="text-md">
-	To modify bids for individual Countries, Regions or Cities, use the <button type="button" class="btn btn-success btn-xs"><i class="fa fa-sliders"></i></button> button to add to your targets list. To <strong>block</strong>, use the <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-ban"></i></button> button.
+	Use the <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-ban"></i></button> button to
+	<strong>blacklist (block)</strong> specific geos. Impressions originating from blacklisted geos
+	<strong>will not be bid on in any capacity.</strong>
+</p>
+<p class="text-md mb-lg">
+	If you want to blacklist geos but already have a <strong>whitelist</strong> set,
+	you may be asked to confirm these settings as your whitelist, by definition, blocks all other geos.
+</p>
+<h4>Customize Bids</h4>
+<p class="text-md">
+	Use the <button type="button" class="btn btn-primary btn-xs"><i class="fa fa-sliders"></i></button> button to modify
+	bids for specific geos. Modifying bids for a particular geo does <strong>NOT</strong> mean
+	that your campaign will exclusively target this geo. To do this, you must also add this geo to your
+	<strong>Whitelist</strong> (see above).
 </p>

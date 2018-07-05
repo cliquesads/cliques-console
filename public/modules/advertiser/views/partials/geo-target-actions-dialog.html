@@ -1,22 +1,55 @@
-<div class="text-md mt">
-	<span ng-if="selectedGeo.type === 'country'">
-		For <strong>{{ selectedGeo.name }}</strong>, do you want to
-	</span>
-	<span ng-if="selectedGeo.type === 'region'">
-		For <strong>{{ selectedGeo.name }}</strong> in <strong>{{ selectedCountry.name }}</strong>, do you want to
-	</span>
+<div class="text-center mt-xl" ng-if="loadingTargetOnlyGeos || loadingBlockTree">
+    <div class="ball-clip-rotate-pulse" style="display: inline-block;">
+        <div></div>
+        <div></div>
+    </div>
+    <h4>Waiting for your current settings to load...</h4>
 </div>
-<div class="row mt-xl">
-	<div class="col-sm-6">
-		<button class="btn btn-success btn-block text-md"
-			ng-click="customizeBiddingForGeo()">
-			Customize Bidding <i class="fa fa-sliders"></i>
-		</button>
+<div ng-if="!loadingTargetOnlyGeos && !loadingBlockTree">
+	<div class="text-md mt">
+		Select the action you would like to take:
 	</div>
-	<div class="col-sm-6">
-		<button class="btn btn-danger btn-block text-md"
-			ng-click="blockGeo()">
-			Block <i class="fa fa-ban"></i>
-		</button>
+	<div class="row mt">
+		<div class="col-sm-12">
+			<button class="btn btn-success btn-block text-md"
+					ng-click="targetOnly()">
+				<i class="fa fa-map-marker"></i> Whitelist
+				<span ng-if="selectedGeo.type === 'country'">
+					<strong>{{ selectedGeo.name }}</strong>
+				</span>
+				<span ng-if="selectedGeo.type === 'region'">
+					<strong>{{ selectedGeo.name }}</strong> in <strong>{{ selectedCountry.name }}</strong>
+				</span>
+			</button>
+		</div>
+	</div>
+	<div class="row mt">
+		<div class="col-sm-12">
+			<button class="btn btn-primary btn-block text-md"
+				ng-click="customizeBiddingForGeo()">
+				<i class="fa fa-sliders"></i> Customize Bid for
+				<span ng-if="selectedGeo.type === 'country'">
+					<strong>{{ selectedGeo.name }}</strong>
+				</span>
+				<span ng-if="selectedGeo.type === 'region'">
+					<strong>{{ selectedGeo.name }}</strong> in <strong>{{ selectedCountry.name }}</strong>
+				</span>
+			</button>
+		</div>
+	</div>
+	<div class="row mt">
+		<div class="col-sm-12">
+			<button class="btn btn-danger btn-block text-md"
+				ng-click="blockGeo()">
+				<i class="fa fa-ban"></i> Blacklist
+				<span ng-if="selectedGeo.type === 'country'">
+					<strong>{{ selectedGeo.name }}</strong>
+				</span>
+				<span ng-if="selectedGeo.type === 'region'">
+					<strong>{{ selectedGeo.name }}</strong> in <strong>{{ selectedCountry.name }}</strong>
+				</span>
+			</button>
+		</div>
 	</div>
 </div>
+

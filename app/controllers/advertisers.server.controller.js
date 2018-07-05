@@ -327,6 +327,8 @@ module.exports = function(db) {
                     wantedGeos = campaign.geo_targets;
                 } else if (targetOrBlock === 'block') {
                     wantedGeos = campaign.blocked_geos;
+                } else if (targetOrBlock === 'targetOnly') {
+                    wantedGeos = campaign.target_only_geos;
                 }
                 return promise.each(wantedGeos, function(country) {
                     var countryObj;
@@ -345,8 +347,8 @@ module.exports = function(db) {
                                     regionObj = JSON.parse(JSON.stringify(regionResult));
                                     regionObj.weight = region.weight;
                                     regionObj.explicit = region.explicit;
+                                    regionObj.cities = [];
                                     if (region.children) {
-                                        regionObj.cities = [];
                                         return promise.each(region.children, function(city) {
                                             var cityObj;
                                             customizedCityIds.push(city.target);
