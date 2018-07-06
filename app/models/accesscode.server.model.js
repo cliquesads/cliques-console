@@ -2,7 +2,7 @@
 /**
  * Module dependencies.
  */
-var mongoose = require('mongoose'),
+const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     crypto = require('crypto'),
     async = require('async'),
@@ -15,7 +15,7 @@ var mongoose = require('mongoose'),
  * Access codes for private beta to allow users to sign up
  * @type {Schema}
  */
-var AccessCodeSchema = new Schema({
+const AccessCodeSchema = new Schema({
     code: {
         type: String,
         default: '',
@@ -109,3 +109,30 @@ AccessCodeSchema.methods.redeemIssuerPromos = function(promoType, callback){
 };
 
 exports.AccessCode = mongoose.model('AccessCode', AccessCodeSchema);
+
+/**
+ * Access Links are granted to new organizations as a one-time link
+ * to sign up for Cliques, rather than a reusable, human-readable
+ * access code. Idea is that the link contains the link _id field.
+ *
+ * @type {mongoose.Schema}
+ */
+const AccessLinkSchema = new Schema({
+    created: {
+        type: Date,
+        default: Date.now
+    },
+    createdBy: { type: Schema.ObjectId, ref: 'User' },
+    expired: { type: Boolean, default: false, required: false },
+    orgType: {
+        type: String,
+        enum: ['advertiser','publisher','networkAdmin']
+    },
+    delegatedPublisher: {type: Schema.ObjectId, ref: 'Publisher' },
+    delegatedAdvertiser: { type: Schema.ObjectId, ref: 'Advertiser' },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true },
+});
+
+exports.AccessLink = mongoose.model('AccessLink', AccessLinkSchema);
