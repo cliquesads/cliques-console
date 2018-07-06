@@ -1,10 +1,10 @@
 /* jshint node: true */
 'use strict';
 
-var accesscode = require('../../app/controllers/accesscode.server.controller');
+const accesscode = require('../../app/controllers/accesscode.server.controller');
 
 module.exports = function(db, routers) {
-    var router = routers.apiRouter;
+    const router = routers.apiRouter;
     
     /**
      * @apiDefine AccessCodeSchema
@@ -110,7 +110,8 @@ module.exports = function(db, routers) {
          * @apiSuccess {Object} ::accessCode:: Updated AccessCode object as response body (see [above](#api-AccessCode)
          *  for all fields).
          */
-        .patch(accesscode.hasAuthorization, accesscode.update)/**
+        .patch(accesscode.hasAuthorization, accesscode.update)
+        /**
          * @api {delete} /accesscode/:accessCodeId Remove AccessCode
          * @apiName RemoveAccessCode
          * @apiGroup AccessCode
