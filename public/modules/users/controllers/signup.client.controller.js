@@ -2,8 +2,8 @@
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
     '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
-    function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations, Timezones,
-             TermsAndConditions, REGEXES, FileUploader){
+    function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations,
+             AccessLink, Timezones, TermsAndConditions, REGEXES, FileUploader){
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
@@ -101,6 +101,28 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                         }
                     }
                 }, function(errorResponse){
+                    // redirect to login page if error on org lookup
+                    $scope.stateError = errorResponse.message;
+                });
+            } else {
+                // redirect to login page if no accessToken & organizationID provided
+                $location.path('/signin');
+            }
+        } else if ($state.current.name === 'loggedout.invite') {
+            /**
+             * Handle invites for new orgs
+             */
+            $analytics.eventTrack('Signup_AccessLinkStart');
+            if ($stateParams.accessLinkId) {
+                $scope.accessLink = AccessLink.get({
+                    accessLinkId: $stateParams.accessLinkId
+                }, function () {
+                    // accessLinkId exists
+                    if ($scope.accessLink.expired) {
+                        $scope.stateError = "This link has expired.";
+                        $analytics.eventTrack('Signup_OrgInviteExpired');
+                    }
+                }, function (errorResponse) {
                     // redirect to login page if error on org lookup
                     $scope.stateError = errorResponse.message;
                 });

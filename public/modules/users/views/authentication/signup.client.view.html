@@ -28,7 +28,7 @@
                     <!-- Add analytics event trigger on load of this step since user will almost never explicitly click
                         on any button to get to step 1 -->
                     <div id="step1" ng-show="wizard.active(1)">
-                        <div ng-show="!organizationInvite">
+                        <div ng-show="!organizationInvite && !accessLink.orgType">
                             <legend>Account Type</legend>
                             <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
                             <div class="box-form">
@@ -116,6 +116,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
+                                        <label>Website *</label>
                                         <label>Website *</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">http://</span>
@@ -235,7 +236,7 @@
                         </ul>
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
-                    <div id="step4" ng-show="wizard.active(4)">
+                    <div id="step4" ng-show="wizard.active(4) && !accessLink">
                         <div ng-show="promos[organization.type].length > 0" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>
