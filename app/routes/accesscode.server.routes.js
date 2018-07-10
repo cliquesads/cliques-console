@@ -148,6 +148,34 @@ module.exports = function(db, routers) {
     router.param('accessCodeId', accesscodes.accessCode.accessCodeByID);
 
     /**
+     * @api {get} /accesslink/:accessLinkId Get AccessLink
+     * @apiName GetAccessLinkLoggedOut
+     * @apiGroup AccessLink
+     * @apiDescription Get AccessLink by ID.
+     *
+     * # Permissions
+     * Because this endpoint is needed in the signup process,
+     * no authentication is performed on POST or GET requests to this endpoint.
+     *
+     * Also, the URL below is wrong, but APIDoc doesn't allow you to specify a separate base URL for API endpoints.
+     * All endpoints with no authentication are not prefixed with the `api/` path, instead are rooted at `/`.
+     * So the URL really should be:
+     *
+     * ```
+     * https://console.cliquesads.com/accesslink/:accessLinkId
+     * ```
+     *
+     * @apiVersion 0.1.0
+     * @apiPermission none
+     *
+     * @apiParam {ObjectId} accessLinkId Object ID of desired Access Link object.
+     * @apiSuccess {Object} ::accessLink:: AccessLink object as response body, see
+     *  [Access Link Schema](#api-AccessLink)
+     */
+    routers.noAuthRouter.route('/accesslink/:accessLinkId').get(accesscodes.accessLink.read);
+    routers.noAuthRouter.param('accessLinkId', accesscodes.accessLink.accessLinkByID);
+
+    /**
      * @apiDefine AccessLinkSchema
      * @apiParam (Body (AccessLink Schema)) {ObjectId} [id]      AccessLink ID. Will be auto-generated for new accesscodes
      * @apiParam (Body (AccessLink Schema)) {String} [created=Date.now] Date created
@@ -199,21 +227,6 @@ module.exports = function(db, routers) {
         .get(accesscodes.accessLink.getMany);
 
     router.route('/accesslink/:accessLinkId')
-        /**
-         * @api {get} /accesslink/:accessLinkId Get One Access Code
-         * @apiName ReadAccessLink
-         * @apiGroup AccessLink
-         * @apiDescription Gets a single access code.
-         *
-         * @apiVersion 0.1.0
-         * @apiPermission networkAdmin
-         *
-         * @apiParam (Path Parameters){String} accessLinkId ObjectID of AccessLink
-         *
-         * @apiSuccess {Object} ::accessLink:: AccessLink object as response body (see [above](#api-AccessLink)
-         *  for all fields).
-         */
-        .get(accesscodes.accessLink.hasAuthorization, accesscodes.accessLink.read)
         /**
          * @api {patch} /accesslink/:accessLinkId Update Access Code
          * @apiName UpdateAccessLink

@@ -12,6 +12,7 @@ angular.module('accesscode').factory('AccessCode', ['$resource',
 .factory('AccessLink', ['$resource',
     function($resource) {
         return $resource('console/accesslink/:accessLinkId', { accessLinkId: '@_id'}, {
+            get: { url: '/accesslink/:accessLinkId' },
             update: { method: 'PATCH'},
             create: { method: 'POST'}
         });

@@ -195,6 +195,7 @@ module.exports = {
          */
         create: function(req, res) {
             const accessLink = new AccessLink(req.body);
+            accessLink.createdBy = req.user;
             accessLink.save((err, ac) => {
                 if (err) {
                     return res.status(400).send({
@@ -217,7 +218,7 @@ module.exports = {
                         message: errorHandler.getAndLogErrorMessage(err)
                     });
                 } else {
-                    AccessLink.populate(newAccessLink, {path: ['delegateAdvertiser', 'delegatePublisher', 'createdBy']}, (err, c) => {
+                    AccessLink.populate(newAccessLink, {path: 'delegatedAdvertiser delegatedPublisher createdBy'}, (err, c) => {
                         if (err){
                             return res.status(400).send({
                                 message: errorHandler.getAndLogErrorMessage(err)
@@ -284,26 +285,18 @@ module.exports = {
 
         sendToUser: function(req, res){
             const accessLink = req.accessLink;
-            const asyncFuncs = [];
-            const fu = thisUser => callback => {
-                let protocol = 'https';
-                if (process.env.NODE_ENV === 'local-test'){
-                    protocol = 'http';
-                }
-                const hostname = req.headers.host;
-                const subject = util.format("%s: You've Been Invited To Join Cliques", thisUser.firstName);
-                const inviteUrl = util.format("%s://%s/#!/invite/%s",protocol,hostname,accessLink.id);
-                const templateName = 'welcome-cliques-access-link';
-                mailer.sendMailFromUser(subject, templateName, {
-                    firstName: thisUser.firstName,
-                    inviteUrl: inviteUrl,
-                }, req.user, thisUser.email, callback);
-            };
-            req.body.forEach(user => {
-                const func = fu(user);
-                asyncFuncs.push(func);
-            });
-            async.parallel(asyncFuncs, (err, results) => {
+            let protocol = 'https';
+            if (process.env.NODE_ENV === 'local-test'){
+                protocol = 'http';
+            }
+            const hostname = req.headers.host;
+            const subject = util.format("%s: You've Been Invited To Join Cliques", accessLink.firstName);
+            const inviteUrl = util.format("%s://%s/#!/invite/%s",protocol,hostname,accessLink.id);
+            const templateName = 'welcome-cliques-access-link';
+            mailer.sendMailFromUser(subject, templateName, {
+                firstName: accessLink.firstName,
+                inviteUrl: inviteUrl,
+            }, req.user, accessLink.email, err =>{
                 if (err){
                     return res.status(400).send({
                         message: errorHandler.getAndLogErrorMessage(err)

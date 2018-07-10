@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
-    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
+    '$window','$analytics','Authentication','Organizations','AccessLink','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
     function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations,
              AccessLink, Timezones, TermsAndConditions, REGEXES, FileUploader){
         $scope.domain_regex = String(REGEXES.domain);
@@ -156,7 +156,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         };
 
         // set vars for new user signup from access code
-        if (!$scope.organizationInvite){
+        if (!$scope.organizationInvite && !$scope.accessLink){
             $scope.getAllFeesFromAccessCode();
             var promos = $scope.authentication.accesscode.promos;
             $scope.promos = _.groupBy(promos, function(p){ return p.type; });
