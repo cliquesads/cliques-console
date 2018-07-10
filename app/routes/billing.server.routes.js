@@ -1,10 +1,10 @@
 /* jshint node: true */
 'use strict';
 
-var organizations = require('../../app/controllers/organizations.server.controller');
 var billing = require('../../app/controllers/billing.server.controller');
 
 module.exports = function(db, routers) {
+    var organizations = require('../../app/controllers/organizations.server.controller')(db);
     var users = require('../controllers/users.server.controller')(db);
 	var router = routers.apiRouter;
 

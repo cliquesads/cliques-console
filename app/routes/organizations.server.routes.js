@@ -1,9 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-var organizations = require('../../app/controllers/organizations.server.controller');
-
 module.exports = function(db, routers) {
+    var organizations = require('../../app/controllers/organizations.server.controller')(db);
     var users = require('../controllers/users.server.controller')(db);
     /**
      * @apiDefine OrganizationSchema
