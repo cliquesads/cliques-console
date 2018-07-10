@@ -18,7 +18,8 @@
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-sm-3 skinny">
                             <h4><i class="fa fa-user"></i> Create an Account</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny">
+                        <!--TODO: Hiding terms & conditions temporarily if accessLink is present -->
+                        <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny" ng-if="!accessLink">
                             <h4><i class="fa fa-file-text-o"></i> Terms & Conditions</h4>
                         </li>
                     </ol>
@@ -116,7 +117,6 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Website *</label>
                                         <label>Website *</label>
                                         <div class="input-group">
                                             <span class="input-group-addon">http://</span>
@@ -230,13 +230,19 @@
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="Signup_Step2"><span>&larr; Previous</span></a>
                             </li>
-                            <li class="next">
-                                <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
+                            <li class="text-center form-group mt">
+                                <!--TODO: Remove when terms added for accessLink-->
+                                <span ng-if="accessLink">
+                                    <button type="submit" class="btn btn-lg btn-primary" analytics-on="click" analytics-event="Signup_Finish"  ng-show="credentials.username && !userNameTaken && userform.password.$valid"><span class="text-md">Finish</span></button>
+                                </span>
+                                <span ng-if="!accessLink">
+                                    <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
+                                </span>
                             </li>
                         </ul>
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
-                    <div id="step4" ng-show="wizard.active(4) && !accessLink">
+                    <div id="step4" ng-if="wizard.active(4) && !accessLink">
                         <div ng-show="promos[organization.type].length > 0" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>

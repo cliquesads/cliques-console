@@ -117,6 +117,10 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 $scope.accessLink = AccessLink.get({
                     accessLinkId: $stateParams.accessLinkId
                 }, function () {
+                    $scope.credentials.firstName = $scope.accessLink.firstName;
+                    $scope.credentials.lastName = $scope.accessLink.lastName;
+                    $scope.credentials.email = $scope.accessLink.email;
+                    $scope.organization.type = $scope.accessLink.orgType;
                     // accessLinkId exists
                     if ($scope.accessLink.expired) {
                         $scope.stateError = "This link has expired.";
@@ -215,9 +219,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             $scope.organization.phone = $('#phone').intlTelInput('getNumber');
             $scope.organization.organization_types = [$scope.organization.type];
 
-            if (!$scope.organizationInvite) {
+            if (!$scope.organizationInvite && !$scope.accessLink) {
                 $scope.organization.accesscode = $scope.authentication.accesscode._id;
                 $scope.organization.promos = $scope.promos[$scope.organization.type];
+            }
+
+            if ($scope.accessLink){
+                $scope.organization.accessLink = $scope.accessLink._id;
             }
 
             $scope.logo_url = $scope.organization.logo_url;
@@ -235,9 +243,10 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         $scope.signUpUser = function(organizationId){
             // Add access code ref to user before submitting for tracking purposes
-            if (!$scope.organizationInvite) {
+            if (!$scope.organizationInvite && !$scope.accessLink) {
                 $scope.credentials.accesscode = $scope.authentication.accesscode._id;
             }
+            // Add accessLink ref
             $scope.credentials.organization = organizationId;
             $scope.credentials.logo_url = $scope.logo_url;
             // Post the request
