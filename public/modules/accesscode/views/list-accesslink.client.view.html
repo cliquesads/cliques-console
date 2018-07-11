@@ -1,0 +1,71 @@
+<div ng-switch on="$state.$current.self.name">
+    <div ng-switch-default>
+        <!-- View hook for child views -->
+        <section data-ui-view="main"></section>
+    </div>
+    <div ng-switch-when="app.admin.listAccessLinks">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading pb0">
+                    <h4>
+                        Organization Invites
+                        <span class="pull-right">
+                            <button type="button" ng-click="newAccessLink()" class="btn btn-primary btn-xs" tooltip="Create a New Invite">
+                                + New Invite
+                            </button>
+                        </span>
+                    </h4>
+                    <hr class="pb0 pt0 m0"/>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <em class="text-muted">Create invites to allow users to set up new Organizational accounts on Cliques, with restricted access to specific Advertisers/Publishers.</em>
+                    </p>
+                    <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" ng-if="accessLinks.$resolved && !accessLinks.length">
+                        <h4 class="m0">No invites yet, why don't you <a href="#" ng-click="newAccessLink()" analytics-on="click" analytics-event="ListAccessLinks_Create">create one</a>?</h4>
+                    </div>
+                    <table class="table table-striped" ng-if="accessLinks.$resolved && accessLinks.length">
+                        <thead>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Created By</th>
+                            <th>Issued To</th>
+                            <th>Organization Type</th>
+                            <th>Delegated Entity</th>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="accessLink in accessLinks | orderBy : 'created'">
+                                <td>
+                                    <div class="label" ng-class="!accessLink.expired ? 'label-success':'label-default'">{{ accessLink.expired ? "Expired":"Active"}}</div>
+                                </td>
+                                <td>
+                                    {{ accessLink.created | date: "short": "UTC" }}
+                                </td>
+                                <td>
+                                    {{ accessLink.createdBy.username }}
+                                </td>
+                                <td>
+                                    {{ accessLink.firstName + " " + accessLink.lastName + " <" + accessLink.email + ">" }}
+                                </td>
+                                <td>
+                                    {{ accessLink.orgType | capitalize }}
+                                </td>
+                                <td>
+                                    {{ accessLink.orgType === 'advertiser' ? accessLink.delegatedAdvertiser.name : accessLink.delegatedPublisher.name }}
+                                </td>
+                                <td style="min-width: 100px">
+                                    <button type="button" ng-click="resendAccessLink(accessLink)" class="btn btn-primary btn-xs" tooltip="Re-Send Invite to User" ng-if="!accessLink.expired">
+                                        <i class="fa fa-lg fa-envelope"></i>
+                                    </button>
+                                    <button type="button" ng-click="deactivateAccessLink(accessLink)" class="btn btn-danger btn-xs" tooltip="Deactivate Invite" ng-if="!accessLink.expired">
+                                        <i class="fa fa-lg fa-power-off"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

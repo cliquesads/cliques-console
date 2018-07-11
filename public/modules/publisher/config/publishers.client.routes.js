@@ -87,7 +87,7 @@ angular.module('publisher').config(['$stateProvider',
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/list-publisher.client.view.html',
-                    controller: 'PublisherController'
+                    controller: 'ListPublisherController'
                 },
                 'titleBar': {
                     template: '<section data-ui-view="titleBar"></section>'
@@ -97,7 +97,10 @@ angular.module('publisher').config(['$stateProvider',
 		state('app.publisher.allPublishers.viewPublisher', {
 			url: '/:publisherId',
             resolve: {
-                $title: function() { return 'View Publisher'; }
+                publisher: function($stateParams, Publisher){
+                    return Publisher.get({ publisherId: $stateParams.publisherId }).$promise;
+                },
+                $title: function(publisher) { return publisher.name; }
             },
             views: {
                 'main': {
@@ -113,7 +116,19 @@ angular.module('publisher').config(['$stateProvider',
         state('app.publisher.allPublishers.viewPublisher.viewSite', {
             url: '/site/:siteId',
             resolve: {
-                $title: function() { return 'View Site'; }
+                site: function($stateParams, publisher){
+                    var i = _.findIndex(publisher.sites, function(site){
+                        return site._id === $stateParams.siteId;
+                    });
+                    return {
+                        publisher: publisher,
+                        index: i,
+                        site: publisher.sites[i]
+                    };
+                },
+                $title: function(site){
+                    return site.site.name;
+                }
             },
             views: {
                 'main': {
@@ -129,6 +144,18 @@ angular.module('publisher').config(['$stateProvider',
         state('app.publisher.allPublishers.viewPublisher.viewSite.viewPage', {
             url: '/page/:pageId',
             resolve: {
+                page: function($stateParams, publisher, site){
+                    var page_ind = _.findIndex(site.site.pages, function(page){
+                        return page._id === $stateParams.pageId;
+                    });
+                    return {
+                        publisher: publisher,
+                        site: site.site,
+                        page: site.site.pages[page_ind],
+                        pageIndex: page_ind,
+                        siteIndex: site.index
+                    };
+                },
                 $title: function() { return 'Page Manager'; }
             },
             views: {

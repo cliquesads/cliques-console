@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('users').controller('SignUpController', ['$scope', '$timeout','$http', '$location','$state', '$stateParams',
-    '$window','$analytics','Authentication','Organizations','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
-    function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations, Timezones,
-             TermsAndConditions, REGEXES, FileUploader){
+    '$window','$analytics','Authentication','Organizations','AccessLink','Timezones','TermsAndConditions','REGEXES', 'FileUploader',
+    function($scope, $timeout, $http, $location, $state, $stateParams, $window, $analytics, Authentication, Organizations,
+             AccessLink, Timezones, TermsAndConditions, REGEXES, FileUploader){
         $scope.domain_regex = String(REGEXES.domain);
         $scope.authentication = Authentication;
 
@@ -108,6 +108,31 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                 // redirect to login page if no accessToken & organizationID provided
                 $location.path('/signin');
             }
+        } else if ($state.current.name === 'loggedout.invite') {
+            /**
+             * Handle invites for new orgs
+             */
+            $analytics.eventTrack('Signup_AccessLinkStart');
+            if ($stateParams.accessLinkId) {
+                $scope.accessLink = AccessLink.get({
+                    accessLinkId: $stateParams.accessLinkId
+                }, function () {
+                    $scope.credentials.firstName = $scope.accessLink.firstName;
+                    $scope.credentials.lastName = $scope.accessLink.lastName;
+                    $scope.credentials.email = $scope.accessLink.email;
+                    $scope.organization.type = $scope.accessLink.orgType;
+                    // accessLinkId exists
+                    if ($scope.accessLink.expired) {
+                        $scope.stateError = "This link has expired.";
+                        $analytics.eventTrack('Signup_OrgInviteExpired');
+                    }
+                }, function (errorResponse) {
+                    $scope.stateError = errorResponse.message || "Invalid link ID.";
+                });
+            } else {
+                // redirect to login page if no accessToken & organizationID provided
+                $location.path('/signin');
+            }
         }
 
         /**
@@ -134,7 +159,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
         };
 
         // set vars for new user signup from access code
-        if (!$scope.organizationInvite){
+        if (!$scope.organizationInvite && !$scope.accessLink){
             $scope.getAllFeesFromAccessCode();
             var promos = $scope.authentication.accesscode.promos;
             $scope.promos = _.groupBy(promos, function(p){ return p.type; });
@@ -193,9 +218,13 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
             $scope.organization.phone = $('#phone').intlTelInput('getNumber');
             $scope.organization.organization_types = [$scope.organization.type];
 
-            if (!$scope.organizationInvite) {
+            if (!$scope.organizationInvite && !$scope.accessLink) {
                 $scope.organization.accesscode = $scope.authentication.accesscode._id;
                 $scope.organization.promos = $scope.promos[$scope.organization.type];
+            }
+
+            if ($scope.accessLink){
+                $scope.organization.accessLink = $scope.accessLink._id;
             }
 
             $scope.logo_url = $scope.organization.logo_url;
@@ -213,9 +242,10 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
          */
         $scope.signUpUser = function(organizationId){
             // Add access code ref to user before submitting for tracking purposes
-            if (!$scope.organizationInvite) {
+            if (!$scope.organizationInvite && !$scope.accessLink) {
                 $scope.credentials.accesscode = $scope.authentication.accesscode._id;
             }
+            // Add accessLink ref
             $scope.credentials.organization = organizationId;
             $scope.credentials.logo_url = $scope.logo_url;
             // Post the request

@@ -1,7 +1,7 @@
 /* jshint node: true */ 'use strict';
-var organizations = require('../controllers/organizations.server.controller');
 
 module.exports = function(db, routers){
+    var organizations = require('../controllers/organizations.server.controller')(db);
     var users = require('../controllers/users.server.controller')(db);
     var aggregations = require('../controllers/aggregations.server.controller')(db);
     var advertisers = require('../controllers/advertisers.server.controller')(db);

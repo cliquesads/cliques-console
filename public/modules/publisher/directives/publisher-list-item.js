@@ -27,7 +27,6 @@ angular.module('publisher').directive('publisherListItem', ['ngDialog', 'Notify'
                     data: {publisher: publisher}
                 });
             };
-
         }
     };
 }]);

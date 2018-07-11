@@ -1,11 +1,10 @@
 /* global _, angular, moment, user, deploymentMode */
 'use strict';
 
-angular.module('publisher').controller('PageController', ['$scope','$stateParams','Publisher',
-    'PUBLISHER_TOOLTIPS','OPENRTB','CREATIVE_SIZES','DEFAULT_TYPES','NATIVE_POSITIONS',
-    'HourlyAdStat','aggregationDateRanges','Authentication','Notify','ngDialog',
+angular.module('publisher').controller('PageController',
 	function($scope,$stateParams, Publisher, PUBLISHER_TOOLTIPS, OPENRTB, CREATIVE_SIZES,
-             DEFAULT_TYPES, NATIVE_POSITIONS, HourlyAdStat, aggregationDateRanges, Authentication, Notify, ngDialog){
+             DEFAULT_TYPES, NATIVE_POSITIONS, HourlyAdStat, aggregationDateRanges,
+             Authentication, Notify, ngDialog, page){
         $scope.DEFAULT_TYPES = DEFAULT_TYPES;
         $scope.authentication = Authentication;
 
@@ -17,19 +16,18 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             }
         };
 
+        $scope.publisher = page.publisher;
+        $scope.site = page.site;
+        $scope.page = page.page;
+        $scope.pageIndex = page.pageIndex;
+        $scope.siteIndex = page.siteIndex;
+
         function setPage(){
             // Set refs to nested documents in parent Publisher so $update method
             // can be used.  Don't know if this is entirely necessary but doing
             // to be safe, as I find Angular's handling of object refs kind of confusing
-            var site_ind = _.findIndex($scope.publisher.sites, function(site){
-                return site._id === $stateParams.siteId;
-            });
-            $scope.site = $scope.publisher.sites[site_ind];
-
-            var page_ind = _.findIndex($scope.site.pages, function(page){
-                return page._id === $stateParams.pageId;
-            });
-            $scope.page = $scope.site.pages[page_ind];
+            $scope.site = $scope.publisher.sites[$scope.siteIndex];
+            $scope.page = $scope.site.pages[$scope.pageIndex];
         }
 
         $scope.update = function() {
@@ -38,15 +36,6 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             }, function(errorResponse) {
                 $scope.error = errorResponse.data.message;
             });
-        };
-
-        $scope.findOne = function() {
-            Publisher.get({publisherId: $stateParams.publisherId})
-                .$promise
-                .then(function(publisher){
-                    $scope.publisher = publisher;
-                    setPage();
-                });
         };
 
         // Only accessible to admins
@@ -315,4 +304,4 @@ angular.module('publisher').controller('PageController', ['$scope','$stateParams
             });
         };
 	}
-]);
+);

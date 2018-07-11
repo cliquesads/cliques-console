@@ -1,22 +1,36 @@
 <section data-ng-controller="PublisherDashboardController">
-    <div class="jumbotron text-center" ng-show="publishers.$resolved && !loadingSites && publishers.length === 0">
+    <div class="jumbotron text-center" ng-show="publishers.$resolved && !loadingSites && allSites.length === 0">
         <div class="text-center">
-            Thanks for being a part of the Cliques Beta Program!
+            Welcome to Cliques!
         </div>
         <br>
-        <div class="row">
-            <p class="lead">
-                It looks like you haven't set up a Publisher yet.  <strong>Let's change that now.</strong>
-            </p>
+        <div ng-if="publishers.length === 0">
+            <div class="row">
+                <p class="lead">
+                    It looks like you haven't set up a Site yet.  <strong>Let's change that now.</strong>
+                </p>
+            </div>
+            <div class="row" ng-show="allSites.length == 0">
+                <p>
+                    <a class="btn btn-primary btn-lg" href="#!/publisher/create" analytics-on="click" analytics-event="PubDashboard_Create">Get Started</a>
+                </p>
+            </div>
         </div>
-        <div class="row" ng-show="publishers.length == 0">
-            <p>
-                <a class="btn btn-primary btn-lg" href="#!/publisher/create" analytics-on="click" analytics-event="PubDashboard_Create">Get Started</a>
-            </p>
+        <div ng-if="publishers.length > 0">
+            <div class="row">
+                <p class="lead">
+                    It looks like you haven't set up a Site yet.  <strong>Let's change that now.</strong>
+                </p>
+            </div>
+            <div class="row" ng-show="allSites.length == 0">
+                <p>
+                    <a class="btn btn-primary btn-lg" href="#!/publisher/{{ publishers[0]._id }}?newSite=true" analytics-on="click" analytics-event="PubDashboard_Create">Get Started</a>
+                </p>
+            </div>
         </div>
     </div>
 
-    <div class="row" ng-show="publishers.$resolved">
+    <div class="row" ng-show="publishers.$resolved && allSites.length > 0">
         <!-- My Sites Section -->
         <div class="col-lg-6 col-sm-12">
             <div class="width-90">

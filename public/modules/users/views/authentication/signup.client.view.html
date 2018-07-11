@@ -1,7 +1,7 @@
-<div ng-show="stateError" class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 alert alert-danger text-center">
+<div ng-if="stateError" class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 alert alert-danger text-center">
     <h3 data-ng-bind="stateError"></h3>
 </div>
-<section ng-hide="stateError" class="row">
+<section ng-if="!stateError" class="row">
     <h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
     <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 panel panel-default">
         <div class="panel-body">
@@ -18,7 +18,8 @@
                         <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)" class="col-sm-3 skinny">
                             <h4><i class="fa fa-user"></i> Create an Account</h4>
                         </li>
-                        <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny">
+                        <!--TODO: Hiding terms & conditions temporarily if accessLink is present -->
+                        <li ng-class="{'active':wizard.active(4)}" class="col-md-3 skinny" ng-if="!accessLink">
                             <h4><i class="fa fa-file-text-o"></i> Terms & Conditions</h4>
                         </li>
                     </ol>
@@ -28,7 +29,7 @@
                     <!-- Add analytics event trigger on load of this step since user will almost never explicitly click
                         on any button to get to step 1 -->
                     <div id="step1" ng-show="wizard.active(1)">
-                        <div ng-show="!organizationInvite">
+                        <div ng-show="!organizationInvite && !accessLink.orgType">
                             <legend>Account Type</legend>
                             <p class="legend-help-text text-muted">Please tell us what type of account you'd like to create.</p>
                             <div class="box-form">
@@ -229,13 +230,19 @@
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="Signup_Step2"><span>&larr; Previous</span></a>
                             </li>
-                            <li class="next">
-                                <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
-                            </li>
+                            <div class="text-center form-group pull-right">
+                                <!--TODO: Remove when terms added for accessLink-->
+                                <span ng-if="accessLink">
+                                    <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="Signup_Finish"  ng-show="credentials.username && !userNameTaken && userform.password.$valid"><span class="text-md">Finish</span></button>
+                                </span>
+                                <span ng-if="!accessLink">
+                                    <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
+                                </span>
+                            </div>
                         </ul>
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
-                    <div id="step4" ng-show="wizard.active(4)">
+                    <div id="step4" ng-if="wizard.active(4) && !accessLink">
                         <div ng-show="promos[organization.type].length > 0" class="alert alert-success">
                             <p>You've used an access code that comes with the following promotions:</p>
                             <ul>
