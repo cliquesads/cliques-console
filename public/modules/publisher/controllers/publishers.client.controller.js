@@ -1,31 +1,11 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$state', '$location',
-    'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-    'REVIEW_TIME',
-	function($rootScope, $scope, $stateParams, $state, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries,
-             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME) {
-		$scope.authentication = Authentication;
-        $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
+angular.module('publisher').controller('ListPublisherController',['$scope', '$stateParams', '$location', 'Authentication',
+    'Publisher','$state','$rootScope',
+    function($scope, $stateParams, $location, Authentication, Publisher, $state, $rootScope){
+        $scope.authentication = Authentication;
         $scope.publishers = Publisher.query();
-
-        /**
-         * Overlap publisher helper modal if state includes necessary query params
-         */
-        $scope.newModal = function(){
-            ngDialog.open({
-                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
-                data: { review_time: REVIEW_TIME }
-            });
-        };
-        // this activates the modal
-        $scope.showNewModal = function(){
-            if ($location.search().newModal){
-                $scope.newModal();
-            }
-        };
-
         /**
          * Factory for filter function used in publisher list view
          */
@@ -55,6 +35,31 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
                 publisherId: publisher._id
             });
         };
+    }
+])
+.controller('PublisherController', ['$scope', '$stateParams', '$location', 'Authentication',
+    'Publisher','publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
+    'REVIEW_TIME','$state','$rootScope',
+	function($scope, $stateParams, $location, Authentication, Publisher, publisher, HourlyAdStat, MongoTimeSeries,
+             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME, $state, $rootScope) {
+
+        $scope.publisher = publisher;
+
+        /**
+         * Overlap publisher helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
 
         $scope.update = function() {
             var publisher = $scope.publisher;
@@ -71,18 +76,14 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
         };
 
 		$scope.findOne = function() {
-			$scope.publisher = Publisher.get({
-				publisherId: $stateParams.publisherId
-			}, function(){
-                HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
-                    groupBy: 'site'
-                }).then(function(response){
-                    response.data.forEach(function(site_data){
-                        var i = _.findIndex($scope.publisher.sites, function(site){
-                            return site._id === site_data._id.site;
-                        });
-                        $scope.publisher.sites[i].percent_spent = (site_data.spend/$scope.publisher.sites[i].budget).toFixed(4);
+            HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
+                groupBy: 'site'
+            }).then(function(response){
+                response.data.forEach(function(site_data){
+                    var i = _.findIndex($scope.publisher.sites, function(site){
+                        return site._id === site_data._id.site;
                     });
+                    $scope.publisher.sites[i].percent_spent = (site_data.spend/$scope.publisher.sites[i].budget).toFixed(4);
                 });
             });
 		};

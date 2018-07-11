@@ -87,7 +87,7 @@ angular.module('publisher').config(['$stateProvider',
             views: {
                 'main': {
                     templateUrl: 'modules/publisher/views/list-publisher.client.view.html',
-                    controller: 'PublisherController'
+                    controller: 'ListPublisherController'
                 },
                 'titleBar': {
                     template: '<section data-ui-view="titleBar"></section>'
@@ -97,7 +97,10 @@ angular.module('publisher').config(['$stateProvider',
 		state('app.publisher.allPublishers.viewPublisher', {
 			url: '/:publisherId',
             resolve: {
-                $title: function() { return 'View Publisher'; }
+                publisher: function($stateParams, Publisher){
+                    return Publisher.get({ publisherId: $stateParams.publisherId }).$promise;
+                },
+                $title: function(publisher) { return publisher.name; }
             },
             views: {
                 'main': {
