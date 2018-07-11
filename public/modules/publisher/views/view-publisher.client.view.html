@@ -38,6 +38,9 @@ adding hook in parent template ---->
                             <i class="fa fa-desktop"></i>&nbsp;&nbsp;Sites
                         </span>
                     </li>
+                    <div class="box-placeholder text-center mv-lg pv-xl" data-ng-if="publisher.sites.length === 0">
+                        <h4>No Sites yet, why don't you <br><a ng-click="newSite()" analytics-on="click" analytics-event="ViewPublisher_NewSite">create one</a>?</h4>
+                    </div>
                     <a data-ng-repeat="site in publisher.sites" data-ng-href="#!/publisher/{{publisher._id}}/site/{{site._id}}" class="list-group-item" analytics-on="click" analytics-event="ViewPublisher_SelectSite">
                         <div class="row row-table">
                             <div class="col-sm-2">
