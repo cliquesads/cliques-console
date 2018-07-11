@@ -1,12 +1,17 @@
 /* global _, angular, moment, user */
 'use strict';
 
-angular.module('publisher').controller('SiteController', ['$scope', '$stateParams', '$location',
-    'Authentication', 'Publisher','DTOptionsBuilder', 'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS','Notify','REVIEW_TIME',
-	function($scope, $stateParams, $location, Authentication, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS, Notify,REVIEW_TIME) {
+angular.module('publisher').controller('SiteController',
+    function($scope, $stateParams, $location, Authentication, Publisher, site, DTOptionsBuilder, DTColumnDefBuilder,
+             HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,PUBLISHER_TOOLTIPS, Notify,REVIEW_TIME,
+             CLIQUE_ICON_CLASSES) {
+
+        $scope.CLIQUE_ICON_CLASSES = CLIQUE_ICON_CLASSES;
 		$scope.authentication = Authentication;
         $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
-        $scope.publishers = Publisher.query();
+        $scope.site = site.site;
+        $scope.publisher = site.publisher;
+        $scope.siteIndex = site.index;
 
         /**
          * Overlap publisher helper modal if state includes necessary query params
@@ -26,28 +31,10 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
 
 		$scope.update = function() {
 			$scope.publisher.$update(function(){
-                setSite();
+                $scope.site = $scope.publisher.sites[$scope.siteIndex];
             }, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
-		};
-
-        function setSite(){
-            var i = _.findIndex($scope.publisher.sites, function(site){
-                return site._id === $stateParams.siteId;
-            });
-            //$scope.site as pointer to site in publisher.sites array
-            //this way, all Publisher resource methods will work
-            $scope.site = $scope.publisher.sites[i];
-        }
-
-		$scope.findOne = function() {
-			Publisher.get({publisherId: $stateParams.publisherId})
-                .$promise
-                .then(function(publisher){
-                    $scope.publisher = publisher;
-                    setSite();
-                });
 		};
 
         // Only accessible to admins
@@ -61,7 +48,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 });
                 this.publisher.$update(function(response){
                     Notify.alert('Your site was successfully deactivated.',{});
-                    setSite();
+                    $scope.site = $scope.publisher.sites[$scope.siteIndex];
                 }, function(errorResponse){
                     Notify.alert('Error deactivating site: ' + errorResponse.message,{status: 'danger'});
                 });
@@ -74,7 +61,7 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
                 });
                 this.publisher.$update(function(response){
                     Notify.alert('Your site was successfully activated. Let\'s do this thing.',{});
-                    setSite();
+                    $scope.site = $scope.publisher.sites[$scope.siteIndex];
                 }, function(errorResponse){
                     Notify.alert('Error activating site: ' + errorResponse.message,{status: 'danger'});
                 });
@@ -234,4 +221,4 @@ angular.module('publisher').controller('SiteController', ['$scope', '$stateParam
             $scope.dateRangeSelection = dateShortCode;
         };
 	}
-]);
+);

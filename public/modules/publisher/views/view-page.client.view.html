@@ -77,8 +77,8 @@
                                 <p class="form-control-static"
                                     ng-show="!pageForm.$visible">
                                     <span class="tag label label-info mr"
-                                        ng-repeat="keyword in page.keywords" ng-show="page.keywords">
-                                        {{ keyword }} 
+                                        ng-repeat="keyword in page.keywords" ng-show="page.keywords.length">
+                                        {{ keyword }}
                                     </span>
                                     <span ng-show="!page.keywords"><em class="text-muted">None</em></span>
                                 </p>

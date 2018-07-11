@@ -1,8 +1,7 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('publisher').controller('ListPublisherController',['$scope', '$stateParams', '$location', 'Authentication',
-    'Publisher','$state','$rootScope',
+angular.module('publisher').controller('ListPublisherController',
     function($scope, $stateParams, $location, Authentication, Publisher, $state, $rootScope){
         $scope.authentication = Authentication;
         $scope.publishers = Publisher.query();
@@ -36,17 +35,15 @@ angular.module('publisher').controller('ListPublisherController',['$scope', '$st
             });
         };
     }
-])
-.controller('PublisherController', ['$scope', '$stateParams', '$location', 'Authentication',
-    'Publisher','publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-    'REVIEW_TIME','$state','$rootScope',
+)
+.controller('PublisherController',
 	function($scope, $stateParams, $location, Authentication, Publisher, publisher, HourlyAdStat, MongoTimeSeries,
-             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME, $state, $rootScope) {
+             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME) {
 
         $scope.publisher = publisher;
 
         /**
-         * Overlap publisher helper modal if state includes necessary query params
+         * Overlay publisher helper modal if state includes necessary query params
          */
         $scope.newModal = function(){
             ngDialog.open({
@@ -58,6 +55,24 @@ angular.module('publisher').controller('ListPublisherController',['$scope', '$st
         $scope.showNewModal = function(){
             if ($location.search().newModal){
                 $scope.newModal();
+            }
+        };
+
+        $scope.newSite = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/publisher/views/partials/create-site.client.view.html',
+                controller: 'SiteWizardController',
+                data: {publisher: $scope.publisher}
+            });
+        };
+
+        /**
+         * Show newSite modal if passed in as query param
+         */
+        $scope.showNewSite = function(){
+            if ($location.search().newSite){
+                $scope.newSite();
             }
         };
 
@@ -97,24 +112,6 @@ angular.module('publisher').controller('ListPublisherController',['$scope', '$st
                 }],
                 data: {publisher: $scope.publisher, update: $scope.update}
             });
-        };
-
-        $scope.newSite = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/create-site.client.view.html',
-                controller: 'SiteWizardController',
-                data: {publisher: $scope.publisher}
-            });
-        };
-
-        /**
-         * Show newSite modal if passed in as query param
-         */
-        $scope.showNewModal = function(){
-            if ($location.search().newSite){
-                $scope.newSite();
-            }
         };
 
 
@@ -157,4 +154,4 @@ angular.module('publisher').controller('ListPublisherController',['$scope', '$st
             $scope.dateRangeSelection = dateShortCode;
         };
 	}
-]);
+);
