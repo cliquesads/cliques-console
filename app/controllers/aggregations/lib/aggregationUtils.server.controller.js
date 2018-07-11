@@ -649,7 +649,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                         current: Number(req.query.resultsPage),
                         pages: adStats ? Math.ceil(adStats.total / skipAndLimit.limit) : 0,
                         count: adStats ? adStats.total : 0,
-                        results: adStats ? adStats.results: 0
+                        results: adStats ? adStats.results: []
                     };
                     // returnObj = {
                     //     current: Number(req.query.resultsPage),
@@ -657,7 +657,7 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     //     count: 1000000,
                     //     results: adStats
                     // };
-                    results = adStats.results;
+                    results = adStats ? adStats.results : [];
                 } else {
                     returnObj = adStats;
                     results = adStats;
