@@ -127,8 +127,7 @@ angular.module('users').controller('SignUpController', ['$scope', '$timeout','$h
                         $analytics.eventTrack('Signup_OrgInviteExpired');
                     }
                 }, function (errorResponse) {
-                    // redirect to login page if error on org lookup
-                    $scope.stateError = errorResponse.message;
+                    $scope.stateError = errorResponse.message || "Invalid link ID.";
                 });
             } else {
                 // redirect to login page if no accessToken & organizationID provided

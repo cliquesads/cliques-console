@@ -1,7 +1,7 @@
-<div ng-show="stateError" class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 alert alert-danger text-center">
+<div ng-if="stateError" class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 alert alert-danger text-center">
     <h3 data-ng-bind="stateError"></h3>
 </div>
-<section ng-hide="stateError" class="row">
+<section ng-if="!stateError" class="row">
     <h3 class="col-md-12 text-center text-white">Sign Up for Cliques Beta</h3>
     <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8 panel panel-default">
         <div class="panel-body">
