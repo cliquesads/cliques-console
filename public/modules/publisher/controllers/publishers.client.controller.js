@@ -107,6 +107,15 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
             });
         };
 
+        /**
+         * Show newSite modal if passed in as query param
+         */
+        $scope.showNewModal = function(){
+            if ($location.search().newSite){
+                $scope.newSite();
+            }
+        };
+
 
         // ######################################### //
         // ######### GRAPH VARS & FUNCTIONS ######## //
