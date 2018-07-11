@@ -1,31 +1,10 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('publisher').controller('PublisherController', ['$rootScope','$scope', '$stateParams', '$state', '$location',
-    'Authentication', 'Publisher','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog','PUBLISHER_TOOLTIPS',
-    'REVIEW_TIME',
-	function($rootScope, $scope, $stateParams, $state, $location, Authentication, Publisher, HourlyAdStat, MongoTimeSeries,
-             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME) {
-		$scope.authentication = Authentication;
-        $scope.TOOLTIPS = PUBLISHER_TOOLTIPS;
+angular.module('publisher').controller('ListPublisherController',
+    function($scope, $stateParams, $location, Authentication, Publisher, $state, $rootScope){
+        $scope.authentication = Authentication;
         $scope.publishers = Publisher.query();
-
-        /**
-         * Overlap publisher helper modal if state includes necessary query params
-         */
-        $scope.newModal = function(){
-            ngDialog.open({
-                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
-                data: { review_time: REVIEW_TIME }
-            });
-        };
-        // this activates the modal
-        $scope.showNewModal = function(){
-            if ($location.search().newModal){
-                $scope.newModal();
-            }
-        };
-
         /**
          * Factory for filter function used in publisher list view
          */
@@ -55,6 +34,47 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
                 publisherId: publisher._id
             });
         };
+    }
+)
+.controller('PublisherController',
+	function($scope, $stateParams, $location, Authentication, Publisher, publisher, HourlyAdStat, MongoTimeSeries,
+             aggregationDateRanges, ngDialog, PUBLISHER_TOOLTIPS, REVIEW_TIME) {
+
+        $scope.publisher = publisher;
+
+        /**
+         * Overlay publisher helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/publisher/views/partials/new-site-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
+
+        $scope.newSite = function(){
+            ngDialog.open({
+                className: 'ngdialog-theme-default dialogwidth800',
+                template: 'modules/publisher/views/partials/create-site.client.view.html',
+                controller: 'SiteWizardController',
+                data: {publisher: $scope.publisher}
+            });
+        };
+
+        /**
+         * Show newSite modal if passed in as query param
+         */
+        $scope.showNewSite = function(){
+            if ($location.search().newSite){
+                $scope.newSite();
+            }
+        };
 
         $scope.update = function() {
             var publisher = $scope.publisher;
@@ -71,18 +91,14 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
         };
 
 		$scope.findOne = function() {
-			$scope.publisher = Publisher.get({
-				publisherId: $stateParams.publisherId
-			}, function(){
-                HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
-                    groupBy: 'site'
-                }).then(function(response){
-                    response.data.forEach(function(site_data){
-                        var i = _.findIndex($scope.publisher.sites, function(site){
-                            return site._id === site_data._id.site;
-                        });
-                        $scope.publisher.sites[i].percent_spent = (site_data.spend/$scope.publisher.sites[i].budget).toFixed(4);
+            HourlyAdStat.pubQuery({publisherId: $stateParams.publisherId},{
+                groupBy: 'site'
+            }).then(function(response){
+                response.data.forEach(function(site_data){
+                    var i = _.findIndex($scope.publisher.sites, function(site){
+                        return site._id === site_data._id.site;
                     });
+                    $scope.publisher.sites[i].percent_spent = (site_data.spend/$scope.publisher.sites[i].budget).toFixed(4);
                 });
             });
 		};
@@ -95,15 +111,6 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
                     $scope.update = $scope.ngDialogData.update;
                 }],
                 data: {publisher: $scope.publisher, update: $scope.update}
-            });
-        };
-
-        $scope.newSite = function(){
-            ngDialog.open({
-                className: 'ngdialog-theme-default dialogwidth800',
-                template: 'modules/publisher/views/partials/create-site.client.view.html',
-                controller: 'SiteWizardController',
-                data: {publisher: $scope.publisher}
             });
         };
 
@@ -147,4 +154,4 @@ angular.module('publisher').controller('PublisherController', ['$rootScope','$sc
             $scope.dateRangeSelection = dateShortCode;
         };
 	}
-]);
+);

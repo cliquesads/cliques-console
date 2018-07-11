@@ -1,10 +1,7 @@
 /* global _, angular, moment, user, deploymentMode */
 'use strict';
 
-angular.module('advertiser').controller('CampaignController', ['$scope', '$stateParams', '$location',
-    '$timeout','Authentication', 'Advertiser','campaign','CampaignActivator','Notify', 'DTOptionsBuilder',
-    'DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
-    'REVIEW_TIME','ADVERTISER_TOOLTIPS','CLIQUE_ICON_CLASSES','BID_SETTINGS',
+angular.module('advertiser').controller('CampaignController',
 	function($scope, $stateParams, $location, $timeout, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
              REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES,BID_SETTINGS) {
@@ -286,4 +283,4 @@ angular.module('advertiser').controller('CampaignController', ['$scope', '$state
             $scope.dateRangeSelection = dateShortCode;
         };
 	}
-]);
+);

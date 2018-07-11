@@ -1,8 +1,8 @@
 /* jshint node: true */ 'use strict';
-var organizations = require('../controllers/organizations.server.controller');
 var passport = require('passport');
 
 module.exports = function(db, routers){
+    var organizations = require('../controllers/organizations.server.controller')(db);
     var users = require('../controllers/users.server.controller')(db);
     var publishers = require('../controllers/publishers.server.controller')(db);
     var router = routers.apiRouter;

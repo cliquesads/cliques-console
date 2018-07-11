@@ -58,6 +58,7 @@ var organizationSchema = new Schema({
     zip: { type: String, required: true },
     phone: { type: String, required: true },
     accesscode: { type: Schema.ObjectId,ref: 'AccessCode' },
+    accessLink: { type: Schema.ObjectId,ref: 'AccessLink' },
     // can agree to multiple terms & conditions
     termsAndConditions: [{ type: Schema.ObjectId,ref: 'TermsAndConditions' }],
     additionalTerms: { type: String, required: false },

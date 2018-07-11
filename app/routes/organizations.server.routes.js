@@ -1,9 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-var organizations = require('../../app/controllers/organizations.server.controller');
-
 module.exports = function(db, routers) {
+    var organizations = require('../../app/controllers/organizations.server.controller')(db);
     var users = require('../controllers/users.server.controller')(db);
     /**
      * @apiDefine OrganizationSchema
@@ -136,7 +135,7 @@ module.exports = function(db, routers) {
      * @apiSuccess {Object} ::organization:: Organization object as response body, see
      *  [Organization Schema](#api-Organization)
      */
-	routers.noAuthRouter.route('/organization/:organizationId').get(organizations.read);
+    routers.noAuthRouter.route('/organization/:organizationId').get(organizations.read);
 	
 	
 	routers.noAuthRouter.param('organizationId', organizations.organizationByID);
