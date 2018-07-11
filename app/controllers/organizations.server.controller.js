@@ -60,6 +60,7 @@ var lookupCountryCode = function(countryName){
 
 module.exports = function(db){
     var advertiserModels = new models.AdvertiserModels(db);
+    var publisherModels = new models.PublisherModels(db);
     return {
 
         /**
@@ -136,7 +137,7 @@ module.exports = function(db){
                                        console.info(`Successfully delegated ownership of advertiser ${advertiser.id} to organization ${org.id}`);
                                     });
                             } else if (accessLink.orgType === 'publisher' && accessLink.delegatedPublisher){
-                                advertiserModels.Advertiser.findByIdAndUpdate(
+                                publisherModels.Publisher.findByIdAndUpdate(
                                     accessLink.delegatedPublisher,
                                     { organization: org._id },
                                     function(err, publisher){
