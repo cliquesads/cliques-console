@@ -104,99 +104,104 @@ module.exports = function(db) {
 
 		            org.save(function (err, org) {
 		                if (err) return handleError(res, err);
+                        Organization.populate(org, { path: 'accessLink'}, function(err, org){
+                        	if (org.accessLink || (org.accessLink.delegatedAdvertiser || org.accessLink.delegatedPublisher)){
+                        		// don't do anything, publisher or advertiser has already been delegated.
+							} else {
+                                if (org.organization_types[0] === 'advertiser') {
+                                    // create a default advertiser and attaches it to the new organization
+                                    var advertiserModels = new models.AdvertiserModels(db);
+                                    var advertiser = new advertiserModels.Advertiser();
 
-		                if (org.organization_types[0] === 'advertiser') {
-		                	// create a default advertiser and attaches it to the new organization
-							var advertiserModels = new models.AdvertiserModels(db);
-		                	var advertiser = new advertiserModels.Advertiser();
+                                    advertiser.user = user;
+                                    advertiser.organization = org;
+                                    advertiser.name = org.name;
+                                    advertiser.website = org.website;
+                                    if (logoUrl) {
+                                        advertiser.logo_url = logoUrl;
+                                    }
 
-		                	advertiser.user = user;
-		                	advertiser.organization = org;
-		                	advertiser.name = org.name;
-		                	advertiser.website = org.website;
-		                	if (logoUrl) {
-		                		advertiser.logo_url = logoUrl;
-		                	}
+                                    advertiser.save(function(err) {
+                                        if (err) {
+                                            return res.status(400).send({
+                                                message: errorHandler.getAndLogErrorMessage(err)
+                                            });
+                                        } else {
+                                            advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
+                                                if (err) {
+                                                    return res.status(400).send({
+                                                        message: errorHandler.getAndLogErrorMessage(err)
+                                                    });
+                                                }
+                                                if (process.env.NODE_ENV === 'production'){
+                                                    // Now send internal email notifying team of creation
+                                                    mailer.sendMailFromUser('New Advertiser Created',
+                                                        'new-advertiser-email.server.view.html',
+                                                        { advertiser: advertiser, user: req.user },
+                                                        req.user,
+                                                        'support@cliquesads.com'
+                                                    );
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else if (org.organization_types[0] === 'publisher') {
+                                    // create a default publisher and attaches it to the new organization
+                                    var publisherModels = new models.PublisherModels(db);
+                                    var publisher = new publisherModels.Publisher();
+                                    publisher.user = user;
+                                    publisher.organization = org;
+                                    publisher.name = org.name;
+                                    publisher.website = org.website;
+                                    if (logoUrl) {
+                                        publisher.logo_url = logoUrl;
+                                    }
 
-		                	advertiser.save(function(err) {
-		                		if (err) {
-		                			return res.status(400).send({
-		                				message: errorHandler.getAndLogErrorMessage(err)
-		                			});
-		                		} else {
-		                			advertiserModels.Advertiser.populate(advertiser, {path: 'user'}, function(err, adv){
-		                			    if (err) {
-		                			        return res.status(400).send({
-		                			            message: errorHandler.getAndLogErrorMessage(err)
-		                			        });
-		                			    }
-		                			    if (process.env.NODE_ENV === 'production'){
-		                			        // Now send internal email notifying team of creation
-		                			        mailer.sendMailFromUser('New Advertiser Created',
-		                			            'new-advertiser-email.server.view.html',
-		                			            { advertiser: advertiser, user: req.user },
-		                			            req.user,
-		                			            'support@cliquesads.com'
-		                			        );
-		                			    }
-		                			});
-		                		}
-		                	});
-		                } else if (org.organization_types[0] === 'publisher') {
-		                	// create a default publisher and attaches it to the new organization
-		                	var publisherModels = new models.PublisherModels(db);
-		                	var publisher = new publisherModels.Publisher();
-		                	publisher.user = user;
-		                	publisher.organization = org;
-		                	publisher.name = org.name;
-		                	publisher.website = org.website;
-		                	if (logoUrl) {
-		                		publisher.logo_url = logoUrl;
-		                	}
-
-		                	publisher.save(function(err) {
-		                		if (err) {
-		                			console.log(err);
-		                			return res.status(400).send({
-		                				message: errorHandler.getAndLogErrorMessage(err)
-		                			});
-		                		} else {
-		                			publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
-		                			    if (err) {
-		                			        return res.status(400).send({
-		                			            message: errorHandler.getAndLogErrorMessage(err)
-		                			        });
-		                			    }
-		                			    if (process.env.NODE_ENV === 'production'){
-		                			        mailer.sendMailFromUser('New Publisher & Site Created',
-		                			            'new-publisher-email.server.view.html',
-		                			            { publisher: pub, user: req.user },
-		                			            req.user,
-		                			            'support@cliquesads.com'
-		                			        );
-		                			    }
-		                			});
-		                		}
-		                	});
-		                }
-		                // Email support team notifying of account creation
-		                if (process.env.NODE_ENV === 'production') {
-		                    mailer.sendMail({
-		                        subject: 'New Cliques Console Account Created',
-		                        templateName: 'new-user-email.server.view.html',
-		                        to: 'support@cliquesads.com',
-		                        data: {user: user, organization: org}
-		                    });
-		                }
-		                req.login(user, function (err) {
-		                    if (err) return handleError(res, err);
-		                    return res.json(user);
-		                });
-						// finally, push user to MailChimp list asynchronously
-						if (process.env.NODE_ENV === 'production'){
-							addUserToMailChimpList(req, user, org);
-						}
-		            });
+                                    publisher.save(function(err) {
+                                        if (err) {
+                                            console.log(err);
+                                            return res.status(400).send({
+                                                message: errorHandler.getAndLogErrorMessage(err)
+                                            });
+                                        } else {
+                                            publisherModels.Publisher.populate(publisher, {path: 'user'}, function(err, pub){
+                                                if (err) {
+                                                    return res.status(400).send({
+                                                        message: errorHandler.getAndLogErrorMessage(err)
+                                                    });
+                                                }
+                                                if (process.env.NODE_ENV === 'production'){
+                                                    mailer.sendMailFromUser('New Publisher & Site Created',
+                                                        'new-publisher-email.server.view.html',
+                                                        { publisher: pub, user: req.user },
+                                                        req.user,
+                                                        'support@cliquesads.com'
+                                                    );
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+							}
+                            // Email support team notifying of account creation
+                            if (process.env.NODE_ENV === 'production') {
+                                mailer.sendMail({
+                                    subject: 'New Cliques Console Account Created',
+                                    templateName: 'new-user-email.server.view.html',
+                                    to: 'support@cliquesads.com',
+                                    data: {user: user, organization: org}
+                                });
+                            }
+                            req.login(user, function (err) {
+                                if (err) return handleError(res, err);
+                                return res.json(user);
+                            });
+                            // finally, push user to MailChimp list asynchronously
+                            if (process.env.NODE_ENV === 'production'){
+                                addUserToMailChimpList(req, user, org);
+                            }
+						});
+                    });
 		        });
 		    });
 		},
