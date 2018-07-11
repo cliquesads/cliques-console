@@ -647,9 +647,9 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
                     adStats = adStats[0];
                     returnObj = {
                         current: Number(req.query.resultsPage),
-                        pages: Math.ceil(adStats.total / skipAndLimit.limit),
-                        count: adStats.total,
-                        results: adStats.results
+                        pages: adStats ? Math.ceil(adStats.total / skipAndLimit.limit) : 0,
+                        count: adStats ? adStats.total : 0,
+                        results: adStats ? adStats.results: 0
                     };
                     // returnObj = {
                     //     current: Number(req.query.resultsPage),
