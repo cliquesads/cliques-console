@@ -197,13 +197,15 @@ module.exports = {
             const accessLink = new AccessLink(req.body);
             accessLink.createdBy = req.user;
             accessLink.save((err, ac) => {
-                if (err) {
-                    return res.status(400).send({
-                        message: errorHandler.getAndLogErrorMessage(err)
-                    });
-                } else {
-                    res.json(ac);
-                }
+                AccessLink.populate(ac, {path: 'delegatedAdvertiser delegatedPublisher createdBy'}, (err, newAc) => {
+                    if (err) {
+                        return res.status(400).send({
+                            message: errorHandler.getAndLogErrorMessage(err)
+                        });
+                    } else {
+                        res.json(newAc);
+                    }
+                });
             });
         },
 

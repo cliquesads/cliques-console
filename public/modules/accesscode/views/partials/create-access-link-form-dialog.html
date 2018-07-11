@@ -72,7 +72,7 @@
                             </select>
                         </div>
                         <div class="form-group pt" ng-if="accessLink.orgType === 'publisher'">
-                            <select name="publisherSelect" id="publisherSelect" class="form-control chosen-select" data-ng-model="accessLink.delegatedAdvertiser" ng-options="publisher.id as publisher.name for publisher in publishers track by publisher.id">
+                            <select name="publisherSelect" id="publisherSelect" class="form-control chosen-select" data-ng-model="accessLink.delegatedPublisher" ng-options="publisher.id as publisher.name for publisher in publishers track by publisher.id">
                                 <option value="" selected>Select a Publisher to delegate.</option>
                             </select>
                         </div>
