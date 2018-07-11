@@ -230,15 +230,15 @@
                             <li class="previous">
                                 <a href="#" ng-click="wizard.go(2)" analytics-on="click" analytics-event="Signup_Step2"><span>&larr; Previous</span></a>
                             </li>
-                            <li class="text-center form-group mt">
+                            <div class="text-center form-group pull-right">
                                 <!--TODO: Remove when terms added for accessLink-->
                                 <span ng-if="accessLink">
-                                    <button type="submit" class="btn btn-lg btn-primary" analytics-on="click" analytics-event="Signup_Finish"  ng-show="credentials.username && !userNameTaken && userform.password.$valid"><span class="text-md">Finish</span></button>
+                                    <button type="submit" class="btn btn-primary" analytics-on="click" analytics-event="Signup_Finish"  ng-show="credentials.username && !userNameTaken && userform.password.$valid"><span class="text-md">Finish</span></button>
                                 </span>
                                 <span ng-if="!accessLink">
                                     <a href="#" ng-show="credentials.username && !userNameTaken && userform.password.$valid" ng-click="wizard.go(4)" analytics-on="click" analytics-event="Signup_Step4"> Next <span>&rarr;</span></a>
                                 </span>
-                            </li>
+                            </div>
                         </ul>
                     </div>
                     <!-- Start Terms & Conditions Stuff -->
