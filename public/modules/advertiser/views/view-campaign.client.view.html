@@ -284,6 +284,9 @@ adding hook in parent template ---->
                                                             </li>
                                                         </ul>
                                                     </div>
+                                                    <div ng-if="!campaign.geo_targets.length && !campaign.blocked_geos.length && !campaign.target_only_geos.length">
+                                                        <i class="fa fa-sliders"></i> 0 Geo Targets Set
+                                                    </div>
                                                 </a>
                                             </strong>
                                         </div>
