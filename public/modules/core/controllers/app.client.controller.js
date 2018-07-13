@@ -76,6 +76,20 @@ angular.module('core').controller('AppController',
                 return auth;
             };
 
+            /**
+             * Authentication helper for restricting access based on deployment mode
+             * @returns {boolean}
+             */
+            $rootScope.deploymentModeIs = function(){
+                var auth = false;
+                for (var i = 0; i < arguments.length; i++){
+                    if (deploymentMode === arguments[i]){
+                        auth = true;
+                    }
+                }
+                return auth;
+            };
+
             // Loading bar transition
             // -----------------------------------
             var thBar;
