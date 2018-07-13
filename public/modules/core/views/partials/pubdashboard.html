@@ -30,15 +30,9 @@
         </div>
     </div>
 
-    <div class="row" ng-show="publishers.$resolved && allSites.length > 0">
+    <div class="row" ng-show="publishers.$resolved">
         <!-- My Sites Section -->
-        <div class="col-lg-6 col-sm-12">
-            <div class="width-90">
-                <span class="custom-section-title no-font-style mb"><i class="fa fa-bookmark-o"></i> My Sites</span>
-                <span class="pull-right">
-                    <a href="/#!/all-sites" analytics-on="click" analytics-event="PubDashboard_AllSites"><i class="fa fa-bookmark-o"></i> All Sites</a>
-                </span>
-            </div>
+        <div class="col-lg-6 col-sm-12">=
             <!-- Begin Loader-->
             <section ng-show="loadingSites">
                 <div class="panel panel-default width-90">
@@ -50,7 +44,13 @@
             </section>
 
             <!--Begin site section contents -->
-            <section ng-show="!loadingSites">
+            <section ng-show="!loadingSites && allSites.length > 0">
+                <div class="width-90">
+                    <span class="custom-section-title no-font-style mb"><i class="fa fa-bookmark-o"></i> My Sites</span>
+                    <span class="pull-right">
+                    <a href="/#!/all-sites" analytics-on="click" analytics-event="PubDashboard_AllSites"><i class="fa fa-bookmark-o"></i> All Sites</a>
+                </span>
+                </div>
                 <!-- scroll up sites button -->
                 <div ng-if="showingSiteEndIndex > SITES_TO_SHOW - 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
@@ -96,57 +96,68 @@
 
         <!-- Year-To-Date Stats Section -->
         <div class="col-lg-6 col-sm-12 pl">
-            <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
-            <span class="pull-right">
-                <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="PubDashboard_GoToAnalytics"></i> Go to Analytics</a>
-            </span>
-            <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
-                <div class="panel-heading">
-                    <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-                        <span class="pull-right">
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="PubDashboard_StatsRange7d">7d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="PubDashboard_StatsRange30d">30d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="PubDashboard_StatsRange90d">90d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="PubDashboard_StatsRangeYTD">YTD</button>
-                        </span>
+            <!-- Begin Loader-->
+            <section ng-show="loadingSites">
+                <div class="panel panel-default width-90">
+                    <div class="panel-body text-center">
+                        <h4>Loading...</h4>
+                        <div class="ball-pulse"><div></div><div></div><div></div></div>
                     </div>
                 </div>
-                <div class="panel-body pt-sm">
-                    <!-- BEGIN Loader-->
-                    <section ng-hide="timeSeries">
-                        <div class="text-center">
-                            <h4>Loading...</h4>
-                            <div class="ball-pulse"><div></div><div></div><div></div></div>
+            </section>
+            <section ng-show="!loadingSites && allSites.length > 0">
+                <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
+                <span class="pull-right">
+                    <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="PubDashboard_GoToAnalytics"></i> Go to Analytics</a>
+                </span>
+                <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
+                    <div class="panel-heading">
+                        <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
+                            <span class="pull-right">
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="PubDashboard_StatsRange7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="PubDashboard_StatsRange30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="PubDashboard_StatsRange90d">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="PubDashboard_StatsRangeYTD">YTD</button>
+                            </span>
                         </div>
-                    </section>
-                    <!-- BEGIN Actual Graph & Stats -->
-                    <section ng-show="timeSeries">
-                        <div class="row mb">
-                            <div class="col-sm-3 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
-                                <small class="text-muted">Impressions</small>
+                    </div>
+                    <div class="panel-body pt-sm">
+                        <!-- BEGIN Loader-->
+                        <section ng-hide="timeSeries">
+                            <div class="text-center">
+                                <h4>Loading...</h4>
+                                <div class="ball-pulse"><div></div><div></div><div></div></div>
                             </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ fillRate | percentage: 2 }}</div>
-                                <small class="text-muted">Fill Rate</small>
+                        </section>
+                        <!-- BEGIN Actual Graph & Stats -->
+                        <section ng-show="timeSeries">
+                            <div class="row mb">
+                                <div class="col-sm-3 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
+                                    <small class="text-muted">Impressions</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ fillRate | percentage: 2 }}</div>
+                                    <small class="text-muted">Fill Rate</small>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ revenue | currency: "$":"0" }}</div>
+                                    <small class="text-muted">Revenue</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ pricing === 'CPC' ? RPC : RPM | currency:"$":"2" }}</div>
+                                    <small class="text-muted">{{ pricing | pubPricing }}</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ CTR | percentage: 2 }}</div>
+                                    <small class="text-muted">CTR</small>
+                                </div>
                             </div>
-                            <div class="col-sm-3 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ revenue | currency: "$":"0" }}</div>
-                                <small class="text-muted">Revenue</small>
-                            </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ pricing === 'CPC' ? RPC : RPM | currency:"$":"2" }}</div>
-                                <small class="text-muted">{{ pricing | pubPricing }}</small>
-                            </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ CTR | percentage: 2 }}</div>
-                                <small class="text-muted">CTR</small>
-                            </div>
-                        </div>
-                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
-                    </section>
+                            <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
+                        </section>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
         <!-- End of Year-To-Date Stats Section -->
     </div>

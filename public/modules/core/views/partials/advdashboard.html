@@ -16,15 +16,9 @@
         </div>
     </div>
 
-    <div class="row" ng-show="advertisers.$resolved && allCampaigns.length > 0">
+    <div class="row" ng-show="advertisers.$resolved">
         <!-- My Campaigns Section -->
         <div class="col-lg-6 col-sm-12">
-            <div class="width-90">
-                <span class="custom-section-title no-font-style mb"><i class="fa fa-bullhorn"></i> My Campaigns</span>
-                <span class="pull-right">
-                    <a href="/#!/all-campaigns" analytics-on="click" analytics-event="AdvDashboard_AllCampaigns"><i class="fa fa-bullhorn"></i> All Campaigns</a>
-                </span>
-            </div>
             <!-- Begin Loader-->
             <section ng-show="loadingCampaigns">
                 <div class="panel panel-default width-90">
@@ -36,7 +30,13 @@
             </section>
 
             <!--Begin campaign section contents -->
-            <section ng-show="!loadingCampaigns">
+            <section ng-show="!loadingCampaigns && allCampaigns.length > 0">
+                <div class="width-90">
+                    <span class="custom-section-title no-font-style mb"><i class="fa fa-bullhorn"></i> My Campaigns</span>
+                    <span class="pull-right">
+                    <a href="/#!/all-campaigns" analytics-on="click" analytics-event="AdvDashboard_AllCampaigns"><i class="fa fa-bullhorn"></i> All Campaigns</a>
+                </span>
+                </div>
                 <!-- scroll up campaigns button -->
                 <div ng-if="showingCampaignEndIndex > CAMPAIGNS_TO_SHOW - 1">
                     <button class="btn btn-block btn-third-white-horizontal width-90 p-sm"
@@ -81,63 +81,74 @@
 
         <!-- Year-To-Date Stats Section -->
         <div class="col-lg-6 col-sm-12 pl">
-            <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
-            <span class="pull-right">
-                <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="AdvDashboard_GoToAnalytics"></i> Go to Analytics</a>
-            </span>
-            <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
-                <div class="panel-heading">
-                    <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
-                        <span class="pull-right">
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange7d">7d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange30d">30d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange90d">90d</button>
-                            <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="AdvDashboard_StatsRangeYTD">YTD</button>
-                        </span>
+            <!-- Begin Loader-->
+            <section ng-show="loadingCampaigns">
+                <div class="panel panel-default width-90">
+                    <div class="panel-body text-center">
+                        <h4>Loading...</h4>
+                        <div class="ball-pulse"><div></div><div></div><div></div></div>
                     </div>
                 </div>
-                <div class="panel-body pt-sm">
-                    <!-- BEGIN Loader-->
-                    <section ng-hide="timeSeries">
-                        <div class="text-center">
-                            <h4>Loading...</h4>
-                            <div class="ball-pulse"><div></div><div></div><div></div></div>
+            </section>
+            <section ng-show="!loadingCampaigns && allCampaigns.length > 0">
+                <span class="custom-section-title no-font-style mb"><i class="fa fa-signal"></i> QuickStats</span>
+                <span class="pull-right">
+                    <a href="/#!/analytics"><i class="fa fa-signal" analytics-on="click" analytics-event="AdvDashboard_GoToAnalytics"></i> Go to Analytics</a>
+                </span>
+                <div id="dashboardGraphPanel" class="panel panel-default" data-ng-init="getDashboardGraph('7d')">
+                    <div class="panel-heading">
+                        <div class="panel-title">{{ dateRanges[summaryDateRangeSelection].label }}
+                            <span class="pull-right">
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('7d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange7d">7d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('30d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange30d">30d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('90d')" analytics-on="click" analytics-event="AdvDashboard_StatsRange90d">90d</button>
+                                <button class="btn btn-sm btn-default" ng-click="getDashboardGraph('ytd')" analytics-on="click" analytics-event="AdvDashboard_StatsRangeYTD">YTD</button>
+                            </span>
                         </div>
-                    </section>
-                    <!-- BEGIN Actual Graph & Stats -->
-                    <section ng-show="timeSeries">
-                        <div class="row mb">
-                            <div class="col-sm-3 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
-                                <small class="text-muted">Impressions</small>
+                    </div>
+                    <div class="panel-body pt-sm">
+                        <!-- BEGIN Loader-->
+                        <section ng-hide="timeSeries">
+                            <div class="text-center">
+                                <h4>Loading...</h4>
+                                <div class="ball-pulse"><div></div><div></div><div></div></div>
                             </div>
-                            <div class="col-sm-2 col-xs-6 text-center ">
-                                <div class="h3 mt-sm mb0">{{ CTR | percentage:2 }}</div>
-                                <small class="text-muted">CTR</small>
-                            </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ clicks | number: 0 }}</div>
-                                <small class="text-muted">Clicks</small>
-                            </div>
-                            <div class="col-sm-1 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ actions | number: 0 }}</div>
-                                <small class="text-muted">Actions</small>
-                            </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">{{ spend | currency:"$":"0" }}</div>
-                                <small class="text-muted">Spend</small>
-                            </div>
-                            <div class="col-sm-2 col-xs-6 text-center">
-                                <div class="h3 mt-sm mb0">
-                                    {{ pricing === 'CPC' ? spend / clicks : spend / impressions * 1000 | currency:"$":"2" }}
+                        </section>
+                        <!-- BEGIN Actual Graph & Stats -->
+                        <section ng-show="timeSeries">
+                            <div class="row mb">
+                                <div class="col-sm-3 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ impressions | number: 0 }}</div>
+                                    <small class="text-muted">Impressions</small>
                                 </div>
-                                <small class="text-muted">Avg. {{ pricing }}</small>
+                                <div class="col-sm-2 col-xs-6 text-center ">
+                                    <div class="h3 mt-sm mb0">{{ CTR | percentage:2 }}</div>
+                                    <small class="text-muted">CTR</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ clicks | number: 0 }}</div>
+                                    <small class="text-muted">Clicks</small>
+                                </div>
+                                <div class="col-sm-1 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ actions | number: 0 }}</div>
+                                    <small class="text-muted">Actions</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">{{ spend | currency:"$":"0" }}</div>
+                                    <small class="text-muted">Spend</small>
+                                </div>
+                                <div class="col-sm-2 col-xs-6 text-center">
+                                    <div class="h3 mt-sm mb0">
+                                        {{ pricing === 'CPC' ? spend / clicks : spend / impressions * 1000 | currency:"$":"2" }}
+                                    </div>
+                                    <small class="text-muted">Avg. {{ pricing }}</small>
+                                </div>
                             </div>
-                        </div>
-                        <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
-                    </section>
+                            <daily-ad-stats-graph time-series="timeSeries" show-points="showPoints" height="170px"></daily-ad-stats-graph>
+                        </section>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
         <!-- End of Year-To-Date Stats Section -->
     </div>
