@@ -105,7 +105,7 @@ module.exports = function(db) {
 		            org.save(function (err, org) {
 		                if (err) return handleError(res, err);
                         Organization.populate(org, { path: 'accessLink'}, function(err, org){
-                        	if (org.accessLink || (org.accessLink.delegatedAdvertiser || org.accessLink.delegatedPublisher)){
+                        	if (org.accessLink && (org.accessLink.delegatedAdvertiser || org.accessLink.delegatedPublisher)){
                         		// don't do anything, publisher or advertiser has already been delegated.
 							} else {
                                 if (org.organization_types[0] === 'advertiser') {

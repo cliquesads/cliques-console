@@ -1,7 +1,7 @@
 <section data-ng-controller="AdvertiserDashboardController">
     <div class="jumbotron text-center" ng-show="advertisers.$resolved && !loadingCampaigns && allCampaigns.length === 0">
         <div class="text-center">
-            Thanks for being a part of the Cliques Beta Program!
+            Welcome to Cliques!
         </div>
         <br>
         <div class="row">
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="row" ng-show="advertisers.$resolved">
+    <div class="row" ng-show="advertisers.$resolved && allCampaigns.length > 0">
         <!-- My Campaigns Section -->
         <div class="col-lg-6 col-sm-12">
             <div class="width-90">

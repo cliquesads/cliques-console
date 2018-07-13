@@ -21,7 +21,7 @@ adding hook in parent template ---->
                         <tab heading="Basics">
                             <!--<div class="panel-body">-->
                                 <!--Only show activate controls for admins right now-->
-                                <fieldset ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
+                                <fieldset ng-if="orgIsType('networkAdmin') || userIsRole('readWrite','admin')">
                                     <small><em class="text-muted">Status</em></small>
                                     <div class="form-horizontal">
                                         <div class="form-group m0">
@@ -283,6 +283,9 @@ adding hook in parent template ---->
                                                                 <strong>{{ geo.name ? geo.name : geo.target }} ({{ geo.children.length ? geo.children.length + " Child Targets": "Entire Region"}})</strong>
                                                             </li>
                                                         </ul>
+                                                    </div>
+                                                    <div ng-if="!campaign.geo_targets.length && !campaign.blocked_geos.length && !campaign.target_only_geos.length">
+                                                        <i class="fa fa-sliders"></i> 0 Geo Targets Set
                                                     </div>
                                                 </a>
                                             </strong>

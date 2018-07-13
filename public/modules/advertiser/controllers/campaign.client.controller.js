@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('advertiser').controller('CampaignController',
-	function($scope, $stateParams, $location, $timeout, Authentication, Advertiser, campaign, CampaignActivator, Notify,
+	function($scope, $stateParams, $location, $timeout, $q, Authentication, Advertiser, campaign, CampaignActivator, Notify,
              DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries, aggregationDateRanges,ngDialog,
              REVIEW_TIME, ADVERTISER_TOOLTIPS,CLIQUE_ICON_CLASSES,BID_SETTINGS) {
 
@@ -44,22 +44,57 @@ angular.module('advertiser').controller('CampaignController',
 
         $scope.toggleCampaignActive = function(){
             if (!this.campaign.active){
-                CampaignActivator.deactivate({
-                    advertiserId: $stateParams.advertiserId,
-                    campaignId: $stateParams.campaignId
-                }).then(function(response){
-                    Notify.alert('Your campaign was successfully deactivated.',{});
-                }, function(errorResponse){
-                    Notify.alert('Error deactivating campaign: ' + errorResponse.message,{status: 'danger'});
+                var deActivatePromise;
+                if (Authentication.user.organization.effectiveOrgType !== 'networkAdmin'){
+                    deActivatePromise = ngDialog.openConfirm({
+                        template: '\
+								<br>\
+								<p>Deactivating this campaign will cause it to stop serving immediately. \
+								Are you sure you want to deactivate this campaign?</p>\
+								<p class="text-center">\
+									<button class="btn btn-lg btn-primary" ng-click="confirm()">OK</button>\
+									<button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+								</p>',
+                        plain: true
+                    });
+                } else {
+                    deActivatePromise = $q.when([]);
+                }
+                deActivatePromise.then(function(){
+                    CampaignActivator.deactivate({
+                        advertiserId: $stateParams.advertiserId,
+                        campaignId: $stateParams.campaignId
+                    }).then(function(response){
+                        Notify.alert('Your campaign was successfully deactivated.',{});
+                    }, function(errorResponse){
+                        Notify.alert('Error deactivating campaign: ' + errorResponse.message,{status: 'danger'});
+                    });
                 });
             } else {
-                CampaignActivator.activate({
-                    advertiserId: $stateParams.advertiserId,
-                    campaignId: $stateParams.campaignId
-                }).then(function(response){
-                    Notify.alert('Your campaign was successfully activated. Let\'s do this thing.',{});
-                }, function(errorResponse){
-                    Notify.alert('Error activating campaign: ' + errorResponse.message,{status: 'danger'});
+                var activatePromise;
+                if (Authentication.user.organization.effectiveOrgType !== 'networkAdmin') {
+                    var activatePromise = ngDialog.openConfirm({
+                        template: '\
+                                    <br>\
+                                    <p>Once this campaign is active, it will begin serving impressions immediately. Are you sure you want to activate?</p>\
+                                    <p class="text-center">\
+                                        <button class="btn btn-lg btn-primary" ng-click="confirm()">OK</button>\
+                                        <button class="btn btn-lg btn-default" ng-click="closeThisDialog()">Cancel</button>\
+                                    </p>',
+                        plain: true
+                    });
+                } else {
+                    activatePromise = $q.when([]);
+                }
+                activatePromise.then(function() {
+                    CampaignActivator.activate({
+                        advertiserId: $stateParams.advertiserId,
+                        campaignId: $stateParams.campaignId
+                    }).then(function (response) {
+                        Notify.alert('Your campaign was successfully activated. Let\'s do this thing.', {});
+                    }, function (errorResponse) {
+                        Notify.alert('Error activating campaign: ' + errorResponse.message, {status: 'danger'});
+                    });
                 });
             }
         };
