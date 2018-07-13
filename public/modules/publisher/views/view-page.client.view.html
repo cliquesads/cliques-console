@@ -15,7 +15,7 @@
                             <label class="control-label col-sm-3">Status</label>
                             <div class="col-sm-8">
                                 <div class="form-control-static">
-                                    <label class="switch" ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
+                                    <label class="switch" ng-show="orgIsType('networkAdmin')">
                                         <input type="checkbox" checked="checked" ng-model="page.active" ng-click="togglePageActive()"/>
                                         <span></span>
                                     </label>

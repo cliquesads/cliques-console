@@ -61,7 +61,7 @@ adding hook in parent template ---->
                                     <div class="form-group m0">
                                         <label class="col-sm-3 control-label">Status</label>
                                         <div class="col-sm-7 form-control-static">
-                                            <label class="switch" ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
+                                            <label class="switch" ng-show="orgIsType('networkAdmin')">
                                                 <input type="checkbox" checked="checked" ng-model="site.active" ng-click="toggleSiteActive()"/>
                                                 <span></span>
                                             </label>
