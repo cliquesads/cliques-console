@@ -493,11 +493,13 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
                 if (node.nodeType === 'City') {
                     targetObj.name = node.name;
                 }
-                var children = self.control.get_children(node);
                 targetsTree.push(targetObj);
-                if (children.length > 0) {
-                    targetObj.children = [];
-                    inner(children, targetObj.children);
+                if (!node.explicit) {
+                    var children = self.control.get_children(node);
+                    if (children.length > 0) {
+                        targetObj.children = [];
+                        inner(children, targetObj.children);
+                    }
                 }
             });
             return targetsTree;
@@ -530,11 +532,13 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
                 if (node.nodeType === 'City') {
                     targetObj.name = node.name;
                 }
-                var children = self.control.get_children(node);
                 targetsTree.push(targetObj);
-                if (children.length > 0) {
-                    targetObj.children = [];
-                    inner(children, targetObj.children);
+                if (!node.explicit){
+                    var children = self.control.get_children(node);
+                    if (children.length > 0) {
+                        targetObj.children = [];
+                        inner(children, targetObj.children);
+                    }
                 }
             });
             return targetsTree;
