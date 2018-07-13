@@ -68,7 +68,7 @@ angular.module('analytics').directive('queryTable', [
 					} 
 
 					// Decide default table headers and format/calculate values for each row
-					scope.headers = scope.headers || Analytics.getDefaultDataHeaders(
+					scope.headers = Analytics.getDefaultDataHeaders(
 						scope.queryParam.type,
 						scope.queryParam.dateGroupBy,
 						$rootScope.role
