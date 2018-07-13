@@ -53,11 +53,23 @@
             <fieldset>
                 <div class="form-group mb-sm">
                     <label>Name *</label>
-                    <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step1" placeholder="Backcountry Stand-Up Fat-Biking Winter 2016" required="required" class="form-control" />
+                    <input type="text" name="campaign.name" id="campaign.name" data-ng-model="campaign.name" data-parsley-group="step1" placeholder="Backcountry Stand-Up Fat-Biking Winter 2019" required="required" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label>Description</label>
                     <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step1" placeholder="Optional - describe your campaign" class="form-control" />
+                </div>
+                <div class="form-group">
+
+                    <!--TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+                    <!-- TODO: External ID shouldn't be required globally but is required here to
+                         TODO: satisfy ST-specific requirement. Abstract away
+                         TODO: implementation-specific features in the future -->
+                    <!--TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+
+
+                    <label>External ID*</label>
+                    <input type="text" name="campaign.externalId" id="campaign.externalId" data-ng-model="campaign.externalId" data-parsley-group="step1" placeholder="Identifier used for external reporting & association purposes." required="required" class="form-control" />
                 </div>
             </fieldset>
             <fieldset>
@@ -204,6 +216,7 @@
                 <h5>Campaign Basics&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" ng-click="wizard.go(1)" analytics-on="click" analytics-event="CampaignWizard_StepOne"><span class="fa fa-edit"></span></a></h5>
                 <div class="col-sm-4"><b>Name</b></div><div class="col-sm-8">{{ campaign.name }}</div>
                 <div class="col-sm-4"><b>Description</b></div><div class="col-sm-8">{{ campaign.description || &apos;empty&apos; }}</div>
+                <div class="col-sm-4"><b>External ID</b></div><div class="col-sm-8">{{ campaign.externalId }}</div>
                 <div class="col-sm-4"><b>Budget</b></div><div class="col-sm-8">{{ campaign.budget | currency:"$":0 }}</div>
                 <div class="col-sm-4"><b>Start Date</b></div><div class="col-sm-8">{{ campaign.start_date | date:"shortDate":"EST" }}</div>
                 <div class="col-sm-4"><b>End Date</b></div><div class="col-sm-8">{{ campaign.end_date | date:"shortDate":"EST" }}</div>
