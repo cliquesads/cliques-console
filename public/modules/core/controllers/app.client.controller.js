@@ -44,6 +44,38 @@ angular.module('core').controller('AppController',
                 $scope.latestHour = moment(latestHour).tz(user.tz).format('MMM Do YYYY h:mm A z');
             }
 
+            /**
+             * Authentication helper for showing/hiding elements in templates. Args
+             * are roles to validate against, will be OR'd and will return true if
+             * user is any one of these roles, false if not.
+             * @returns {boolean}
+             */
+            $rootScope.userIsRole = function(){
+                var auth = false;
+                for (var i = 0; i < arguments.length; i++){
+                    if (user.role === arguments[i]){
+                        auth = true;
+                    }
+                }
+                return auth;
+            };
+
+            /**
+             * Authentication helper for showing/hiding elements in templates. Args
+             * are types to validate against, will be OR'd and will return true if
+             * organization is any one of these types, false if not.
+             * @returns {boolean}
+             */
+            $rootScope.orgIsType = function(){
+                var auth = false;
+                for (var i = 0; i < arguments.length; i++){
+                    if (user.organization.effectiveOrgType === arguments[i]){
+                        auth = true;
+                    }
+                }
+                return auth;
+            };
+
             // Loading bar transition
             // -----------------------------------
             var thBar;
