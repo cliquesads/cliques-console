@@ -50,7 +50,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="dropdown dropdown-list" dropdown>
+            <li class="dropdown dropdown-list" dropdown ng-if="deploymentModeIs('adNetwork') || orgIsType('networkAdmin')">
                 <a href class="dropdown-toggle" dropdown-toggle analytics-on="click" analytics-event="TopNavBar_ToggleBillingDropdown">
                     <i class="fa fa-lg fa-credit-card"></i> Billing
                     <div ng-show="payments.length" class="label label-danger">{{ payments.length }}</div>

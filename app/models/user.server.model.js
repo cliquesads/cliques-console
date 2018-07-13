@@ -81,14 +81,6 @@ var UserSchema = new Schema({
 	},
 	providerData: {},
 	additionalProvidersData: {},
-	//TODO: TEMPORARY, REMOVE WHEN MIGRATED TO USE ROLE
-	roles: {
-		type: [{
-			type: String,
-			enum: USER_ROLES
-		}],
-		default: ['admin']
-	},
 	//NEW, ATOMIC ROLE
 	role: {
 		type: String,

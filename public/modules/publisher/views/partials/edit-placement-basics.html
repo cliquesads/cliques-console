@@ -2,7 +2,7 @@
 <div ng-show="saveerror" class="alert alert-danger">{{ saveerror }}</div>
 <form id="placementForm" name="placementForm">
     <div class="form-horizontal">
-        <div class="form-group m0" ng-show="authentication.user.organization.organization_types.indexOf('networkAdmin') > -1">
+        <div class="form-group m0" ng-show="orgIsType('networkAdmin')">
             <label class="control-label col-sm-3">Active</label>
             <div class="col-sm-8">
                 <div class="form-control-static">

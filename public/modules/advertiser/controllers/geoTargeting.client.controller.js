@@ -727,8 +727,10 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				.then(function() {
 					// Now load regions for country, and load cities for regions
 					for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
-						$scope.blocked_geos.loadCountryGeoChildren($scope.blocked_geos.data[i]);
-					}
+                        if ($scope.blocked_geos.data[i].explicit) {
+                            $scope.blocked_geos.loadCountryGeoChildren($scope.blocked_geos.data[i]);
+                        }
+                    }
 					$scope.blocked_geos.setExpandLevel(0);
 					$rootScope.loadingBlockTree = false;
 					$scope.dirty = false;
@@ -741,7 +743,9 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.target_only_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'targetOnly')
 				.then(function() {
 					for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
-						$scope.target_only_geos.loadCountryGeoChildren($scope.target_only_geos.data[i]);
+						if ($scope.target_only_geos.data[i].explicit){
+                            $scope.target_only_geos.loadCountryGeoChildren($scope.target_only_geos.data[i]);
+						}
 					}
 					$scope.target_only_geos.setExpandLevel(0);
 					$rootScope.loadingTargetOnlyGeos = false;
