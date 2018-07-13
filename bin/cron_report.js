@@ -1,19 +1,18 @@
-var request = require('request');
-var parser = require('cron-parser');
-var moment = require('moment-timezone');
-var csvWriter = require('csv-write-stream');
-var mail = require('../app/controllers/mailer.server.controller');
-var _ = require('lodash');
-var base64 = require('base64-stream');
-var promise = require('bluebird');
-
-var mailer = new mail.Mailer({
-    fromAddress: "no-reply@cliquesads.com",
-    templatePath: __dirname + '/../app/views/templates'
-});
-var BASE_URL;
-
 require('./_main')(function(GLOBALS) {
+    var request = require('request');
+    var parser = require('cron-parser');
+    var moment = require('moment-timezone');
+    var csvWriter = require('csv-write-stream');
+    var mail = require('../app/controllers/mailer.server.controller');
+    var _ = require('lodash');
+    var base64 = require('base64-stream');
+    var promise = require('bluebird');
+
+    var mailer = new mail.Mailer({
+        fromAddress: "no-reply@cliquesads.com",
+        templatePath: __dirname + '/../app/views/templates'
+    });
+    var BASE_URL;
     var config = GLOBALS.cliques_config;
     if (process.env.NODE_ENV === 'local-test') {
         BASE_URL = 'http://' + config.get('Console.http.external.hostname') + ':' + config.get('Console.http.external.port');
