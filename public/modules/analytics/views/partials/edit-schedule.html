@@ -18,7 +18,6 @@
 							id="crontabDay"
 							class="form-control chosen-select"
 							ng-model="crontabDay"
-							ng-required="true"
 							ng-options="key for (key, value) in crontabDayOptions">
 						<option value="" selected>
 							Every...
@@ -40,7 +39,6 @@
 						   name="crontabHour"
 						   id="crontabHour"
 						   ng-model="crontabHour"
-						   ng-required="true"
 						   class="form-control">
 				</div>
 				<label for="crontabMinute"
@@ -55,14 +53,12 @@
 						   name="crontabMinute"
 						   id="crontabMinute"
 						   ng-model="crontabMinute"
-						   ng-required="true"
 						   class="form-control">
 				</div>
 				<div class="col-sm-2">
 					<select name="crontabAmPm"
 						id="crontabAmPm"
 						ng-model="crontabAmPm"
-						ng-required="true"
 						class="form-control chosen-select">
 						<option value="AM" selected>AM</option>
 						<option value="PM">PM</option>
@@ -73,6 +69,12 @@
 		</div>
 		<!-- Submit edition button -->
 		<div class="text-center">
+			<button
+					class="btn btn-danger text-md mt"
+					type="button"
+					ng-click="clearSchedule()">
+				<i class="fa fa-trash"></i> Remove Schedule
+			</button>
 			<button
 				class="btn btn-primary text-md mt"
 				type="submit">
