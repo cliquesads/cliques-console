@@ -335,8 +335,16 @@ angular.module('analytics').directive('reportSettings', [
                                 $scope.crontabAmPm = crontabInfo.crontabAmPm;
                             }
 
+                            $scope.clearSchedule = function(){
+                                $scope.selectedSettings.schedule = null;
+                                $scope.crontabDay = null;
+                                $scope.crontabHour = null;
+                                $scope.crontabMinute = null;
+                                $scope.crontabAmPm = null;
+                            };
+
                             $scope.editSchedule = function() {
-                                $scope.selectedSettings.schedule = Analytics.adjustCrontabStringForTimezone($scope.crontabDay, $scope.crontabHour, $scope.crontabMinute, $scope.crontabAmPm);
+                                $scope.selectedSettings.schedule = $scope.selectedSettings.schedule ? Analytics.adjustCrontabStringForTimezone($scope.crontabDay, $scope.crontabHour, $scope.crontabMinute, $scope.crontabAmPm) : null;
                                 $scope.closeThisDialog(0);
                                 parentScope.update();
                             };
