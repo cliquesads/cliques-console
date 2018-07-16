@@ -710,13 +710,21 @@ angular.module('advertiser').controller('GeoTargetingController', [
 				$scope.loadingTargetTree = true;
 				$scope.geo_targets.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'target')
 				.then(function() {
+					var promises = [];
+					for (var i = 0; i < $scope.geo_targets.data.length; i ++) {
+						var promise = $scope.geo_targets.loadCountryGeoChildren($scope.geo_targets.data[i]);
+						promises.push(promise);
+					}
+					return $q.all(promises);
+				})
+				.then(function() {
 					return $scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
 				})
 				.then(function() {
 					$scope.geo_targets.setExpandLevel(0);
 					$scope.geo_targets.setCountrySliderHiders();
 					$scope.loadingTargetTree = false;
-                    $scope.dirty = false;
+          $scope.dirty = false;
 				});
 			});
 
@@ -750,11 +758,11 @@ angular.module('advertiser').controller('GeoTargetingController', [
 			});
 		};
 
-        //======================================================================//
-        //================= END Tree Initialization Handlers ===================//
-        //======================================================================//
+    //======================================================================//
+    //================= END Tree Initialization Handlers ===================//
+    //======================================================================//
 
-        // Initialize targeting tree and blocked tree objects
+    // Initialize targeting tree and blocked tree objects
 		$scope.initializeAllTrees();
 
 	}
