@@ -29,20 +29,19 @@ angular.module('advertiser').config(['$stateProvider',
             }
         })
         .state('app.admin.listAccessLinks', {
-                url: '/admin/access-link',
-                title: 'Organization Invites',
-                resolve: {
-                    $title: function () {
-                        return 'Organization Invites';
-                    }
-                },
-                views: {
-                    'main': {
-                        templateUrl: 'modules/accesscode/views/list-accesslink.client.view.html',
-                        controller: 'ListAccessLinksController'
-                    }
+            url: '/admin/access-link',
+            title: 'Organization Invites',
+            resolve: {
+                $title: function () {
+                    return 'Organization Invites';
                 }
-            });
-        }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/accesscode/views/list-accesslink.client.view.html',
+                    controller: 'ListAccessLinksController'
+                }
+            }
+        });
 	}
 ]);
