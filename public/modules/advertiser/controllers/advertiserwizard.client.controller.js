@@ -1,17 +1,8 @@
 'use strict';
 
-angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
-    '$stateParams',
-    '$location',
-    '$q',
-    '$analytics',
-    'Authentication',
-    'Advertiser',
-    'FileUploader',
-    'REGEXES',
-    'ADVERTISER_TOOLTIPS',
-    'LOGO','ngDialog',
-	function($scope, $stateParams, $location, $q, $analytics, Authentication, Advertiser, FileUploader, REGEXES, ADVERTISER_TOOLTIPS, LOGO, ngDialog) {
+angular.module('advertiser').controller('AdvertiserWizardController',
+	function($scope, $stateParams, $location, $q, $analytics, Authentication, Advertiser, SalesPerson, FileUploader,
+             REGEXES, ADVERTISER_TOOLTIPS, LOGO) {
 
         //##################################//
         //###### INIT SCOPE VARIABLES ######//
@@ -86,6 +77,11 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             return (input.$dirty || $scope.submitted) && input.$error[type];
         };
 
+        // get salespeople for dropdown
+        SalesPerson.query({ perPage: 50000 }).$promise.then(function(results){
+            $scope.salespeople = results.results;
+        });
+
         /**
          * Method called to submit Advertiser to API
          * @returns {boolean}
@@ -135,4 +131,4 @@ angular.module('advertiser').controller('AdvertiserWizardController', ['$scope',
             });
         };
 	}
-]);
+);

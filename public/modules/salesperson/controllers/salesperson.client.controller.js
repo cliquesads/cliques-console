@@ -6,7 +6,7 @@ angular.module('salesperson').controller('SalesPersonController', function($scop
     $scope.queryParams = {
         perPage: 10,
         site: null,
-        sort_by: "lastName,desc"
+        sort_by: "lastName"
     };
     $scope.salesPeople = [];
     $scope.pagination = {
@@ -40,8 +40,17 @@ angular.module('salesperson').controller('SalesPersonController', function($scop
     };
     $scope.getSalesPeople(1);
 
+    $scope.update = function(salesPerson){
+        var p = new SalesPerson(salesPerson);
+        p.$update(function(){
+            Notify.alert("Salesperson successfully updated.", {status: 'success'});
+        },function(errorResponse){
+            Notify.alert(errorResponse.data.message, {status: 'danger'});
+        });
+    };
+
     $scope.newSalesPerson = function(){
-        ngDialog.open({
+        var dialog = ngDialog.open({
             template: 'modules/salesperson/views/create-salesperson-dialog.html',
             className: 'ngdialog-theme-default dialogwidth650',
             controller: ['$scope','SalesPerson', function(scope, SalesPerson){
@@ -60,9 +69,8 @@ angular.module('salesperson').controller('SalesPersonController', function($scop
                             // once it's created, hit endpoint to send to user
                             Notify.alert('Salesperson ' + scope.salesperson.firstName + ' ' + scope.salesperson.lastName + ' created.',
                                 {status: 'success'});
-                            scope.closeThisDialog(salesPerson);
+                            scope.closeThisDialog(true);
                             scope.loading = false;
-                            $scope.salesPeople.splice(0, 0, salesPerson);
                         }, function(errorResponse){
                             scope.loading = false;
                             scope.error = errorResponse.data.message;
@@ -70,6 +78,11 @@ angular.module('salesperson').controller('SalesPersonController', function($scop
                     }
                 };
             }]
+        });
+        dialog.closePromise.then(function(data){
+            if (data.value){
+                $scope.getSalesPeople($scope.queryParams.page);
+            }
         });
     };
 });

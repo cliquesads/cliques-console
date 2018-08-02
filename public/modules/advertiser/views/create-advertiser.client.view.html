@@ -59,6 +59,13 @@
                                     <input name="description" type="text" data-ng-model="advertiser.description" id="description" class="form-control" placeholder="Optional - Brief Description of this Advertiser">
                                 </div>
                             </div>
+                            <br/>
+                            <div class="form-group" ng-if="orgIsType('networkAdmin')">
+                                <label for="salesPersonSelect">Salesperson</label>
+                                <select name="salesPersonSelect" id="salesPersonSelect" class="form-control chosen-select" data-ng-model="advertiser.salesperson" ng-options='p._id as (p.firstName + " " + p.lastName) for p in salespeople'>
+                                    <option value="" selected>---</option>
+                                </select>
+                            </div>
                         </form>
                     </fieldset>
                     <small class="text-muted">* Required</small>

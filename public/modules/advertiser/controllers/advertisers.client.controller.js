@@ -115,8 +115,11 @@ controller('AdvertiserController', ['$scope', '$stateParams', '$location',
             $scope.advertiserBasics = function(){
                 ngDialog.open({
                     template: 'modules/advertiser/views/partials/advertiser-inline.html',
-                    controller: ['$scope','$location','Notify', function($scope, $location, Notify){
+                    controller: ['$scope','$location','SalesPerson','Notify', function($scope, $location, SalesPerson, Notify){
                         $scope.advertiser = $scope.ngDialogData.advertiser;
+                        SalesPerson.query({ perPage: 50000 }).$promise.then(function(results){
+                            $scope.salespeople = results.results;
+                        });
                         $scope.update = function() {
                             if ($scope.advertiserBasicsForm.$valid){
                                 var advertiser = $scope.advertiser;

@@ -6,6 +6,7 @@
  */
 const errorHandler = require('./errors.server.controller'),
     mongoose = require('mongoose'),
+    _ = require('lodash'),
     SalesPerson = mongoose.model('SalesPerson');
 
 module.exports = (db) => {

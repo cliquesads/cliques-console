@@ -25,6 +25,14 @@
                 </p>
             </div>
         </div>
+        <div class="form-group mb" ng-if="orgIsType('networkAdmin')">
+            <label class="col-sm-4 control-label" for="description">Salesperson</label>
+            <div class="col-sm-8">
+                <select name="salesPersonSelect" id="salesPersonSelect" class="form-control chosen-select" data-ng-model="advertiser.salesperson" ng-options='p._id as (p.firstName + " " + p.lastName) for p in salespeople'>
+                    <option value="" selected>---</option>
+                </select>
+            </div>
+        </div>
     </div>
     <div class="row text-center">
         <button type="submit" class="btn btn-large btn-primary">Save</button>
