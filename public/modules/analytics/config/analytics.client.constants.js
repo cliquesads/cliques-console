@@ -102,7 +102,7 @@ angular.module('analytics')
             campaign: {
                 name: 'Campaigns',
                 iconClass: 'fa fa-bullhorn',
-                description: 'See all campaigns you\'ve served impressions on and how well each campaigns has performed.',
+                description: 'See all campaigns you\'ve served impressions on and how well each campaign has performed.',
                 route: 'app._analytics.analytics.quickQueries.campaign',
                 defaultQueryParam: {
                     name: 'Campaigns',
@@ -116,6 +116,28 @@ angular.module('analytics')
                     timePeriod: true,
                     dateGroupBy: false,
                     campaignFilter: true,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    pagination: false
+                }
+            },
+            advertiser: {
+                name: 'Advertisers',
+                iconClass: 'fa fa-bullhorn',
+                description: 'High-level report that provides an advertiser performance summary.',
+                route: 'app._analytics.analytics.quickQueries.advertiser',
+                defaultQueryParam: {
+                    name: 'Advertisers',
+                    type: 'advertiser',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'advertiser',
+                    populate: 'advertiser'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
                     siteFilter: true,
                     hasGraph: false,
                     hasTable: true,
@@ -321,6 +343,51 @@ angular.module('analytics')
                     pagination: false
                 }
             },
+            campaign: {
+                name: 'Campaigns',
+                iconClass: 'fa fa-bullhorn',
+                description: 'See all campaigns you\'ve served impressions on and how well each campaign has performed.',
+                route: 'app._analytics.analytics.quickQueries.campaign',
+                defaultQueryParam: {
+                    name: 'Campaigns',
+                    type: 'campaign',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'advertiser,campaign',
+                    populate: 'advertiser,campaign'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
+                    campaignFilter: true,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    pagination: false
+                }
+            },
+            advertiser: {
+                name: 'Advertisers',
+                iconClass: 'fa fa-bullhorn',
+                description: 'High-level report that provides an advertiser performance summary.',
+                route: 'app._analytics.analytics.quickQueries.advertiser',
+                defaultQueryParam: {
+                    name: 'Advertisers',
+                    type: 'advertiser',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'advertiser',
+                    populate: 'advertiser'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
+                    siteFilter: true,
+                    hasGraph: false,
+                    hasTable: true,
+                    pagination: false
+                }
+            },
             creative: {
                 name: 'Creatives',
                 iconClass: 'fa fa-image',
@@ -493,6 +560,28 @@ angular.module('analytics')
                     campaignFilter: false,
                     siteFilter: true,
                     hasGraph: true,
+                    hasTable: true,
+                    pagination: false
+                }
+            },
+            advertiser: {
+                name: 'Advertisers',
+                iconClass: 'fa fa-bullhorn',
+                description: 'High-level report that provides an advertiser performance summary.',
+                route: 'app._analytics.analytics.quickQueries.advertiser',
+                defaultQueryParam: {
+                    name: 'Advertisers',
+                    type: 'advertiser',
+                    dateRangeShortCode: '7d',
+                    humanizedDateRange: 'Last 7 Days',
+                    groupBy: 'advertiser',
+                    populate: 'advertiser'
+                },
+                availableSettings: {
+                    timePeriod: true,
+                    dateGroupBy: false,
+                    siteFilter: true,
+                    hasGraph: false,
                     hasTable: true,
                     pagination: false
                 }
