@@ -169,10 +169,12 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
                 var forms = ['desktop', 'mobile'];
                 for (var i = 0; i < forms.length; i++) {
                     var form = forms[i];
-                    var val = $scope.codeMirrors[namespace][form].getValue();
-                    if (val === null || val === '') {
-                        $scope.templateErrors[namespace][form] = requiredErrorMessage;
-                        valid = false;
+                    if ($scope.placement.multiPaneNative.wrapper[form].active){
+                        var val = $scope.codeMirrors[namespace][form].getValue();
+                        if (val === null || val === '') {
+                            $scope.templateErrors[namespace][form] = requiredErrorMessage;
+                            valid = false;
+                        }
                     }
                 }
                 return valid;
@@ -196,6 +198,8 @@ angular.module('publisher').controller('EditNativeSpecs', ['$scope','Authenticat
                     $scope.saveerror = errorResponse.data.message;
                 });
             } else {
+                $scope.loading = false;
+                $scope.saveerror = "Please correct the form and re-submit.";
                 return false;
             }
         };
