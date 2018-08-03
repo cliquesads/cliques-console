@@ -75,10 +75,16 @@ const formatQueryResults = function(rows, reqQuery) {
                     case 'advertiser':
                         row.logo = val;
                         row._logo_type = 'Advertiser';
+                        if (reqQuery.type === 'advertiser'){
+                            val = val ? val.name : `<No ${queryTypeHeader} provided>`;
+                        }
                         break;
                     case 'publisher':
                         row.logo = val;
                         row._logo_type = 'Publisher';
+                        if (reqQuery.type === 'publisher'){
+                            val = val ? val.name : `<No ${queryTypeHeader} provided>`;
+                        }
                         break;
                     default:
                         // otherwise, get name of populated object

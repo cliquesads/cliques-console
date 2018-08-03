@@ -146,7 +146,8 @@ angular.module('analytics').factory('Analytics', [
             if (queryType !== 'state'){
                 var h = 0;
                 for (var i = 0; i < groupBy.length; i++){
-                    if (groupBy[i] === 'advertiser' || groupBy[i] === 'publisher'){
+                    if ((groupBy[i] === 'advertiser' && queryType !== 'advertiser') ||
+                        (groupBy[i] === 'publisher' && queryType !== 'publisher')){
                         h = i-1;
                         continue;
                     } else {

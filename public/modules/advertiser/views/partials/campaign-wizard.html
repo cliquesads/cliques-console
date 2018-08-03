@@ -59,7 +59,7 @@
                     <label>Description</label>
                     <input type="text" name="campaign.description" id="campaign.description" data-ng-model="campaign.description" data-parsley-group="step1" placeholder="Optional - describe your campaign" class="form-control" />
                 </div>
-                <div class="form-group">
+                <div class="form-group" ng-if="deploymentModeIs('contentNetwork')">
 
                     <!--TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
                     <!-- TODO: External ID shouldn't be required globally but is required here to
