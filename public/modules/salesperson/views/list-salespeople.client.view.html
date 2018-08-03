@@ -1,0 +1,81 @@
+<section>
+    <div class="article-container">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>All Salespeople
+                        <span class="pull-right">
+                            <button type="button" ng-click="newSalesPerson()" class="btn btn-primary btn-xs text-md" tooltip="Create a New Salesperson">
+                                + New Salesperson
+                            </button>
+                        </span>
+                    </h4>
+                    <hr/>
+                </div>
+                <div class="panel-body pt0">
+                    <div class="text-center col-xs-12" ng-hide="resolved">
+                        <div class="ball-clip-rotate-pulse" style="display: inline-block">
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <h4>Loading Salespeople...</h4>
+                    </div>
+                    <!-- START table-responsive-->
+                    <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" ng-show="resolved && salesPeople.length === 0">
+                        <h4 class="m0">No Salespeople yet, why don't you <a href="#" ng-click="newSalesPerson()" analytics-on="click" analytics-event="SalesPeople_Create">create one</a>?</h4>
+                    </div>
+                    <div class="table-responsive col-xs-12" ng-if="salesPeople.length > 0 && resolved">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="person in salesPeople">
+                                    <td>
+                                        <a href="#" editable-text="person.firstName" onaftersave="update(person)" analytics-on="click" analytics-event="SalesPeople_UpdateFirstName">
+                                            {{ person.firstName }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" editable-text="person.lastName" onaftersave="update(person)" analytics-on="click" analytics-event="SalesPeople_UpdateLastName">
+                                            {{ person.lastName }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" editable-text="person.email" onaftersave="update(person)" analytics-on="click" analytics-event="SalesPeople_UpdateEmail">
+                                            {{ person.email }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- END table-responsive-->
+                </div>
+                <div class="panel-footer">
+                    <div class="row ml-sm mr-sm">
+                        <div class="pull-left text-md mt">
+                            Showing results
+                            <strong>{{ pagination.start }} - {{ pagination.end }}</strong>
+                            of <strong>{{ pagination.count }}</strong>
+                        </div>
+                        <div class="pull-right"
+                             paging
+                             page="queryParams.page"
+                             page-size="queryParams.perPage"
+                             total="pagination.count"
+                             paging-action="getSalesPeople(page)"
+                             show-prev-next="true"
+                             show-first-last="true"
+                             scroll-top="true"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
