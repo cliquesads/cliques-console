@@ -1,0 +1,42 @@
+<h4>Create a new Salesperson</h4>
+<hr/>
+<form name="salesPersonForm" id="salesPersonForm" data-ng-submit="submit()" autocomplete="off">
+    <fieldset>
+        <table>
+            <thead>
+                <th class="col-sm-4"><strong>First Name*</strong></th>
+                <th class="col-sm-4"><strong>Last Name*</strong></th>
+                <th class="col-sm-4"><strong>Email</strong></th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="col-sm-4">
+                        <input type="text" id="firstName" required="required" name="firstName" class="form-control" data-ng-model="salesperson.firstName" placeholder="John">
+                    </td>
+                    <td class="col-sm-4">
+                        <input type="text" id="lastName" required="required" name="lastName" class="form-control" data-ng-model="salesperson.lastName" placeholder="Snow">
+                    </td>
+                    <td class="col-sm-4">
+                        <input type="email" id="email" name="email" class="form-control" data-ng-model="salesperson.email" placeholder="john-snow@gmail.com">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <small class="text-muted">* Required</small>
+    <div class="row text-center">
+        <div class="text-center form-group mt-xl">
+            <button type="submit" class="btn btn-large btn-primary">Save</button>
+        </div>
+        <div data-ng-show="error" class="alert alert-danger">
+            <strong data-ng-bind="error"></strong>
+        </div>
+        <div ng-show="loading">
+            <div class="ball-pulse">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+</form>

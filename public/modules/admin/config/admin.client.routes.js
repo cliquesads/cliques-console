@@ -42,6 +42,21 @@ angular.module('advertiser').config(['$stateProvider',
                     controller: 'ListAccessLinksController'
                 }
             }
+        })
+        .state('app.admin.listSalespeople', {
+            url: '/admin/salespeople',
+            title: 'Salespeople',
+            resolve: {
+                $title: function () {
+                    return 'Salespeople';
+                }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/salesperson/views/list-salespeople.client.view.html',
+                    controller: 'SalesPersonController'
+                }
+            }
         });
 	}
 ]);
