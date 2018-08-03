@@ -4,7 +4,7 @@
 angular.module('salesperson').controller('SalesPersonController', function($scope, $location, ngDialog, Users, SalesPerson, Notify) {
     $scope.perPageOptions = [ 5, 10, 25, 50, 100 ];
     $scope.queryParams = {
-        perPage: 10,
+        perPage: 25,
         site: null,
         sort_by: "lastName"
     };

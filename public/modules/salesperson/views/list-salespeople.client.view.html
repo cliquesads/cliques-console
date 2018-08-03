@@ -21,7 +21,7 @@
                         <h4>Loading Salespeople...</h4>
                     </div>
                     <!-- START table-responsive-->
-                    <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" ng-if="salespeople.$resolved && !salespeople.length">
+                    <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" ng-show="resolved && salesPeople.length === 0">
                         <h4 class="m0">No Salespeople yet, why don't you <a href="#" ng-click="newSalesPerson()" analytics-on="click" analytics-event="SalesPeople_Create">create one</a>?</h4>
                     </div>
                     <div class="table-responsive col-xs-12" ng-if="salesPeople.length > 0 && resolved">
