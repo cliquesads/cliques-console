@@ -89,6 +89,19 @@ angular.module('analytics').config(['$stateProvider',
                 }
             }
         }).
+        state('app._analytics.analytics.quickQueries.advertiser', {
+            url: '/advertiser',
+            queryType: 'advertiser',
+            resolve: {
+                $title: function() { return 'Advertisers Query'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/analytics/views/partials/quick-query.client.view.html',
+                    controller: 'AnalyticsController'
+                }
+            }
+        }).
         state('app._analytics.analytics.quickQueries.creative', {
             url: '/creative',
             queryType: 'creative',
