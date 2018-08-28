@@ -1,7 +1,7 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('advertiser').controller('ListAdvertisersController', ['$scope', '$stateParams', '$location',
+angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope', '$stateParams', '$location',
     '$state', '$rootScope', '$timeout', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
 	function($scope, $stateParams, $location, $state, $rootScope, $timeout, Authentication, Advertiser, ngDialog,
              ADVERTISER_TOOLTIPS, REVIEW_TIME) {
@@ -77,6 +77,83 @@ angular.module('advertiser').controller('ListAdvertisersController', ['$scope', 
             $location.path('/advertiser/create');
         };
 	}
+]).
+controller('ListAdvertiserController', ['$scope', '$stateParams', '$location',
+    '$state', '$rootScope', '$timeout', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
+    function($scope, $stateParams, $location, $state, $rootScope, $timeout, Authentication, Advertiser, ngDialog,
+             ADVERTISER_TOOLTIPS, REVIEW_TIME) {
+
+        $scope.authentication = Authentication;
+        $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+
+        /**
+         * Factory for filter function used in advertiser list view
+         */
+        $scope.hasActiveCampaigns = function (bool){
+            return function (advertiser, index, arr) {
+                var hasBoolCampaigns = advertiser.campaigns.filter(function(camp){
+                    return camp.active === true;
+                }).length > 0;
+                if (!bool){
+                    hasBoolCampaigns = !hasBoolCampaigns || advertiser.campaigns.length === 0;
+                }
+                return hasBoolCampaigns;
+            };
+        };
+
+        /**
+         * Set $rootScope.advertiser var to remember advertiser selection if
+         * user checks checkbox, and redirect to appropriate view
+         * @type {boolean}
+         */
+        $scope.defaults = { rememberMySelection: true };
+        $scope.selectAdvertiser = function(advertiser) {
+            $rootScope.advertiser = $scope.defaults.rememberMySelection ? advertiser : null;
+            var nextState = $stateParams.next ? $stateParams.next : '.viewAdvertiser';
+            event.preventDefault();
+            $state.go(nextState, {
+                advertiserId: advertiser._id
+            });
+        };
+
+        /**
+         * Overlay campaign helper modal if state includes necessary query params
+         */
+        $scope.newModal = function(){
+            ngDialog.open({
+                template: 'modules/advertiser/views/partials/new-campaign-helper-modal.html',
+                data: { review_time: REVIEW_TIME }
+            });
+        };
+        // this activates the modal
+        $scope.showNewModal = function(){
+            if ($location.search().newModal){
+                $scope.newModal();
+            }
+        };
+
+
+        $scope.remove = function(advertiser) {
+            if (advertiser) {
+                advertiser.$remove();
+                for (var i in $scope.advertiser) {
+                    if ($scope.advertiser[i] === advertiser) {
+                        $scope.advertiser.splice(i, 1);
+                    }
+                }
+            } else {
+                $scope.advertiser.$remove(function() {
+                    $location.path('advertiser');
+                });
+            }
+        };
+
+        $scope.advertisers = Advertiser.query();
+
+        $scope.goToCreateNewAdvertiser = function() {
+            $location.path('/advertiser/create');
+        };
+    }
 ]).
 controller('AdvertiserController', ['$scope', '$stateParams', '$location',
         'Authentication', 'Advertiser','advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
