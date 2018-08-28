@@ -113,7 +113,7 @@ angular.module('advertiser').config(['$stateProvider',
                         } else {
                             var nextState = '.viewAdvertiser';
                             event.preventDefault();
-                            $state.go('app.advertiser.advertiserSwitcher', {
+                            $state.go('app.advertiser.allAdvertisers', {
                                 next: nextState
                             });
                         }
