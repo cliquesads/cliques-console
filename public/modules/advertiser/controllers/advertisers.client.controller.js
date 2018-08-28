@@ -78,83 +78,105 @@ angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope
         };
 	}
 ]).
-controller('ListAdvertiserController', ['$scope', '$stateParams', '$location',
-    '$state', '$rootScope', '$timeout', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
-    function($scope, $stateParams, $location, $state, $rootScope, $timeout, Authentication, Advertiser, ngDialog,
-             ADVERTISER_TOOLTIPS, REVIEW_TIME) {
+controller('ListAdvertiserController',
+    function($scope, $stateParams, $location, $state, $rootScope, $timeout,aggregationDateRanges,
+             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat, tableSort) {
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
-        /**
-         * Factory for filter function used in advertiser list view
-         */
-        $scope.hasActiveCampaigns = function (bool){
-            return function (advertiser, index, arr) {
-                var hasBoolCampaigns = advertiser.campaigns.filter(function(camp){
-                    return camp.active === true;
-                }).length > 0;
-                if (!bool){
-                    hasBoolCampaigns = !hasBoolCampaigns || advertiser.campaigns.length === 0;
-                }
-                return hasBoolCampaigns;
-            };
+        $scope.pagination = {
+            count: null,
+            pages: null,
+            start: 0,
+            end: 0
         };
 
         /**
-         * Set $rootScope.advertiser var to remember advertiser selection if
-         * user checks checkbox, and redirect to appropriate view
-         * @type {boolean}
+         * Broadcasts event to load new page of query results, passing
+         * desired queryParam changes.
          */
-        $scope.defaults = { rememberMySelection: true };
-        $scope.selectAdvertiser = function(advertiser) {
-            $rootScope.advertiser = $scope.defaults.rememberMySelection ? advertiser : null;
-            var nextState = $stateParams.next ? $stateParams.next : '.viewAdvertiser';
-            event.preventDefault();
-            $state.go(nextState, {
-                advertiserId: advertiser._id
+        $scope.loadNewPage = function(page){
+            $rootScope.$broadcast("refreshQuery", {
+                resultsPage: page
             });
         };
 
+        $scope.dateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+        $scope.startDate = $scope.dateRanges[$scope.dateRangeSelection].startDate;
+        $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
+        $scope.headers = [
+            'active',
+            'advertiser',
+            'name',
+            'budget',
+            'start_date',
+            'end_date',
+            'spend',
+            'impressions',
+            'clicks'
+        ];
+
+        $scope.currentSorting = {
+            order: 'desc'
+        };
         /**
-         * Overlay campaign helper modal if state includes necessary query params
+         * Sort table by specific column
+         * TODO: bll Should really just handle sorting with lodash `sortBy` function
          */
-        $scope.newModal = function(){
-            ngDialog.open({
-                template: 'modules/advertiser/views/partials/new-campaign-helper-modal.html',
-                data: { review_time: REVIEW_TIME }
-            });
-        };
-        // this activates the modal
-        $scope.showNewModal = function(){
-            if ($location.search().newModal){
-                $scope.newModal();
-            }
+        $scope.sortTableBy = function(headerName){
+            tableSort.sortTableBy($scope.campaigns, headerName, $scope.currentSorting);
         };
 
-
-        $scope.remove = function(advertiser) {
-            if (advertiser) {
-                advertiser.$remove();
-                for (var i in $scope.advertiser) {
-                    if ($scope.advertiser[i] === advertiser) {
-                        $scope.advertiser.splice(i, 1);
-                    }
-                }
-            } else {
-                $scope.advertiser.$remove(function() {
-                    $location.path('advertiser');
+        /**
+         * Get Advertisers and unpack campaigns, then get AdStats
+         */
+        Advertiser.query().$promise.then(function(response){
+            $scope.campaigns = _.flatMap(response, function(advertiser){
+                return advertiser.campaigns.map(function(campaign){
+                    campaign.logo_secure_url = advertiser.logo_secure_url;
+                    campaign.advertiser = advertiser.name;
+                    campaign._advertiser = advertiser;
+                    return campaign;
                 });
-            }
-        };
-
-        $scope.advertisers = Advertiser.query();
+            });
+            return HourlyAdStat.advSummaryQuery({
+                groupBy: 'campaign',
+                startDate: $scope.startDate,
+                endDate: $scope.endDate
+            });
+        }).then(function(response) {
+            $scope.campaignData = response.data;
+            $scope.campaigns.map(function (campaign) {
+                var adStats = _.find($scope.campaignData, function (d) {
+                    return d._id.campaign === campaign._id;
+                });
+                if (!adStats){
+                    adStats = {
+                        imps: 0,
+                        clicks: 0,
+                        spend: 0
+                    };
+                }
+                campaign.adStats = adStats;
+                campaign.impressions = adStats.imps;
+                campaign.spend = adStats.spend;
+                campaign.clicks = adStats.clicks;
+                campaign.cpc = adStats.clicks ? adStats.spend / adStats.clicks : 0;
+                campaign.cpm = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
+                campaign.ctr = adStats.imps ? adStats.clicks / adStats.imps : 0;
+                return campaign;
+            });
+        }).catch(function(err){
+            console.log(err);
+        });
 
         $scope.goToCreateNewAdvertiser = function() {
             $location.path('/advertiser/create');
         };
     }
-]).
+).
 controller('AdvertiserController', ['$scope', '$stateParams', '$location',
         'Authentication', 'Advertiser','advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
         'ADVERTISER_TOOLTIPS','REVIEW_TIME', '$state', '$rootScope',
