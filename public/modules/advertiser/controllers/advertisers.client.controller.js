@@ -102,10 +102,6 @@ controller('ListAdvertiserController',
             });
         };
 
-        $scope.dateRangeSelection = "7d";
-        $scope.dateRanges = aggregationDateRanges(user.tz);
-        $scope.startDate = $scope.dateRanges[$scope.dateRangeSelection].startDate;
-        $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
         $scope.headers = [
             'active',
             'advertiser',
@@ -123,7 +119,6 @@ controller('ListAdvertiserController',
         };
         /**
          * Sort table by specific column
-         * TODO: bll Should really just handle sorting with lodash `sortBy` function
          */
         $scope.sortTableBy = function(headerName){
             tableSort.sortTableBy($scope.campaigns, headerName, $scope.currentSorting);
@@ -132,7 +127,53 @@ controller('ListAdvertiserController',
         /**
          * Get Advertisers and unpack campaigns, then get AdStats
          */
+        $scope.dateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+
+        /**
+         *
+         * @param dateShortCode
+         */
+        $scope.getCampaignAdStatData = function(dateShortCode){
+            $scope.startDate = $scope.dateRanges[dateShortCode].startDate;
+            $scope.endDate = $scope.dateRanges[dateShortCode].endDate;
+            return HourlyAdStat.advSummaryQuery({
+                groupBy: 'campaign',
+                startDate: $scope.startDate,
+                endDate: $scope.endDate
+            }).then(function(response) {
+                $scope.campaignData = response.data;
+                $scope.campaignDataLoading = false;
+                $scope.campaigns.map(function (campaign) {
+                    var adStats = _.find($scope.campaignData, function (d) {
+                        return d._id.campaign === campaign._id;
+                    });
+                    if (!adStats){
+                        adStats = {
+                            imps: 0,
+                            clicks: 0,
+                            spend: 0
+                        };
+                    }
+                    campaign.adStats = adStats;
+                    campaign.impressions = adStats.imps;
+                    campaign.spend = adStats.spend;
+                    campaign.clicks = adStats.clicks;
+                    campaign.cpc = adStats.clicks ? adStats.spend / adStats.clicks : 0;
+                    campaign.cpm = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
+                    campaign.ctr = adStats.imps ? adStats.clicks / adStats.imps : 0;
+                    return campaign;
+                });
+            });
+        };
+
+        /**
+         * Get advertisers, flatten into campaigns array and get AdStat data on
+         * controller load.
+         */
+        $scope.campaignsLoading = true;
         Advertiser.query().$promise.then(function(response){
+            $scope.campaignsLoading = false;
             $scope.campaigns = _.flatMap(response, function(advertiser){
                 return advertiser.campaigns.map(function(campaign){
                     campaign.logo_secure_url = advertiser.logo_secure_url;
@@ -141,33 +182,9 @@ controller('ListAdvertiserController',
                     return campaign;
                 });
             });
-            return HourlyAdStat.advSummaryQuery({
-                groupBy: 'campaign',
-                startDate: $scope.startDate,
-                endDate: $scope.endDate
-            });
-        }).then(function(response) {
-            $scope.campaignData = response.data;
-            $scope.campaigns.map(function (campaign) {
-                var adStats = _.find($scope.campaignData, function (d) {
-                    return d._id.campaign === campaign._id;
-                });
-                if (!adStats){
-                    adStats = {
-                        imps: 0,
-                        clicks: 0,
-                        spend: 0
-                    };
-                }
-                campaign.adStats = adStats;
-                campaign.impressions = adStats.imps;
-                campaign.spend = adStats.spend;
-                campaign.clicks = adStats.clicks;
-                campaign.cpc = adStats.clicks ? adStats.spend / adStats.clicks : 0;
-                campaign.cpm = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
-                campaign.ctr = adStats.imps ? adStats.clicks / adStats.imps : 0;
-                return campaign;
-            });
+            $scope.campaignDataLoading = true;
+        }).then(function() {
+            return $scope.getCampaignAdStatData($scope.dateRangeSelection);
         }).catch(function(err){
             console.log(err);
         });
