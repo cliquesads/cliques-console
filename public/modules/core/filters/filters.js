@@ -45,4 +45,16 @@ angular.module('core').filter('percentage', ['$filter', function ($filter) {
             return 'RPM';
         }
     };
+})
+.filter('formalize', function(){
+    return function(input){
+        function capitalize(i){
+            return i.substring(0,1).toUpperCase()+i.substring(1);
+        }
+        // split on capital letters (camelCase) or underscores
+        var inputs = input.split(/(?=[A-Z_])|(?<=_)/);
+        inputs = inputs.filter(function(i){ return i !== '_'; });
+        inputs = inputs.map(capitalize);
+        return inputs.join(' ');
+    };
 });

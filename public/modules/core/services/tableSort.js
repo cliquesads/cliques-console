@@ -61,7 +61,15 @@ angular.module('core').service('tableSort', function() {
                         return aValue - bValue;
                     }
                 };
-                return typeof aValue === 'number' ? numberSort(aValue, bValue, order) : stringSort(aValue, bValue, order);
+
+                switch (typeof aValue){
+                    case 'number':
+                        return numberSort(aValue, bValue, order);
+                    case 'string':
+                        return stringSort(aValue, bValue, order);
+                    case 'boolean':
+                        return numberSort(aValue, bValue, order);
+                }
             };
         },
 
