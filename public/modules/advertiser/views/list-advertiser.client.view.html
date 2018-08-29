@@ -5,41 +5,188 @@
     </div>
     <div ng-switch-when="app.advertiser.allAdvertisers">
         <div class="row">
-            <div class="col-sm-offset-2 col-sm-8">
-                <div class="header-section">
-                    <div class="header-text">
-                        <strong>Please Select an Advertiser to Continue</strong>
+            <div class="col-sm-12">
+                <div class="panel panel-default mt">
+                    <!-- Heading & buttons -->
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4>All Advertisers & Campaigns</h4>
+                                </div>
+                                <!-- More data fields dropdown -->
+                                <div class="col-sm-6 text-right">
+                                    <span class="pull-right">
+                                        <a type="button" class="btn btn-labeled btn-primary" href="#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">
+                                            <span class="btn-label"><i class="fa fa-plus"></i></span>Create New Advertiser
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="pt0 pb0 mt0 mb0"/>
                     </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="defaults.rememberMySelection">Remember My Selection
-                        </label>
+                    <!-- Table -->
+                    <div class="panel-body pt0"
+                         ng-if="!campaignsLoading">
+                        <div>
+                            <div class="col-xs-1 mb">
+                                <!--<small ng-if="!activeFilter">Click to show only active campaigns </small>-->
+                                <!--<small ng-if="activeFilter">Click to show all campaigns</small>-->
+                                <small>Active Campaign Filter</small>
+                                <div class="mt0">
+                                    <label class="switch">
+                                        <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
+                                        <span></span>
+                                    </label>
+                                    <div class="label" ng-class="activeFilter ? 'label-success':'label-default'">{{ activeFilter ? "Active Only":"All Campaigns"}}</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 mb">
+                                <!-- Search box -->
+                                <div class="input-group mt">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="Filter by Advertiser or Campaign Name"
+                                           ng-model="search.searchKeyword"
+                                           ng-keypress="$event.keyCode === 13 && searchCampaigns()" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default"
+                                                type="button"
+                                                ng-click="searchCampaigns()"
+                                                ng-disabled="search.searchKeyword === ''">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default"
+                                                type="button"
+                                                ng-click="cancelSearch()"
+                                                ng-disabled="search.searchKeyword === ''">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-hover mb0">
+                            <thead>
+                                <tr>
+                                    <th class="clickable"
+                                        ng-class="{
+                                            'current-sorting': currentSorting.orderBy === header
+                                        }"
+                                        ng-click="sortTableBy(header)"
+                                        ng-repeat="header in headers" style="max-width: 220px">
+                                        {{ header | formalize }}
+                                        <a href="#" ng-if="globalSort.column" tooltip="All results pages sorted globally by {{ header }} ({{ globalSort.order | capitalize }}.) To change global sorting, use the 'Sort By' field in the Query Settings panel above.">
+                                            <i ng-if="globalSort.column === header && globalSort.order === 'asc'" class="fa fa-sort-amount-asc"></i>
+                                            <i ng-if="globalSort.column === header && globalSort.order === 'desc'" class="fa fa-sort-amount-desc"></i>
+                                        </a>
+                                        <span class="pull-right">
+                                            <i class="fa"
+                                               ng-class="{
+                                                    'fa-sort': currentSorting.orderBy !== header,
+                                                    'fa-sort-asc': currentSorting.orderBy === header && currentSorting.order === 'desc',
+                                                    'fa-sort-desc': currentSorting.orderBy === header && currentSorting.order === 'asc'
+                                               }">
+                                        </i>
+                                    </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="row in campaigns" ng-hide="(activeFilter && !row.active) || (search.searchActive && !row.keywordMatch)">
+                                <td ng-repeat="header in headers"
+                                    style="max-width: 220px; vertical-align: middle;">
+                                    <span ng-if="header === 'budget' || header === 'spend'">
+                                        <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
+                                        {{ row[header] | currency:'$':'0' }}
+                                    </span>
+                                    <span ng-if="header === 'impressions' || header === 'clicks'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                        {{ row[header] | number:'0' }}
+                                    </span>
+                                    <span ng-if="header === 'CPC' || header === 'CPM'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                        {{ row[header] | currency:'$':'2' }}
+                                    </span>
+                                    <span ng-if="header === 'CTR'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                        {{ row[header] | percentage:'2' }}
+                                    </span>
+                                    <span ng-if="header === 'start_date' || header === 'end_date'">
+                                        {{ row[header] | date:'MM/dd/yyyy'}}
+                                    </span>
+                                    <span ng-if="header === '%_spent'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                        <radial percent="row['%_spent']" size="sm" ng-show="!campaignDataLoading" tooltip="{{ row.spend | currency:'$':'0' }}"></radial>
+                                    </span>
+                                    <span ng-if="header === 'name'">
+                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign" ng-class="{'text-bold': row.active }">
+                                            {{ row[header] }}
+                                        </a>
+                                    </span>
+                                    <span ng-if="header === 'advertiser'">
+                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser" ng-class="{'text-bold': row.active }">
+                                            <div class="col-xs-4">
+                                                <img ng-src="{{ row.logo_secure_url }}" class="client-logo-md" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
+                                            </div>
+                                            <div class="col-xs-8" style="padding-top: 15px;">
+                                                {{ row[header] }}
+                                            </div>
+                                        </a>
+                                    </span>
+                                    <span ng-if="header === 'active'">
+                                        <div class="label" ng-class="row.active ? 'label-success':'label-default'">{{ row.active ? "Active":"Inactive"}}</div>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="10">
+                                    <!-- Search not found placeholder -->
+                                    <div class="box-placeholder text-center"
+                                         ng-if="search.searchActive && !search.foundSome">
+                                        No results matching the keyword <strong>{{ search.searchKeyword }}</strong> were found.
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-8 advertiser-list-container">
-                <div class="btn-third-white-horizontal" ng-click="goToCreateNewAdvertiser()">
-                    <i class="fa fa-plus"></i>&nbsp;&nbsp;
-                    CREATE NEW ADVERTISER
-                </div>
-                <div ng-show="(advertisers | filter:hasActiveCampaigns(true)).length">
-                    <br/>
-                    <em class="custom-section-title">Active</em>
-                    <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectActiveAdvertiser">
-                            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-                        </a>
+                    <!-- Spin Loader -->
+                    <div class="panel-body pt0"
+                         ng-if="campaignsLoading">
+                        <spin-loader></spin-loader>
                     </div>
-                </div>
-                <div ng-show="(advertisers | filter:hasActiveCampaigns(false)).length">
-                    <br/>
-                    <em class="custom-section-title">Inactive</em>
-                    <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectInactiveAdvertiser">
-                            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-                        </a>
+                    <div class="panel-footer">
+                        <div class="row ml-sm mr-sm">
+                            <!--<div ng-switch="queryParam.resultsPage || '_undefined_'">-->
+                                <!--<div ng-switch-when="_undefined_">-->
+                                    <!--<div class="pull-left text-md mt">-->
+                                        <!--Showing results-->
+                                        <!--<strong> 1 - {{ campaigns.length }}</strong>-->
+                                        <!--of <strong>{{ campaigns.length }}</strong>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div ng-switch-default>-->
+                                    <!--<div class="pull-left text-md mt">-->
+                                        <!--Showing results-->
+                                        <!--<strong>{{ pagination.start }} - {{ pagination.end }}</strong>-->
+                                        <!--of <strong>{{ pagination.count }}</strong>-->
+                                    <!--</div><div class="pull-right"-->
+                                               <!--paging-->
+                                               <!--page="resultsPage"-->
+                                               <!--page-size="perPage"-->
+                                               <!--total="pagination.count"-->
+                                               <!--paging-action="loadNewPage(page)"-->
+                                               <!--show-prev-next="true"-->
+                                               <!--show-first-last="true"-->
+                                               <!--scroll-top="true"-->
+                                <!--&gt;</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
                     </div>
                 </div>
             </div>

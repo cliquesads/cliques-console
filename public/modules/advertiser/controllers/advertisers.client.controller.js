@@ -1,7 +1,7 @@
 /* global _, angular, user */
 'use strict';
 
-angular.module('advertiser').controller('ListAdvertisersController', ['$scope', '$stateParams', '$location',
+angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope', '$stateParams', '$location',
     '$state', '$rootScope', '$timeout', 'Authentication', 'Advertiser','ngDialog','ADVERTISER_TOOLTIPS','REVIEW_TIME',
 	function($scope, $stateParams, $location, $state, $rootScope, $timeout, Authentication, Advertiser, ngDialog,
              ADVERTISER_TOOLTIPS, REVIEW_TIME) {
@@ -78,6 +78,141 @@ angular.module('advertiser').controller('ListAdvertisersController', ['$scope', 
         };
 	}
 ]).
+controller('ListAdvertiserController',
+    function($scope, $stateParams, $location, $state, $rootScope, $timeout,aggregationDateRanges,
+             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat, tableSort) {
+
+        $scope.authentication = Authentication;
+        $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
+
+        $scope.headers = [
+            'active',
+            'advertiser',
+            'name',
+            'budget',
+            '%_spent',
+            'start_date',
+            'end_date',
+            'CTR',
+            'CPC',
+            'CPM'
+        ];
+
+        $scope.currentSorting = {
+            order: 'desc'
+        };
+
+        /**
+         * Sort table by specific column
+         */
+        $scope.sortTableBy = function (headerName) {
+            tableSort.sortTableBy($scope.campaigns, headerName, $scope.currentSorting);
+        };
+
+        /**
+         * Get Advertisers and unpack campaigns, then get AdStats
+         */
+        $scope.dateRangeSelection = "7d";
+        $scope.dateRanges = aggregationDateRanges(user.tz);
+
+        /**
+         *
+         * @param dateShortCode
+         */
+        $scope.getCampaignAdStatData = function () {
+            $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
+            return HourlyAdStat.advSummaryQuery({
+                groupBy: 'campaign',
+                startDate: $scope.earliestStartDate,
+                endDate: $scope.endDate
+            }).then(function (response) {
+                $scope.campaignData = response.data;
+                $scope.campaignDataLoading = false;
+                $scope.campaigns.map(function (campaign) {
+                    var adStats = _.find($scope.campaignData, function (d) {
+                        return d._id.campaign === campaign._id;
+                    });
+                    if (!adStats) {
+                        adStats = {
+                            imps: 0,
+                            clicks: 0,
+                            spend: 0
+                        };
+                    }
+                    campaign.adStats = adStats;
+                    campaign.impressions = adStats.imps;
+                    campaign.spend = adStats.spend;
+                    campaign.clicks = adStats.clicks;
+                    campaign.CPC = adStats.clicks ? adStats.spend / adStats.clicks : 0;
+                    campaign.CPM = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
+                    campaign.CTR = adStats.imps ? adStats.clicks / adStats.imps : 0;
+                    campaign["%_spent"] = adStats.spend / campaign.budget;
+                    return campaign;
+                });
+            });
+        };
+
+        /**
+         * Get advertisers, flatten into campaigns array and get AdStat data on
+         * controller load.
+         */
+        $scope.campaignsLoading = true;
+        Advertiser.query().$promise.then(function (response) {
+            $scope.campaignsLoading = false;
+            $scope.earliestStartDate = new Date();
+            $scope.campaigns = _.flatMap(response, function (advertiser) {
+                return advertiser.campaigns.map(function (campaign) {
+
+                    // set this for query purposes to avoid running a query without
+                    // a date condition against the HourlyAdStats API.
+                    $scope.earliestStartDate = new Date(Math.min(new Date(campaign.start_date), $scope.earliestStartDate));
+
+                    // set advertiser metadata on Campaign row object
+                    campaign.logo_secure_url = advertiser.logo_secure_url;
+                    campaign.advertiser = advertiser.name;
+                    campaign._advertiser = advertiser;
+                    return campaign;
+                });
+            });
+            $scope.campaignDataLoading = true;
+        }).then(function () {
+            return $scope.getCampaignAdStatData($scope.dateRangeSelection);
+        }).catch(function (err) {
+            console.log(err);
+        });
+
+        $scope.goToCreateNewAdvertiser = function () {
+            $location.path('/advertiser/create');
+        };
+
+        $scope.activeFilter = true;
+        $scope.search = {
+            searchKeyword: '',
+            searchActive: false,
+            foundSome: false
+        };
+        $scope.searchCampaigns = function () {
+            $scope.search.foundSome = false;
+            $scope.search.searchActive = true;
+            var keyword = $scope.search.searchKeyword.toLowerCase();
+            $scope.campaigns.forEach(function (campaign) {
+                var match = campaign.name.toLowerCase().search(keyword) > -1 || campaign.advertiser.toLowerCase().search(keyword) > -1;
+                if (match) {
+                    $scope.search.foundSome = true;
+                    campaign.keywordMatch = true;
+                }
+            });
+        };
+        $scope.cancelSearch = function(){
+            $scope.search.searchKeyword = '';
+            $scope.search.searchActive = false;
+            $scope.search.foundSome = false;
+            $scope.campaigns.forEach(function(campaign){
+                campaign.keywordMatch = false;
+            });
+        };
+    }
+).
 controller('AdvertiserController', ['$scope', '$stateParams', '$location',
         'Authentication', 'Advertiser','advertiser','HourlyAdStat','MongoTimeSeries','aggregationDateRanges','ngDialog',
         'ADVERTISER_TOOLTIPS','REVIEW_TIME', '$state', '$rootScope',

@@ -132,7 +132,7 @@ angular.module('advertiser').config(['$stateProvider',
                         } else {
                             var nextState = '.viewAdvertiser.createNewCampaign';
                             event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers', {
+                            $state.go('app.advertiser.advertiserSwitcher', {
                                 next: nextState
                             });
                         }
@@ -151,7 +151,7 @@ angular.module('advertiser').config(['$stateProvider',
                         } else {
                             var nextState = '.viewAdvertiser.actionBeacons';
                             event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers',{
+                            $state.go('app.advertiser.advertiserSwitcher',{
                                 next: nextState
                             });
                         }
@@ -163,15 +163,30 @@ angular.module('advertiser').config(['$stateProvider',
         /**
          * BEGIN advertiser-specific states, starting at All Advertisers
          */
+        state('app.advertiser.advertiserSwitcher', {
+            url: '/select-advertiser?next',
+            resolve: {
+                $title: function(){ return 'Select Advertiser'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/advertiser-switcher.client.view.html',
+                    controller: 'AdvertiserSwitcherController'
+                },
+                'titleBar': {
+                    template: '<section data-ui-view="titleBar"></section>'
+                }
+            }
+        }).
         state('app.advertiser.allAdvertisers', {
-            url: '/advertiser?next',
+            url: '/advertiser',
             resolve: {
                 $title: function(){ return 'All Advertisers'; }
             },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
-                    controller: 'ListAdvertisersController'
+                    controller: 'ListAdvertiserController'
                 },
                 'titleBar': {
                     template: '<section data-ui-view="titleBar"></section>'
