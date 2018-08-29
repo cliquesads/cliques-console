@@ -16,11 +16,11 @@
                                 </div>
                                 <!-- More data fields dropdown -->
                                 <div class="col-sm-6 text-right">
-                                    <button class="btn btn-primary"
-                                            type="button"
-                                            ng-click="showMoreTableFields()">
-                                        <i class="fa fa-table"></i> Show/hide table fields
-                                    </button>
+                                    <span class="pull-right">
+                                        <a type="button" class="btn btn-labeled btn-primary" href="#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">
+                                            <span class="btn-label"><i class="fa fa-plus"></i></span>Create New Advertiser
+                                        </a>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -30,7 +30,8 @@
                     <div class="panel-body pt0"
                          ng-if="!campaignsLoading">
                         <div>
-                            <small>Filter Active Campaigns / Show All Campaigns</small>
+                            <small ng-if="!activeFilter">Click to show only active campaigns </small>
+                            <small ng-if="activeFilter">Click to show all campaigns</small>
                             <div class="mt0">
                                 <label class="switch">
                                     <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
@@ -122,53 +123,36 @@
                     </div>
                     <div class="panel-footer">
                         <div class="row ml-sm mr-sm">
-                            <div ng-switch="queryParam.resultsPage || '_undefined_'">
-                                <div ng-switch-when="_undefined_">
-                                    <div class="pull-left text-md mt">
-                                        Showing results
-                                        <strong> 1 - {{ campaigns.length }}</strong>
-                                        of <strong>{{ campaigns.length }}</strong>
-                                    </div>
-                                </div>
-                                <div ng-switch-default>
-                                    <div class="pull-left text-md mt">
-                                        Showing results
-                                        <strong>{{ pagination.start }} - {{ pagination.end }}</strong>
-                                        of <strong>{{ pagination.count }}</strong>
-                                    </div><div class="pull-right"
-                                               paging
-                                               page="resultsPage"
-                                               page-size="perPage"
-                                               total="pagination.count"
-                                               paging-action="loadNewPage(page)"
-                                               show-prev-next="true"
-                                               show-first-last="true"
-                                               scroll-top="true"
-                                ></div>
-                                </div>
-                            </div>
+                            <!--<div ng-switch="queryParam.resultsPage || '_undefined_'">-->
+                                <!--<div ng-switch-when="_undefined_">-->
+                                    <!--<div class="pull-left text-md mt">-->
+                                        <!--Showing results-->
+                                        <!--<strong> 1 - {{ campaigns.length }}</strong>-->
+                                        <!--of <strong>{{ campaigns.length }}</strong>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div ng-switch-default>-->
+                                    <!--<div class="pull-left text-md mt">-->
+                                        <!--Showing results-->
+                                        <!--<strong>{{ pagination.start }} - {{ pagination.end }}</strong>-->
+                                        <!--of <strong>{{ pagination.count }}</strong>-->
+                                    <!--</div><div class="pull-right"-->
+                                               <!--paging-->
+                                               <!--page="resultsPage"-->
+                                               <!--page-size="perPage"-->
+                                               <!--total="pagination.count"-->
+                                               <!--paging-action="loadNewPage(page)"-->
+                                               <!--show-prev-next="true"-->
+                                               <!--show-first-last="true"-->
+                                               <!--scroll-top="true"-->
+                                <!--&gt;</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--<div ng-show="(advertisers | filter:hasActiveCampaigns(true)).length">-->
-        <!--<br/>-->
-        <!--<em class="custom-section-title">Active</em>-->
-        <!--<div data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" >-->
-        <!--<advertiser-campaign-container advertiser="advertiser"></advertiser-campaign-container>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div ng-show="(advertisers | filter:hasActiveCampaigns(false)).length">-->
-        <!--<br/>-->
-        <!--<em class="custom-section-title">Inactive</em>-->
-        <!--<div class="list-group">-->
-        <!--<a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectInactiveAdvertiser">-->
-        <!--<advertiser-campaign-container advertiser="advertiser"></advertiser-campaign-container>-->
-        <!--</a>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
         <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" data-ng-if="advertisers.$resolved && !advertisers.length">
             <h4 class="m0">No advertisers yet, why don't you <a href="/#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">create one</a>?</h4>
         </div>
