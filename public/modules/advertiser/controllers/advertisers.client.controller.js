@@ -105,7 +105,7 @@ controller('ListAdvertiserController',
         /**
          * Sort table by specific column
          */
-        $scope.sortTableBy = function(headerName){
+        $scope.sortTableBy = function (headerName) {
             tableSort.sortTableBy($scope.campaigns, headerName, $scope.currentSorting);
         };
 
@@ -119,20 +119,20 @@ controller('ListAdvertiserController',
          *
          * @param dateShortCode
          */
-        $scope.getCampaignAdStatData = function(){
+        $scope.getCampaignAdStatData = function () {
             $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
             return HourlyAdStat.advSummaryQuery({
                 groupBy: 'campaign',
                 startDate: $scope.earliestStartDate,
                 endDate: $scope.endDate
-            }).then(function(response) {
+            }).then(function (response) {
                 $scope.campaignData = response.data;
                 $scope.campaignDataLoading = false;
                 $scope.campaigns.map(function (campaign) {
                     var adStats = _.find($scope.campaignData, function (d) {
                         return d._id.campaign === campaign._id;
                     });
-                    if (!adStats){
+                    if (!adStats) {
                         adStats = {
                             imps: 0,
                             clicks: 0,
@@ -157,11 +157,11 @@ controller('ListAdvertiserController',
          * controller load.
          */
         $scope.campaignsLoading = true;
-        Advertiser.query().$promise.then(function(response){
+        Advertiser.query().$promise.then(function (response) {
             $scope.campaignsLoading = false;
             $scope.earliestStartDate = new Date();
-            $scope.campaigns = _.flatMap(response, function(advertiser){
-                return advertiser.campaigns.map(function(campaign){
+            $scope.campaigns = _.flatMap(response, function (advertiser) {
+                return advertiser.campaigns.map(function (campaign) {
 
                     // set this for query purposes to avoid running a query without
                     // a date condition against the HourlyAdStats API.
@@ -175,17 +175,42 @@ controller('ListAdvertiserController',
                 });
             });
             $scope.campaignDataLoading = true;
-        }).then(function() {
+        }).then(function () {
             return $scope.getCampaignAdStatData($scope.dateRangeSelection);
-        }).catch(function(err){
+        }).catch(function (err) {
             console.log(err);
         });
 
-        $scope.goToCreateNewAdvertiser = function() {
+        $scope.goToCreateNewAdvertiser = function () {
             $location.path('/advertiser/create');
         };
 
         $scope.activeFilter = true;
+        $scope.search = {
+            searchKeyword: '',
+            searchActive: false,
+            foundSome: false
+        };
+        $scope.searchCampaigns = function () {
+            $scope.search.foundSome = false;
+            $scope.search.searchActive = true;
+            var keyword = $scope.search.searchKeyword.toLowerCase();
+            $scope.campaigns.forEach(function (campaign) {
+                var match = campaign.name.toLowerCase().search(keyword) > -1 || campaign.advertiser.toLowerCase().search(keyword) > -1;
+                if (match) {
+                    $scope.search.foundSome = true;
+                    campaign.keywordMatch = true;
+                }
+            });
+        };
+        $scope.cancelSearch = function(){
+            $scope.search.searchKeyword = '';
+            $scope.search.searchActive = false;
+            $scope.search.foundSome = false;
+            $scope.campaigns.forEach(function(campaign){
+                campaign.keywordMatch = false;
+            });
+        };
     }
 ).
 controller('AdvertiserController', ['$scope', '$stateParams', '$location',

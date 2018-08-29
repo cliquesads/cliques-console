@@ -30,17 +30,46 @@
                     <div class="panel-body pt0"
                          ng-if="!campaignsLoading">
                         <div>
-                            <small ng-if="!activeFilter">Click to show only active campaigns </small>
-                            <small ng-if="activeFilter">Click to show all campaigns</small>
-                            <div class="mt0">
-                                <label class="switch">
-                                    <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
-                                    <span></span>
-                                </label>
-                                <div class="label" ng-class="activeFilter ? 'label-success':'label-default'">{{ activeFilter ? "Active Only":"All Campaigns"}}</div>
+                            <div class="col-xs-1 mb">
+                                <!--<small ng-if="!activeFilter">Click to show only active campaigns </small>-->
+                                <!--<small ng-if="activeFilter">Click to show all campaigns</small>-->
+                                <small>Active Campaign Filter</small>
+                                <div class="mt0">
+                                    <label class="switch">
+                                        <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
+                                        <span></span>
+                                    </label>
+                                    <div class="label" ng-class="activeFilter ? 'label-success':'label-default'">{{ activeFilter ? "Active Only":"All Campaigns"}}</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 mb">
+                                <!-- Search box -->
+                                <div class="input-group mt">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="Filter by Advertiser or Campaign Name"
+                                           ng-model="search.searchKeyword"
+                                           ng-keypress="$event.keyCode === 13 && searchCampaigns()" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default"
+                                                type="button"
+                                                ng-click="searchCampaigns()"
+                                                ng-disabled="search.searchKeyword === ''">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default"
+                                                type="button"
+                                                ng-click="cancelSearch()"
+                                                ng-disabled="search.searchKeyword === ''">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <table class="table table-striped table-hover mb0">
+                        <table class="table table-bordered table-hover mb0">
                             <thead>
                                 <tr>
                                     <th class="clickable"
@@ -67,7 +96,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="row in campaigns" ng-hide="activeFilter && !row.active">
+                            <tr ng-repeat="row in campaigns" ng-hide="(activeFilter && !row.active) || (search.searchActive && !row.keywordMatch)">
                                 <td ng-repeat="header in headers"
                                     style="max-width: 220px; vertical-align: middle;">
                                     <span ng-if="header === 'budget' || header === 'spend'">
@@ -111,6 +140,15 @@
                                     <span ng-if="header === 'active'">
                                         <div class="label" ng-class="row.active ? 'label-success':'label-default'">{{ row.active ? "Active":"Inactive"}}</div>
                                     </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="10">
+                                    <!-- Search not found placeholder -->
+                                    <div class="box-placeholder text-center"
+                                         ng-if="search.searchActive && !search.foundSome">
+                                        No results matching the keyword <strong>{{ search.searchKeyword }}</strong> were found.
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
