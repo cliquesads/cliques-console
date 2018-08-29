@@ -51,10 +51,15 @@ angular.module('core').filter('percentage', ['$filter', function ($filter) {
         function capitalize(i){
             return i.substring(0,1).toUpperCase()+i.substring(1);
         }
-        // split on capital letters (camelCase) or underscores
-        var inputs = input.split(/(?=[A-Z_])|(?<=_)/);
-        inputs = inputs.filter(function(i){ return i !== '_'; });
-        inputs = inputs.map(capitalize);
-        return inputs.join(' ');
+        // just ignore if string is all caps, which means it's probably an acronym.
+        if (input === input.toUpperCase()){
+            return input;
+        } else {
+            // split on capital letters (camelCase) or underscores
+            var inputs = input.split(/(?=[A-Z_])|(?<=_)/);
+            inputs = inputs.filter(function(i){ return i !== '_'; });
+            inputs = inputs.map(capitalize);
+            return inputs.join(' ');
+        }
     };
 });
