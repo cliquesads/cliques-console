@@ -85,38 +85,23 @@ controller('ListAdvertiserController',
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
 
-        $scope.pagination = {
-            count: null,
-            pages: null,
-            start: 0,
-            end: 0
-        };
-
-        /**
-         * Broadcasts event to load new page of query results, passing
-         * desired queryParam changes.
-         */
-        $scope.loadNewPage = function(page){
-            $rootScope.$broadcast("refreshQuery", {
-                resultsPage: page
-            });
-        };
-
         $scope.headers = [
             'active',
             'advertiser',
             'name',
             'budget',
+            '%_spent',
             'start_date',
             'end_date',
-            'spend',
-            'impressions',
-            'clicks'
+            'CTR',
+            'CPC',
+            'CPM'
         ];
 
         $scope.currentSorting = {
             order: 'desc'
         };
+
         /**
          * Sort table by specific column
          */
@@ -134,12 +119,11 @@ controller('ListAdvertiserController',
          *
          * @param dateShortCode
          */
-        $scope.getCampaignAdStatData = function(dateShortCode){
-            $scope.startDate = $scope.dateRanges[dateShortCode].startDate;
-            $scope.endDate = $scope.dateRanges[dateShortCode].endDate;
+        $scope.getCampaignAdStatData = function(){
+            $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
             return HourlyAdStat.advSummaryQuery({
                 groupBy: 'campaign',
-                startDate: $scope.startDate,
+                startDate: $scope.earliestStartDate,
                 endDate: $scope.endDate
             }).then(function(response) {
                 $scope.campaignData = response.data;
@@ -159,9 +143,10 @@ controller('ListAdvertiserController',
                     campaign.impressions = adStats.imps;
                     campaign.spend = adStats.spend;
                     campaign.clicks = adStats.clicks;
-                    campaign.cpc = adStats.clicks ? adStats.spend / adStats.clicks : 0;
-                    campaign.cpm = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
-                    campaign.ctr = adStats.imps ? adStats.clicks / adStats.imps : 0;
+                    campaign.CPC = adStats.clicks ? adStats.spend / adStats.clicks : 0;
+                    campaign.CPM = adStats.imps ? adStats.spend / adStats.imps * 1000 : 0;
+                    campaign.CTR = adStats.imps ? adStats.clicks / adStats.imps : 0;
+                    campaign["%_spent"] = adStats.spend / campaign.budget;
                     return campaign;
                 });
             });
@@ -174,8 +159,15 @@ controller('ListAdvertiserController',
         $scope.campaignsLoading = true;
         Advertiser.query().$promise.then(function(response){
             $scope.campaignsLoading = false;
+            $scope.earliestStartDate = new Date();
             $scope.campaigns = _.flatMap(response, function(advertiser){
                 return advertiser.campaigns.map(function(campaign){
+
+                    // set this for query purposes to avoid running a query without
+                    // a date condition against the HourlyAdStats API.
+                    $scope.earliestStartDate = new Date(Math.min(new Date(campaign.start_date), $scope.earliestStartDate));
+
+                    // set advertiser metadata on Campaign row object
                     campaign.logo_secure_url = advertiser.logo_secure_url;
                     campaign.advertiser = advertiser.name;
                     campaign._advertiser = advertiser;
@@ -192,6 +184,8 @@ controller('ListAdvertiserController',
         $scope.goToCreateNewAdvertiser = function() {
             $location.path('/advertiser/create');
         };
+
+        $scope.activeFilter = true;
     }
 ).
 controller('AdvertiserController', ['$scope', '$stateParams', '$location',

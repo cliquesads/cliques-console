@@ -12,7 +12,7 @@
                         <div class="panel-title">
                             <div class="row">
                                 <div class="col-sm-6">
-
+                                    <h4>All Advertisers & Campaigns</h4>
                                 </div>
                                 <!-- More data fields dropdown -->
                                 <div class="col-sm-6 text-right">
@@ -21,18 +21,24 @@
                                             ng-click="showMoreTableFields()">
                                         <i class="fa fa-table"></i> Show/hide table fields
                                     </button>
-                                    <div class="btn btn-primary" ng-click="goToCreateNewAdvertiser()">
-                                        <i class="fa fa-plus"></i>&nbsp;&nbsp;
-                                        CREATE NEW ADVERTISER
-                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <hr class="pt0 pb0 mt0 mb0"/>
                     </div>
                     <!-- Table -->
                     <div class="panel-body pt0"
                          ng-if="!campaignsLoading">
-                        <hr class="m0">
+                        <div>
+                            <small>Filter Active Campaigns / Show All Campaigns</small>
+                            <div class="mt0">
+                                <label class="switch">
+                                    <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
+                                    <span></span>
+                                </label>
+                                <div class="label" ng-class="activeFilter ? 'label-success':'label-default'">{{ activeFilter ? "Active Only":"All Campaigns"}}</div>
+                            </div>
+                        </div>
                         <table class="table table-striped table-hover mb0">
                             <thead>
                                 <tr>
@@ -41,7 +47,7 @@
                                             'current-sorting': currentSorting.orderBy === header
                                         }"
                                         ng-click="sortTableBy(header)"
-                                        ng-repeat="header in headers" style="max-width: 400px">
+                                        ng-repeat="header in headers" style="max-width: 220px">
                                         {{ header | formalize }}
                                         <a href="#" ng-if="globalSort.column" tooltip="All results pages sorted globally by {{ header }} ({{ globalSort.order | capitalize }}.) To change global sorting, use the 'Sort By' field in the Query Settings panel above.">
                                             <i ng-if="globalSort.column === header && globalSort.order === 'asc'" class="fa fa-sort-amount-asc"></i>
@@ -60,37 +66,45 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="row in campaigns">
+                            <tr ng-repeat="row in campaigns" ng-hide="activeFilter && !row.active">
                                 <td ng-repeat="header in headers"
-                                    style="max-width: 200px">
+                                    style="max-width: 220px; vertical-align: middle;">
                                     <span ng-if="header === 'budget' || header === 'spend'">
-                                        <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div><div></div></div>
+                                        <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
                                         {{ row[header] | currency:'$':'0' }}
                                     </span>
                                     <span ng-if="header === 'impressions' || header === 'clicks'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div><div></div></div>
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
                                         {{ row[header] | number:'0' }}
                                     </span>
-                                    <span ng-if="header === 'cpc' || header === 'cpm'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div><div></div></div>
+                                    <span ng-if="header === 'CPC' || header === 'CPM'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
                                         {{ row[header] | currency:'$':'2' }}
                                     </span>
                                     <span ng-if="header === 'CTR'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div><div></div></div>
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
                                         {{ row[header] | percentage:'2' }}
                                     </span>
                                     <span ng-if="header === 'start_date' || header === 'end_date'">
                                         {{ row[header] | date:'MM/dd/yyyy'}}
                                     </span>
+                                    <span ng-if="header === '%_spent'">
+                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                        <radial percent="row['%_spent']" size="sm" ng-show="!campaignDataLoading" tooltip="{{ row.spend | currency:'$':'0' }}"></radial>
+                                    </span>
                                     <span ng-if="header === 'name'">
-                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign">
+                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign" ng-class="{'text-bold': row.active }">
                                             {{ row[header] }}
                                         </a>
                                     </span>
                                     <span ng-if="header === 'advertiser'">
-                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser">
-                                            <img ng-src="{{ row.logo_secure_url }}" class="client-logo-xs" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
-                                            &nbsp;{{ row[header] }}
+                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser" ng-class="{'text-bold': row.active }">
+                                            <div class="col-xs-4">
+                                                <img ng-src="{{ row.logo_secure_url }}" class="client-logo-md" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
+                                            </div>
+                                            <div class="col-xs-8" style="padding-top: 15px;">
+                                                {{ row[header] }}
+                                            </div>
                                         </a>
                                     </span>
                                     <span ng-if="header === 'active'">
