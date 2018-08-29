@@ -56,8 +56,12 @@ angular.module('core').filter('percentage', ['$filter', function ($filter) {
             return input;
         } else {
             // split on capital letters (camelCase) or underscores
-            var inputs = input.split(/(?=[A-Z_])|(?<=_)/);
-            inputs = inputs.filter(function(i){ return i !== '_'; });
+            var inputs = input.split(/(?=[A-Z_])/);
+            inputs = inputs.map(function(str){
+                return str.split('_');
+            });
+            inputs = _.flatten(inputs);
+            inputs = inputs.filter(function(i){ return i !== ''; });
             inputs = inputs.map(capitalize);
             return inputs.join(' ');
         }
