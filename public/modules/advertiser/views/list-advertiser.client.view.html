@@ -18,7 +18,7 @@
                                 <div class="col-sm-6 text-right">
                                     <span class="pull-right">
                                         <a type="button" class="btn btn-labeled btn-primary" href="#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">
-                                            <span class="btn-label"><i class="fa fa-plus"></i></span>Create New Advertiser
+                                            <span class="btn-label"><i class="fa fa-plus"></i></span>CREATE NEW ADVERTISER
                                         </a>
                                     </span>
                                 </div>
@@ -29,70 +29,93 @@
                     <!-- Table -->
                     <div class="panel-body pt0"
                          ng-if="!campaignsLoading">
-                        <div>
-                            <div class="col-xs-2 mb">
-                                <!--<small ng-if="!activeFilter">Click to show only active campaigns </small>-->
-                                <!--<small ng-if="activeFilter">Click to show all campaigns</small>-->
-                                <small>Active Campaign Filter</small>
-                                <div class="mt0">
-                                    <label class="switch">
-                                        <input type="checkbox" checked="checked" ng-click="activeFilter = !activeFilter"/>
-                                        <span></span>
-                                    </label>
-                                    <div class="label" ng-class="activeFilter ? 'label-success':'label-default'">{{ activeFilter ? "Active Only":"All Campaigns"}}</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-4 mb">
-                                <!-- Search box -->
-                                <div class="input-group mt">
-                                    <input type="text"
-                                           class="form-control"
-                                           placeholder="Filter by Advertiser or Campaign Name"
-                                           ng-model="search.searchKeyword"
-                                           ng-keypress="$event.keyCode === 13 && searchCampaigns()" />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default"
-                                                type="button"
-                                                ng-click="searchCampaigns()"
-                                                ng-disabled="search.searchKeyword === ''">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-default"
-                                                type="button"
-                                                ng-click="cancelSearch()"
-                                                ng-disabled="search.searchKeyword === ''">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+
+                        <!-- Table Headers -->
                         <table class="table table-bordered table-hover mb0">
                             <thead>
+                                <!-- Headers Row-->
                                 <tr>
-                                    <th class="clickable"
-                                        ng-class="{
+                                    <th ng-class="{
                                             'current-sorting': currentSorting.orderBy.indexOf(header) > -1
                                         }"
-                                        ng-click="sortTableBy(header)"
                                         ng-repeat="header in headers" style="max-width: 220px">
                                         {{ header | formalize }}
-                                        <span class="pull-right">
+                                        <a href="#"
+                                           class="btn btn-default btn-xs"
+                                           ng-click="filters.showFilters = !filters.showFilters"
+                                           ng-if="header === 'active' || header === 'advertiser' || header === 'campaign'" tooltip="{{ filters.showFilters ? 'Hide' : 'Show'}} {{ header | formalize }} Filter">
+                                            <i class="fa fa-filter"></i>
+                                        </a>
+                                        <span class="pull-right" ng-click="sortTableBy(header)"
+                                              tooltip="{{ currentSorting.orderBy.indexOf(header) > -1 ?
+                                              (currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'asc' ?
+                                              'Sort by ' + header + ', descending' : 'Remove sort by ' + header)
+                                              : 'Sort by ' + header + ', ascending' }}">
                                             <i class="fa"
                                                ng-class="{
                                                     'fa-sort': currentSorting.orderBy.indexOf(header) === -1,
-                                                    'fa-sort-asc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'asc',
-                                                    'fa-sort-desc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'desc'
+                                                    'fa-sort-amount-asc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'asc',
+                                                    'fa-sort-amount-desc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'desc'
                                                }"></i>
                                             <span class="label label-primary label-xs" ng-if="currentSorting.orderBy.indexOf(header) > -1 && currentSorting.orderBy.length > 1">{{ currentSorting.orderBy.indexOf(header) + 1}}</span>
                                         </span>
                                     </th>
                                 </tr>
+
+                                <!-- Filters Row -->
+                                <tr class="subheader-row pt0 mt0" ng-show="filters.showFilters">
+                                    <th ng-repeat="header in headers" style="max-width: 220px">
+                                        <span ng-if="header === 'active'">
+                                            <!--<small>Active Campaign Filter</small>-->
+                                            <div class="mt0">
+                                                <label class="switch">
+                                                    <input type="checkbox" checked="checked" ng-click="filters.activeFilter = !filters.activeFilter"/>
+                                                    <span></span>
+                                                </label>
+                                                <span class="label" ng-class="filters.activeFilter ? 'label-success':'label-default'">{{ filters.activeFilter ? "Active":"All"}}</span>
+                                            </div>
+                                        </span>
+                                        <span ng-if="header === 'advertiser'">
+                                            <div class="mt0">
+                                                <select data-placeholder="Select an advertiser" class="form-control chosen-select"
+                                                        ng-options="advertiser._id as advertiser.name for advertiser in advertisers" ng-model="filters.advertiser">
+                                                    <option value="">*All Advertisers*</option>
+                                                </select>
+                                            </div>
+                                        </span>
+                                        <span ng-if="header === 'campaign'">
+                                            <!-- Search box -->
+                                            <div class="input-group">
+                                                <input type="text"
+                                                       class="form-control"
+                                                       placeholder="Search..."
+                                                       ng-model="filters.search.searchKeyword"
+                                                       ng-keypress="$event.keyCode === 13 && searchCampaigns()" />
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-primary btn-sm"
+                                                            type="button"
+                                                            ng-click="searchCampaigns()"
+                                                            ng-disabled="filters.search.searchKeyword === ''">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-danger btn-sm"
+                                                            type="button"
+                                                            ng-click="cancelSearch()"
+                                                            ng-disabled="filters.search.searchKeyword === ''">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </span>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="row in campaigns" ng-hide="(activeFilter && !row.active) || (search.searchActive && !row.keywordMatch)">
+                            <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && !row.active) ||
+                                (filters.search.searchActive && !row.keywordMatch) ||
+                                (filters.advertiser.length > 0 && filters.advertiser.indexOf(row._advertiser._id) === -1)">
                                 <td ng-repeat="header in headers"
                                     style="max-width: 220px; vertical-align: middle;">
                                     <span ng-if="header === 'budget' || header === 'spend'">
@@ -109,7 +132,7 @@
                                     </span>
                                     <span ng-if="header === 'CTR'">
                                         <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
-                                        {{ row[header] | percentage:'2' }}
+                                        <span ng-hide="campaignDataLoading">{{ row[header] | percentage:'2' }}</span>
                                     </span>
                                     <span ng-if="header === 'start_date' || header === 'end_date'">
                                         {{ row[header] | date:'M/d/yy'}}
@@ -142,8 +165,8 @@
                                 <td colspan="10">
                                     <!-- Search not found placeholder -->
                                     <div class="box-placeholder text-center"
-                                         ng-if="search.searchActive && !search.foundSome">
-                                        No results matching the keyword <strong>{{ search.searchKeyword }}</strong> were found.
+                                         ng-if="filters.search.searchActive && !filters.search.foundSome">
+                                        No results matching the keyword <strong>{{ filters.search.searchKeyword }}</strong> were found.
                                     </div>
                                 </td>
                             </tr>

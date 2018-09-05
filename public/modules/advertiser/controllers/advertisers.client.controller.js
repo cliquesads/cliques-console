@@ -196,6 +196,7 @@ controller('ListAdvertiserController',
         Advertiser.query().$promise.then(function (response) {
             $scope.campaignsLoading = false;
             $scope.earliestStartDate = new Date();
+            $scope.advertisers = response;
             $scope.campaigns = _.flatMap(response, function (advertiser) {
                 return advertiser.campaigns.map(function (campaign) {
 
@@ -223,28 +224,32 @@ controller('ListAdvertiserController',
             $location.path('/advertiser/create');
         };
 
-        $scope.activeFilter = true;
-        $scope.search = {
-            searchKeyword: '',
-            searchActive: false,
-            foundSome: false
+        $scope.filters = {
+            search: {
+                searchKeyword: '',
+                searchActive: false,
+                foundSome: false
+            },
+            activeFilter: true,
+            showFilters: false,
+            advertiser: null
         };
         $scope.searchCampaigns = function () {
-            $scope.search.foundSome = false;
-            $scope.search.searchActive = true;
-            var keyword = $scope.search.searchKeyword.toLowerCase();
+            $scope.filters.search.foundSome = false;
+            $scope.filters.search.searchActive = true;
+            var keyword = $scope.filters.search.searchKeyword.toLowerCase();
             $scope.campaigns.forEach(function (campaign) {
                 var match = campaign.campaign.toLowerCase().search(keyword) > -1 || campaign.advertiser.toLowerCase().search(keyword) > -1;
                 if (match) {
-                    $scope.search.foundSome = true;
+                    $scope.filters.search.foundSome = true;
                     campaign.keywordMatch = true;
                 }
             });
         };
         $scope.cancelSearch = function(){
-            $scope.search.searchKeyword = '';
-            $scope.search.searchActive = false;
-            $scope.search.foundSome = false;
+            $scope.filters.search.searchKeyword = '';
+            $scope.filters.search.searchActive = false;
+            $scope.filters.search.foundSome = false;
             $scope.campaigns.forEach(function(campaign){
                 campaign.keywordMatch = false;
             });
