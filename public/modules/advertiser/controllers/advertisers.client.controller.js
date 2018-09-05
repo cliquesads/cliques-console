@@ -80,7 +80,7 @@ angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope
 ]).
 controller('ListAdvertiserController',
     function($scope, $stateParams, $location, $state, $rootScope, $timeout,aggregationDateRanges,
-             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat, tableSort) {
+             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat) {
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
@@ -88,25 +88,61 @@ controller('ListAdvertiserController',
         $scope.headers = [
             'active',
             'advertiser',
-            'name',
+            'campaign',
             'budget',
             '%_spent',
             'start_date',
             'end_date',
+            'imps',
             'CTR',
             'CPC',
             'CPM'
         ];
 
         $scope.currentSorting = {
-            order: 'desc'
+            orderBy: ['advertiser', 'start_date'],
+            order: ['asc','desc']
+        };
+
+        /**
+         * Performs actual sorting of table using $scope.currentSorting object.
+         * @private
+         */
+        $scope._sortByCurrentSorting = function(){
+            // need to add predicate for string fields to cast to either all lowerCase or upperCase,
+            // because lodash sorts lowerCase & upperCase strings separately otherwise.
+            var orderBy = $scope.currentSorting.orderBy.map(function(header){
+                if (typeof $scope.campaigns[0][header] === 'string'){
+                    return function(campaign){
+                        return campaign[header].toLowerCase();
+                    };
+                } else {
+                    return header;
+                }
+            });
+            $scope.campaigns = _.orderBy($scope.campaigns, orderBy, $scope.currentSorting.order);
         };
 
         /**
          * Sort table by specific column
          */
         $scope.sortTableBy = function (headerName) {
-            tableSort.sortTableBy($scope.campaigns, headerName, $scope.currentSorting);
+            var orderByIndex = $scope.currentSorting.orderBy.indexOf(headerName);
+            if (orderByIndex > -1){
+                // cycle through to desc if is currently asc,
+                // and remove if order is desc.
+                if ($scope.currentSorting.order[orderByIndex] === 'desc'){
+                    $scope.currentSorting.order.splice(orderByIndex,1);
+                    $scope.currentSorting.orderBy.splice(orderByIndex,1);
+                } else {
+                    $scope.currentSorting.order[orderByIndex] = 'desc';
+                }
+            } else {
+                $scope.currentSorting.orderBy.push(headerName);
+                $scope.currentSorting.order.push('asc');
+            }
+            // now that currentSorting obj is set properly, sort table
+            $scope._sortByCurrentSorting();
         };
 
         /**
@@ -117,7 +153,6 @@ controller('ListAdvertiserController',
 
         /**
          *
-         * @param dateShortCode
          */
         $scope.getCampaignAdStatData = function () {
             $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
@@ -141,6 +176,7 @@ controller('ListAdvertiserController',
                     }
                     campaign.adStats = adStats;
                     campaign.impressions = adStats.imps;
+                    campaign.imps = adStats.imps;
                     campaign.spend = adStats.spend;
                     campaign.clicks = adStats.clicks;
                     campaign.CPC = adStats.clicks ? adStats.spend / adStats.clicks : 0;
@@ -169,11 +205,13 @@ controller('ListAdvertiserController',
 
                     // set advertiser metadata on Campaign row object
                     campaign.logo_secure_url = advertiser.logo_secure_url;
+                    campaign.campaign = campaign.name;
                     campaign.advertiser = advertiser.name;
                     campaign._advertiser = advertiser;
                     return campaign;
                 });
             });
+            $scope._sortByCurrentSorting();
             $scope.campaignDataLoading = true;
         }).then(function () {
             return $scope.getCampaignAdStatData($scope.dateRangeSelection);
@@ -196,7 +234,7 @@ controller('ListAdvertiserController',
             $scope.search.searchActive = true;
             var keyword = $scope.search.searchKeyword.toLowerCase();
             $scope.campaigns.forEach(function (campaign) {
-                var match = campaign.name.toLowerCase().search(keyword) > -1 || campaign.advertiser.toLowerCase().search(keyword) > -1;
+                var match = campaign.campaign.toLowerCase().search(keyword) > -1 || campaign.advertiser.toLowerCase().search(keyword) > -1;
                 if (match) {
                     $scope.search.foundSome = true;
                     campaign.keywordMatch = true;

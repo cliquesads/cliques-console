@@ -130,7 +130,7 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/create-campaign');
                         } else {
-                            var nextState = '.viewAdvertiser.createNewCampaign';
+                            var nextState = 'allAdvertisers.viewAdvertiser.createNewCampaign';
                             event.preventDefault();
                             $state.go('app.advertiser.advertiserSwitcher', {
                                 next: nextState
@@ -149,7 +149,7 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/actionbeacon');
                         } else {
-                            var nextState = '.viewAdvertiser.actionBeacons';
+                            var nextState = 'allAdvertisers.viewAdvertiser.actionBeacons';
                             event.preventDefault();
                             $state.go('app.advertiser.advertiserSwitcher',{
                                 next: nextState
