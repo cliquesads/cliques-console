@@ -36,14 +36,16 @@
                                 <!-- Headers Row-->
                                 <tr>
                                     <th ng-class="{
-                                            'current-sorting': currentSorting.orderBy.indexOf(header) > -1
+                                            'current-sorting': currentSorting.orderBy.indexOf(header) > -1,
+                                            'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                            'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1
                                         }"
                                         ng-repeat="header in headers" style="max-width: 220px">
                                         {{ header | formalize }}
                                         <a href="#"
                                            class="btn btn-default btn-xs"
                                            ng-click="filters.showFilters = !filters.showFilters"
-                                           ng-if="header === 'active' || header === 'advertiser' || header === 'campaign'" tooltip="{{ filters.showFilters ? 'Hide' : 'Show'}} {{ header | formalize }} Filter">
+                                           ng-if="header === 'active' || header === 'advertiser' || header === 'campaign'" tooltip="{{ filters.showFilters ? 'Hide' : 'Show'}} Filters">
                                             <i class="fa fa-filter"></i>
                                         </a>
                                         <span class="pull-right" ng-click="sortTableBy(header)"
@@ -64,7 +66,9 @@
 
                                 <!-- Filters Row -->
                                 <tr class="subheader-row pt0 mt0" ng-show="filters.showFilters">
-                                    <th ng-repeat="header in headers" style="max-width: 220px">
+                                    <th ng-repeat="header in headers" style="max-width: 220px"
+                                        ng-class="{'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                                  'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1}">
                                         <span ng-if="header === 'active'">
                                             <!--<small>Active Campaign Filter</small>-->
                                             <div class="mt0">
@@ -113,63 +117,69 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && !row.active) ||
-                                (filters.search.searchActive && !row.keywordMatch) ||
-                                (filters.advertiser.length > 0 && filters.advertiser.indexOf(row._advertiser._id) === -1)">
-                                <td ng-repeat="header in headers"
-                                    style="max-width: 220px; vertical-align: middle;">
-                                    <span ng-if="header === 'budget' || header === 'spend'">
-                                        <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
-                                        {{ row[header] | currency:'$':'0' }}
-                                    </span>
-                                    <span ng-if="header === 'imps' || header === 'clicks'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
-                                        {{ row[header] | number:'0' }}
-                                    </span>
-                                    <span ng-if="header === 'CPC' || header === 'CPM'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
-                                        {{ row[header] | currency:'$':'2' }}
-                                    </span>
-                                    <span ng-if="header === 'CTR'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
-                                        <span ng-hide="campaignDataLoading">{{ row[header] | percentage:'2' }}</span>
-                                    </span>
-                                    <span ng-if="header === 'start_date' || header === 'end_date'">
-                                        {{ row[header] | date:'M/d/yy'}}
-                                    </span>
-                                    <span ng-if="header === '%_spent'">
-                                        <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
-                                        <radial percent="row['%_spent']" size="sm" ng-show="!campaignDataLoading" tooltip-text="{{ row.spend | currency:'$':'0' }}"></radial>
-                                    </span>
-                                    <span ng-if="header === 'campaign'">
-                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign" ng-class="{'text-bold': row.active }">
-                                            {{ row[header] }}
-                                        </a>
-                                    </span>
-                                    <span ng-if="header === 'advertiser'">
-                                        <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser" ng-class="{'text-bold': row.active }">
-                                            <div class="col-xs-4">
-                                                <img ng-src="{{ row.logo_secure_url }}" class="client-logo-md" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
-                                            </div>
-                                            <div class="col-xs-8" style="padding-top: 15px;">
+                                <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && !row.active) ||
+                                    (filters.search.searchActive && !row.keywordMatch) ||
+                                    (filters.advertiser && filters.advertiser !== row._advertiser._id)">
+                                    <td ng-repeat="header in headers"
+                                        style="max-width: 220px; vertical-align: middle;"
+                                        ng-class="{ 'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                                    'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1}">
+                                        <span ng-if="header === 'budget' || header === 'spend'">
+                                            <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | currency:'$':'0' }}
+                                        </span>
+                                        <span ng-if="header === 'imps' || header === 'clicks'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | number:'0' }}
+                                        </span>
+                                        <span ng-if="header === 'CPC' || header === 'CPM'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | currency:'$':'2' }}
+                                        </span>
+                                        <span ng-if="header === 'CTR'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            <span ng-hide="campaignDataLoading">{{ row[header] | percentage:'2' }}</span>
+                                        </span>
+                                        <span ng-if="header === 'start_date' || header === 'end_date'">
+                                            {{ row[header] | date:'M/d/yy'}}
+                                        </span>
+                                        <span ng-if="header === '%_spent'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            <radial percent="row['%_spent']" size="sm" ng-show="!campaignDataLoading" tooltip-text="{{ row.spend | currency:'$':'0' }}"></radial>
+                                        </span>
+                                        <span ng-if="header === 'campaign'">
+                                            <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign" ng-class="{'text-bold': row.active }">
                                                 {{ row[header] }}
-                                            </div>
-                                        </a>
-                                    </span>
-                                    <span ng-if="header === 'active'">
-                                        <div class="label" ng-class="row.active ? 'label-success':'label-default'">{{ row.active ? "Active":"Inactive"}}</div>
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="10">
-                                    <!-- Search not found placeholder -->
-                                    <div class="box-placeholder text-center"
-                                         ng-if="filters.search.searchActive && !filters.search.foundSome">
-                                        No results matching the keyword <strong>{{ filters.search.searchKeyword }}</strong> were found.
-                                    </div>
-                                </td>
-                            </tr>
+                                            </a>
+                                        </span>
+                                        <span ng-if="header === 'advertiser'">
+                                            <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser" ng-class="{'text-bold': row.active }">
+                                                <div class="col-xs-4">
+                                                    <img ng-src="{{ row.logo_secure_url }}" class="client-logo-md" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
+                                                </div>
+                                                <div class="col-xs-8" style="padding-top: 15px;">
+                                                    {{ row[header] }}
+                                                </div>
+                                            </a>
+                                        </span>
+                                        <span ng-if="header === 'active'">
+                                            <div class="label" ng-class="row.active ? 'label-success':'label-default'">{{ row.active ? "Active":"Inactive"}}</div>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr id="noResults" ng-show="noResults">
+                                    <td colspan="11">
+                                        <!-- Search not found placeholder -->
+                                        <div class="box-placeholder text-center">
+                                            No matching campaigns were found.
+                                        </div>
+                                        <!--&lt;!&ndash; Search not found placeholder &ndash;&gt;-->
+                                        <!--<div class="box-placeholder text-center"-->
+                                             <!--ng-if="filters.search.advertiser && campaigns.filter(function(c){ return c._advertiser._id === filters.})">-->
+                                            <!--No results matching the keyword <strong>{{ filters.search.searchKeyword }}</strong> were found.-->
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

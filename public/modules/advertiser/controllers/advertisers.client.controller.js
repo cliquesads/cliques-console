@@ -212,7 +212,12 @@ controller('ListAdvertiserController',
                     return campaign;
                 });
             });
+
+            // perform couple of view state-setting tasks
             $scope._sortByCurrentSorting();
+            $scope.setNoResult();
+
+            // control variables for stats loader animations
             $scope.campaignDataLoading = true;
         }).then(function () {
             return $scope.getCampaignAdStatData($scope.dateRangeSelection);
@@ -224,17 +229,46 @@ controller('ListAdvertiserController',
             $location.path('/advertiser/create');
         };
 
+        /**
+         * FILTER & SEARCH
+         */
         $scope.filters = {
             search: {
                 searchKeyword: '',
                 searchActive: false,
                 foundSome: false
             },
-            activeFilter: true,
+            activeFilter: false,
             showFilters: false,
             advertiser: null
         };
+
+        $scope.setNoResult = function(){
+            $timeout(function(){
+                $scope.noResults = $('tbody').children('tr:not(#noResults):visible').length === 0;
+            });
+        };
+
+        $scope.$watchGroup(['filters.activeFilter','filters.advertiser'], function(old, newVal){
+            $scope.setNoResult();
+        });
+
+        $scope._clearSearchResults = function(){
+            $scope.campaigns.forEach(function(campaign){
+                campaign.keywordMatch = false;
+            });
+        };
+
+        $scope.cancelSearch = function(){
+            $scope.filters.search.searchKeyword = '';
+            $scope.filters.search.searchActive = false;
+            $scope.filters.search.foundSome = false;
+            $scope._clearSearchResults();
+            $scope.setNoResult();
+        };
+
         $scope.searchCampaigns = function () {
+            $scope._clearSearchResults();
             $scope.filters.search.foundSome = false;
             $scope.filters.search.searchActive = true;
             var keyword = $scope.filters.search.searchKeyword.toLowerCase();
@@ -245,14 +279,7 @@ controller('ListAdvertiserController',
                     campaign.keywordMatch = true;
                 }
             });
-        };
-        $scope.cancelSearch = function(){
-            $scope.filters.search.searchKeyword = '';
-            $scope.filters.search.searchActive = false;
-            $scope.filters.search.foundSome = false;
-            $scope.campaigns.forEach(function(campaign){
-                campaign.keywordMatch = false;
-            });
+            $scope.setNoResult();
         };
     }
 ).
