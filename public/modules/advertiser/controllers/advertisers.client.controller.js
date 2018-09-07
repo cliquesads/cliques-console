@@ -236,10 +236,30 @@ controller('ListAdvertiserController',
                 searchActive: false,
                 foundSome: false
             },
-            activeFilter: false,
+            activeFilter: 'All',
             showFilters: false,
             advertiser: null
         };
+
+        $scope.$watch('filters.activeFilter', function(newVal, oldVal){
+            if (newVal){
+                $scope.campaigns.forEach(function(campaign){
+                    switch (newVal){
+                        case 'All':
+                            campaign.activeFilterHide = false;
+                            break;
+                        case 'Active':
+                            campaign.activeFilterHide = !campaign.active;
+                            break;
+                        case 'Inactive':
+                            campaign.activeFilterHide = campaign.active || campaign.pending;
+                            break;
+                        case 'Scheduled':
+                            campaign.activeFilterHide = !campaign.pending;
+                    }
+                });
+            }
+        });
 
         $scope.setNoResult = function(){
             $timeout(function(){

@@ -71,11 +71,12 @@
                                         <span ng-if="header === 'active'">
                                             <!--<small>Active Campaign Filter</small>-->
                                             <div class="mt0">
-                                                <label class="switch">
-                                                    <input type="checkbox" checked="checked" ng-model="filters.activeFilter"/>
-                                                    <span></span>
-                                                </label>
-                                                <span class="label" ng-class="filters.activeFilter ? 'label-success':'label-default'">{{ filters.activeFilter ? "Active":"All"}}</span>
+                                                <select ng-model="filters.activeFilter" class="form-control chosen-select">
+                                                    <option value="All">All</option>
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                    <option value="Scheduled">Scheduled</option>
+                                                </select>
                                             </div>
                                         </span>
                                         <span ng-if="header === 'advertiser'">
@@ -117,7 +118,7 @@
                             </thead>
                             <!-- BEGIN Table Body -->
                             <tbody>
-                                <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && !row.active) ||
+                                <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && row.activeFilterHide) ||
                                     (filters.search.searchActive && !row.keywordMatch) ||
                                     (filters.advertiser && filters.advertiser !== row._advertiser._id)">
                                     <td ng-repeat="header in headers"
