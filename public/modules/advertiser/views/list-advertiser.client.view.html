@@ -163,7 +163,7 @@
                                             </a>
                                         </span>
                                         <span ng-if="header === 'active'">
-                                            <div class="label" ng-class="row.active ? 'label-success':'label-default'">{{ row.active ? "Active":"Inactive"}}</div>
+                                            <campaign-status-label campaign="row"></campaign-status-label>
                                         </span>
                                     </td>
                                 </tr>

@@ -194,7 +194,7 @@ require('./_main')(function(GLOBALS) {
             let campaignsToActivate = [];
             advertisers.forEach((adv) => {
                 const temp = adv.campaigns.filter((campaign) => {
-                    return (start <= campaign.start_date && campaign.start_date < end);
+                    return (start <= campaign.start_date && campaign.start_date < end && campaign.pending);
                 });
                 campaignsToActivate = campaignsToActivate.concat(temp);
             });
