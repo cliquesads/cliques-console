@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+	<p>The following campaigns were activated at {{ tstamp.toString() }}:</p>
+    <ul>
+        {% for camp in successCampaigns %}
+        <li>
+            <a href="https://console.cliquesads.com/#!/advertiser/{{ camp.__parent.id }}/campaign/{{ camp.id }}">{{ camp.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <p>Please double check these campaigns to ensure they were activated properly and that there are no outstanding issues.</p>
+	<br>
+	<p>The {{appName}} Support Team</p>
+</body>
+</html>

@@ -10,9 +10,10 @@ angular.module('core').directive("radial", function(){
         restrict: 'E',
         scope: {
             percent: '=',
-            size: '@'
+            size: '@',
+            tooltipText: '@'
         },
-        template: '<div data-label="{{ percentformatted }}" class="radial-bar {{ radialpercentclass }} radial-bar-{{ size }}"></div>',
+        template: '<div tooltip="{{ tooltipText }}" data-label="{{ percentformatted }}" class="radial-bar {{ radialpercentclass }} radial-bar-{{ size }}"></div>',
         link: function(scope, element, attrs){
             scope.radialpercentclass = 'radial-bar-0';
             scope.percentformatted = '0%';

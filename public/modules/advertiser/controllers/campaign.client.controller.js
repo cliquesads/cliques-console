@@ -73,7 +73,7 @@ angular.module('advertiser').controller('CampaignController',
             } else {
                 var activatePromise;
                 if (Authentication.user.organization.effectiveOrgType !== 'networkAdmin') {
-                    var activatePromise = ngDialog.openConfirm({
+                    activatePromise = ngDialog.openConfirm({
                         template: '\
                                     <br>\
                                     <p>Once this campaign is active, it will begin serving impressions immediately. Are you sure you want to activate?</p>\

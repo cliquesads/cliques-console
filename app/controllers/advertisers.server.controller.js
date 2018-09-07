@@ -440,6 +440,10 @@ module.exports = function(db) {
                         }
                         // Now set to active and save
                         advertiser.campaigns[ind].active = true;
+
+                        // Set pending to false, meaning that it is no longer pending activation
+                        advertiser.campaigns[ind].pending= false;
+
                         advertiser.save(function (err) {
                             if (err) {
                                 return res.status(400).send({

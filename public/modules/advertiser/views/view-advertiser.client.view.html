@@ -30,7 +30,7 @@ adding hook in parent template ---->
                     <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item" analytics-on="click" analytics-event="ViewAdvertiser_SelectCampaign">
                         <div class="row row-table">
                             <div class="col-sm-2">
-                                <div class="label" ng-class="campaign.active ? 'label-success':'label-default'">{{ campaign.active ? "Active":"Inactive"}}</div>
+                                <campaign-status-label campaign="campaign"></campaign-status-label>
                             </div>
                             <div class="col-sm-5" style="word-break: break-all;">
                                 <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>

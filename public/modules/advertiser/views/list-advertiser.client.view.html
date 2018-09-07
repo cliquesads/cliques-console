@@ -5,47 +5,199 @@
     </div>
     <div ng-switch-when="app.advertiser.allAdvertisers">
         <div class="row">
-            <div class="col-sm-offset-2 col-sm-8">
-                <div class="header-section">
-                    <div class="header-text">
-                        <strong>Please Select an Advertiser to Continue</strong>
+            <div class="col-sm-12">
+                <div class="panel panel-default mt">
+                    <!-- Heading & buttons -->
+                    <div class="panel-heading">
+                        <div class="panel-title">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4>All Advertisers & Campaigns</h4>
+                                </div>
+                                <!-- More data fields dropdown -->
+                                <div class="col-sm-6 text-right">
+                                    <span class="pull-right">
+                                        <a type="button" class="btn btn-labeled btn-primary" href="#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">
+                                            <span class="btn-label"><i class="fa fa-plus"></i></span>CREATE NEW ADVERTISER
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="pt0 pb0 mt0 mb0"/>
                     </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" ng-model="defaults.rememberMySelection">Remember My Selection
-                        </label>
+
+                    <!-- Panel body -->
+                    <div class="panel-body pt0" ng-if="!campaignsLoading">
+
+                        <!-- Table -->
+                        <table class="table table-bordered table-hover mb0">
+                            <thead>
+                                <!-- Headers Row-->
+                                <tr>
+                                    <th ng-class="{
+                                            'current-sorting': currentSorting.orderBy.indexOf(header) > -1,
+                                            'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                            'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1
+                                        }"
+                                        ng-repeat="header in headers" style="max-width: 220px">
+                                        {{ header | formalize }}
+                                        <a href="#"
+                                           ng-click="filters.showFilters = !filters.showFilters"
+                                           ng-if="header === 'active' || header === 'advertiser' || header === 'campaign'" tooltip="{{ filters.showFilters ? 'Hide' : 'Show'}} Filters">
+                                            <i class="fa fa-filter"></i>
+                                        </a>
+                                        <span class="pull-right" ng-click="sortTableBy(header)"
+                                              tooltip="{{ currentSorting.orderBy.indexOf(header) > -1 ?
+                                              (currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'asc' ?
+                                              'Sort by ' + header + ', descending' : 'Remove sort by ' + header)
+                                              : 'Sort by ' + header + ', ascending' }}">
+                                            <i class="fa"
+                                               ng-class="{
+                                                    'fa-sort': currentSorting.orderBy.indexOf(header) === -1,
+                                                    'fa-sort-amount-asc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'asc',
+                                                    'fa-sort-amount-desc': currentSorting.orderBy.indexOf(header) > -1 && currentSorting.order[currentSorting.orderBy.indexOf(header)] === 'desc'
+                                               }"></i>
+                                            <span class="label label-primary label-xs" ng-if="currentSorting.orderBy.indexOf(header) > -1 && currentSorting.orderBy.length > 1">{{ currentSorting.orderBy.indexOf(header) + 1}}</span>
+                                        </span>
+                                    </th>
+                                </tr>
+
+                                <!-- Filters Row -->
+                                <tr class="subheader-row pt0 mt0" ng-show="filters.showFilters">
+                                    <th ng-repeat="header in headers" style="max-width: 220px"
+                                        ng-class="{'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                                  'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1}">
+                                        <span ng-if="header === 'active'">
+                                            <!--<small>Active Campaign Filter</small>-->
+                                            <div class="mt0">
+                                                <select ng-model="filters.activeFilter" class="form-control chosen-select">
+                                                    <option value="All">All</option>
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                    <option value="Scheduled">Scheduled</option>
+                                                </select>
+                                            </div>
+                                        </span>
+                                        <span ng-if="header === 'advertiser'">
+                                            <div class="mt0">
+                                                <select data-placeholder="Select an advertiser" class="form-control chosen-select"
+                                                        ng-options="advertiser._id as advertiser.name for advertiser in advertisers" ng-model="filters.advertiser">
+                                                    <option value="">*All Advertisers*</option>
+                                                </select>
+                                            </div>
+                                        </span>
+                                        <span ng-if="header === 'campaign'">
+                                            <!-- Search box -->
+                                            <div class="input-group">
+                                                <input type="text"
+                                                       class="form-control"
+                                                       placeholder="Search..."
+                                                       ng-model="filters.search.searchKeyword"
+                                                       ng-keypress="$event.keyCode === 13 && searchCampaigns()" />
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-primary btn-sm"
+                                                            type="button"
+                                                            ng-click="searchCampaigns()"
+                                                            ng-disabled="filters.search.searchKeyword === ''">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </span>
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-danger btn-sm"
+                                                            type="button"
+                                                            ng-click="cancelSearch()"
+                                                            ng-disabled="filters.search.searchKeyword === ''">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <!-- BEGIN Table Body -->
+                            <tbody>
+                                <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && row.activeFilterHide) ||
+                                    (filters.search.searchActive && !row.keywordMatch) ||
+                                    (filters.advertiser && filters.advertiser !== row._advertiser._id)">
+                                    <td ng-repeat="header in headers"
+                                        style="max-width: 220px; vertical-align: middle;"
+                                        ng-class="{ 'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
+                                                    'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1}">
+                                        <span ng-if="header === 'budget' || header === 'spend'">
+                                            <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | currency:'$':'0' }}
+                                        </span>
+                                        <span ng-if="header === 'imps' || header === 'clicks'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | number:'0' }}
+                                        </span>
+                                        <span ng-if="header === 'CPC' || header === 'CPM'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            {{ row[header] | currency:'$':'2' }}
+                                        </span>
+                                        <span ng-if="header === 'CTR'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            <span ng-hide="campaignDataLoading">{{ row[header] | percentage:'2' }}</span>
+                                        </span>
+                                        <span ng-if="header === 'start' || header === 'end'">
+                                            {{ row[header] | date:'M/d/yy'}}
+                                        </span>
+                                        <span ng-if="header === '%_spent'">
+                                            <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
+                                            <radial percent="row['%_spent']" size="sm" ng-show="!campaignDataLoading" tooltip-text="{{ row.spend | currency:'$':'0' }}"></radial>
+                                        </span>
+                                        <span ng-if="header === 'campaign'">
+                                            <a data-ng-href="#!/advertiser/{{row._advertiser._id}}/campaign/{{row._id}}" tooltip="Go to Campaign" ng-class="{'text-bold': row.active }">
+                                                {{ row[header] }}
+                                            </a>
+                                        </span>
+                                        <span ng-if="header === 'advertiser'">
+                                            <a data-ng-href="#!/advertiser/{{row._advertiser._id}}" tooltip="Go to Advertiser" ng-class="{'text-bold': row.active }">
+                                                <div class="col-xs-4">
+                                                    <img ng-src="{{ row.logo_secure_url }}" class="client-logo-md" tooltip="{{ row.advertiserName }}" tooltip-placement="right">
+                                                </div>
+                                                <div class="col-xs-8" style="padding-top: 15px;">
+                                                    {{ row[header] }}
+                                                </div>
+                                            </a>
+                                        </span>
+                                        <span ng-if="header === 'active'">
+                                            <campaign-status-label campaign="row"></campaign-status-label>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr id="noResults" ng-show="noResults">
+                                    <td colspan="11">
+                                        <!-- Search not found placeholder -->
+                                        <div class="box-placeholder text-center">
+                                            <span ng-if="!campaignsLoading && campaigns.length > 0">
+                                                No campaigns found. <a href="#!/new-campaign">Create a New Campaign</a>
+                                            </span>
+                                            <span ng-if="!campaignsLoading && campaigns.length === 0">
+                                                It looks like you haven't created a Campaign yet. <a href="#!/new-campaign" class="strong">Let's change that now.</a>
+                                            </span>
+                                            <span ng-if="!campaignsLoading && advertisers.length === 0">
+                                                It looks like you haven't set up an Advertiser yet. <a href="#!/advertiser/create" class="strong">Let's fix that now.</a>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Spin Loader -->
+                    <div class="panel-body pt0"
+                         ng-if="campaignsLoading">
+                        <spin-loader></spin-loader>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row ml-sm mr-sm">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-8 advertiser-list-container">
-                <div class="btn-third-white-horizontal" ng-click="goToCreateNewAdvertiser()">
-                    <i class="fa fa-plus"></i>&nbsp;&nbsp;
-                    CREATE NEW ADVERTISER
-                </div>
-                <div ng-show="(advertisers | filter:hasActiveCampaigns(true)).length">
-                    <br/>
-                    <em class="custom-section-title">Active</em>
-                    <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(true) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectActiveAdvertiser">
-                            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-                        </a>
-                    </div>
-                </div>
-                <div ng-show="(advertisers | filter:hasActiveCampaigns(false)).length">
-                    <br/>
-                    <em class="custom-section-title">Inactive</em>
-                    <div class="list-group">
-                        <a data-ng-repeat="advertiser in advertisers | filter:hasActiveCampaigns(false) | orderBy:'name'" data-ng-href="#" class="list-group-item" ng-click="selectAdvertiser(advertiser)" analytics-on="click" analytics-event="ListAdvertiser_SelectInactiveAdvertiser">
-                            <advertiser-list-item advertiser="advertiser"></advertiser-list-item>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" data-ng-if="advertisers.$resolved && !advertisers.length">
-            <h4 class="m0">No advertisers yet, why don't you <a href="/#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">create one</a>?</h4>
         </div>
     </div>
 </div>

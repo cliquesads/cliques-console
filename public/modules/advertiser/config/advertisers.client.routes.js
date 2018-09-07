@@ -102,25 +102,6 @@ angular.module('advertiser').config(['$stateProvider',
          *
          * Not abstract, though, since it needs to be browseable.
          */
-        state('app.advertiser.allCampaigns', {
-            url: '/all-campaigns',
-            resolve: {
-                redirect: function ($state, $rootScope, $location, Advertiser) {
-                    getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
-                        if (advertiserId){
-                            // TODO: State.go just hangs, have no idea why
-                            $location.path('/advertiser/' + advertiserId);
-                        } else {
-                            var nextState = '.viewAdvertiser';
-                            event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers', {
-                                next: nextState
-                            });
-                        }
-                    });
-                }
-            }
-        }).
         state('app.advertiser.createCampaign', {
             url: '/new-campaign',
             resolve: {
@@ -130,9 +111,9 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/create-campaign');
                         } else {
-                            var nextState = '.viewAdvertiser.createNewCampaign';
+                            var nextState = 'app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign';
                             event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers', {
+                            $state.go('app.advertiser.advertiserSwitcher', {
                                 next: nextState
                             });
                         }
@@ -149,9 +130,9 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/actionbeacon');
                         } else {
-                            var nextState = '.viewAdvertiser.actionBeacons';
+                            var nextState = 'app.advertiser.allAdvertisers.viewAdvertiser.actionBeacons';
                             event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers',{
+                            $state.go('app.advertiser.advertiserSwitcher',{
                                 next: nextState
                             });
                         }
@@ -163,15 +144,30 @@ angular.module('advertiser').config(['$stateProvider',
         /**
          * BEGIN advertiser-specific states, starting at All Advertisers
          */
+        state('app.advertiser.advertiserSwitcher', {
+            url: '/select-advertiser?next',
+            resolve: {
+                $title: function(){ return 'Select Advertiser'; }
+            },
+            views: {
+                'main': {
+                    templateUrl: 'modules/advertiser/views/advertiser-switcher.client.view.html',
+                    controller: 'AdvertiserSwitcherController'
+                },
+                'titleBar': {
+                    template: '<section data-ui-view="titleBar"></section>'
+                }
+            }
+        }).
         state('app.advertiser.allAdvertisers', {
-            url: '/advertiser?next',
+            url: '/advertiser',
             resolve: {
                 $title: function(){ return 'All Advertisers'; }
             },
             views: {
                 'main': {
                     templateUrl: 'modules/advertiser/views/list-advertiser.client.view.html',
-                    controller: 'ListAdvertisersController'
+                    controller: 'ListAdvertiserController'
                 },
                 'titleBar': {
                     template: '<section data-ui-view="titleBar"></section>'
