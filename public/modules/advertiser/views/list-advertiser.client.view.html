@@ -38,12 +38,11 @@
                                     <th ng-class="{
                                             'current-sorting': currentSorting.orderBy.indexOf(header) > -1,
                                             'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
-                                            'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1
+                                            'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1
                                         }"
                                         ng-repeat="header in headers" style="max-width: 220px">
                                         {{ header | formalize }}
                                         <a href="#"
-                                           class="btn btn-default btn-xs"
                                            ng-click="filters.showFilters = !filters.showFilters"
                                            ng-if="header === 'active' || header === 'advertiser' || header === 'campaign'" tooltip="{{ filters.showFilters ? 'Hide' : 'Show'}} Filters">
                                             <i class="fa fa-filter"></i>
@@ -68,12 +67,12 @@
                                 <tr class="subheader-row pt0 mt0" ng-show="filters.showFilters">
                                     <th ng-repeat="header in headers" style="max-width: 220px"
                                         ng-class="{'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
-                                                  'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1}">
+                                                  'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1}">
                                         <span ng-if="header === 'active'">
                                             <!--<small>Active Campaign Filter</small>-->
                                             <div class="mt0">
                                                 <label class="switch">
-                                                    <input type="checkbox" checked="checked" ng-click="filters.activeFilter = !filters.activeFilter"/>
+                                                    <input type="checkbox" checked="checked" ng-model="filters.activeFilter"/>
                                                     <span></span>
                                                 </label>
                                                 <span class="label" ng-class="filters.activeFilter ? 'label-success':'label-default'">{{ filters.activeFilter ? "Active":"All"}}</span>
@@ -123,7 +122,7 @@
                                     <td ng-repeat="header in headers"
                                         style="max-width: 220px; vertical-align: middle;"
                                         ng-class="{ 'hidden-md': ['imps','CTR','CPC','CPM'].indexOf(header) > -1,
-                                                    'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start_date','end_date'].indexOf(header) > -1}">
+                                                    'hidden-sm': ['imps','CTR','CPC','CPM', '%_spent','budget','start','end'].indexOf(header) > -1}">
                                         <span ng-if="header === 'budget' || header === 'spend'">
                                             <div ng-show="campaignDataLoading && header === 'spend'" class="ball-pulse"><div></div><div></div></div>
                                             {{ row[header] | currency:'$':'0' }}
@@ -140,7 +139,7 @@
                                             <div ng-show="campaignDataLoading" class="ball-pulse"><div></div><div></div></div>
                                             <span ng-hide="campaignDataLoading">{{ row[header] | percentage:'2' }}</span>
                                         </span>
-                                        <span ng-if="header === 'start_date' || header === 'end_date'">
+                                        <span ng-if="header === 'start' || header === 'end'">
                                             {{ row[header] | date:'M/d/yy'}}
                                         </span>
                                         <span ng-if="header === '%_spent'">
@@ -171,13 +170,8 @@
                                     <td colspan="11">
                                         <!-- Search not found placeholder -->
                                         <div class="box-placeholder text-center">
-                                            No matching campaigns were found.
+                                            No campaigns found. <a href="#">Create a New Campaign</a>
                                         </div>
-                                        <!--&lt;!&ndash; Search not found placeholder &ndash;&gt;-->
-                                        <!--<div class="box-placeholder text-center"-->
-                                             <!--ng-if="filters.search.advertiser && campaigns.filter(function(c){ return c._advertiser._id === filters.})">-->
-                                            <!--No results matching the keyword <strong>{{ filters.search.searchKeyword }}</strong> were found.-->
-                                        <!--</div>-->
                                     </td>
                                 </tr>
                             </tbody>
@@ -190,31 +184,6 @@
                     </div>
                     <div class="panel-footer">
                         <div class="row ml-sm mr-sm">
-                            <!--<div ng-switch="queryParam.resultsPage || '_undefined_'">-->
-                                <!--<div ng-switch-when="_undefined_">-->
-                                    <!--<div class="pull-left text-md mt">-->
-                                        <!--Showing results-->
-                                        <!--<strong> 1 - {{ campaigns.length }}</strong>-->
-                                        <!--of <strong>{{ campaigns.length }}</strong>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div ng-switch-default>-->
-                                    <!--<div class="pull-left text-md mt">-->
-                                        <!--Showing results-->
-                                        <!--<strong>{{ pagination.start }} - {{ pagination.end }}</strong>-->
-                                        <!--of <strong>{{ pagination.count }}</strong>-->
-                                    <!--</div><div class="pull-right"-->
-                                               <!--paging-->
-                                               <!--page="resultsPage"-->
-                                               <!--page-size="perPage"-->
-                                               <!--total="pagination.count"-->
-                                               <!--paging-action="loadNewPage(page)"-->
-                                               <!--show-prev-next="true"-->
-                                               <!--show-first-last="true"-->
-                                               <!--scroll-top="true"-->
-                                <!--&gt;</div>-->
-                                <!--</div>-->
-                            <!--</div>-->
                         </div>
                     </div>
                 </div>

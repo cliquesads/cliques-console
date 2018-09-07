@@ -102,25 +102,6 @@ angular.module('advertiser').config(['$stateProvider',
          *
          * Not abstract, though, since it needs to be browseable.
          */
-        state('app.advertiser.allCampaigns', {
-            url: '/all-campaigns',
-            resolve: {
-                redirect: function ($state, $rootScope, $location, Advertiser) {
-                    getImpliedAdvertiserId($state, $rootScope, $location, Advertiser, function(err, advertiserId){
-                        if (advertiserId){
-                            // TODO: State.go just hangs, have no idea why
-                            $location.path('/advertiser/' + advertiserId);
-                        } else {
-                            var nextState = '.viewAdvertiser';
-                            event.preventDefault();
-                            $state.go('app.advertiser.allAdvertisers', {
-                                next: nextState
-                            });
-                        }
-                    });
-                }
-            }
-        }).
         state('app.advertiser.createCampaign', {
             url: '/new-campaign',
             resolve: {
@@ -130,7 +111,7 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/create-campaign');
                         } else {
-                            var nextState = 'allAdvertisers.viewAdvertiser.createNewCampaign';
+                            var nextState = 'app.advertiser.allAdvertisers.viewAdvertiser.createNewCampaign';
                             event.preventDefault();
                             $state.go('app.advertiser.advertiserSwitcher', {
                                 next: nextState
@@ -149,7 +130,7 @@ angular.module('advertiser').config(['$stateProvider',
                             // TODO: State.go just hangs, have no idea why
                             $location.path('/advertiser/' + advertiserId + '/actionbeacon');
                         } else {
-                            var nextState = 'allAdvertisers.viewAdvertiser.actionBeacons';
+                            var nextState = 'app.advertiser.allAdvertisers.viewAdvertiser.actionBeacons';
                             event.preventDefault();
                             $state.go('app.advertiser.advertiserSwitcher',{
                                 next: nextState

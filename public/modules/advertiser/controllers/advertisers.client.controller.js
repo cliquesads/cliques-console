@@ -29,7 +29,7 @@ angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope
          * user checks checkbox, and redirect to appropriate view
          * @type {boolean}
          */
-        $scope.defaults = { rememberMySelection: true };
+        $scope.defaults = { rememberMySelection: false };
         $scope.selectAdvertiser = function(advertiser) {
             $rootScope.advertiser = $scope.defaults.rememberMySelection ? advertiser : null;
             var nextState = $stateParams.next ? $stateParams.next : '.viewAdvertiser';
@@ -91,8 +91,8 @@ controller('ListAdvertiserController',
             'campaign',
             'budget',
             '%_spent',
-            'start_date',
-            'end_date',
+            'start',
+            'end',
             'imps',
             'CTR',
             'CPC',
@@ -100,7 +100,7 @@ controller('ListAdvertiserController',
         ];
 
         $scope.currentSorting = {
-            orderBy: ['advertiser', 'start_date'],
+            orderBy: ['advertiser', 'start'],
             order: ['asc','desc']
         };
 
@@ -206,6 +206,8 @@ controller('ListAdvertiserController',
 
                     // set advertiser metadata on Campaign row object
                     campaign.logo_secure_url = advertiser.logo_secure_url;
+                    campaign.start = campaign.start_date;
+                    campaign.end = campaign.end_date;
                     campaign.campaign = campaign.name;
                     campaign.advertiser = advertiser.name;
                     campaign._advertiser = advertiser;
