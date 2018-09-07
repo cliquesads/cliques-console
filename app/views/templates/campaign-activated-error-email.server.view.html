@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+	<p>Error activating campaigns @ {{ tstamp.toString() }}</p>
+    <ul>
+        {% for err in errors %}
+        <li>
+            <a href="https://console.cliquesads.com/#!/advertiser/{{ err.campaign.__parent.id }}/campaign/{{ err.campaign.id }}">{{ err.campaign.name }}</a>: Status {{ err.statusCode }} {{ err.statusMessage }} - {{ err.message }}
+        </li>
+        {% endfor %}
+    </ul>
+    <p>Please investigate these errors IMMEDIATELY.</p>
+	<br>
+	<p>The {{appName}} Support Team</p>
+</body>
+</html>
