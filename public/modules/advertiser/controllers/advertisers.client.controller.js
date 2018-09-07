@@ -227,10 +227,6 @@ controller('ListAdvertiserController',
             console.log(err);
         });
 
-        $scope.goToCreateNewAdvertiser = function () {
-            $location.path('/advertiser/create');
-        };
-
         /**
          * FILTER & SEARCH
          */

@@ -26,11 +26,11 @@
                         </div>
                         <hr class="pt0 pb0 mt0 mb0"/>
                     </div>
-                    <!-- Table -->
-                    <div class="panel-body pt0"
-                         ng-if="!campaignsLoading">
 
-                        <!-- Table Headers -->
+                    <!-- Panel body -->
+                    <div class="panel-body pt0" ng-if="!campaignsLoading">
+
+                        <!-- Table -->
                         <table class="table table-bordered table-hover mb0">
                             <thead>
                                 <!-- Headers Row-->
@@ -115,6 +115,7 @@
                                     </th>
                                 </tr>
                             </thead>
+                            <!-- BEGIN Table Body -->
                             <tbody>
                                 <tr ng-repeat="row in campaigns" ng-hide="(filters.activeFilter && !row.active) ||
                                     (filters.search.searchActive && !row.keywordMatch) ||
@@ -170,7 +171,15 @@
                                     <td colspan="11">
                                         <!-- Search not found placeholder -->
                                         <div class="box-placeholder text-center">
-                                            No campaigns found. <a href="#">Create a New Campaign</a>
+                                            <span ng-if="!campaignsLoading && campaigns.length > 0">
+                                                No campaigns found. <a href="#!/new-campaign">Create a New Campaign</a>
+                                            </span>
+                                            <span ng-if="!campaignsLoading && campaigns.length === 0">
+                                                It looks like you haven't created a Campaign yet. <a href="#!/new-campaign" class="strong">Let's change that now.</a>
+                                            </span>
+                                            <span ng-if="!campaignsLoading && advertisers.length === 0">
+                                                It looks like you haven't set up an Advertiser yet. <a href="#!/advertiser/create" class="strong">Let's fix that now.</a>
+                                            </span>
                                         </div>
                                     </td>
                                 </tr>
@@ -188,9 +197,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-offset-2 col-sm-8 box-placeholder text-center mt-lg pv-xl pv-xl" data-ng-if="advertisers.$resolved && !advertisers.length">
-            <h4 class="m0">No advertisers yet, why don't you <a href="/#!/advertiser/create" analytics-on="click" analytics-event="ListAdvertiser_Create">create one</a>?</h4>
         </div>
     </div>
 </div>
