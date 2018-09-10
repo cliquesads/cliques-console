@@ -242,7 +242,7 @@ controller('ListAdvertiserController',
         };
 
         $scope.$watch('filters.activeFilter', function(newVal, oldVal){
-            if (newVal){
+            if (newVal && $scope.campaigns){
                 $scope.campaigns.forEach(function(campaign){
                     switch (newVal){
                         case 'All':
