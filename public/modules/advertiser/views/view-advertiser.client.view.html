@@ -29,18 +29,18 @@ adding hook in parent template ---->
                 <ul class="list-group mt-lg">
                     <a data-ng-repeat="campaign in advertiser.campaigns" data-ng-href="#!/advertiser/{{advertiser._id}}/campaign/{{campaign._id}}" class="list-group-item" analytics-on="click" analytics-event="ViewAdvertiser_SelectCampaign">
                         <div class="row row-table">
-                            <div class="col-sm-2">
+                            <div class="col-xs-2 col-xs-3 col-xs-3">
                                 <campaign-status-label campaign="campaign"></campaign-status-label>
                             </div>
-                            <div class="col-sm-5" style="word-break: break-all;">
+                            <div class="col-xs-5 col-xs-6 col-xs-6" style="word-break: break-all;">
                                 <h4 class="list-group-item-heading" data-ng-bind="campaign.name"></h4>
                                 <p class="list-group-item-text">{{ campaign.clique }}</p>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-xs-3">
                                 <h4 class="list-group-item-heading">{{ campaign.budget | currency:"$":"0" }}</h4>
                                 <p class="list-group-item-text">Budget</p>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-2 hidden-md hidden-sm hidden-xs">
                                 <radial percent="campaign.percent_spent" size="sm"></radial>
                             </div>
                         </div>
