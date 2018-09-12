@@ -196,7 +196,7 @@ controller('ListAdvertiserController',
         Advertiser.query().$promise.then(function (response) {
             $scope.campaignsLoading = false;
             $scope.earliestStartDate = new Date();
-            $scope.advertisers = response;
+            $scope.advertisers = response ? _.sortBy(response, 'name') : response;
             $scope.campaigns = _.flatMap(response, function (advertiser) {
                 return advertiser.campaigns.map(function (campaign) {
 
