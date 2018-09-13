@@ -638,7 +638,8 @@ AdStatsAPIHandler.prototype._getManyWrapper = function(pipelineBuilder, aggregat
 
         // Now execute the query w/ all pipelines built
         const aggregation = aggregationModel.aggregate(pipelines);
-        aggregation.options = { allowDiskUse: true };
+        // TODO: This was causing some queries to time out
+        // aggregation.options = { allowDiskUse: true };
         aggregation.exec(function(err, adStats){
             if (err) {
                 console.log("error in query: " + err);
