@@ -47,29 +47,92 @@
 				<p><strong>To whitelist, blacklist or set bids for a city, region or country, <i class="fa fa-sm fa-mouse-pointer"></i> select it from the map below.</strong></p>
 				<p>Your base bid is set to <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong>, which means that you will bid <strong>{{ campaign.base_bid | currency : "$" : 2 }}</strong> for all countries, regions & cities in this map <strong>unless you indicate otherwise.</strong></p>
 			</em>
-		</div>
-		<div class="panel-body">
 			<!-- Button to reload world map -->
-			<div ng-if="mapObject.scope !== 'world'">
+			<div ng-show="mapObject.scope !== 'world'" class="pull-left">
 				<button class="btn btn-default"
-					ng-click="reloadWorldMap()">
+						ng-click="reloadWorldMap()">
 					<i class="fa fa-lg fa-angle-double-left"></i> Back to world map
 				</button>
 			</div>
+			<!--Show DMA targeting button only for USA -->
+			<div class="pull-right" ng-show="selectedGeo._id === 'USA' && !dmaTargeting">
+				<button class="btn btn-warning"
+						ng-click="dmaTargeting = true">
+					<i class="fa fa-lg fa-industry"></i> Target DMAs
+				</button>
+			</div>
+			<!-- Button to toggle back to state & city targeting from DMA targeting-->
+			<div class="pull-right" ng-show="selectedGeo._id === 'USA' && dmaTargeting">
+				<button class="btn btn-warning"
+						ng-click="dmaTargeting = false">
+					<i class="fa fa-lg fa-building-o"></i> Target States & Cities
+				</button>
+			</div>
+		</div>
+
+		<div class="panel-body">
 
 			<!-- Map -->
 			<datamap
-				data-ng-if="mapAvailable"
+				data-ng-if="mapAvailable && !dmaTargeting"
 				class="pb0"
 				on-click="mapClicked"
 				map="mapObject"
 				plugins="mapPlugins"
 				plugin-data="mapPluginData">
-			</datamap>	
+			</datamap>
+			<div ng-if="dmaTargeting && dmas.$resolved && dmas.length" class="mt-xl" style="height: 400px; overflow-y: scroll;">
+                <table class="table table-bordered table-hover mb0">
+                    <thead>
+                        <tr>
+                            <th>Designated Market Area (DMA)</th>
+                            <th>DMA Code</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr class="subheader-row pt0 mt0">
+                            <th colspan="3">
+                                <div class="input-group col-xs-12">
+                                    <input type="text"
+                                           class="form-control"
+                                           placeholder="Search DMAs..."
+                                           ng-model="dmaSearch.keyword"
+                                           ng-keypress="$event.keyCode === 13 && searchDMAs()" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary btn-sm"
+                                                type="button"
+                                                ng-click="searchDMAs()"
+                                                ng-disabled="dmaSearch.keyword === ''">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-danger btn-sm"
+                                                type="button"
+                                                ng-click="cancelSearch()"
+                                                ng-disabled="dmaSearch.keyword === ''">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="dma in dmas" ng-hide="!dma.keywordMatch && dmaSearch.active">
+                            <td>{{ dma.name }}</td>
+                            <td>{{ dma.code }}</td>
+                            <td>
+                                <button class="btn btn-xs btn-success" tooltip="Whitelist" ng-click=""><i class="fa fa-map-marker"></i></button>
+                                <button class="btn btn-xs btn-primary" tooltip="Set Custom Bidding" ng-click=""><i class="fa fa-sliders"></i></button>
+                                <button class="btn btn-xs btn-danger" tooltip="Blacklist" ng-click=""><i class="fa fa-ban"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+			</div>
 
 			<!-- Placeholder for non-USA users -->
-			<div ng-if="!mapAvailable"
-				class="text-center">
+			<div ng-if="!mapAvailable && !dmaTargeting" class="text-center">
 				<h3><i class="fa fa-lg fa-globe"></i> States map only available for United States</h3>	
 				<p class="mb-lg">Stay tuned for updates!</p>
 				<p class="mb-lg"><em>Have specific reporting needs that you'd like us to address in a future release? <a href="mailto:support@cliquesads.com">Contact us.</a></em></p>

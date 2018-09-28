@@ -1,10 +1,8 @@
 /* global _, angular, moment, user, pricing */
 'use strict';
 
-angular.module('advertiser').controller('GeoTargetingController', [
-	'$scope', '$state', '$q', 'Notify', 'campaign', 'ngDialog', '$window', '$rootScope', 'Country', 'Region', 'City',
-	'aggregationDateRanges', 'GeoAdStat', 'GeoTree','$timeout','CampaignGeo',
-	function($scope, $state, $q, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City,
+angular.module('advertiser').controller('GeoTargetingController',
+	function($scope, $state, $q, Notify, campaign, ngDialog, $window, $rootScope, Country, Region, City, DMA,
 			 aggregationDateRanges, GeoAdStat, GeoTree, $timeout, CampaignGeo) {
 
 		$scope.Math = Math;
@@ -301,6 +299,45 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		//====================================================//
 		//================ END of Map Settings ================//
 		//====================================================//
+
+        // control var for DMA-based targeting
+        $scope.dmaTargeting = false;
+		$scope.$watch('dmaTargeting', function(newVal, oldVal){
+		   if (oldVal !== newVal && newVal && !$scope.dmas){
+		       $scope.dmas = DMA.query();
+           }
+        });
+		$scope.dmaSearch = {
+		    foundSome: false,
+		    active: false,
+            keyword: ''
+        };
+		$scope.searchDMAs = function(){
+            $scope.dmaSearch.foundSome = false;
+            $scope.dmaSearch.active = true;
+            var keyword = $scope.dmaSearch.keyword.toLowerCase();
+            $scope.dmas.forEach(function(dma){
+                var match = dma.name.toLowerCase().search(keyword) > -1 || dma.code.toString().search(keyword) > -1;
+                if (match) {
+                    $scope.dmaSearch.foundSome = true;
+                    dma.keywordMatch = true;
+                }
+                $scope.setNoResult();
+            });
+        };
+        $scope._clearSearchResults = function(){
+            $scope.dmas.forEach(function(dma){
+                dma.keywordMatch = false;
+            });
+        };
+
+        $scope.cancelSearch = function(){
+            $scope.dmaSearch.keyword = '';
+            $scope.dmaSearch.active = false;
+            $scope.dmaSearch.foundSome = false;
+            $scope._clearSearchResults();
+        };
+
 
 		$scope.getAllGeosHelp = function() {
 			ngDialog.open({
@@ -762,4 +799,4 @@ angular.module('advertiser').controller('GeoTargetingController', [
 		$scope.initializeAllTrees();
 
 	}
-]);
+);
