@@ -1,6 +1,6 @@
 /* global _ */
 'use strict';
-angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConvert','CampaignGeo',function(DndTreeWrapper, $TreeDnDConvert, CampaignGeo){
+angular.module('advertiser').factory('GeoTree',function(DndTreeWrapper, $TreeDnDConvert, CampaignGeo){
 
     /**
      * Adds custom methods & properties to tree node object.
@@ -21,7 +21,7 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         var newNode = _.clone(node);
 
         // Add custom node properties
-        newNode.parentId = parentId; // Needed for conversion to Geo Treen DND format
+        newNode.parentId = parentId; // Needed for conversion to Geo Tree DND format
         newNode.nodeType = nodeType;
         // Hide slider for city node for performance tuning
         if (nodeType !== 'City') {
@@ -161,6 +161,34 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         }
         regionObj.weight = countryNode.weight;
         var regionNode = _initializeGeoTreeNode(regionObj, 'Region', regionObj.country, countryNode.weight);
+        if (!countryNode.__children__) {
+            countryNode.__children__ = [];
+        }
+        countryNode.__children__.push(regionNode);
+        return regionNode;
+    };
+
+    /**
+     * DMA nodes fall under a different tree than Regions & Cities, but for UI
+     * purposes still roll up to country (USA specifically, only US has DMAs). So
+     * special handler for DMAs.
+     *
+     * @param dmaObj
+     * @param countryNode
+     * @returns {*}
+     */
+    GeoTree.prototype.addDMANode = function(dmaObj, countryNode) {
+        var i = 0;
+        if (countryNode.__children__) {
+            for (i = 0; i < countryNode.__children__.length; i ++) {
+                if (countryNode.__children__[i]._id === dmaObj._id && countryNode.__children__[i].nodeType === 'DMA') {
+                    // Such region node already exists in tree data, return this existed region node
+                    return countryNode.__children__[i];
+                }
+            }
+        }
+        dmaObj.weight = countryNode.weight;
+        var regionNode = _initializeGeoTreeNode(dmaObj, 'DMA', countryNode._id, countryNode.weight);
         if (!countryNode.__children__) {
             countryNode.__children__ = [];
         }
@@ -551,4 +579,4 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
     };
 
     return GeoTree;
-}]);
+});

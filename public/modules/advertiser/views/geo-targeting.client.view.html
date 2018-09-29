@@ -55,7 +55,7 @@
 				</button>
 			</div>
 			<!--Show DMA targeting button only for USA -->
-			<div class="pull-right" ng-show="selectedGeo._id === 'USA' && !dmaTargeting">
+			<div class="pull-right" ng-show="selectedCountry._id === 'USA' && !dmaTargeting">
 				<button class="btn btn-warning"
 						ng-click="dmaTargeting = true">
 					<i class="fa fa-lg fa-industry"></i> Target DMAs
@@ -63,7 +63,7 @@
 			</div>
 			<!-- Button to toggle back to state & city targeting from DMA targeting-->
 			<div class="pull-right" ng-show="selectedGeo._id === 'USA' && dmaTargeting">
-				<button class="btn btn-warning"
+				<button class="btn btn-default"
 						ng-click="dmaTargeting = false">
 					<i class="fa fa-lg fa-building-o"></i> Target States & Cities
 				</button>
@@ -81,55 +81,53 @@
 				plugins="mapPlugins"
 				plugin-data="mapPluginData">
 			</datamap>
-			<div ng-if="dmaTargeting && dmas.$resolved && dmas.length" class="mt-xl" style="height: 400px; overflow-y: scroll;">
-                <table class="table table-bordered table-hover mb0">
-                    <thead>
-                        <tr>
-                            <th>Designated Market Area (DMA)</th>
-                            <th>DMA Code</th>
-                            <th>Actions</th>
-                        </tr>
-                        <tr class="subheader-row pt0 mt0">
-                            <th colspan="3">
-                                <div class="input-group col-xs-12">
-                                    <input type="text"
-                                           class="form-control"
-                                           placeholder="Search DMAs..."
-                                           ng-model="dmaSearch.keyword"
-                                           ng-keypress="$event.keyCode === 13 && searchDMAs()" />
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary btn-sm"
-                                                type="button"
-                                                ng-click="searchDMAs()"
-                                                ng-disabled="dmaSearch.keyword === ''">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-danger btn-sm"
-                                                type="button"
-                                                ng-click="cancelSearch()"
-                                                ng-disabled="dmaSearch.keyword === ''">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="dma in dmas" ng-hide="!dma.keywordMatch && dmaSearch.active">
-                            <td>{{ dma.name }}</td>
-                            <td>{{ dma.code }}</td>
-                            <td>
-                                <button class="btn btn-xs btn-success" tooltip="Whitelist" ng-click=""><i class="fa fa-map-marker"></i></button>
-                                <button class="btn btn-xs btn-primary" tooltip="Set Custom Bidding" ng-click=""><i class="fa fa-sliders"></i></button>
-                                <button class="btn btn-xs btn-danger" tooltip="Blacklist" ng-click=""><i class="fa fa-ban"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-			</div>
+
+            <!-- DMA Targeting -->
+			<div ng-if="dmaTargeting && dmas.$resolved && dmas.length" class="mt-xl">
+                <div class="panel-heading bg-warning pt-sm pb-sm">
+                    <h4>Designated Market Areas (DMA)</h4>
+                </div>
+                <!--<hr class="mt-sm mb-sm"/>-->
+                <div class="p-sm bg-gray">
+                    <div class="input-group">
+                        <input type="text"
+                               class="form-control search"
+                               placeholder="Search DMA name or code and press <Enter>..."
+                               ng-model="dmaSearch.keyword"
+                               ng-keypress="$event.keyCode === 13 && searchDMAs()" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary btn-sm"
+                                    type="button"
+                                    ng-click="searchDMAs()"
+                                    ng-disabled="dmaSearch.keyword === ''">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger btn-sm"
+                                    type="button"
+                                    ng-click="cancelSearch()"
+                                    ng-disabled="dmaSearch.keyword === ''">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="list-group vertical-scroll">
+                    <div class="list-group-item" ng-repeat="dma in dmas" ng-hide="!dma.keywordMatch && dmaSearch.active">
+                        {{ dma.name }} ({{ dma.code }})
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-success" tooltip="Whitelist" ng-click="dmaActions.targetOnly(dma)"><i class="fa fa-map-marker"></i></button>
+                            <button class="btn btn-xs btn-primary" tooltip="Set Custom Bidding" ng-click="dmaActions.customizeBidding(dma)"><i class="fa fa-sliders"></i></button>
+                            <button class="btn btn-xs btn-danger" tooltip="Blacklist" ng-click="dmaActions.block(dma)"><i class="fa fa-ban"></i></button>
+                        </span>
+                    </div>
+                    <!-- No results box -->
+                    <div class="box-placeholder text-center" ng-if="!dmaSearch.foundSome && dmaSearch.active">
+                        No DMAs found matching keyword <strong>{{ dmaSearch.keyword }}</strong>.
+                    </div>
+                </div>
+            </div>
 
 			<!-- Placeholder for non-USA users -->
 			<div ng-if="!mapAvailable && !dmaTargeting" class="text-center">

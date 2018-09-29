@@ -300,18 +300,24 @@ angular.module('advertiser').controller('GeoTargetingController',
 		//================ END of Map Settings ================//
 		//====================================================//
 
+        //====================================================//
+        //================ BEGIN DMA Stuff ===================//
+        //====================================================//
+
         // control var for DMA-based targeting
         $scope.dmaTargeting = false;
 		$scope.$watch('dmaTargeting', function(newVal, oldVal){
 		   if (oldVal !== newVal && newVal && !$scope.dmas){
-		       $scope.dmas = DMA.query();
+		       $scope.dmas = DMA.query({ sort_by: 'name' });
            }
         });
+
 		$scope.dmaSearch = {
 		    foundSome: false,
 		    active: false,
             keyword: ''
         };
+
 		$scope.searchDMAs = function(){
             $scope.dmaSearch.foundSome = false;
             $scope.dmaSearch.active = true;
@@ -322,9 +328,9 @@ angular.module('advertiser').controller('GeoTargetingController',
                     $scope.dmaSearch.foundSome = true;
                     dma.keywordMatch = true;
                 }
-                $scope.setNoResult();
             });
         };
+
         $scope._clearSearchResults = function(){
             $scope.dmas.forEach(function(dma){
                 dma.keywordMatch = false;
@@ -338,6 +344,49 @@ angular.module('advertiser').controller('GeoTargetingController',
             $scope._clearSearchResults();
         };
 
+        // Namespace for all action functions to target/block
+        // DMAs. Each function adds to one of the geoTree instances
+        // in scope.
+        $scope.dmaActions = {
+            targetOnly: function(dma){
+                $scope.dirty = true;
+                // A country is selected to target only,
+                // load the whole country and all its regions/cities
+                $rootScope.loadingTargetOnlyGeos = true;
+                var countryNode = $scope.target_only_geos.addCountryNode($rootScope.selectedCountry);
+                var dmaNode = $scope.target_only_geos.addDMANode(dma, countryNode);
+                dmaNode.explicit = true;
+                // Clear blacklist
+                $scope.blocked_geos.data = [];
+                $rootScope.loadingTargetOnlyGeos = false;
+            },
+            block: function(dma){
+                $scope.dirty = true;
+                $rootScope.loadingBlockTree = true;
+                var countryNode = $scope.blocked_geos.addCountryNode($rootScope.selectedCountry);
+                var dmaNode = $scope.blocked_geos.addDMANode(dma, countryNode);
+                dmaNode.explicit = true;
+                $scope.target_only_geos.data = [];
+                $rootScope.loadingBlockTree = false;
+            },
+            customizeBidding: function(dma){
+                $scope.dirty = true;
+                // A region is selected to customize,
+                // should load just that region and its cities
+                $rootScope.loadingTargetTree = true;
+                var countryNode = $scope.geo_targets.addCountryNode($rootScope.selectedCountry);
+                var dmaNode = $scope.geo_targets.addDMANode(dma, countryNode);
+                // get cpms for each loaded geo
+                $scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange)
+                    .then(function() {
+                        $rootScope.loadingTargetTree = false;
+                    });
+            }
+        };
+
+        //====================================================//
+        //================ END DMA Stuff =====================//
+        //====================================================//
 
 		$scope.getAllGeosHelp = function() {
 			ngDialog.open({
@@ -472,52 +521,75 @@ angular.module('advertiser').controller('GeoTargetingController',
 			}, 'geo_targets');
 		$scope.geo_targets.searchingStatus = 'NotSearching';
 
+		var _removeFunction = function(tree){
+		    return function(node) {
+                $scope[tree].control.remove_node(node);
+                switch(node.nodeType) {
+                    case 'Country':
+                        break;
+                    case 'Region':
+                        var parentCountryId = node.parentId;
+                        for (var i = 0; i < $scope[tree].data.length; i ++) {
+                            // Set parents explicit to false and children to true if a child is removed
+                            if (parentCountryId === $scope[tree].data[i]._id) {
+                                $scope[tree].data[i].explicit = false;
+                                for (var j = 0; j < $scope[tree].data[i].__children__.length; j ++) {
+                                    $scope[tree].data[i].__children__[j].explicit = true;
+                                }
+                                // Remove parent node if it's empty & has no children
+                                if ($scope[tree].data[i].__children__.length === 0){
+                                    $scope[tree].data.splice(i, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    case 'DMA':
+                        parentCountryId = node.parentId;
+                        for (var i = 0; i < $scope[tree].data.length; i ++) {
+                            if (parentCountryId === $scope[tree].data[i]._id) {
+                                // NOTE: Currently DMA's can only be set explicitly, so don't need to
+                                // set explicit vals on removal
+
+                                // Remove parent node if it's empty & has no children
+                                if ($scope[tree].data[i].__children__.length === 0){
+                                    $scope[tree].data.splice(i, 1);
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    case 'City':
+                        var parentRegionId = node.parentId;
+                        var parentRegionFound = false;
+                        for (var i = 0; i < $scope[tree].data.length; i ++) {
+                            for (var j = 0; j < $scope[tree].data[i].__children__.length; j ++) {
+                                if (parentRegionId === $scope[tree].data[i].__children__[j]._id) {
+                                    $scope[tree].data[i].__children__[j].explicit = false;
+                                    for (var k = 0; k < $scope[tree].data[i].__children__[j].__children__.length; k ++) {
+                                        $scope[tree].data[i].__children__[j].__children__[k].explicit = true;
+                                    }
+                                    parentRegionFound = true;
+                                    break;
+                                }
+                            }
+                            if (parentRegionFound) {
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                $scope.dirty = true;
+            };
+        };
 		/**
 		 * GeoTree for blocked geo tree vars
 		 */
 		$scope.blocked_geos = new GeoTree([],
 			{
-				remove: function(node) {
-					switch(node.nodeType) {
-						case 'Country':
-						break;
-						case 'Region':
-							var parentCountryId = node.parentId;
-							for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
-								if (parentCountryId === $scope.blocked_geos.data[i]._id) {
-									$scope.blocked_geos.data[i].explicit = false;
-									for (var j = 0; j < $scope.blocked_geos.data[i].__children__.length; j ++) {
-										$scope.blocked_geos.data[i].__children__[j].explicit = true;	
-									}
-									break;
-								}
-							}
-						break;
-						case 'City':
-							var parentRegionId = node.parentId;
-							var parentRegionFound = false;
-							for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
-								for (var j = 0; j < $scope.blocked_geos.data[i].__children__.length; j ++) {
-									if (parentRegionId === $scope.blocked_geos.data[i].__children__[j]._id) {
-										$scope.blocked_geos.data[i].__children__[j].explicit = false;
-										for (var k = 0; k < $scope.blocked_geos.data[i].__children__[j].__children__.length; k ++) {
-											$scope.blocked_geos.data[i].__children__[j].__children__[k].explicit = true;
-										}
-										parentRegionFound = true;
-										break;
-									}
-								}
-								if (parentRegionFound) {
-									break;
-								}
-							}
-						break;
-						default:
-						break;
-					}
-					$scope.blocked_geos.control.remove_node(node);
-					$scope.dirty = true;
-				},
+				remove: _removeFunction('blocked_geos'),
 				toggleExpandRegion: function(node) {
 					$scope.lazyLoadCities(node, $scope.blocked_geos);
 				}
@@ -529,47 +601,7 @@ angular.module('advertiser').controller('GeoTargetingController',
 		 */
 		$scope.target_only_geos = new GeoTree([],
 			{
-				remove: function(node) {
-					switch(node.nodeType) {
-						case 'Country':
-						break;
-						case 'Region':
-							var parentCountryId = node.parentId;
-							for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
-								if (parentCountryId === $scope.target_only_geos.data[i]._id) {
-									$scope.target_only_geos.data[i].explicit = false;
-									for (var j = 0; j < $scope.target_only_geos.data[i].__children__.length; j ++) {
-										$scope.target_only_geos.data[i].__children__[j].explicit = true;
-									}
-									break;
-								}
-							}
-						break;
-						case 'City':
-							var parentRegionId = node.parentId;
-							var parentRegionFound = false;
-							for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
-								for (var j = 0; j < $scope.target_only_geos.data[i].__children__.length; j ++) {
-									if (parentRegionId === $scope.target_only_geos.data[i].__children__[j]._id) {
-										$scope.target_only_geos.data[i].__children__[j].explicit = false;
-										for (var k = 0; k < $scope.target_only_geos.data[i].__children__[j].__children__.length; k ++) {
-											$scope.target_only_geos.data[i].__children__[j].__children__[k].explicit = true;
-										}
-										parentRegionFound = true;
-										break;
-									}
-								}
-								if (parentRegionFound) {
-									break;
-								}
-							}
-						break;
-						default:
-						break;
-					}
-					$scope.target_only_geos.control.remove_node(node);	
-					$scope.dirty = true;
-				},
+				remove: _removeFunction('target_only_geos'),
 				toggleExpandRegion: function(node) {
 					$scope.lazyLoadCities(node, $scope.target_only_geos);	
 				}
@@ -638,17 +670,23 @@ angular.module('advertiser').controller('GeoTargetingController',
 			var startDate = $scope.dateRanges[dateRange].startDate;
 			var endDate = $scope.dateRanges[dateRange].endDate;
 			var countryIds = [],
-				regionIds = [];
+				regionIds = [],
+                dmaIds = [];
 			geoTree.forEach(function(geo) {
 				countryIds.push(geo._id);
 				if (geo.__children__) {
 					geo.__children__.forEach(function(region) {
-						regionIds.push(region._id);
+                        if (region.nodeType === 'DMA'){
+                            dmaIds.push(region._id);
+                        } else {
+                            regionIds.push(region._id);
+                        }
 					});
 				}
 			});
 			var countryQueryString = '',
-				regionQueryString = '';
+				regionQueryString = '',
+                dmaQueryString = '';
 			if (countryIds.length === 1) {
 				countryQueryString = countryIds[0];
 			} else if (countryIds.length > 1) {
@@ -659,33 +697,53 @@ angular.module('advertiser').controller('GeoTargetingController',
 			} else if (regionIds.length > 1) {
 				regionQueryString = '{in}' + regionIds.join(',');
 			}
-			return GeoAdStat.pubSummaryQuery({
-				groupBy: 'country,region,city',
-				country: countryQueryString,
-				region: regionQueryString,
-				startDate: startDate,
-				endDate: endDate
-			}).then(function(response) {
-				var allGeosStats = {
-					Country: _getPriceData(_.groupBy(response.data, '_id.country')),
-					Region: _getPriceData(_.groupBy(response.data, '_id.region')),
-					City: _getPriceData(_.groupBy(response.data, '_id.city'))
-				};
-				// Now bind to geoTree data to use in template
-				function inner(treeData) {
-					treeData.forEach(function(node) {
-						if (node.nodeType !== 'City') {
-							node.stats = allGeosStats[node.nodeType][node._id];
-						} else {
-							node.stats = allGeosStats[node.nodeType][node.name];
-						}
-						if (node.__children__ && node.__children__.length > 0) {
-							inner(node.__children__);
-						}
-					});
-				}
-				inner(geoTree);
-			});
+            if (dmaIds.length === 1) {
+                dmaQueryString = dmaIds[0];
+            } else if (dmaIds.length > 1) {
+                dmaQueryString = '{in}' + dmaIds.join(',');
+            }
+
+            var geoTreeStatsPromise = GeoAdStat.pubSummaryQuery({
+                groupBy: 'country,region,city',
+                country: countryQueryString,
+                region: regionQueryString,
+                startDate: startDate,
+                endDate: endDate
+            });
+
+            var dmaStatsPromise = dmaQueryString ? GeoAdStat.pubSummaryQuery({
+                groupBy: 'dma',
+                dma: dmaQueryString,
+                startDate: startDate,
+                endDate: endDate
+            }) : $q.when([]);
+
+			return $q.all([geoTreeStatsPromise, dmaStatsPromise]).then(function(responses){
+                var geoTreeResponse = responses[0],
+                    dmaResponse = responses[1];
+                var allGeosStats = {
+                    Country: _getPriceData(_.groupBy(geoTreeResponse.data, '_id.country')),
+                    Region: _getPriceData(_.groupBy(geoTreeResponse.data, '_id.region')),
+                    City: _getPriceData(_.groupBy(geoTreeResponse.data, '_id.city'))
+                };
+                if (dmaResponse){
+                    allGeosStats.DMA = _getPriceData(_.groupBy(dmaResponse.data, '_id.dma'));
+                }
+                // Now bind to geoTree data to use in template
+                function inner(treeData) {
+                    treeData.forEach(function(node) {
+                        if (node.nodeType !== 'City') {
+                            node.stats = allGeosStats[node.nodeType][node._id];
+                        } else {
+                            node.stats = allGeosStats[node.nodeType][node.name];
+                        }
+                        if (node.__children__ && node.__children__.length > 0) {
+                            inner(node.__children__);
+                        }
+                    });
+                }
+                inner(geoTree);
+            });
 		};
 
 		//================= BEGIN Tree Search functions ===================//
