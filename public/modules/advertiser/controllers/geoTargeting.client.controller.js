@@ -409,11 +409,14 @@ angular.module('advertiser').controller('GeoTargetingController',
 			$scope.blocked_geos.clearSearchResult();
 
 			$scope.geo_targets.toGeoTargetsSchema(function(err, targetsArray) {
-				$scope.campaign.geo_targets = targetsArray;
+				$scope.campaign.geo_targets = targetsArray[0];
+				$scope.campaign.dma_targets = targetsArray[1];
 				$scope.blocked_geos.toBlockedGeosSchema(function(err, blockedArray) {
-					$scope.campaign.blocked_geos = blockedArray;
+					$scope.campaign.blocked_geos = blockedArray[0];
+					$scope.campaign.blocked_dmas = blockedArray[1];
 					$scope.target_only_geos.toTargetOnlyGeosSchema(function(err, targetOnlyArray) {
-						$scope.campaign.target_only_geos = targetOnlyArray;
+						$scope.campaign.target_only_geos = targetOnlyArray[0];
+						$scope.campaign.target_only_dmas = targetOnlyArray[1];
 						$scope.advertiser.$update(function() {
 							$scope.campaign = $scope.advertiser.campaigns[$scope.campaignIndex];
 							$scope.dirty = false;
