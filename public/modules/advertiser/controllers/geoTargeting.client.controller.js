@@ -806,7 +806,7 @@ angular.module('advertiser').controller('GeoTargetingController',
 			// Initialization for geo_targets tree
 			$scope.geo_targets.clearTreeData(function(err) {
 				$scope.loadingTargetTree = true;
-				$scope.geo_targets.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'target')
+				$scope.geo_targets.fromGeosInCampaign($scope.advertiser, $scope.campaign, 'target')
 				.then(function() {
 					return $scope.getGeoTreeStats($scope.geo_targets.data, $scope.defaultDateRange);
 				})
@@ -821,7 +821,7 @@ angular.module('advertiser').controller('GeoTargetingController',
 			// Initialization for blocked_geos tree
 			$scope.blocked_geos.clearTreeData(function(err) {
 				$rootScope.loadingBlockTree = true;
-				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'block')
+				$scope.blocked_geos.fromGeosInCampaign($scope.advertiser, $scope.campaign, 'block')
 				.then(function() {
 					// Now load regions for country, and load cities for regions
 					for (var i = 0; i < $scope.blocked_geos.data.length; i ++) {
@@ -838,7 +838,7 @@ angular.module('advertiser').controller('GeoTargetingController',
 			// Initialization for target_only_geos tree
 			$scope.target_only_geos.clearTreeData(function(err) {
 				$rootScope.loadingTargetOnlyGeos = true;
-				$scope.target_only_geos.fromGeosInCampaign($scope.advertiser._id, $scope.campaign._id, 'targetOnly')
+				$scope.target_only_geos.fromGeosInCampaign($scope.advertiser, $scope.campaign, 'targetOnly')
 				.then(function() {
 					for (var i = 0; i < $scope.target_only_geos.data.length; i ++) {
 						if ($scope.target_only_geos.data[i].explicit){

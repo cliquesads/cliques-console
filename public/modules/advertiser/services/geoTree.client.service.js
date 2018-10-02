@@ -321,14 +321,15 @@ angular.module('advertiser').factory('GeoTree',function(DndTreeWrapper, $TreeDnD
      * @param geos can be geo_targets or blocked_geos from backend DB
      * @param callback
      */
-    GeoTree.prototype.fromGeosInCampaign = function(advertiserId, campaignId, targetOrBlock) {
+    GeoTree.prototype.fromGeosInCampaign = function(advertiser, campaign, targetOrBlock) {
         var self = this;
-        return CampaignGeo.getGeoTrees(advertiserId, campaignId, targetOrBlock) 
+        return CampaignGeo.getGeoTrees(advertiser._id, campaign._id, targetOrBlock)
         .then(function(response) {
             var geoData = response.data;
             var flattened = [];
-            if (!geoData) return;
+            if (!geoData.length) return;
             geoData.forEach(function(country) {
+                // now load rest of the geo region/city tree
                 var countryNode = _initializeGeoTreeNode(country, 'Country', null);
                 countryNode.explicit = country.explicit;
                 flattened.push(countryNode);
@@ -348,6 +349,13 @@ angular.module('advertiser').factory('GeoTree',function(DndTreeWrapper, $TreeDnD
                             });
                         }
                     }); 
+                }
+                if (country.dmas){
+                    country.dmas.forEach(function(dma){
+                        var dmaNode = _initializeGeoTreeNode(dma, 'DMA', countryNode._id, countryNode.weight);
+                        dmaNode.explicit = dma.explicit;
+                        flattened.push(dmaNode);
+                    });
                 }
             });
             self.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
