@@ -16,6 +16,8 @@ var node_utils = require('@cliques/cliques-node-utils'),
 	_ = require('lodash');
 
 
+mongoose.Promise = promise;
+
 if (process.env.NODE_ENV !== 'production'){
     var pubsub_options = {
         projectId: 'mimetic-codex-781',
@@ -323,12 +325,16 @@ module.exports = function(db) {
 
                 var geoTrees = [];
                 var wantedGeos;
+                var wantedDmas;
                 if (targetOrBlock === 'target') {
                     wantedGeos = campaign.geo_targets;
+                    wantedDmas = campaign.dma_targets;
                 } else if (targetOrBlock === 'block') {
                     wantedGeos = campaign.blocked_geos;
+                    wantedDmas = campaign.blocked_dmas;
                 } else if (targetOrBlock === 'targetOnly') {
                     wantedGeos = campaign.target_only_geos;
+                    wantedDmas = campaign.target_only_dmas;
                 }
                 return promise.each(wantedGeos, function(country) {
                     var countryObj;
@@ -384,6 +390,33 @@ module.exports = function(db) {
                     .then(function() {
                         geoTrees.push(countryObj);
                     });
+                })
+                // Now populate DMAs
+                .then(() => {
+                    // first add DMA targets from dma_targets / blocked_dmas / target_only_dmas
+                    if (wantedDmas && wantedDmas.length) {
+                        let usaNode = _.find(geoTrees, function(country){
+                            return country._id === 'USA';
+                        });
+                        // if USA isn't in geoTargeting tree, then need to manually add it as a placeholder for DMAs.
+                        if (!usaNode) {
+                            usaNode = { _id: "USA", name: "USA", explicit: false, weight: null };
+                            geoTrees.push(usaNode);
+                        }
+                        usaNode.dmas = [];
+                        // TODO: don't link how this makes individual DB calls for each target, should run a find() instead
+                        // of findOne and not
+                        return geoModels.DMA.find({_id: { $in: wantedDmas.map((target) => { return target.target; })}})
+                            .then(function(dmaResults){
+                                for (let dma of dmaResults){
+                                    const dmaObj = JSON.parse(JSON.stringify(dma));
+                                    const target = _.find(wantedDmas, t => { return t.target === dma._id; });
+                                    dmaObj.weight = target.weight;
+                                    dmaObj.explicit = target.explicit;
+                                    usaNode.dmas.push(dmaObj);
+                                }
+                            });
+                    }
                 })
                 .then(function() {
                     return res.json(geoTrees);

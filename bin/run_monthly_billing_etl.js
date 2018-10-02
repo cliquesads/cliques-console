@@ -216,13 +216,15 @@ require('./_main')(function(GLOBALS){
             Organization.find({ _id: { $in: orgs}}, function(err, organizations){
                 if (err) return callback(err);
                 organizations.forEach(function(org) {
-                    var row = _.find(results, function(r){
+                    var rows = results.filter(function(r){
                         if (r._id[model]){
                             return r._id[model].organization.toString() === org._id.toString();
                         }
                     });
-                    if (row){
-                        row.organization = org;
+                    if (rows.length > 0){
+                        rows.forEach(function(row){
+                            row.organization = org;
+                        });
                     }
                 });
                 return callback(null, results);
@@ -465,13 +467,13 @@ require('./_main')(function(GLOBALS){
                         callback();
                     });
                 },
-                function(callback){
-                    var createSinglePayment = _createSinglePayment('publisher');
-                    async.forEachOf(orgGroupedResults[1], createSinglePayment, function(err){
-                        if (err) return callback(err);
-                        callback();
-                    });
-                }
+                // function(callback){
+                //     var createSinglePayment = _createSinglePayment('publisher');
+                //     async.forEachOf(orgGroupedResults[1], createSinglePayment, function(err){
+                //         if (err) return callback(err);
+                //         callback();
+                //     });
+                // }
             ], function(err){
                 if (err) return reject(err);
                 return resolve();
@@ -493,7 +495,11 @@ require('./_main')(function(GLOBALS){
             function(err){ console.error(chalk.red(err.stack)); }
         )
         .then(
-            function(orgGroupedResults){ return createPayments(orgGroupedResults); },
+
+            function(orgGroupedResults){
+                // console.log(orgGroupedResults);
+                return createPayments(orgGroupedResults);
+            },
             function(err){ console.error(chalk.red(err.stack));}
         )
         .then(
