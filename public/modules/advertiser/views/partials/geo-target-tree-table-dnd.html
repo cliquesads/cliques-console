@@ -58,6 +58,12 @@
 						</a>
 						{{node.name}}
 					</span>
+					<span ng-switch-when="DMA">
+						<a data-nodrag>
+							<i class="fa fa-lg fa-industry"></i>
+						</a>
+						{{node.name}}
+					</span>
 				</span>
 			</td>
 			<!-- Weight -->
@@ -94,7 +100,7 @@
 						</div>
 					</div>	
 				</span>	
-				<span ng-if="node.nodeType === 'Region'">
+				<span ng-if="node.nodeType === 'Region' || node.nodeType === 'DMA'">
 					<rzslider rz-slider-model="node.weight"
 						rz-slider-options="{
 							floor: 0,

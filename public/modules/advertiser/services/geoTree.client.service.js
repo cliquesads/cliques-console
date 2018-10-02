@@ -1,6 +1,6 @@
 /* global _ */
 'use strict';
-angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConvert','CampaignGeo',function(DndTreeWrapper, $TreeDnDConvert, CampaignGeo){
+angular.module('advertiser').factory('GeoTree',function(DndTreeWrapper, $TreeDnDConvert, CampaignGeo){
 
     /**
      * Adds custom methods & properties to tree node object.
@@ -21,7 +21,7 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         var newNode = _.clone(node);
 
         // Add custom node properties
-        newNode.parentId = parentId; // Needed for conversion to Geo Treen DND format
+        newNode.parentId = parentId; // Needed for conversion to Geo Tree DND format
         newNode.nodeType = nodeType;
         // Hide slider for city node for performance tuning
         if (nodeType !== 'City') {
@@ -168,6 +168,34 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         return regionNode;
     };
 
+    /**
+     * DMA nodes fall under a different tree than Regions & Cities, but for UI
+     * purposes still roll up to country (USA specifically, only US has DMAs). So
+     * special handler for DMAs.
+     *
+     * @param dmaObj
+     * @param countryNode
+     * @returns {*}
+     */
+    GeoTree.prototype.addDMANode = function(dmaObj, countryNode) {
+        var i = 0;
+        if (countryNode.__children__) {
+            for (i = 0; i < countryNode.__children__.length; i ++) {
+                if (countryNode.__children__[i]._id === dmaObj._id && countryNode.__children__[i].nodeType === 'DMA') {
+                    // Such region node already exists in tree data, return this existed region node
+                    return countryNode.__children__[i];
+                }
+            }
+        }
+        dmaObj.weight = countryNode.weight;
+        var regionNode = _initializeGeoTreeNode(dmaObj, 'DMA', countryNode._id, countryNode.weight);
+        if (!countryNode.__children__) {
+            countryNode.__children__ = [];
+        }
+        countryNode.__children__.push(regionNode);
+        return regionNode;
+    };
+
     GeoTree.prototype.addCityNode = function(cityObj, regionNode) {
         // Make sure the city about to add is NOT YET in this region
         var i = 0;
@@ -293,14 +321,15 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
      * @param geos can be geo_targets or blocked_geos from backend DB
      * @param callback
      */
-    GeoTree.prototype.fromGeosInCampaign = function(advertiserId, campaignId, targetOrBlock) {
+    GeoTree.prototype.fromGeosInCampaign = function(advertiser, campaign, targetOrBlock) {
         var self = this;
-        return CampaignGeo.getGeoTrees(advertiserId, campaignId, targetOrBlock) 
+        return CampaignGeo.getGeoTrees(advertiser._id, campaign._id, targetOrBlock)
         .then(function(response) {
             var geoData = response.data;
             var flattened = [];
-            if (!geoData) return;
+            if (!geoData.length) return;
             geoData.forEach(function(country) {
+                // now load rest of the geo region/city tree
                 var countryNode = _initializeGeoTreeNode(country, 'Country', null);
                 countryNode.explicit = country.explicit;
                 flattened.push(countryNode);
@@ -320,6 +349,13 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
                             });
                         }
                     }); 
+                }
+                if (country.dmas){
+                    country.dmas.forEach(function(dma){
+                        var dmaNode = _initializeGeoTreeNode(dma, 'DMA', countryNode._id, countryNode.weight);
+                        dmaNode.explicit = dma.explicit;
+                        flattened.push(dmaNode);
+                    });
                 }
             });
             self.data = $TreeDnDConvert.line2tree(flattened, '_id', 'parentId');
@@ -436,6 +472,8 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
     /**
      * Converts treeData to Campaign.geo_targets schema format for saving.
      *
+     * Also splits out DMAs and generates them as a array.
+     *
      * Recurses to lowest non-overridden level of each branch & saves branch, ignoring
      * all overridden children.
      *
@@ -443,24 +481,32 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
      */
     GeoTree.prototype.toGeoTargetsSchema = function(callback) {
         var self = this;
+        var dmaTargets = [];
         function inner(thisSubtree, targetsTree) {
             targetsTree = targetsTree || [];
             thisSubtree.forEach(function(node) {
-                var weight = node.__overridden__ ? null : node.weight;
-                var targetObj = {
-                    target: node._id,
-                    weight: weight,
-                    children: null,
-                    __overridden__: node.__overridden__
-                };
-                if (node.nodeType === 'City') {
-                    targetObj.name = node.name;
-                }
-                var children = self.control.get_children(node);
-                targetsTree.push(targetObj);
-                if (children.length > 0) {
-                    targetObj.children = [];
-                    inner(children, targetObj.children);
+                if (node.nodeType !== 'DMA'){
+                    var weight = node.__overridden__ ? null : node.weight;
+                    var targetObj = {
+                        target: node._id,
+                        weight: weight,
+                        children: null,
+                        __overridden__: node.__overridden__
+                    };
+                    if (node.nodeType === 'City') {
+                        targetObj.name = node.name;
+                    }
+                    var children = self.control.get_children(node);
+                    targetsTree.push(targetObj);
+                    if (children.length > 0) {
+                        targetObj.children = [];
+                        inner(children, targetObj.children);
+                    }
+                } else {
+                    dmaTargets.push({
+                        target: node._id,
+                        weight: node.__overridden__ ? null : node.weight
+                    });
                 }
             });
             return targetsTree;
@@ -469,7 +515,10 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         targetsTree = pruneOverriddenChildren(targetsTree, function(obj) {
             return obj.__overridden__;
         });
-        return callback(null, targetsTree);
+        dmaTargets = pruneOverriddenChildren(dmaTargets,function(obj) {
+            return obj.__overridden__;
+        });
+        return callback(null, [targetsTree, dmaTargets]);
     };
 
     /**
@@ -482,24 +531,32 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
      */
     GeoTree.prototype.toBlockedGeosSchema = function(callback) {
         var self = this;
+        var dmaTargets = [];
         function inner(thisSubtree, targetsTree) {
             targetsTree = targetsTree || [];    
             thisSubtree.forEach(function(node) {
-                var targetObj = {
-                    target: node._id,
-                    children: null,
-                    explicit: node.explicit
-                };
-                if (node.nodeType === 'City') {
-                    targetObj.name = node.name;
-                }
-                targetsTree.push(targetObj);
-                if (!node.explicit) {
-                    var children = self.control.get_children(node);
-                    if (children.length > 0) {
-                        targetObj.children = [];
-                        inner(children, targetObj.children);
+                if (node.nodeType !== 'DMA') {
+                    var targetObj = {
+                        target: node._id,
+                        children: null,
+                        explicit: node.explicit
+                    };
+                    if (node.nodeType === 'City') {
+                        targetObj.name = node.name;
                     }
+                    targetsTree.push(targetObj);
+                    if (!node.explicit) {
+                        var children = self.control.get_children(node);
+                        if (children.length > 0) {
+                            targetObj.children = [];
+                            inner(children, targetObj.children);
+                        }
+                    }
+                } else {
+                    dmaTargets.push({
+                        target: node._id,
+                        explicit: true
+                    });
                 }
             });
             return targetsTree;
@@ -508,7 +565,7 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         blockedTree = pruneOverriddenChildren(blockedTree, function(obj) {
             return obj.explicit === false;
         });
-        return callback(null, blockedTree);
+        return callback(null, [blockedTree, dmaTargets]);
     };
 
     /**
@@ -521,24 +578,32 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
      */
     GeoTree.prototype.toTargetOnlyGeosSchema = function(callback) {
         var self = this;
+        var dmaTargets = [];
         function inner(thisSubtree, targetsTree) {
-            targetsTree = targetsTree || [];    
+            targetsTree = targetsTree || [];
             thisSubtree.forEach(function(node) {
-                var targetObj = {
-                    target: node._id,
-                    children: null,
-                    explicit: node.explicit
-                };
-                if (node.nodeType === 'City') {
-                    targetObj.name = node.name;
-                }
-                targetsTree.push(targetObj);
-                if (!node.explicit){
-                    var children = self.control.get_children(node);
-                    if (children.length > 0) {
-                        targetObj.children = [];
-                        inner(children, targetObj.children);
+                if (node.nodeType !== 'DMA'){
+                    var targetObj = {
+                        target: node._id,
+                        children: null,
+                        explicit: node.explicit
+                    };
+                    if (node.nodeType === 'City') {
+                        targetObj.name = node.name;
                     }
+                    targetsTree.push(targetObj);
+                    if (!node.explicit){
+                        var children = self.control.get_children(node);
+                        if (children.length > 0) {
+                            targetObj.children = [];
+                            inner(children, targetObj.children);
+                        }
+                    }
+                } else {
+                    dmaTargets.push({
+                        target: node._id,
+                        explicit: true
+                    });
                 }
             });
             return targetsTree;
@@ -547,8 +612,8 @@ angular.module('advertiser').factory('GeoTree',['DndTreeWrapper', '$TreeDnDConve
         targetOnlyTree = pruneOverriddenChildren(targetOnlyTree, function(obj) {
             return obj.explicit === false;
         });
-        return callback(null, targetOnlyTree);
+        return callback(null, [targetOnlyTree, dmaTargets]);
     };
 
     return GeoTree;
-}]);
+});

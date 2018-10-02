@@ -26,4 +26,9 @@ angular.module('geo')
 			update: { method: 'PATCH' }
 		}
 	);
+}])
+.factory('DMA', ['$resource', function($resource) {
+	return $resource('/console/dma/:dmaId', { dmaId: '@_id'},
+		{}
+	);
 }]);
