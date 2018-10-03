@@ -715,8 +715,8 @@ angular.module('advertiser').controller('GeoTargetingController',
             });
 
             var dmaStatsPromise = dmaQueryString ? GeoAdStat.pubSummaryQuery({
-                groupBy: 'dma',
-                dma: dmaQueryString,
+                groupBy: 'DMA',
+                DMA: dmaQueryString,
                 startDate: startDate,
                 endDate: endDate
             }) : $q.when([]);
@@ -730,7 +730,7 @@ angular.module('advertiser').controller('GeoTargetingController',
                     City: _getPriceData(_.groupBy(geoTreeResponse.data, '_id.city'))
                 };
                 if (dmaResponse){
-                    allGeosStats.DMA = _getPriceData(_.groupBy(dmaResponse.data, '_id.dma'));
+                    allGeosStats.DMA = _getPriceData(_.groupBy(dmaResponse.data, '_id.DMA'));
                 }
                 // Now bind to geoTree data to use in template
                 function inner(treeData) {
