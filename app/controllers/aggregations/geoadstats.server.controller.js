@@ -20,7 +20,7 @@ var GeoAdStatAPI = exports.GeoAdStatAPI = function(db){
     this.adv_params = ['advertiser','campaign'];
     this.pub_params = ['publisher','site','page'];
     this.clique_params = ['pub_clique', 'adv_clique'];
-    this.geo_params = ['country','region','dma','city','zip'];
+    this.geo_params = ['country','region','DMA','city','zip'];
     // this.advPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.adv_params, this.pub_params.concat(this.geo_params), 'hour');
     // this.pubPipelineBuilder = new HourlyAggregationPipelineVarBuilder(this.pub_params, this.adv_params.concat(this.geo_params), 'hour');
     // this.cliquePipelineBuilder = new HourlyAggregationPipelineVarBuilder([], this.clique_params.concat(this.geo_params), 'hour');
