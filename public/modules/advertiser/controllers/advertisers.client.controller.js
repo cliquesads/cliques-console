@@ -80,7 +80,7 @@ angular.module('advertiser').controller('AdvertiserSwitcherController', ['$scope
 ]).
 controller('ListAdvertiserController',
     function($scope, $stateParams, $location, $state, $rootScope, $timeout,aggregationDateRanges,
-             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat) {
+             Authentication, Advertiser, ngDialog, ADVERTISER_TOOLTIPS, HourlyAdStat, DailyAdStat) {
 
         $scope.authentication = Authentication;
         $scope.TOOLTIPS = ADVERTISER_TOOLTIPS;
@@ -156,7 +156,7 @@ controller('ListAdvertiserController',
          */
         $scope.getCampaignAdStatData = function () {
             $scope.endDate = $scope.dateRanges[$scope.dateRangeSelection].endDate;
-            return HourlyAdStat.advSummaryQuery({
+            return DailyAdStat.advSummaryQuery({
                 groupBy: 'campaign',
                 startDate: $scope.earliestStartDate,
                 endDate: $scope.endDate

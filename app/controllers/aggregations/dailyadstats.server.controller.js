@@ -8,32 +8,26 @@ const aggregationUtils = require('./lib/aggregationUtils.server.controller.js'),
     AdStatsAPIHandler = aggregationUtils.AdStatsAPIHandler;
 
 /**
- * Lightweight object to expose GeoAdStats query methods to API routes.
+ * Lightweight object to expose DailyAdStats query methods to API routes.
  *
- * @param aggregationModels
- * @param advertiserModels
- * @param publisherModels
  * @constructor
  */
-exports.GeoAdStatAPI = class GeoAdStatAPI extends AdStatsAPIHandler {
-    constructor(db) {
+exports.DailyAdStatAPI = class DailyAdStatAPI extends AdStatsAPIHandler {
+    constructor(db){
         super(db);
-        this.adv_params = ['advertiser', 'campaign'];
-        this.pub_params = ['publisher', 'site', 'page'];
+        this.adv_params = ['advertiser','campaign'];
+        this.pub_params = ['publisher','site'];
         this.clique_params = ['pub_clique', 'adv_clique'];
-        this.geo_params = ['country', 'region', 'DMA', 'city', 'zip'];
 
         //TODO: Don't love this, should figure out better way to handle general queries
         let all_params = this.adv_params.concat(this.pub_params);
         all_params = all_params.concat(this.clique_params);
-        all_params = all_params.concat(this.geo_params);
-        this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([], all_params, 'hour');
+        this.genPipelineBuilder = new HourlyAggregationPipelineVarBuilder([],all_params, 'date');
     }
 
     /*------------ General (non-path-param) methods ------------ */
-
     getMany(req, res){
-        return this.getManyWrapper(this.genPipelineBuilder, this.aggregationModels.GeoAdStat)(req, res);
+        return this.getManyWrapper(this.genPipelineBuilder, this.aggregationModels.DailyAdStat)(req, res);
     }
 
     /**
@@ -56,7 +50,7 @@ exports.GeoAdStatAPI = class GeoAdStatAPI extends AdStatsAPIHandler {
                 ids.push(doc.id);
             });
             req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-            return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.GeoAdStat)(req, res);
+            return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.DailyAdStat)(req, res);
         });
     }
 
@@ -81,8 +75,9 @@ exports.GeoAdStatAPI = class GeoAdStatAPI extends AdStatsAPIHandler {
                 ids.push(doc.id);
             });
             req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-            return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.GeoAdStat)(req, res);
+            return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.DailyAdStat)(req, res);
         });
     }
 };
+
 
