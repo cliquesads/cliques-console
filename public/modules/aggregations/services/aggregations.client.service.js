@@ -114,3 +114,26 @@ angular.module('aggregations').factory('KeywordAdStat', ['$http',
         return keywordadstatfactory;
     }
 ]);
+
+/**
+ * Factory to help query DailyAdStat API endpoints.
+ */
+angular.module('aggregations').factory('DailyAdStat', ['$http',
+    function($http) {
+        var base_path = '/console/dailyadstat';
+        var advSummary_path = base_path + '/advSummary';
+        var pubSummary_path = base_path + '/pubSummary';
+        var dailyadstatfactory = {};
+
+        dailyadstatfactory.query = function(queryParams) {
+            return $http.get(base_path, {params: queryParams});
+        };
+        dailyadstatfactory.advSummaryQuery = function(queryParams) {
+            return $http.get(advSummary_path, {params: queryParams});
+        };
+        dailyadstatfactory.pubSummaryQuery = function(queryParams) {
+            return $http.get(pubSummary_path, {params: queryParams});
+        };
+        return dailyadstatfactory;
+    }
+]);
