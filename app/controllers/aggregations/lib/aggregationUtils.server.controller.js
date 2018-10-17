@@ -235,17 +235,17 @@ const HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVar
         // Handle date query params & add to match step if provided
         if (req.query.hasOwnProperty('startDate')) {
             try {
-                match.hour = { $gte: new Date(req.query.startDate) };
+                match[self.dateFieldName] = { $gte: new Date(req.query.startDate) };
             } catch (e) {
                 throw new Error('Invalid startDate, cannot parse to Date object');
             }
         }
         if (req.query.hasOwnProperty('endDate')) {
             try {
-                if (match.hour){
-                    match.hour.$lt = new Date(req.query.endDate);
+                if (match[self.dateFieldName]){
+                    match[self.dateFieldName].$lt = new Date(req.query.endDate);
                 } else {
-                    match.hour = { $lt: new Date(req.query.endDate) };
+                    match[self.dateFieldName] = { $lt: new Date(req.query.endDate) };
                 }
             } catch (e) {
                 throw new Error('Invalid endDate, cannot parse to Date object');
