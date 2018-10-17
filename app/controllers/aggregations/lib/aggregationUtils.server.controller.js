@@ -161,7 +161,7 @@ const formatQueryResults = function(rows, reqQuery) {
  * @param {String} dateFieldName name of date field in aggregation model, default is 'hour'
  * @constructor
  */
-exports.HourlyAggregationPipelineVarBuilder = class HourlyAggregationPipelineVarBuilder {
+const HourlyAggregationPipelineVarBuilder = exports.HourlyAggregationPipelineVarBuilder = class HourlyAggregationPipelineVarBuilder {
     constructor(pathParams, queryParams, dateFieldName){
         this.pathParams = pathParams;
         this.queryParams = queryParams;
@@ -582,7 +582,7 @@ exports.AdStatsAPIHandler = class AdStatsAPIHandler {
             // build sort, which may or may not be populated
             let sort;
             try {
-                sort = pipelineBuilder.getSort(req);
+                sort = HourlyAggregationPipelineVarBuilder.getSort(req);
             } catch (e) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(e)
@@ -592,7 +592,7 @@ exports.AdStatsAPIHandler = class AdStatsAPIHandler {
             // build pagination params
             let skipAndLimit;
             try {
-                skipAndLimit = pipelineBuilder.getSkipAndLimit(req);
+                skipAndLimit = HourlyAggregationPipelineVarBuilder.getSkipAndLimit(req);
             } catch (e) {
                 return res.status(400).send({
                     message: errorHandler.getAndLogErrorMessage(e)
