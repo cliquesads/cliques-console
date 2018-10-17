@@ -6,10 +6,8 @@
 'use strict';
 
 angular.module('core').controller('PublisherDashboardController',
-    ['$scope','$location','$window','Publisher','DTOptionsBuilder','DTColumnDefBuilder','HourlyAdStat','MongoTimeSeries',
-        'aggregationDateRanges','Authentication','Screenshot','Notify','LOGO',
-    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, MongoTimeSeries,
-             aggregationDateRanges, Authentication, Screenshot, Notify, LOGO) {
+    function($scope, $location, $window, Publisher, DTOptionsBuilder, DTColumnDefBuilder, HourlyAdStat, DailyAdStat,
+             MongoTimeSeries, aggregationDateRanges, Authentication, Screenshot, Notify, LOGO) {
         
         $scope.isShowingAllStats = false;
 
@@ -44,7 +42,7 @@ angular.module('core').controller('PublisherDashboardController',
         $scope.publishers = Publisher.query(function(publishers) {
             // after getting all publishers, kick off request to get hourlyAdStat data as well,
             // which we will then bind to the approriate Site
-            HourlyAdStat.pubSummaryQuery({
+            DailyAdStat.pubSummaryQuery({
                 groupBy: 'site'
             }).then(function(response) {
                 publishers.forEach(function(pub) {
@@ -197,4 +195,4 @@ angular.module('core').controller('PublisherDashboardController',
         };
 
     }
-]);
+);

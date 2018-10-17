@@ -1,13 +1,15 @@
 /* jshint node: true */ 'use strict';
 
-var HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').HourlyAdStatsAPI,
+const HourlyAdStatAPI = require('./aggregations/hourlyadstats.server.controller').HourlyAdStatsAPI,
     GeoAdStatAPI = require('./aggregations/geoadstats.server.controller').GeoAdStatAPI,
-    KeywordAdStatAPI = require('./aggregations/keywordadstats.server.controller').KeywordAdStatAPI;
+    KeywordAdStatAPI = require('./aggregations/keywordadstats.server.controller').KeywordAdStatAPI,
+    DailyAdStatAPI = require('./aggregations/dailyadstats.server.controller').DailyAdStatAPI;
 
 module.exports = function(db) {
-    var hourlyAdStatAPI = new HourlyAdStatAPI(db);
-    var geoAdStatAPI = new GeoAdStatAPI(db);
-    var keywordAdStatAPI = new KeywordAdStatAPI(db);
+    const hourlyAdStatAPI = new HourlyAdStatAPI(db);
+    const geoAdStatAPI = new GeoAdStatAPI(db);
+    const keywordAdStatAPI = new KeywordAdStatAPI(db);
+    const dailyAdStatAPI = new DailyAdStatAPI(db);
     return {
         hourlyAdStat: {
             getMany: function(req, res) {
@@ -55,6 +57,17 @@ module.exports = function(db) {
             },
             getManyPublisherSummary: function(req, res) {
                 return keywordAdStatAPI.getManyPublisherSummary(req, res);
+            }
+        },
+        dailyAdStat: {
+            getMany: function(req, res) {
+                return dailyAdStatAPI.getMany(req, res);
+            },
+            getManyAdvertiserSummary: function(req, res) {
+                return dailyAdStatAPI.getManyAdvertiserSummary(req, res);
+            },
+            getManyPublisherSummary: function(req, res) {
+                return dailyAdStatAPI.getManyPublisherSummary(req, res);
             }
         }
     };
