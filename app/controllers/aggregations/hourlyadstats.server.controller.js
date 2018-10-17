@@ -38,7 +38,7 @@ util.inherits(HourlyAdStatAPI, AdStatsAPIHandler);
 /*------------ General (non-path-param) methods ------------ */
 
 HourlyAdStatAPI.prototype.getMany = function(req, res){
-    return this._getManyWrapper(this.genPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
+    return this.getManyWrapper(this.genPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
 };
 
 /**
@@ -61,7 +61,7 @@ HourlyAdStatAPI.prototype.getManyAdvertiserSummary = function(req, res){
             ids.push(doc.id);
         });
         req.query.advertiser = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-        return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
+        return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
     });
 };
 
@@ -86,18 +86,18 @@ HourlyAdStatAPI.prototype.getManyPublisherSummary = function(req, res){
             ids.push(doc.id);
         });
         req.query.publisher = ids.length > 1 ? '{in}' + ids.join(',') : ids[0];
-        return self._getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
+        return self.getManyWrapper(self.genPipelineBuilder, self.aggregationModels.HourlyAdStat)(req, res);
     });
 };
 
 /*------------ Hierarchical, path-param methods ------------ */
 
 HourlyAdStatAPI.prototype.getManyAdvertiser = function(req, res){
-    return this._getManyWrapper(this.advPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
+    return this.getManyWrapper(this.advPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
 };
 HourlyAdStatAPI.prototype.getManyPublisher = function(req, res){
-    return this._getManyWrapper(this.pubPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
+    return this.getManyWrapper(this.pubPipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
 };
 HourlyAdStatAPI.prototype.getManyClique = function(req, res){
-    return this._getManyWrapper(this.cliquePipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
+    return this.getManyWrapper(this.cliquePipelineBuilder, this.aggregationModels.HourlyAdStat)(req, res);
 };
