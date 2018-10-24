@@ -5,7 +5,7 @@
 <body>
     <p><strong>The following error was encountered during the data_alerts.js run at {{ tstamp.toString() }}</strong></p>
     <p>
-        {{ err.stack }}
+        {{ err.stack || err }}
     </p>
     <p>Please check server logs and resolve ASAP.</p>
     <br>

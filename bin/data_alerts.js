@@ -34,7 +34,7 @@ require('./_main')(function(GLOBALS) {
     function getHourlyAdStatData(start, end){
         start = start.toISOString();
         end = end.toISOString();
-        const url = `${BASE_API_URL}/api/hourlyadstats?startDate=${start}&endDate=${end}`;
+        const url = `${BASE_API_URL}/api/hourlyadstat?startDate=${start}&endDate=${end}`;
         console.log(`Sending GET request to ${url}...`);
         const promisifiedRequest = promise.promisify(request);
         return promisifiedRequest({
@@ -101,7 +101,16 @@ require('./_main')(function(GLOBALS) {
                 // Log error for posterity's sake
                 throw new Error(`Error getting hourlyAdStat data: Status ${response.statusCode} - ${response.body}`);
             } else {
-                return doFillRateAlert(JSON.parse(response.body), config.get('Alerts.minFillRate'), rangeStart);
+                let minFillRate;
+                try {
+                    minFillRate = config.get('Alerts.minFillRate');
+                } catch (e){
+                    console.log(`No config found for Alerts.minFillRate, skipping this alert...`);
+                    return new promise((resolve, reject) => {
+                        return resolve();
+                    });
+                }
+                return doFillRateAlert(JSON.parse(response.body), minFillRate, rangeStart);
             }
         })
         .then(() => {
@@ -109,7 +118,7 @@ require('./_main')(function(GLOBALS) {
             process.exit(0);
         })
         .catch(err => {
-            console.error(chalk.red(err.stack));
+            console.error(chalk.red(err.stack || err));
             mailer.sendMail({
                 subject: `Data Alert Script Error at ${now}`,
                 templateName: 'alert-script-email.server.view.html',
