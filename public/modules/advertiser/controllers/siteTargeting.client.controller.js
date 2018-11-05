@@ -338,7 +338,34 @@ angular.module('advertiser').controller('SiteTargetingController',
             //====================================================//
             //=============== END SiteTree Class =================//
             //====================================================//
-            
+
+            var _setSiblingExplicitValues = function(tree, node){
+                var nodeTypes = ['Clique', 'Site', 'Page', 'Placement'];
+
+                var inner = function(data, node){
+                    for (var i = 0; i < data.length; i ++){
+                        var a = nodeTypes.indexOf(node.nodeType);
+                        var b = nodeTypes.indexOf(data[i].nodeType);
+                        if (b === a - 1){
+                            if (node.parentId === data[i]._id){
+                                data[i].explicit = false;
+                                for (var j = 0; j < data[i].__children__.length; j ++) {
+                                    data[i].__children__[j].explicit = true;
+                                }
+                                // Remove parent node if it's empty & has no children
+                                if (data[i].__children__.length === 0){
+                                    data.splice(i, 1);
+                                }
+                                break;
+                            }
+                        } else if (b < a){
+                            inner(data[i].__children__);
+                        }
+                    }
+                };
+                inner(tree.data, node);
+                $scope.dirty = true;
+            };
 
             //==========================================================//
             //=============== BEGIN SiteTree Instances =================//
@@ -421,7 +448,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                     remove: function (node) {
                         // Add whole ancestor branch to new tree, as necessary
                         SiteTree.prototype.moveNode($scope.target_sites, $scope.all_sites, node);
-                        $scope.dirty = true;
+                        _setSiblingExplicitValues($scope.target_sites, node);
+                        // $scope.dirty = true;
                     }
                 },
                 {
@@ -457,6 +485,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 ]
             );
 
+
+
             /**
              * SiteTree for Blocked Sites tree vars
              */
@@ -464,7 +494,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 {
                     remove: function (node) {
                         SiteTree.prototype.moveNode($scope.blocked_sites, $scope.all_sites, node);
-                        $scope.dirty = true;
+                        _setSiblingExplicitValues($scope.blocked_sites, node);
                     }
                 },
                 {
