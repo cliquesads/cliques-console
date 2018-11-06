@@ -356,10 +356,19 @@ angular.module('advertiser').controller('SiteTargetingController',
                                 if (data[i].__children__.length === 0){
                                     data.splice(i, 1);
                                 }
-                                break;
+                                return true;
                             }
                         } else if (b < a){
-                            inner(data[i].__children__);
+                            // otherwise recurse down the branch & pass
+                            // parentFound value back up if parent is found
+                            // in lower level of tree
+                            var parentFound = inner(data[i].__children__, node);
+                            if (parentFound){
+                                // if parent is found in branch below this node, set explicit
+                                // value to false for this node
+                                data[i].explicit = false;
+                            }
+                            return parentFound;
                         }
                     }
                 };
