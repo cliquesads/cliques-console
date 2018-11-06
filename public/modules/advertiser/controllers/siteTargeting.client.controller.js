@@ -358,7 +358,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     for (var i = 0; i < data.length; i ++){
                         var a = nodeTypes.indexOf(node.nodeType);
                         var b = nodeTypes.indexOf(data[i].nodeType);
-                        // only try to find 
+                        // only try to find parent if nodeType is parent level to nodeType for node.
                         if (b === a - 1){
                             if (node.parentId === data[i]._id){
                                 data[i].explicit = false;
