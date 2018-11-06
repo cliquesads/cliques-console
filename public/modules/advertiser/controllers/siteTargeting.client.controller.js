@@ -338,7 +338,56 @@ angular.module('advertiser').controller('SiteTargetingController',
             //====================================================//
             //=============== END SiteTree Class =================//
             //====================================================//
-            
+
+            /**
+             * Helper to ensure integrity of tree settings when a node is removed from a
+             * SiteTree. When a node is removed from a targeting tree, its parent might have been
+             * set to `explicit = true` with no children, so this function will:
+             *
+             *    1. Set parent node's `explicit` to `false`, if not already
+             *    2. Set all sibling node's `explicit` to `true`, if not already.
+             *
+             * @param tree
+             * @param node
+             * @private
+             */
+            var _setSiblingExplicitValues = function(tree, node){
+                var nodeTypes = ['Clique', 'Site', 'Page', 'Placement'];
+
+                var inner = function(data, node){
+                    for (var i = 0; i < data.length; i ++){
+                        var a = nodeTypes.indexOf(node.nodeType);
+                        var b = nodeTypes.indexOf(data[i].nodeType);
+                        // only try to find parent if nodeType is parent level to nodeType for node.
+                        if (b === a - 1){
+                            if (node.parentId === data[i]._id){
+                                data[i].explicit = false;
+                                for (var j = 0; j < data[i].__children__.length; j ++) {
+                                    data[i].__children__[j].explicit = true;
+                                }
+                                // Remove parent node if it's empty & has no children
+                                if (data[i].__children__.length === 0){
+                                    data.splice(i, 1);
+                                }
+                                return true;
+                            }
+                        } else if (b < a){
+                            // otherwise recurse down the branch & pass
+                            // parentFound value back up if parent is found
+                            // in lower level of tree
+                            var parentFound = inner(data[i].__children__, node);
+                            if (parentFound){
+                                // if parent is found in branch below this node, set explicit
+                                // value to false for this node
+                                data[i].explicit = false;
+                            }
+                            return parentFound;
+                        }
+                    }
+                };
+                inner(tree.data, node);
+                $scope.dirty = true;
+            };
 
             //==========================================================//
             //=============== BEGIN SiteTree Instances =================//
@@ -421,7 +470,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                     remove: function (node) {
                         // Add whole ancestor branch to new tree, as necessary
                         SiteTree.prototype.moveNode($scope.target_sites, $scope.all_sites, node);
-                        $scope.dirty = true;
+                        _setSiblingExplicitValues($scope.target_sites, node);
+                        // $scope.dirty = true;
                     }
                 },
                 {
@@ -457,6 +507,8 @@ angular.module('advertiser').controller('SiteTargetingController',
                 ]
             );
 
+
+
             /**
              * SiteTree for Blocked Sites tree vars
              */
@@ -464,7 +516,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                 {
                     remove: function (node) {
                         SiteTree.prototype.moveNode($scope.blocked_sites, $scope.all_sites, node);
-                        $scope.dirty = true;
+                        _setSiblingExplicitValues($scope.blocked_sites, node);
                     }
                 },
                 {
