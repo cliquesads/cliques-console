@@ -339,6 +339,18 @@ angular.module('advertiser').controller('SiteTargetingController',
             //=============== END SiteTree Class =================//
             //====================================================//
 
+            /**
+             * Helper to ensure integrity of tree settings when a node is removed from a
+             * SiteTree. When a node is removed from a targeting tree, its parent might have been
+             * set to `explicit = true` with no children, so this function will:
+             *
+             *    1. Set parent node's `explicit` to `false`, if not already
+             *    2. Set all sibling node's `explicit` to `true`, if not already.
+             *
+             * @param tree
+             * @param node
+             * @private
+             */
             var _setSiblingExplicitValues = function(tree, node){
                 var nodeTypes = ['Clique', 'Site', 'Page', 'Placement'];
 
@@ -346,6 +358,7 @@ angular.module('advertiser').controller('SiteTargetingController',
                     for (var i = 0; i < data.length; i ++){
                         var a = nodeTypes.indexOf(node.nodeType);
                         var b = nodeTypes.indexOf(data[i].nodeType);
+                        // only try to find 
                         if (b === a - 1){
                             if (node.parentId === data[i]._id){
                                 data[i].explicit = false;
