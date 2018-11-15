@@ -564,7 +564,7 @@ angular.module('advertiser').controller('GeoTargetingController',
                         break;
                     case 'City':
                         var parentRegionId = node.parentId;
-                        var parentRegionFound = false;
+                        var parentRegionIndex = -1;
                         for (var i = 0; i < $scope[tree].data.length; i ++) {
                             for (var j = 0; j < $scope[tree].data[i].__children__.length; j ++) {
                                 if (parentRegionId === $scope[tree].data[i].__children__[j]._id) {
@@ -572,11 +572,21 @@ angular.module('advertiser').controller('GeoTargetingController',
                                     for (var k = 0; k < $scope[tree].data[i].__children__[j].__children__.length; k ++) {
                                         $scope[tree].data[i].__children__[j].__children__[k].explicit = true;
                                     }
-                                    parentRegionFound = true;
+                                    parentRegionIndex = j;
                                     break;
                                 }
                             }
-                            if (parentRegionFound) {
+                            if (parentRegionIndex > -1) {
+                            	if ($scope[tree].data[i].explicit){
+                                    // if parent country was set to explicit, means that no other regions were set explicitly,
+                                    // so have to check & set them to explicit if that's true
+                                    for (var l = 0; l < $scope[tree].data[i].__children__.length; l ++){
+                                    	if (l !== parentRegionIndex){
+                                    		$scope[tree].data[i].__children__[l].explicit = true;
+										}
+									}
+                                    $scope[tree].data[i].explicit = false;
+								}
                                 break;
                             }
                         }
