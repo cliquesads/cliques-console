@@ -366,20 +366,27 @@ module.exports = function(db) {
                                                 regionObj.cities.push(cityObj);
                                             });
                                         });
+                                    } else {
+                                        return geoModels.City.count({region: regionObj._id})
+                                            .then(function(numOfCities) {
+                                               regionObj.numOfCities = numOfCities;
+                                            });
                                     }
                                 })
                                 .then(function() {
-                                    // For each region, all those cities that haven't 
-                                    // been customized should also be loaded
-                                    return geoModels.City.find({
-                                        region: region.target,
-                                        _id: {
-                                            $nin: customizedCityIds
-                                        }
-                                    })
-                                    .then(function(notCustomizedCities) {
-                                        regionObj.cities = regionObj.cities.concat(notCustomizedCities);
-                                    });
+                                    if (targetOrBlock === 'target'){
+                                        // For each region, all those cities that haven't
+                                        // been customized should also be loaded
+                                        return geoModels.City.find({
+                                            region: region.target,
+                                            _id: {
+                                                $nin: customizedCityIds
+                                            }
+                                        })
+                                        .then(function(notCustomizedCities) {
+                                            regionObj.cities = regionObj.cities.concat(notCustomizedCities);
+                                        });
+                                    }
                                 })
                                 .then(function() {
                                     countryObj.regions.push(regionObj);
