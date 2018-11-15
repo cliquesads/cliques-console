@@ -537,7 +537,12 @@ angular.module('advertiser').controller('GeoTargetingController',
                             if (parentCountryId === $scope[tree].data[i]._id) {
                                 $scope[tree].data[i].explicit = false;
                                 for (var j = 0; j < $scope[tree].data[i].__children__.length; j ++) {
-                                    $scope[tree].data[i].__children__[j].explicit = true;
+                                	var hasExplicitChildren = $scope[tree].data[i].__children__[j].__children__.some(function(el){
+										return el.explicit;
+                                    });
+                                	if (!hasExplicitChildren){
+                                        $scope[tree].data[i].__children__[j].explicit = true;
+									}
                                 }
                                 // Remove parent node if it's empty & has no children
                                 if ($scope[tree].data[i].__children__.length === 0){
@@ -582,7 +587,12 @@ angular.module('advertiser').controller('GeoTargetingController',
                                     // so have to check & set them to explicit if that's true
                                     for (var l = 0; l < $scope[tree].data[i].__children__.length; l ++){
                                     	if (l !== parentRegionIndex){
-                                    		$scope[tree].data[i].__children__[l].explicit = true;
+                                    		var nhasExplicitChildren = $scope[tree].data[i].__children__[l].__children__.some(function(el){
+                                                return el.explicit;
+                                            });
+                                            if (!nhasExplicitChildren){
+                                                $scope[tree].data[i].__children__[l].explicit = true;
+                                            }
 										}
 									}
                                     $scope[tree].data[i].explicit = false;
