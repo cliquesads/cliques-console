@@ -338,15 +338,18 @@ angular.module('advertiser').factory('GeoTree',function(DndTreeWrapper, $TreeDnD
                         var regionNode = _initializeGeoTreeNode(region, 'Region', country._id, countryNode.weight);
                         regionNode.explicit = region.explicit;
                         flattened.push(regionNode);
-                        regionNode.numOfCities = 0;
-                        if (region.cities) {
+                        if (region.cities.length > 0 || region.numOfCities > 0) {
                             regionNode.regionNodeIcon = 'fa fa-lg fa-plus-circle';
-                            regionNode.numOfCities = region.cities.length;
-                            region.cities.forEach(function(city) {
-                                var cityNode = _initializeGeoTreeNode(city, 'City', region._id, regionNode.weight);
-                                cityNode.explicit = city.explicit;
-                                flattened.push(cityNode);
-                            });
+                            if (region.cities.length > 0){
+                                // flag set to determine whether to lazy-load cities on click
+                                regionNode.citiesLoaded = true;
+                                regionNode.numOfCities = region.cities.length;
+                                region.cities.forEach(function(city) {
+                                    var cityNode = _initializeGeoTreeNode(city, 'City', region._id, regionNode.weight);
+                                    cityNode.explicit = city.explicit;
+                                    flattened.push(cityNode);
+                                });
+                            }
                         }
                     }); 
                 }
