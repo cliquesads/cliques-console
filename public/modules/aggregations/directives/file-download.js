@@ -11,11 +11,11 @@ angular.module('aggregations').directive('fileDownload', [function() {
             scope.$watch('fileDownload', function(newValue, oldValue) {
                 if (newValue !== undefined && newValue !== null) {
                     console.debug('Downloading a new file');
-                    var isFirefox = typeof InstallTrigger !== 'undefined';
+                    var isFirefox = typeof InstallTrigger !== 'undefined' || navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
                     var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
                     var isIE = /*@cc_on!@*/ false || !!document.documentMode;
                     var isEdge = !isIE && !!window.StyleMedia;
-                    var isChrome = !!window.chrome && !!window.chrome.webstore;
+                    var isChrome = (!!window.chrome && !!window.chrome.webstore) || navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
                     var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
                     var isBlink = (isChrome || isOpera) && !!window.CSS;
 
